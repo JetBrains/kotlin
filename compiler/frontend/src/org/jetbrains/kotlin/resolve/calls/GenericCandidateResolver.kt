@@ -16,19 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import com.google.common.collect.Maps
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
@@ -130,7 +128,7 @@ class GenericCandidateResolver(
             substitutor: TypeSubstitutor,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<*>,
-            resolveFunctionArgumentBodies: CallResolverUtil.ResolveArgumentsMode
+            resolveFunctionArgumentBodies: ResolveArgumentsMode
     ) {
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
@@ -239,14 +237,14 @@ class GenericCandidateResolver(
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
         }
         if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
-            || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
+            || hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.getDataFlowInfoForArguments()
         val dataFlowInfoForArgument = dataFlowInfoForArguments.getInfo(valueArgument)
 
         //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
-        val hasExpectedReturnType = !CallResolverUtil.hasUnknownReturnType(expectedType)
+        val hasExpectedReturnType = !hasUnknownReturnType(expectedType)
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
         if (hasExpectedReturnType) {
             val temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
@@ -267,7 +265,7 @@ class GenericCandidateResolver(
                 return
             }
         }
-        val expectedTypeWithoutReturnType = if (hasExpectedReturnType) CallResolverUtil.replaceReturnTypeByUnknown(expectedType) else expectedType
+        val expectedTypeWithoutReturnType = if (hasExpectedReturnType) replaceReturnTypeByUnknown(expectedType) else expectedType
         val newContext = context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
@@ -502,7 +502,7 @@ public class FunctionCodegen {
         if (isMethodOfAny(descriptor)) return;
 
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
-        if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return;
+        if (CallResolverUtilPackage.isOrOverridesSynthesized(descriptor)) return;
 
         Set<Bridge<Method>> bridgesToGenerate = BridgesPackage.generateBridgesForFunctionDescriptor(
                 descriptor,

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -26,6 +25,8 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
@@ -55,9 +56,9 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.getEffectiveExpectedType;
 import static org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage.getEffectiveExpectedType;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
@@ -295,7 +296,7 @@ public class CandidateResolver {
     @NotNull
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
+            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
         return checkAllValueArguments(context, context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
     }
 
@@ -303,7 +304,7 @@ public class CandidateResolver {
     public <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull BindingTrace trace,
-            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies
+            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
     ) {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
                 context, context.candidateCall, trace, resolveFunctionArgumentBodies);
@@ -346,7 +347,7 @@ public class CandidateResolver {
             @NotNull CallResolutionContext<C> context,
             @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull BindingTrace trace,
-            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
+            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
         ResolutionStatus resultStatus = SUCCESS;
         List<JetType> argumentTypes = Lists.newArrayList();
         MutableDataFlowInfoForArguments infoForArguments = candidateCall.getDataFlowInfoForArguments();
@@ -423,7 +424,7 @@ public class CandidateResolver {
         ResolutionStatus status = SUCCESS;
         // For the expressions like '42.(f)()' where f: String.() -> Unit we'd like to generate a type mismatch error on '1',
         // not to throw away the candidate, so the following check is skipped.
-        if (!CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
+        if (!CallResolverUtilPackage.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
             status = status.combine(checkReceiverTypeError(context, extensionReceiver, candidateCall.getExtensionReceiver()));
         }
         status = status.combine(checkReceiverTypeError(context, dispatchReceiver, candidateCall.getDispatchReceiver()));
@@ -439,7 +440,7 @@ public class CandidateResolver {
 
         D candidateDescriptor = context.candidateCall.getCandidateDescriptor();
 
-        JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
+        JetType erasedReceiverType = CallResolverUtilPackage.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
 
         boolean isSubtypeBySmartCast = SmartCastUtils.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, context);
         if (!isSubtypeBySmartCast) {

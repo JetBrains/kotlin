@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
@@ -403,7 +403,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private boolean isGenericToArrayPresent() {
         Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"));
         for (FunctionDescriptor function : functions) {
-            if (CallResolverUtil.isOrOverridesSynthesized(function)) {
+            if (CallResolverUtilPackage.isOrOverridesSynthesized(function)) {
                 continue;
             }
 

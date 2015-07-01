@@ -23,13 +23,12 @@ import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
@@ -38,14 +37,11 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.ArrayList
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
-import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.ErrorUtils
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
@@ -61,7 +57,7 @@ public class CallCompleter(
 
         // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
         // it's completed when the outer (variable as function call) is completed
-        if (!CallResolverUtil.isInvokeCallOnVariable(context.call)) {
+        if (!isInvokeCallOnVariable(context.call)) {
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
 

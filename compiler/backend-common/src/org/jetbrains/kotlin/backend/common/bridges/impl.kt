@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 
 public fun <Signature> generateBridgesForFunctionDescriptor(
         descriptor: FunctionDescriptor,
@@ -69,7 +69,7 @@ private data class DescriptorBasedFunctionHandle(val descriptor: FunctionDescrip
  */
 public fun findTraitImplementation(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     if (descriptor.getKind().isReal()) return null
-    if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return null
+    if (isOrOverridesSynthesized(descriptor)) return null
 
     val implementation = findImplementationFromInterface(descriptor) ?: return null
     val immediateConcreteSuper = firstSuperMethodFromKotlin(descriptor, implementation) ?: return null

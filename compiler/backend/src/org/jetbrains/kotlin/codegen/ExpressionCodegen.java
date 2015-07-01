@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -2330,7 +2330,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
-        JetSuperExpression superCallExpression = CallResolverUtil.getSuperCallExpression(call);
+        JetSuperExpression superCallExpression = CallResolverUtilPackage.getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
         if (superCall && !isInterface(fd.getContainingDeclaration())) {
