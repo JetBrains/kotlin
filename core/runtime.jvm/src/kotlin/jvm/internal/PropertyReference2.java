@@ -23,4 +23,9 @@ public class PropertyReference2 extends PropertyReference implements KProperty2 
     public Object get(Object receiver1, Object receiver2) {
         throw error();
     }
+
+    @Override
+    public KProperty2.Getter getGetter() {
+        throw error();
+    }
 }

@@ -17,6 +17,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.reflect.KMutableProperty2;
+import kotlin.reflect.KProperty2;
 
 public class MutablePropertyReference2 extends MutablePropertyReference implements KMutableProperty2 {
     @Override
@@ -26,6 +27,16 @@ public class MutablePropertyReference2 extends MutablePropertyReference implemen
 
     @Override
     public void set(Object receiver1, Object receiver2, Object value) {
+        throw error();
+    }
+
+    @Override
+    public KProperty2.Getter getGetter() {
+        throw error();
+    }
+
+    @Override
+    public KMutableProperty2.Setter getSetter() {
         throw error();
     }
 }

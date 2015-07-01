@@ -30,6 +30,8 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, 
 
     override val name: String get() = descriptor.getName().asString()
 
+    override val getter by ReflectProperties.lazy { Getter(this) }
+
     override val javaGetter: Method get() = super.javaGetter!!
 
     override val javaField: Field? get() = null
@@ -43,6 +45,10 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, 
             throw IllegalPropertyAccessException(e)
         }
     }
+
+    class Getter<D, E, out R>(override val property: KProperty2Impl<D, E, R>) : KPropertyImpl.Getter<R>, KProperty2.Getter<D, E, R> {
+        override fun invoke(receiver1: D, receiver2: E): R = property.get(receiver1, receiver2)
+    }
 }
 
 
@@ -50,6 +56,8 @@ class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty
     constructor(container: KClassImpl<D>, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
+
+    override val setter by ReflectProperties.lazy { Setter(this) }
 
     override val javaSetter: Method get() = super.javaSetter!!
 
@@ -60,5 +68,9 @@ class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
         }
+    }
+
+    class Setter<D, E, R>(override val property: KMutableProperty2Impl<D, E, R>) : KMutablePropertyImpl.Setter<R>, KMutableProperty2.Setter<D, E, R> {
+        override fun invoke(receiver1: D, receiver2: E, value: R): Unit = property.set(receiver1, receiver2, value)
     }
 }

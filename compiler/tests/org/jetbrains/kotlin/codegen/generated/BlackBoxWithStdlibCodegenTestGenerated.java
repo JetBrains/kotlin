@@ -3251,6 +3251,45 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/simpleGetProperties.kt");
                 doTestWithStdlib(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Accessors extends AbstractBlackBoxCodegenTest {
+                @TestMetadata("accessorNames.kt")
+                public void testAccessorNames() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors/accessorNames.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                public void testAllFilesPresentInAccessors() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("extensionPropertyAccessors.kt")
+                public void testExtensionPropertyAccessors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors/extensionPropertyAccessors.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("memberExtensions.kt")
+                public void testMemberExtensions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors/memberExtensions.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("memberPropertyAccessors.kt")
+                public void testMemberPropertyAccessors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors/memberPropertyAccessors.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("topLevelPropertyAccessors.kt")
+                public void testTopLevelPropertyAccessors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/accessors/topLevelPropertyAccessors.kt");
+                    doTestWithStdlib(fileName);
+                }
+            }
         }
     }
 

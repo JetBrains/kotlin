@@ -24,12 +24,40 @@ package kotlin.reflect
  *
  * @param R the type of the property.
  */
-public interface KProperty<out R> : KCallable<R>
+public interface KProperty<out R> : KCallable<R> {
+    /** The getter of this property, used to obtain the value of the property. */
+    public val getter: Getter<R>
+
+    /**
+     * Represents a property accessor, which is a `get` or `set` method declared alongside the property.
+     * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/properties.html#getters-and-setters)
+     * for more information.
+     *
+     * @param R the type of the property, which it is an accessor of.
+     */
+    public interface Accessor<out R> {
+        /** The property which this accessor is originated from. */
+        public val property: KProperty<R>
+    }
+
+    /**
+     * Getter of the property is a `get` method declared alongside the property.
+     */
+    public interface Getter<out R> : Accessor<R>, KFunction<R>
+}
 
 /**
  * Represents a property declared as a `var`.
  */
-public interface KMutableProperty<R> : KProperty<R>
+public interface KMutableProperty<R> : KProperty<R> {
+    /** The setter of this mutable property, used to change the value of the property. */
+    public val setter: Setter<R>
+
+    /**
+     * Setter of the property is a `set` method declared alongside the property.
+     */
+    public interface Setter<R> : KProperty.Accessor<R>, KFunction<Unit>
+}
 
 
 /**
@@ -42,6 +70,10 @@ public interface KProperty0<out R> : KProperty<R> {
      * Returns the current value of the property.
      */
     public fun get(): R
+
+    override val getter: Getter<R>
+
+    public interface Getter<out R> : KProperty.Getter<R>, () -> R
 }
 
 /**
@@ -54,6 +86,10 @@ public interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
      * @param value the new value to be assigned to this property.
      */
     public fun set(value: R)
+
+    override val setter: Setter<R>
+
+    public interface Setter<R> : KMutableProperty.Setter<R>, (R) -> Unit
 }
 
 
@@ -72,6 +108,10 @@ public interface KProperty1<T, out R> : KProperty<R> {
      *                 or an extension receiver if this is a top level extension property.
      */
     public fun get(receiver: T): R
+
+    override val getter: Getter<T, R>
+
+    public interface Getter<T, out R> : KProperty.Getter<R>, (T) -> R
 }
 
 /**
@@ -87,6 +127,10 @@ public interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R>
      * @param value the new value to be assigned to this property.
      */
     public fun set(receiver: T, value: R)
+
+    override val setter: Setter<T, R>
+
+    public interface Setter<T, R> : KMutableProperty.Setter<R>, (T, R) -> Unit
 }
 
 
@@ -109,6 +153,10 @@ public interface KProperty2<D, E, out R> : KProperty<R> {
      * @param receiver2 the instance of the second receiver.
      */
     public fun get(receiver1: D, receiver2: E): R
+
+    override val getter: Getter<D, E, R>
+
+    public interface Getter<D, E, out R> : KProperty.Getter<R>, (D, E) -> R
 }
 
 /**
@@ -123,4 +171,8 @@ public interface KMutableProperty2<D, E, R> : KProperty2<D, E, R>, KMutablePrope
      * @param value the new value to be assigned to this property.
      */
     public fun set(receiver1: D, receiver2: E, value: R)
+
+    override val setter: Setter<D, E, R>
+
+    public interface Setter<D, E, R> : KMutableProperty.Setter<R>, (D, E, R) -> Unit
 }

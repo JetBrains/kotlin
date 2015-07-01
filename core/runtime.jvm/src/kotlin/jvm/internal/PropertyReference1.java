@@ -23,4 +23,9 @@ public class PropertyReference1 extends PropertyReference implements KProperty1 
     public Object get(Object receiver) {
         throw error();
     }
+
+    @Override
+    public KProperty1.Getter getGetter() {
+        throw error();
+    }
 }
