@@ -24,10 +24,14 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
+import java.io.PrintWriter
 import java.util.ArrayDeque
 import java.util.ArrayList
 import java.util.regex.Pattern
 import kotlin.text.Regex
+
+// Switch this flag to render bytecode after each line in the REPL test. Useful for debugging verify errors or other codegen problems
+private val DUMP_BYTECODE = false
 
 private val START_PATTERN = Pattern.compile(">>>( *)(.*)$")
 private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
@@ -83,7 +87,12 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
-            val actual = when (lineResult.getType()!!) {
+
+            if (DUMP_BYTECODE) {
+                repl.dumpClasses(PrintWriter(System.out))
+            }
+
+            val actual = when (lineResult.getType()) {
                 ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
                 ReplInterpreter.LineResultType.ERROR -> lineResult.getErrorText()
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
