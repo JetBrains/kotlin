@@ -10,9 +10,6 @@ fun box(): String {
     b.rangeTo(b)
     b rangeTo b
     b..b
-    b.rangeTo(c)
-    b rangeTo c
-    b..c
     b.rangeTo(s)
     b rangeTo s
     b..s
@@ -36,9 +33,6 @@ fun box(): String {
     s.rangeTo(b)
     s rangeTo b
     s..b
-    s.rangeTo(c)
-    s rangeTo c
-    s..c
     s.rangeTo(s)
     s rangeTo s
     s..s
@@ -58,9 +52,6 @@ fun box(): String {
     i.rangeTo(b)
     i rangeTo b
     i..b
-    i.rangeTo(c)
-    i rangeTo c
-    i..c
     i.rangeTo(s)
     i rangeTo s
     i..s
@@ -80,9 +71,6 @@ fun box(): String {
     j.rangeTo(b)
     j rangeTo b
     j..b
-    j.rangeTo(c)
-    j rangeTo c
-    j..c
     j.rangeTo(s)
     j rangeTo s
     j..s
@@ -102,9 +90,6 @@ fun box(): String {
     f.rangeTo(b)
     f rangeTo b
     f..b
-    f.rangeTo(c)
-    f rangeTo c
-    f..c
     f.rangeTo(s)
     f rangeTo s
     f..s
@@ -124,9 +109,6 @@ fun box(): String {
     d.rangeTo(b)
     d rangeTo b
     d..b
-    d.rangeTo(c)
-    d rangeTo c
-    d..c
     d.rangeTo(s)
     d rangeTo s
     d..s
@@ -151,7 +133,7 @@ fun main(args: Array<String>) {
     val s = "bcsijfd"
     for (i in s) {
         for (j in s) {
-            if (i == 'c' && j != 'c') continue
+            if ((i == 'c') != (j == 'c')) continue
             println("    $i.rangeTo($j)")
             println("    $i rangeTo $j")
             println("    $i..$j")
