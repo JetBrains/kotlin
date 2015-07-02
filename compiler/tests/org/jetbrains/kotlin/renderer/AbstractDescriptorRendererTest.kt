@@ -89,10 +89,10 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 val parent = accessor.getParent() as JetProperty
                 val propertyDescriptor = getDescriptor(parent, resolveSession) as PropertyDescriptor
                 if (accessor.isGetter()) {
-                    descriptors.add(propertyDescriptor.getGetter())
+                    descriptors.add(propertyDescriptor.getGetter()!!)
                 }
                 else {
-                    descriptors.add(propertyDescriptor.getSetter())
+                    descriptors.add(propertyDescriptor.getSetter()!!)
                 }
                 accessor.acceptChildren(this)
             }
@@ -108,7 +108,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                     // if class has primary constructor then we visit it later, otherwise add it artificially
                     if (element !is JetClassOrObject || !element.hasExplicitPrimaryConstructor()) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                            descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor())
+                            descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor()!!)
                         }
                     }
                 }

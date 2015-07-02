@@ -92,7 +92,7 @@ public class FunctionReader(private val context: TranslationContext) {
     public fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getExternalModuleName(descriptor)
         val currentModuleName = context.getConfig().getModuleId()
-        return currentModuleName != moduleName && moduleName in moduleJsDefinition
+        return currentModuleName != moduleName && moduleName != null && moduleName in moduleJsDefinition
     }
 
     public fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)

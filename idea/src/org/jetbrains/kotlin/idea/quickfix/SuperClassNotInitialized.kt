@@ -173,7 +173,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
             for (parameter in parametersToAdd) {
                 val newParameter = parameterList.addParameter(parameter)
-                typeRefsToShorten.add(newParameter.getTypeReference())
+                typeRefsToShorten.add(newParameter.getTypeReference()!!)
             }
 
             val delegatorCall = factory.createDelegatorToSuperCall(element.getText() + "(" + parameterNames.joinToString(",") + ")")

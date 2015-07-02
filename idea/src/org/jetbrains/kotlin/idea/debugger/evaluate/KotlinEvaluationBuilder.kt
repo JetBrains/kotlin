@@ -299,7 +299,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         override fun visitProperty(property: JetProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
-                                valuesForLabels.put(property.getName(), value.asValue())
+                                valuesForLabels.put(property.getName()!!, value.asValue())
                             }
                         }
                     })

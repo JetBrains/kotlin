@@ -46,7 +46,7 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
             }
             override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
                 expression.acceptChildren(this)
-                descriptors.add(bindingContext.get(BindingContext.FUNCTION, expression.getFunctionLiteral()))
+                descriptors.add(bindingContext.get(BindingContext.FUNCTION, expression.getFunctionLiteral())!!)
             }
         })
 

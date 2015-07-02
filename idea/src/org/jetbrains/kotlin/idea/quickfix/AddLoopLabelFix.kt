@@ -54,12 +54,12 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
         element.acceptChildren(object : JetTreeVisitorVoid() {
             override fun visitLabeledExpression(expression: JetLabeledExpression) {
                 super.visitLabeledExpression(expression)
-                usedLabels.add(expression.getLabelName())
+                usedLabels.add(expression.getLabelName()!!)
             }
         })
         element.parents.forEach {
             if (it is JetLabeledExpression) {
-                usedLabels.add(it.getLabelName())
+                usedLabels.add(it.getLabelName()!!)
             }
         }
         return usedLabels

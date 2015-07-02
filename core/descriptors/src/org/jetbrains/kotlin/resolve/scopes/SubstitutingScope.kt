@@ -34,7 +34,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         if (substitutor.isEmpty()) return descriptor
 
         if (substitutedDescriptors == null) {
-            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor>()
+            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor?>()
         }
 
         val substituted = substitutedDescriptors!!.getOrPut(descriptor, { descriptor.substitute(substitutor) })

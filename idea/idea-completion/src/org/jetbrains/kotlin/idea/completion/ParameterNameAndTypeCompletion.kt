@@ -117,7 +117,7 @@ class ParameterNameAndTypeCompletion(
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create("", name, ArbitraryType(parameterType), lookupElementFactory)
                         val count = lookupElementToCount[lookupElement] ?: 0
-                        lookupElementToCount[lookupElement] = count + 1
+                        lookupElementToCount[lookupElement!!] = count + 1
                     }
                 }
             }

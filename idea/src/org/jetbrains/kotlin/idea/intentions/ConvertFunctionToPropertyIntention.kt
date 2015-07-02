@@ -85,7 +85,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
             val property = originalFunction.replace(psiFactory.createProperty(function.getText())) as JetProperty
             if (needsExplicitType) {
-                elementsToShorten.add(property.getTypeReference())
+                elementsToShorten.add(property.getTypeReference()!!)
             }
         }
 

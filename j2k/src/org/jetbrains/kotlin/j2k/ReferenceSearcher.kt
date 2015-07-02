@@ -68,10 +68,10 @@ public object IdeaReferenceSearcher: ReferenceSearcher {
     override fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference> {
         val fileTypes = ArrayList<FileType>()
         if (searchJava) {
-            fileTypes.add(JavaLanguage.INSTANCE.getAssociatedFileType())
+            fileTypes.add(JavaLanguage.INSTANCE.getAssociatedFileType()!!)
         }
         if (searchKotlin) {
-            fileTypes.add(JetLanguage.INSTANCE.getAssociatedFileType())
+            fileTypes.add(JetLanguage.INSTANCE.getAssociatedFileType()!!)
         }
         val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.toTypedArray())
         return ReferencesSearch.search(element, searchScope).findAll()

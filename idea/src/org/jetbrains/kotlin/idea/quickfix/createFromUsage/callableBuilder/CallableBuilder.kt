@@ -724,7 +724,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
             else {
                 oldTypeArgumentList.replace(JetPsiFactory(callElement).createTypeArguments(renderedTypeArgs.joinToString(", ", "<", ">")))
-                elementsToShorten.add(callElement.getTypeArgumentList())
+                elementsToShorten.add(callElement.getTypeArgumentList()!!)
             }
         }
 

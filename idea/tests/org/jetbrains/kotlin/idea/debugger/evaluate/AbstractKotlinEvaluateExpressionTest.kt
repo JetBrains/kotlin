@@ -294,6 +294,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
                 val localVariableValue = context.getFrameProxy()!!.getValue(localVariable) as? ObjectReference
                 assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
+                localVariableValue!!
                 markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
             }
 
