@@ -47,16 +47,12 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public trait JetChangeSignatureConfiguration {
-    fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor
+public interface JetChangeSignatureConfiguration {
+    fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor = originalDescriptor
+    fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
+    fun forcePerformForSelectedFunctionOnly(): Boolean = false
 
-    fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
-        return false
-    }
-
-    fun forcePerformForSelectedFunctionOnly(): Boolean {
-        return false
-    }
+    object Empty: JetChangeSignatureConfiguration
 }
 
 fun JetMethodDescriptor.modify(action: (JetMutableMethodDescriptor) -> Unit): JetMethodDescriptor {

@@ -14,250 +14,171 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.HelpID;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
-import com.intellij.refactoring.changeSignature.ChangeSignatureUtil;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
+import com.intellij.refactoring.changeSignature.ChangeSignatureUtil
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-import java.util.Collection;
+public class JetChangeSignatureHandler : ChangeSignatureHandler {
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
-import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
+    override fun findTargetMember(file: PsiFile, editor: Editor) =
+            file.findElementAt(editor.getCaretModel().getOffset())?.let { findTargetMember(it) }
 
-public class JetChangeSignatureHandler implements ChangeSignatureHandler {
-    @Nullable
-    public static PsiElement findTargetForRefactoring(@NotNull PsiElement element) {
-        PsiElement elementParent = element.getParent();
-        if ((elementParent instanceof JetNamedFunction || elementParent instanceof JetClass || elementParent instanceof JetProperty)
-            && ((JetNamedDeclaration) elementParent).getNameIdentifier() == element) return elementParent;
+    override fun findTargetMember(element: PsiElement) =
+            findTargetForRefactoring(element)
 
-        if (elementParent instanceof JetParameter) {
-            JetParameter parameter = (JetParameter) elementParent;
-            JetPrimaryConstructor primaryConstructor = PsiTreeUtil.getParentOfType(parameter, JetPrimaryConstructor.class);
-            if (parameter.hasValOrVar()
-                && (parameter.getNameIdentifier() == element || parameter.getValOrVarKeyword() == element)
-                && primaryConstructor != null
-                && primaryConstructor.getValueParameterList() == parameter.getParent()) return parameter;
-        }
+    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext) {
+        editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
 
-        if (elementParent instanceof JetSecondaryConstructor &&
-            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) return elementParent;
+        val element = findTargetMember(file, editor) ?: CommonDataKeys.PSI_ELEMENT.getData(dataContext) ?: return
+        val elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset()) ?: return
+        if (element !is JetElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
 
-        if (PsiTreeUtil.getParentOfType(element, JetParameterList.class) != null) {
-            return PsiTreeUtil.getParentOfType(element, JetFunction.class, JetProperty.class, JetClass.class);
-        }
-
-        JetTypeParameterList typeParameterList = PsiTreeUtil.getParentOfType(element, JetTypeParameterList.class);
-        if (typeParameterList != null) {
-            return PsiTreeUtil.getParentOfType(typeParameterList, JetFunction.class, JetProperty.class, JetClass.class);
-        }
-
-        JetExpression calleeExpr;
-        JetCallElement call = PsiTreeUtil.getParentOfType(element,
-                                                          JetCallExpression.class,
-                                                          JetDelegatorToSuperCall.class,
-                                                          JetConstructorDelegationCall.class);
-        if (call != null) {
-            calleeExpr = call.getCalleeExpression();
-        }
-        else {
-            calleeExpr = PsiTreeUtil.getParentOfType(element, JetSimpleNameExpression.class);
-        }
-
-        if (calleeExpr instanceof JetConstructorCalleeExpression) {
-            calleeExpr = ((JetConstructorCalleeExpression) calleeExpr).getConstructorReferenceExpression();
-        }
-        if (calleeExpr instanceof JetSimpleNameExpression || calleeExpr instanceof JetConstructorDelegationReferenceExpression) {
-            JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
-            if (jetElement == null) return null;
-
-            BindingContext bindingContext = ResolvePackage.analyze(jetElement, BodyResolveMode.FULL);
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpr);
-
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof CallableDescriptor) return calleeExpr;
-        }
-
-        return null;
+        invokeChangeSignature(element, elementAtCaret, project, editor)
     }
 
-    public static void invokeChangeSignature(
-            @NotNull JetElement element,
-            @NotNull PsiElement context,
-            @NotNull Project project,
-            @Nullable Editor editor
-    ) {
-        BindingContext bindingContext = ResolvePackage.analyze(element, BodyResolveMode.FULL);
+    override fun invoke(project: Project, elements: Array<PsiElement>, dataContext: DataContext?) {
+        val element = elements.singleOrNull()?.unwrapped ?: return
+        if (element !is JetElement) throw AssertionError("This handler must be invoked for Kotlin elements only: ${element.getText()}")
 
-        CallableDescriptor callableDescriptor = findDescriptor(element, project, editor, bindingContext);
-        if (callableDescriptor == null) {
-            return;
-        }
-
-        if (callableDescriptor instanceof JavaCallableMemberDescriptor) {
-            PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, callableDescriptor);
-            assert declaration instanceof PsiMethod : "PsiMethod expected: " + callableDescriptor;
-            ChangeSignatureUtil.invokeChangeSignatureOn((PsiMethod) declaration, project);
-            return;
-        }
-
-        if (TasksPackage.isDynamic(callableDescriptor)) {
-            if (editor != null) {
-                CodeInsightUtils.showErrorHint(
-                        project,
-                        editor,
-                        "Change signature is not applicable to dynamically invoked functions",
-                        "Change Signature",
-                        null
-                );
-            }
-            return;
-        }
-
-        runChangeSignature(project, callableDescriptor, emptyConfiguration(), bindingContext, context, null);
+        val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
+        invokeChangeSignature(element, element, project, editor)
     }
 
-    @TestOnly
-    public static JetChangeSignatureConfiguration getConfiguration() {
-        return emptyConfiguration();
-    }
+    override fun getTargetNotFoundMessage() =
+            JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
 
-    private static JetChangeSignatureConfiguration emptyConfiguration() {
-        return new JetChangeSignatureConfiguration() {
-            @NotNull
-            @Override
-            public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor, @NotNull BindingContext bindingContext) {
-                //do nothing
-                return originalDescriptor;
+    companion object {
+        public fun findTargetForRefactoring(element: PsiElement): PsiElement? {
+            val elementParent = element.getParent()
+
+            if ((elementParent is JetNamedFunction || elementParent is JetClass || elementParent is JetProperty)
+                && (elementParent as JetNamedDeclaration).getNameIdentifier() === element) return elementParent
+
+            if (elementParent is JetParameter) {
+                val primaryConstructor = PsiTreeUtil.getParentOfType(elementParent, javaClass<JetPrimaryConstructor>())
+                if (elementParent.hasValOrVar()
+                    && (elementParent.getNameIdentifier() === element || elementParent.getValOrVarKeyword() === element)
+                    && primaryConstructor != null
+                    && primaryConstructor.getValueParameterList() === elementParent.getParent()) return elementParent
             }
 
-            @Override
-            public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
-                return false;
+            if (elementParent is JetSecondaryConstructor && elementParent.getConstructorKeyword() === element) return elementParent
+
+            element.getStrictParentOfType<JetParameterList>()?.let { parameterList ->
+                return PsiTreeUtil.getParentOfType(parameterList, javaClass<JetFunction>(), javaClass<JetProperty>(), javaClass<JetClass>())
             }
 
-            @Override
-            public boolean forcePerformForSelectedFunctionOnly() {
-                return false;
+            element.getStrictParentOfType<JetTypeParameterList>()?.let { typeParameterList ->
+                return PsiTreeUtil.getParentOfType(typeParameterList, javaClass<JetFunction>(), javaClass<JetProperty>(), javaClass<JetClass>())
             }
-        };
-    }
 
-    @Nullable
-    @Override
-    public PsiElement findTargetMember(PsiFile file, Editor editor) {
-        return findTargetMember(file.findElementAt(editor.getCaretModel().getOffset()));
-    }
+            val call: JetCallElement? = PsiTreeUtil.getParentOfType(element,
+                                                                   javaClass<JetCallExpression>(),
+                                                                   javaClass<JetDelegatorToSuperCall>(),
+                                                                   javaClass<JetConstructorDelegationCall>())
+            val calleeExpr = call?.let {
+                val callee = it.getCalleeExpression()
+                (callee as? JetConstructorCalleeExpression)?.getConstructorReferenceExpression() ?: callee
+            } ?: element.getStrictParentOfType<JetSimpleNameExpression>()
 
-    @Nullable
-    @Override
-    public PsiElement findTargetMember(PsiElement element) {
-        return findTargetForRefactoring(element);
-    }
+            if (calleeExpr is JetSimpleNameExpression || calleeExpr is JetConstructorDelegationReferenceExpression) {
+                val jetElement = element.getStrictParentOfType<JetElement>() ?: return null
 
-    @Override
-    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, DataContext dataContext) {
-        editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
-        PsiElement element = findTargetMember(file, editor);
-        if (element == null) {
-            element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+                val bindingContext = jetElement.analyze(BodyResolveMode.FULL)
+                val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, calleeExpr as JetReferenceExpression]
+
+                if (descriptor is ClassDescriptor || descriptor is CallableDescriptor) return calleeExpr
+            }
+
+            return null
         }
 
-        PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        if (element != null && elementAtCaret != null) {
-            assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
+        public fun invokeChangeSignature(element: JetElement, context: PsiElement, project: Project, editor: Editor?) {
+            val bindingContext = element.analyze(BodyResolveMode.FULL)
 
-            invokeChangeSignature((JetElement) element, elementAtCaret, project, editor);
+            val callableDescriptor = findDescriptor(element, project, editor, bindingContext) ?: return
+
+            if (callableDescriptor is JavaCallableMemberDescriptor) {
+                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, callableDescriptor)
+                assert(declaration is PsiMethod) { "PsiMethod expected: $callableDescriptor" }
+                ChangeSignatureUtil.invokeChangeSignatureOn(declaration as PsiMethod, project)
+                return
+            }
+
+            if (callableDescriptor.isDynamic()) {
+                if (editor != null) {
+                    CodeInsightUtils.showErrorHint(project, editor, "Change signature is not applicable to dynamically invoked functions", "Change Signature", null)
+                }
+                return
+            }
+
+            runChangeSignature(project, callableDescriptor, JetChangeSignatureConfiguration.Empty, bindingContext, context, null)
         }
-    }
 
-    @Override
-    public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, @Nullable DataContext dataContext) {
-        if (elements.length != 1) return;
-        Editor editor = dataContext != null ? CommonDataKeys.EDITOR.getData(dataContext) : null;
-
-        PsiElement element = AsJavaPackage.getUnwrapped(elements[0]);
-        assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
-
-        invokeChangeSignature((JetElement) element, element, project, editor);
-    }
-
-    @Nullable
-    @Override
-    public String getTargetNotFoundMessage() {
-        return JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name");
-    }
-
-    @Nullable
-    public static CallableDescriptor findDescriptor(
-            @NotNull PsiElement element,
-            @NotNull Project project,
-            @Nullable Editor editor,
-            BindingContext bindingContext
-    ) {
-        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null;
-
-        DeclarationDescriptor descriptor;
-        if (element instanceof JetReferenceExpression) {
-            descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) element);
-        } else {
-            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        private fun getDescriptor(bindingContext: BindingContext, element: PsiElement): DeclarationDescriptor? {
+            val descriptor = when (element) {
+                is JetReferenceExpression -> bindingContext[BindingContext.REFERENCE_TARGET, element]
+                else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]
+            }
+            return if (descriptor is ClassDescriptor) descriptor.getUnsubstitutedPrimaryConstructor() else descriptor
         }
-        if (descriptor instanceof ClassDescriptor) {
-            descriptor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
-        }
-        if (descriptor instanceof FunctionDescriptor) {
-            for (ValueParameterDescriptor parameter : ((FunctionDescriptor) descriptor).getValueParameters()) {
-                if (parameter.getVarargElementType() != null) {
-                    String message = JetRefactoringBundle.message("error.cant.refactor.vararg.functions");
-                    CommonRefactoringUtil.showErrorHint(project, editor, message,
-                                                        REFACTORING_NAME,
-                                                        HelpID.CHANGE_SIGNATURE);
-                    return null;
+
+        public fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
+            if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
+
+            var descriptor = getDescriptor(bindingContext, element)
+
+            return when (descriptor) {
+                is FunctionDescriptor -> {
+                    if (descriptor.getValueParameters().any { it.getVarargElementType() != null }) {
+                        val message = JetRefactoringBundle.message("error.cant.refactor.vararg.functions")
+                        CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
+                        return null
+                    }
+
+                    if (descriptor.getKind() === SYNTHESIZED) {
+                        val message = JetRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.getName())
+                        CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
+                        return null
+                    }
+
+                    descriptor
+                }
+
+                is PropertyDescriptor, is ValueParameterDescriptor -> descriptor as CallableDescriptor
+
+                else -> {
+                    val message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name"))
+                    CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
+                    null
                 }
             }
-            if (((FunctionDescriptor) descriptor).getKind() == SYNTHESIZED) {
-                String message = JetRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.getName());
-                CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.CHANGE_SIGNATURE);
-                return null;
-            }
-
-
-            return (FunctionDescriptor) descriptor;
-        }
-        else if (descriptor instanceof PropertyDescriptor || descriptor instanceof ValueParameterDescriptor) {
-            return (CallableDescriptor) descriptor;
-        }
-        else {
-            String message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message(
-                    "error.wrong.caret.position.function.or.constructor.name"));
-            CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.CHANGE_SIGNATURE);
-            return null;
         }
     }
 }

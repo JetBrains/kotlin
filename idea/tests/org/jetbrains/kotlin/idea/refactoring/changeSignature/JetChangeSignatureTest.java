@@ -1128,11 +1128,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 
-        CallableDescriptor callableDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
+        CallableDescriptor callableDescriptor = JetChangeSignatureHandler.Companion.findDescriptor(element, project, editor, bindingContext);
         assertNotNull(callableDescriptor);
 
         return ChangeSignaturePackage.createChangeInfo(
-                project, callableDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
+                project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, bindingContext, context
+        );
     }
 
     private class JavaRefactoringProvider {
