@@ -794,6 +794,21 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddForLoopIndicesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>S
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>S
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SwapBinaryExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
