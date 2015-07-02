@@ -465,6 +465,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     }
 
     @Override
+    public final Void visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
+        visitPrimaryConstructor(constructor);
+        return null;
+    }
+
+    @Override
     public final Void visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
         visitNamedFunction(function);
         return null;
@@ -539,6 +545,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     @Override
     public final Void visitAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry, Void data) {
         visitAnnotationEntry(annotationEntry);
+        return null;
+    }
+
+    @Override
+    public final Void visitConstructorCalleeExpression(@NotNull JetConstructorCalleeExpression constructorCalleeExpression, Void data) {
+        visitConstructorCalleeExpression(constructorCalleeExpression);
         return null;
     }
 
