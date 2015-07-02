@@ -36,7 +36,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.refactoring.listeners.RefactoringElementAdapter;
+import com.intellij.refactoring.listeners.RefactoringElementListener;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jdom.Element;
@@ -51,6 +54,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetDeclarationContainer;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -58,7 +62,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import java.util.*;
 
 public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
-    implements CommonJavaRunConfigurationParameters {
+    implements CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
 
     public String MAIN_CLASS_NAME;
     public String VM_PARAMETERS;
@@ -216,6 +220,36 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         JavaCommandLineState state = new MyJavaCommandLineState(this, executionEnvironment);
         state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
         return state;
+    }
+
+    @Nullable
+    @Override
+    public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
+        if (element instanceof JetDeclarationContainer) {
+            FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName((JetDeclarationContainer) element);
+            if (name != null && name.asString().equals(MAIN_CLASS_NAME)) {
+                return new RefactoringElementAdapter() {
+                    @Override
+                    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+                        updateMainClassName(newElement);
+                    }
+
+                    @Override
+                    protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                        updateMainClassName(newElement);
+                    }
+                };
+            }
+        }
+        return null;
+    }
+
+    private void updateMainClassName(PsiElement element) {
+        JetDeclarationContainer container = KotlinRunConfigurationProducer.Companion.getEntryPointContainer(element);
+        FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
+        if (name != null) {
+            MAIN_CLASS_NAME = name.asString();
+        }
     }
 
     private static class MyJavaCommandLineState extends JavaCommandLineState {
