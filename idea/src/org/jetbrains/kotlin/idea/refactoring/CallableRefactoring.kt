@@ -150,7 +150,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             return true
         }
 
-        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations == closestModifiableDescriptors) {
+        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations.subtract(closestModifiableDescriptors).isEmpty()) {
             performRefactoring(closestModifiableDescriptors)
             return true
         }

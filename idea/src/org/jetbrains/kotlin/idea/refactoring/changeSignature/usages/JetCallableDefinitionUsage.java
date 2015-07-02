@@ -151,7 +151,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
         if (currentCallableDescriptor == null) {
             PsiElement element = getDeclaration();
 
-            if (element instanceof JetFunction || element instanceof JetProperty) {
+            if (element instanceof JetFunction || element instanceof JetProperty || element instanceof JetParameter) {
                 currentCallableDescriptor = (CallableDescriptor) ResolvePackage.resolveToDescriptor((JetDeclaration) element);
             }
             else if (element instanceof JetClass) {
@@ -227,7 +227,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
                                   callable.getTypeReference() != null);
         }
         else {
-            returnTypeIsNeeded = element instanceof JetProperty;
+            returnTypeIsNeeded = element instanceof JetProperty || element instanceof JetParameter;
         }
 
         if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
@@ -273,7 +273,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 canReplaceEntireList = true;
             }
         }
-        else if (!(element instanceof JetProperty)) {
+        else if (!(element instanceof JetProperty || element instanceof JetParameter)) {
             newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(
                     (JetCallableDefinitionUsage<PsiElement>) this)
             );

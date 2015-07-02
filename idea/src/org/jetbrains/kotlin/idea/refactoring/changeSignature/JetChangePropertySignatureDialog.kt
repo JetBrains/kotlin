@@ -51,7 +51,7 @@ public class JetChangePropertySignatureDialog(
     )
     private val nameField = EditorTextField(methodDescriptor.getName())
     private var returnTypeField: EditorTextField by Delegates.notNull()
-    private var receiverTypeCheckBox: JCheckBox by Delegates.notNull()
+    private var receiverTypeCheckBox: JCheckBox? = null
     var receiverTypeLabel: JLabel by Delegates.notNull()
     private var receiverTypeField: EditorTextField by Delegates.notNull()
     var receiverDefaultValueLabel: JLabel? = null
@@ -66,7 +66,7 @@ public class JetChangePropertySignatureDialog(
 
     override fun createCenterPanel(): JComponent? {
         fun updateReceiverUI() {
-            val withReceiver = receiverTypeCheckBox.isSelected()
+            val withReceiver = receiverTypeCheckBox!!.isSelected()
             receiverTypeLabel.setEnabled(withReceiver)
             receiverTypeField.setEnabled(withReceiver)
             receiverDefaultValueLabel?.setEnabled(withReceiver)
@@ -77,7 +77,8 @@ public class JetChangePropertySignatureDialog(
         val psiFactory = JetPsiFactory(myProject)
 
         return with(FormBuilder.createFormBuilder()) {
-            if (!((methodDescriptor.baseDeclaration as? JetProperty)?.isLocal() ?: false)) {
+            val baseDeclaration = methodDescriptor.baseDeclaration
+            if (!((baseDeclaration as? JetProperty)?.isLocal() ?: false)) {
                 visibilityCombo.setSelectedItem(methodDescriptor.getVisibility())
                 addLabeledComponent("&Visibility: ", visibilityCombo)
             }
@@ -85,37 +86,39 @@ public class JetChangePropertySignatureDialog(
             addLabeledComponent("&Name: ", nameField)
 
             val returnTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReturnType(),
-                                                                           methodDescriptor.baseDeclaration)
+                                                                           baseDeclaration)
             returnTypeField = EditorTextField(documentManager.getDocument(returnTypeCodeFragment), myProject, JetFileType.INSTANCE)
             addLabeledComponent("&Type: ", returnTypeField)
 
-            addSeparator()
+            if (baseDeclaration is JetProperty) {
+                addSeparator()
 
-            val receiverTypeCheckBox = JCheckBox("Extension property: ")
-            receiverTypeCheckBox.setMnemonic('x')
-            receiverTypeCheckBox.addActionListener { updateReceiverUI() }
-            receiverTypeCheckBox.setSelected(methodDescriptor.receiver != null)
-            addComponent(receiverTypeCheckBox)
-            this@JetChangePropertySignatureDialog.receiverTypeCheckBox = receiverTypeCheckBox
+                val receiverTypeCheckBox = JCheckBox("Extension property: ")
+                receiverTypeCheckBox.setMnemonic('x')
+                receiverTypeCheckBox.addActionListener { updateReceiverUI() }
+                receiverTypeCheckBox.setSelected(methodDescriptor.receiver != null)
+                addComponent(receiverTypeCheckBox)
+                this@JetChangePropertySignatureDialog.receiverTypeCheckBox = receiverTypeCheckBox
 
-            val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReceiverType() ?: "",
-                                                                             methodDescriptor.baseDeclaration)
-            receiverTypeField = EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, JetFileType.INSTANCE)
-            receiverTypeLabel = JLabel("Receiver type: ")
-            receiverTypeLabel.setDisplayedMnemonic('t')
-            addLabeledComponent(receiverTypeLabel, receiverTypeField)
+                val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReceiverType() ?: "",
+                                                                                 methodDescriptor.baseDeclaration)
+                receiverTypeField = EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, JetFileType.INSTANCE)
+                receiverTypeLabel = JLabel("Receiver type: ")
+                receiverTypeLabel.setDisplayedMnemonic('t')
+                addLabeledComponent(receiverTypeLabel, receiverTypeField)
 
-            if (methodDescriptor.receiver == null) {
-                val receiverDefaultValueCodeFragment = psiFactory.createExpressionCodeFragment("", methodDescriptor.baseDeclaration)
-                receiverDefaultValueField = EditorTextField(documentManager.getDocument(receiverDefaultValueCodeFragment),
-                                                            myProject,
-                                                            JetFileType.INSTANCE)
-                receiverDefaultValueLabel = JLabel("Default receiver value: ")
-                receiverDefaultValueLabel!!.setDisplayedMnemonic('D')
-                addLabeledComponent(receiverDefaultValueLabel, receiverDefaultValueField!!)
+                if (methodDescriptor.receiver == null) {
+                    val receiverDefaultValueCodeFragment = psiFactory.createExpressionCodeFragment("", methodDescriptor.baseDeclaration)
+                    receiverDefaultValueField = EditorTextField(documentManager.getDocument(receiverDefaultValueCodeFragment),
+                                                                myProject,
+                                                                JetFileType.INSTANCE)
+                    receiverDefaultValueLabel = JLabel("Default receiver value: ")
+                    receiverDefaultValueLabel!!.setDisplayedMnemonic('D')
+                    addLabeledComponent(receiverDefaultValueLabel, receiverDefaultValueField!!)
+                }
+
+                updateReceiverUI()
             }
-
-            updateReceiverUI()
 
             getPanel()
         }
@@ -131,7 +134,7 @@ public class JetChangePropertySignatureDialog(
 
         psiFactory.createSimpleName(nameField.getText()).validateElement("Invalid name")
         psiFactory.createType(returnTypeField.getText()).validateElement("Invalid return type")
-        if (receiverTypeCheckBox.isSelected()) {
+        if (receiverTypeCheckBox?.isSelected() ?: false) {
             psiFactory.createType(receiverTypeField.getText()).validateElement("Invalid receiver type")
         }
         getDefaultReceiverValue()?.validateElement("Invalid default receiver value")
@@ -140,7 +143,7 @@ public class JetChangePropertySignatureDialog(
     override fun doAction() {
         val descriptor = (methodDescriptor as? JetMutableMethodDescriptor)?.original ?: methodDescriptor
 
-        val receiver = if (receiverTypeCheckBox.isSelected()) {
+        val receiver = if (receiverTypeCheckBox?.isSelected() ?: false) {
             descriptor.receiver ?: JetParameterInfo(callableDescriptor = descriptor.baseDescriptor,
                                                     name = "receiver",
                                                     defaultValueForCall = getDefaultReceiverValue())

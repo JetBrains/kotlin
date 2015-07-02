@@ -117,7 +117,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     private boolean isPropertyJavaUsage() {
-        return this.callee.getElement() instanceof JetProperty
+        PsiElement calleeElement = this.callee.getElement();
+        return (calleeElement instanceof JetProperty || calleeElement instanceof JetParameter)
                && resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof JavaMethodDescriptor;
     }
 

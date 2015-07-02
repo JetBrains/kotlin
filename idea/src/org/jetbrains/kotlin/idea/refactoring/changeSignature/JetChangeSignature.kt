@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -79,7 +80,7 @@ public class JetChangeSignature(project: Project,
             is JetFunction, is JetClass -> {
                 JetChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(project, commandName, descriptor, defaultValueContext)
             }
-            is JetProperty -> {
+            is JetProperty, is JetParameter -> {
                 JetChangePropertySignatureDialog.createProcessorForSilentRefactoring(project, commandName, descriptor)
             }
             else -> throw AssertionError("Unexpected declaration: ${descriptor.baseDeclaration.getElementTextWithContext()}")
@@ -90,7 +91,7 @@ public class JetChangeSignature(project: Project,
     private fun runInteractiveRefactoring(descriptor: JetMethodDescriptor) {
         val dialog = when (descriptor.baseDeclaration) {
             is JetFunction, is JetClass -> JetChangeSignatureDialog(project, descriptor, defaultValueContext, commandName)
-            is JetProperty -> JetChangePropertySignatureDialog(project, descriptor, commandName)
+            is JetProperty, is JetParameter -> JetChangePropertySignatureDialog(project, descriptor, commandName)
             else -> throw AssertionError("Unexpected declaration: ${descriptor.baseDeclaration.getElementTextWithContext()}")
         }
 

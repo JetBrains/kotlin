@@ -104,7 +104,7 @@ public class JetChangeInfo(
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 
     fun getNonReceiverParameters(): List<JetParameterInfo> {
-        if (methodDescriptor.baseDeclaration is JetProperty) return emptyList()
+        methodDescriptor.baseDeclaration.let { if (it is JetProperty || it is JetParameter) return emptyList() }
         return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
     }
 
@@ -309,7 +309,7 @@ public class JetChangeInfo(
                 when (method) {
                     is JetFunction, is JetClassOrObject ->
                         createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, false)
-                    is JetProperty -> {
+                    is JetProperty, is JetParameter -> {
                         val accessorName = originalPsiMethod.getName()
                         when {
                             accessorName.startsWith(JvmAbi.GETTER_PREFIX) ->

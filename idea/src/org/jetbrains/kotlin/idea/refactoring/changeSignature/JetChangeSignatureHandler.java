@@ -53,6 +53,22 @@ import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignat
 public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     @Nullable
     public static PsiElement findTargetForRefactoring(@NotNull PsiElement element) {
+        PsiElement elementParent = element.getParent();
+        if ((elementParent instanceof JetNamedFunction || elementParent instanceof JetClass || elementParent instanceof JetProperty)
+            && ((JetNamedDeclaration) elementParent).getNameIdentifier() == element) return elementParent;
+
+        if (elementParent instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) elementParent;
+            JetPrimaryConstructor primaryConstructor = PsiTreeUtil.getParentOfType(parameter, JetPrimaryConstructor.class);
+            if (parameter.hasValOrVar()
+                && (parameter.getNameIdentifier() == element || parameter.getValOrVarKeyword() == element)
+                && primaryConstructor != null
+                && primaryConstructor.getValueParameterList() == parameter.getParent()) return parameter;
+        }
+
+        if (elementParent instanceof JetSecondaryConstructor &&
+            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) return elementParent;
+
         if (PsiTreeUtil.getParentOfType(element, JetParameterList.class) != null) {
             return PsiTreeUtil.getParentOfType(element, JetFunction.class, JetProperty.class, JetClass.class);
         }
@@ -61,13 +77,6 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
         if (typeParameterList != null) {
             return PsiTreeUtil.getParentOfType(typeParameterList, JetFunction.class, JetProperty.class, JetClass.class);
         }
-
-        PsiElement elementParent = element.getParent();
-        if ((elementParent instanceof JetNamedFunction || elementParent instanceof JetClass || elementParent instanceof JetProperty)
-            && ((JetNamedDeclaration) elementParent).getNameIdentifier() == element) return elementParent;
-
-        if (elementParent instanceof JetSecondaryConstructor &&
-            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) return elementParent;
 
         JetExpression calleeExpr;
         JetCallElement call = PsiTreeUtil.getParentOfType(element,
@@ -241,8 +250,8 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
 
             return (FunctionDescriptor) descriptor;
         }
-        else if (descriptor instanceof PropertyDescriptor) {
-            return (PropertyDescriptor) descriptor;
+        else if (descriptor instanceof PropertyDescriptor || descriptor instanceof ValueParameterDescriptor) {
+            return (CallableDescriptor) descriptor;
         }
         else {
             String message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message(

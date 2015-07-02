@@ -155,7 +155,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     if (parent instanceof JetConstructorCalleeExpression && parent.getParent() instanceof JetDelegatorToSuperCall)
                         result.add(new JetFunctionCallUsage((JetDelegatorToSuperCall)parent.getParent(), functionUsageInfo));
                 }
-                else if (element instanceof JetSimpleNameExpression && functionPsi instanceof JetProperty) {
+                else if (element instanceof JetSimpleNameExpression
+                         && (functionPsi instanceof JetProperty || functionPsi instanceof JetParameter)) {
                     result.add(new JetPropertyCallUsage((JetSimpleNameExpression) element));
                 }
             }
