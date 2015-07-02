@@ -1,0 +1,44 @@
+package
+
+public/*package*/ open class Outer {
+    public/*package*/ constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ open inner class A {
+        public/*package*/ constructor A()
+        public/*package*/ open fun </*0*/ T> bar(/*0*/ x: Y<T!>!): X<T!>!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open fun </*0*/ K, /*1*/ V> foo(/*0*/ x: K!): V!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class B : Outer.A {
+        public/*package*/ constructor B()
+        java.lang.Override() public/*package*/ open override /*1*/ fun </*0*/ R> bar(/*0*/ org.jetbrains.annotations.NotNull() x: Y<R>): X<R!>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        java.lang.Override() public/*package*/ open override /*1*/ fun </*0*/ T1, /*1*/ T2> foo(/*0*/ org.jetbrains.annotations.Nullable() x: T1?): T2
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class C : Outer.B {
+        public/*package*/ constructor C()
+        java.lang.Override() public/*package*/ open override /*1*/ fun </*0*/ E> bar(/*0*/ x: Y<E>): X<E!>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        java.lang.Override() public/*package*/ open override /*1*/ fun </*0*/ I, /*1*/ J> foo(/*0*/ x: I?): J
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ open inner class D : Outer.C {
+        public/*package*/ constructor D()
+        java.lang.Override() public/*package*/ open override /*1*/ fun </*0*/ F> bar(/*0*/ org.jetbrains.annotations.Nullable() x: Y<F!>!): X<F!>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        java.lang.Override() org.jetbrains.annotations.NotNull() public/*package*/ open override /*1*/ fun </*0*/ U, /*1*/ W> foo(/*0*/ org.jetbrains.annotations.Nullable() x: U?): W
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
