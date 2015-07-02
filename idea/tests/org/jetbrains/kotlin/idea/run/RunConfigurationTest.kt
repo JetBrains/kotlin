@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.execution.Executor
 import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
+import com.intellij.execution.RunManagerEx
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configurations.JavaCommandLine
 import com.intellij.execution.configurations.JavaParameters
@@ -34,17 +35,21 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -98,6 +103,19 @@ class RunConfigurationTest: CodeInsightTestCase() {
         doTest(ConfigLibraryUtil::configureKotlinJsRuntimeAndSdk)
     }
 
+    fun testUpdateOnClassRename() {
+        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
+
+        val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
+
+        val obj = JetFullClassNameIndex.getInstance().get("renameTest.Foo", getTestProject(), getTestProject().allScope()).single()
+        val rename = RefactoringFactory.getInstance(getTestProject()).createRename(obj, "Bar")
+        rename.run()
+
+        Assert.assertEquals("renameTest.Bar", runConfiguration.MAIN_CLASS_NAME)
+    }
+
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
         val baseDir = getTestProject().getBaseDir()!!
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
@@ -140,10 +158,24 @@ class RunConfigurationTest: CodeInsightTestCase() {
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
         val mainFunction = JetTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
-        val dataContext = MapDataContext()
-        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), mainFunction))
+        return createConfigurationFromElement(mainFunction)
+    }
 
-        return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration() as JetRunConfiguration
+    private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
+        val obj = JetFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
+        val mainFunction = obj.getDeclarations().single { it is JetFunction && it.getName() == "main" }
+        return createConfigurationFromElement(mainFunction, save)
+    }
+
+    private fun createConfigurationFromElement(element: PsiElement?, save: Boolean = false): JetRunConfiguration {
+        val dataContext = MapDataContext()
+        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), element))
+
+        val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()
+        if (save) {
+            RunManagerEx.getInstanceEx(myProject).setTemporaryConfiguration(runnerAndConfigurationSettings)
+        }
+        return runnerAndConfigurationSettings!!.getConfiguration() as JetRunConfiguration
     }
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
