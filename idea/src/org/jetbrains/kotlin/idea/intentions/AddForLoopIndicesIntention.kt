@@ -16,34 +16,33 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetForExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import com.intellij.codeInsight.template.TemplateBuilderImpl
+import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.analyzer.analyzeInContext
-import org.jetbrains.jet.lang.psi.JetCallExpression
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class AddForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
-        "add.for.loop.indices", javaClass()) {
+        javaClass(), "Add indices to 'for' loop") {
     override fun applyTo(element: JetForExpression, editor: Editor) {
         val loopRange = element.getLoopRange()!!
-        val newRangeText = "${loopRange.getText()}.withIndices()"
-        val newRange = JetPsiFactory.createExpression(editor.getProject(), newRangeText)
+        val newRangeText = "${loopRange.getText()}.withIndex()"
+        val project = editor.getProject()!!
+        val psiFactory = JetPsiFactory(project)
+        val newRange = psiFactory.createExpression(newRangeText)
 
         //Roundabout way to create new multiparameter element so as not to incorrectly trigger syntax error highlighting
         val loopParameter = element.getLoopParameter()!!
-        val parenthesizedParam = JetPsiFactory.createExpression(editor.getProject(), "(index)") as JetParenthesizedExpression
+        val parenthesizedParam = psiFactory.createExpression("(index)") as JetParenthesizedExpression
         val indexElement = parenthesizedParam.getExpression()!!
-        val comma = JetPsiFactory.createComma(editor.getProject())
-        val newParamElement = JetPsiFactory.createExpression(editor.getProject(), " ${loopParameter.getText()}")
+        val comma = psiFactory.createComma()
+        val newParamElement = psiFactory.createExpression(loopParameter.getText())
         parenthesizedParam.addAfter(newParamElement, indexElement)
         parenthesizedParam.addAfter(comma, indexElement)
 
@@ -55,29 +54,31 @@ public class AddForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpres
         editor.getCaretModel().moveToOffset(multiParameter.getTextOffset())
         val templateBuilder = TemplateBuilderImpl(multiParameter)
         templateBuilder.replaceElement(multiParameter, "index")
-        val manager = TemplateManagerImpl(editor.getProject())
-        PsiDocumentManager.getInstance(editor.getProject()!!).doPostponedOperationsAndUnblockDocument(editor.getDocument())
-        manager.startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        TemplateManager.getInstance(project).startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
     }
 
-    override fun isApplicableTo(element: JetForExpression): Boolean {
+    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
         if (element.getLoopParameter() == null) return false
+        val body = element.getBody()
+        if (body != null && caretOffset >= body.getTextRange().getStartOffset()) return false
+
         val range = element.getLoopRange() ?: return false
         if (range is JetDotQualifiedExpression) {
             val selector = range.getSelectorExpression() ?: return true
-            if (selector.getText() == "withIndices()") return false
+            if (selector.getText() == "withIndex()") return false
         }
 
-        val potentialExpression = JetPsiFactory.createExpression(element.getProject(),
-                                                                 "${range.getText()}.withIndices()") as JetDotQualifiedExpression
+        val psiFactory = JetPsiFactory(element.getProject())
+        val potentialExpression = psiFactory.createExpression("${range.getText()}.withIndex()") as JetDotQualifiedExpression
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+        val bindingContext = element.analyze()
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return false
         val functionSelector = potentialExpression.getSelectorExpression() as JetCallExpression
         val updatedContext = potentialExpression.analyzeInContext(scope)
-        val callScope = updatedContext[BindingContext.RESOLVED_CALL, functionSelector.getCalleeExpression()!!] ?: return false
+        val call = updatedContext[BindingContext.CALL, functionSelector.getCalleeExpression()] ?: return false
+        val callScope = updatedContext[BindingContext.RESOLVED_CALL, call] ?: return false
         val callFqName = DescriptorUtils.getFqNameSafe(callScope.getCandidateDescriptor())
-        return callFqName.toString() == "kotlin.withIndices"
+        return callFqName.toString() == "kotlin.withIndex"
     }
-
 }

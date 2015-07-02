@@ -16,55 +16,48 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.jet.lang.psi.JetForExpression
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.find.FindManager
 import com.intellij.find.impl.FindManagerImpl
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.jet.plugin.findUsages.KotlinPropertyFindUsagesOptions
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
-        "remove.for.loop.indices", javaClass()) {
+       javaClass(), "Remove indices in 'for' loop") {
     override fun applyTo(element: JetForExpression, editor: Editor) {
         val parameter = element.getMultiParameter()!!
         val range = element.getLoopRange() as JetDotQualifiedExpression
         val parameters = parameter.getEntries()
-        if (parameters.size() == 2) {
-            parameter.replace(parameters[1])
-        }
-        else {
-            JetPsiUtil.deleteElementWithDelimiters(parameters[0])
-        }
+
+        val loop = JetPsiFactory(element).createExpression("for (${parameters[1].getText()} in _) {}") as JetForExpression
+        parameter.replace(loop.getLoopParameter()!!)
 
         range.replace(range.getReceiverExpression())
     }
 
-    override fun isApplicableTo(element: JetForExpression): Boolean {
+    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
         val multiParameter = element.getMultiParameter() ?: return false
+        if (multiParameter.getEntries().size() != 2) return false
         val range = element.getLoopRange() as? JetDotQualifiedExpression ?: return false
         val selector = range.getSelectorExpression() as? JetCallExpression ?: return false
 
-        if (!selector.textMatches("withIndices()")) return false
+        if (!selector.textMatches("withIndex()")) return false
 
-        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
-        val callResolution = bindingContext[BindingContext.RESOLVED_CALL, selector.getCalleeExpression()!!] ?: return false
+        val body = element.getBody()
+        if (body != null && caretOffset >= body.getTextRange().getStartOffset()) return false
+
+        val bindingContext = element.analyze()
+        val call = bindingContext[BindingContext.CALL, selector.getCalleeExpression()] ?: return false
+        val callResolution = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return false
         val fqName = DescriptorUtils.getFqNameSafe(callResolution.getCandidateDescriptor())
-        if (fqName.toString() != "kotlin.withIndices") return false
+        if (fqName.toString() != "kotlin.withIndex") return false
 
         val indexVar = multiParameter.getEntries()[0]
-        val findManager = FindManager.getInstance(element.getProject()) as FindManagerImpl
-        val findHandler = findManager.getFindUsagesManager().getFindUsagesHandler(indexVar, false) ?: return false
-        val options = KotlinPropertyFindUsagesOptions(element.getProject())
-        var usageCount = 0
-        val processorLambda: (UsageInfo?) -> Boolean = { t -> usageCount++; false }
-        findHandler.processElementUsages(indexVar, processorLambda, options)
-        return usageCount == 0
+        return ReferencesSearch.search(indexVar).findFirst() == null
     }
-
 }

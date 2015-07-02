@@ -2,7 +2,7 @@
 //WITH_RUNTIME
 
 fun foo(b: List<Int>) : Int {
-    for ((i, <caret>c) in b.withIndices()) {
+    for ((i, <caret>c) in b.withIndex()) {
         return i
     }
     return 0
