@@ -33,7 +33,21 @@ abstract class KotlinClassFileViewProvider(
         manager: PsiManager,
         file: VirtualFile,
         physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, JetLanguage.INSTANCE) {
-    override fun getContents(): CharSequence = getPsi(JetLanguage.INSTANCE)?.getText() ?: ""
+    val content : LockedClearableLazyValue<String> = LockedClearableLazyValue(Any()) {
+        val psiFile = createFile(manager.getProject(), file, JetFileType.INSTANCE)
+        val text = psiFile?.getText() ?: ""
+
+        (psiFile as? PsiFileImpl)?.markInvalidated()
+
+        text
+    }
+
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
+        // Workaround for KT-8344
+        return super.createFile(project, file, fileType)
+    }
+
+    override fun getContents() = content.get()
 }
 
 public class JetClassFileViewProvider(
