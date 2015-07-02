@@ -92,7 +92,7 @@ public trait AbstractSMAPBaseTest {
 
         val files = data.substring(fileSectionStart, lineSection).split("\n")
 
-        val cleaned = files.map { JetTestUtils.replaceHashWithStar(it).replace("*", "HASH") }.join("\n")
+        val cleaned = files.join("\n")
 
         return data.substring(0, fileSectionStart) + cleaned + data.substring(lineSection)
     }
