@@ -534,6 +534,16 @@
                 <attribute name="Main-Class" value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
             </manifest>
         </jar>
+
+        <delete file="${output}/kotlin-compiler-embeddable.jar" failonerror="false"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
+        <jarjar jarfile="${output}/kotlin-compiler-embeddable.jar" filesonly="true" filesetmanifest="merge">
+            <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
+            <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
+            <zipfileset src="${bootstrap.reflect}" includes="**" excludes="META-INF/**"/>
+            <rule pattern="com.google.**" result="kotlin.compiler.jvm.internal.impl.com.google.protobuf.@1"/>
+            <rule pattern="javax.inject.**" result="kotlin.compiler.jvm.internal.impl.javax.inject.@1"/>
+        </jarjar>
     </target>
 
     <target name="android-compiler-plugin">
