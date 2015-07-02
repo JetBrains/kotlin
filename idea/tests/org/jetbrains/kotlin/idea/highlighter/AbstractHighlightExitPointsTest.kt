@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.assertEquals
@@ -28,7 +30,9 @@ public abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureT
 
         val text = myFixture.getFile().getText()
         val expectedToBeHighlighted = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "//HIGHLIGHTED:")
+        val searchResultsTextAttributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
         val highlighters = myFixture.getEditor().getMarkupModel().getAllHighlighters()
+                .filter { it.getTextAttributes() == searchResultsTextAttributes }
         val actual = highlighters.map { text.substring(it.getStartOffset(), it.getEndOffset()) }
         assertEquals(expectedToBeHighlighted, actual)
     }
