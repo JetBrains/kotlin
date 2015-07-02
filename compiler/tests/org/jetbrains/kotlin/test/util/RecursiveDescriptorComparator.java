@@ -95,7 +95,7 @@ public class RecursiveDescriptorComparator {
         StringBuilder result = new StringBuilder();
         appendDeclarationRecursively(declarationDescriptor, DescriptorUtils.getContainingModule(declarationDescriptor),
                                      new Printer(result, 1), true);
-        return JetTestUtils.replaceHashWithStar(result.toString());
+        return result.toString();
     }
 
     private void appendDeclarationRecursively(

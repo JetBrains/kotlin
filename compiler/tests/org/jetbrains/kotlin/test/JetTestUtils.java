@@ -950,6 +950,7 @@ public class JetTestUtils {
 
     @NotNull
     public static String replaceHashWithStar(@NotNull String string) {
+        //TODO: hashes are still used in SamWrapperCodegen
         Matcher matcher = STRIP_PACKAGE_PART_HASH_PATTERN.matcher(string);
         if (matcher.find()) {
             return matcher.replaceAll("\\$*");
