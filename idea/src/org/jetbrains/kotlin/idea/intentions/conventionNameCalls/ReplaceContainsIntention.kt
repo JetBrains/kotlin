@@ -33,7 +33,8 @@ public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQua
         val resolvedCall = element.toResolvedCall() ?: return null
         if (!resolvedCall.getStatus().isSuccess()) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
+        val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
+        if (argumentMatch.valueParameter.getIndex() != 0) return null
 
         val target = resolvedCall.getResultingDescriptor()
         val returnType = target.getReturnType() ?: return null

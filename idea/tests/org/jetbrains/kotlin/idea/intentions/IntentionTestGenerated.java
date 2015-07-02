@@ -2624,6 +2624,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unmatchedArgument.kt")
+            public void testUnmatchedArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/unmatchedArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("validNamedArgument.kt")
             public void testValidNamedArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/validNamedArgument.kt");
