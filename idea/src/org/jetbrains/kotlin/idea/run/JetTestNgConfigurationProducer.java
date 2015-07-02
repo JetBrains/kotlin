@@ -90,7 +90,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
         JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class, false);
 
         if (jetClass == null) {
-            jetClass = JetJUnitConfigurationProducer.getClassDeclarationInFile(jetFile);
+            jetClass = KotlinJUnitRunConfigurationProducer.Companion.getClassDeclarationInFile(jetFile);
         }
 
         if (jetClass == null) {
