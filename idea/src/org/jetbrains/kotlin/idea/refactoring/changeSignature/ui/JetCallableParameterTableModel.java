@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiCodeFragment;
@@ -23,6 +23,9 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 

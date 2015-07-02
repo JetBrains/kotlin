@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.psi.PsiElement;
@@ -23,6 +23,9 @@ import com.intellij.util.ui.ColumnInfo;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;

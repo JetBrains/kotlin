@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 
 public class JetSecondaryConstructorParameterTableModel extends JetCallableParameterTableModel {
     public JetSecondaryConstructorParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {

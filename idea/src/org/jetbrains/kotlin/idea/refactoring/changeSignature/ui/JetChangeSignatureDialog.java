@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetExpressionCodeFragment;
 import org.jetbrains.kotlin.psi.JetTypeCodeFragment;

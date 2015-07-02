@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -24,6 +24,8 @@ import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
