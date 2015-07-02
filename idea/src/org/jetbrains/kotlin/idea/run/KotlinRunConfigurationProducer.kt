@@ -45,7 +45,7 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
         val location = context.getLocation() ?: return false
-        val module = context.getModule() ?: return false
+        val module = location.getModule() ?: return false
         val container = getEntryPointContainer(location)
         val startClassFQName = getStartClassFqName(container) ?: return false
 
