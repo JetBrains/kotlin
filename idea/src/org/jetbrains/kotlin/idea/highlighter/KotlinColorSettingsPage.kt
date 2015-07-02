@@ -42,7 +42,7 @@ public class KotlinColorSettingsPage : ColorSettingsPage {
 
 /**
  * Doc comment here for `SomeClass`
- * @see Iterator#next()
+ * @see <KDOC_LINK>Iterator#next()</KDOC_LINK>
  */
 <ANNOTATION>@deprecated</ANNOTATION>("Deprecated class")
 <BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int)
