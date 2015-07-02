@@ -119,16 +119,20 @@ fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetTy
     // Note that `this` is flexible here, so it's equal to it's bounds
     val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !JetTypeChecker.DEFAULT.equalTypes(it, this) }
 
-    return fun(index: Int): JavaTypeQualifiers {
+    val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size()
+    val computedResult = Array(treeSize) {
+        index ->
         val isHeadTypeConstructor = index == 0
-        if (!isHeadTypeConstructor && onlyHeadTypeConstructor) return JavaTypeQualifiers.NONE
+        assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
-        val qualifiers = indexedThisType.getOrDefault(index, { return JavaTypeQualifiers.NONE })
+        val qualifiers = indexedThisType[index]
         val verticalSlice = indexedFromSupertypes.map { it.getOrDefault(index, { null }) }.filterNotNull()
 
         // Only the head type constructor is safely co-variant
-        return qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
+        qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
     }
+
+    return { index -> computedResult.getOrDefault(index) { JavaTypeQualifiers.NONE } }
 }
 
 private fun JetType.computeQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): JavaTypeQualifiers {
