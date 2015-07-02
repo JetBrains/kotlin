@@ -39,7 +39,7 @@ private enum class TypeComponentPosition {
     INFLEXIBLE
 }
 
-data class Result(val type: JetType, val subtreeSize: Int)
+private data class Result(val type: JetType, val subtreeSize: Int)
 
 private fun JetType.enhancePossiblyFlexible(qualifiers: (Int) -> JavaTypeQualifiers, index: Int): Result {
     if (this.isError()) return Result(this, 1)

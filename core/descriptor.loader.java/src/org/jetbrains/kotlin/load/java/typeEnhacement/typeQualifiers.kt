@@ -36,11 +36,11 @@ enum class NullabilityQualifier {
     NOT_NULL
 }
 
-val NULLABLE_ANNOTATIONS = listOf(
+private val NULLABLE_ANNOTATIONS = listOf(
         JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 )
 
-val NOT_NULL_ANNOTATIONS = listOf(
+private val NOT_NULL_ANNOTATIONS = listOf(
         JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
 )
 
@@ -49,11 +49,11 @@ enum class MutabilityQualifier {
     MUTABLE
 }
 
-val READ_ONLY_ANNOTATIONS = listOf(
+private val READ_ONLY_ANNOTATIONS = listOf(
         JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
 )
 
-val MUTABLE_ANNOTATIONS = listOf(
+private val MUTABLE_ANNOTATIONS = listOf(
         JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION
 )
 

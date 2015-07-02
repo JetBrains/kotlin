@@ -22,17 +22,16 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.typeEnhacement.computeIndexedQualifiersForOverride
-import org.jetbrains.kotlin.load.java.typeEnhacement.enhance
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.types.JetType
 
-fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
+public fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
     return platformSignatures.map {
         it.enhance()
     }
 }
 
-fun <D : CallableMemberDescriptor> D.enhance(): D {
+private fun <D : CallableMemberDescriptor> D.enhance(): D {
     // TODO type parameters
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments
@@ -75,13 +74,13 @@ interface SignaturePart<out T> {
     fun replaceType(newType: JetType): T
 }
 
-fun ReceiverParameterDescriptor.toPart() = object : SignaturePart<JetType> {
+private fun ReceiverParameterDescriptor.toPart() = object : SignaturePart<JetType> {
     override val type = this@toPart.getType() // workaround for KT-7557
 
     override fun replaceType(newType: JetType) = newType
 }
 
-fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDescriptor> {
+private fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDescriptor> {
     override val type = this@toPart.getType() // workaround for KT-7557
 
     override fun replaceType(newType: JetType) = ValueParameterDescriptorImpl(
@@ -97,7 +96,7 @@ fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDes
     )
 }
 
-fun JetType.toReturnTypePart() = object : SignaturePart<JetType> {
+private fun JetType.toReturnTypePart() = object : SignaturePart<JetType> {
     override val type = this@toReturnTypePart
 
     override val isCovariant: Boolean = true
@@ -105,7 +104,7 @@ fun JetType.toReturnTypePart() = object : SignaturePart<JetType> {
     override fun replaceType(newType: JetType) = newType
 }
 
-fun <D : CallableMemberDescriptor, T, P : SignaturePart<T>> D.parts(collector: (D) -> P): SignatureParts<T, P> {
+private fun <D : CallableMemberDescriptor, T, P : SignaturePart<T>> D.parts(collector: (D) -> P): SignatureParts<T, P> {
     return SignatureParts(
             collector(this),
             this.getOverriddenDescriptors().map {
