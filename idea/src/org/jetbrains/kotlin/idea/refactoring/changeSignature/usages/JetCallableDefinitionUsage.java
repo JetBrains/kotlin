@@ -165,7 +165,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @Override
-    public boolean processUsage(JetChangeInfo changeInfo, PsiElement element) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element) {
         if (!(element instanceof JetNamedDeclaration)) return true;
 
         JetPsiFactory psiFactory = JetPsiFactory(element.getProject());
