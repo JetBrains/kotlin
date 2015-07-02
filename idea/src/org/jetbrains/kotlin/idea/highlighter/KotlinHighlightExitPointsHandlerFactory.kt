@@ -41,7 +41,12 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
 
     override fun createHighlightUsagesHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
         if (target is LeafPsiElement && (target.getElementType() in RETURN_AND_THROW)) {
-            val returnOrThrow: JetExpression = PsiTreeUtil.getParentOfType(target, javaClass<JetReturnExpression>(), javaClass<JetThrowExpression>())
+            val returnOrThrow = PsiTreeUtil.getParentOfType<JetExpression>(
+                    target,
+                    javaClass<JetReturnExpression>(),
+                    javaClass<JetThrowExpression>()
+            ) ?: return null
+
             return MyHandler(editor, file, returnOrThrow)
         }
         return null
