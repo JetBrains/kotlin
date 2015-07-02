@@ -1,0 +1,4 @@
+package
+
+internal fun </*0*/ T> test(/*0*/ foo: kotlin.List<T>): T
+internal fun </*0*/ S, /*1*/ T : S> kotlin.Iterable<T>.reduce(/*0*/ operation: (S, T) -> S): S

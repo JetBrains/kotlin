@@ -443,6 +443,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("kt6179filterTo.kt")
+    public void testKt6179filterTo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/kt6179filterTo.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Lambda1.kt")
     public void testLambda1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Lambda1.kt");
