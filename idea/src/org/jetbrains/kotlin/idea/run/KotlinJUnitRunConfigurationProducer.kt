@@ -130,9 +130,10 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     }
 
     private fun getTestClass(leaf: PsiElement): PsiClass? {
+        val containingFile = leaf.getContainingFile() as? JetFile ?: return null
         var jetClass = leaf.getParentOfType<JetClass>(false)
         if (!jetClass.isJUnitTestClass()) {
-            jetClass = getTestClassInFile(leaf.getContainingFile() as JetFile)
+            jetClass = getTestClassInFile(containingFile)
         }
         if (jetClass != null) {
             return LightClassUtil.getPsiClass(jetClass)
