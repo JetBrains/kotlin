@@ -14,157 +14,125 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.run;
+package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.NotNullFunction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.idea.MainFunctionDetector;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.execution.Location
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.junit.RuntimeConfigurationProducer
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.ElementBase
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.NotNullFunction
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 
-import java.util.List;
-
-import static kotlin.KotlinPackage.singleOrNull;
-
-public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
-    @Nullable
-    private PsiElement mySourceElement;
-
-    public JetRunConfigurationProducer() {
-        super(JetRunConfigurationType.getInstance());
+public class KotlinRunConfigurationProducer : RuntimeConfigurationProducer(JetRunConfigurationType.getInstance()), Cloneable {
+    override fun clone(): KotlinRunConfigurationProducer {
+        return super<RuntimeConfigurationProducer>.clone() as KotlinRunConfigurationProducer
     }
 
-    @Nullable
-    @Override
-    public PsiElement getSourceElement() {
-        return mySourceElement;
+    private var mySourceElement: PsiElement? = null
+
+    override fun getSourceElement(): PsiElement? {
+        return mySourceElement
     }
 
-    @Override
-    protected RunnerAndConfigurationSettings createConfigurationByElement(@NotNull Location location, ConfigurationContext configurationContext) {
-        JetDeclarationContainer container = getEntryPointContainer(location);
-        if (container == null) return null;
+    override fun createConfigurationByElement(location: Location<*>, configurationContext: ConfigurationContext): RunnerAndConfigurationSettings? {
+        val container = getEntryPointContainer(location) ?: return null
 
-        mySourceElement = (PsiElement) container;
+        mySourceElement = container as PsiElement?
 
-        FqName startClassFQName = getStartClassFqName(container);
-        if (startClassFQName == null) return null;
+        val startClassFQName = getStartClassFqName(container)
+        if (startClassFQName == null) return null
 
-        Module module = location.getModule();
-        assert module != null;
+        val module = location.getModule()
+        assert(module != null)
 
-        return createConfigurationByQName(module, configurationContext, startClassFQName);
+        return createConfigurationByQName(module, configurationContext, startClassFQName)
     }
 
-    @Nullable
-    private static FqName getStartClassFqName(@Nullable JetDeclarationContainer container) {
-        if (container == null) return null;
-        if (container instanceof JetFile) return PackageClassUtils.getPackageClassFqName(((JetFile) container).getPackageFqName());
-        if (container instanceof JetClassOrObject) {
-            JetClassOrObject classOrObject = (JetClassOrObject) container;
-            if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isCompanion()) {
-                classOrObject = PsiTreeUtil.getParentOfType(classOrObject, JetClass.class);
+    private fun getStartClassFqName(container: JetDeclarationContainer?): FqName? {
+        if (container == null) return null
+        if (container is JetFile) return PackageClassUtils.getPackageClassFqName((container as JetFile?).getPackageFqName())
+        if (container is JetClassOrObject) {
+            if (container is JetObjectDeclaration && container.isCompanion()) {
+                val containerClass = PsiTreeUtil.getParentOfType<JetClass>(container, javaClass<JetClass>())
+                return containerClass?.getFqName()
             }
-            return classOrObject != null ? classOrObject.getFqName() : null;
+            return container?.getFqName()
         }
-        throw new IllegalArgumentException("Invalid entry-point container: " + ((PsiElement) container).getText());
+        throw IllegalArgumentException("Invalid entry-point container: " + (container as PsiElement?).getText())
     }
 
-    @Nullable
-    private static JetDeclarationContainer getEntryPointContainer(@NotNull Location location) {
-        if (DumbService.getInstance(location.getProject()).isDumb()) return null;
+    private fun getEntryPointContainer(location: Location<*>): JetDeclarationContainer? {
+        if (DumbService.getInstance(location.getProject()).isDumb()) return null
 
-        Module module = location.getModule();
-        if (module == null) return null;
+        val module = location.getModule() ?: return null
 
-        if (ProjectStructureUtil.isJsKotlinModule(module)) return null;
+        if (ProjectStructureUtil.isJsKotlinModule(module)) return null
 
-        PsiElement locationElement = location.getPsiElement();
+        val locationElement = location.getPsiElement()
 
-        PsiFile psiFile = locationElement.getContainingFile();
-        if (!(psiFile instanceof JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null;
+        val psiFile = locationElement.getContainingFile()
+        if (!(psiFile is JetFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
-        JetFile jetFile = (JetFile) psiFile;
-        final ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
-        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(
-                new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
-                    @NotNull
-                    @Override
-                    public FunctionDescriptor fun(JetNamedFunction function) {
-                        return (FunctionDescriptor) resolutionFacade.resolveToDescriptor(function);
-                    }
-                });
-
-        for (JetDeclarationContainer currentElement = PsiTreeUtil.getNonStrictParentOfType(locationElement, JetClassOrObject.class,
-                                                                                           JetFile.class);
-             currentElement != null;
-             currentElement = PsiTreeUtil.getParentOfType((PsiElement) currentElement, JetClassOrObject.class, JetFile.class)) {
-            JetDeclarationContainer entryPointContainer = currentElement;
-            if (entryPointContainer instanceof JetClass) {
-                entryPointContainer = singleOrNull(((JetClass) currentElement).getCompanionObjects());
+        val resolutionFacade = psiFile.getResolutionFacade()
+        val mainFunctionDetector = MainFunctionDetector(object : NotNullFunction<JetNamedFunction, FunctionDescriptor> {
+            override fun `fun`(function: JetNamedFunction): FunctionDescriptor {
+                return resolutionFacade.resolveToDescriptor(function) as FunctionDescriptor
             }
-            if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer;
+        })
+
+        var currentElement = PsiTreeUtil.getNonStrictParentOfType<PsiElement>(locationElement, javaClass<JetClassOrObject>(), javaClass<JetFile>()) as JetDeclarationContainer
+        while (currentElement != null) {
+            var entryPointContainer = currentElement
+            if (entryPointContainer is JetClass) {
+                entryPointContainer = entryPointContainer.getCompanionObjects().singleOrNull() as JetDeclarationContainer
+            }
+            if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.getDeclarations())) return entryPointContainer
+            currentElement = PsiTreeUtil.getParentOfType<PsiElement>(currentElement as PsiElement?, javaClass<JetClassOrObject>(), javaClass<JetFile>()) as JetDeclarationContainer
         }
 
-        return null;
+        return null
     }
 
-    @NotNull
-    private RunnerAndConfigurationSettings createConfigurationByQName(
-            @NotNull Module module,
-            ConfigurationContext context,
-            @NotNull FqName fqName
-    ) {
-        RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(module.getProject(), context);
-        JetRunConfiguration configuration = (JetRunConfiguration) settings.getConfiguration();
-        configuration.setModule(module);
-        configuration.setName(StringUtil.trimEnd(fqName.asString(), "." + PackageClassUtils.getPackageClassName(fqName)));
-        configuration.setRunClass(fqName.asString());
-        return settings;
+    private fun createConfigurationByQName(module: Module, context: ConfigurationContext, fqName: FqName): RunnerAndConfigurationSettings {
+        val settings = cloneTemplateConfiguration(module.getProject(), context)
+        val configuration = settings.getConfiguration() as JetRunConfiguration
+        configuration.setModule(module)
+        configuration.setName(StringUtil.trimEnd(fqName.asString(), "." + PackageClassUtils.getPackageClassName(fqName)))
+        configuration.setRunClass(fqName.asString())
+        return settings
     }
 
-    @Override
-    protected RunnerAndConfigurationSettings findExistingByElement(
-            Location location,
-            @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
-            ConfigurationContext context
-    ) {
-        FqName startClassFQName = getStartClassFqName(getEntryPointContainer(location));
-        if (startClassFQName == null) return null;
+    override fun findExistingByElement(location: Location<*>?, existingConfigurations: List<RunnerAndConfigurationSettings>, context: ConfigurationContext?): RunnerAndConfigurationSettings? {
+        val startClassFQName = getStartClassFqName(getEntryPointContainer(location)) ?: return null
 
-        for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
-            if (existingConfiguration.getType() instanceof JetRunConfigurationType) {
-                JetRunConfiguration jetConfiguration = (JetRunConfiguration)existingConfiguration.getConfiguration();
+        for (existingConfiguration in existingConfigurations) {
+            if (existingConfiguration.getType() is JetRunConfigurationType) {
+                val jetConfiguration = existingConfiguration.getConfiguration() as JetRunConfiguration
                 if (Comparing.equal(jetConfiguration.getRunClass(), startClassFQName.asString())) {
-                    if (Comparing.equal(location.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
-                        return existingConfiguration;
+                    if (Comparing.equal<Module>(location!!.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
+                        return existingConfiguration
                     }
                 }
             }
         }
-        return null;
+        return null
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return PREFERED;
+    override fun compareTo(o: Any?): Int {
+        return RuntimeConfigurationProducer.PREFERED
     }
 }
