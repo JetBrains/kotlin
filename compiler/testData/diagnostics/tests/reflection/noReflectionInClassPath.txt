@@ -1,0 +1,25 @@
+package
+
+internal fun n01(): kotlin.reflect.KProperty1<Foo, kotlin.Any>
+internal fun n02(): kotlin.reflect.KFunction1<Foo, kotlin.Unit>
+internal fun n03(): kotlin.reflect.KClass<Foo>
+internal fun n04(/*0*/ p: kotlin.reflect.KProperty0<kotlin.Int>): kotlin.Int
+internal fun n05(/*0*/ p: kotlin.reflect.KMutableProperty0<kotlin.String>): kotlin.Unit
+internal fun n06(/*0*/ p: kotlin.reflect.KProperty0<kotlin.Int>): kotlin.Int
+internal fun n07(/*0*/ p: kotlin.reflect.KFunction<kotlin.String>): kotlin.String
+internal fun n08(/*0*/ p: kotlin.reflect.KProperty1<kotlin.String, kotlin.Int>): kotlin.Int
+internal fun n09(/*0*/ p: kotlin.reflect.KProperty2<kotlin.String, kotlin.String, kotlin.Int>): kotlin.Int
+internal fun n10(): kotlin.Unit
+internal fun n11(): kotlin.Unit
+internal fun y01(): kotlin.reflect.KProperty1.Getter<Foo, kotlin.Any>
+internal fun y02(): kotlin.Collection<kotlin.reflect.KProperty1<Foo, *>>
+internal fun y03(): kotlin.String?
+
+internal final class Foo {
+    public constructor Foo(/*0*/ prop: kotlin.Any)
+    internal final val prop: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun func(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

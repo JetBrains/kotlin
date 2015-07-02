@@ -97,12 +97,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
-        @TestMetadata("noReflectionInClasspath.args")
-        public void testNoReflectionInClasspath() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/noReflectionInClasspath.args");
-            doJvmTest(fileName);
-        }
-
         @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
         public void testNonExistingClassPathAndAnnotationsPath() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/nonExistingClassPathAndAnnotationsPath.args");

@@ -18,20 +18,19 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
-import kotlin.properties.Delegates
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: JetScope by Delegates.lazy {
+    private val kotlinReflectScope: JetScope by lazy {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 
@@ -52,6 +51,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kClass: ClassDescriptor by ClassLookup
     public val kProperty0: ClassDescriptor by ClassLookup
     public val kProperty1: ClassDescriptor by ClassLookup
+    public val kProperty2: ClassDescriptor by ClassLookup
     public val kMutableProperty0: ClassDescriptor by ClassLookup
     public val kMutableProperty1: ClassDescriptor by ClassLookup
 
@@ -108,10 +108,9 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     companion object {
-        public fun isReflectionType(type: JetType): Boolean {
-            val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return false
-            val fqName = DescriptorUtils.getFqName(descriptor)
-            return fqName.isSafe() && fqName.toSafe().isSubpackageOf(KOTLIN_REFLECT_FQ_NAME)
+        public fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
+            val containingPackage = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>())
+            return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
     }
 }

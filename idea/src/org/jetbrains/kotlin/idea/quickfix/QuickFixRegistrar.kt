@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -30,7 +31,9 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateP
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
 
 public class QuickFixRegistrar : QuickFixContributor {
     public override fun registerQuickFixes(quickFixes: QuickFixes) {
@@ -306,8 +309,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
         EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory)
 
-        ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix,
-                                                               MigrateAnnotationMethodCallInWholeFile)
+        DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix, MigrateAnnotationMethodCallInWholeFile)
 
         ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.registerFactory(DeprecatedEnumEntrySuperConstructorSyntaxFix,
                                                                 DeprecatedEnumEntrySuperConstructorSyntaxFix.createWholeProjectFixFactory())
@@ -327,6 +329,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_SYMBOL_WITH_MESSAGE.registerFactory(DeprecatedSymbolUsageFix,
                                                   DeprecatedSymbolUsageInWholeProjectFix)
 
-        ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
+        POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
+
+        NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
     }
 }

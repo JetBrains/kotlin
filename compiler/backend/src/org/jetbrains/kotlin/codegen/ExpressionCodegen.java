@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -103,7 +102,6 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
-import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
@@ -2733,8 +2731,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
-        checkReflectionIsAvailable(expression);
-
         JetType type = bindingContext.getType(expression);
         assert type != null;
 
@@ -2753,9 +2749,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
                               (FunctionDescriptor) resolvedCall.getResultingDescriptor());
         }
-
-        // TODO: this diagnostic should also be reported on function references once they obtain reflection
-        checkReflectionIsAvailable(expression);
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
@@ -2787,12 +2780,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         codegen.generate();
 
         return codegen.putInstanceOnStack();
-    }
-
-    private void checkReflectionIsAvailable(@NotNull JetExpression expression) {
-        if (findClassAcrossModuleDependencies(state.getModule(), JvmAbi.REFLECTION_FACTORY_IMPL) == null) {
-            state.getDiagnostics().report(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH.on(expression, expression));
-        }
     }
 
     @NotNull

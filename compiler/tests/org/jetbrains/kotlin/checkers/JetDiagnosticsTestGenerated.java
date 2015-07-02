@@ -10435,6 +10435,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/reflection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Reflection extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInReflection() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("noReflectionInClassPath.kt")
+            public void testNoReflectionInClassPath() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/reflection/noReflectionInClassPath.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/regressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

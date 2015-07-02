@@ -1047,13 +1047,6 @@
         level="WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReflectionNotFoundInspection"
-        displayName="Reflection not found"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
         displayName="Package name does not match containing directory"
         groupName="Kotlin"
