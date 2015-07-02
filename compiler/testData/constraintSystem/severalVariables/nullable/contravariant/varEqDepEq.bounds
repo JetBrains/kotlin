@@ -1,0 +1,23 @@
+VARIABLES T P
+
+EQUAL T Int
+EQUAL P Consumer<T?>
+
+type parameter bounds:
+T := Int, >: Int, <: Int?
+P := Consumer<T?>*, := Consumer<Int?>, <: Consumer<Int?>, >: Consumer<Int?>
+
+status:
+-hasCannotCaptureTypesError: false
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=Int
+P=Consumer<Int?>

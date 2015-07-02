@@ -433,6 +433,204 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
         }
 
+        @TestMetadata("compiler/testData/constraintSystem/severalVariables/nullable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Nullable extends AbstractConstraintSystemTest {
+            public void testAllFilesPresentInNullable() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable"), Pattern.compile("^(.+)\\.constraints$"), true);
+            }
+
+            @TestMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Contravariant extends AbstractConstraintSystemTest {
+                public void testAllFilesPresentInContravariant() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/contravariant"), Pattern.compile("^(.+)\\.constraints$"), true);
+                }
+
+                @TestMetadata("varEqDepEq.constraints")
+                public void testVarEqDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varEqDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSub.constraints")
+                public void testVarEqDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varEqDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSuper.constraints")
+                public void testVarEqDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varEqDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepEq.constraints")
+                public void testVarSubDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSubDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSub.constraints")
+                public void testVarSubDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSubDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSuper.constraints")
+                public void testVarSubDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSubDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepEq.constraints")
+                public void testVarSuperDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSuperDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSub.constraints")
+                public void testVarSuperDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSuperDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSuper.constraints")
+                public void testVarSuperDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/contravariant/varSuperDepSuper.constraints");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Covariant extends AbstractConstraintSystemTest {
+                public void testAllFilesPresentInCovariant() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/covariant"), Pattern.compile("^(.+)\\.constraints$"), true);
+                }
+
+                @TestMetadata("varEqDepEq.constraints")
+                public void testVarEqDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varEqDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSub.constraints")
+                public void testVarEqDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varEqDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSuper.constraints")
+                public void testVarEqDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varEqDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepEq.constraints")
+                public void testVarSubDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSubDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSub.constraints")
+                public void testVarSubDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSubDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSuper.constraints")
+                public void testVarSubDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSubDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepEq.constraints")
+                public void testVarSuperDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSuperDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSub.constraints")
+                public void testVarSuperDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSuperDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSuper.constraints")
+                public void testVarSuperDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/covariant/varSuperDepSuper.constraints");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Invariant extends AbstractConstraintSystemTest {
+                public void testAllFilesPresentInInvariant() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/nullable/invariant"), Pattern.compile("^(.+)\\.constraints$"), true);
+                }
+
+                @TestMetadata("varEqDepEq.constraints")
+                public void testVarEqDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varEqDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSub.constraints")
+                public void testVarEqDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varEqDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varEqDepSuper.constraints")
+                public void testVarEqDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varEqDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepEq.constraints")
+                public void testVarSubDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSubDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSub.constraints")
+                public void testVarSubDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSubDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSubDepSuper.constraints")
+                public void testVarSubDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSubDepSuper.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepEq.constraints")
+                public void testVarSuperDepEq() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSuperDepEq.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSub.constraints")
+                public void testVarSuperDepSub() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSuperDepSub.constraints");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varSuperDepSuper.constraints")
+                public void testVarSuperDepSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/nullable/invariant/varSuperDepSuper.constraints");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/constraintSystem/severalVariables/recursive")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
