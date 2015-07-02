@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.JavaRunConfigurationExtensionManager
-import com.intellij.execution.Location
-import com.intellij.execution.PsiLocation
-import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.JUnitConfiguration
 import com.intellij.execution.junit.JUnitConfigurationType
 import com.intellij.execution.junit.JUnitUtil
-import com.intellij.execution.junit.RuntimeConfigurationProducer
-import com.intellij.openapi.module.Module
+import com.intellij.execution.junit.PatternConfigurationProducer
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -34,114 +33,116 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class KotlinJUnitRunConfigurationProducer : RuntimeConfigurationProducer(JUnitConfigurationType.getInstance()) {
-    private var myElement: JetElement? = null
+public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
+    override fun isConfigurationFromContext(configuration: JUnitConfiguration,
+                                            context: ConfigurationContext): Boolean {
+        if (RunConfigurationProducer.getInstance(javaClass<PatternConfigurationProducer>()).isMultipleElementsSelected(context)) {
+            return false
+        }
 
-    override fun getSourceElement(): PsiElement? {
-        return myElement
+        val leaf = context.getLocation()?.getPsiElement() ?: return false
+        val methodLocation = getTestMethodLocation(leaf)
+        val testClass = getTestClass(leaf)
+        val testObject = configuration.getTestObject()
+
+        if (!testObject.isConfiguredByElement(configuration, testClass, methodLocation?.getPsiElement(), null, null)) {
+            return false
+        }
+
+        return settingsMatchTemplate(configuration, context)
     }
 
-    override fun createConfigurationByElement(location: Location<*>, context: ConfigurationContext): RunnerAndConfigurationSettings? {
-        if (DumbService.getInstance(location.getProject()).isDumb()) return null
+    // copied from JUnitConfigurationProducer in IDEA
+    private fun settingsMatchTemplate(configuration: JUnitConfiguration, context: ConfigurationContext): Boolean {
+        val predefinedConfiguration = context.getOriginalConfiguration(JUnitConfigurationType.getInstance())
 
+        val vmParameters = (predefinedConfiguration as? CommonJavaRunConfigurationParameters)?.getVMParameters()
+        if (vmParameters != null && configuration.getVMParameters() != vmParameters) return false
+
+        val template = RunManager.getInstance(configuration.getProject()).getConfigurationTemplate(getConfigurationFactory())
+        val predefinedModule = (template.getConfiguration() as ModuleBasedConfiguration<*>).getConfigurationModule().getModule()
+        val configurationModule = configuration.getConfigurationModule().getModule()
+        return configurationModule == context.getLocation()?.getModule() || configurationModule == predefinedModule
+    }
+
+    override fun setupConfigurationFromContext(configuration: JUnitConfiguration,
+                                               context: ConfigurationContext,
+                                               sourceElement: Ref<PsiElement>): Boolean {
+        if (DumbService.getInstance(context.getProject()).isDumb()) return false
+
+        val location = context.getLocation() ?: return false
         val leaf = location.getPsiElement()
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
-            return null
+            return false
         }
 
         if (leaf.getContainingFile() !is JetFile) {
-            return null
+            return false
         }
 
         val jetFile = leaf.getContainingFile() as JetFile
 
         if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
-            return null
+            return false
         }
 
-        val function = PsiTreeUtil.getParentOfType(leaf, javaClass<JetNamedFunction>(), false)
-        if (function != null) {
-            myElement = function
+        val methodLocation = getTestMethodLocation(leaf)
+        if (methodLocation != null) {
+            val originalModule = configuration.getConfigurationModule().getModule()
+            configuration.beMethodConfiguration(methodLocation)
+            configuration.restoreOriginalModule(originalModule)
+            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            return true
+        }
 
-            @SuppressWarnings("unchecked")
-            val owner = PsiTreeUtil.getParentOfType(function, javaClass<JetFunction>(), javaClass<JetClass>())
+        val testClass = getTestClass(leaf)
+        if (testClass != null) {
+            val originalModule = configuration.getConfigurationModule().getModule()
+            configuration.beClassConfiguration(testClass)
+            configuration.restoreOriginalModule(originalModule)
+            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            return true
+        }
 
-            if (owner is JetClass) {
-                val delegate = LightClassUtil.getPsiClass(owner)
-                if (delegate != null) {
-                    for (method in delegate.getMethods()) {
-                        if (method.getNavigationElement() === function) {
-                            val methodLocation = PsiLocation.fromPsiElement(method)
-                            if (JUnitUtil.isTestMethod(methodLocation, false)) {
-                                val settings = cloneTemplateConfiguration(context.getProject(), context)
-                                val configuration = settings.getConfiguration() as JUnitConfiguration
+        return false
+    }
 
-                                val originalModule = configuration.getConfigurationModule().getModule()
-                                configuration.beMethodConfiguration(methodLocation)
-                                configuration.restoreOriginalModule(originalModule)
-                                JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+    private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
+        val function = leaf.getParentOfType<JetNamedFunction>(false) ?: return null
+        val owner = PsiTreeUtil.getParentOfType(function, javaClass<JetFunction>(), javaClass<JetClass>())
 
-                                return settings
-                            }
-                            break
-                        }
-                    }
-                }
+        if (owner is JetClass) {
+            val delegate = LightClassUtil.getPsiClass(owner) ?: return null
+            val method = delegate.getMethods().firstOrNull() { it.getNavigationElement() == function } ?: return null
+            val methodLocation = PsiLocation.fromPsiElement(method)
+            if (JUnitUtil.isTestMethod(methodLocation, false)) {
+                return methodLocation
             }
         }
-
-        var jetClass = PsiTreeUtil.getParentOfType(leaf, javaClass<JetClass>(), false)
-
-        if (jetClass == null) {
-            jetClass = getClassDeclarationInFile(jetFile)
-        }
-
-        if (jetClass != null) {
-            myElement = jetClass
-            val delegate = LightClassUtil.getPsiClass(jetClass)
-
-            if (delegate != null && JUnitUtil.isTestClass(delegate)) {
-                val settings = cloneTemplateConfiguration(context.getProject(), context)
-                val configuration = settings.getConfiguration() as JUnitConfiguration
-
-                val originalModule = configuration.getConfigurationModule().getModule()
-                configuration.beClassConfiguration(delegate)
-                configuration.restoreOriginalModule(originalModule)
-                JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
-
-                return settings
-            }
-        }
-
         return null
     }
 
-    override fun compareTo(o: Any?): Int {
-        return 0
-    }
-
-    companion object {
-
-        fun getClassDeclarationInFile(jetFile: JetFile): JetClass? {
-            var tempSingleDeclaration: JetClass? = null
-
-            for (jetDeclaration in jetFile.getDeclarations()) {
-                if (jetDeclaration is JetClass) {
-
-                    if (tempSingleDeclaration == null) {
-                        tempSingleDeclaration = jetDeclaration
-                    }
-                    else {
-                        // There are several class declarations in file
-                        return null
-                    }
-                }
-            }
-
-            return tempSingleDeclaration
+    private fun getTestClass(leaf: PsiElement): PsiClass? {
+        var jetClass = leaf.getParentOfType<JetClass>(false)
+        if (!jetClass.isJUnitTestClass()) {
+            jetClass = getTestClassInFile(leaf.getContainingFile() as JetFile)
         }
+        if (jetClass != null) {
+            return LightClassUtil.getPsiClass(jetClass)
+        }
+        return null
     }
+
+    private fun JetClass?.isJUnitTestClass() =
+            LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it) } ?: false
+
+    private fun getTestClassInFile(jetFile: JetFile) =
+            jetFile.getDeclarations().filterIsInstance<JetClass>().singleOrNull { it.isJUnitTestClass() }
 }
