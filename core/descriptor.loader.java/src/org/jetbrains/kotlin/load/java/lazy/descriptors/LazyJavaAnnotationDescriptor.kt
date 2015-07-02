@@ -123,7 +123,7 @@ class LazyJavaAnnotationDescriptor(
         if (valueParameter == null) return null
 
         val values = elements.map {
-            argument -> resolveAnnotationArgument(argument) ?: NullValue.NULL
+            argument -> resolveAnnotationArgument(argument) ?: NullValue
         }
         return ArrayValue(values, valueParameter.getType(), true, values.any { it.usesVariableAsConstant() })
     }

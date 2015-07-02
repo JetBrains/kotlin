@@ -20,32 +20,24 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class StringValue(value: String, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<String>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+public class StringValue(
+        value: String,
+        canBeUsedInAnnotations: Boolean,
+        usesVariableAsConstant: Boolean
+) : CompileTimeConstant<String>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getStringType()
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getStringType()
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
+
+    override fun toString() = "\"$value\""
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        return value != (other as StringValue).value
     }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitStringValue(this, data)
-    }
-
-    override fun toString(): String {
-        return "\"" + value + "\""
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        val that = o as? StringValue ?: return false
-
-        if (if (value != null) value != that.value else that.value != null) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return if (value != null) value.hashCode() else 0
-    }
+    override fun hashCode() = value.hashCode()
 }

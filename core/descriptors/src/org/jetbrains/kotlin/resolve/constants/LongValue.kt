@@ -20,17 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class LongValue(value: Long, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Long>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+public class LongValue(
+        value: Long,
+        canBeUsedInAnnotations: Boolean,
+        pure: Boolean,
+        usesVariableAsConstant: Boolean
+) : IntegerValueConstant<Long>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getLongType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getLongType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitLongValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitLongValue(this, data)
 
-    override fun toString(): String {
-        return "$value.toLong()"
-    }
+    override fun toString() = "$value.toLong()"
 }

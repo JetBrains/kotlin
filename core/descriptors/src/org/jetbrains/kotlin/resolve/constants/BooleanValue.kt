@@ -20,17 +20,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class BooleanValue(value: Boolean, canBeUseInAnnotation: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<Boolean>(value, canBeUseInAnnotation, false, usesVariableAsConstant) {
+public class BooleanValue(
+        value: Boolean,
+        canBeUseInAnnotation: Boolean,
+        usesVariableAsConstant: Boolean
+) : CompileTimeConstant<Boolean>(value, canBeUseInAnnotation, false, usesVariableAsConstant) {
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getBooleanType()
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getBooleanType()
-    }
-
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitBooleanValue(this, data)
-    }
-
-    override fun toString(): String {
-        return "$value"
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitBooleanValue(this, data)
 }

@@ -23,25 +23,26 @@ import org.jetbrains.kotlin.types.*
 
 import java.util.Collections
 
-public class IntegerValueTypeConstant(value: Number, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Number>(value, canBeUsedInAnnotations, true, usesVariableAsConstant) {
+public class IntegerValueTypeConstant(
+        value: Number,
+        canBeUsedInAnnotations: Boolean,
+        usesVariableAsConstant: Boolean
+) : IntegerValueConstant<Number>(value, canBeUsedInAnnotations, true, usesVariableAsConstant) {
 
-    private val typeConstructor: IntegerValueTypeConstructor
-
-    init {
-        this.typeConstructor = IntegerValueTypeConstructor(value.toLong())
-    }
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong())
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return JetTypeImpl(Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(), ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true))
+        return JetTypeImpl(
+                Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>()
+                , ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+        )
     }
 
     deprecated("")
     override val value: Number
         get() = throw UnsupportedOperationException("Use IntegerValueTypeConstant.getValue(expectedType) instead")
 
-    public fun getType(expectedType: JetType): JetType {
-        return TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
-    }
+    public fun getType(expectedType: JetType): JetType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
 
     public fun getValue(expectedType: JetType): Number {
         val numberValue = typeConstructor.getValue()
@@ -62,11 +63,7 @@ public class IntegerValueTypeConstant(value: Number, canBeUsedInAnnotations: Boo
         }
     }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitNumberTypeValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitNumberTypeValue(this, data)
 
-    override fun toString(): String {
-        return typeConstructor.toString()
-    }
+    override fun toString() = typeConstructor.toString()
 }

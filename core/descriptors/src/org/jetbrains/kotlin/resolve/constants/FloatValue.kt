@@ -20,17 +20,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class FloatValue(value: Float, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<Float>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+public class FloatValue(
+        value: Float,
+        canBeUsedInAnnotations: Boolean,
+        usesVariableAsConstant: Boolean
+) : CompileTimeConstant<Float>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getFloatType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getFloatType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitFloatValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitFloatValue(this, data)
 
-    override fun toString(): String {
-        return "$value.toFloat()"
-    }
+    override fun toString() = "$value.toFloat()"
 }

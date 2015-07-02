@@ -43,6 +43,8 @@ public abstract class CompileTimeConstant<T> protected constructor(public open v
 
     public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
 
+    override fun toString() = value.toString()
+
     companion object {
 
         /*

@@ -23,29 +23,20 @@ import org.jetbrains.kotlin.types.JetType
 
 public abstract class ErrorValue : CompileTimeConstant<Unit>(Unit, true, false, false) {
 
-    deprecated("") // Should not be called, for this is not a real value, but a indication of an error
+    deprecated("Should not be called, for this is not a real value, but a indication of an error")
     override val value: Unit
-        get() {
-            throw UnsupportedOperationException()
-        }
+        get() = throw UnsupportedOperationException()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitErrorValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitErrorValue(this, data)
 
     public class ErrorValueWithMessage(public val message: String) : ErrorValue() {
 
-        override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-            return ErrorUtils.createErrorType(message)
-        }
+        override fun getType(kotlinBuiltIns: KotlinBuiltIns) = ErrorUtils.createErrorType(message)
 
-        override fun toString(): String {
-            return message
-        }
+        override fun toString() = message
     }
 
     companion object {
-
         public fun create(message: String): ErrorValue {
             return ErrorValueWithMessage(message)
         }

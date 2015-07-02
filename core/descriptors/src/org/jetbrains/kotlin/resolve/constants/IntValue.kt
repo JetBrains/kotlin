@@ -20,32 +20,25 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class IntValue(value: Int, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Int>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+public class IntValue(
+        value: Int,
+        canBeUsedInAnnotations: Boolean,
+        pure: Boolean,
+        usesVariableAsConstant: Boolean
+) : IntegerValueConstant<Int>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getIntType()
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getIntType()
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        val intValue = other as IntValue
+
+        return value == intValue.value
     }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitIntValue(this, data)
-    }
-
-    override fun toString(): String {
-        return value.toString()
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        val intValue = o as? IntValue ?: return false
-
-        if (value !== intValue.value) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return value
-    }
+    override fun hashCode() = value
 }

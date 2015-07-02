@@ -43,7 +43,7 @@ public fun createCompileTimeConstant(
         is Double -> DoubleValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
         is Boolean -> BooleanValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
         is String -> StringValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
-        null -> NullValue.NULL
+        null -> NullValue
         else -> null
     }
 }

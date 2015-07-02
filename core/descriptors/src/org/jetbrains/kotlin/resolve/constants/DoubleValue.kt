@@ -20,17 +20,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class DoubleValue(value: Double, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<Double>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+public class DoubleValue(
+        value: Double,
+        canBeUsedInAnnotations: Boolean,
+        usesVariableAsConstant: Boolean
+) : CompileTimeConstant<Double>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getDoubleType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getDoubleType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitDoubleValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitDoubleValue(this, data)
 
-    override fun toString(): String {
-        return "$value.toDouble()"
-    }
+    override fun toString() = "$value.toDouble()"
 }

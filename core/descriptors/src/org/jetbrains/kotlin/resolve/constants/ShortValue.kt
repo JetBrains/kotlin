@@ -20,18 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class ShortValue(value: Short, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Short>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+public class ShortValue(
+        value: Short,
+        canBeUsedInAnnotations: Boolean,
+        pure: Boolean,
+        usesVariableAsConstant: Boolean
+) : IntegerValueConstant<Short>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getShortType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getShortType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitShortValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitShortValue(this, data)
 
-    override fun toString(): String {
-        return "$value.toShort()"
-    }
-
+    override fun toString() = "$value.toShort()"
 }

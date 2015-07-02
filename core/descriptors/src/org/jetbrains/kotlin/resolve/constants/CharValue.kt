@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class CharValue(value: Char, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Char>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+public class CharValue(
+        value: Char,
+        canBeUsedInAnnotations: Boolean,
+        pure: Boolean,
+        usesVariableAsConstant: Boolean
+) : IntegerValueConstant<Char>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getCharType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getCharType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitCharValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitCharValue(this, data)
 
     override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
 

@@ -19,53 +19,29 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
+import java.util.*
 
-public class ArrayValue(value: List<CompileTimeConstant<*>>, private val type: JetType, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<List<CompileTimeConstant<*>>>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+public class ArrayValue(
+        value: List<CompileTimeConstant<*>>,
+        private val type: JetType,
+        canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean
+) : CompileTimeConstant<List<CompileTimeConstant<*>>>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
     init {
         assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was " + type + ": " + value }
     }
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return type
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = type
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        return value == (other as ArrayValue).value
     }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitArrayValue(this, data)
-    }
-
-    override fun toString(): String {
-        return value.toString()
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        val that = o as? ArrayValue ?: return false
-
-        if (value == null) {
-            return that.value == null
-        }
-
-        var i = 0
-        for (thisObject in value) {
-            if (thisObject != that.value.get(i)) {
-                return false
-            }
-            i++
-        }
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var hashCode = 0
-        if (value == null) return hashCode
-        for (o in value) {
-            hashCode += o.hashCode()
-        }
-        return hashCode
-    }
+    override fun hashCode() = value.hashCode()
 }
 

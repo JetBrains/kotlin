@@ -20,17 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class ByteValue(value: Byte, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVaraiableAsConstant: Boolean) : IntegerValueConstant<Byte>(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant) {
+public class ByteValue(
+        value: Byte,
+        canBeUsedInAnnotations: Boolean,
+        pure: Boolean,
+        usesVaraiableAsConstant: Boolean
+) : IntegerValueConstant<Byte>(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getByteType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getByteType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitByteValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitByteValue(this, data)
 
-    override fun toString(): String {
-        return "$value.toByte()"
-    }
+    override fun toString(): String = "$value.toByte()"
 }

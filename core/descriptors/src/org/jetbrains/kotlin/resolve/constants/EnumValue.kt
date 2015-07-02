@@ -23,34 +23,26 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.sure
 
-public class EnumValue(value: ClassDescriptor, usesVariableAsConstant: Boolean) : CompileTimeConstant<ClassDescriptor>(value, true, false, usesVariableAsConstant) {
+public class EnumValue(
+        value: ClassDescriptor,
+        usesVariableAsConstant: Boolean
+) : CompileTimeConstant<ClassDescriptor>(value, true, false, usesVariableAsConstant) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return getType()
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = getType()
+
+    private fun getType() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }
+
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
+
+    override fun toString() = "${getType()}.${value.getName()}"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        return value == (other as EnumValue).value
     }
 
-    private fun getType(): JetType {
-        val type = value.classObjectType
-        return type.sure { "Enum entry must have a class object type: " + value }
-    }
-
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitEnumValue(this, data)
-    }
-
-    override fun toString(): String {
-        return "${getType()}.${value.getName()}"
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        return value == (o as? EnumValue)?.value
-    }
-
-    override fun hashCode(): Int {
-        return value.hashCode()
-    }
+    override fun hashCode() = value.hashCode()
 }
 

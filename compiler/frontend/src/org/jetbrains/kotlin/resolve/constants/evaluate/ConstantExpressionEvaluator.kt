@@ -106,7 +106,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
         if (text == null) return null
 
         val nodeElementType = expression.getNode().getElementType()
-        if (nodeElementType == JetNodeTypes.NULL) return NullValue.NULL
+        if (nodeElementType == JetNodeTypes.NULL) return NullValue
 
         val result: Any? = when (nodeElementType) {
             JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)

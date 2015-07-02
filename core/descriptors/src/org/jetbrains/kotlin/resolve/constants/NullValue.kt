@@ -20,21 +20,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public class NullValue private constructor() : CompileTimeConstant<Void?>(null, false, false, false) {
+public object NullValue : CompileTimeConstant<Void?>(null, false, false, false) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return kotlinBuiltIns.getNullableNothingType()
-    }
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getNullableNothingType()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
-        return visitor.visitNullValue(this, data)
-    }
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitNullValue(this, data)
 
-    override fun toString(): String {
-        return "null"
-    }
-
-    companion object {
-        public val NULL: NullValue = NullValue()
-    }
+    override fun toString() = "null"
 }
