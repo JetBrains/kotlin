@@ -181,8 +181,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public final fun dec(): kotlin.Char
     public final fun inc(): kotlin.Char
     public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
-    kotlin.deprecated(value = "This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.") public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
-    kotlin.deprecated(value = "This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.") public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Char
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Char
     public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
     public open fun toByte(): kotlin.Byte
     public open fun toChar(): kotlin.Char

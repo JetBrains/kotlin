@@ -30,15 +30,13 @@ public class Char private () : Comparable<Char> {
      */
     public override fun compareTo(other: Char): Int
 
-    /** Adds the other value to this value. */
-    deprecated("This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.")
-    public fun plus(other: Int): Int
+    /** Adds the other Int value to this value resulting a Char. */
+    public fun plus(other: Int): Char
 
-    /** Subtracts the other value from this value. */
+    /** Subtracts the other Char value from this value resulting an Int. */
     public fun minus(other: Char): Int
-    /** Subtracts the other value from this value. */
-    deprecated("This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.")
-    public fun minus(other: Int): Int
+    /** Subtracts the other Int value from this value resulting a Char. */
+    public fun minus(other: Int): Char
 
     /** Increments this value. */
     public fun inc(): Char

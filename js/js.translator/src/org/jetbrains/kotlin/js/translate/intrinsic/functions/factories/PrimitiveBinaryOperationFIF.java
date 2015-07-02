@@ -134,14 +134,6 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
-        if (pattern("Int|Short|Byte|Double|Float.compareTo(Char)").apply(descriptor)) {
-            return new WithCharAsSecondOperandFunctionIntrinsic(PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC);
-        }
-
-        if (pattern("Char.compareTo(Int|Short|Byte|Double|Float)").apply(descriptor)) {
-            return new WithCharAsFirstOperandFunctionIntrinsic(PRIMITIVE_NUMBER_COMPARE_TO_INTRINSIC);
-        }
-
         if (pattern("Char.rangeTo(Char)").apply(descriptor)) {
             return CHAR_RANGE_TO_INTRINSIC;
         }
@@ -161,13 +153,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
 
         if (pattern("Int|Short|Byte.div(Int|Short|Byte)").apply(descriptor)) {
-                return INTEGER_DIVISION_INTRINSIC;
-        }
-        if (pattern("Char.div(Int|Short|Byte)").apply(descriptor)) {
-            return new WithCharAsFirstOperandFunctionIntrinsic(INTEGER_DIVISION_INTRINSIC);
-        }
-        if (pattern("Int|Short|Byte.div(Char)").apply(descriptor)) {
-            return new WithCharAsSecondOperandFunctionIntrinsic(INTEGER_DIVISION_INTRINSIC);
+            return INTEGER_DIVISION_INTRINSIC;
         }
         if (descriptor.getName().equals(Name.identifier("rangeTo"))) {
             return RANGE_TO_INTRINSIC;
@@ -181,11 +167,11 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         JsBinaryOperator operator = getOperator(descriptor);
         BinaryOperationInstrinsicBase result = new PrimitiveBinaryOperationFunctionIntrinsic(operator);
 
-        if (pattern("Char.plus|minus|times|div|mod(Int|Short|Byte|Double|Float)").apply(descriptor)) {
-            return new WithCharAsFirstOperandFunctionIntrinsic(result);
+        if (pattern("Char.plus|minus(Int)").apply(descriptor)) {
+            return new CharAndIntBinaryOperationFunctionIntrinsic(result);
         }
-        if (pattern("Int|Short|Byte|Double|Float.plus|minus|times|div|mod(Char)").apply(descriptor)) {
-            return new WithCharAsSecondOperandFunctionIntrinsic(result);
+        if (pattern("Char.minus(Char)").apply(descriptor)) {
+            return new CharAndCharBinaryOperationFunctionIntrinsic(result);
         }
         return result;
     }
@@ -219,35 +205,35 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     }
 
-    private static class WithCharAsFirstOperandFunctionIntrinsic extends BinaryOperationInstrinsicBase {
+    private static class CharAndIntBinaryOperationFunctionIntrinsic extends BinaryOperationInstrinsicBase {
 
         @NotNull
         private final BinaryOperationInstrinsicBase functionIntrinsic;
 
-        private WithCharAsFirstOperandFunctionIntrinsic(@NotNull BinaryOperationInstrinsicBase functionIntrinsic) {
+        private CharAndIntBinaryOperationFunctionIntrinsic(@NotNull BinaryOperationInstrinsicBase functionIntrinsic) {
             this.functionIntrinsic = functionIntrinsic;
         }
 
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return functionIntrinsic.doApply(JsAstUtils.charToInt(left), right, context);
+            return JsAstUtils.toChar(functionIntrinsic.doApply(JsAstUtils.charToInt(left), right, context));
         }
     }
 
-    private static class WithCharAsSecondOperandFunctionIntrinsic extends BinaryOperationInstrinsicBase {
+    private static class CharAndCharBinaryOperationFunctionIntrinsic extends BinaryOperationInstrinsicBase {
 
         @NotNull
         private final BinaryOperationInstrinsicBase functionIntrinsic;
 
-        private WithCharAsSecondOperandFunctionIntrinsic(@NotNull BinaryOperationInstrinsicBase functionIntrinsic) {
+        private CharAndCharBinaryOperationFunctionIntrinsic(@NotNull BinaryOperationInstrinsicBase functionIntrinsic) {
             this.functionIntrinsic = functionIntrinsic;
         }
 
         @NotNull
         @Override
         public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
-            return functionIntrinsic.doApply(left, JsAstUtils.charToInt(right), context);
+            return functionIntrinsic.doApply(JsAstUtils.charToInt(left), JsAstUtils.charToInt(right), context);
         }
     }
 }
