@@ -1,0 +1,23 @@
+VARIABLES T P
+
+SUBTYPE Int T
+SUBTYPE P My<My<Consumer<T>>>
+
+type parameter bounds:
+T >: Int
+P <: My<My<Consumer<T>>>*, <: My<out My<out Consumer<Int>>>
+
+status:
+-hasCannotCaptureTypesError: false
+-hasConflictingConstraints: false
+-hasContradiction: true
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: true
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=Int
+P=My<out My<out Consumer<Int>>>

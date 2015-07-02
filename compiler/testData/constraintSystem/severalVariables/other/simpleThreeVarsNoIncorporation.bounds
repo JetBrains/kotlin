@@ -1,0 +1,26 @@
+VARIABLES T P E
+
+SUBTYPE T P
+SUBTYPE P E
+SUBTYPE Int E
+
+type parameter bounds:
+T <: P*, <: E*
+P >: T*, <: E*
+E >: T*, >: P*, >: Int
+
+status:
+-hasCannotCaptureTypesError: false
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: false
+-hasUnknownParameters: true
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=???
+P=???
+E=Int

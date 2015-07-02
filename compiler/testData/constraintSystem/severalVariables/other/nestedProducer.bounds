@@ -1,0 +1,23 @@
+VARIABLES T P
+
+SUBTYPE T Int
+SUBTYPE P Producer<Producer<Producer<T>>>
+
+type parameter bounds:
+T <: Int
+P <: Producer<Producer<Producer<T>>>*, <: Producer<Producer<Producer<Int>>>
+
+status:
+-hasCannotCaptureTypesError: false
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=Int
+P=Producer<Producer<Producer<Int>>>

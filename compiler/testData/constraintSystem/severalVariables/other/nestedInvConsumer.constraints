@@ -1,0 +1,4 @@
+VARIABLES T P
+
+SUBTYPE Int T
+SUBTYPE P My<My<Consumer<T>>>

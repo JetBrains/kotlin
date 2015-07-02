@@ -631,6 +631,87 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             }
         }
 
+        @TestMetadata("compiler/testData/constraintSystem/severalVariables/other")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Other extends AbstractConstraintSystemTest {
+            public void testAllFilesPresentInOther() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/other"), Pattern.compile("^(.+)\\.constraints$"), true);
+            }
+
+            @TestMetadata("constraintForNullables.constraints")
+            public void testConstraintForNullables() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/constraintForNullables.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedConsumer.constraints")
+            public void testNestedConsumer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedConsumer.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedConsumer1.constraints")
+            public void testNestedConsumer1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedConsumer1.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedInvConsumer.constraints")
+            public void testNestedInvConsumer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedInvConsumer.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedInvProducer.constraints")
+            public void testNestedInvProducer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedInvProducer.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedProducer.constraints")
+            public void testNestedProducer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedProducer.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nestedProducerAndConsumer.constraints")
+            public void testNestedProducerAndConsumer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/nestedProducerAndConsumer.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("severalOccurrences.constraints")
+            public void testSeveralOccurrences() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/severalOccurrences.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleFun.constraints")
+            public void testSimpleFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/simpleFun.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleThreeVars.constraints")
+            public void testSimpleThreeVars() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/simpleThreeVars.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleThreeVarsNoIncorporation.constraints")
+            public void testSimpleThreeVarsNoIncorporation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/simpleThreeVarsNoIncorporation.constraints");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simpleThreeVarsNoIncorporationFixed.constraints")
+            public void testSimpleThreeVarsNoIncorporationFixed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/other/simpleThreeVarsNoIncorporationFixed.constraints");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/constraintSystem/severalVariables/recursive")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

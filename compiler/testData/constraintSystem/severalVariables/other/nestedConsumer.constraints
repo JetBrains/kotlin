@@ -1,0 +1,4 @@
+VARIABLES T P
+
+SUBTYPE Int T
+EQUAL P Consumer<Consumer<T>>

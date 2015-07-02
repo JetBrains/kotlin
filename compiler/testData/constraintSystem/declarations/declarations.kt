@@ -11,3 +11,4 @@ interface My<T>
 interface Successor<T> : My<T>
 
 interface Two<T, P>
+interface Fun<in T, out R>
