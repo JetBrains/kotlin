@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 public abstract class SerializedResourcePaths {
-    public abstract val EXTENSION_REGISTRY: ExtensionRegistryLite
+    public abstract val extensionRegistry: ExtensionRegistryLite
 
     public abstract fun getClassMetadataPath(classId: ClassId): String
 
@@ -39,5 +39,4 @@ public abstract class SerializedResourcePaths {
     }
 
     public val fallbackPaths: FallbackPaths = FallbackPaths
-
 }

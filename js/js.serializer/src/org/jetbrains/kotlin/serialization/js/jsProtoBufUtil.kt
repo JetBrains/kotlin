@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import java.io.ByteArrayInputStream
 
 public fun ByteArray.toPackageData(nameResolver: NameResolver): PackageData {
-    val registry = KotlinJavascriptSerializedResourcePaths.EXTENSION_REGISTRY
+    val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
     val packageProto = ProtoBuf.Package.parseFrom(ByteArrayInputStream(this), registry)
     return PackageData(nameResolver, packageProto)
 }
 
 public fun ByteArray.toClassData(nameResolver: NameResolver): ClassData {
-    val registry = KotlinJavascriptSerializedResourcePaths.EXTENSION_REGISTRY
+    val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
     val classProto = ProtoBuf.Class.parseFrom(ByteArrayInputStream(this), registry)
     return ClassData(nameResolver, classProto)
 }

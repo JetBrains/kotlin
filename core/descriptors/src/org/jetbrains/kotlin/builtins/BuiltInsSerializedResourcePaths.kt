@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 public object BuiltInsSerializedResourcePaths : SerializedResourcePaths() {
-    public override val EXTENSION_REGISTRY: ExtensionRegistryLite
+    public override val extensionRegistry: ExtensionRegistryLite
 
     init {
-        EXTENSION_REGISTRY = ExtensionRegistryLite.newInstance()
-        BuiltInsProtoBuf.registerAllExtensions(EXTENSION_REGISTRY)
+        extensionRegistry = ExtensionRegistryLite.newInstance()
+        BuiltInsProtoBuf.registerAllExtensions(extensionRegistry)
     }
 
     private val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"

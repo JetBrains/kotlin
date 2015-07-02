@@ -36,7 +36,7 @@ public open class ResourceLoadingClassDataFinder(
 
         return ClassData(
                 packageFragment.nameResolver,
-                ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.EXTENSION_REGISTRY)
+                ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.extensionRegistry)
         )
     }
 }

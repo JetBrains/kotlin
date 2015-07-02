@@ -33,7 +33,7 @@ public class KotlinJavascriptPackageFragment(
 
     protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
-        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.EXTENSION_REGISTRY)
+        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.extensionRegistry)
         return classesProto.getClassNameList()?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 }
