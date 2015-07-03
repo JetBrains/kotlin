@@ -1,4 +1,6 @@
 // ERROR: Unresolved reference: LinkedList
+// ERROR: None of the following functions can be called with the arguments supplied:  public open fun add(e: kotlin.Any): kotlin.Boolean defined in java.util.ArrayList public open fun add(index: kotlin.Int, element: kotlin.Any): kotlin.Unit defined in java.util.ArrayList
+// ERROR: None of the following functions can be called with the arguments supplied:  public open fun add(e: kotlin.Any): kotlin.Boolean defined in java.util.ArrayList public open fun add(index: kotlin.Int, element: kotlin.Any): kotlin.Unit defined in java.util.ArrayList
 import java.util.*
 
 public class Lists {
