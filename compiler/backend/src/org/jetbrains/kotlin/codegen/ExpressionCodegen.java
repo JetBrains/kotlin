@@ -3727,63 +3727,52 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public StackValue visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
-        final IElementType opToken = operationSign.getReferencedNameElementType();
+        final JetExpression left = expression.getLeft();
+        final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.COLON) {
-            return gen(expression.getLeft());
+            return gen(left);
         }
-        else {
-            JetTypeReference typeReference = expression.getRight();
-            final JetType rightType = bindingContext.get(TYPE, typeReference);
-            assert rightType != null;
 
-            Type rightTypeAsm = boxType(asmType(rightType));
-            final JetExpression left = expression.getLeft();
+        final JetType rightType = bindingContext.get(TYPE, expression.getRight());
+        assert rightType != null;
 
-            DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
-                final StackValue value = genQualified(receiver, left);
+        final StackValue value = genQualified(receiver, left);
 
-                return StackValue.operation(rightTypeAsm, new Function1<InstructionAdapter, Unit>() {
-                    @Override
-                    public Unit invoke(InstructionAdapter v) {
-                        value.put(boxType(value.type), v);
+        return StackValue.operation(boxType(asmType(rightType)), new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter v) {
+                value.put(boxType(value.type), v);
 
-                        if (value.type == Type.VOID_TYPE) {
-                            v.aconst(null);
-                        }
-                        else if (opToken != JetTokens.AS_SAFE) {
-                            if (!TypeUtils.isNullableType(rightType)) {
-                                v.dup();
-                                Label nonnull = new Label();
-                                v.ifnonnull(nonnull);
-                                JetType leftType = bindingContext.getType(left);
-                                assert leftType != null;
-                                genThrow(v, "kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
-                                                                        " cannot be cast to " +
-                                                                        DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
-                                v.mark(nonnull);
-                            }
-                        }
-                        else {
-                            v.dup();
-                            generateInstanceOfInstruction(rightType);
-                            Label ok = new Label();
-                            v.ifne(ok);
-                            v.pop();
-                            v.aconst(null);
-                            v.mark(ok);
-                        }
-
-                        generateCheckCastInstruction(rightType);
-                        return Unit.INSTANCE$;
+                if (value.type == Type.VOID_TYPE) {
+                    v.aconst(null);
+                }
+                else if (opToken != JetTokens.AS_SAFE) {
+                    if (!TypeUtils.isNullableType(rightType)) {
+                        v.dup();
+                        Label nonnull = new Label();
+                        v.ifnonnull(nonnull);
+                        JetType leftType = bindingContext.getType(left);
+                        assert leftType != null;
+                        genThrow(v, "kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
+                                                                " cannot be cast to " +
+                                                                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
+                        v.mark(nonnull);
                     }
-                });
+                }
+                else {
+                    v.dup();
+                    generateInstanceOfInstruction(rightType);
+                    Label ok = new Label();
+                    v.ifne(ok);
+                    v.pop();
+                    v.aconst(null);
+                    v.mark(ok);
+                }
+
+                generateCheckCastInstruction(rightType);
+                return Unit.INSTANCE$;
             }
-            else {
-                throw new UnsupportedOperationException("Don't know how to handle non-class types in as/as? : " + descriptor);
-            }
-        }
+        });
     }
 
     @Override
