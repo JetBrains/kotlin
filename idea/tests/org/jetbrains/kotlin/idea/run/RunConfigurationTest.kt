@@ -33,10 +33,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
@@ -114,6 +111,19 @@ class RunConfigurationTest: CodeInsightTestCase() {
         rename.run()
 
         Assert.assertEquals("renameTest.Bar", runConfiguration.MAIN_CLASS_NAME)
+    }
+
+    fun testUpdateOnPackageRename() {
+        val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
+
+        val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
+
+        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")
+        val rename = RefactoringFactory.getInstance(getTestProject()).createRename(pkg, "afterRenameTest")
+        rename.run()
+
+        Assert.assertEquals("afterRenameTest.Foo", runConfiguration.MAIN_CLASS_NAME)
     }
 
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
