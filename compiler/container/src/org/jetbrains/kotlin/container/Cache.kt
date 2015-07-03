@@ -22,9 +22,11 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.ArrayList
 import java.util.LinkedHashSet
+import java.util.concurrent.ConcurrentHashMap
 
 private object ClassTraversalCache {
-    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
+    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>(
+            100, 0.75f, Runtime.getRuntime().availableProcessors(), ContainerUtil.canonicalStrategy())
 
     fun getClassInfo(c: Class<*>): ClassInfo {
         val classInfo = cache.get(c)
