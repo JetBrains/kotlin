@@ -14,662 +14,577 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build;
+package org.jetbrains.kotlin.jps.build
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.ZipUtil;
-import kotlin.KotlinPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.builders.BuildResult;
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl;
-import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
-import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.util.JpsPathUtil;
-import org.jetbrains.kotlin.codegen.AsmUtil;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.test.MockLibraryUtil;
-import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
+import com.google.common.collect.Lists
+import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.testFramework.LightVirtualFile
+import com.intellij.util.ArrayUtil
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.io.ZipUtil
+import kotlin.KotlinPackage
+import org.jetbrains.jps.builders.BuildResult
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
+import org.jetbrains.jps.model.java.JpsJavaDependencyScope
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.zip.ZipOutputStream;
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
+import java.util.regex.Pattern
+import java.util.zip.ZipOutputStream
 
-import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 
-public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
-    private static final String PROJECT_NAME = "kotlinProject";
-    private static final String ADDITIONAL_MODULE_NAME = "module2";
-    private static final String JDK_NAME = "IDEA_JDK";
+public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
-    private static final String[] EXCLUDE_FILES = { "Excluded.class", "YetAnotherExcluded.class" };
-    private static final String[] NOTHING = {};
-    private static final String KOTLIN_JS_LIBRARY = "jslib-example";
-    private static final String PATH_TO_KOTLIN_JS_LIBRARY = TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY;
-    private static final String KOTLIN_JS_LIBRARY_JAR = KOTLIN_JS_LIBRARY + ".jar";
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf(
-            PROJECT_NAME + ".js",
-            PROJECT_NAME + ".meta.js",
-            "lib/kotlin.js",
-            "lib/stdlib.meta.js"
-    );
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = KotlinPackage.hashSetOf(
-            ADDITIONAL_MODULE_NAME + ".js",
-            ADDITIONAL_MODULE_NAME + ".meta.js",
-            "lib/kotlin.js",
-            "lib/stdlib.meta.js"
-    );
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = KotlinPackage.hashSetOf(
-            PROJECT_NAME + ".js",
-            PROJECT_NAME + ".meta.js"
-    );
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR =
-        KotlinPackage.hashSetOf(
-            PROJECT_NAME + ".js",
-            PROJECT_NAME + ".meta.js",
-            "lib/kotlin.js",
-            "lib/stdlib.meta.js",
-            "lib/jslib-example.js",
-            "lib/file0.js",
-            "lib/dir/file1.js",
-            "lib/META-INF-ex/file2.js",
-            "lib/res0.js",
-            "lib/resdir/res1.js");
-    private static final Set<String> EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR =
-        KotlinPackage.hashSetOf(
-            PROJECT_NAME + ".js",
-            PROJECT_NAME + ".meta.js",
-            "custom/kotlin.js",
-            "custom/stdlib.meta.js",
-            "custom/jslib-example.js",
-            "custom/file0.js",
-            "custom/dir/file1.js",
-            "custom/META-INF-ex/file2.js",
-            "custom/res0.js",
-            "custom/resdir/res1.js");
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        File sourceFilesRoot = new File(TEST_DATA_PATH + "general/" + getTestName(false));
-        workDir = copyTestDataToTmpDir(sourceFilesRoot);
-        getOrCreateProjectDir();
+    throws(Exception::class)
+    override fun setUp() {
+        super.setUp()
+        val sourceFilesRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
+        workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(sourceFilesRoot)
+        getOrCreateProjectDir()
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        FileUtil.delete(workDir);
-        super.tearDown();
+    throws(Exception::class)
+    override fun tearDown() {
+        FileUtil.delete(workDir)
+        super.tearDown()
     }
 
-    @Override
-    protected File doGetProjectDir() throws IOException {
-        return workDir;
+    throws(IOException::class)
+    override fun doGetProjectDir(): File {
+        return workDir
     }
 
-    private void initProject() {
-        addJdk(JDK_NAME);
-        loadProject(workDir.getAbsolutePath() + File.separator + PROJECT_NAME + ".ipr");
+    private fun initProject() {
+        addJdk(JDK_NAME)
+        loadProject(workDir.getAbsolutePath() + File.separator + PROJECT_NAME + ".ipr")
     }
 
-    public void doTest() {
-        initProject();
-        makeAll().assertSuccessful();
+    public fun doTest() {
+        initProject()
+        makeAll().assertSuccessful()
     }
 
-    public void doTestWithRuntime() {
-        initProject();
-        addKotlinRuntimeDependency();
-        makeAll().assertSuccessful();
+    public fun doTestWithRuntime() {
+        initProject()
+        addKotlinRuntimeDependency()
+        makeAll().assertSuccessful()
     }
 
-    public void doTestWithKotlinJavaScriptLibrary() {
-        initProject();
-        addKotlinJavaScriptStdlibDependency();
-        createKotlinJavaScriptLibraryArchive();
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY_JAR));
-        makeAll().assertSuccessful();
+    public fun doTestWithKotlinJavaScriptLibrary() {
+        initProject()
+        addKotlinJavaScriptStdlibDependency()
+        createKotlinJavaScriptLibraryArchive()
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        makeAll().assertSuccessful()
     }
 
-    public void testKotlinProject() {
-        doTest();
+    public fun testKotlinProject() {
+        doTest()
 
-        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"));
+        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
     }
 
-    public void testKotlinJavaScriptProject() {
-        initProject();
-        addKotlinJavaScriptStdlibDependency();
-        makeAll().assertSuccessful();
+    public fun testKotlinJavaScriptProject() {
+        initProject()
+        addKotlinJavaScriptStdlibDependency()
+        makeAll().assertSuccessful()
 
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testKotlinJavaScriptProjectWithTwoModules() {
-        initProject();
-        addKotlinJavaScriptStdlibDependency();
-        makeAll().assertSuccessful();
+    public fun testKotlinJavaScriptProjectWithTwoModules() {
+        initProject()
+        addKotlinJavaScriptStdlibDependency()
+        makeAll().assertSuccessful()
 
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY, contentOfOutputDir(ADDITIONAL_MODULE_NAME));
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY, contentOfOutputDir(ADDITIONAL_MODULE_NAME))
 
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-        checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME));
-        checkWhen(new Action[]{ touch("src/test1.kt"), touch("module2/src/module2.kt")}, null, k2jsOutput(PROJECT_NAME,
-                                                                                                          ADDITIONAL_MODULE_NAME));
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
+        checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME))
+        checkWhen(arrayOf(touch("src/test1.kt"), touch("module2/src/module2.kt")), null, k2jsOutput(PROJECT_NAME, ADDITIONAL_MODULE_NAME))
     }
 
-    public void testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
-        initProject();
-        File jslibJar = PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath();
-        File jslibDir = new File(workDir, "KotlinJavaScript");
+    public fun testKotlinJavaScriptProjectWithDirectoryAsStdlib() {
+        initProject()
+        val jslibJar = PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()
+        val jslibDir = File(workDir, "KotlinJavaScript")
         try {
-            ZipUtil.extract(jslibJar, jslibDir, null);
+            ZipUtil.extract(jslibJar, jslibDir, null)
         }
-        catch (IOException ex) {
-            throw new IllegalStateException(ex.getMessage());
-        }
-        addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir);
-        makeAll().assertSuccessful();
-
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-    }
-
-    public void testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
-        initProject();
-        addKotlinJavaScriptStdlibDependency();
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY));
-        makeAll().assertSuccessful();
-
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-    }
-
-    public void testKotlinJavaScriptProjectWithLibrary() {
-        doTestWithKotlinJavaScriptLibrary();
-
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-    }
-
-    public void testKotlinJavaScriptProjectWithLibraryCustomOutputDir() {
-        doTestWithKotlinJavaScriptLibrary();
-
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-    }
-
-    public void testKotlinJavaScriptProjectWithLibraryNoCopy() {
-        doTestWithKotlinJavaScriptLibrary();
-
-        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY, contentOfOutputDir(PROJECT_NAME));
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME));
-    }
-
-    public void testKotlinJavaScriptProjectWithLibraryAndErrors() {
-        initProject();
-        addKotlinJavaScriptStdlibDependency();
-        createKotlinJavaScriptLibraryArchive();
-        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, new File(workDir, KOTLIN_JS_LIBRARY_JAR));
-        makeAll().assertFailed();
-
-        assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME));
-    }
-
-    public void testExcludeFolderInSourceRoot() {
-        doTest();
-
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "Foo.class");
-        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
-
-        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
-    }
-
-    public void testExcludeModuleFolderInSourceRootOfAnotherModule() {
-        doTest();
-
-        for (JpsModule module : myProject.getModules()) {
-            assertFilesExistInOutput(module, "Foo.class");
+        catch (ex: IOException) {
+            throw IllegalStateException(ex.getMessage())
         }
 
-        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
-        checkWhen(touch("src/module2/src/foo.kt"), null, new String[] {klass("module2", "Foo")});
+        addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir)
+        makeAll().assertSuccessful()
+
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testExcludeFileUsingCompilerSettings() {
-        doTest();
+    public fun testKotlinJavaScriptProjectWithDirectoryAsLibrary() {
+        initProject()
+        addKotlinJavaScriptStdlibDependency()
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
+        makeAll().assertSuccessful()
 
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
-        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
-
-        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
-        checkWhen(touch("src/Excluded.kt"), null, NOTHING );
-        checkWhen(touch("src/dir/YetAnotherExcluded.kt"), null, NOTHING);
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testExcludeFolderNonRecursivelyUsingCompilerSettings() {
-        doTest();
+    public fun testKotlinJavaScriptProjectWithLibrary() {
+        doTestWithKotlinJavaScriptLibrary()
 
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
-        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
-
-        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
-        checkWhen(touch("src/dir/subdir/bar.kt"), null, new String[] { klass("kotlinProject", "Bar")} );
-
-        checkWhen(touch("src/dir/Excluded.kt"), null, NOTHING );
-        checkWhen(touch("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING);
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testExcludeFolderRecursivelyUsingCompilerSettings() {
-        doTest();
+    public fun testKotlinJavaScriptProjectWithLibraryCustomOutputDir() {
+        doTestWithKotlinJavaScriptLibrary()
 
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
-        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
-
-        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
-
-        checkWhen(touch("src/exclude/Excluded.kt"), null, NOTHING);
-        checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING);
-        checkWhen(touch("src/exclude/subdir/Excluded.kt"), null, NOTHING);
-        checkWhen(touch("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING);
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testManyFiles() {
-        doTest();
+    public fun testKotlinJavaScriptProjectWithLibraryNoCopy() {
+        doTestWithKotlinJavaScriptLibrary()
 
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
-        checkWhen(touch("src/Bar.kt"),
-                  new String[] {"src/Bar.kt"},
-                  new String[] {klass("kotlinProject", "foo.Bar")});
-
-        checkWhen(del("src/main.kt"),
-                  new String[] {"src/Bar.kt", "src/boo.kt"},
-                  mergeArrays(
-                      packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"),
-                      packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"),
-                      new String[]{ klass("kotlinProject", "foo.Bar") }
-                  ));
-        assertFilesExistInOutput(module, "boo/BooPackage.class", "foo/Bar.class");
-        assertFilesNotExistInOutput(module, "foo/FooPackage.class");
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
-        checkWhen(touch("src/Bar.kt"), null, new String[] {klass("kotlinProject", "foo.Bar")});
+        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY, contentOfOutputDir(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
-    public void testManyFilesForPackage() {
-        doTest();
+    public fun testKotlinJavaScriptProjectWithLibraryAndErrors() {
+        initProject()
+        addKotlinJavaScriptStdlibDependency()
+        createKotlinJavaScriptLibraryArchive()
+        addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
+        makeAll().assertFailed()
 
-        JpsModule module = myProject.getModules().get(0);
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
-
-        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
-        checkWhen(touch("src/Bar.kt"),
-                  new String[] {"src/Bar.kt"},
-                  new String[] {
-                          klass("kotlinProject", "foo.Bar"),
-                          klass("kotlinProject", "foo.FooPackage"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")});
-
-        checkWhen(del("src/main.kt"),
-                  new String[] {"src/Bar.kt", "src/boo.kt"},
-                  mergeArrays(
-                          packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"),
-                          packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"),
-                          packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"),
-                          new String[] {klass("kotlinProject", "foo.Bar")}
-                  ));
-        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
-
-        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
-        checkWhen(touch("src/Bar.kt"), null,
-                  new String[] {
-                          klass("kotlinProject", "foo.Bar"),
-                          klass("kotlinProject", "foo.FooPackage"),
-                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")
-                  });
+        TestCase.assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
     }
 
-    public void testKotlinProjectTwoFilesInOnePackage() {
-        doTest();
+    public fun testExcludeFolderInSourceRoot() {
+        doTest()
 
-        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"));
-        checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"));
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "Foo.class")
+        assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
 
-        checkWhen(new Action[]{ del("src/test1.kt"), del("src/test2.kt") }, NOTHING,
-                  new String[] {
-                          packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
-                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
-                          klass("kotlinProject", "_DefaultPackage")
-                  });
-
-        assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class");
+        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
     }
 
-    public void testKotlinJavaProject() {
-        doTestWithRuntime();
+    public fun testExcludeModuleFolderInSourceRootOfAnotherModule() {
+        doTest()
+
+        for (module in myProject.getModules()) {
+            assertFilesExistInOutput(module, "Foo.class")
+        }
+
+        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        checkWhen(touch("src/module2/src/foo.kt"), null, arrayOf(klass("module2", "Foo")))
     }
 
-    public void testJKJProject() {
-        doTestWithRuntime();
+    public fun testExcludeFileUsingCompilerSettings() {
+        doTest()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class")
+        assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
+
+        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        checkWhen(touch("src/Excluded.kt"), null, NOTHING)
+        checkWhen(touch("src/dir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
-    public void testKJKProject() {
-        doTestWithRuntime();
+    public fun testExcludeFolderNonRecursivelyUsingCompilerSettings() {
+        doTest()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class")
+        assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
+
+        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+        checkWhen(touch("src/dir/subdir/bar.kt"), null, arrayOf(klass("kotlinProject", "Bar")))
+
+        checkWhen(touch("src/dir/Excluded.kt"), null, NOTHING)
+        checkWhen(touch("src/dir/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
-    public void testKJCircularProject() {
-        doTestWithRuntime();
+    public fun testExcludeFolderRecursivelyUsingCompilerSettings() {
+        doTest()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class")
+        assertFilesNotExistInOutput(module, *EXCLUDE_FILES)
+
+        checkWhen(touch("src/foo.kt"), null, arrayOf(klass("kotlinProject", "Foo")))
+
+        checkWhen(touch("src/exclude/Excluded.kt"), null, NOTHING)
+        checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING)
+        checkWhen(touch("src/exclude/subdir/Excluded.kt"), null, NOTHING)
+        checkWhen(touch("src/exclude/subdir/YetAnotherExcluded.kt"), null, NOTHING)
     }
 
-    public void testJKJInheritanceProject() {
-        doTestWithRuntime();
+    public fun testManyFiles() {
+        doTest()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar")))
+
+        checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
+        assertFilesExistInOutput(module, "boo/BooPackage.class", "foo/Bar.class")
+        assertFilesNotExistInOutput(module, "foo/FooPackage.class")
+
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar")))
     }
 
-    public void testKJKInheritanceProject() {
-        doTestWithRuntime();
+    public fun testManyFilesForPackage() {
+        doTest()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"))
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
+
+        checkWhen(del("src/main.kt"), arrayOf("src/Bar.kt", "src/boo.kt"), mergeArrays(packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"), packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"), arrayOf(klass("kotlinProject", "foo.Bar"))))
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class")
+
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"))
+        checkWhen(touch("src/Bar.kt"), null, arrayOf(klass("kotlinProject", "foo.Bar"), klass("kotlinProject", "foo.FooPackage"), packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")))
     }
 
-    public void testCircularDependenciesNoKotlinFiles() {
-        doTest();
+    public fun testKotlinProjectTwoFilesInOnePackage() {
+        doTest()
+
+        checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"))
+        checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"))
+
+        checkWhen(arrayOf(del("src/test1.kt"), del("src/test2.kt")), NOTHING, arrayOf(packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"), packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"), klass("kotlinProject", "_DefaultPackage")))
+
+        assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class")
     }
 
-    public void testCircularDependenciesDifferentPackages() {
-        initProject();
-        BuildResult result = makeAll();
+    public fun testKotlinJavaProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testJKJProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testKJKProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testKJCircularProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testJKJInheritanceProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testKJKInheritanceProject() {
+        doTestWithRuntime()
+    }
+
+    public fun testCircularDependenciesNoKotlinFiles() {
+        doTest()
+    }
+
+    public fun testCircularDependenciesDifferentPackages() {
+        initProject()
+        val result = makeAll()
 
         // Check that outputs are located properly
-        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Package.class");
-        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Package.class");
+        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Package.class")
+        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Package.class")
 
-        result.assertSuccessful();
+        result.assertSuccessful()
 
-        checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Package"));
-        checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Package"));
+        checkWhen(touch("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Package"))
+        checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Package"))
     }
 
-    public void testCircularDependenciesSamePackage() throws IOException {
-        initProject();
-        BuildResult result = makeAll();
-        result.assertSuccessful();
+    throws(IOException::class)
+    public fun testCircularDependenciesSamePackage() {
+        initProject()
+        val result = makeAll()
+        result.assertSuccessful()
 
         // Check that outputs are located properly
-        File facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class");
-        File facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class");
-        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA");
-        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB");
+        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class")
+        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
 
-        checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"));
-        checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"));
+        checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+        checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
     }
 
-    public void testCircularDependencyWithReferenceToOldVersionLib() throws IOException {
-        initProject();
+    throws(IOException::class)
+    public fun testCircularDependencyWithReferenceToOldVersionLib() {
+        initProject()
 
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(
-                workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false);
+        val libraryJar = MockLibraryUtil.compileLibraryToJar(workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false)
 
-        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false,
-                      "module-lib", libraryJar);
+        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
 
-        BuildResult result = makeAll();
-        result.assertSuccessful();
+        val result = makeAll()
+        result.assertSuccessful()
     }
 
-    public void testDependencyToOldKotlinLib() throws IOException {
-        initProject();
+    throws(IOException::class)
+    public fun testDependencyToOldKotlinLib() {
+        initProject()
 
-        File libraryJar = MockLibraryUtil.compileLibraryToJar(
-                workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false);
+        val libraryJar = MockLibraryUtil.compileLibraryToJar(workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false)
 
-        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar);
+        AbstractKotlinJpsBuildTestCase.addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar)
 
-        addKotlinRuntimeDependency();
+        addKotlinRuntimeDependency()
 
-        BuildResult result = makeAll();
-        result.assertSuccessful();
+        val result = makeAll()
+        result.assertSuccessful()
     }
 
-    private void createKotlinJavaScriptLibraryArchive() {
-        File jarFile = new File(workDir, KOTLIN_JS_LIBRARY_JAR);
+    private fun createKotlinJavaScriptLibraryArchive() {
+        val jarFile = File(workDir, KOTLIN_JS_LIBRARY_JAR)
         try {
-            ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
-            ZipUtil.addDirToZipRecursively(zip, jarFile, new File(PATH_TO_KOTLIN_JS_LIBRARY), "", null, null);
-            zip.close();
+            val zip = ZipOutputStream(FileOutputStream(jarFile))
+            ZipUtil.addDirToZipRecursively(zip, jarFile, File(PATH_TO_KOTLIN_JS_LIBRARY), "", null, null)
+            zip.close()
         }
-        catch (FileNotFoundException ex) {
-            throw new IllegalStateException(ex.getMessage());
+        catch (ex: FileNotFoundException) {
+            throw IllegalStateException(ex.getMessage())
         }
-        catch (IOException ex) {
-            throw new IllegalStateException(ex.getMessage());
+        catch (ex: IOException) {
+            throw IllegalStateException(ex.getMessage())
         }
+
     }
 
-    @NotNull
-    private static String[] k2jsOutput(String ...moduleNames) {
-        int length = moduleNames.length;
-        String[] result = new String[2 * length];
-        int index = 0;
-        for(String moduleName : moduleNames) {
-            File outputDir = new File("out/production/" + moduleName);
-            result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName).getPath());
-            result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName).getPath());
+    private fun contentOfOutputDir(moduleName: String): Set<String> {
+        val outputDir = "out/production/$moduleName"
+        val baseDir = File(workDir, outputDir)
+        val files = FileUtil.findFilesByMask(Pattern.compile(".*"), baseDir)
+        val result = HashSet<String>()
+        for (file in files) {
+            val relativePath = FileUtil.getRelativePath(baseDir, file)
+            assert(relativePath != null, "relativePath should not be null")
+            result.add(toSystemIndependentName(relativePath))
         }
-        return result;
+        return result
     }
 
-    @NotNull
-    private Set<String> contentOfOutputDir(String moduleName) {
-        String outputDir = "out/production/" + moduleName;
-        File baseDir = new File(workDir, outputDir);
-        List<File> files = FileUtil.findFilesByMask(Pattern.compile(".*"), baseDir);
-        Set<String> result = new HashSet<String>();
-        for(File file : files) {
-            String relativePath = FileUtil.getRelativePath(baseDir, file);
-            assert relativePath != null : "relativePath should not be null";
-            result.add(toSystemIndependentName(relativePath));
-        }
-        return result;
-    }
-
-    @NotNull
-    private static Set<String> getMethodsOfClass(@NotNull File classFile) throws IOException {
-        final Set<String> result = new TreeSet<String>();
-        new ClassReader(FileUtil.loadFileBytes(classFile)).accept(new ClassVisitor(Opcodes.ASM5) {
-            @Override
-            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                result.add(name);
-                return null;
+    public fun testReexportedDependency() {
+        initProject()
+        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, ContainerUtil.filter(myProject.getModules(), object : Condition<JpsModule> {
+            override fun value(module: JpsModule): Boolean {
+                return module.getName() == "module2"
             }
-        }, 0);
-        return result;
+        }), true)
+        makeAll().assertSuccessful()
     }
 
-    public void testReexportedDependency() {
-        initProject();
-        addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE,
-                                   ContainerUtil.filter(myProject.getModules(), new Condition<JpsModule>() {
-                                       @Override
-                                       public boolean value(JpsModule module) {
-                                           return module.getName().equals("module2");
-                                       }
-                                   }), true
-        );
-        makeAll().assertSuccessful();
+    throws(InterruptedException::class)
+    public fun testDoNotCreateUselessKotlinIncrementalCaches() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        val storageRoot = BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()
+        TestCase.assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        TestCase.assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
-    public void testDoNotCreateUselessKotlinIncrementalCaches() throws InterruptedException {
-        initProject();
-        makeAll().assertSuccessful();
-
-        File storageRoot = new BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot();
-        assertTrue(new File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists());
-        assertFalse(new File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists());
-    }
-
-    @NotNull
-    private JpsModule findModule(@NotNull String name) {
-        for (JpsModule module : myProject.getModules()) {
-            if (module.getName().equals(name)) {
-                return module;
+    private fun findModule(name: String): JpsModule {
+        for (module in myProject.getModules()) {
+            if (module.getName() == name) {
+                return module
             }
         }
-        throw new IllegalStateException("Couldn't find module " + name);
+        throw IllegalStateException("Couldn't find module $name")
     }
 
-    private static void assertFilesExistInOutput(JpsModule module, String... relativePaths) {
-        for (String path : relativePaths) {
-            File outputFile = findFileInOutputDir(module, path);
-            assertTrue("Output not written: " +
-                       outputFile.getAbsolutePath() +
-                       "\n Directory contents: \n" +
-                       dirContents(outputFile.getParentFile()),
-                       outputFile.exists());
-        }
+    private fun checkWhen(action: Action, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
+        checkWhen(arrayOf(action), pathsToCompile, pathsToDelete)
     }
 
-    private static File findFileInOutputDir(JpsModule module, String relativePath) {
-        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
-        assertNotNull(outputUrl);
-        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
-        return new File(outputDir, relativePath);
-    }
-
-
-    private static void assertFilesNotExistInOutput(JpsModule module, String... relativePaths) {
-        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
-        assertNotNull(outputUrl);
-        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
-        for (String path : relativePaths) {
-            File outputFile = new File(outputDir, path);
-            assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path + "\"",
-                        outputFile.exists());
-        }
-    }
-
-    private static String dirContents(File dir) {
-        File[] files = dir.listFiles();
-        if (files == null) {
-            return "<not found>";
-        }
-        StringBuilder builder = new StringBuilder();
-        for (File file : files) {
-            builder.append(" * ").append(file.getName()).append("\n");
-        }
-        return builder.toString();
-    }
-
-    private void checkWhen(Action action, @Nullable String[] pathsToCompile, @Nullable String[] pathsToDelete) {
-        checkWhen(new Action[]{action}, pathsToCompile, pathsToDelete);
-    }
-
-    private void checkWhen(Action[] actions, @Nullable String[] pathsToCompile, @Nullable String[] pathsToDelete) {
-        for (Action action : actions) {
-            action.apply();
+    private fun checkWhen(actions: Array<Action>, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
+        for (action in actions) {
+            action.apply()
         }
 
-        makeAll().assertSuccessful();
+        makeAll().assertSuccessful()
 
         if (pathsToCompile != null) {
-            assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, pathsToCompile);
+            assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, *pathsToCompile)
         }
 
         if (pathsToDelete != null) {
-            assertDeleted(pathsToDelete);
+            assertDeleted(*pathsToDelete)
         }
     }
 
-    private static String klass(String moduleName, String classFqName) {
-        String outputDirPrefix = "out/production/" + moduleName + "/";
-        return outputDirPrefix + classFqName.replace('.', '/') + ".class";
+    private fun packageClasses(moduleName: String, fileName: String, packageClassFqName: String): Array<String> {
+        return arrayOf(klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName))
     }
 
-    private String[] packageClasses(String moduleName, String fileName, String packageClassFqName) {
-        return new String[] {klass(moduleName, packageClassFqName), packagePartClass(moduleName, fileName, packageClassFqName)};
-    }
-
-    private String packagePartClass(String moduleName, String fileName, String packageClassFqName) {
-        String path = FileUtilRt.toSystemIndependentName(new File(workDir, fileName).getAbsolutePath());
-        LightVirtualFile fakeVirtualFile = new LightVirtualFile(path) {
-            @NotNull
-            @Override
-            public String getPath() {
+    private fun packagePartClass(moduleName: String, fileName: String, packageClassFqName: String): String {
+        val path = FileUtilRt.toSystemIndependentName(File(workDir, fileName).getAbsolutePath())
+        val fakeVirtualFile = object : LightVirtualFile(path) {
+            override fun getPath(): String {
                 // strip extra "/" from the beginning
-                return super.getPath().substring(1);
+                return super.getPath().substring(1)
             }
-        };
-
-        FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName(new FqName(packageClassFqName), fakeVirtualFile);
-        return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName));
-    }
-
-    public static String[] mergeArrays(String[]... stringArrays) {
-        Set<String> result = new HashSet<String>();
-        for (String[] array : stringArrays) {
-            result.addAll(Arrays.asList(array));
-        }
-        return ArrayUtil.toStringArray(result);
-    }
-
-    private enum Operation {
-        CHANGE, DELETE
-    }
-
-    protected Action touch(String path) {
-        return new Action(Operation.CHANGE, path);
-    }
-
-    protected Action del(String path) {
-        return new Action(Operation.DELETE, path);
-    }
-
-    protected class Action {
-        private final Operation operation;
-        private final String path;
-
-        protected Action(Operation operation, String path) {
-            this.operation = operation;
-            this.path = path;
         }
 
-        protected void apply() {
-            File file = new File(workDir, path);
+        val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(FqName(packageClassFqName), fakeVirtualFile)
+        return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName))
+    }
 
-            if (operation == Operation.CHANGE) {
-                change(file.getAbsolutePath());
+    private enum class Operation {
+        CHANGE,
+        DELETE
+    }
+
+    protected fun touch(path: String): Action {
+        return Action(Operation.CHANGE, path)
+    }
+
+    protected fun del(path: String): Action {
+        return Action(Operation.DELETE, path)
+    }
+
+    protected inner class Action protected constructor(private val operation: Operation, private val path: String) {
+
+        protected fun apply() {
+            val file = File(workDir, path)
+
+            if (operation === Operation.CHANGE) {
+                JpsBuildTestCase.change(file.getAbsolutePath())
             }
-            else if(operation == Operation.DELETE) {
-                assertTrue("Can not delete file \"" + file.getAbsolutePath() + "\"", file.delete());
+            else if (operation === Operation.DELETE) {
+                TestCase.assertTrue("Can not delete file \"" + file.getAbsolutePath() + "\"", file.delete())
             }
             else {
-                fail("Unknown operation");
+                TestCase.fail("Unknown operation")
             }
+        }
+    }
+
+    companion object {
+        private val PROJECT_NAME = "kotlinProject"
+        private val ADDITIONAL_MODULE_NAME = "module2"
+        private val JDK_NAME = "IDEA_JDK"
+
+        private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
+        private val NOTHING = arrayOf<String>()
+        private val KOTLIN_JS_LIBRARY = "jslib-example"
+        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
+        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = KotlinPackage.hashSetOf("$ADDITIONAL_MODULE_NAME.js", "$ADDITIONAL_MODULE_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js", "lib/jslib-example.js", "lib/file0.js", "lib/dir/file1.js", "lib/META-INF-ex/file2.js", "lib/res0.js", "lib/resdir/res1.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "custom/kotlin.js", "custom/stdlib.meta.js", "custom/jslib-example.js", "custom/file0.js", "custom/dir/file1.js", "custom/META-INF-ex/file2.js", "custom/res0.js", "custom/resdir/res1.js")
+
+        private fun k2jsOutput(vararg moduleNames: String): Array<String> {
+            val length = moduleNames.size()
+            val result = arrayOfNulls<String>(2 * length)
+            var index = 0
+            for (moduleName in moduleNames) {
+                val outputDir = File("out/production/$moduleName")
+                result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName).getPath())
+                result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName).getPath())
+            }
+            return result
+        }
+
+        throws(IOException::class)
+        private fun getMethodsOfClass(classFile: File): Set<String> {
+            val result = TreeSet<String>()
+            ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
+                    result.add(name)
+                    return null
+                }
+            }, 0)
+            return result
+        }
+
+        private fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
+            for (path in relativePaths) {
+                val outputFile = findFileInOutputDir(module, path)
+                TestCase.assertTrue("Output not written: " + outputFile.getAbsolutePath() + "\n Directory contents: \n" + dirContents(outputFile.getParentFile()), outputFile.exists())
+            }
+        }
+
+        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
+            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
+            TestCase.assertNotNull(outputUrl)
+            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
+            return File(outputDir, relativePath)
+        }
+
+
+        private fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
+            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
+            TestCase.assertNotNull(outputUrl)
+            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
+            for (path in relativePaths) {
+                val outputFile = File(outputDir, path)
+                TestCase.assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path + "\"", outputFile.exists())
+            }
+        }
+
+        private fun dirContents(dir: File): String {
+            val files = dir.listFiles() ?: return "<not found>"
+            val builder = StringBuilder()
+            for (file in files) {
+                builder.append(" * ").append(file.getName()).append("\n")
+            }
+            return builder.toString()
+        }
+
+        private fun klass(moduleName: String, classFqName: String): String {
+            val outputDirPrefix = "out/production/$moduleName/"
+            return outputDirPrefix + classFqName.replace('.', '/') + ".class"
+        }
+
+        public fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
+            val result = HashSet<String>()
+            for (array in stringArrays) {
+                result.addAll(Arrays.asList(*array))
+            }
+            return ArrayUtil.toStringArray(result)
         }
     }
 }
