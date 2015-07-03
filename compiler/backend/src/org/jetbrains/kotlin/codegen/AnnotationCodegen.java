@@ -119,6 +119,12 @@ public abstract class AnnotationCodegen {
                 generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
             }
         }
+        if (annotated instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
+            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
+            }
+        }
     }
 
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
@@ -158,6 +164,15 @@ public abstract class AnnotationCodegen {
         Class<?> annotationClass = isNullableType ? Nullable.class : NotNull.class;
 
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
+    }
+
+    private void generateRetentionAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+        RetentionPolicy policy = getRetentionPolicy(classDescriptor);
+        String descriptor = Type.getType(Retention.class).getDescriptor();
+        if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+        AnnotationVisitor visitor = visitAnnotation(descriptor, true);
+        visitor.visitEnum("value", Type.getType(RetentionPolicy.class).getDescriptor(), policy.name());
+        visitor.visitEnd();
     }
 
     private void generateAnnotationIfNotPresent(Set<String> annotationDescriptorsAlreadyPresent, Class<?> annotationClass) {
@@ -318,8 +333,37 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
+    private enum KotlinRetention {
+        SOURCE(RetentionPolicy.SOURCE),
+        BINARY(RetentionPolicy.CLASS),
+        RUNTIME(RetentionPolicy.RUNTIME);
+
+        final RetentionPolicy mapped;
+
+        KotlinRetention(RetentionPolicy mapped) {
+            this.mapped = mapped;
+        }
+    }
+
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
+        AnnotationDescriptor kotlinAnnotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
+        if (kotlinAnnotation != null) {
+            for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> argument: kotlinAnnotation.getAllValueArguments().entrySet()) {
+                if ("retention".equals(argument.getKey().getName().asString()) && argument.getValue() instanceof EnumValue) {
+                    ClassDescriptor enumEntry = ((EnumValue) argument.getValue()).getValue();
+                    JetType classObjectType = getClassObjectType(enumEntry);
+                    if (classObjectType != null) {
+                        if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
+                            String entryName = enumEntry.getName().asString();
+                            for (KotlinRetention retention: KotlinRetention.values()) {
+                                if (retention.name().equals(entryName)) return retention.mapped;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {
             Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
@@ -337,7 +381,7 @@ public abstract class AnnotationCodegen {
             }
         }
 
-        return RetentionPolicy.CLASS;
+        return RetentionPolicy.RUNTIME;
     }
 
     @NotNull

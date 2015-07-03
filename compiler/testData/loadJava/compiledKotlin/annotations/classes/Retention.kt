@@ -2,6 +2,4 @@
 //SKIP_IN_RUNTIME_TEST
 package test
 
-import java.lang.annotation.*
-
-Retention(RetentionPolicy.RUNTIME) annotation class Anno
+annotation(retention = AnnotationRetention.RUNTIME) class Anno

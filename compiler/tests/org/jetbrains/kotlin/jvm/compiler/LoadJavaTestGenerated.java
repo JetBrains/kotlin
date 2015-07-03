@@ -1942,6 +1942,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("TargetedAnnotation.kt")
+            public void testTargetedAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -2028,6 +2034,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("ClassObjectInStaticNestedClass.kt")
                 public void testClassObjectInStaticNestedClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("DataClass.kt")
+                public void testDataClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/DataClass.kt");
                     doTestCompiledKotlin(fileName);
                 }
 

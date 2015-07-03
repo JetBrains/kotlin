@@ -1,0 +1,5 @@
+package test
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation() public final annotation class TargetedAnnotation : kotlin.Annotation {
+    /*primary*/ public constructor TargetedAnnotation()
+}

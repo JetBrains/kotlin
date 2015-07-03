@@ -1,10 +1,7 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.java
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(
         val i: Int = 1,
         val s: String = "a",
         val a: Ann2 = Ann2(),

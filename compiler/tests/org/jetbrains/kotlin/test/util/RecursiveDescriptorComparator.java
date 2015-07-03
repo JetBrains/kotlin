@@ -40,20 +40,26 @@ import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.lang.annotation.Retention;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public class RecursiveDescriptorComparator {
+
+    private static final Set<FqName> excludedAnnotations = new HashSet<FqName>();
+    static {
+        excludedAnnotations.add(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME));
+        excludedAnnotations.add(new FqName(Retention.class.getName()));
+    }
+
     private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
-                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
+                    options.setExcludedAnnotationClasses(excludedAnnotations);
                     options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                     options.setIncludePropertyConstant(true);
                     options.setNameShortness(NameShortness.FULLY_QUALIFIED);

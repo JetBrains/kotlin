@@ -366,13 +366,22 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAndSortAnnotationArguments(descriptor: AnnotationDescriptor): List<String> {
-        return descriptor.getAllValueArguments().entrySet()
+        val allValueArguments = descriptor.getAllValueArguments()
+        val classDescriptor = if (renderDefaultAnnotationArguments) TypeUtils.getClassDescriptor(descriptor.getType()) else null
+        val parameterDescriptorsWithDefaultValue = classDescriptor?.getUnsubstitutedPrimaryConstructor()?.getValueParameters()?.filter {
+            it.declaresDefaultValue()
+        } ?: emptyList()
+        val defaultList = parameterDescriptorsWithDefaultValue.filter { !allValueArguments.containsKey(it) }.map {
+            "${it.getName().asString()} = ..."
+        }.sort()
+        val argumentList = allValueArguments.entrySet()
                 .map { entry ->
                     val name = entry.key.getName().asString()
-                    val value = renderConstant(entry.value)
+                    val value = if (!parameterDescriptorsWithDefaultValue.contains(entry.key)) renderConstant(entry.value) else "..."
                     "$name = $value"
                 }
                 .sort()
+        return (defaultList + argumentList).sort()
     }
 
     private fun renderConstant(value: CompileTimeConstant<*>): String {

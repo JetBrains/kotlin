@@ -47,6 +47,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("annotationJavaRetentionPolicyRuntime.kt")
+    public void testAnnotationJavaRetentionPolicyRuntime() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/annotationJavaRetentionPolicyRuntime.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("annotationRetentionPolicyClass.kt")
     public void testAnnotationRetentionPolicyClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/annotationRetentionPolicyClass.kt");

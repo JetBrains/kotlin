@@ -176,6 +176,7 @@ public interface DescriptorRendererOptions {
     public var flexibleTypesForCode: Boolean
     public var secondaryConstructorsAsPrimary: Boolean
     public var renderAccessors: Boolean
+    public var renderDefaultAnnotationArguments: Boolean
 }
 
 public enum class RenderingFormat {

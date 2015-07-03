@@ -1,12 +1,8 @@
 // KT-5665
 
-import java.lang.annotation.*
+annotation(retention = AnnotationRetention.RUNTIME) class First
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class First
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class Second(val value: String)
+annotation(retention = AnnotationRetention.RUNTIME) class Second(val value: String)
 
 enum class E {
     @First

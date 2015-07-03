@@ -1,8 +1,4 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(
         val p1: Byte,
         val p2: Short,
         val p3: Int,
