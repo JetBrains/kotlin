@@ -654,6 +654,19 @@
                         </else>
                     </if>
 
+                    <!--
+                         This one needs to be deleted because otherwise it gets onto the classpath
+                         together with junit-4.10.jar and the classloading goes crazy that breaks
+                         many nice features of IDEA including diffs in the test console.
+                    -->
+                    <delete file="@{idea.dir}/lib/junit.jar"/>
+
+                    <!--
+                    Plugin depends on newer runtime and reflect jar from our bootstrap compiler.
+                    -->
+                    <delete file="@{idea.dir}/lib/kotlin-runtime.jar"/>
+                    <delete file="@{idea.dir}/lib/kotlin-reflect.jar"/>
+
                     <echo message="@{download.dir.intellij-core}/intellij-core-analysis.jar"/>
 
                     <mkdir dir="@{core-analysis}"/>
@@ -707,13 +720,6 @@
 
                     <mkdir dir="@{sources}"/>
                     <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.zip" overwrite="true"/>
-
-                    <!--
-                         This one needs to be deleted because otherwise it gets onto the classpath
-                         together with junit-4.10.jar and the classloading goes crazy that breaks
-                         many nice features of IDEA including diffs in the test console.
-                    -->
-                    <delete file="@{idea.dir}/lib/junit.jar"/>
                 </then>
             </if>
 
