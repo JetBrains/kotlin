@@ -73,8 +73,8 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
             val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
             val resolutionResults = injector.getCallResolver().resolveFunctionCall(
                     BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
-            assert (resolutionResults.isSingleResult()) {
-                "Removing type arguments changed resolve for: ${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}"
+            if (!resolutionResults.isSingleResult()) {
+                return false
             }
 
             val args = originalCall.getTypeArguments()
