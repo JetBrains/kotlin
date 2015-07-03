@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
@@ -89,14 +91,14 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     @Override
-    public boolean processUsage(JetChangeInfo changeInfo, JetCallElement element) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull JetCallElement element, @NotNull UsageInfo[] allUsages) {
         if (shouldSkipUsage(element)) return true;
 
         changeNameIfNeeded(changeInfo, element);
 
         if (element.getValueArgumentList() != null) {
             if (changeInfo.isParameterSetOrOrderChanged()) {
-                updateArgumentsAndReceiver(changeInfo, element);
+                updateArgumentsAndReceiver(changeInfo, element, allUsages);
             }
             else {
                 changeArgumentNames(changeInfo, element);
@@ -319,7 +321,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return newExpression;
     }
 
-    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element) {
+    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element, @NotNull UsageInfo[] allUsages) {
         JetValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
         List<? extends ValueArgument> oldArguments = element.getValueArguments();
@@ -347,11 +349,18 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
 
             JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
-            String defaultValueText = defaultValueForCall != null
-                                      ? substituteReferences(defaultValueForCall,
-                                                             parameterInfo.getDefaultValueParameterReferences(),
-                                                             psiFactory).getText()
-                                      : "";
+
+            String defaultValueText;
+            if (ChangeSignaturePackage.isInsideOfCallerBody(element, allUsages)) {
+                defaultValueText = parameterInfo.getName();
+            }
+            else {
+                defaultValueText = defaultValueForCall != null
+                                   ? substituteReferences(defaultValueForCall,
+                                                          parameterInfo.getDefaultValueParameterReferences(),
+                                                          psiFactory).getText()
+                                   : "";
+            }
 
             if (isNamedCall) {
                 String newName = parameterInfo.getInheritedName(callee);

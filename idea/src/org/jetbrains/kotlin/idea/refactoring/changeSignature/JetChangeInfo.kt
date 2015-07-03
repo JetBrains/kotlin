@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
-import com.intellij.refactoring.changeSignature.ChangeInfo
-import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor
-import com.intellij.refactoring.changeSignature.JavaChangeInfo
-import com.intellij.refactoring.changeSignature.ParameterInfoImpl
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.refactoring.changeSignature.*
+import com.intellij.refactoring.util.CanonicalTypes
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.VisibilityUtil
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -37,16 +38,18 @@ import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.LinkedHashSet
 import kotlin.properties.Delegates
 
 public class JetChangeInfo(
@@ -57,7 +60,8 @@ public class JetChangeInfo(
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
         receiver: JetParameterInfo? = methodDescriptor.receiver,
-        val context: PsiElement
+        val context: PsiElement,
+        primaryPropagationTargets: Collection<PsiElement> = emptyList()
 ): ChangeInfo {
     var receiverParameterInfo: JetParameterInfo? = receiver
         set(value: JetParameterInfo?) {
@@ -147,6 +151,42 @@ public class JetChangeInfo(
     fun isReceiverTypeChanged(): Boolean = receiverParameterInfo?.getTypeText() != methodDescriptor.renderOriginalReceiverType()
 
     override fun getLanguage(): Language = JetLanguage.INSTANCE
+
+    public var propagationTargetUsageInfos: List<UsageInfo> = ArrayList()
+        private set
+
+    public var primaryPropagationTargets: Collection<PsiElement> = emptyList()
+        set(value: Collection<PsiElement>) {
+            $primaryPropagationTargets = value
+
+            val result = LinkedHashSet<UsageInfo>()
+
+            fun add(element: PsiElement) {
+                element.unwrapped?.let {
+                    val usageInfo = when (it) {
+                        is JetNamedFunction, is JetConstructor<*>, is JetClassOrObject ->
+                            KotlinCallerUsage(it as JetNamedDeclaration)
+                        is PsiMethod ->
+                            CallerUsageInfo(it, true, true)
+                        else ->
+                            return
+                    }
+
+                    result.add(usageInfo)
+                }
+            }
+
+            for (caller in value) {
+                add(caller)
+                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach { add(it) }
+            }
+
+            propagationTargetUsageInfos = result.toList()
+        }
+
+    init {
+        this.primaryPropagationTargets = primaryPropagationTargets
+    }
 
     public fun getNewSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
@@ -239,13 +279,22 @@ public class JetChangeInfo(
                 VisibilityUtil.getVisibilityModifier(currentPsiMethod.getModifierList())
             else
                 PsiModifier.PACKAGE_LOCAL
-            val javaChangeInfo = ChangeSignatureProcessor(getMethod().getProject(),
-                                                          originalPsiMethod,
-                                                          false,
-                                                          newVisibility,
-                                                          newName,
-                                                          newReturnType ?: PsiType.VOID,
-                                                          newParameters).getChangeInfo()
+            val propagationTargets = primaryPropagationTargets.asSequence()
+                    .map { it.getRepresentativeLightMethod() }
+                    .filterNotNull()
+                    .toSet()
+            val javaChangeInfo = ChangeSignatureProcessor(
+                    getMethod().getProject(),
+                    originalPsiMethod,
+                    false,
+                    newVisibility,
+                    newName,
+                    CanonicalTypes.createTypeWrapper(newReturnType ?: PsiType.VOID),
+                    newParameters,
+                    arrayOf<ThrownExceptionInfo>(),
+                    propagationTargets,
+                    emptySet()
+            ).getChangeInfo()
             javaChangeInfo.updateMethod(currentPsiMethod)
 
             return javaChangeInfo
@@ -336,7 +385,7 @@ public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
 public val JetChangeInfo.oldName: String?
     get() = (methodDescriptor.getMethod() as? JetFunction)?.getName()
 
-public val JetChangeInfo.affectedFunctions: Collection<UsageInfo> get() = methodDescriptor.affectedCallables
+public fun JetChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 
 public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMethodDescriptor): JetChangeInfo {
     val method = getMethod() as PsiMethod
@@ -369,7 +418,7 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
                               name = info.getName(),
                               type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
                               defaultValueForCall = defaultValueExpr)) {
-            currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(currentType)
+            currentTypeText = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(currentType)
             this
         }
     }

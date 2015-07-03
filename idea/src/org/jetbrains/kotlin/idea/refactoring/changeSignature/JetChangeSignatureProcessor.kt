@@ -26,6 +26,7 @@ import com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase
 import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor
 import com.intellij.refactoring.changeSignature.JavaChangeSignatureUsageProcessor
 import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
@@ -52,7 +53,7 @@ public class JetChangeSignatureProcessor(project: Project,
                 KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), getChangeInfo().getMethod())
             }
         }
-        super.findUsages().filterIsInstanceTo(allUsages, javaClass<JetUsageInfo<PsiElement>>())
+        super.findUsages().filterTo(allUsages) { it is JetUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
 
         return allUsages.toTypedArray()
     }

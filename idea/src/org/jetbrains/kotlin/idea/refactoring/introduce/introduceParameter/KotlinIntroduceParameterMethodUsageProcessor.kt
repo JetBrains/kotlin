@@ -100,7 +100,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
                 .map { it.unwrapped }
                 .filterIsInstance<JetFunction>()
         return (kotlinFunctions + element).all {
-            JetCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it)
+            JetCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
         }
     }
 
@@ -116,7 +116,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         else {
             JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
         }
-        return delegateUsage.processUsage(changeInfo, callElement)
+        return delegateUsage.processUsage(changeInfo, callElement, usages)
     }
 
     override fun processAddSuperCall(data: IntroduceParameterData, usage: UsageInfo, usages: Array<out UsageInfo>): Boolean = true

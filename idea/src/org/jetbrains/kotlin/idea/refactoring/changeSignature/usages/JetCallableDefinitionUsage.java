@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.usageView.UsageInfo;
 import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +166,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element, @NotNull UsageInfo[] allUsages) {
         if (!(element instanceof JetNamedDeclaration)) return true;
 
         JetPsiFactory psiFactory = JetPsiFactory(element.getProject());

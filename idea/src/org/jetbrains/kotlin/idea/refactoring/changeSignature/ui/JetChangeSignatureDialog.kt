@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.VerticalFlowLayout
@@ -30,18 +29,15 @@ import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.changeSignature.CallerChooserBase
 import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase
 import com.intellij.refactoring.ui.ComboBoxVisibilityPanel
-import com.intellij.refactoring.ui.VisibilityPanelBase
 import com.intellij.ui.DottedBorder
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.Consumer
-import com.intellij.util.Function
 import com.intellij.util.IJSwingUtilities
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.table.JBTableRow
@@ -157,6 +153,10 @@ public class JetChangeSignatureDialog(
 
     override fun createCallerChooser(title: String, treeToReuse: Tree?, callback: Consumer<Set<PsiElement>>) =
             KotlinCallerChooser(myMethod.getMethod(), myProject, title, treeToReuse, callback)
+
+    // Forbid receiver propagation
+    override fun mayPropagateParameters() =
+            getParameters().any { it.isNewParameter && it != parametersTableModel.getReceiver() }
 
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<JetParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
@@ -364,6 +364,7 @@ public class JetChangeSignatureDialog(
                                             getVisibility(),
                                             getMethodName(),
                                             myDefaultValueContext)
+        changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList();
         return JetChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle())
     }
 
