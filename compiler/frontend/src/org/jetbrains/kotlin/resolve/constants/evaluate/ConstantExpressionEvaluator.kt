@@ -387,7 +387,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             val varargType = resultingDescriptor.getValueParameters().first().getVarargElementType()!!
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
-            return ArrayValue(arguments, resultingDescriptor.getReturnType()!!, true, arguments.any() { it.usesVariableAsConstant() })
+            return ArrayValue(arguments, resultingDescriptor.getReturnType()!!, arguments.any() { it.usesVariableAsConstant() })
         }
 
         // Ann()

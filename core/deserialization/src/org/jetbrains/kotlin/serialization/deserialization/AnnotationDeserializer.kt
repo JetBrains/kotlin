@@ -110,9 +110,11 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                 val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
 
                 ArrayValue(
-                        arrayElements.map { resolveValue(expectedElementType, it, nameResolver) },
+                        arrayElements.map {
+                            resolveValue(expectedElementType, it, nameResolver)
+                        },
                         actualArrayType,
-                        true, true
+                        true
                 )
             }
             else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")

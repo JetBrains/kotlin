@@ -249,7 +249,7 @@ public class AnnotationResolver {
 
             if (parameterDescriptor.declaresDefaultValue() && constants.isEmpty()) return null;
 
-            return new ArrayValue(constants, parameterDescriptor.getType(), true, usesVariableAsConstant);
+            return new ArrayValue(constants, parameterDescriptor.getType(), usesVariableAsConstant);
         }
         else {
             // we should actually get only one element, but just in case of getting many, we take the last one

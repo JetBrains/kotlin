@@ -107,7 +107,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             elements.trimToSize()
-                            arguments[parameter] = ArrayValue(elements, parameter.getType(), true, false)
+                            arguments[parameter] = ArrayValue(elements, parameter.getType(), false)
                         }
                     }
                 }

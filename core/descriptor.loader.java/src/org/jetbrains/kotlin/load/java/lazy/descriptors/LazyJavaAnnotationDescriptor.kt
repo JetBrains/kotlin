@@ -125,7 +125,7 @@ class LazyJavaAnnotationDescriptor(
         val values = elements.map {
             argument -> resolveAnnotationArgument(argument) ?: NullValue
         }
-        return ArrayValue(values, valueParameter.getType(), true, values.any { it.usesVariableAsConstant() })
+        return ArrayValue(values, valueParameter.getType(), values.any { it.usesVariableAsConstant() })
     }
 
     private fun resolveFromEnumValue(element: JavaField?): CompileTimeConstant<*>? {
