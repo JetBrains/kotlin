@@ -126,7 +126,6 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/arrayListGet.kt");
         String text = generateToText();
 
-        assertTrue(text.contains("checkExpressionValueIsNotNull"));
         assertTrue(text.contains("checkParameterIsNotNull"));
     }
 

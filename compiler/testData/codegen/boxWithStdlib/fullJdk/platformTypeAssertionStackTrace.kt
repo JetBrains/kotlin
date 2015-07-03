@@ -1,8 +1,7 @@
-import java.util.Arrays
-import java.util.ArrayList
+import java.util.*
 
 fun box(): String {
-    val a = ArrayList<String>()
+    val a = ArrayList<String>() as AbstractList<String>
     a.add(null)
     try {
         val b: String = a[0]
