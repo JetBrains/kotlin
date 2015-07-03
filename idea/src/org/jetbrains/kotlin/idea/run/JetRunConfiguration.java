@@ -34,6 +34,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetDeclaration;
@@ -250,6 +252,14 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         if (name != null) {
             MAIN_CLASS_NAME = name.asString();
         }
+    }
+
+    @Override
+    public String suggestedName() {
+        if (MAIN_CLASS_NAME == null) {
+            return null;
+        }
+        return StringUtil.trimEnd(MAIN_CLASS_NAME, "." + PackageClassUtils.getPackageClassName(new FqName(MAIN_CLASS_NAME)));
     }
 
     private static class MyJavaCommandLineState extends JavaCommandLineState {

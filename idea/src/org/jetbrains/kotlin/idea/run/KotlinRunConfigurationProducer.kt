@@ -70,8 +70,8 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
                                           configuration: JetRunConfiguration,
                                           fqName: FqName) {
         configuration.setModule(module)
-        configuration.setName(StringUtil.trimEnd(fqName.asString(), "." + PackageClassUtils.getPackageClassName(fqName)))
         configuration.setRunClass(fqName.asString())
+        configuration.setGeneratedName()
     }
 
     override fun isConfigurationFromContext(configuration: JetRunConfiguration, context: ConfigurationContext): Boolean {
