@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public class ByteValue(
         value: Byte,
-        canBeUsedInAnnotations: Boolean,
-        pure: Boolean,
-        usesVaraiableAsConstant: Boolean
-) : IntegerValueConstant<Byte>(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : IntegerValueConstant<Byte>(value, parameters) {
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getByteType()
 

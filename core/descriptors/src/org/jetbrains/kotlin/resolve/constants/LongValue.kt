@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public class LongValue(
         value: Long,
-        canBeUsedInAnnotations: Boolean,
-        pure: Boolean,
-        usesVariableAsConstant: Boolean
-) : IntegerValueConstant<Long>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : IntegerValueConstant<Long>(value, parameters) {
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getLongType()
 

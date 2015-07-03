@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.types.JetType
 
 public class BooleanValue(
         value: Boolean,
-        canBeUseInAnnotation: Boolean,
-        usesVariableAsConstant: Boolean
-) : CompileTimeConstant<Boolean>(value, canBeUseInAnnotation, false, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Boolean>(value, parameters) {
+    override fun isPure(): Boolean = false
+
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getBooleanType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitBooleanValue(this, data)

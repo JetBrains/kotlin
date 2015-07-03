@@ -22,27 +22,25 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 public fun createCompileTimeConstant(
         value: Any?,
-        canBeUsedInAnnotation: Boolean,
-        isPureIntConstant: Boolean,
-        usesVariableAsConstant: Boolean = false,
+        parameters: CompileTimeConstant.Parameters,
         expectedType: JetType? = null
 ): CompileTimeConstant<*>? {
     // TODO: primitive arrays
     if (expectedType == null) {
         when(value) {
-            is Byte -> return ByteValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-            is Short -> return ShortValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-            is Int -> return IntValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-            is Long -> return LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+            is Byte -> return ByteValue(value, parameters)
+            is Short -> return ShortValue(value, parameters)
+            is Int -> return IntValue(value, parameters)
+            is Long -> return LongValue(value, parameters)
         }
     }
     return when(value) {
-        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant, expectedType)
-        is Char -> CharValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-        is Float -> FloatValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
-        is Double -> DoubleValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
-        is Boolean -> BooleanValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
-        is String -> StringValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
+        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), parameters, expectedType)
+        is Char -> CharValue(value, parameters)
+        is Float -> FloatValue(value, parameters)
+        is Double -> DoubleValue(value, parameters)
+        is Boolean -> BooleanValue(value, parameters)
+        is String -> StringValue(value, parameters)
         null -> NullValue
         else -> null
     }
@@ -50,32 +48,37 @@ public fun createCompileTimeConstant(
 
 private fun getIntegerValue(
         value: Long,
-        canBeUsedInAnnotation: Boolean,
-        isPureIntConstant: Boolean,
-        usesVariableAsConstant: Boolean,
+        parameters: CompileTimeConstant.Parameters,
         expectedType: JetType
 ): CompileTimeConstant<*>? {
     fun defaultIntegerValue(value: Long) = when (value) {
-        value.toInt().toLong() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-        else -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        value.toInt().toLong() -> IntValue(value.toInt(), parameters)
+        else -> LongValue(value, parameters)
     }
 
     if (TypeUtils.noExpectedType(expectedType) || expectedType.isError()) {
-        return IntegerValueTypeConstant(value, canBeUsedInAnnotation, usesVariableAsConstant)
+        return IntegerValueTypeConstant(value, parameters)
     }
 
     val notNullExpected = TypeUtils.makeNotNullable(expectedType)
     return when {
-        KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-        KotlinBuiltIns.isShort(notNullExpected) -> when (value) {
-            value.toShort().toLong() -> ShortValue(value.toShort(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-            else -> defaultIntegerValue(value)
-        }
-        KotlinBuiltIns.isByte(notNullExpected) -> when (value) {
-            value.toByte().toLong() -> ByteValue(value.toByte(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
-            else -> defaultIntegerValue(value)
-        }
-        KotlinBuiltIns.isChar(notNullExpected) -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        KotlinBuiltIns.isLong(notNullExpected) -> LongValue(value, parameters)
+
+        KotlinBuiltIns.isShort(notNullExpected) ->
+            if (value == value.toShort().toLong())
+                ShortValue(value.toShort(), parameters)
+            else
+                defaultIntegerValue(value)
+
+        KotlinBuiltIns.isByte(notNullExpected) ->
+            if (value == value.toByte().toLong())
+                ByteValue(value.toByte(), parameters)
+            else
+                defaultIntegerValue(value)
+
+        KotlinBuiltIns.isChar(notNullExpected) ->
+            IntValue(value.toInt(), parameters)
+
         else -> defaultIntegerValue(value)
     }
 }

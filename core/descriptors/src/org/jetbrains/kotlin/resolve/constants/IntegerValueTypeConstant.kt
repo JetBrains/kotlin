@@ -25,9 +25,10 @@ import java.util.Collections
 
 public class IntegerValueTypeConstant(
         value: Number,
-        canBeUsedInAnnotations: Boolean,
-        usesVariableAsConstant: Boolean
-) : IntegerValueConstant<Number>(value, canBeUsedInAnnotations, true, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : IntegerValueConstant<Number>(value, parameters) {
+
+    override fun isPure() = true
 
     private val typeConstructor = IntegerValueTypeConstructor(value.toLong())
 

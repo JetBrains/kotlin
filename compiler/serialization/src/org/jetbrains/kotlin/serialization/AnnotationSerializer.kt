@@ -121,11 +121,12 @@ public object AnnotationSerializer {
                 // TODO: IntegerValueTypeConstant should not occur in annotation arguments
                 val number = constant.getValue(type)
                 val specificConstant = with(KotlinBuiltIns.getInstance()) {
+                    val parameters = CompileTimeConstant.Parameters.ThrowException
                     when (type) {
-                        getLongType() -> LongValue(number.toLong(), true, true, true)
-                        getIntType() -> IntValue(number.toInt(), true, true, true)
-                        getShortType() -> ShortValue(number.toShort(), true, true, true)
-                        getByteType() -> ByteValue(number.toByte(), true, true, true)
+                        getLongType() -> LongValue(number.toLong(), parameters)
+                        getIntType() -> IntValue(number.toInt(), parameters)
+                        getShortType() -> ShortValue(number.toShort(), parameters)
+                        getByteType() -> ByteValue(number.toByte(), parameters)
                         else -> throw IllegalStateException("Integer constant $constant has non-integer type $type")
                     }
                 }

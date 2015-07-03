@@ -22,9 +22,10 @@ import org.jetbrains.kotlin.types.JetType
 
 public class DoubleValue(
         value: Double,
-        canBeUsedInAnnotations: Boolean,
-        usesVariableAsConstant: Boolean
-) : CompileTimeConstant<Double>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Double>(value, parameters) {
+
+    override fun isPure() = false
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getDoubleType()
 

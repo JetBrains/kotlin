@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.types.JetType
 
 public class StringValue(
         value: String,
-        canBeUsedInAnnotations: Boolean,
-        usesVariableAsConstant: Boolean
-) : CompileTimeConstant<String>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<String>(value, parameters) {
+    override fun isPure() = false
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getStringType()
 

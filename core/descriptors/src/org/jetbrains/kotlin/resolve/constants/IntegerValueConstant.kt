@@ -18,7 +18,5 @@ package org.jetbrains.kotlin.resolve.constants
 
 public abstract class IntegerValueConstant<T> protected constructor(
         value: T,
-        canBeUsedInAnnotations: Boolean,
-        pure: Boolean,
-        usesVariableAsConstant: Boolean
-) : CompileTimeConstant<T>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant)
+        parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<T>(value, parameters)

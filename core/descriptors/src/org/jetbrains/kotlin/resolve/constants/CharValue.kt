@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public class CharValue(
         value: Char,
-        canBeUsedInAnnotations: Boolean,
-        pure: Boolean,
-        usesVariableAsConstant: Boolean
-) : IntegerValueConstant<Char>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : IntegerValueConstant<Char>(value, parameters) {
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getCharType()
 

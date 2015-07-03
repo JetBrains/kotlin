@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.types.JetType
 
 public class FloatValue(
         value: Float,
-        canBeUsedInAnnotations: Boolean,
-        usesVariableAsConstant: Boolean
-) : CompileTimeConstant<Float>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Float>(value, parameters) {
+    override fun isPure() = false
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getFloatType()
 

@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public class ShortValue(
         value: Short,
-        canBeUsedInAnnotations: Boolean,
-        pure: Boolean,
-        usesVariableAsConstant: Boolean
-) : IntegerValueConstant<Short>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
+        parameters: CompileTimeConstant.Parameters
+) : IntegerValueConstant<Short>(value, parameters) {
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getShortType()
 

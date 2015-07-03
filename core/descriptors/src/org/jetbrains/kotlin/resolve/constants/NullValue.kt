@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
-public object NullValue : CompileTimeConstant<Void?>(null, false, false, false) {
+public object NullValue : CompileTimeConstant<Void?>(null, CompileTimeConstant.Parameters.Impl(false, false, false)) {
 
     override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getNullableNothingType()
 

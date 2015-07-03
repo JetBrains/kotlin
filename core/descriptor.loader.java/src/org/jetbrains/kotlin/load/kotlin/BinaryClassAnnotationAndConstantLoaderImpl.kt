@@ -66,8 +66,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         }
 
         val compileTimeConstant = createCompileTimeConstant(
-                normalizedValue, canBeUsedInAnnotation = true, isPureIntConstant = true,
-                usesVariableAsConstant = true, expectedType = null
+                normalizedValue, CompileTimeConstant.Parameters.ThrowException
         )
         return compileTimeConstant
     }
@@ -107,7 +106,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             elements.trimToSize()
-                            arguments[parameter] = ArrayValue(elements, parameter.getType(), false)
+                            arguments[parameter] = ArrayValue(elements, parameter.getType(), CompileTimeConstant.Parameters.ThrowException)
                         }
                     }
                 }
@@ -130,7 +129,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name)
                     if (classifier is ClassDescriptor) {
-                        return EnumValue(classifier, false)
+                        return EnumValue(classifier)
                     }
                 }
                 return ErrorValue.create("Unresolved enum entry: $enumClassId.$name")
@@ -141,9 +140,10 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             private fun createConstant(name: Name?, value: Any?): CompileTimeConstant<*> {
-                return createCompileTimeConstant(value, canBeUsedInAnnotation = true, isPureIntConstant = false,
-                                                 usesVariableAsConstant = false, expectedType = null)
-                       ?: ErrorValue.create("Unsupported annotation argument: $name")
+                return createCompileTimeConstant(
+                        value,
+                        CompileTimeConstant.Parameters.ThrowException
+                ) ?: ErrorValue.create("Unsupported annotation argument: $name")
             }
 
             private fun setArgumentValueByName(name: Name, argumentValue: CompileTimeConstant<*>) {

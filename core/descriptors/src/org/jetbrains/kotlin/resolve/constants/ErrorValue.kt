@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-public abstract class ErrorValue : CompileTimeConstant<Unit>(Unit, true, false, false) {
+public abstract class ErrorValue : CompileTimeConstant<Unit>(Unit, CompileTimeConstant.Parameters.Impl(true, false, false)) {
 
     deprecated("Should not be called, for this is not a real value, but a indication of an error")
     override val value: Unit

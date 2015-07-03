@@ -68,17 +68,18 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
             value: Value,
             nameResolver: NameResolver
     ): CompileTimeConstant<*> {
+        val parameters = CompileTimeConstant.Parameters.ThrowException
         val result = when (value.getType()) {
-            Type.BYTE -> ByteValue(value.getIntValue().toByte(), true, true, true)
-            Type.CHAR -> CharValue(value.getIntValue().toChar(), true, true, true)
-            Type.SHORT -> ShortValue(value.getIntValue().toShort(), true, true, true)
-            Type.INT -> IntValue(value.getIntValue().toInt(), true, true, true)
-            Type.LONG -> LongValue(value.getIntValue(), true, true, true)
-            Type.FLOAT -> FloatValue(value.getFloatValue(), true, true)
-            Type.DOUBLE -> DoubleValue(value.getDoubleValue(), true, true)
-            Type.BOOLEAN -> BooleanValue(value.getIntValue() != 0L, true, true)
+            Type.BYTE -> ByteValue(value.getIntValue().toByte(), parameters)
+            Type.CHAR -> CharValue(value.getIntValue().toChar(), parameters)
+            Type.SHORT -> ShortValue(value.getIntValue().toShort(), parameters)
+            Type.INT -> IntValue(value.getIntValue().toInt(), parameters)
+            Type.LONG -> LongValue(value.getIntValue(), parameters)
+            Type.FLOAT -> FloatValue(value.getFloatValue(), parameters)
+            Type.DOUBLE -> DoubleValue(value.getDoubleValue(), parameters)
+            Type.BOOLEAN -> BooleanValue(value.getIntValue() != 0L, parameters)
             Type.STRING -> {
-                StringValue(nameResolver.getString(value.getStringValue()), true, true)
+                StringValue(nameResolver.getString(value.getStringValue()), parameters)
             }
             Type.CLASS -> {
                 // TODO: support class literals
@@ -114,7 +115,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                             resolveValue(expectedElementType, it, nameResolver)
                         },
                         actualArrayType,
-                        true
+                        parameters
                 )
             }
             else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")
@@ -135,7 +136,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
         if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
             val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName)
             if (enumEntry is ClassDescriptor) {
-                return EnumValue(enumEntry, true)
+                return EnumValue(enumEntry)
             }
         }
         return ErrorValue.create("Unresolved enum entry: $enumClassId.$enumEntryName")
