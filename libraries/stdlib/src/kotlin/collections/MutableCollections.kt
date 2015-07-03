@@ -21,7 +21,7 @@ public fun <T> MutableCollection<in T>.addAll(sequence: Sequence<T>) {
  * Adds all elements of the given [array] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
-    for (item in array) add(item)
+    addAll(array.asList())
 }
 
 /**
@@ -54,7 +54,7 @@ public fun <T> MutableCollection<in T>.removeAll(array: Array<out T>) {
 public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
     when (iterable) {
         is Collection -> retainAll(iterable)
-        else -> retainAll(iterable.toSet())
+        else -> retainAll(iterable.toHashSet())
     }
 }
 
@@ -62,5 +62,5 @@ public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
  * Retains only elements of the given [array] in this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.retainAll(array: Array<out T>) {
-    retainAll(array.toSet())
+    retainAll(array.toHashSet())
 }

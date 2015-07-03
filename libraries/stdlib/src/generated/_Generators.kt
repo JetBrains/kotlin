@@ -600,89 +600,9 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 /**
  * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
-public fun <T> Array<out T>.plus(array: Array<out T>): List<T> {
-    val answer = ArrayList<T>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun BooleanArray.plus(array: Array<out Boolean>): List<Boolean> {
-    val answer = ArrayList<Boolean>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun ByteArray.plus(array: Array<out Byte>): List<Byte> {
-    val answer = ArrayList<Byte>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun CharArray.plus(array: Array<out Char>): List<Char> {
-    val answer = ArrayList<Char>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun DoubleArray.plus(array: Array<out Double>): List<Double> {
-    val answer = ArrayList<Double>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun FloatArray.plus(array: Array<out Float>): List<Float> {
-    val answer = ArrayList<Float>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun IntArray.plus(array: Array<out Int>): List<Int> {
-    val answer = ArrayList<Int>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun LongArray.plus(array: Array<out Long>): List<Long> {
-    val answer = ArrayList<Long>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun ShortArray.plus(array: Array<out Short>): List<Short> {
-    val answer = ArrayList<Short>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
+public fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
+    val answer = ArrayList<T>(this.size() + array.size())
+    answer.addAll(this)
     answer.addAll(array)
     return answer
 }
@@ -691,224 +611,354 @@ public fun ShortArray.plus(array: Array<out Short>): List<Short> {
  * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrDefault(10) + array.size())
-    for (thisElement in this) answer.add(thisElement)
+    if (this is Collection) return this.plus(array)
+    val answer = ArrayList<T>()
+    answer.addAll(this)
     answer.addAll(array)
     return answer
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
-public fun <T> Array<out T>.plus(collection: Iterable<T>): List<T> {
-    val answer = ArrayList<T>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
+public fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
+    return this.plus(array.asList())
+}
+
+/**
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
+ */
+public fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
+    result.addAll(this)
+    result.addAll(array)
+    return result
+}
+
+public fun <T> Array<out T>.plus(collection: Collection<T>): Array<out T> {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as Array<out T>
+}
+
+public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as BooleanArray
+}
+
+public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as ByteArray
+}
+
+public fun CharArray.plus(collection: Collection<Char>): CharArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as CharArray
+}
+
+public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as DoubleArray
+}
+
+public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as FloatArray
+}
+
+public fun IntArray.plus(collection: Collection<Int>): IntArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as IntArray
+}
+
+public fun LongArray.plus(collection: Collection<Long>): LongArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as LongArray
+}
+
+public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as ShortArray
+}
+
+public fun <T> Collection<T>.plus(collection: Collection<T>): List<T> {
+    val answer = ArrayList<T>(this.size() + collection.size())
+    answer.addAll(this)
     answer.addAll(collection)
     return answer
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun BooleanArray.plus(collection: Iterable<Boolean>): List<Boolean> {
-    val answer = ArrayList<Boolean>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
+public fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
+    if (collection is Collection) return this.plus(collection)
+    val answer = ArrayList<T>(this)
     answer.addAll(collection)
     return answer
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun ByteArray.plus(collection: Iterable<Byte>): List<Byte> {
-    val answer = ArrayList<Byte>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun CharArray.plus(collection: Iterable<Char>): List<Char> {
-    val answer = ArrayList<Char>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun DoubleArray.plus(collection: Iterable<Double>): List<Double> {
-    val answer = ArrayList<Double>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun FloatArray.plus(collection: Iterable<Float>): List<Float> {
-    val answer = ArrayList<Float>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun IntArray.plus(collection: Iterable<Int>): List<Int> {
-    val answer = ArrayList<Int>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun LongArray.plus(collection: Iterable<Long>): List<Long> {
-    val answer = ArrayList<Long>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun ShortArray.plus(collection: Iterable<Short>): List<Short> {
-    val answer = ArrayList<Short>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
 public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrDefault(10) + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
+    if (this is Collection) return this.plus(collection)
+    val answer = ArrayList<T>(0)
+    answer.addAll(this)
     answer.addAll(collection)
     return answer
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [collection]
  */
 public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
     return sequenceOf(this, collection.asSequence()).flatten()
 }
 
 /**
- * Returns a list containing all elements of original collection and then the given [element].
+ * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun <T> Array<out T>.plus(element: T): List<T> {
-    val answer = ArrayList<T>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
+public fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
+    result.addAll(this)
+    result.addAll(collection)
+    return result
+}
+
+public fun <T> Array<out T>.plus(collection: Array<out T>): Array<out T> {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as Array<out T>
+}
+
+public fun BooleanArray.plus(collection: BooleanArray): BooleanArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as BooleanArray
+}
+
+public fun ByteArray.plus(collection: ByteArray): ByteArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as ByteArray
+}
+
+public fun CharArray.plus(collection: CharArray): CharArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as CharArray
+}
+
+public fun DoubleArray.plus(collection: DoubleArray): DoubleArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as DoubleArray
+}
+
+public fun FloatArray.plus(collection: FloatArray): FloatArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as FloatArray
+}
+
+public fun IntArray.plus(collection: IntArray): IntArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as IntArray
+}
+
+public fun LongArray.plus(collection: LongArray): LongArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as LongArray
+}
+
+public fun ShortArray.plus(collection: ShortArray): ShortArray {
+    val thisSize = size()
+    val answer = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        answer[thisSize + i] = element
+    }
+    return answer as ShortArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun <T> Array<out T>.plus(element: T): Array<out T> {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as Array<out T>
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun BooleanArray.plus(element: Boolean): BooleanArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as BooleanArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ByteArray.plus(element: Byte): ByteArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as ByteArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun CharArray.plus(element: Char): CharArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as CharArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun DoubleArray.plus(element: Double): DoubleArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as DoubleArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun FloatArray.plus(element: Float): FloatArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as FloatArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun IntArray.plus(element: Int): IntArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as IntArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun LongArray.plus(element: Long): LongArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as LongArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ShortArray.plus(element: Short): ShortArray {
+    val answer = this.copyOf(size() + 1)
+    answer[size()] = element
+    return answer as ShortArray
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then the given [element].
+ */
+public fun <T> Collection<T>.plus(element: T): List<T> {
+    val answer = ArrayList<T>(size() + 1)
+    answer.addAll(this)
     answer.add(element)
     return answer
 }
 
 /**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun BooleanArray.plus(element: Boolean): List<Boolean> {
-    val answer = ArrayList<Boolean>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun ByteArray.plus(element: Byte): List<Byte> {
-    val answer = ArrayList<Byte>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun CharArray.plus(element: Char): List<Char> {
-    val answer = ArrayList<Char>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun DoubleArray.plus(element: Double): List<Double> {
-    val answer = ArrayList<Double>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun FloatArray.plus(element: Float): List<Float> {
-    val answer = ArrayList<Float>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun IntArray.plus(element: Int): List<Int> {
-    val answer = ArrayList<Int>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun LongArray.plus(element: Long): List<Long> {
-    val answer = ArrayList<Long>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun ShortArray.plus(element: Short): List<Short> {
-    val answer = ArrayList<Short>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
+ * Returns a list containing all elements of the original collection and then the given [element].
  */
 public fun <T> Iterable<T>.plus(element: T): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrNull()?.let { it + 1 } ?: 10)
-    for (thisElement in this) answer.add(thisElement)
+    if (this is Collection) return this.plus(element)
+    val answer = ArrayList<T>()
+    answer.addAll(this)
     answer.add(element)
     return answer
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then the given [element].
+ * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
 public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
     return sequenceOf(this, sequenceOf(element)).flatten()
+}
+
+/**
+ * Returns a set containing all elements of the original set and then the given [element].
+ */
+public fun <T> Set<T>.plus(element: T): Set<T> {
+    val copyOfSet = LinkedHashSet<T>(mapCapacity(size() + 1))
+    copyOfSet.addAll(this)
+    copyOfSet.add(element)
+    return copyOfSet
 }
 
 /**
