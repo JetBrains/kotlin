@@ -211,7 +211,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         return containerText != null ? containerText + "." + elementText : elementText;
     }
 
-    private static String renderNamedFunction(FunctionDescriptor descriptor) {
+    public static String renderNamedFunction(FunctionDescriptor descriptor) {
         DeclarationDescriptor descriptorForName = descriptor instanceof ConstructorDescriptor
                                                   ? descriptor.getContainingDeclaration()
                                                   : descriptor;

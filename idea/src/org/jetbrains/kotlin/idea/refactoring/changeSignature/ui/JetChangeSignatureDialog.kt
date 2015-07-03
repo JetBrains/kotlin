@@ -155,8 +155,8 @@ public class JetChangeSignatureDialog(
         return true
     }
 
-    override fun createCallerChooser(title: String, treeToReuse: Tree, callback: Consumer<Set<PsiElement>>) =
-            throw UnsupportedOperationException()
+    override fun createCallerChooser(title: String, treeToReuse: Tree?, callback: Consumer<Set<PsiElement>>) =
+            KotlinCallerChooser(myMethod.getMethod(), myProject, title, treeToReuse, callback)
 
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<JetParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
