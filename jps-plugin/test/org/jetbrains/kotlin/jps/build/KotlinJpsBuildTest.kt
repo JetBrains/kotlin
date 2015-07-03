@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.jps.build
 import com.google.common.collect.Lists
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.ZipUtil
-import kotlin.KotlinPackage
-import org.jetbrains.jps.builders.BuildResult
+import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -40,20 +41,136 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
+import java.util.Collections
+import java.util.HashSet
+import java.util.TreeSet
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
-
-import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
+import kotlin.test.*
 
 public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
+    companion object {
+        private val PROJECT_NAME = "kotlinProject"
+        private val ADDITIONAL_MODULE_NAME = "module2"
+        private val JDK_NAME = "IDEA_JDK"
 
-    throws(Exception::class)
+        private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
+        private val NOTHING = arrayOf<String>()
+        private val KOTLIN_JS_LIBRARY = "jslib-example"
+        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
+        private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
+        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = hashSetOf(
+                "$PROJECT_NAME.js",
+                "$PROJECT_NAME.meta.js",
+                "lib/kotlin.js",
+                "lib/stdlib.meta.js"
+        )
+        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = hashSetOf(
+                "$ADDITIONAL_MODULE_NAME.js",
+                "$ADDITIONAL_MODULE_NAME.meta.js",
+                "lib/kotlin.js",
+                "lib/stdlib.meta.js"
+        )
+        private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = hashSetOf(
+                "$PROJECT_NAME.js",
+                "$PROJECT_NAME.meta.js",
+                "lib/kotlin.js",
+                "lib/stdlib.meta.js",
+                "lib/jslib-example.js",
+                "lib/file0.js",
+                "lib/dir/file1.js",
+                "lib/META-INF-ex/file2.js",
+                "lib/res0.js",
+                "lib/resdir/res1.js"
+        )
+        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = hashSetOf(
+                "$PROJECT_NAME.js",
+                "$PROJECT_NAME.meta.js",
+                "custom/kotlin.js",
+                "custom/stdlib.meta.js",
+                "custom/jslib-example.js",
+                "custom/file0.js",
+                "custom/dir/file1.js",
+                "custom/META-INF-ex/file2.js",
+                "custom/res0.js",
+                "custom/resdir/res1.js"
+        )
+
+        private fun k2jsOutput(vararg moduleNames: String): Array<String> {
+            val list = arrayListOf<String>()
+            for (moduleName in moduleNames) {
+                val outputDir = File("out/production/$moduleName")
+                list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName).getPath()))
+                list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName).getPath()))
+            }
+            return list.toTypedArray()
+        }
+
+        private fun getMethodsOfClass(classFile: File): Set<String> {
+            val result = TreeSet<String>()
+            ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
+                    result.add(name)
+                    return null
+                }
+            }, 0)
+            return result
+        }
+
+        private fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
+            for (path in relativePaths) {
+                val outputFile = findFileInOutputDir(module, path)
+                assertTrue(outputFile.exists(), "Output not written: " + outputFile.getAbsolutePath() + "\n Directory contents: \n" + dirContents(outputFile.getParentFile()))
+            }
+        }
+
+        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
+            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
+            assertNotNull(outputUrl)
+            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
+            return File(outputDir, relativePath)
+        }
+
+
+        private fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
+            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
+            assertNotNull(outputUrl)
+            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
+            for (path in relativePaths) {
+                val outputFile = File(outputDir, path)
+                assertFalse(outputFile.exists(), "Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path + "\"")
+            }
+        }
+
+        private fun dirContents(dir: File): String {
+            val files = dir.listFiles() ?: return "<not found>"
+            val builder = StringBuilder()
+            for (file in files) {
+                builder.append(" * ").append(file.getName()).append("\n")
+            }
+            return builder.toString()
+        }
+
+        private fun klass(moduleName: String, classFqName: String): String {
+            val outputDirPrefix = "out/production/$moduleName/"
+            return outputDirPrefix + classFqName.replace('.', '/') + ".class"
+        }
+
+        public fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
+            val result = HashSet<String>()
+            for (array in stringArrays) {
+                result.addAll(Arrays.asList(*array))
+            }
+            return ArrayUtil.toStringArray(result)
+        }
+    }
+
     override fun setUp() {
         super.setUp()
         val sourceFilesRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
@@ -61,16 +178,12 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         getOrCreateProjectDir()
     }
 
-    throws(Exception::class)
     override fun tearDown() {
         FileUtil.delete(workDir)
         super.tearDown()
     }
 
-    throws(IOException::class)
-    override fun doGetProjectDir(): File {
-        return workDir
-    }
+    override fun doGetProjectDir(): File = workDir
 
     private fun initProject() {
         addJdk(JDK_NAME)
@@ -107,7 +220,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         addKotlinJavaScriptStdlibDependency()
         makeAll().assertSuccessful()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
@@ -116,8 +229,8 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         addKotlinJavaScriptStdlibDependency()
         makeAll().assertSuccessful()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY, contentOfOutputDir(ADDITIONAL_MODULE_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY, contentOfOutputDir(ADDITIONAL_MODULE_NAME))
 
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
         checkWhen(touch("module2/src/module2.kt"), null, k2jsOutput(ADDITIONAL_MODULE_NAME))
@@ -138,7 +251,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir)
         makeAll().assertSuccessful()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
@@ -148,28 +261,28 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY))
         makeAll().assertSuccessful()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
     public fun testKotlinJavaScriptProjectWithLibrary() {
         doTestWithKotlinJavaScriptLibrary()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
     public fun testKotlinJavaScriptProjectWithLibraryCustomOutputDir() {
         doTestWithKotlinJavaScriptLibrary()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
     public fun testKotlinJavaScriptProjectWithLibraryNoCopy() {
         doTestWithKotlinJavaScriptLibrary()
 
-        TestCase.assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY, contentOfOutputDir(PROJECT_NAME))
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
     }
 
@@ -180,7 +293,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         addKotlinJavaScriptDependency(KOTLIN_JS_LIBRARY, File(workDir, KOTLIN_JS_LIBRARY_JAR))
         makeAll().assertFailed()
 
-        TestCase.assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
+        assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
     }
 
     public fun testExcludeFolderInSourceRoot() {
@@ -333,7 +446,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Package"))
     }
 
-    throws(IOException::class)
     public fun testCircularDependenciesSamePackage() {
         initProject()
         val result = makeAll()
@@ -349,7 +461,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
     }
 
-    throws(IOException::class)
     public fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject()
 
@@ -361,7 +472,6 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         result.assertSuccessful()
     }
 
-    throws(IOException::class)
     public fun testDependencyToOldKotlinLib() {
         initProject()
 
@@ -399,7 +509,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         for (file in files) {
             val relativePath = FileUtil.getRelativePath(baseDir, file)
             assert(relativePath != null, "relativePath should not be null")
-            result.add(toSystemIndependentName(relativePath))
+            result.add(toSystemIndependentName(relativePath!!))
         }
         return result
     }
@@ -414,14 +524,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         makeAll().assertSuccessful()
     }
 
-    throws(InterruptedException::class)
     public fun testDoNotCreateUselessKotlinIncrementalCaches() {
         initProject()
         makeAll().assertSuccessful()
 
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()
-        TestCase.assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
-        TestCase.assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+        assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
+        assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
     }
 
     private fun findModule(name: String): JpsModule {
@@ -475,116 +584,23 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         DELETE
     }
 
-    protected fun touch(path: String): Action {
-        return Action(Operation.CHANGE, path)
-    }
+    protected fun touch(path: String): Action = Action(Operation.CHANGE, path)
 
-    protected fun del(path: String): Action {
-        return Action(Operation.DELETE, path)
-    }
+    protected fun del(path: String): Action = Action(Operation.DELETE, path)
 
-    protected inner class Action protected constructor(private val operation: Operation, private val path: String) {
+    protected fun change(filePath: String): Unit = JpsBuildTestCase.change(filePath)
 
-        protected fun apply() {
+    protected inner class Action constructor(private val operation: Operation, private val path: String) {
+        fun apply() {
             val file = File(workDir, path)
-
-            if (operation === Operation.CHANGE) {
-                JpsBuildTestCase.change(file.getAbsolutePath())
+            when (operation) {
+                Operation.CHANGE ->
+                    change(file.getAbsolutePath())
+                Operation.DELETE ->
+                    assertTrue(file.delete(), "Can not delete file \"" + file.getAbsolutePath() + "\"")
+                else ->
+                    fail("Unknown operation")
             }
-            else if (operation === Operation.DELETE) {
-                TestCase.assertTrue("Can not delete file \"" + file.getAbsolutePath() + "\"", file.delete())
-            }
-            else {
-                TestCase.fail("Unknown operation")
-            }
-        }
-    }
-
-    companion object {
-        private val PROJECT_NAME = "kotlinProject"
-        private val ADDITIONAL_MODULE_NAME = "module2"
-        private val JDK_NAME = "IDEA_JDK"
-
-        private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
-        private val NOTHING = arrayOf<String>()
-        private val KOTLIN_JS_LIBRARY = "jslib-example"
-        private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
-        private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
-        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_STDLIB_ONLY = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js")
-        private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = KotlinPackage.hashSetOf("$ADDITIONAL_MODULE_NAME.js", "$ADDITIONAL_MODULE_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js")
-        private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js")
-        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "lib/kotlin.js", "lib/stdlib.meta.js", "lib/jslib-example.js", "lib/file0.js", "lib/dir/file1.js", "lib/META-INF-ex/file2.js", "lib/res0.js", "lib/resdir/res1.js")
-        private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = KotlinPackage.hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js", "custom/kotlin.js", "custom/stdlib.meta.js", "custom/jslib-example.js", "custom/file0.js", "custom/dir/file1.js", "custom/META-INF-ex/file2.js", "custom/res0.js", "custom/resdir/res1.js")
-
-        private fun k2jsOutput(vararg moduleNames: String): Array<String> {
-            val length = moduleNames.size()
-            val result = arrayOfNulls<String>(2 * length)
-            var index = 0
-            for (moduleName in moduleNames) {
-                val outputDir = File("out/production/$moduleName")
-                result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName).getPath())
-                result[index++] = toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName).getPath())
-            }
-            return result
-        }
-
-        throws(IOException::class)
-        private fun getMethodsOfClass(classFile: File): Set<String> {
-            val result = TreeSet<String>()
-            ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.ASM5) {
-                override fun visitMethod(access: Int, name: String, desc: String, signature: String, exceptions: Array<String>): MethodVisitor? {
-                    result.add(name)
-                    return null
-                }
-            }, 0)
-            return result
-        }
-
-        private fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
-            for (path in relativePaths) {
-                val outputFile = findFileInOutputDir(module, path)
-                TestCase.assertTrue("Output not written: " + outputFile.getAbsolutePath() + "\n Directory contents: \n" + dirContents(outputFile.getParentFile()), outputFile.exists())
-            }
-        }
-
-        private fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
-            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
-            TestCase.assertNotNull(outputUrl)
-            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
-            return File(outputDir, relativePath)
-        }
-
-
-        private fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
-            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
-            TestCase.assertNotNull(outputUrl)
-            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
-            for (path in relativePaths) {
-                val outputFile = File(outputDir, path)
-                TestCase.assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path + "\"", outputFile.exists())
-            }
-        }
-
-        private fun dirContents(dir: File): String {
-            val files = dir.listFiles() ?: return "<not found>"
-            val builder = StringBuilder()
-            for (file in files) {
-                builder.append(" * ").append(file.getName()).append("\n")
-            }
-            return builder.toString()
-        }
-
-        private fun klass(moduleName: String, classFqName: String): String {
-            val outputDirPrefix = "out/production/$moduleName/"
-            return outputDirPrefix + classFqName.replace('.', '/') + ".class"
-        }
-
-        public fun mergeArrays(vararg stringArrays: Array<String>): Array<String> {
-            val result = HashSet<String>()
-            for (array in stringArrays) {
-                result.addAll(Arrays.asList(*array))
-            }
-            return ArrayUtil.toStringArray(result)
         }
     }
 }
