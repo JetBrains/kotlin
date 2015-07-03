@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 
@@ -150,7 +149,6 @@ public class ModifiersChecker {
             checkVarargsModifiers(modifierListOwner, descriptor);
         }
         checkPlatformNameApplicability(descriptor);
-        checkPublicFieldApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
     }
 
@@ -164,7 +162,6 @@ public class ModifiersChecker {
         reportIllegalModalityModifiers(modifierListOwner);
         reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
-        checkPublicFieldApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
     }
 
@@ -315,24 +312,6 @@ public class ModifiersChecker {
         }
     }
 
-    private void checkPublicFieldApplicability(@NotNull DeclarationDescriptor descriptor) {
-        AnnotationDescriptor annotation = AnnotationsPackage.findPublicFieldAnnotation(descriptor);
-        if (annotation == null) return;
-
-        JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
-        if (annotationEntry == null) return;
-
-        if (!(descriptor instanceof PropertyDescriptor)) {
-            trace.report(INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry));
-            return;
-        }
-
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (Boolean.FALSE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
-            trace.report(INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry));
-        }
-    }
-
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {
         checkIncompatibleModifiers(modifierList, trace, availableModifiers, availableCombinations);
     }
@@ -423,7 +402,7 @@ public class ModifiersChecker {
 
     private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
         for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
-            checker.check(declaration, descriptor, trace);
+            checker.check(declaration, descriptor, trace, trace.getBindingContext());
         }
     }
 
