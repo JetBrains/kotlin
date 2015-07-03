@@ -40,6 +40,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiPackage;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import kotlin.KotlinPackage;
@@ -246,9 +247,16 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Nullable
     @Override
     public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
+        FqName fqNameBeingRenamed = null;
         if (element instanceof JetDeclarationContainer) {
-            FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName((JetDeclarationContainer) element);
-            if (name != null && name.asString().equals(MAIN_CLASS_NAME)) {
+            fqNameBeingRenamed = KotlinRunConfigurationProducer.Companion.getStartClassFqName((JetDeclarationContainer) element);
+        }
+        else if (element instanceof PsiPackage) {
+            fqNameBeingRenamed = new FqName(((PsiPackage) element).getQualifiedName());
+        }
+        FqName ourClassName = new FqName(MAIN_CLASS_NAME);
+        if (fqNameBeingRenamed != null && fqNameBeingRenamed.isAncestorOf(ourClassName)) {
+            if (element instanceof JetDeclarationContainer) {
                 return new RefactoringElementAdapter() {
                     @Override
                     public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
@@ -261,6 +269,20 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
                     }
                 };
             }
+            else {
+                final String nameSuffix = MAIN_CLASS_NAME.substring(fqNameBeingRenamed.toString().length());
+                return new RefactoringElementAdapter() {
+                    @Override
+                    protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                        updateMainClassNameWithSuffix(newElement, nameSuffix);
+                    }
+
+                    @Override
+                    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+                        updateMainClassNameWithSuffix(newElement, nameSuffix);
+                    }
+                };
+            }
         }
         return null;
     }
@@ -270,6 +292,12 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
         if (name != null) {
             MAIN_CLASS_NAME = name.asString();
+        }
+    }
+
+    private void updateMainClassNameWithSuffix(PsiElement element, String suffix) {
+        if (element instanceof PsiPackage) {
+            MAIN_CLASS_NAME = ((PsiPackage) element).getQualifiedName() + suffix;
         }
     }
 
