@@ -38,7 +38,7 @@ public fun createContainerForReplWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
+    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
 
     useInstance(additionalFileScopeProvider)

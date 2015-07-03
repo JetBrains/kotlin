@@ -401,11 +401,17 @@ public abstract class ElementResolver protected constructor(
         return trace
     }
 
-    private fun createBodyResolver(resolveSession: ResolveSession, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter): BodyResolver {
+    private fun createBodyResolver(
+            resolveSession: ResolveSession,
+            trace: BindingTrace,
+            file: JetFile,
+            statementFilter: StatementFilter
+    ): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
+        val module = resolveSession.getModuleDescriptor()
         return createContainerForBodyResolve(
-                globalContext.withProject(file.getProject()).withModule(resolveSession.getModuleDescriptor()),
-                trace, getAdditionalCheckerProvider(file), statementFilter, getDynamicTypesSettings(file)
+                globalContext.withProject(file.getProject()).withModule(module),
+                trace, createAdditionalCheckerProvider(file, module), statementFilter, getDynamicTypesSettings(file)
         ).get<BodyResolver>()
     }
 
@@ -477,7 +483,7 @@ public abstract class ElementResolver protected constructor(
         return null
     }
 
-    protected abstract fun getAdditionalCheckerProvider(jetFile: JetFile): AdditionalCheckerProvider
+    protected abstract fun createAdditionalCheckerProvider(jetFile: JetFile, module: ModuleDescriptor): AdditionalCheckerProvider
     protected abstract fun getDynamicTypesSettings(jetFile: JetFile): DynamicTypesSettings
 
     private class BodyResolveContextForLazy(

@@ -53,7 +53,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 context,
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                KotlinJvmCheckerProvider, DynamicTypesSettings())
+                KotlinJvmCheckerProvider(context.module), DynamicTypesSettings()
+        )
 
         context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 

@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
-public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
+public class KotlinJvmCheckerProvider(private val module: ModuleDescriptor) : AdditionalCheckerProvider(
         additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(),
                                                LocalFunInlineChecker(),
                                                ReifiedTypeParameterAnnotationChecker(),

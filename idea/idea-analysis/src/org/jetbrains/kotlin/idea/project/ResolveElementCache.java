@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex;
 import org.jetbrains.kotlin.psi.JetElement;
@@ -88,8 +89,8 @@ public class ResolveElementCache extends ElementResolver implements BodyResolveC
 
     @NotNull
     @Override
-    public AdditionalCheckerProvider getAdditionalCheckerProvider(@NotNull JetFile jetFile) {
-        return TargetPlatformDetector.getPlatform(jetFile).getAdditionalCheckerProvider();
+    public AdditionalCheckerProvider createAdditionalCheckerProvider(@NotNull JetFile jetFile, @NotNull ModuleDescriptor module) {
+        return TargetPlatformDetector.getPlatform(jetFile).createAdditionalCheckerProvider(module);
     }
 
     @NotNull

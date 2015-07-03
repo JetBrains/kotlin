@@ -215,11 +215,9 @@ private object KotlinResolveDataProvider {
 
     fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalysisResult {
         try {
+            val module = resolveSession.getModuleDescriptor()
             if (analyzableElement is JetCodeFragment) {
-                return AnalysisResult.success(
-                        analyzeExpressionCodeFragment(resolveSession, analyzableElement),
-                        resolveSession.getModuleDescriptor()
-                )
+                return AnalysisResult.success(analyzeExpressionCodeFragment(resolveSession, analyzableElement), module)
             }
 
             val file = analyzableElement.getContainingJetFile()
@@ -232,12 +230,12 @@ private object KotlinResolveDataProvider {
 
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile())
             val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
-            val moduleContext = globalContext.withProject(project).withModule(resolveSession.getModuleDescriptor())
+            val moduleContext = globalContext.withProject(project).withModule(module)
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                     moduleContext,
                     resolveSession,
                     trace,
-                    targetPlatform.getAdditionalCheckerProvider(),
+                    targetPlatform.createAdditionalCheckerProvider(module),
                     targetPlatform.getDynamicTypesSettings(),
                     resolveSession.getBodyResolveCache()
             ).get<LazyTopDownAnalyzerForTopLevel>()
@@ -248,7 +246,7 @@ private object KotlinResolveDataProvider {
             )
             return AnalysisResult.success(
                     trace.getBindingContext(),
-                    resolveSession.getModuleDescriptor()
+                    module
             )
         }
         catch (e: ProcessCanceledException) {

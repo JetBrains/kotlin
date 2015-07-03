@@ -71,7 +71,7 @@ public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver
 ): Pair<ResolveSession, JavaDescriptorResolver> = createContainer("LazyResolveWithJava") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
+    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
 
     useInstance(moduleClassResolver)
@@ -92,7 +92,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
+    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
     useInstance(declarationProviderFactory)
     useInstance(BodyResolveCache.ThrowException)
