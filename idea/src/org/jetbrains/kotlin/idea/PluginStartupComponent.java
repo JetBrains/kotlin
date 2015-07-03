@@ -20,7 +20,6 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.debugger.filter.FilterPackage;
-import org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 public class PluginStartupComponent implements ApplicationComponent {
@@ -35,7 +34,6 @@ public class PluginStartupComponent implements ApplicationComponent {
     @Override
     public void initComponent() {
         registerPathVariable();
-        QuickFixRegistrar.registerQuickFixes();
 
         FilterPackage.addKotlinStdlibDebugFilterIfNeeded();
     }
