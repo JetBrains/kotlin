@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.run;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
+import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
@@ -214,6 +215,24 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         JavaParametersUtil.checkAlternativeJRE(this);
         ProgramParametersUtil.checkWorkingDirectoryExist(this, getProject(), getConfigurationModule().getModule());
         JavaRunConfigurationExtensionManager.checkConfigurationIsValid(this);
+
+        Module module = getConfigurationModule().getModule();
+        if (module == null) {
+            throw new RuntimeConfigurationError("Module not specified");
+        }
+        if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
+            throw new RuntimeConfigurationError("No main class specified");
+        }
+        PsiClass psiClass = JavaExecutionUtil.findMainClass(module, MAIN_CLASS_NAME);
+        if (psiClass == null) {
+            throw new RuntimeConfigurationWarning("Class '" + MAIN_CLASS_NAME + "' not found in module " + getConfigurationModule().getModuleName());
+        }
+        try {
+            findMainFun(module, psiClass);
+        }
+        catch (CantRunException e) {
+            throw new RuntimeConfigurationWarning(e.getMessage());
+        }
     }
 
     @Override
@@ -259,16 +278,49 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         if (MAIN_CLASS_NAME == null) {
             return null;
         }
-        return StringUtil.trimEnd(MAIN_CLASS_NAME, "." + PackageClassUtils.getPackageClassName(new FqName(MAIN_CLASS_NAME)));
+        return StringUtil.trimEnd(MAIN_CLASS_NAME,
+                                  "." + PackageClassUtils.getPackageClassName(new FqName(MAIN_CLASS_NAME).parent()));
     }
 
-    private static class MyJavaCommandLineState extends JavaCommandLineState {
+    @NotNull
+    private static Collection<JetNamedFunction> getMainFunCandidates(@NotNull Module module, @NotNull PsiClass psiClass) {
+        if (psiClass instanceof KotlinLightClassForPackage) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName == null) return Collections.emptyList();
+            FqName mainFunFqName = new FqName(qualifiedName).parent().child(Name.identifier("main"));
+            return JetTopLevelFunctionFqnNameIndex.getInstance().get(
+                    mainFunFqName.asString(), module.getProject(), module.getModuleRuntimeScope(true)
+            );
+        }
+        return KotlinPackage.filterNotNull(
+                KotlinPackage.map(
+                        psiClass.findMethodsByName("main", false),
+                        new Function1<PsiMethod, JetNamedFunction>() {
+                            @Override
+                            public JetNamedFunction invoke(PsiMethod method) {
+                                if (!(method instanceof KotlinLightMethod)) return null;
 
-        private final JetRunConfiguration myConfiguration;
+                                JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                                return declaration instanceof JetNamedFunction ? (JetNamedFunction) declaration : null;
+                            }
+                        }
+                )
+        );
+    }
 
+    @Nullable
+    private static JetNamedFunction findMainFun(@NotNull Module module, @NotNull PsiClass psiClass) throws CantRunException {
+        for (JetNamedFunction function : getMainFunCandidates(module, psiClass)) {
+            BindingContext bindingContext = ResolvePackage.analyze(function, BodyResolveMode.FULL);
+            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
+            if (mainFunctionDetector.isMain(function)) return function;
+        }
+        return null;
+    }
+
+    private static class MyJavaCommandLineState extends BaseJavaApplicationCommandLineState<JetRunConfiguration> {
         public MyJavaCommandLineState(@NotNull JetRunConfiguration configuration, ExecutionEnvironment environment) {
-            super(environment);
-            myConfiguration = configuration;
+            super(environment, configuration);
         }
 
         @Override
@@ -297,7 +349,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             PsiClass psiClass = JavaExecutionUtil.findMainClass(module, runClass);
             if (psiClass == null) throw CantRunException.classNotFound(runClass, module);
 
-            JetNamedFunction mainFun = findMainFun(module, psiClass);
+            JetNamedFunction mainFun = myConfiguration.findMainFun(module, psiClass);
             if (mainFun == null) throw new CantRunException(noFunctionFoundMessage(psiClass));
 
             Module classModule = ModuleUtilCore.findModuleForPsiElement(mainFun);
@@ -332,42 +384,6 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
                 return String.format("Function 'main' not found in class '%s'", classFqName);
             }
             return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
-        }
-
-        @NotNull
-        private Collection<JetNamedFunction> getMainFunCandidates(@NotNull Module module, @NotNull PsiClass psiClass) {
-            if (psiClass instanceof KotlinLightClassForPackage) {
-                String qualifiedName = psiClass.getQualifiedName();
-                if (qualifiedName == null) return Collections.emptyList();
-                FqName mainFunFqName = new FqName(qualifiedName).parent().child(Name.identifier("main"));
-                return JetTopLevelFunctionFqnNameIndex.getInstance().get(
-                        mainFunFqName.asString(), module.getProject(), module.getModuleRuntimeScope(true)
-                );
-            }
-            return KotlinPackage.filterNotNull(
-                    KotlinPackage.map(
-                            psiClass.findMethodsByName("main", false),
-                            new Function1<PsiMethod, JetNamedFunction>() {
-                                @Override
-                                public JetNamedFunction invoke(PsiMethod method) {
-                                    if (!(method instanceof KotlinLightMethod)) return null;
-
-                                    JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-                                    return declaration instanceof JetNamedFunction ? (JetNamedFunction) declaration : null;
-                                }
-                            }
-                    )
-            );
-        }
-
-        @Nullable
-        private JetNamedFunction findMainFun(@NotNull Module module, @NotNull PsiClass psiClass) throws CantRunException {
-            for (JetNamedFunction function : getMainFunCandidates(module, psiClass)) {
-                BindingContext bindingContext = ResolvePackage.analyze(function, BodyResolveMode.FULL);
-                MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
-                if (mainFunctionDetector.isMain(function)) return function;
-            }
-            return null;
         }
     }
 }
