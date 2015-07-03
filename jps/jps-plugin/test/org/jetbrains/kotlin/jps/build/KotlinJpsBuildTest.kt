@@ -26,8 +26,16 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ArrayUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.ZipUtil
+import org.jetbrains.jps.api.CanceledStatus
+import org.jetbrains.jps.builders.BuildResult
+import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.builders.TestProjectBuilderLogger
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
+import org.jetbrains.jps.builders.logging.BuildLoggingManager
+import org.jetbrains.jps.incremental.BuilderRegistry
+import org.jetbrains.jps.incremental.IncProjectBuilder
+import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
@@ -41,10 +49,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.util.Arrays
 import java.util.Collections
 import java.util.HashSet
@@ -531,6 +536,99 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val storageRoot = BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()
         assertTrue(File(storageRoot, "targets/java-test/kotlinProject/kotlin").exists())
         assertFalse(File(storageRoot, "targets/java-production/kotlinProject/kotlin").exists())
+    }
+
+    public fun testCancelLongKotlinCompilation() {
+        generateLongKotlinFile("Foo.kt", "foo", "Foo")
+        initProject()
+
+        val start = System.currentTimeMillis()
+        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > 2000 }
+
+        val logger = TestProjectBuilderLogger()
+        val buildResult = BuildResult()
+        buildCustom(canceledStatus, logger, buildResult)
+        val interval = System.currentTimeMillis() - start
+
+        assertCanceled(buildResult)
+        buildResult.assertSuccessful()
+        assert(interval < 8000, "expected time for canceled compilation < 8000 ms, but $interval")
+
+        val module = myProject.getModules().get(0)
+        assertFilesNotExistInOutput(module, "foo/Foo.class")
+
+        val expectedLog = workDir.getAbsolutePath() + File.separator + "expected.log"
+        checkFullLog(logger, File(expectedLog))
+    }
+
+    public fun testCancelKotlinCompilation() {
+        initProject()
+        makeAll().assertSuccessful()
+
+        val module = myProject.getModules().get(0)
+        assertFilesExistInOutput(module, "foo/Bar.class")
+
+        val buildResult = BuildResult()
+        val canceledStatus = object: CanceledStatus {
+            var checkFromIndex = 0;
+
+            public override fun isCanceled(): Boolean {
+                val messages = buildResult.getMessages(BuildMessage.Kind.INFO)
+                for (i in checkFromIndex..messages.size()-1) {
+                    if (messages.get(i).getMessageText().startsWith("Kotlin JPS plugin version")) return true;
+                }
+
+                checkFromIndex = messages.size();
+                return false;
+            }
+        }
+
+        touch("src/Bar.kt").apply()
+        buildCustom(canceledStatus, TestProjectBuilderLogger(), buildResult)
+        assertCanceled(buildResult)
+
+        assertFilesNotExistInOutput(module, "foo/Bar.class")
+    }
+
+    private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
+        val scopeBuilder = CompileScopeTestBuilder.make().all()
+        val descriptor = this.createProjectDescriptor(BuildLoggingManager(logger))
+        try {
+            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, null, true)
+            builder.addMessageHandler(buildResult)
+            builder.build(scopeBuilder.build(), false)
+        }
+        finally {
+            descriptor.release()
+        }
+    }
+
+    private fun checkFullLog(logger: TestProjectBuilderLogger, expectedLogFile: File) {
+        UsefulTestCase.assertSameLinesWithFile(expectedLogFile.getAbsolutePath(), logger.getFullLog(getOrCreateProjectDir(), myDataStorageRoot))
+    }
+
+    private fun assertCanceled(buildResult: BuildResult) {
+        val list = buildResult.getMessages(BuildMessage.Kind.INFO)
+        assertTrue("The build has been canceled".equals(list.last().getMessageText()))
+    }
+
+    private fun generateLongKotlinFile(filePath: String, packagename: String, className: String)  {
+        val file = File(workDir.getAbsolutePath() + File.separator + "src" + File.separator + filePath)
+        FileUtilRt.createIfNotExists(file)
+        val writer = BufferedWriter(FileWriter(file))
+        try {
+            writer.write("package $packagename\n\n")
+            writer.write("public class $className {\n")
+
+            for (i in 0..10000) {
+                writer.write("fun f$i():Int = $i\n\n")
+            }
+
+            writer.write("}\n")
+        }
+        finally {
+            writer.close()
+        }
     }
 
     private fun findModule(name: String): JpsModule {
