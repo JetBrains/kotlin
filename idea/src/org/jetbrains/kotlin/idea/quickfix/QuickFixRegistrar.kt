@@ -14,327 +14,319 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
+
+import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
+import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+
+public class QuickFixRegistrar : QuickFixContributor {
+    public override fun registerQuickFixes(quickFixes: QuickFixes) {
+        fun DiagnosticFactory<*>.registerFactory(vararg factory: JetIntentionActionsFactory) {
+            quickFixes.register(this, *factory)
+        }
 
-import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory;
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
-
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+        fun DiagnosticFactory<*>.registerActions(vararg action: IntentionAction) {
+            quickFixes.register(this, *action)
+        }
 
-public class QuickFixRegistrar {
-    public static void registerQuickFixes() {
-        JetSingleIntentionActionFactory
-                removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD);
-        JetSingleIntentionActionFactory addAbstractModifierFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD);
-
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
+        val removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD)
+        val addAbstractModifierFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD)
 
-        JetSingleIntentionActionFactory removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
+        ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.registerFactory(removeAbstractModifierFactory)
 
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_GETTER, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_GETTER, removePartsFromPropertyFactory);
+        val removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory()
+        ABSTRACT_PROPERTY_WITH_INITIALIZER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
+        ABSTRACT_PROPERTY_WITH_GETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
+        ABSTRACT_PROPERTY_WITH_SETTER.registerFactory(removeAbstractModifierFactory, removePartsFromPropertyFactory)
 
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_SETTER, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_WITH_SETTER, removePartsFromPropertyFactory);
+        PROPERTY_INITIALIZER_IN_TRAIT.registerFactory(removePartsFromPropertyFactory)
 
-        QuickFixes.factories.put(PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
+        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(addAbstractModifierFactory)
+        ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
+        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
 
-        QuickFixes.factories.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, addAbstractModifierFactory);
-        QuickFixes.factories.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, addAbstractModifierFactory);
+        val removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD)
+        val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, javaClass<JetClass>())
+        ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
-        JetSingleIntentionActionFactory removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD);
+        ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
-        JetSingleIntentionActionFactory addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, JetClass.class);
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
+        val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
+        ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
 
-        JetSingleIntentionActionFactory removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
-        QuickFixes.factories.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
+        FINAL_PROPERTY_IN_TRAIT.registerFactory(removeFinalModifierFactory)
+        FINAL_FUNCTION_WITH_NO_BODY.registerFactory(removeFinalModifierFactory)
 
-        QuickFixes.factories.put(ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
+        val addFunctionBodyFactory = AddFunctionBodyFix.createFactory()
+        NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, addFunctionBodyFactory)
 
-        QuickFixes.factories.put(FINAL_PROPERTY_IN_TRAIT, removeFinalModifierFactory);
-        QuickFixes.factories.put(FINAL_FUNCTION_WITH_NO_BODY, removeFinalModifierFactory);
+        NON_VARARG_SPREAD.registerFactory(RemovePsiElementSimpleFix.createRemoveSpreadFactory())
 
-        JetSingleIntentionActionFactory addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
-        QuickFixes.factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
-        QuickFixes.factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
+        MIXING_NAMED_AND_POSITIONED_ARGUMENTS.registerFactory(AddNameToArgumentFix.createFactory())
 
-        QuickFixes.factories.put(NON_VARARG_SPREAD, RemovePsiElementSimpleFix.createRemoveSpreadFactory());
+        NON_MEMBER_FUNCTION_NO_BODY.registerFactory(addFunctionBodyFactory)
 
-        QuickFixes.factories.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, AddNameToArgumentFix.createFactory());
+        NOTHING_TO_OVERRIDE.registerFactory( RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
+                                        ChangeMemberFunctionSignatureFix.createFactory(),
+                                        AddFunctionToSupertypeFix.createFactory())
+        VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
-        QuickFixes.factories.put(NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
+        USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
+        DEPRECATED_STATIC_ASSERT.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove static type assertion"))
 
-        QuickFixes.factories.put(NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD));
-        QuickFixes.factories.put(NOTHING_TO_OVERRIDE, ChangeMemberFunctionSignatureFix.createFactory());
-        QuickFixes.factories.put(NOTHING_TO_OVERRIDE, AddFunctionToSupertypeFix.createFactory());
-        QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(OVERRIDE_KEYWORD));
+        val changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory()
+        WRONG_SETTER_PARAMETER_TYPE.registerFactory(changeAccessorTypeFactory)
+        WRONG_GETTER_RETURN_TYPE.registerFactory(changeAccessorTypeFactory)
 
-        QuickFixes.factories.put(USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory(
-                "Remove cast"));
-        QuickFixes.factories.put(DEPRECATED_STATIC_ASSERT, RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory(
-                "Remove static type assertion"));
+        USELESS_ELVIS.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory())
 
-        JetSingleIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
-        QuickFixes.factories.put(WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
-        QuickFixes.factories.put(WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
+        val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
+        REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
+        ABSTRACT_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
+        OPEN_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true))
+        TRAIT_CAN_NOT_BE_FINAL.registerFactory(removeFinalModifierFactory)
+        DEPRECATED_TRAIT_KEYWORD.registerFactory(DeprecatedTraitSyntaxFix, DeprecatedTraitSyntaxFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
+        REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
+        INCOMPATIBLE_MODIFIERS.registerFactory(RemoveModifierFix.createRemoveModifierFactory(false))
+        VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY.registerFactory(RemoveModifierFix.createRemoveVarianceFactory())
 
-        JetSingleIntentionActionFactory removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true);
-        QuickFixes.factories.put(REDUNDANT_MODIFIER, removeRedundantModifierFactory);
-        QuickFixes.factories.put(ABSTRACT_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD,
-                                                                                                                        true));
-        QuickFixes.factories.put(OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true));
-        QuickFixes.factories.put(TRAIT_CAN_NOT_BE_FINAL, removeFinalModifierFactory);
-        QuickFixes.factories.put(DEPRECATED_TRAIT_KEYWORD, DeprecatedTraitSyntaxFix.Companion);
-        QuickFixes.factories.put(DEPRECATED_TRAIT_KEYWORD, DeprecatedTraitSyntaxFix.Companion.createWholeProjectFixFactory());
+        val removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD)
+        NON_FINAL_MEMBER_IN_FINAL_CLASS.registerFactory(AddModifierFix.createFactory(OPEN_KEYWORD, javaClass<JetClass>()),
+                                                   removeOpenModifierFactory)
 
-        QuickFixes.factories.put(REDUNDANT_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(true));
-        QuickFixes.factories.put(INCOMPATIBLE_MODIFIERS, RemoveModifierFix.createRemoveModifierFactory(false));
-        QuickFixes.factories.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, RemoveModifierFix.createRemoveVarianceFactory());
+        val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
+        GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
+        REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
+        ILLEGAL_MODIFIER.registerFactory(removeModifierFactory)
+        REPEATED_MODIFIER.registerFactory(removeModifierFactory)
 
-        JetSingleIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD);
-        QuickFixes.factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, AddModifierFix.createFactory(OPEN_KEYWORD, JetClass.class));
-        QuickFixes.factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
+        val removeInnerModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD)
+        INNER_CLASS_IN_TRAIT.registerFactory(removeInnerModifierFactory)
+        INNER_CLASS_IN_OBJECT.registerFactory(removeInnerModifierFactory)
 
-        JetSingleIntentionActionFactory removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory();
-        QuickFixes.factories.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
-        QuickFixes.factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
-        QuickFixes.factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
-        QuickFixes.factories.put(REPEATED_MODIFIER, removeModifierFactory);
+        val changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory()
+        INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.registerFactory(changeToBackingFieldFactory)
+        INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER.registerFactory(changeToBackingFieldFactory)
 
-        JetSingleIntentionActionFactory removeInnerModifierFactory =
-                RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD);
-        QuickFixes.factories.put(INNER_CLASS_IN_TRAIT, removeInnerModifierFactory);
-        QuickFixes.factories.put(INNER_CLASS_IN_OBJECT, removeInnerModifierFactory);
+        val changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory()
+        NO_BACKING_FIELD_ABSTRACT_PROPERTY.registerFactory(changeToPropertyNameFactory)
+        NO_BACKING_FIELD_CUSTOM_ACCESSORS.registerFactory(changeToPropertyNameFactory)
+        INACCESSIBLE_BACKING_FIELD.registerFactory(changeToPropertyNameFactory)
 
-        JetSingleIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
-        QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
-        QuickFixes.factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
+        val unresolvedReferenceFactory = AutoImportFix.createFactory()
+        UNRESOLVED_REFERENCE.registerFactory(unresolvedReferenceFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(unresolvedReferenceFactory)
 
-        JetSingleIntentionActionFactory changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory();
-        QuickFixes.factories.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, changeToPropertyNameFactory);
-        QuickFixes.factories.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS, changeToPropertyNameFactory);
-        QuickFixes.factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
+        val removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory()
+        CONFLICTING_IMPORT.registerFactory(removeImportFixFactory)
 
-        JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.Companion.createFactory();
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, unresolvedReferenceFactory);
+        SUPERTYPE_NOT_INITIALIZED.registerFactory(SuperClassNotInitialized)
+        FUNCTION_CALL_EXPECTED.registerFactory(ChangeToFunctionInvocationFix.createFactory())
 
-        JetSingleIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
-        QuickFixes.factories.put(CONFLICTING_IMPORT, removeImportFixFactory);
+        CANNOT_CHANGE_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix.createFactory())
+        CANNOT_WEAKEN_ACCESS_PRIVILEGE.registerFactory(ChangeVisibilityModifierFix.createFactory())
 
-        QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, SuperClassNotInitialized.INSTANCE$);
-        QuickFixes.factories.put(FUNCTION_CALL_EXPECTED, ChangeToFunctionInvocationFix.createFactory());
+        REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.REDUNDANT))
+        NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.SUPERTYPE))
+        USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS))
 
-        QuickFixes.factories.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
-        QuickFixes.factories.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
 
-        QuickFixes.factories.put(REDUNDANT_NULLABLE, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.REDUNDANT));
-        QuickFixes.factories.put(NULLABLE_SUPERTYPE, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.SUPERTYPE));
-        QuickFixes.factories.put(USELESS_NULLABLE_CHECK, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS));
+        val implementMethodsHandler = ImplementMethodsHandler()
+        ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
+        MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
 
+        VAL_WITH_SETTER.registerFactory(ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY)
+        VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
+        VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
 
-        ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
-        QuickFixes.actions.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
-        QuickFixes.actions.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
+        val removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory()
+        VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
+        VAL_OR_VAR_ON_LOOP_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
+        VAL_OR_VAR_ON_CATCH_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
+        VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
 
-        QuickFixes.factories.put(VAL_WITH_SETTER, ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY);
-        QuickFixes.factories.put(VAL_REASSIGNMENT, ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY);
-        QuickFixes.factories.put(VAR_OVERRIDDEN_BY_VAL, ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY);
+        VIRTUAL_MEMBER_HIDDEN.registerFactory(AddOverrideToEqualsHashCodeToStringFix.createFactory())
 
-        JetSingleIntentionActionFactory removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory();
-        QuickFixes.factories.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParameterFixFactory);
-        QuickFixes.factories.put(VAL_OR_VAR_ON_LOOP_PARAMETER, removeValVarFromParameterFixFactory);
-        QuickFixes.factories.put(VAL_OR_VAR_ON_CATCH_PARAMETER, removeValVarFromParameterFixFactory);
-        QuickFixes.factories.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, removeValVarFromParameterFixFactory);
+        UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.createRemoveVariableFactory())
 
-        QuickFixes.factories.put(VIRTUAL_MEMBER_HIDDEN, AddOverrideToEqualsHashCodeToStringFix.createFactory());
+        UNNECESSARY_SAFE_CALL.registerFactory(ReplaceWithDotCallFix)
+        UNSAFE_CALL.registerFactory(ReplaceWithSafeCallFix)
 
-        QuickFixes.factories.put(UNUSED_VARIABLE, RemovePsiElementSimpleFix.createRemoveVariableFactory());
+        UNSAFE_CALL.registerFactory(AddExclExclCallFix)
+        UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
+        UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix.createFactory())
 
-        QuickFixes.factories.put(UNNECESSARY_SAFE_CALL, ReplaceWithDotCallFix.Companion);
-        QuickFixes.factories.put(UNSAFE_CALL, ReplaceWithSafeCallFix.Companion);
+        val removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD)
+        PACKAGE_MEMBER_CANNOT_BE_PROTECTED.registerFactory(removeProtectedModifierFactory)
 
-        QuickFixes.factories.put(UNSAFE_CALL, AddExclExclCallFix.Companion);
-        QuickFixes.factories.put(UNNECESSARY_NOT_NULL_ASSERTION, RemoveExclExclCallFix.Companion);
-        QuickFixes.factories.put(UNSAFE_INFIX_CALL, ReplaceInfixCallFix.createFactory());
+        PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.registerActions(SpecifyTypeExplicitlyFix())
+        AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
 
-        JetSingleIntentionActionFactory removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD);
-        QuickFixes.factories.put(PACKAGE_MEMBER_CANNOT_BE_PROTECTED, removeProtectedModifierFactory);
+        ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix.createFactory())
+        NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix.createFactory())
+        BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
-        QuickFixes.actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
-        QuickFixes.actions.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, new SpecifyTypeExplicitlyFix());
+        NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.createFactoryForIsExpression())
+        WRONG_NUMBER_OF_TYPE_ARGUMENTS.registerFactory(AddStarProjectionsFix.createFactoryForJavaClass())
 
-        QuickFixes.factories.put(ELSE_MISPLACED_IN_WHEN, MoveWhenElseBranchFix.createFactory());
-        QuickFixes.factories.put(NO_ELSE_IN_WHEN, AddWhenElseBranchFix.createFactory());
-        QuickFixes.factories.put(BREAK_OR_CONTINUE_IN_WHEN, AddLoopLabelFix.Companion);
+        TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory())
 
-        QuickFixes.factories.put(NO_TYPE_ARGUMENTS_ON_RHS, AddStarProjectionsFix.createFactoryForIsExpression());
-        QuickFixes.factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
+        val changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory()
+        UNCHECKED_CAST.registerFactory(changeToStarProjectionFactory)
+        CANNOT_CHECK_FOR_ERASED.registerFactory(changeToStarProjectionFactory)
 
-        QuickFixes.factories.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory());
+        INACCESSIBLE_OUTER_CLASS_EXPRESSION.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD, javaClass<JetClass>()))
 
-        JetSingleIntentionActionFactory changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory();
-        QuickFixes.factories.put(UNCHECKED_CAST, changeToStarProjectionFactory);
-        QuickFixes.factories.put(CANNOT_CHECK_FOR_ERASED, changeToStarProjectionFactory);
+        val addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory()
+        FINAL_SUPERTYPE.registerFactory(addOpenModifierToClassDeclarationFix)
+        FINAL_UPPER_BOUND.registerFactory(addOpenModifierToClassDeclarationFix)
 
-        QuickFixes.factories.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, AddModifierFix.createFactory(INNER_KEYWORD, JetClass.class));
+        OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix.createFactory())
 
-        JetSingleIntentionActionFactory addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory();
-        QuickFixes.factories.put(FINAL_SUPERTYPE, addOpenModifierToClassDeclarationFix);
-        QuickFixes.factories.put(FINAL_UPPER_BOUND, addOpenModifierToClassDeclarationFix);
+        PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix.createFactory())
 
-        QuickFixes.factories.put(OVERRIDING_FINAL_MEMBER, MakeOverriddenMemberOpenFix.createFactory());
+        OPEN_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD))
+        ABSTRACT_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD))
+        ILLEGAL_ENUM_ANNOTATION.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ENUM_KEYWORD))
 
-        QuickFixes.factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
+        NESTED_CLASS_NOT_ALLOWED.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD))
 
-        QuickFixes.factories.put(OPEN_MODIFIER_IN_ENUM, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD));
-        QuickFixes.factories.put(ABSTRACT_MODIFIER_IN_ENUM, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD));
-        QuickFixes.factories.put(ILLEGAL_ENUM_ANNOTATION, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ENUM_KEYWORD));
+        CONFLICTING_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
+        PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
+        PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
 
-        QuickFixes.factories.put(NESTED_CLASS_NOT_ALLOWED, AddModifierFix.createFactory(INNER_KEYWORD));
+        NOT_AN_ANNOTATION_CLASS.registerFactory(MakeClassAnAnnotationClassFix.createFactory())
 
-        QuickFixes.factories.put(CONFLICTING_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(false));
-        QuickFixes.factories.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, RemoveModifierFix.createRemoveProjectionFactory(false));
-        QuickFixes.factories.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, RemoveModifierFix.createRemoveProjectionFactory(false));
+        val changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride()
+        RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
+        PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
+        COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeVariableTypeFix.createFactoryForComponentFunctionReturnTypeMismatch())
 
-        QuickFixes.factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
+        val changeFunctionReturnTypeFix = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit()
+        RETURN_TYPE_MISMATCH.registerFactory(changeFunctionReturnTypeFix)
+        NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.registerFactory(changeFunctionReturnTypeFix)
+        RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForReturnTypeMismatchOnOverride())
+        COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch())
+        HAS_NEXT_FUNCTION_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch())
+        COMPARE_TO_TYPE_MISMATCH.registerFactory(ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch())
 
-        JetIntentionActionsFactory changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride();
-        QuickFixes.factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
-        QuickFixes.factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
-        QuickFixes.factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeVariableTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
+        TOO_MANY_ARGUMENTS.registerFactory(ChangeFunctionSignatureFix.createFactory())
+        NO_VALUE_FOR_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactory())
+        UNUSED_PARAMETER.registerFactory(ChangeFunctionSignatureFix.createFactoryForUnusedParameter())
+        EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch())
+        DEPRECATED_LAMBDA_SYNTAX.registerFactory(DeprecatedLambdaSyntaxFix, DeprecatedLambdaSyntaxFix.createWholeProjectFixFactory())
 
-        JetSingleIntentionActionFactory changeFunctionReturnTypeFix = ChangeFunctionReturnTypeFix.createFactoryForChangingReturnTypeToUnit();
-        QuickFixes.factories.put(RETURN_TYPE_MISMATCH, changeFunctionReturnTypeFix);
-        QuickFixes.factories.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, changeFunctionReturnTypeFix);
-        QuickFixes.factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeFunctionReturnTypeFix.createFactoryForReturnTypeMismatchOnOverride());
-        QuickFixes.factories.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForComponentFunctionReturnTypeMismatch());
-        QuickFixes.factories.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForHasNextFunctionTypeMismatch());
-        QuickFixes.factories.put(COMPARE_TO_TYPE_MISMATCH, ChangeFunctionReturnTypeFix.createFactoryForCompareToTypeMismatch());
+        EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
+        EXPECTED_RETURN_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch())
 
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, ChangeFunctionSignatureFix.createFactory());
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, ChangeFunctionSignatureFix.createFactory());
-        QuickFixes.factories.put(UNUSED_PARAMETER, ChangeFunctionSignatureFix.createFactoryForUnusedParameter());
-        QuickFixes.factories.put(EXPECTED_PARAMETERS_NUMBER_MISMATCH, ChangeFunctionSignatureFix.createFactoryForParametersNumberMismatch());
-        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory);
-        QuickFixes.factories.put(DEPRECATED_LAMBDA_SYNTAX, DeprecatedLambdaSyntaxFix.Factory.createWholeProjectFixFactory());
+        val changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch()
+        EXPECTED_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
+        ASSIGNMENT_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
 
-        QuickFixes.factories.put(EXPECTED_PARAMETER_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch());
-        QuickFixes.factories.put(EXPECTED_RETURN_TYPE_MISMATCH, ChangeTypeFix.createFactoryForExpectedReturnTypeMismatch());
+        UNRESOLVED_REFERENCE.registerFactory(CreateUnaryOperationActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateUnaryOperationActionFactory)
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateUnaryOperationActionFactory)
 
-        JetSingleIntentionActionFactory changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch();
-        QuickFixes.factories.put(EXPECTED_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
-        QuickFixes.factories.put(ASSIGNMENT_TYPE_MISMATCH, changeFunctionLiteralReturnTypeFix);
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateBinaryOperationActionFactory)
+        UNRESOLVED_REFERENCE.registerFactory(CreateBinaryOperationActionFactory)
+        NONE_APPLICABLE.registerFactory(CreateBinaryOperationActionFactory)
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateBinaryOperationActionFactory)
+        TOO_MANY_ARGUMENTS.registerFactory(CreateBinaryOperationActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateUnaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateUnaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateUnaryOperationActionFactory.INSTANCE$);
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateCallableFromCallActionFactory)
+        UNRESOLVED_REFERENCE.registerFactory(CreateCallableFromCallActionFactory)
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateCallableFromCallActionFactory)
+        TOO_MANY_ARGUMENTS.registerFactory(CreateCallableFromCallActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateCallableFromCallActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateBinaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateBinaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NONE_APPLICABLE, CreateBinaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateBinaryOperationActionFactory.INSTANCE$);
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateBinaryOperationActionFactory.INSTANCE$);
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegationCallActionFactory)
+        TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegationCallActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateCallableFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateCallableFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateCallableFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateCallableFromCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateCallableFromCallActionFactory.INSTANCE$);
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegatorToSuperCallActionFactory)
+        TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegatorToSuperCallActionFactory)
 
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateConstructorFromDelegationCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateConstructorFromDelegationCallActionFactory.INSTANCE$);
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateClassFromConstructorCallActionFactory)
+        UNRESOLVED_REFERENCE.registerFactory(CreateClassFromConstructorCallActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateClassFromConstructorCallActionFactory)
 
-        QuickFixes.factories.put(NO_VALUE_FOR_PARAMETER, CreateConstructorFromDelegatorToSuperCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(TOO_MANY_ARGUMENTS, CreateConstructorFromDelegatorToSuperCallActionFactory.INSTANCE$);
+        UNRESOLVED_REFERENCE.registerFactory(CreateLocalVariableActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateLocalVariableActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateClassFromConstructorCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromConstructorCallActionFactory.INSTANCE$);
-        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateClassFromConstructorCallActionFactory.INSTANCE$);
+        UNRESOLVED_REFERENCE.registerFactory(CreateParameterActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateParameterActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateParameterActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateLocalVariableActionFactory.INSTANCE$);
-        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateLocalVariableActionFactory.INSTANCE$);
+        NAMED_PARAMETER_NOT_FOUND.registerFactory(CreateParameterByNamedArgumentActionFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateParameterActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, CreateParameterActionFactory.INSTANCE$);
-        QuickFixes.factories.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, CreateParameterActionFactory.INSTANCE$);
+        FUNCTION_EXPECTED.registerFactory(CreateInvokeFunctionActionFactory)
 
-        QuickFixes.factories.put(NAMED_PARAMETER_NOT_FOUND, CreateParameterByNamedArgumentActionFactory.INSTANCE$);
+        val factoryForTypeMismatchError = QuickFixFactoryForTypeMismatchError()
+        TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
+        NULL_FOR_NONNULL_TYPE.registerFactory(factoryForTypeMismatchError)
+        CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
 
-        QuickFixes.factories.put(FUNCTION_EXPECTED, CreateInvokeFunctionActionFactory.INSTANCE$);
+        SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.createFactoryForSmartCastImpossible())
 
-        QuickFixFactoryForTypeMismatchError factoryForTypeMismatchError = new QuickFixFactoryForTypeMismatchError();
-        QuickFixes.factories.put(TYPE_MISMATCH, factoryForTypeMismatchError);
-        QuickFixes.factories.put(NULL_FOR_NONNULL_TYPE, factoryForTypeMismatchError);
-        QuickFixes.factories.put(CONSTANT_EXPECTED_TYPE_MISMATCH, factoryForTypeMismatchError);
+        PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix.createFactory())
 
-        QuickFixes.factories.put(SMARTCAST_IMPOSSIBLE, CastExpressionFix.createFactoryForSmartCastImpossible());
+        MANY_CLASSES_IN_SUPERTYPE_LIST.registerFactory(RemoveSupertypeFix.createFactory())
 
-        QuickFixes.factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
+        NO_GET_METHOD.registerFactory(CreateGetFunctionActionFactory)
+        NO_SET_METHOD.registerFactory(CreateSetFunctionActionFactory)
+        HAS_NEXT_MISSING.registerFactory(CreateHasNextFunctionActionFactory)
+        HAS_NEXT_FUNCTION_NONE_APPLICABLE.registerFactory(CreateHasNextFunctionActionFactory)
+        NEXT_MISSING.registerFactory(CreateNextFunctionActionFactory)
+        NEXT_NONE_APPLICABLE.registerFactory(CreateNextFunctionActionFactory)
+        ITERATOR_MISSING.registerFactory(CreateIteratorFunctionActionFactory)
+        COMPONENT_FUNCTION_MISSING.registerFactory(CreateComponentFunctionActionFactory)
 
-        QuickFixes.factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
+        DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(CreatePropertyDelegateAccessorsActionFactory)
+        DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE.registerFactory(CreatePropertyDelegateAccessorsActionFactory)
 
-        QuickFixes.factories.put(NO_GET_METHOD, CreateGetFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NO_SET_METHOD, CreateSetFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(HAS_NEXT_MISSING, CreateHasNextFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, CreateHasNextFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NEXT_MISSING, CreateNextFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(NEXT_NONE_APPLICABLE, CreateNextFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(ITERATOR_MISSING, CreateIteratorFunctionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(COMPONENT_FUNCTION_MISSING, CreateComponentFunctionActionFactory.INSTANCE$);
+        UNRESOLVED_REFERENCE.registerFactory(CreateClassFromTypeReferenceActionFactory,
+                                        CreateClassFromReferenceExpressionActionFactory,
+                                        CreateClassFromCallWithConstructorCalleeActionFactory)
 
-        QuickFixes.factories.put(DELEGATE_SPECIAL_FUNCTION_MISSING, CreatePropertyDelegateAccessorsActionFactory.INSTANCE$);
-        QuickFixes.factories.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, CreatePropertyDelegateAccessorsActionFactory.INSTANCE$);
+        PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromTypeReferenceActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromReferenceExpressionActionFactory.INSTANCE$);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
+        EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertThisDelegationCallFactory)
+        EXPLICIT_DELEGATION_CALL_REQUIRED.registerFactory(InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory)
 
-        QuickFixes.factories.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
+        ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix,
+                                                               MigrateAnnotationMethodCallInWholeFile)
 
-        QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
-        QuickFixes.factories.put(EXPLICIT_DELEGATION_CALL_REQUIRED, InsertDelegationCallQuickfix.InsertSuperDelegationCallFactory.INSTANCE$);
+        ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.registerFactory(DeprecatedEnumEntrySuperConstructorSyntaxFix,
+                                                                DeprecatedEnumEntrySuperConstructorSyntaxFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallFix.Companion);
-        QuickFixes.factories.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, MigrateAnnotationMethodCallInWholeFile.Companion);
+        ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER.registerFactory(DeprecatedEnumEntryDelimiterSyntaxFix,
+                                                              DeprecatedEnumEntryDelimiterSyntaxFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR, DeprecatedEnumEntrySuperConstructorSyntaxFix.Companion);
-        QuickFixes.factories.put(ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR, DeprecatedEnumEntrySuperConstructorSyntaxFix.Companion.createWholeProjectFixFactory());
+        MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
+                                               MissingConstructorKeywordFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER, DeprecatedEnumEntryDelimiterSyntaxFix.Companion);
-        QuickFixes.factories.put(ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER, DeprecatedEnumEntryDelimiterSyntaxFix.Companion.createWholeProjectFixFactory());
+        FUNCTION_EXPRESSION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix,
+                                                 RemoveNameFromFunctionExpressionFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(MISSING_CONSTRUCTOR_KEYWORD, MissingConstructorKeywordFix.Companion);
-        QuickFixes.factories.put(MISSING_CONSTRUCTOR_KEYWORD, MissingConstructorKeywordFix.Companion.createWholeProjectFixFactory());
+        UNRESOLVED_REFERENCE.registerFactory(ReplaceObsoleteLabelSyntaxFix,
+                                        ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
 
-        QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion);
-        QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion.createWholeProjectFixFactory());
+        DEPRECATED_SYMBOL_WITH_MESSAGE.registerFactory(DeprecatedSymbolUsageFix,
+                                                  DeprecatedSymbolUsageInWholeProjectFix)
 
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, ReplaceObsoleteLabelSyntaxFix.Companion);
-        QuickFixes.factories.put(UNRESOLVED_REFERENCE, ReplaceObsoleteLabelSyntaxFix.Companion.createWholeProjectFixFactory());
-
-        QuickFixes.factories.put(DEPRECATED_SYMBOL_WITH_MESSAGE, DeprecatedSymbolUsageFix.Companion);
-        QuickFixes.factories.put(DEPRECATED_SYMBOL_WITH_MESSAGE, DeprecatedSymbolUsageInWholeProjectFix.Companion);
-        
-        QuickFixes.factories.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, ReplaceJavaAnnotationPositionedArgumentsFix.Companion);
+        ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
     }
 }

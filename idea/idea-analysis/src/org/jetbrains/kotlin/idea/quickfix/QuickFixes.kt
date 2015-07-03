@@ -14,27 +14,49 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.intellij.codeInsight.intention.IntentionAction;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
-
-import java.util.Collection;
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 
 public class QuickFixes {
+    private val factories: Multimap<DiagnosticFactory<*>, JetIntentionActionsFactory> = HashMultimap.create<DiagnosticFactory<*>, JetIntentionActionsFactory>()
+    private val actions: Multimap<DiagnosticFactory<*>, IntentionAction> = HashMultimap.create<DiagnosticFactory<*>, IntentionAction>()
 
-    static final Multimap<DiagnosticFactory<?>, JetIntentionActionsFactory> factories = HashMultimap.create();
-    static final Multimap<DiagnosticFactory<?>, IntentionAction> actions = HashMultimap.create();
-
-    public static Collection<JetIntentionActionsFactory> getActionsFactories(DiagnosticFactory<?> diagnosticFactory) {
-        return factories.get(diagnosticFactory);
+    init {
+        Extensions.getExtensions(QuickFixContributor.EP_NAME).forEach { it.registerQuickFixes(this) }
     }
 
-    public static Collection<IntentionAction> getActions(DiagnosticFactory<?> diagnosticFactory) {
-        return actions.get(diagnosticFactory);
+    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: JetIntentionActionsFactory) {
+        factories.putAll(diagnosticFactory, factory.toList())
     }
 
-    private QuickFixes() {}
+    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg action: IntentionAction) {
+        actions.putAll(diagnosticFactory, action.toList())
+    }
+
+    public fun getActionFactories(diagnosticFactory: DiagnosticFactory<*>): Collection<JetIntentionActionsFactory> {
+        return factories.get(diagnosticFactory)
+    }
+
+    public fun getActions(diagnosticFactory: DiagnosticFactory<*>): Collection<IntentionAction> {
+        return actions.get(diagnosticFactory)
+    }
+
+    companion object {
+        public fun getInstance(): QuickFixes = ServiceManager.getService(javaClass<QuickFixes>())
+    }
+}
+
+public interface QuickFixContributor {
+    companion object {
+        val EP_NAME: ExtensionPointName<QuickFixContributor> = ExtensionPointName.create("org.jetbrains.kotlin.quickFixContributor")
+    }
+
+    fun registerQuickFixes(quickFixes: QuickFixes)
 }

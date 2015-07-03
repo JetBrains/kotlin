@@ -254,11 +254,11 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
         public fun createQuickfixes(diagnostic: Diagnostic): Collection<IntentionAction> {
             val result = arrayListOf<IntentionAction>()
-            val intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory())
+            val intentionActionsFactories = QuickFixes.getInstance().getActionFactories(diagnostic.getFactory())
             for (intentionActionsFactory in intentionActionsFactories.filterNotNull()) {
                 result.addAll(intentionActionsFactory.createActions(diagnostic))
             }
-            result.addAll(QuickFixes.getActions(diagnostic.getFactory()))
+            result.addAll(QuickFixes.getInstance().getActions(diagnostic.getFactory()))
             return result
         }
     }
