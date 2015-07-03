@@ -2,6 +2,28 @@ package
 
 internal fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2>
 
+public/*package*/ open class MyMap</*0*/ K, /*1*/ V> : java.util.AbstractMap<K!, V!> {
+    public/*package*/ constructor MyMap</*0*/ K, /*1*/ V>()
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.(Mutable)Set<K!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.(Mutable)Collection<V!>!
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Any?): kotlin.Boolean
+    java.lang.Override() public open override /*1*/ fun entrySet(): kotlin.MutableSet<kotlin.MutableMap.MutableEntry<K!, V!>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Any?): V?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun keySet(): kotlin.MutableSet<K!>
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ m: kotlin.Map<out K!, V!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Any?): V?
+    public open override /*1*/ /*fake_override*/ fun size(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun values(): kotlin.MutableCollection<V!>
+}
+
 internal interface ResolverForProject</*0*/ M1> {
     internal open val exposeM: M1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
