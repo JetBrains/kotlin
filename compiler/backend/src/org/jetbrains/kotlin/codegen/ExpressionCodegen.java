@@ -3727,7 +3727,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public StackValue visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, StackValue receiver) {
-        final JetExpression left = expression.getLeft();
+        JetExpression left = expression.getLeft();
         final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.COLON) {
             return gen(left);
@@ -3752,10 +3752,7 @@ The "returned" value of try expression with no finally is either the last expres
                         v.dup();
                         Label nonnull = new Label();
                         v.ifnonnull(nonnull);
-                        JetType leftType = bindingContext.getType(left);
-                        assert leftType != null;
-                        genThrow(v, "kotlin/TypeCastException", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(leftType) +
-                                                                " cannot be cast to " +
+                        genThrow(v, "kotlin/TypeCastException", "null cannot be cast to non-null type " +
                                                                 DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
                         v.mark(nonnull);
                     }

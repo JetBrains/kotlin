@@ -1,4 +1,7 @@
+import java.util.ArrayList
+
 // KT-2823 TypeCastException has no message
+// KT-5121 Better error message in on casting null to non-null type
 
 fun box(): String {
     try {
@@ -6,9 +9,20 @@ fun box(): String {
         a as Array<String>
     }
     catch (e: TypeCastException) {
-        if (e.getMessage() == "kotlin.Any? cannot be cast to kotlin.Array<kotlin.String>") {
-            return "OK"
+        if (e.getMessage() != "null cannot be cast to non-null type kotlin.Array<kotlin.String>") {
+            return "Fail 1: $e"
         }
     }
-    return "fail"
+
+    try {
+        val x: String? = null
+        x as String
+    }
+    catch (e: TypeCastException) {
+        if (e.getMessage() != "null cannot be cast to non-null type kotlin.String") {
+            return "Fail 2: $e"
+        }
+    }
+
+    return "OK"
 }
