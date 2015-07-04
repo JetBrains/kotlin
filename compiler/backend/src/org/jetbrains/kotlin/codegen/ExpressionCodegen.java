@@ -3744,9 +3744,10 @@ The "returned" value of try expression with no finally is either the last expres
                 value.put(boxType(value.type), v);
 
                 if (value.type == Type.VOID_TYPE) {
-                    v.aconst(null);
+                    StackValue.putUnitInstance(v);
                 }
-                else if (opToken != JetTokens.AS_SAFE) {
+
+                if (opToken != JetTokens.AS_SAFE) {
                     if (!TypeUtils.isNullableType(rightType)) {
                         v.dup();
                         Label nonnull = new Label();
