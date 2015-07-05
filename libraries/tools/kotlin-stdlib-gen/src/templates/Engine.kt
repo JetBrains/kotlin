@@ -12,26 +12,40 @@ enum class Family {
     Collections,
     Lists,
     Maps,
+    Sets,
     ArraysOfObjects,
     ArraysOfPrimitives,
+    InvariantArraysOfObjects,
     Strings,
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
     Primitives,
     Generic;
 
-    val isPrimitiveSpecialization: Boolean by Delegates.lazy { this in listOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives) }
+    val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
+
+    companion object {
+        val primitiveSpecializations = setOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives)
+        val defaultFamilies = setOf(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Strings)
+    }
 }
 
-enum class PrimitiveType(val name: String) {
-    Boolean("Boolean"),
-    Byte("Byte"),
-    Char("Char"),
-    Short("Short"),
-    Int("Int"),
-    Long("Long"),
-    Float("Float"),
-    Double("Double")
+enum class PrimitiveType {
+    Boolean,
+    Byte,
+    Char,
+    Short,
+    Int,
+    Long,
+    Float,
+    Double;
+
+    val name: String get() = this.name()
+
+    companion object {
+        val defaultPrimitives = PrimitiveType.values().toSet()
+        val numericPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
+    }
 }
 
 
@@ -63,17 +77,18 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
 
 
-    val defaultFamilies = array(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Strings)
-    val defaultPrimitives = PrimitiveType.values()
-    val numericPrimitives = array(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
+    val defaultFamilies = Family.defaultFamilies
+    val defaultPrimitives = PrimitiveType.defaultPrimitives
+    val numericPrimitives = PrimitiveType.numericPrimitives
 
     var toNullableT: Boolean = false
 
     var receiverAsterisk = false
 
-    val buildFamilies = LinkedHashSet(defaultFamilies.toList())
-    val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
+    val buildFamilies = LinkedHashSet(defaultFamilies)
+    val buildPrimitives = LinkedHashSet(defaultPrimitives)
 
+    val customSignature = FamilyProperty<String>()
     val deprecate = FamilyProperty<String>()
     val deprecateReplacement = FamilyProperty<String>()
     val doc = FamilyProperty<String>()
@@ -112,8 +127,12 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun only(vararg primitives: PrimitiveType) {
+        only(primitives.asList())
+    }
+
+    fun only(primitives: Collection<PrimitiveType>) {
         buildPrimitives.clear()
-        buildPrimitives.addAll(primitives.toList())
+        buildPrimitives.addAll(primitives)
     }
 
     fun include(vararg families: Family) {
@@ -156,15 +175,16 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             Collections -> "Collection<$isAsteriskOrT>"
             Lists -> "List<$isAsteriskOrT>"
             Maps -> "Map<K, V>"
+            Sets -> "Set<$isAsteriskOrT>"
             Sequences -> "Sequence<$isAsteriskOrT>"
-            ArraysOfObjects -> "Array<$isAsteriskOrT>"
+            InvariantArraysOfObjects -> "Array<T>"
+            ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
             Strings -> "String"
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
             Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
             Generic -> "T"
-            else -> throw IllegalStateException("Invalid family")
         }
 
 
@@ -175,7 +195,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             while (t.hasMoreTokens()) {
                 val token = t.nextToken()
                 answer.append(when (token) {
-                                  "SELF" -> if (receiver == "Array<T>") "Array<out T>" else receiver
+                                  "SELF" -> receiver
                                   "PRIMITIVE" -> primitive?.name() ?: token
                                   "SUM" -> {
                                       when (primitive) {
@@ -244,7 +264,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                 return types
             }
             else if (primitive == null && f != Strings) {
-                val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).filterNot { it == ' ' }.takeWhile { it != '>' }.split(",")
+                val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).takeWhile { it != '>' }.split(",")
+                        .map { it.removePrefix("out").removePrefix("in").trim() }
                 for (implicit in implicitTypeParameters.reverse()) {
                     if (implicit != "*" && !types.any { it.startsWith(implicit) || it.startsWith("reified " + implicit) }) {
                         types.add(0, implicit)
@@ -293,14 +314,10 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
             builder.append(types.join(separator = ", ", prefix = "<", postfix = "> ").renderType())
         }
 
-        val receiverType = (when (receiver) {
-            "Array<T>" -> if (toNullableT) "Array<out T?>" else "Array<out T>"
-            else -> if (toNullableT) receiver.replace("T>", "T?>") else receiver
-        }).renderType()
-
+        val receiverType = (if (toNullableT) receiver.replace("T>", "T?>") else receiver).renderType()
 
         builder.append(receiverType)
-        builder.append(".${signature.renderType()}: ${returnType.renderType()}")
+        builder.append(".${(customSignature[f] ?: signature).renderType()}: ${returnType.renderType()}")
         if (keyword == "fun") builder.append(" {")
 
         val body = (customPrimitiveBodies[f to primitive] ?: body[f] ?: throw RuntimeException("No body specified for $signature for ${f to primitive}")).trim('\n')
