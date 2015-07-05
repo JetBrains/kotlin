@@ -262,6 +262,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callAny.kt")
+        public void testCallAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/callAny.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("callNullable.kt")
         public void testCallNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/callNullable.kt");
@@ -280,6 +286,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCallAny.kt")
+        public void testInfixCallAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallAny.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("infixCallNullable.kt")
         public void testInfixCallNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallNullable.kt");
@@ -289,6 +301,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/intrinsic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intrinsicAny.kt")
+        public void testIntrinsicAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/intrinsicAny.kt");
             doTest(fileName);
         }
 

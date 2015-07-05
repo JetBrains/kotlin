@@ -34,7 +34,7 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         val operandType = numberFunctionOperandType(returnType)
         val paramType = if (shift()) Type.INT_TYPE else operandType
 
-        return createBinaryIntrinsicCallable(operandType, paramType, operandType) {
+        return createBinaryIntrinsicCallable(returnType, paramType, operandType) {
             v -> v.visitInsn(returnType.getOpcode(opcode))
         }
     }
