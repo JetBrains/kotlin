@@ -21,7 +21,7 @@ class ArraysJVMTest {
         checkContent(longArrayOf(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it.toLong() }
         checkContent(floatArrayOf(0.toFloat(), 1.toFloat(), 2.toFloat(), 3.toFloat()).copyOf().iterator(), 4) { it.toFloat() }
         checkContent(doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOf().iterator(), 6) { it.toDouble() }
-        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOf().iterator(), 6) { ('0' + it).toChar() }
+        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOf().iterator(), 6) { '0' + it }
     }
 
     test fun copyOfRange() {
@@ -32,7 +32,7 @@ class ArraysJVMTest {
         checkContent(longArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3).iterator(), 3) { it.toLong() }
         checkContent(floatArrayOf(0.toFloat(), 1.toFloat(), 2.toFloat(), 3.toFloat()).copyOfRange(0, 3).iterator(), 3) { it.toFloat() }
         checkContent(doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOfRange(0, 3).iterator(), 3) { it.toDouble() }
-        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3).iterator(), 3) { ('0' + it).toChar() }
+        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3).iterator(), 3) { '0' + it }
     }
 
     test fun reduce() {

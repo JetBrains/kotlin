@@ -55,13 +55,13 @@ fun box(): String {
     }
 
     val list5 = ArrayList<Char>()
-    val range5 = (MaxC - 2).toChar()..MaxC
+    val range5 = (MaxC - 2)..MaxC
     for (i in range5) {
         list5.add(i)
         if (list5.size() > 23) break
     }
-    if (list5 != listOf<Char>((MaxC - 2).toChar(), (MaxC - 1).toChar(), MaxC)) {
-        return "Wrong elements for (MaxC - 2).toChar()..MaxC: $list5"
+    if (list5 != listOf<Char>((MaxC - 2), (MaxC - 1), MaxC)) {
+        return "Wrong elements for (MaxC - 2)..MaxC: $list5"
     }
 
     return "OK"
