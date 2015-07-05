@@ -166,7 +166,10 @@ var Kotlin = {};
             constructor.baseInitializer = metadata.baseClass;
         }
 
-        constructor.$metadata$ = metadata;
+        Object.defineProperty(constructor, '$metadata$', {
+            enumerable: false,
+            value: metadata
+        });
         constructor.prototype = prototypeObj;
         Object.defineProperty(constructor, "object", {get: class_object, configurable: true});
         return constructor;
@@ -175,17 +178,21 @@ var Kotlin = {};
     Kotlin.createObjectNow = function (bases, constructor, functions) {
         var noNameClass = Kotlin.createClassNow(bases, constructor, functions);
         var obj = new noNameClass();
-        obj.$metadata$ = {
-            type: Kotlin.TYPE.OBJECT
-        };
-        return  obj;
+        Object.defineProperty(obj, '$metadata$', {
+            enumerable: false,
+            value: {type: Kotlin.TYPE.OBJECT}
+        });
+        return obj;
     };
 
     Kotlin.createTraitNow = function (bases, properties, staticProperties) {
         var obj = function () {};
         copyProperties(obj, staticProperties);
 
-        obj.$metadata$ = computeMetadata(bases, properties);
+        Object.defineProperty(obj, '$metadata$', {
+            enumerable: false,
+            value: computeMetadata(bases, properties)
+        });
         obj.$metadata$.type = Kotlin.TYPE.TRAIT;
 
         obj.prototype = {};
