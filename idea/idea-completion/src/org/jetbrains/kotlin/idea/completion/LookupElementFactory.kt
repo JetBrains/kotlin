@@ -303,7 +303,7 @@ public class LookupElementFactory(
 
                         1 -> {
                             val parameterType = parameters.single().getType()
-                            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
                                 val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                                 if (parameterCount <= 1) {
                                     // otherwise additional item with lambda template is to be added

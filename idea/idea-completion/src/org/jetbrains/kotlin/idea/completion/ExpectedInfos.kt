@@ -188,7 +188,7 @@ class ExpectedInfos(
                 if (parameter.hasDefaultValue()) return false // parameter is optional
                 if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
                 // last parameter of functional type can be placed outside parenthesis:
-                if (parameter == parameters.last() && KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameter.getType())) return false
+                if (parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
                 return true
             }
 

@@ -106,7 +106,7 @@ class LookupElementsCollector(
             val parameters = descriptor.getValueParameters()
             if (parameters.size() == 1) {
                 val parameterType = parameters.get(0).getType()
-                if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
                         var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
