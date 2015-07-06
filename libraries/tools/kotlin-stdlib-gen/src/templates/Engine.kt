@@ -206,18 +206,19 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                                   "ZERO" -> when (primitive) {
                                       PrimitiveType.Double -> "0.0"
                                       PrimitiveType.Float -> "0.0f"
+                                      PrimitiveType.Long -> "0L"
                                       else -> "0"
                                   }
                                   "ONE" -> when (primitive) {
                                       PrimitiveType.Double -> "1.0"
                                       PrimitiveType.Float -> "1.0f"
-                                      PrimitiveType.Long -> "1.toLong()"
+                                      PrimitiveType.Long -> "1L"
                                       else -> "1"
                                   }
                                   "-ONE" -> when (primitive) {
                                       PrimitiveType.Double -> "-1.0"
                                       PrimitiveType.Float -> "-1.0f"
-                                      PrimitiveType.Long -> "-1.toLong()"
+                                      PrimitiveType.Long -> "-1L"
                                       else -> "-1"
                                   }
                                   "TCollection" -> {
