@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
-import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
@@ -250,16 +247,17 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
         val descriptors = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
-        return filterShadowedNonImported(descriptors, reference!!)
+        return filterShadowedNonImportedAndExcluded(descriptors, reference!!)
     }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
         val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression, bindingContext)
-        return filterShadowedNonImported(descriptors, reference)
+        return filterShadowedNonImportedAndExcluded(descriptors, reference)
     }
 
-    private fun filterShadowedNonImported(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(descriptors, referenceVariants, reference.expression)
+    private fun filterShadowedNonImportedAndExcluded(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
+        val notExcluded = descriptors.filter { !isInExcludedPackage(it) }
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(notExcluded, referenceVariants, reference.expression)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {

@@ -35,6 +35,18 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("CallablesInExcludedPackage")
+    public void testCallablesInExcludedPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/CallablesInExcludedPackage/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ClassInExcludedPackage")
+    public void testClassInExcludedPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ClassInExcludedPackage/");
+        doTest(fileName);
+    }
+
     @TestMetadata("CompleteFunctionWithNoSpecifiedType")
     public void testCompleteFunctionWithNoSpecifiedType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/CompleteFunctionWithNoSpecifiedType/");
@@ -62,6 +74,18 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     @TestMetadata("EnumEntry")
     public void testEnumEntry() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/EnumEntry/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExcludedClass")
+    public void testExcludedClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExcludedClass/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExcludedJavaClass")
+    public void testExcludedJavaClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ExcludedJavaClass/");
         doTest(fileName);
     }
 
