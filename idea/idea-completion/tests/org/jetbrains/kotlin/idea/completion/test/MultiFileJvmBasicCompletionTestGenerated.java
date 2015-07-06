@@ -137,6 +137,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("MoreSpecificExtensionGeneric")
+    public void testMoreSpecificExtensionGeneric() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/MoreSpecificExtensionGeneric/");
+        doTest(fileName);
+    }
+
     @TestMetadata("MoreSpecificExtensionInDifferentPackage")
     public void testMoreSpecificExtensionInDifferentPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/MoreSpecificExtensionInDifferentPackage/");

@@ -140,42 +140,6 @@ enum class CallableWeight {
 
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
 
-fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
-    if (descriptor1 == descriptor2) return true
-    if (descriptor1 == null || descriptor2 == null) return false
-    if (descriptor1.getOriginal() != descriptor2.getOriginal()) return false
-    if (descriptor1 !is CallableDescriptor) return true
-    descriptor2 as CallableDescriptor
-
-    // optimization:
-    if (descriptor1 == descriptor1.getOriginal() && descriptor2 == descriptor2.getOriginal()) return true
-
-    val typeChecker = JetTypeChecker.withAxioms(object: JetTypeChecker.TypeConstructorEquality {
-        override fun equals(a: TypeConstructor, b: TypeConstructor): Boolean {
-            val typeParam1 = a.getDeclarationDescriptor() as? TypeParameterDescriptor
-            val typeParam2 = b.getDeclarationDescriptor() as? TypeParameterDescriptor
-            if (typeParam1 != null
-                && typeParam2 != null
-                && typeParam1.getContainingDeclaration() == descriptor1
-                && typeParam2.getContainingDeclaration() == descriptor2) {
-                return typeParam1.getIndex() == typeParam2.getIndex()
-            }
-
-            return a == b
-        }
-    })
-
-    if (!typeChecker.equalTypesOrNulls(descriptor1.getReturnType(), descriptor2.getReturnType())) return false
-
-    val parameters1 = descriptor1.getValueParameters()
-    val parameters2 = descriptor2.getValueParameters()
-    if (parameters1.size() != parameters2.size()) return false
-    for ((param1, param2) in parameters1.zip(parameters2)) {
-        if (!typeChecker.equalTypes(param1.getType(), param2.getType())) return false
-    }
-    return true
-}
-
 fun InsertionContext.isAfterDot(): Boolean {
     var offset = getStartOffset()
     val chars = getDocument().getCharsSequence()

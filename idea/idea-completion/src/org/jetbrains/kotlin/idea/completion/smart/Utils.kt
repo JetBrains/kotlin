@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -168,8 +169,12 @@ public class ShadowedDeclarationsFilter(
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
-        val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }.toSet()
-        val filtered = descriptors.filter { it in resultingDescriptors }
+        val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }
+        val resultingOriginals = resultingDescriptors.mapTo(HashSet<DeclarationDescriptor>()) { it.getOriginal() }
+        val filtered = descriptors.filter { candidateDescriptor ->
+            candidateDescriptor.getOriginal() in resultingOriginals /* optimization */
+                && resultingDescriptors.any { descriptorsEqualWithSubstitution(it, candidateDescriptor) }
+        }
         return if (filtered.isNotEmpty()) filtered else descriptors /* something went wrong, none of our declarations among resolve candidates, let's not filter anything */
     }
 

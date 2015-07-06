@@ -1650,6 +1650,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("PreferCloserReceiverGeneric.kt")
+            public void testPreferCloserReceiverGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferCloserReceiverGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PreferMemberExtension.kt")
             public void testPreferMemberExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMemberExtension.kt");
@@ -1671,6 +1677,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("PreferMoreSpecificExtension.kt")
             public void testPreferMoreSpecificExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMoreSpecificExtensionGeneric.kt")
+            public void testPreferMoreSpecificExtensionGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMoreSpecificExtensionGenericWithParam.kt")
+            public void testPreferMoreSpecificExtensionGenericWithParam() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGenericWithParam.kt");
                 doTest(fileName);
             }
         }
