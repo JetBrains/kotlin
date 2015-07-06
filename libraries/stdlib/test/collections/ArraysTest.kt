@@ -6,15 +6,16 @@ import kotlin.test.assertTrue
 import kotlin.test.expect
 import org.junit.Test as test
 
-fun <T> checkContent(iter: Iterator<T>, length: Int, value: (Int) -> T) {
-    var idx = 0
-    while (idx != length && iter.hasNext()) {
-        assertEquals(value(idx++), iter.next(), "Invalid element")
-    }
+fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: LongArray, actual: LongArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: ShortArray, actual: ShortArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: ByteArray, actual: ByteArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: DoubleArray, actual: DoubleArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: FloatArray, actual: FloatArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: CharArray, actual: CharArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
+fun assertArrayNotSameButEquals(expected: BooleanArray, actual: BooleanArray, message: String = "") { assertTrue(expected !== actual, message); assertEquals(expected.toList(), actual.toList(), message) }
 
-    assertEquals(length, idx, "Invalid length")
-    assertFalse(iter.hasNext(), "Invalid length (hasNext())")
-}
 
 class ArraysTest {
 
@@ -211,20 +212,22 @@ class ArraysTest {
 
     test fun plus() {
         assertEquals(listOf("1", "2", "3", "4"), listOf("1", "2") + arrayOf("3", "4"))
-        val arr = arrayOf("1", "2") + arrayOf("3", "4")
-        assertEquals(4, arr.size())
-        checkContent(arr.iterator(), 4) { (it + 1).toString() }
+        assertArrayNotSameButEquals(arrayOf("1", "2", "3"), arrayOf("1", "2") + "3")
+        assertArrayNotSameButEquals(arrayOf("1", "2", "3", "4"), arrayOf("1", "2") + arrayOf("3", "4"))
+        assertArrayNotSameButEquals(arrayOf("1", "2", "3", "4"), arrayOf("1", "2") + listOf("3", "4"))
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 3), intArrayOf(1, 2) + 3)
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 3, 4), intArrayOf(1, 2) + listOf(3, 4))
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 3, 4), intArrayOf(1, 2) + intArrayOf(3, 4))
     }
 
     test fun plusVararg() {
         fun stringOnePlus(vararg a: String) = arrayOf("1") + a
-        fun numberOnePlus(vararg a: Int) = intArrayOf(1) + a
+        fun longOnePlus(vararg a: Long) = longArrayOf(1) + a
+        fun intOnePlus(vararg a: Int) = intArrayOf(1) + a
 
-        val arrS = stringOnePlus("2")
-        checkContent(arrS.iterator(), 2) { (it + 1).toString() }
-
-        val arrN = numberOnePlus(2)
-        checkContent(arrN.iterator(), 2) { it + 1 }
+        assertArrayNotSameButEquals(arrayOf("1", "2"), stringOnePlus("2"), "Array.plus")
+        assertArrayNotSameButEquals(intArrayOf(1, 2), intOnePlus(2), "IntArray.plus")
+        assertArrayNotSameButEquals(longArrayOf(1, 2), longOnePlus(2), "LongArray.plus")
     }
 
     test fun first() {
@@ -313,6 +316,42 @@ class ArraysTest {
         val charList = listOf('a', 'b')
         val charArray: CharArray = charList.toCharArray()
         assertEquals(charList, charArray.asList())
+    }
+
+    test fun copyOf() {
+        booleanArrayOf(true, false, true).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        byteArrayOf(0, 1, 2, 3, 4, 5).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        shortArrayOf(0, 1, 2, 3, 4, 5).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        intArrayOf(0, 1, 2, 3, 4, 5).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        longArrayOf(0, 1, 2, 3, 4, 5).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        floatArrayOf(0F, 1F, 2F, 3F).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).let { assertArrayNotSameButEquals(it, it.copyOf()) }
+        charArrayOf('0', '1', '2', '3', '4', '5').let { assertArrayNotSameButEquals(it, it.copyOf()) }
+    }
+
+    test fun copyAndResize() {
+        assertArrayNotSameButEquals(arrayOf("1", "2"), arrayOf("1", "2", "3").copyOf(2))
+        assertArrayNotSameButEquals(arrayOf("1", "2", null), arrayOf("1", "2").copyOf(3))
+
+        assertArrayNotSameButEquals(longArrayOf(1, 2), longArrayOf(1, 2, 3).copyOf(2))
+        assertArrayNotSameButEquals(longArrayOf(1, 2, 0), longArrayOf(1, 2).copyOf(3))
+
+        assertArrayNotSameButEquals(intArrayOf(1, 2), intArrayOf(1, 2, 3).copyOf(2))
+        assertArrayNotSameButEquals(intArrayOf(1, 2, 0), intArrayOf(1, 2).copyOf(3))
+
+        assertArrayNotSameButEquals(charArrayOf('A', 'B'), charArrayOf('A', 'B', 'C').copyOf(2))
+        assertArrayNotSameButEquals(charArrayOf('A', 'B', '\u0000'), charArrayOf('A', 'B').copyOf(3))
+    }
+
+    test fun copyOfRange() {
+        assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(byteArrayOf(0, 1, 2), byteArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(shortArrayOf(0, 1, 2), shortArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(intArrayOf(0, 1, 2), intArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(longArrayOf(0, 1, 2), longArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(floatArrayOf(0F, 1F, 2F), floatArrayOf(0F, 1F, 2F, 3F, 4F, 5F).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(doubleArrayOf(0.0, 1.0, 2.0), doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOfRange(0, 3))
+        assertArrayNotSameButEquals(charArrayOf('0', '1', '2'), charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3))
     }
 
     /*

@@ -13,27 +13,7 @@ class ArraysJVMTest {
             expect(b[i]) { a[i] }
     }
 
-    test fun copyOf() {
-        checkContent(booleanArrayOf(true, false, true, false, true, false).copyOf().iterator(), 6) { it % 2 == 0 }
-        checkContent(byteArrayOf(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it.toByte() }
-        checkContent(shortArrayOf(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it.toShort() }
-        checkContent(intArrayOf(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it }
-        checkContent(longArrayOf(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it.toLong() }
-        checkContent(floatArrayOf(0.toFloat(), 1.toFloat(), 2.toFloat(), 3.toFloat()).copyOf().iterator(), 4) { it.toFloat() }
-        checkContent(doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOf().iterator(), 6) { it.toDouble() }
-        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOf().iterator(), 6) { '0' + it }
-    }
 
-    test fun copyOfRange() {
-        checkContent(booleanArrayOf(true, false, true, false, true, false).copyOfRange(0, 3).iterator(), 3) { it % 2 == 0 }
-        checkContent(byteArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3).iterator(), 3) { it.toByte() }
-        checkContent(shortArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3).iterator(), 3) { it.toShort() }
-        checkContent(intArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3).iterator(), 3) { it }
-        checkContent(longArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3).iterator(), 3) { it.toLong() }
-        checkContent(floatArrayOf(0.toFloat(), 1.toFloat(), 2.toFloat(), 3.toFloat()).copyOfRange(0, 3).iterator(), 3) { it.toFloat() }
-        checkContent(doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOfRange(0, 3).iterator(), 3) { it.toDouble() }
-        checkContent(charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3).iterator(), 3) { '0' + it }
-    }
 
     test fun reduce() {
         expect(-4) { intArrayOf(1, 2, 3) reduce { a, b -> a - b } }
