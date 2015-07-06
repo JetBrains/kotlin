@@ -31,7 +31,7 @@ public interface JetIcons {
     Icon ENUM = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/enumKotlin.png");
     Icon FILE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png");
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/objectKotlin.png");
-    Icon TRAIT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/traitKotlin.png");
+    Icon TRAIT = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/interfaceKotlin.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/function.png");
     Icon EXTENSION_FUNCTION = PlatformIcons.FUNCTION_ICON;
     Icon LAMBDA = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/lambda.png");
