@@ -169,11 +169,20 @@ public class LookupElementFactory(
         }
         var element = LookupElementBuilder.create(lookupObject, name)
 
+        val insertHandler = getDefaultInsertHandler(descriptor)
+        element = element.withInsertHandler(insertHandler)
+
         when (descriptor) {
             is FunctionDescriptor -> {
                 val returnType = descriptor.getReturnType()
                 element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
-                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), false)
+
+                val insertsLambda = (insertHandler as KotlinFunctionInsertHandler).lambdaInfo != null
+                if (insertsLambda) {
+                    element = element.appendTailText(" {...} ", false)
+                }
+
+                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), insertsLambda)
             }
 
             is VariableDescriptor -> {
@@ -231,9 +240,6 @@ public class LookupElementFactory(
         if (lookupObject.isDeprecated) {
             element = element.withStrikeoutness(true)
         }
-
-        val insertHandler = getDefaultInsertHandler(descriptor)
-        element = element.withInsertHandler(insertHandler)
 
         if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
             element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
