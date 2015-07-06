@@ -14,525 +14,424 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorFontType;
-import com.intellij.openapi.editor.event.DocumentAdapter;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiCodeFragment;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.CallerChooserBase;
-import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
-import com.intellij.refactoring.ui.ComboBoxVisibilityPanel;
-import com.intellij.refactoring.ui.VisibilityPanelBase;
-import com.intellij.ui.DottedBorder;
-import com.intellij.ui.EditorTextField;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
-import com.intellij.util.IJSwingUtilities;
-import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.table.JBTableRow;
-import com.intellij.util.ui.table.JBTableRowEditor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetExpressionCodeFragment;
-import org.jetbrains.kotlin.psi.JetTypeCodeFragment;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind;
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.editor.colors.EditorFontType
+import com.intellij.openapi.editor.event.DocumentAdapter
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiCodeFragment
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.changeSignature.CallerChooserBase
+import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase
+import com.intellij.refactoring.changeSignature.MethodDescriptor
+import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase
+import com.intellij.refactoring.ui.ComboBoxVisibilityPanel
+import com.intellij.refactoring.ui.VisibilityPanelBase
+import com.intellij.ui.DottedBorder
+import com.intellij.ui.EditorTextField
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.treeStructure.Tree
+import com.intellij.util.Consumer
+import com.intellij.util.Function
+import com.intellij.util.IJSwingUtilities
+import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.table.JBTableRow
+import com.intellij.util.ui.table.JBTableRowEditor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
+import org.jetbrains.kotlin.psi.JetExpressionCodeFragment
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetTypeCodeFragment
+import org.jetbrains.kotlin.types.JetType
+import java.awt.BorderLayout
+import java.awt.Font
+import java.awt.Toolkit
+import java.awt.event.ItemEvent
+import java.awt.event.ItemListener
+import java.util.ArrayList
+import javax.swing.*
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
+public class JetChangeSignatureDialog(
+        project: Project,
+        methodDescriptor: JetMethodDescriptor,
+        context: PsiElement,
+        private val commandName: String?
+) : ChangeSignatureDialogBase<
         JetParameterInfo,
         PsiElement,
         Visibility,
         JetMethodDescriptor,
         ParameterTableModelItemBase<JetParameterInfo>,
-        JetCallableParameterTableModel
-        >
-{
-    private final String commandName;
+        JetCallableParameterTableModel>(project, methodDescriptor, false, context) {
+    override fun getFileType() = JetFileType.INSTANCE
 
-    public JetChangeSignatureDialog(Project project, @NotNull JetMethodDescriptor methodDescriptor, PsiElement context, String commandName) {
-        super(project, methodDescriptor, false, context);
-        this.commandName = commandName;
-    }
+    override fun createParametersInfoModel(descriptor: JetMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
 
-    @Override
-    protected LanguageFileType getFileType() {
-        return JetFileType.INSTANCE;
-    }
+    override fun createReturnTypeCodeFragment() = createReturnTypeCodeFragment(myProject, myMethod)
 
-    @Override
-    protected JetCallableParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor) {
-        return createParametersInfoModel(descriptor, myDefaultValueContext);
-    }
+    public fun getReturnType(): JetType? = getType(myReturnTypeCodeFragment as JetTypeCodeFragment?)
+    
+    private val parametersTableModel: JetCallableParameterTableModel get() = super.myParametersTableModel
+    
+    override fun getRowPresentation(item: ParameterTableModelItemBase<JetParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
+        val panel = JPanel(BorderLayout())
 
-    @NotNull
-    private static JetCallableParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor, PsiElement defaultValueContext) {
-        switch (descriptor.getKind()) {
-            case FUNCTION:
-                return new JetFunctionParameterTableModel(descriptor, defaultValueContext);
-            case PRIMARY_CONSTRUCTOR:
-                return new JetPrimaryConstructorParameterTableModel(descriptor, defaultValueContext);
-            case SECONDARY_CONSTRUCTOR:
-                return new JetSecondaryConstructorParameterTableModel(descriptor, defaultValueContext);
-        }
-        throw new AssertionError("Invalid kind: " + descriptor.getKind());
-    }
-
-    @Override
-    protected PsiCodeFragment createReturnTypeCodeFragment() {
-        return createReturnTypeCodeFragment(myProject, myMethod);
-    }
-
-    @NotNull
-    private static PsiCodeFragment createReturnTypeCodeFragment(@NotNull Project project, @NotNull JetMethodDescriptor method) {
-        return JetPsiFactory(project).createTypeCodeFragment(
-                ChangeSignaturePackage.renderOriginalReturnType(method), method.getBaseDeclaration()
-        );
-    }
-
-    @Nullable
-    public JetType getReturnType() {
-        return getType((JetTypeCodeFragment) myReturnTypeCodeFragment);
-    }
-
-    private static JetType getType(JetTypeCodeFragment typeCodeFragment) {
-        return typeCodeFragment != null ? typeCodeFragment.getType() : null;
-    }
-
-    @Override
-    protected JComponent getRowPresentation(ParameterTableModelItemBase<JetParameterInfo> item, boolean selected, boolean focused) {
-        JPanel panel = new JPanel(new BorderLayout());
-        String valOrVar = "";
-
-        if (myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR) {
-            switch (item.parameter.getValOrVar()) {
-                case None:
-                    valOrVar = "    ";
-                    break;
-                case Val:
-                    valOrVar = "val ";
-                    break;
-                case Var:
-                    valOrVar = "var ";
-                    break;
+        val valOrVar: String
+        if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
+            valOrVar = when (item.parameter.valOrVar) {
+                JetValVar.None -> "    "
+                JetValVar.Val -> "val "
+                JetValVar.Var -> "var "
             }
         }
+        else {
+            valOrVar = ""
+        }
 
-        String parameterName = getPresentationName(item);
-        String typeText = item.typeCodeFragment.getText();
-        String defaultValue = item.defaultValueCodeFragment.getText();
-        String separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length() + 1);
-        String text = valOrVar + parameterName + ":" + separator + typeText;
+        val parameterName = getPresentationName(item)
+        val typeText = item.typeCodeFragment.getText()
+        val defaultValue = item.defaultValueCodeFragment.getText()
+        val separator = StringUtil.repeatSymbol(' ', getParamNamesMaxLength() - parameterName.length() + 1)
+        var text = "$valOrVar$parameterName:$separator$typeText"
 
-        if (StringUtil.isNotEmpty(defaultValue))
-            text += " // default value = " + defaultValue;
+        if (StringUtil.isNotEmpty(defaultValue)) {
+            text += " // default value = $defaultValue"
+        }
 
-        EditorTextField field = new EditorTextField(" " + text, getProject(), getFileType()) {
-            @Override
-            protected boolean shouldHaveBorder() {
-                return false;
-            }
-        };
+        val field = object : EditorTextField(" $text", getProject(), getFileType()) {
+            override fun shouldHaveBorder() = false
+        }
 
-        Font font = EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN);
-        font = new Font(font.getFontName(), font.getStyle(), 12);
-        field.setFont(font);
+        val plainFont  = EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN)
+        field.setFont(Font(plainFont.getFontName(), plainFont.getStyle(), 12))
 
         if (selected && focused) {
-            panel.setBackground(UIUtil.getTableSelectionBackground());
-            field.setAsRendererWithSelection(UIUtil.getTableSelectionBackground(), UIUtil.getTableSelectionForeground());
-        } else {
-            panel.setBackground(UIUtil.getTableBackground());
+            panel.setBackground(UIUtil.getTableSelectionBackground())
+            field.setAsRendererWithSelection(UIUtil.getTableSelectionBackground(), UIUtil.getTableSelectionForeground())
+        }
+        else {
+            panel.setBackground(UIUtil.getTableBackground())
             if (selected && !focused) {
-                panel.setBorder(new DottedBorder(UIUtil.getTableForeground()));
+                panel.setBorder(DottedBorder(UIUtil.getTableForeground()))
             }
         }
-        panel.add(field, BorderLayout.WEST);
-        return panel;
+        panel.add(field, BorderLayout.WEST)
+
+        return panel
     }
 
-    private String getPresentationName(ParameterTableModelItemBase<JetParameterInfo> item) {
-        JetParameterInfo parameter = item.parameter;
-        if (parameter == null) return null;
-        if (parameter == myParametersTableModel.getReceiver()) return "<receiver>";
-        return parameter.getName();
+    private fun getPresentationName(item: ParameterTableModelItemBase<JetParameterInfo>): String {
+        val parameter = item.parameter
+        return if (parameter == parametersTableModel.getReceiver()) "<receiver>" else parameter.getName()
     }
 
-    private int getColumnTextMaxLength(Function<ParameterTableModelItemBase<JetParameterInfo>, String> nameFunction) {
-        int len = 0;
-        for (ParameterTableModelItemBase<JetParameterInfo> item : myParametersTableModel.getItems()) {
-            String text = nameFunction.fun(item);
-            len = Math.max(len, text == null ? 0 : text.length());
-        }
-        return len;
+    private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<JetParameterInfo>, String?>) =
+            parametersTableModel.getItems().map { nameFunction(it)?.length() ?: 0 }.max() ?: 0
+
+    private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
+
+    private fun getTypesMaxLength() = getColumnTextMaxLength { it.typeCodeFragment?.getText() }
+
+    private fun getDefaultValuesMaxLength() = getColumnTextMaxLength { it.defaultValueCodeFragment?.getText() }
+
+    override fun isListTableViewSupported() = true
+
+    override fun isEmptyRow(row: ParameterTableModelItemBase<JetParameterInfo>): Boolean {
+        if (!row.parameter.getName().isNullOrEmpty()) return false
+        if (!row.parameter.getTypeText().isNullOrEmpty()) return false
+        return true
     }
 
-    private int getParamNamesMaxLength() {
-        return getColumnTextMaxLength(new Function<ParameterTableModelItemBase<JetParameterInfo>, String>() {
-            @Override
-            public String fun(ParameterTableModelItemBase<JetParameterInfo> item) {
-                return getPresentationName(item);
-            }
-        });
-    }
+    override fun createCallerChooser(title: String, treeToReuse: Tree, callback: Consumer<Set<PsiElement>>) =
+            throw UnsupportedOperationException()
 
-    private int getTypesMaxLength() {
-        return getColumnTextMaxLength(new Function<ParameterTableModelItemBase<JetParameterInfo>, String>() {
-            @Override
-            public String fun(ParameterTableModelItemBase<JetParameterInfo> item) {
-                return item.typeCodeFragment == null ? null : item.typeCodeFragment.getText();
-            }
-        });
-    }
+    override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<JetParameterInfo>): JBTableRowEditor? {
+        return object : JBTableRowEditor() {
+            private val components = ArrayList<JComponent>()
+            private val nameEditor = EditorTextField(item.parameter.getName(), getProject(), getFileType())
 
-    private int getDefaultValuesMaxLength() {
-        return getColumnTextMaxLength(new Function<ParameterTableModelItemBase<JetParameterInfo>, String>() {
-            @Override
-            public String fun(ParameterTableModelItemBase<JetParameterInfo> item) {
-                return item.defaultValueCodeFragment == null ? null : item.defaultValueCodeFragment.getText();
-            }
-        });
-    }
-
-    @Override
-    protected boolean isListTableViewSupported() {
-        return true;
-    }
-
-    @Override
-    protected boolean isEmptyRow(ParameterTableModelItemBase<JetParameterInfo> row) {
-        if (!StringUtil.isEmpty(row.parameter.getName())) return false;
-        if (!StringUtil.isEmpty(row.parameter.getTypeText())) return false;
-        return true;
-    }
-
-    @Nullable
-    @Override
-    protected CallerChooserBase<PsiElement> createCallerChooser(String title, Tree treeToReuse, Consumer<Set<PsiElement>> callback) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected JBTableRowEditor getTableEditor(final JTable t, final ParameterTableModelItemBase<JetParameterInfo> item) {
-        return new JBTableRowEditor() {
-            private final List<JComponent> components = new ArrayList<JComponent>();
-            private final EditorTextField nameEditor = new EditorTextField(item.parameter.getName(), getProject(), getFileType());;
-
-            private void updateNameEditor() {
-                nameEditor.setEnabled(item.parameter != myParametersTableModel.getReceiver());
+            private fun updateNameEditor() {
+                nameEditor.setEnabled(item.parameter != parametersTableModel.getReceiver())
             }
 
-            private boolean isDefaultColumnEnabled() {
-                return item.parameter.getIsNewParameter() && item.parameter != myMethod.getReceiver();
-            }
+            private fun isDefaultColumnEnabled() =
+                    item.parameter.isNewParameter && item.parameter != myMethod.receiver
 
-            @Override
-            public void prepareEditor(JTable table, final int row) {
-                setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-                int column = 0;
+            override fun prepareEditor(table: JTable, row: Int) {
+                setLayout(BoxLayout(this, BoxLayout.X_AXIS))
+                var column = 0
 
-                for (ColumnInfo columnInfo : myParametersTableModel.getColumnInfos()) {
-                    JPanel panel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false));
-                    EditorTextField editor = null;
-                    JComponent component;
-                    final int columnFinal = column;
+                for (columnInfo in parametersTableModel.getColumnInfos()) {
+                    val panel = JPanel(VerticalFlowLayout(VerticalFlowLayout.TOP, 4, 2, true, false))
+                    val editor: EditorTextField?
+                    val component: JComponent
+                    val columnFinal = column
 
                     if (JetCallableParameterTableModel.isTypeColumn(columnInfo)) {
-                        Document document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment);
-                        component = editor = new EditorTextField(document, getProject(), getFileType());
+                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment)
+                        editor = EditorTextField(document, getProject(), getFileType())
+                        component = editor
                     }
                     else if (JetCallableParameterTableModel.isNameColumn(columnInfo)) {
-                        component = editor = nameEditor;
-                        updateNameEditor();
+                        editor = nameEditor
+                        component = editor
+                        updateNameEditor()
                     }
                     else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
-                        Document document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment);
-                        component = editor = new EditorTextField(document, getProject(), getFileType());
+                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment)
+                        editor = EditorTextField(document, getProject(), getFileType())
+                        component = editor
                     }
                     else if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
-                        JComboBox comboBox = new JComboBox(JetValVar.values());
-                        comboBox.setSelectedItem(item.parameter.getValOrVar());
-                        comboBox.addItemListener(new ItemListener() {
-                            @Override
-                            public void itemStateChanged(@NotNull ItemEvent e) {
-                                myParametersTableModel.setValueAtWithoutUpdate(e.getItem(), row, columnFinal);
-                                updateSignature();
+                        val comboBox = JComboBox(JetValVar.values())
+                        comboBox.setSelectedItem(item.parameter.valOrVar)
+                        comboBox.addItemListener(object : ItemListener {
+                            override fun itemStateChanged(e: ItemEvent) {
+                                parametersTableModel.setValueAtWithoutUpdate(e.getItem(), row, columnFinal)
+                                updateSignature()
                             }
-                        });
-                        component = comboBox;
+                        })
+                        component = comboBox
+                        editor = null
                     }
                     else if (JetFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
-                        JCheckBox checkBox = new JCheckBox();
-                        checkBox.setSelected(myParametersTableModel.getReceiver() == item.parameter);
-                        checkBox.addItemListener(
-                                new ItemListener() {
-                                    @Override
-                                    public void itemStateChanged(@NotNull ItemEvent e) {
-                                        ((JetFunctionParameterTableModel)myParametersTableModel).setReceiver(
-                                                e.getStateChange() == ItemEvent.SELECTED ? item.parameter : null
-                                        );
-                                        updateSignature();
-                                        updateNameEditor();
-                                    }
-                                }
-                        );
-                        component = checkBox;
+                        val checkBox = JCheckBox()
+                        checkBox.setSelected(parametersTableModel.getReceiver() == item.parameter)
+                        checkBox.addItemListener {
+                            val newReceiver = if (it.getStateChange() == ItemEvent.SELECTED) item.parameter else null
+                            (parametersTableModel as JetFunctionParameterTableModel).setReceiver(newReceiver)
+                            updateSignature()
+                            updateNameEditor()
+                        }
+                        component = checkBox
+                        editor = null
                     }
                     else
-                        continue;
+                        continue
 
-                    JBLabel label = new JBLabel(columnInfo.getName(), UIUtil.ComponentStyle.SMALL);
-                    panel.add(label);
+                    val label = JBLabel(columnInfo.getName(), UIUtil.ComponentStyle.SMALL)
+                    panel.add(label)
 
                     if (editor != null) {
-                        editor.addDocumentListener(new DocumentAdapter() {
-                            @Override
-                            public void documentChanged(DocumentEvent e) {
-                                fireDocumentChanged(e, columnFinal);
-                            }
-                        });
-                        editor.setPreferredWidth(t.getWidth() / myParametersTableModel.getColumnCount());
+                        editor.addDocumentListener(
+                                object : DocumentAdapter() {
+                                    override fun documentChanged(e: DocumentEvent?) {
+                                        fireDocumentChanged(e, columnFinal)
+                                    }
+                                }
+                        )
+                        editor.setPreferredWidth(table.getWidth() / parametersTableModel.getColumnCount())
                     }
 
-                    components.add(component);
-                    panel.add(component);
-                    add(panel);
-                    IJSwingUtilities.adjustComponentsOnMac(label, component);
-                    column++;
+                    components.add(component)
+                    panel.add(component)
+                    add(panel)
+                    IJSwingUtilities.adjustComponentsOnMac(label, component)
+                    column++
                 }
             }
 
-            @Override
-            public JBTableRow getValue() {
-                return new JBTableRow() {
-                    @Override
-                    public Object getValueAt(int column) {
-                        ColumnInfo columnInfo = myParametersTableModel.getColumnInfos()[column];
+            override fun getValue(): JBTableRow {
+                return object : JBTableRow {
+                    override fun getValueAt(column: Int): Any? {
+                        val columnInfo = parametersTableModel.getColumnInfos()[column]
 
                         if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
-                            return ((JComboBox) components.get(column)).getSelectedItem();
+                            return (components.get(column) as JComboBox).getSelectedItem()
                         else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
-                            return item.typeCodeFragment;
+                            return item.typeCodeFragment
                         else if (JetCallableParameterTableModel.isNameColumn(columnInfo))
-                            return ((EditorTextField) components.get(column)).getText();
+                            return (components.get(column) as EditorTextField).getText()
                         else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo))
-                            return item.defaultValueCodeFragment;
+                            return item.defaultValueCodeFragment
                         else
-                            return null;
+                            return null
                     }
-                };
+                }
             }
 
-            private int getColumnWidth(int letters) {
-                Font font = EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN);
-                font = new Font(font.getFontName(), font.getStyle(), 12);
-                return letters * Toolkit.getDefaultToolkit().getFontMetrics(font).stringWidth("W");
+            private fun getColumnWidth(letters: Int): Int {
+                var font = EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN)
+                font = Font(font.getFontName(), font.getStyle(), 12)
+                return letters * Toolkit.getDefaultToolkit().getFontMetrics(font).stringWidth("W")
             }
 
-            private int getEditorIndex(int x) {
-                int[] columnLetters = isDefaultColumnEnabled() ?
-                                      new int[] { 4, getParamNamesMaxLength(), getTypesMaxLength(), getDefaultValuesMaxLength() } :
-                                      new int[] { 4, getParamNamesMaxLength(), getTypesMaxLength() };
-                int columnIndex = 0;
+            private fun getEditorIndex(x: Int): Int {
+                @suppress("NAME_SHADOWING") var x = x
 
-                for (int i = myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR ? 0 : 1; i < columnLetters.length; i ++) {
-                    int width = getColumnWidth(columnLetters[i]);
+                val columnLetters = if (isDefaultColumnEnabled())
+                    intArrayOf(4, getParamNamesMaxLength(), getTypesMaxLength(), getDefaultValuesMaxLength())
+                else
+                    intArrayOf(4, getParamNamesMaxLength(), getTypesMaxLength())
+
+                var columnIndex = 0
+                for (i in (if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) 0 else 1)..columnLetters.size() - 1) {
+                    val width = getColumnWidth(columnLetters[i])
 
                     if (x <= width)
-                        return columnIndex;
+                        return columnIndex
 
-                    columnIndex ++;
-                    x -= width;
+                    columnIndex++
+                    x -= width
                 }
 
-                return columnIndex - 1;
+                return columnIndex - 1
             }
 
-            @Override
-            public JComponent getPreferredFocusedComponent() {
-                MouseEvent me = getMouseEvent();
-                int index = me != null
-                            ? getEditorIndex((int) me.getPoint().getX())
-                            : myMethod.getKind() == Kind.PRIMARY_CONSTRUCTOR ? 1 : 0;
-                JComponent component = components.get(index);
-                return component instanceof EditorTextField ? ((EditorTextField) component).getFocusTarget() : component;
+            override fun getPreferredFocusedComponent(): JComponent {
+                val me = getMouseEvent()
+                val index = if (me != null)
+                    getEditorIndex(me.getPoint().getX().toInt())
+                else if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) 1 else 0
+                val component = components.get(index)
+                return if (component is EditorTextField) component.getFocusTarget() else component
             }
 
-            @Override
-            public JComponent[] getFocusableComponents() {
-                JComponent[] focusable = new JComponent[components.size()];
+            override fun getFocusableComponents(): Array<JComponent> {
+                return Array(components.size()) {
+                    val component = components.get(it)
+                    (component as? EditorTextField)?.getFocusTarget() ?: component
+                }
+            }
+        }
+    }
 
-                for (int i = 0; i < components.size(); i++) {
-                    focusable[i] = components.get(i);
+    override fun calculateSignature(): String {
+        val changeInfo = evaluateChangeInfo(parametersTableModel,
+                                            myReturnTypeCodeFragment,
+                                            getMethodDescriptor(),
+                                            getVisibility(),
+                                            getMethodName(),
+                                            myDefaultValueContext)
+        return changeInfo.getNewSignature(getMethodDescriptor().originalPrimaryCallable)
+    }
 
-                    if (focusable[i] instanceof EditorTextField)
-                        focusable[i] = ((EditorTextField) focusable[i]).getFocusTarget();
+    override fun createVisibilityControl() = ComboBoxVisibilityPanel(
+            arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
+    )
+
+    override fun updateSignatureAlarmFired() {
+        super.updateSignatureAlarmFired()
+        validateButtons()
+    }
+
+    override fun validateAndCommitData() = null
+
+    override fun canRun() {
+        if (myNamePanel.isVisible()
+            && myMethod.canChangeName()
+            && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(getMethodName())) {
+            throw ConfigurationException(JetRefactoringBundle.message("function.name.is.invalid"))
+        }
+
+        if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite && getReturnType() == null) {
+            throw ConfigurationException(JetRefactoringBundle.message("return.type.is.invalid"))
+        }
+
+        val parameterInfos = parametersTableModel.getItems()
+
+        for (item in parameterInfos) {
+            val parameterName = item.parameter.getName()
+
+            if (item.parameter != parametersTableModel.getReceiver()
+                && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName)) {
+                throw ConfigurationException(JetRefactoringBundle.message("parameter.name.is.invalid", parameterName))
+            }
+
+            if (getType(item.typeCodeFragment as JetTypeCodeFragment) == null) {
+                throw ConfigurationException(JetRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()))
+            }
+        }
+    }
+
+    override fun createRefactoringProcessor(): BaseRefactoringProcessor {
+        val changeInfo = evaluateChangeInfo(parametersTableModel,
+                                            myReturnTypeCodeFragment,
+                                            getMethodDescriptor(),
+                                            getVisibility(),
+                                            getMethodName(),
+                                            myDefaultValueContext)
+        return JetChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle())
+    }
+
+    public fun getMethodDescriptor(): JetMethodDescriptor = myMethod
+
+    override fun getSelectedIdx(): Int {
+        return myMethod.getParameters().withIndex().firstOrNull { it.value.isNewParameter }?.index
+               ?: super.getSelectedIdx()
+    }
+
+    companion object {
+        private fun createParametersInfoModel(descriptor: JetMethodDescriptor, defaultValueContext: PsiElement): JetCallableParameterTableModel {
+            return when (descriptor.kind) {
+                JetMethodDescriptor.Kind.FUNCTION -> JetFunctionParameterTableModel(descriptor, defaultValueContext)
+                JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> JetPrimaryConstructorParameterTableModel(descriptor, defaultValueContext)
+                JetMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> JetSecondaryConstructorParameterTableModel(descriptor, defaultValueContext)
+            }
+        }
+
+        private fun createReturnTypeCodeFragment(project: Project, method: JetMethodDescriptor) =
+                JetPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
+
+        private fun getType(typeCodeFragment: JetTypeCodeFragment?) = typeCodeFragment?.getType()
+
+        public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
+                                                                      commandName: String,
+                                                                      method: JetMethodDescriptor,
+                                                                      defaultValueContext: PsiElement): BaseRefactoringProcessor {
+            val parameterTableModel = createParametersInfoModel(method, defaultValueContext)
+            parameterTableModel.setParameterInfos(method.getParameters())
+            val changeInfo = evaluateChangeInfo(parameterTableModel,
+                                                createReturnTypeCodeFragment(project, method),
+                                                method,
+                                                method.getVisibility(),
+                                                method.getName(),
+                                                defaultValueContext)
+            return JetChangeSignatureProcessor(project, changeInfo, commandName)
+        }
+
+        private fun evaluateChangeInfo(parametersModel: JetCallableParameterTableModel,
+                                       returnTypeCodeFragment: PsiCodeFragment?,
+                                       methodDescriptor: JetMethodDescriptor,
+                                       visibility: Visibility,
+                                       methodName: String,
+                                       defaultValueContext: PsiElement): JetChangeInfo {
+            val parameters = parametersModel.getItems().map { parameter ->
+                val parameterInfo = parameter.parameter
+
+                parameterInfo.currentTypeText = parameter.typeCodeFragment.getText().trim()
+                val codeFragment = parameter.defaultValueCodeFragment as JetExpressionCodeFragment
+                val oldDefaultValue = parameterInfo.defaultValueForCall
+                if (codeFragment.getText() != (if (oldDefaultValue != null) oldDefaultValue.getText() else "")) {
+                    parameterInfo.defaultValueForCall = codeFragment.getContentElement()
                 }
 
-                return focusable;
+                parameterInfo
             }
-        };
-    }
 
-    @Override
-    protected String calculateSignature() {
-        JetChangeInfo changeInfo = evaluateChangeInfo(
-                myParametersTableModel,
-                myReturnTypeCodeFragment,
-                getMethodDescriptor(),
-                getVisibility(),
-                getMethodName(),
-                myDefaultValueContext
-        );
-        return changeInfo.getNewSignature(getMethodDescriptor().getOriginalPrimaryCallable());
-    }
-
-    @Override
-    protected VisibilityPanelBase<Visibility> createVisibilityControl() {
-        return new ComboBoxVisibilityPanel<Visibility>(new Visibility[]{
-                Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC }
-        );
-    }
-
-    @Override
-    protected void updateSignatureAlarmFired() {
-        super.updateSignatureAlarmFired();
-        validateButtons();
-    }
-
-    @Nullable
-    @Override
-    protected String validateAndCommitData() {
-        return null;
-    }
-
-    @Override
-    protected void canRun() throws ConfigurationException {
-        if (myNamePanel.isVisible() && myMethod.canChangeName() && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(getMethodName()))
-            throw new ConfigurationException(JetRefactoringBundle.message("function.name.is.invalid"));
-        if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite && getReturnType() == null)
-            throw new ConfigurationException(JetRefactoringBundle.message("return.type.is.invalid"));
-
-        List<ParameterTableModelItemBase<JetParameterInfo>> parameterInfos = myParametersTableModel.getItems();
-
-        for (ParameterTableModelItemBase<JetParameterInfo> item : parameterInfos) {
-            String parameterName = item.parameter.getName();
-
-            if (item.parameter != myParametersTableModel.getReceiver()
-                && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName))
-                throw new ConfigurationException(JetRefactoringBundle.message("parameter.name.is.invalid", parameterName));
-            if (getType((JetTypeCodeFragment) item.typeCodeFragment) == null)
-                throw new ConfigurationException(JetRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()));
+            val returnTypeText = if (returnTypeCodeFragment != null) returnTypeCodeFragment.getText().trim() else ""
+            val returnType = getType(returnTypeCodeFragment as JetTypeCodeFragment?)
+            return JetChangeInfo(methodDescriptor.original,
+                                 methodName,
+                                 returnType,
+                                 returnTypeText,
+                                 visibility,
+                                 parameters,
+                                 parametersModel.getReceiver(),
+                                 defaultValueContext)
         }
-    }
-
-    @Override
-    @NotNull
-    protected BaseRefactoringProcessor createRefactoringProcessor() {
-        JetChangeInfo changeInfo = evaluateChangeInfo(
-                myParametersTableModel,
-                myReturnTypeCodeFragment,
-                getMethodDescriptor(),
-                getVisibility(),
-                getMethodName(),
-                myDefaultValueContext
-        );
-        return new JetChangeSignatureProcessor(myProject, changeInfo, commandName != null ? commandName : getTitle());
-    }
-
-    @NotNull
-    public static BaseRefactoringProcessor createRefactoringProcessorForSilentChangeSignature(
-            @NotNull Project project,
-            @NotNull String commandName,
-            @NotNull JetMethodDescriptor method,
-            @NotNull PsiElement defaultValueContext
-    ) {
-        JetCallableParameterTableModel parameterTableModel = createParametersInfoModel(method, defaultValueContext);
-        parameterTableModel.setParameterInfos(method.getParameters());
-        JetChangeInfo changeInfo = evaluateChangeInfo(
-                parameterTableModel,
-                createReturnTypeCodeFragment(project, method),
-                method,
-                method.getVisibility(),
-                method.getName(),
-                defaultValueContext
-        );
-        return new JetChangeSignatureProcessor(project, changeInfo, commandName);
-    }
-
-    @NotNull
-    public JetMethodDescriptor getMethodDescriptor() {
-        return myMethod;
-    }
-
-    private static JetChangeInfo evaluateChangeInfo(
-            @NotNull JetCallableParameterTableModel parametersModel,
-            @Nullable PsiCodeFragment returnTypeCodeFragment,
-            @NotNull JetMethodDescriptor methodDescriptor,
-            @Nullable Visibility visibility,
-            @NotNull String methodName,
-            @NotNull PsiElement defaultValueContext
-    ) {
-        List<JetParameterInfo> parameters = new ArrayList<JetParameterInfo>(parametersModel.getRowCount());
-
-        for (ParameterTableModelItemBase<JetParameterInfo> parameter : parametersModel.getItems()) {
-            parameter.parameter.setCurrentTypeText(parameter.typeCodeFragment.getText().trim());
-
-            parameters.add(parameter.parameter);
-
-            JetExpressionCodeFragment codeFragment = (JetExpressionCodeFragment) parameter.defaultValueCodeFragment;
-            JetExpression oldDefaultValue = parameter.parameter.getDefaultValueForCall();
-            if (!codeFragment.getText().equals(oldDefaultValue != null ? oldDefaultValue.getText() : "")) {
-                parameter.parameter.setDefaultValueForCall(codeFragment.getContentElement());
-            }
-        }
-
-        String returnTypeText = returnTypeCodeFragment != null ? returnTypeCodeFragment.getText().trim() : "";
-        JetType returnType = getType((JetTypeCodeFragment) returnTypeCodeFragment);
-        return new JetChangeInfo(methodDescriptor.getOriginal(), methodName, returnType, returnTypeText,
-                                 visibility, parameters, parametersModel.getReceiver(), defaultValueContext);
-    }
-
-    @Override
-    protected int getSelectedIdx() {
-        List<JetParameterInfo> parameters = myMethod.getParameters();
-        for (int i = 0; i < parameters.size(); i++) {
-            JetParameterInfo info = parameters.get(i);
-            if (info.getIsNewParameter()) return i;
-        }
-        return super.getSelectedIdx();
     }
 }
