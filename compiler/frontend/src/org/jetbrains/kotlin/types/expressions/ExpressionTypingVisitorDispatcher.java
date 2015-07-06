@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
@@ -143,7 +144,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     @Override
     @NotNull
     public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getTypeInfo(expression, context, this);
+        JetTypeInfo result = getTypeInfo(expression, context, this);
+        AnnotationTargetChecker.INSTANCE$.checkExpression(expression, context.trace);
+        return result;
     }
 
     @Override

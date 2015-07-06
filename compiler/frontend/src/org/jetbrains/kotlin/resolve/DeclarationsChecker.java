@@ -67,6 +67,7 @@ public class DeclarationsChecker {
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
         for (JetFile file : bodiesResolveContext.getFiles()) {
             checkModifiersAndAnnotationsInPackageDirective(file);
+            AnnotationTargetChecker.INSTANCE$.check(file, trace);
         }
 
         Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
@@ -146,6 +147,7 @@ public class DeclarationsChecker {
                 }
             }
         }
+        AnnotationTargetChecker.INSTANCE$.check(packageDirective, trace);
 
         ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
     }
@@ -302,6 +304,7 @@ public class DeclarationsChecker {
             if (typeParameter != null) {
                 DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
             }
+            AnnotationTargetChecker.INSTANCE$.check(jetTypeParameter, trace);
         }
     }
 

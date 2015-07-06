@@ -18,6 +18,6 @@ fun test() : Unit {
   val <!UNUSED_VARIABLE!>s<!> = "" <!USELESS_CAST!>as Any<!>
   ("" as String?)?.length()
   (data@("" as String?))?.length()
-  (@data()( "" as String?))?.length()
+  (<!WRONG_ANNOTATION_TARGET!>@data()<!>( "" as String?))?.length()
   Unit
 }

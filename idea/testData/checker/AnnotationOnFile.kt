@@ -1,8 +1,8 @@
-@file:kotlin.deprecated("message")
+<error>@file:kotlin.deprecated("message")</error>
 @file:suppress(<error>BAR</error>)
 @file:suppress(BAZ)
 
-@<error>k</error>otlin.deprecated("message")
+<error>@<error>k</error>otlin.deprecated("message")</error>
 @<error>s</error>uppress(<error>BAR</error>)
 @<error>s</error>uppress(BAZ)
 
@@ -19,4 +19,5 @@ package boo
 val BAZ = "baz"
 val N = 0
 
+target(AnnotationTarget.FILE)
 annotation class myAnnotation(val i: Int, val s: String)

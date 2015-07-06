@@ -2,7 +2,7 @@ package
 
 internal fun foo(): @[My(x = IntegerValueType(42))] kotlin.Int
 
-kotlin.annotation.annotation() internal final annotation class My : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() internal final annotation class My : kotlin.Annotation {
     public constructor My(/*0*/ x: kotlin.Int)
     internal final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
