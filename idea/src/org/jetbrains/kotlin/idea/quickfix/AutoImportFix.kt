@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import java.util.ArrayList
+import com.intellij.codeInsight.*
+import org.jetbrains.kotlin.idea.core.isInExcludedPackage
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -152,7 +154,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
 
-        return result
+        return result.filter { it -> !isInExcludedPackage(it) }
     }
 
     private fun getClasses(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<DeclarationDescriptor>

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
@@ -197,4 +198,11 @@ public class KotlinIndicesHelper(
                 .filterIsInstance<CallableDescriptor>()
                 .filter { it.getExtensionReceiverParameter() == null }
     }
+}
+
+public fun isInExcludedPackage(descriptor: DeclarationDescriptor): Boolean {
+    val fqName = DescriptorUtils.getFqName(descriptor).asString()
+
+    return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
+            .any { excluded -> fqName == excluded || fqName.startsWith(excluded + ".") }
 }

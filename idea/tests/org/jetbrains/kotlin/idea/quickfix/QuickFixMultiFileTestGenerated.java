@@ -185,6 +185,30 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("noImportsForClassInExcludedPackage.before.Main.kt")
+        public void testNoImportsForClassInExcludedPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForClassInExcludedPackage.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportsForExcludedClass.before.Main.kt")
+        public void testNoImportsForExcludedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForExcludedClass.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportsForFunctionInExcludedPackage.before.Main.kt")
+        public void testNoImportsForFunctionInExcludedPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForFunctionInExcludedPackage.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("notExcludedClass.before.Main.kt")
+        public void testNotExcludedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notExcludedClass.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("objectImport.before.Main.kt")
         public void testObjectImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/objectImport.before.Main.kt");

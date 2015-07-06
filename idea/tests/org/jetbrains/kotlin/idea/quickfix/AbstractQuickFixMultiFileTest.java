@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
+import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -65,6 +66,18 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
     protected void doTestWithExtraFile(String beforeFileName) throws Exception {
         doTest(beforeFileName, true);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = new String[]{"excludedPackage", "somePackage.ExcludedClass"};
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY;
+        super.tearDown();
     }
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
