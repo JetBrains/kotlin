@@ -77,12 +77,13 @@ fun specialJS(): List<GenericFunction> {
     templates add f("plus(element: T)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
+        inline(true)
+        annotations("""suppress("NOTHING_TO_INLINE")""")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body() {
             """
-            val result = this.copyOf()
-            (result: dynamic).push(element)
-            return result as SELF
+            return (this: dynamic).concat(arrayOf(element))
             """
         }
     }
@@ -90,6 +91,7 @@ fun specialJS(): List<GenericFunction> {
     templates add f("plus(collection: Collection<T>)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
         body {
             """
@@ -105,6 +107,7 @@ fun specialJS(): List<GenericFunction> {
         inline(true)
         annotations("""suppress("NOTHING_TO_INLINE")""")
         returns("SELF")
+        returns(ArraysOfObjects) { "Array<T>" }
         body {
             """
             return (this: dynamic).concat(array)

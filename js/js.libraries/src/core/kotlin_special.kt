@@ -286,7 +286,7 @@ public inline fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [array].
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun <T> Array<out T>.plus(array: Array<out T>): Array<out T> {
+public inline fun <T> Array<out T>.plus(array: Array<out T>): Array<T> {
     return (this: dynamic).concat(array)
 }
 
@@ -357,7 +357,7 @@ public inline fun ShortArray.plus(array: ShortArray): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [collection].
  */
-public fun <T> Array<out T>.plus(collection: Collection<T>): Array<out T> {
+public fun <T> Array<out T>.plus(collection: Collection<T>): Array<T> {
     return arrayPlusCollection(this, collection)
 }
 
@@ -420,81 +420,72 @@ public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun <T> Array<out T>.plus(element: T): Array<out T> {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as Array<out T>
+suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.plus(element: T): Array<T> {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun BooleanArray.plus(element: Boolean): BooleanArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as BooleanArray
+suppress("NOTHING_TO_INLINE")
+public inline fun BooleanArray.plus(element: Boolean): BooleanArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun ByteArray.plus(element: Byte): ByteArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as ByteArray
+suppress("NOTHING_TO_INLINE")
+public inline fun ByteArray.plus(element: Byte): ByteArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun CharArray.plus(element: Char): CharArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as CharArray
+suppress("NOTHING_TO_INLINE")
+public inline fun CharArray.plus(element: Char): CharArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun DoubleArray.plus(element: Double): DoubleArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as DoubleArray
+suppress("NOTHING_TO_INLINE")
+public inline fun DoubleArray.plus(element: Double): DoubleArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun FloatArray.plus(element: Float): FloatArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as FloatArray
+suppress("NOTHING_TO_INLINE")
+public inline fun FloatArray.plus(element: Float): FloatArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun IntArray.plus(element: Int): IntArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as IntArray
+suppress("NOTHING_TO_INLINE")
+public inline fun IntArray.plus(element: Int): IntArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun LongArray.plus(element: Long): LongArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as LongArray
+suppress("NOTHING_TO_INLINE")
+public inline fun LongArray.plus(element: Long): LongArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-public fun ShortArray.plus(element: Short): ShortArray {
-    val result = this.copyOf()
-    (result: dynamic).push(element)
-    return result as ShortArray
+suppress("NOTHING_TO_INLINE")
+public inline fun ShortArray.plus(element: Short): ShortArray {
+    return (this: dynamic).concat(arrayOf(element))
 }
 

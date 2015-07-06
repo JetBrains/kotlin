@@ -6,92 +6,87 @@ fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body() {
             """
-            val result = this.copyOf(size() + 1)
-            result[size()] = element
-            return result as SELF
+            val index = size()
+            val result = Arrays.copyOf(this, index + 1)
+            result[index] = element
+            return result
             """
         }
     }
 
     templates add f("plus(collection: Collection<T>)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
         doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
         body {
             """
-            val thisSize = size()
-            val result = this.copyOf(thisSize + collection.size())
-            collection.forEachIndexed { i, element ->
-                result[thisSize + i] = element
-            }
-            return result as SELF
+            var index = size()
+            val result = Arrays.copyOf(this, index + collection.size())
+            for (element in collection) result[index++] = element
+            return result
             """
         }
     }
 
     templates add f("plus(array: SELF)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
+        customSignature(InvariantArraysOfObjects) { "plus(array: Array<out T>)" }
         doc { "Returns an array containing all elements of the original array and then all elements of the given [array]." }
         returns("SELF")
         body {
             """
             val thisSize = size()
             val arraySize = array.size()
-            val result = this.copyOf(thisSize + arraySize)
+            val result = Arrays.copyOf(this, thisSize + arraySize)
             System.arraycopy(array, 0, result, thisSize, arraySize)
-            return result as SELF
+            return result
             """
         }
     }
 
 
     templates add f("copyOfRange(from: Int, to: Int)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
+        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOfRange")"""}
         body {
             "return Arrays.copyOfRange(this, from, to)"
         }
     }
 
     templates add f("copyOf()") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
-        returns(ArraysOfObjects) { "Array<T>" }
+        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
         body {
             "return Arrays.copyOf(this, size())"
-        }
-        body(ArraysOfObjects) {
-            "return Arrays.copyOf(this, size()) as Array<T>"
         }
     }
 
     // This overload can cause nulls if array size is expanding, hence different return overload
     templates add f("copyOf(newSize: Int)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
         body {
             "return Arrays.copyOf(this, newSize)"
         }
-        returns(ArraysOfObjects) { "Array<T?>" }
-        body(ArraysOfObjects) {
-            "return Arrays.copyOf(this, newSize) as Array<T?>"
-        }
+        returns(ArraysOfObjects) { "Array<out T?>" }
+        returns(InvariantArraysOfObjects) { "Array<T?>" }
+        annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
     }
 
     templates add f("fill(element: T)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
         returns { "SELF" }
-        returns(ArraysOfObjects) { "Array<out T>" }
         body {
             """
             Arrays.fill(this, element)
