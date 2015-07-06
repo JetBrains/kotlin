@@ -15,11 +15,27 @@ public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
  * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
- * Use [ConcurrentMap.putIfAbsent] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
+ * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
  */
-deprecated("Use putIfAbsent instead or cast this map to MutableMap.")
+deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.")
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
     throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
+
+/**
+ * Concurrent getOrPut, that is safe for concurrent maps.
+ *
+ * Returns the value for the given [key]. If the key is not found in the map, calls the [defaultValue] function,
+ * puts its result into the map under the given key and returns it.
+ *
+ * This method guarantees not to put the value into the map if the key is already there,
+ * but the [defaultValue] function may be invoked even if the key is already in the map.
+ */
+public inline fun <K, V: Any> ConcurrentMap<K, V>.concurrentGetOrPut(key: K, defaultValue: () -> V): V {
+    // Do not use computeIfAbsent on JVM8 as it would change locking behavior
+    return this.get(key) ?:
+            defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
+
+}
 
 /**
  * Converts this [Map] to a [SortedMap] so iteration order will be in key order.
