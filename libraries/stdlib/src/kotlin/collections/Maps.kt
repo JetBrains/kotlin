@@ -223,6 +223,15 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
 }
 
 /**
+ * Puts all the elements of the given sequence into this [MutableMap] with the first component in the pair being the key and the second the value.
+ */
+public fun <K, V> MutableMap<K, V>.putAll(values: Sequence<Pair<K,V>>): Unit {
+    for ((key, value) in values) {
+        put(key, value)
+    }
+}
+
+/**
  * Returns a new map with entries having the keys of this map and the values obtained by applying the `transform`
  * function to each entry in this [Map].
  *
@@ -336,6 +345,29 @@ public fun <K, V> MutableMap<K, V>.plusAssign(map: Map<K, V>) {
  * Returns a new map containing all key-value pairs from the given collection of pairs.
  */
 public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
+    val result = LinkedHashMap<K, V>(collectionSizeOrNull()?.let { mapCapacity(it) } ?: 16)
+    for (element in this) {
+        result.put(element.first, element.second)
+    }
+    return result
+}
+
+/**
+ * Returns a new map containing all key-value pairs from the given array of pairs.
+ */
+public fun <K, V> Array<Pair<K, V>>.toMap(): Map<K, V> {
+    val result = LinkedHashMap<K, V>(mapCapacity(size()))
+    for (element in this) {
+        result.put(element.first, element.second)
+    }
+    return result
+}
+
+/**
+ * Returns a new map containing all key-value pairs from the given sequence of pairs.
+ */
+
+public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> {
     val result = LinkedHashMap<K, V>()
     for (element in this) {
         result.put(element.first, element.second)
