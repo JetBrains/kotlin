@@ -97,7 +97,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
     @NotNull
     public JavaConstructorDescriptor enhance(
             @Nullable JetType enhancedReceiverType,
-            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull List<JetType> enhancedValueParametersTypes,
             @NotNull JetType enhancedReturnType
     ) {
         JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
@@ -105,7 +105,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                 enhancedReceiverType,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                enhancedValueParameters,
+                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()

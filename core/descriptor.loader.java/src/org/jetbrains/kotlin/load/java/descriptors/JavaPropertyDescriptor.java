@@ -47,7 +47,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Override
     public JavaCallableMemberDescriptor enhance(
             @Nullable JetType enhancedReceiverType,
-            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull List<JetType> enhancedValueParametersTypes,
             @NotNull JetType enhancedReturnType
     ) {
         JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(

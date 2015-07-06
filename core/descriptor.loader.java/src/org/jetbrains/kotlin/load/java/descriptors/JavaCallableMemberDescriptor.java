@@ -28,7 +28,7 @@ public interface JavaCallableMemberDescriptor extends CallableMemberDescriptor {
     @NotNull
     JavaCallableMemberDescriptor enhance(
             @Nullable JetType enhancedReceiverType,
-            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull List<JetType> enhancedValueParametersTypes,
             @NotNull JetType enhancedReturnType
     );
 }

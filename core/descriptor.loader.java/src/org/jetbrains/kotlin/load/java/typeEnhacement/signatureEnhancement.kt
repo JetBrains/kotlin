@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -38,78 +39,41 @@ private fun <D : CallableMemberDescriptor> D.enhance(): D {
 
     val enhancedReceiverType =
             if (getExtensionReceiverParameter() != null)
-                parts { it.getExtensionReceiverParameter()!!.toPart() }.enhance()
+                parts(isCovariant = false) { it.getExtensionReceiverParameter()!!.getType() }.enhance()
             else null
 
-    val enhancedValueParameters = getValueParameters().map {
-        p -> parts { it.getValueParameters()[p.getIndex()]!!.toPart() }.enhance()
+    val enhancedValueParametersTypes = getValueParameters().map {
+        p -> parts(isCovariant = false) { it.getValueParameters()[p.getIndex()].getType() }.enhance()
     }
 
-    val enhancedReturnType = parts { it.getReturnType()!!.toReturnTypePart() }.enhance()
+    val enhancedReturnType = parts(isCovariant = true) { it.getReturnType()!! }.enhance()
 
     if (this is JavaCallableMemberDescriptor) {
         @suppress("UNCHECKED_CAST")
-        return this.enhance(enhancedReceiverType, enhancedValueParameters, enhancedReturnType) as D
+        return this.enhance(enhancedReceiverType, enhancedValueParametersTypes, enhancedReturnType) as D
     }
 
     return this
 }
 
-fun <T, P : SignaturePart<T>> SignatureParts<T, P>.enhance(): T {
-    val qualifiers = fromOverride.type.computeIndexedQualifiersForOverride(this.fromOverridden.map { it.type }, fromOverride.isCovariant)
-    return fromOverride.replaceType(fromOverride.type.enhance(qualifiers))
-}
-
-class SignatureParts<T, P: SignaturePart<T>>(
-        val fromOverride: P,
-        val fromOverridden: Collection<P>
-)
-
-interface SignaturePart<out T> {
+private class SignatureParts(
+    val fromOverride: JetType,
+    val fromOverridden: Collection<JetType>,
     val isCovariant: Boolean
-        get() = false
-
-    val type: JetType
-
-    fun replaceType(newType: JetType): T
+) {
+    fun enhance(): JetType {
+        val qualifiers = fromOverride.computeIndexedQualifiersForOverride(this.fromOverridden, isCovariant)
+        return fromOverride.enhance(qualifiers)
+    }
 }
 
-private fun ReceiverParameterDescriptor.toPart() = object : SignaturePart<JetType> {
-    override val type = this@toPart.getType() // workaround for KT-7557
-
-    override fun replaceType(newType: JetType) = newType
-}
-
-private fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDescriptor> {
-    override val type = this@toPart.getType() // workaround for KT-7557
-
-    override fun replaceType(newType: JetType) = ValueParameterDescriptorImpl(
-            getContainingDeclaration(),
-            null,
-            getIndex(),
-            getAnnotations(),
-            getName(),
-            newType,
-            declaresDefaultValue(),
-            if (getVarargElementType() != null) KotlinBuiltIns.getInstance().getArrayElementType(newType) else null,
-            getSource()
-    )
-}
-
-private fun JetType.toReturnTypePart() = object : SignaturePart<JetType> {
-    override val type = this@toReturnTypePart
-
-    override val isCovariant: Boolean = true
-
-    override fun replaceType(newType: JetType) = newType
-}
-
-private fun <D : CallableMemberDescriptor, T, P : SignaturePart<T>> D.parts(collector: (D) -> P): SignatureParts<T, P> {
+private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> JetType): SignatureParts {
     return SignatureParts(
             collector(this),
             this.getOverriddenDescriptors().map {
                 @suppress("UNCHECKED_CAST")
                 collector(it as D)
-            }
+            },
+            isCovariant
     )
 }

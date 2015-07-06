@@ -97,7 +97,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     public JavaMethodDescriptor enhance(
             @Nullable JetType enhancedReceiverType,
-            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull List<JetType> enhancedValueParametersTypes,
             @NotNull JetType enhancedReturnType
     ) {
         JavaMethodDescriptor enhancedMethod = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
@@ -105,7 +105,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 enhancedReceiverType,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
-                enhancedValueParameters,
+                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhancedMethod),
                 enhancedReturnType,
                 getModality(),
                 getVisibility()
