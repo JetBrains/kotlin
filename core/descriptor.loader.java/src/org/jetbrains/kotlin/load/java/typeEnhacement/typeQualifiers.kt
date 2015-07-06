@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.utils.getOrDefault
 import java.util.ArrayList
 
 enum class NullabilityQualifier {
@@ -126,13 +125,13 @@ fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetTy
         assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
         val qualifiers = indexedThisType[index]
-        val verticalSlice = indexedFromSupertypes.map { it.getOrDefault(index, { null }) }.filterNotNull()
+        val verticalSlice = indexedFromSupertypes.map { it.getOrElse(index, { null }) }.filterNotNull()
 
         // Only the head type constructor is safely co-variant
         qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
     }
 
-    return { index -> computedResult.getOrDefault(index) { JavaTypeQualifiers.NONE } }
+    return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
 }
 
 private fun JetType.computeQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): JavaTypeQualifiers {
