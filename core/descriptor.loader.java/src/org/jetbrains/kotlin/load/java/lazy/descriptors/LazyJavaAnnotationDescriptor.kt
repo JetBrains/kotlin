@@ -64,6 +64,8 @@ class LazyJavaAnnotationDescriptor(
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(true, false, false))
+
     override fun getType(): JetType = type()
 
     private val allValueArguments = c.storageManager.createLazyValue {
@@ -100,7 +102,7 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> createCompileTimeConstant(argument.value, CompileTimeConstant.Parameters.Impl(true, false, false))
+            is JavaLiteralAnnotationArgument -> factory.createCompileTimeConstant(argument.value)
             is JavaEnumValueAnnotationArgument -> resolveFromEnumValue(argument.resolve())
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.name ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
@@ -110,22 +112,20 @@ class LazyJavaAnnotationDescriptor(
     }
 
     private fun resolveFromAnnotation(javaAnnotation: JavaAnnotation): CompileTimeConstant<*>? {
-        val descriptor = c.resolveAnnotation(javaAnnotation)
-        if (descriptor == null) return null
+        val descriptor = c.resolveAnnotation(javaAnnotation) ?: return null
 
-        return AnnotationValue(descriptor)
+        return factory.createAnnotationValue(descriptor)
     }
 
     private fun resolveFromArray(argumentName: Name, elements: List<JavaAnnotationArgument>): CompileTimeConstant<*>? {
         if (getType().isError()) return null
 
-        val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, getAnnotationClass())
-        if (valueParameter == null) return null
+        val valueParameter = DescriptorResolverUtils.getAnnotationParameterByName(argumentName, getAnnotationClass()) ?: return null
 
         val values = elements.map {
-            argument -> resolveAnnotationArgument(argument) ?: NullValue
+            argument -> resolveAnnotationArgument(argument) ?: factory.createNullValue()
         }
-        return ArrayValue(values, valueParameter.getType(), CompileTimeConstant.Parameters.Impl(true, false, values.any { it.usesVariableAsConstant() }))
+        return factory.createArrayValue(values, valueParameter.getType())
     }
 
     private fun resolveFromEnumValue(element: JavaField?): CompileTimeConstant<*>? {
@@ -134,13 +134,12 @@ class LazyJavaAnnotationDescriptor(
         val containingJavaClass = element.getContainingClass()
 
         //TODO: (module refactoring) moduleClassResolver should be used here
-        val enumClass = c.javaClassResolver.resolveClass(containingJavaClass)
-        if (enumClass == null) return null
+        val enumClass = c.javaClassResolver.resolveClass(containingJavaClass) ?: return null
 
         val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(element.getName())
         if (classifier !is ClassDescriptor) return null
 
-        return EnumValue(classifier)
+        return factory.createEnumValue(classifier)
     }
 
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
@@ -160,7 +159,7 @@ class LazyJavaAnnotationDescriptor(
             override fun computeMemberScope() = jlClass.getMemberScope(arguments)
         }
 
-        return KClassValue(javaClassObjectType)
+        return factory.createKClassValue(javaClassObjectType)
     }
 
     override fun toString(): String {

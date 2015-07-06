@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.ConstantsPackage;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 
 public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitializerEvaluator {
@@ -35,15 +35,13 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
         PsiExpression initializer = ((JavaFieldImpl) field).getInitializer();
         Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
         if (evaluatedExpression != null) {
-            return ConstantsPackage.createCompileTimeConstant(
-                    evaluatedExpression,
+            CompileTimeConstantFactory factory = new CompileTimeConstantFactory(
                     new CompileTimeConstant.Parameters.Impl(
                             ConstantExpressionEvaluator.isPropertyCompileTimeConstant(descriptor),
                             false,
                             true
-                    ),
-                    descriptor.getType()
-            );
+                    ));
+            return factory.createCompileTimeConstant(evaluatedExpression, descriptor.getType());
         }
         return null;
     }

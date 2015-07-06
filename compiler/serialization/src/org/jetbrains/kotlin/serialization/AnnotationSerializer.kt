@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
 public object AnnotationSerializer {
+
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException)
+
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
             val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as? ClassDescriptor
@@ -121,12 +124,11 @@ public object AnnotationSerializer {
                 // TODO: IntegerValueTypeConstant should not occur in annotation arguments
                 val number = constant.getValue(type)
                 val specificConstant = with(KotlinBuiltIns.getInstance()) {
-                    val parameters = CompileTimeConstant.Parameters.ThrowException
                     when (type) {
-                        getLongType() -> LongValue(number.toLong(), parameters)
-                        getIntType() -> IntValue(number.toInt(), parameters)
-                        getShortType() -> ShortValue(number.toShort(), parameters)
-                        getByteType() -> ByteValue(number.toByte(), parameters)
+                        getLongType() -> factory.createLongValue(number.toLong())
+                        getIntType() -> factory.createIntValue(number.toInt())
+                        getShortType() -> factory.createShortValue(number.toShort())
+                        getByteType() -> factory.createByteValue(number.toByte())
                         else -> throw IllegalStateException("Integer constant $constant has non-integer type $type")
                     }
                 }

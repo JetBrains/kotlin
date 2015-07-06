@@ -39,6 +39,8 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val builtIns: KotlinBuiltIns
         get() = module.builtIns
 
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException)
+
     public fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
         val annotationClass = resolveClass(nameResolver.getClassId(proto.getId()))
 
@@ -68,18 +70,17 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
             value: Value,
             nameResolver: NameResolver
     ): CompileTimeConstant<*> {
-        val parameters = CompileTimeConstant.Parameters.ThrowException
         val result = when (value.getType()) {
-            Type.BYTE -> ByteValue(value.getIntValue().toByte(), parameters)
-            Type.CHAR -> CharValue(value.getIntValue().toChar(), parameters)
-            Type.SHORT -> ShortValue(value.getIntValue().toShort(), parameters)
-            Type.INT -> IntValue(value.getIntValue().toInt(), parameters)
-            Type.LONG -> LongValue(value.getIntValue(), parameters)
-            Type.FLOAT -> FloatValue(value.getFloatValue(), parameters)
-            Type.DOUBLE -> DoubleValue(value.getDoubleValue(), parameters)
-            Type.BOOLEAN -> BooleanValue(value.getIntValue() != 0L, parameters)
+            Type.BYTE -> factory.createByteValue(value.getIntValue().toByte())
+            Type.CHAR -> factory.createCharValue(value.getIntValue().toChar())
+            Type.SHORT -> factory.createShortValue(value.getIntValue().toShort())
+            Type.INT -> factory.createIntValue(value.getIntValue().toInt())
+            Type.LONG -> factory.createLongValue(value.getIntValue())
+            Type.FLOAT -> factory.createFloatValue(value.getFloatValue())
+            Type.DOUBLE -> factory.createDoubleValue(value.getDoubleValue())
+            Type.BOOLEAN -> factory.createBooleanValue(value.getIntValue() != 0L)
             Type.STRING -> {
-                StringValue(nameResolver.getString(value.getStringValue()), parameters)
+                factory.createStringValue(nameResolver.getString(value.getStringValue()))
             }
             Type.CLASS -> {
                 // TODO: support class literals
@@ -110,12 +111,11 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
 
                 val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
 
-                ArrayValue(
+                factory.createArrayValue(
                         arrayElements.map {
                             resolveValue(expectedElementType, it, nameResolver)
                         },
-                        actualArrayType,
-                        parameters
+                        actualArrayType
                 )
             }
             else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")
@@ -126,7 +126,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
         }
         else {
             // This means that an annotation class has been changed incompatibly without recompiling clients
-            return ErrorValue.create("Unexpected argument value")
+            return factory.createErrorValue("Unexpected argument value")
         }
     }
 
@@ -136,10 +136,10 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
         if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
             val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName)
             if (enumEntry is ClassDescriptor) {
-                return EnumValue(enumEntry)
+                return factory.createEnumValue(enumEntry)
             }
         }
-        return ErrorValue.create("Unresolved enum entry: $enumClassId.$enumEntryName")
+        return factory.createErrorValue("Unresolved enum entry: $enumClassId.$enumEntryName")
     }
 
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): JetType =
