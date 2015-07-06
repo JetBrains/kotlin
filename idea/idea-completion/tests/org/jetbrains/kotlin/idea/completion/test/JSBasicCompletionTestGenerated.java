@@ -1281,21 +1281,9 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
-            @TestMetadata("ParameterName1.kt")
-            public void testParameterName1() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName1.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ParameterName2.kt")
             public void testParameterName2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ParameterName3.kt")
-            public void testParameterName3() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName3.kt");
                 doTest(fileName);
             }
 
@@ -1314,12 +1302,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("ParameterType1.kt")
             public void testParameterType1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ParameterType2.kt")
-            public void testParameterType2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType2.kt");
                 doTest(fileName);
             }
 

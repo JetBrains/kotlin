@@ -1,5 +1,5 @@
 fun bar() {
-    val handler = { (i: <caret>) }
+    val handler = { i: <caret> }
 }
 
 // EXIST: Int
