@@ -46,6 +46,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -365,6 +366,23 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         // Delete OverriderUsageInfo for Kotlin declarations since they can't be processed correctly
         // TODO: Drop when OverriderUsageInfo.getElement() gets deleted
         UsageInfo[] usageInfos = refUsages.get();
+
+        for (UsageInfo usageInfo : usageInfos) {
+            if (usageInfo instanceof KotlinWrapperForJavaUsageInfos) {
+                KotlinWrapperForJavaUsageInfos wrapperForJavaUsageInfos = (KotlinWrapperForJavaUsageInfos) usageInfo;
+                UsageInfo[] infos = wrapperForJavaUsageInfos.getJavaUsageInfos();
+                for (int i = 0; i < infos.length; i++) {
+                    UsageInfo javaUsageInfo = infos[i];
+                    if (javaUsageInfo instanceof OverriderUsageInfo) {
+                        PsiMethod method = ((OverriderUsageInfo) javaUsageInfo).getOverridingMethod();
+                        if (method instanceof KotlinLightMethod) {
+                            infos[i] = new UsageInfo(((KotlinLightMethod) method).getOrigin());
+                        }
+                    }
+                }
+            }
+        }
+
         List<UsageInfo> adjustedUsages = KotlinPackage.filterNot(
                 usageInfos,
                 new Function1<UsageInfo, Boolean>() {
@@ -375,6 +393,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     }
                 }
         );
+
         if (adjustedUsages.size() < usageInfos.length) {
             refUsages.set(adjustedUsages.toArray(new UsageInfo[adjustedUsages.size()]));
         }
