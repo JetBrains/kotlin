@@ -1,5 +1,9 @@
 fun bar() {
-    val handler = { i, <caret> }
+    val handler = { <caret>
+        foo()
+    }
 }
 
-// NUMBER: 0
+// INVOCATION_COUNT: 0
+// EXIST: bar
+// EXIST: null
