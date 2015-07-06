@@ -485,11 +485,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val parameters = resolved?.getParameterList()?.getParameters()
         val expectedTypes = parameters?.map { it.getType() } ?: listOf()
 
-        val commentsAndSpacesInheritance = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS)
+        val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
 
         return if (arguments.size() == expectedTypes.size()) {
-            arguments.indices.map { i ->
-                val argument = arguments[i]
+            arguments.mapIndexed { i, argument ->
                 val converted = codeConverter.convertExpression(argument, expectedTypes[i])
                 val result = if (parameters != null && i == arguments.lastIndex && parameters[i].isVarArgs() && argument.getType() is PsiArrayType)
                     StarExpression(converted)

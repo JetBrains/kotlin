@@ -244,19 +244,18 @@ class Converter private constructor(
 
     private fun convertAnnotationType(psiClass: PsiClass): Class {
         val paramModifiers = Modifiers(listOf(Modifier.PUBLIC)).assignNoPrototype()
-        val noBlankLinesInheritance = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE)
         val annotationMethods = psiClass.getMethods().filterIsInstance<PsiAnnotationMethod>()
         val (methodsNamedValue, otherMethods) = annotationMethods.partition { it.getName() == "value" }
 
         fun createParameter(type: Type, method: PsiAnnotationMethod): Parameter {
-            type.assignPrototype(method.getReturnTypeElement(), noBlankLinesInheritance)
+            type.assignPrototype(method.getReturnTypeElement(), CommentsAndSpacesInheritance.NO_SPACES)
 
             return Parameter(method.declarationIdentifier(),
                       type,
                       Parameter.VarValModifier.Val,
                       convertAnnotations(method),
                       paramModifiers,
-                      annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
+                      annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, CommentsAndSpacesInheritance.NO_SPACES)
         }
 
         fun convertType(psiType: PsiType?): Type {
@@ -320,7 +319,7 @@ class Converter private constructor(
             }
             val body = field.getInitializingClass()?.let { convertAnonymousClassBody(it) }
             return EnumConstant(name, annotations, modifiers, params, body)
-                    .assignPrototype(field, CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS))
+                    .assignPrototype(field, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         else {
             val isVal = isVal(referenceSearcher, field)
@@ -339,7 +338,8 @@ class Converter private constructor(
                   isVal,
                   typeToDeclare != null,
                   shouldGenerateDefaultInitializer(referenceSearcher, field),
-                  if (correction != null) correction.setterAccess else modifiers.accessModifier()).assignPrototype(field)
+                  if (correction != null) correction.setterAccess else modifiers.accessModifier()
+            ).assignPrototype(field)
         }
     }
 
@@ -545,7 +545,7 @@ class Converter private constructor(
             Nullability.Nullable -> type = type.toNullableType()
         }
         return Parameter(parameter.declarationIdentifier(), type, varValModifier,
-                         convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS))
+                         convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance.LINE_BREAKS)
     }
 
     public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
@@ -556,7 +556,7 @@ class Converter private constructor(
 
     public fun convertModifiers(owner: PsiModifierListOwner): Modifiers {
         return Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
-                .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE))
+                .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance.NO_SPACES)
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {

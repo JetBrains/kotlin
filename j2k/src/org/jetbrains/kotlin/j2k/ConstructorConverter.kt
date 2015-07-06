@@ -216,8 +216,8 @@ class ConstructorConverter(
                                   accessModifiers,
                                   default)
                                 .assignPrototypes(
-                                        PrototypeInfo(parameter, CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS)),
-                                        PrototypeInfo(field, CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE))
+                                        PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
+                                        PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
                                 )
                     }
                 },

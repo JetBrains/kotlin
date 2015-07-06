@@ -54,7 +54,12 @@ data class CommentsAndSpacesInheritance(
         val commentsBefore: Boolean = true,
         val commentsAfter: Boolean = true,
         val commentsInside: Boolean = true
-)
+) {
+    companion object {
+        val NO_SPACES = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE)
+        val LINE_BREAKS = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS)
+    }
+}
 
 fun Element.canonicalCode(): String {
     val builder = CodeBuilder(null)
