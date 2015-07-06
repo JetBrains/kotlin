@@ -46,8 +46,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
-import org.jetbrains.kotlin.asJava.AsJavaPackage;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -91,7 +89,6 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         else {
             findSAMUsages(info, result);
             findConstructorDelegationUsages(info, result);
-            findKotlinOverrides(info, result);
         }
 
         return result.toArray(new UsageInfo[result.size()]);
@@ -337,7 +334,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetType samCallType = context.getType(callExpression);
             if (samCallType == null) continue;
 
-            result.add(new DeferredJavaMethodOverrideOrSAMUsage(functionLiteral, functionDescriptor, samCallType));
+            result.add(new DeferredSAMUsage(functionLiteral, functionDescriptor, samCallType));
         }
     }
 
@@ -359,21 +356,6 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     }
                 }
         );
-    }
-
-    private static void findKotlinOverrides(ChangeInfo changeInfo, Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-        if (!RefactoringPackage.isTrueJavaMethod(method)) return;
-
-        for (PsiMethod overridingMethod : OverridingMethodsSearch.search((PsiMethod) method)) {
-            PsiElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(overridingMethod);
-            if (!(unwrappedElement instanceof JetNamedFunction)) continue;
-
-            JetNamedFunction function = (JetNamedFunction) unwrappedElement;
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(function);
-
-            result.add(new DeferredJavaMethodOverrideOrSAMUsage(function, functionDescriptor, null));
-        }
     }
 
     @Override

@@ -22,24 +22,24 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
 import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.types.JetType
 
 public abstract class JavaMethodDeferredKotlinUsage<T: PsiElement>(element: T): UsageInfo(element) {
         abstract fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
 }
 
-public class DeferredJavaMethodOverrideOrSAMUsage(
-        val function: JetFunction,
+public class DeferredSAMUsage(
+        val functionLiteral: JetFunctionLiteral,
         val functionDescriptor: FunctionDescriptor,
-        val samCallType: JetType?
-): JavaMethodDeferredKotlinUsage<JetFunction>(function) {
-        override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunction> {
-                return object : JavaMethodKotlinUsageWithDelegate<JetFunction>(function, javaMethodChangeInfo) {
+        val samCallType: JetType
+): JavaMethodDeferredKotlinUsage<JetFunctionLiteral>(functionLiteral) {
+        override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral> {
+                return object : JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {
                         override val delegateUsage = JetCallableDefinitionUsage(
-                                function,
+                                functionLiteral,
                                 functionDescriptor,
-                                javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable,
-                                samCallType
+                                javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable, samCallType
                         )
                 }
         }
