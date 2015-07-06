@@ -75,3 +75,426 @@ public inline fun ShortArray.asList(): List<Short> {
     return (this as Array<Short>).asList()
 }
 
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.copyOf(): Array<T> {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun BooleanArray.copyOf(): BooleanArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ByteArray.copyOf(): ByteArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun CharArray.copyOf(): CharArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun DoubleArray.copyOf(): DoubleArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun FloatArray.copyOf(): FloatArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun IntArray.copyOf(): IntArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun LongArray.copyOf(): LongArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ShortArray.copyOf(): ShortArray {
+    return (this: dynamic).slice(0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    return arrayCopyResize(this, newSize, false)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun ByteArray.copyOf(newSize: Int): ByteArray {
+    return arrayCopyResize(this, newSize, 0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun CharArray.copyOf(newSize: Int): CharArray {
+    return arrayCopyResize(this, newSize, '\u0000')
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun ShortArray.copyOf(newSize: Int): ShortArray {
+    return arrayCopyResize(this, newSize, 0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun IntArray.copyOf(newSize: Int): IntArray {
+    return arrayCopyResize(this, newSize, 0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun LongArray.copyOf(newSize: Int): LongArray {
+    return arrayCopyResize(this, newSize, 0L)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun FloatArray.copyOf(newSize: Int): FloatArray {
+    return arrayCopyResize(this, newSize, 0.0f)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+    return arrayCopyResize(this, newSize, 0.0)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
+    return arrayCopyResize(this, newSize, null)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<T> {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
+    return (this: dynamic).slice(from, to)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun <T> Array<out T>.plus(array: Array<out T>): Array<out T> {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun BooleanArray.plus(array: BooleanArray): BooleanArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ByteArray.plus(array: ByteArray): ByteArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun CharArray.plus(array: CharArray): CharArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun DoubleArray.plus(array: DoubleArray): DoubleArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun FloatArray.plus(array: FloatArray): FloatArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun IntArray.plus(array: IntArray): IntArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun LongArray.plus(array: LongArray): LongArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+suppress("NOTHING_TO_INLINE")
+public inline fun ShortArray.plus(array: ShortArray): ShortArray {
+    return (this: dynamic).concat(array)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun <T> Array<out T>.plus(collection: Collection<T>): Array<out T> {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun CharArray.plus(collection: Collection<Char>): CharArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun IntArray.plus(collection: Collection<Int>): IntArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun LongArray.plus(collection: Collection<Long>): LongArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
+    return arrayPlusCollection(this, collection)
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun <T> Array<out T>.plus(element: T): Array<out T> {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as Array<out T>
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun BooleanArray.plus(element: Boolean): BooleanArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as BooleanArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ByteArray.plus(element: Byte): ByteArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as ByteArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun CharArray.plus(element: Char): CharArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as CharArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun DoubleArray.plus(element: Double): DoubleArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as DoubleArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun FloatArray.plus(element: Float): FloatArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as FloatArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun IntArray.plus(element: Int): IntArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as IntArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun LongArray.plus(element: Long): LongArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as LongArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ShortArray.plus(element: Short): ShortArray {
+    val result = this.copyOf()
+    (result: dynamic).push(element)
+    return result as ShortArray
+}
+

@@ -210,13 +210,21 @@ class ArraysTest {
     }
 
     test fun plus() {
-        assertEquals(listOf("1", "2", "3", "4"), arrayOf("1", "2") + arrayOf("3", "4"))
         assertEquals(listOf("1", "2", "3", "4"), listOf("1", "2") + arrayOf("3", "4"))
+        val arr = arrayOf("1", "2") + arrayOf("3", "4")
+        assertEquals(4, arr.size())
+        checkContent(arr.iterator(), 4) { (it + 1).toString() }
     }
 
     test fun plusVararg() {
-        fun onePlus(vararg a: String) = arrayOf("1") + a
-        assertEquals(listOf("1", "2"), onePlus("2"))
+        fun stringOnePlus(vararg a: String) = arrayOf("1") + a
+        fun numberOnePlus(vararg a: Int) = intArrayOf(1) + a
+
+        val arrS = stringOnePlus("2")
+        checkContent(arrS.iterator(), 2) { (it + 1).toString() }
+
+        val arrN = numberOnePlus(2)
+        checkContent(arrN.iterator(), 2) { it + 1 }
     }
 
     test fun first() {

@@ -545,6 +545,294 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
 }
 
 /**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun <T> Array<out T>.plus(array: Array<out T>): Array<out T> {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as Array<out T>
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun BooleanArray.plus(array: BooleanArray): BooleanArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as BooleanArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun ByteArray.plus(array: ByteArray): ByteArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as ByteArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun CharArray.plus(array: CharArray): CharArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as CharArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun DoubleArray.plus(array: DoubleArray): DoubleArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as DoubleArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun FloatArray.plus(array: FloatArray): FloatArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as FloatArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun IntArray.plus(array: IntArray): IntArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as IntArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun LongArray.plus(array: LongArray): LongArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as LongArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun ShortArray.plus(array: ShortArray): ShortArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = this.copyOf(thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result as ShortArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun <T> Array<out T>.plus(collection: Collection<T>): Array<out T> {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as Array<out T>
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as BooleanArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as ByteArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun CharArray.plus(collection: Collection<Char>): CharArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as CharArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as DoubleArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as FloatArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun IntArray.plus(collection: Collection<Int>): IntArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as IntArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun LongArray.plus(collection: Collection<Long>): LongArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as LongArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
+    val thisSize = size()
+    val result = this.copyOf(thisSize + collection.size())
+    collection.forEachIndexed { i, element ->
+        result[thisSize + i] = element
+    }
+    return result as ShortArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun <T> Array<out T>.plus(element: T): Array<out T> {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as Array<out T>
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun BooleanArray.plus(element: Boolean): BooleanArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as BooleanArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ByteArray.plus(element: Byte): ByteArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as ByteArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun CharArray.plus(element: Char): CharArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as CharArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun DoubleArray.plus(element: Double): DoubleArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as DoubleArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun FloatArray.plus(element: Float): FloatArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as FloatArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun IntArray.plus(element: Int): IntArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as IntArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun LongArray.plus(element: Long): LongArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as LongArray
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ShortArray.plus(element: Short): ShortArray {
+    val result = this.copyOf(size() + 1)
+    result[size()] = element
+    return result as ShortArray
+}
+
+/**
  * Sorts array or range in array inplace.
  */
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {

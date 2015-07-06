@@ -5,6 +5,51 @@ import templates.Family.*
 fun specialJVM(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
+    templates add f("plus(element: T)") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        returns("SELF")
+        doc { "Returns an array containing all elements of the original array and then the given [element]." }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val result = this.copyOf(size() + 1)
+            result[size()] = element
+            return result as SELF
+            """
+        }
+    }
+
+    templates add f("plus(collection: Collection<T>)") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        returns("SELF")
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
+        body {
+            """
+            val thisSize = size()
+            val result = this.copyOf(thisSize + collection.size())
+            collection.forEachIndexed { i, element ->
+                result[thisSize + i] = element
+            }
+            return result as SELF
+            """
+        }
+    }
+
+    templates add f("plus(array: SELF)") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [array]." }
+        returns("SELF")
+        body {
+            """
+            val thisSize = size()
+            val arraySize = array.size()
+            val result = this.copyOf(thisSize + arraySize)
+            System.arraycopy(array, 0, result, thisSize, arraySize)
+            return result as SELF
+            """
+        }
+    }
+
+
     templates add f("copyOfRange(from: Int, to: Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }

@@ -6,48 +6,37 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
-        exclude(Strings)
+        only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
         returns("List<T>")
-        returns("SELF", ArraysOfObjects, ArraysOfPrimitives, Sets, Sequences)
         body {
             """
             if (this is Collection) return this.plus(element)
-            val answer = ArrayList<T>()
-            answer.addAll(this)
-            answer.add(element)
-            return answer
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.add(element)
+            return result
             """
         }
         body(Collections) {
             """
-            val answer = ArrayList<T>(size() + 1)
-            answer.addAll(this)
-            answer.add(element)
-            return answer
-            """
-        }
-
-
-        doc(ArraysOfObjects, ArraysOfPrimitives) { "Returns an array containing all elements of the original array and then the given [element]." }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val answer = this.copyOf(size() + 1)
-            answer[size()] = element
-            return answer as SELF
+            val result = ArrayList<T>(size() + 1)
+            result.addAll(this)
+            result.add(element)
+            return result
             """
         }
 
         // TODO: use build scope function when available
         // TODO: use immutable sets when available
-        // TODO: precalculate size
+        returns("SELF", Sets, Sequences)
         doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
         body(Sets) {
             """
-            val copyOfSet = LinkedHashSet<T>(mapCapacity(size() + 1))
-            copyOfSet.addAll(this)
-            copyOfSet.add(element)
-            return copyOfSet
+            val result = LinkedHashSet<T>(mapCapacity(size() + 1))
+            result.addAll(this)
+            result.add(element)
+            return result
             """
         }
 
@@ -67,23 +56,24 @@ fun generators(): List<GenericFunction> {
         body {
             """
             if (this is Collection) return this.plus(collection)
-            val answer = ArrayList<T>(0)
-            answer.addAll(this)
-            answer.addAll(collection)
-            return answer
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(collection)
+            return result
             """
         }
         body(Collections) {
             """
             if (collection is Collection) return this.plus(collection)
-            val answer = ArrayList<T>(this)
-            answer.addAll(collection)
-            return answer
+            val result = ArrayList<T>(this)
+            result.addAll(collection)
+            return result
             """
         }
 
         // TODO: try to precalculate size
         // TODO: use immutable set builder when available
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [collection]." }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
@@ -93,7 +83,7 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]" }
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]." }
         body(Sequences) {
             """
             return sequenceOf(this, collection.asSequence()).flatten()
@@ -102,52 +92,42 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Collection<T>)") {
-        only(Collections, ArraysOfPrimitives, ArraysOfObjects)
+        only(Collections)
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [collection]." }
         returns("List<T>")
-        returns("SELF", ArraysOfObjects, ArraysOfPrimitives)
-        body(Collections) {
+        body {
             """
-            val answer = ArrayList<T>(this.size() + collection.size())
-            answer.addAll(this)
-            answer.addAll(collection)
-            return answer
-            """
-        }
-        // ?
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val thisSize = size()
-            val answer = this.copyOf(thisSize + collection.size())
-            collection.forEachIndexed { i, element ->
-                answer[thisSize + i] = element
-            }
-            return answer as SELF
+            val result = ArrayList<T>(this.size() + collection.size())
+            result.addAll(this)
+            result.addAll(collection)
+            return result
             """
         }
     }
 
     templates add f("plus(array: Array<out T>)") {
         only(Iterables, Collections, Sets, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given [array]." }
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [array]." }
         returns("List<T>")
         returns("SELF", Sets, Sequences)
         body {
             """
             if (this is Collection) return this.plus(array)
-            val answer = ArrayList<T>()
-            answer.addAll(this)
-            answer.addAll(array)
-            return answer
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(array)
+            return result
             """
         }
         body(Collections) {
             """
-            val answer = ArrayList<T>(this.size() + array.size())
-            answer.addAll(this)
-            answer.addAll(array)
-            return answer
+            val result = ArrayList<T>(this.size() + array.size())
+            result.addAll(this)
+            result.addAll(array)
+            return result
             """
         }
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [array]." }
         body(Sets) {
             """
             val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
@@ -156,6 +136,7 @@ fun generators(): List<GenericFunction> {
             return result
             """
         }
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [array]." }
         body(Sequences) {
             """
             return this.plus(array.asList())
@@ -163,20 +144,6 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("plus(collection: SELF)") {
-        only(ArraysOfObjects, ArraysOfPrimitives)
-        returns("SELF")
-        body {
-            """
-            val thisSize = size()
-            val answer = this.copyOf(thisSize + collection.size())
-            collection.forEachIndexed { i, element ->
-                answer[thisSize + i] = element
-            }
-            return answer as SELF
-            """
-        }
-    }
 
     templates add f("plus(sequence: Sequence<T>)") {
         only(Sequences)
