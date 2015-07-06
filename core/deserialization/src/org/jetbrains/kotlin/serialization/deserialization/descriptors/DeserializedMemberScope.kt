@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.Flags
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import java.util.*
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.toReadOnlyList
+import java.util.ArrayList
+import java.util.LinkedHashMap
+import java.util.LinkedHashSet
 
 public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
@@ -108,6 +111,8 @@ public abstract class DeserializedMemberScope protected constructor(
     protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
 
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 

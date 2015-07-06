@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
@@ -33,6 +34,8 @@ public trait JetScope {
     public fun getLocalVariable(name: Name): VariableDescriptor?
 
     public fun getFunctions(name: Name): Collection<FunctionDescriptor>
+
+    public fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor>
 
     public fun getContainingDeclaration(): DeclarationDescriptor
 

@@ -297,6 +297,8 @@ public abstract class LazyJavaMemberScope(
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
 
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
+
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 

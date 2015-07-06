@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -31,6 +32,8 @@ public class ExplicitImportsScope(private val descriptors: Collection<Declaratio
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 
     override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> = listOf()
 
     override fun getContainingDeclaration() = throw UnsupportedOperationException()
 

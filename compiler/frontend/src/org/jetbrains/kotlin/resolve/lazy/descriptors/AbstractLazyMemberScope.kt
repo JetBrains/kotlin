@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.LinkedHashSet
@@ -109,6 +110,8 @@ protected constructor(
     }
 
     protected abstract fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>)
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 

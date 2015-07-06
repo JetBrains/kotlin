@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
@@ -46,6 +48,7 @@ public class StaticScopeForKotlinClass(
 
     override fun getPackage(name: Name) = null
     override fun getProperties(name: Name) = listOf<VariableDescriptor>()
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
     override fun getLocalVariable(name: Name) = null
     override fun getContainingDeclaration() = containingClass
     override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()

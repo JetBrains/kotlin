@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
 public abstract class JetScopeImpl : JetScope {
@@ -30,6 +31,8 @@ public abstract class JetScopeImpl : JetScope {
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = setOf()
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> = listOf()
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 

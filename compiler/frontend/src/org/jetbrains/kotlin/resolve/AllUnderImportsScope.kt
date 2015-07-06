@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.resolve.scopes.FilteringScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
-import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
+import java.util.ArrayList
 
 class AllUnderImportsScope : JetScope {
     private val scopes = ArrayList<JetScope>()
@@ -53,6 +51,10 @@ class AllUnderImportsScope : JetScope {
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
         return scopes.flatMap { it.getFunctions(name) }
+    }
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
+        return scopes.flatMap { it.getSyntheticExtensionProperties(receiverType, name) }
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null // packages are not imported by all under imports

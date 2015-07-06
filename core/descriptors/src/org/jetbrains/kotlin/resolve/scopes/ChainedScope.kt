@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
-import java.util.*
+import org.jetbrains.kotlin.utils.Printer
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
@@ -62,6 +64,9 @@ public open class ChainedScope(
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getFunctions(name) }
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverType, name) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {

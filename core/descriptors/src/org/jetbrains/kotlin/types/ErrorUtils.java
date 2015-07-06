@@ -91,6 +91,14 @@ public class ErrorUtils {
             return ERROR_PROPERTY_GROUP;
         }
 
+        @NotNull
+        @Override
+        public Collection<VariableDescriptor> getSyntheticExtensionProperties(
+                @NotNull JetType receiverType, @NotNull Name name
+        ) {
+            return ERROR_PROPERTY_GROUP;
+        }
+
         @Override
         public VariableDescriptor getLocalVariable(@NotNull Name name) {
             return ERROR_PROPERTY;
@@ -190,6 +198,14 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<VariableDescriptor> getSyntheticExtensionProperties(
+                @NotNull JetType receiverType, @NotNull Name name
+        ) {
             throw new IllegalStateException();
         }
 
