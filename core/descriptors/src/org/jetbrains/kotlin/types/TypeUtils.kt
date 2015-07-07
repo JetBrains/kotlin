@@ -87,7 +87,7 @@ public fun JetTypeChecker.equalTypesOrNulls(type1: JetType?, type2: JetType?): B
     return equalTypes(type1, type2)
 }
 
-fun JetType.getNestedTypeArguments(): List<TypeProjection> {
+fun JetType.getNestedArguments(): List<TypeProjection> {
     val result = ArrayList<TypeProjection>()
 
     val stack = ArrayDeque<TypeProjection>()

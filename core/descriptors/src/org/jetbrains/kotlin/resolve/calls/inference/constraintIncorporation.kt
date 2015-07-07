@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_B
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.types.typeUtil.getNestedTypeArguments
+import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
@@ -111,7 +111,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     // todo
     // if we allow non-trivial type projections, we bump into errors like
     // "Empty intersection for types [MutableCollection<in ('Int'..'Int?')>, MutableCollection<out Any?>, MutableCollection<in Int>]"
-    fun JetType.containsConstrainingTypeWithoutProjection() = this.getNestedTypeArguments().any {
+    fun JetType.containsConstrainingTypeWithoutProjection() = this.getNestedArguments().any {
         it.getType().getConstructor() == substitution.constrainingType.getConstructor() && it.getProjectionKind() == Variance.INVARIANT
     }
     if (approximationBounds.upper.containsConstrainingTypeWithoutProjection() && bound.kind != LOWER_BOUND) {

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
-import org.jetbrains.kotlin.types.typeUtil.getNestedTypeArguments
+import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -168,7 +168,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     fun JetType.getNestedTypeVariables(original: Boolean = false): List<TypeParameterDescriptor> {
-        return getNestedTypeArguments().map { typeProjection ->
+        return getNestedArguments().map { typeProjection ->
             typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
     }
