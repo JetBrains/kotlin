@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring
+package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.refactoring.classMembers.MemberInfoBase
-import com.intellij.refactoring.classMembers.MemberInfoModel
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetFile
@@ -25,7 +26,13 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
 public class KotlinMemberInfo(member: JetNamedDeclaration) : MemberInfoBase<JetNamedDeclaration>(member) {
     init {
+        val memberDescriptor = member.resolveToDescriptor()
         isStatic = member.getParent() is JetFile
-        displayName = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(member.resolveToDescriptor())
+        displayName = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(memberDescriptor)
+
+        val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.getOverriddenDescriptors() ?: emptySet()
+        if (overriddenDescriptors.isNotEmpty()) {
+            overrides = overriddenDescriptors.any { it.getModality() != Modality.ABSTRACT }
+        }
     }
 }

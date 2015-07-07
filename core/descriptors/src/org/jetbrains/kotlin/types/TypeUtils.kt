@@ -45,7 +45,8 @@ public fun JetType.nullability(): TypeNullability {
 fun JetType.makeNullable() = TypeUtils.makeNullable(this)
 fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
 
-fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
+fun JetType.immediateSupertypes(): Collection<JetType> = TypeUtils.getImmediateSupertypes(this)
+fun JetType.supertypes(): Collection<JetType> = TypeUtils.getAllSupertypes(this)
 
 fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)

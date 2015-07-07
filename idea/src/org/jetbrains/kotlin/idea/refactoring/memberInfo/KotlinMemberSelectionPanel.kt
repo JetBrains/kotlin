@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.ui
+package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.refactoring.ui.AbstractMemberSelectionPanel
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorFactory
-import org.jetbrains.kotlin.idea.refactoring.KotlinMemberInfo
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import java.awt.BorderLayout
 
