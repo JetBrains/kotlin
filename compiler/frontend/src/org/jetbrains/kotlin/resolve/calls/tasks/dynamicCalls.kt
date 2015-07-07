@@ -223,8 +223,8 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return delegate.getExtensionsByName(scope, name, bindingTrace).filter {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, receiver, bindingTrace).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }
     }

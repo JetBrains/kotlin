@@ -164,7 +164,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver,
-                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, c.context.trace),
+                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.getType(), c.context.trace),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -237,7 +237,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.getType().getMemberScope(), c.name, c.context.trace)
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.getType().getMemberScope(), c.name, receiverParameter.getType(), c.context.trace)
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter, receiverKind, c.context.call)
         }
     }

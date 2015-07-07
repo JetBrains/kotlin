@@ -14002,6 +14002,75 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/syntheticExtensions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticExtensions extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInSyntheticExtensions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("Bases.kt")
+            public void testBases() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/Bases.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("CompiledClass.kt")
+            public void testCompiledClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/CompiledClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FalseGetters.kt")
+            public void testFalseGetters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/FalseGetters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FalseSetters.kt")
+            public void testFalseSetters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/FalseSetters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GenericClass.kt")
+            public void testGenericClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/GenericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Getter.kt")
+            public void testGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/Getter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GetterAndSetter.kt")
+            public void testGetterAndSetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/GetterAndSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImplicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/ImplicitReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnlyPublic.kt")
+            public void testOnlyPublic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/OnlyPublic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SetterOnly.kt")
+            public void testSetterOnly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/SetterOnly.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
