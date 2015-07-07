@@ -75,9 +75,6 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     // Here <=> means lower_bound, upper_bound or exact_bound constraint.
     // Then a new bound 'T <=> My<_/in/out Type>' can be generated.
 
-    // We don't substitute anything into recursive constraints
-    if (substitution.typeVariable == bound.typeVariable) return
-
     val substitutedType = when (substitution.kind) {
         EXACT_BOUND -> substitution.constrainingType
         UPPER_BOUND -> CapturedType(TypeProjectionImpl(Variance.OUT_VARIANCE, substitution.constrainingType))

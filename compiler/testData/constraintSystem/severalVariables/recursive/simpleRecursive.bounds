@@ -4,11 +4,11 @@ EQUAL T Int
 EQUAL T My<T>
 
 type parameter bounds:
-T := Int, := My<T>*
+T := Int, := My<T>*, := My<Int>
 
 status:
 -hasCannotCaptureTypesError: false
--hasConflictingConstraints: false
+-hasConflictingConstraints: true
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
@@ -18,4 +18,4 @@ status:
 -isSuccessful: false
 
 result:
-T=Int
+T=???
