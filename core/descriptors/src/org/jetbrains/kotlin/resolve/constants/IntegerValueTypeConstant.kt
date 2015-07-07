@@ -32,12 +32,10 @@ public class IntegerValueTypeConstant(
 
     private val typeConstructor = IntegerValueTypeConstructor(value.toLong())
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
-        return JetTypeImpl(
-                Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>()
-                , ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
-        )
-    }
+    override val type = JetTypeImpl(
+            Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>()
+            , ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    )
 
     deprecated("")
     override val value: Number

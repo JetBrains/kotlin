@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.types.JetType
 
 public class FloatValue(
         value: Float,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : CompileTimeConstant<Float>(value, parameters) {
     override fun isPure() = false
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getFloatType()
+    override val type = builtIns.getFloatType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitFloatValue(this, data)
 

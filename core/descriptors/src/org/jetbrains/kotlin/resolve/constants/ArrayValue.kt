@@ -23,7 +23,7 @@ import java.util.*
 
 public class ArrayValue(
         value: List<CompileTimeConstant<*>>,
-        private val type: JetType,
+        override val type: JetType,
         parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<List<CompileTimeConstant<*>>>(value, parameters) {
 
@@ -39,8 +39,6 @@ public class ArrayValue(
     init {
         assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was " + type + ": " + value }
     }
-
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = type
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
 

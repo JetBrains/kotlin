@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.types.JetType
 
 public class StringValue(
         value: String,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : CompileTimeConstant<String>(value, parameters) {
     override fun isPure() = false
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getStringType()
+    override val type = builtIns.getStringType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
 

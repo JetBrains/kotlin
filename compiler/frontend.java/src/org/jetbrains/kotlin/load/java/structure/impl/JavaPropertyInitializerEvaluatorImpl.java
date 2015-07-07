@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitializerEvaluator {
     @Nullable
@@ -40,7 +41,7 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
                             ConstantExpressionEvaluator.isPropertyCompileTimeConstant(descriptor),
                             false,
                             true
-                    ));
+                    ), DescriptorUtilPackage.getBuiltIns(descriptor));
             return factory.createCompileTimeConstant(evaluatedExpression, descriptor.getType());
         }
         return null;

@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.types.JetType
 
 public class ByteValue(
         value: Byte,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : IntegerValueConstant<Byte>(value, parameters) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getByteType()
+    override val type = builtIns.getByteType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitByteValue(this, data)
 

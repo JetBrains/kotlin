@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.types.JetType
 
 public class CharValue(
         value: Char,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : IntegerValueConstant<Char>(value, parameters) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getCharType()
+    override val type = builtIns.getCharType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitCharValue(this, data)
 

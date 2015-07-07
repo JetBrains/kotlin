@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.types.JetType
 
 public class LongValue(
         value: Long,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : IntegerValueConstant<Long>(value, parameters) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getLongType()
+    override val type = builtIns.getLongType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitLongValue(this, data)
 

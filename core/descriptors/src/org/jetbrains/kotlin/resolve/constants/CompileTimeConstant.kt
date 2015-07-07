@@ -30,7 +30,7 @@ public abstract class CompileTimeConstant<T> protected constructor(
 
     public open fun usesVariableAsConstant(): Boolean = parameters.usesVariableAsConstant
 
-    public abstract fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType
+    public abstract val type: JetType
 
     public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
 

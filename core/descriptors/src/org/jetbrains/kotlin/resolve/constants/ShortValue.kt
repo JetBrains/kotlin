@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.types.JetType
 
 public class ShortValue(
         value: Short,
-        parameters: CompileTimeConstant.Parameters
+        parameters: CompileTimeConstant.Parameters,
+        builtIns: KotlinBuiltIns
 ) : IntegerValueConstant<Short>(value, parameters) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = kotlinBuiltIns.getShortType()
+    override val type = builtIns.getShortType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitShortValue(this, data)
 

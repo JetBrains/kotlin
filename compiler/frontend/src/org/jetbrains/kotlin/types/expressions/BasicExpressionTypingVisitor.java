@@ -133,7 +133,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return createCompileTimeConstantTypeInfo(value, expression, context, components.builtIns);
+        return createCompileTimeConstantTypeInfo(value, expression, context);
     }
 
     @NotNull
@@ -942,7 +942,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, contextWithExpectedType.trace,
                                                                                     contextWithExpectedType.expectedType);
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
 
         return DataFlowUtils.checkType(typeInfo.replaceType(result),
@@ -1138,7 +1138,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }

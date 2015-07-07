@@ -27,13 +27,12 @@ public class EnumValue(
         value: ClassDescriptor
 ) : CompileTimeConstant<ClassDescriptor>(value, CompileTimeConstant.Parameters.Impl(true, false, false)) {
 
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = getType()
-
-    private fun getType() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }
+    override val type: JetType
+        get() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
 
-    override fun toString() = "${getType()}.${value.getName()}"
+    override fun toString() = "$type.${value.getName()}"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

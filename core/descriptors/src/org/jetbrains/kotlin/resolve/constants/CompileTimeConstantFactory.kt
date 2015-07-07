@@ -22,28 +22,31 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class CompileTimeConstantFactory(private val parameters: CompileTimeConstant.Parameters) {
-    fun createLongValue(value: Long) = LongValue(value, parameters)
+public class CompileTimeConstantFactory(
+        private val parameters: CompileTimeConstant.Parameters,
+        private val builtins: KotlinBuiltIns
+) {
+    fun createLongValue(value: Long) = LongValue(value, parameters, builtins)
 
-    fun createIntValue(value: Int) = IntValue(value, parameters)
+    fun createIntValue(value: Int) = IntValue(value, parameters, builtins)
 
     fun createErrorValue(message: String) = ErrorValue.create(message)
 
-    fun createShortValue(value: Short) = ShortValue(value, parameters)
+    fun createShortValue(value: Short) = ShortValue(value, parameters, builtins)
 
-    fun createByteValue(value: Byte) = ByteValue(value, parameters)
+    fun createByteValue(value: Byte) = ByteValue(value, parameters, builtins)
 
-    fun createDoubleValue(value: Double) = DoubleValue(value, parameters)
+    fun createDoubleValue(value: Double) = DoubleValue(value, parameters, builtins)
 
-    fun createFloatValue(value: Float) = FloatValue(value, parameters)
+    fun createFloatValue(value: Float) = FloatValue(value, parameters, builtins)
 
-    fun createBooleanValue(value: Boolean) = BooleanValue(value, parameters)
+    fun createBooleanValue(value: Boolean) = BooleanValue(value, parameters, builtins)
 
-    fun createCharValue(value: Char) = CharValue(value, parameters)
+    fun createCharValue(value: Char) = CharValue(value, parameters, builtins)
 
-    fun createStringValue(value: String) = StringValue(value, parameters)
+    fun createStringValue(value: String) = StringValue(value, parameters, builtins)
 
-    fun createNullValue() = NullValue
+    fun createNullValue() = NullValue(builtins)
 
     fun createEnumValue(enumEntryClass: ClassDescriptor): EnumValue = EnumValue(enumEntryClass)
 

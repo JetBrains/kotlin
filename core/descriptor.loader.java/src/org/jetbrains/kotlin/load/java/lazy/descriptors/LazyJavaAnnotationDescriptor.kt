@@ -64,7 +64,7 @@ class LazyJavaAnnotationDescriptor(
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
-    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(true, false, false))
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(true, false, false), c.module.builtIns)
 
     override fun getType(): JetType = type()
 

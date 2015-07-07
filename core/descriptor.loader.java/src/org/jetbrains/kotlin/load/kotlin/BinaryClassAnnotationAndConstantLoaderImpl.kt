@@ -46,7 +46,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         storageManager, kotlinClassFinder, errorReporter
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module)
-    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException)
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException, module.builtIns)
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.constants.*
@@ -26,9 +27,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Typ
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-public object AnnotationSerializer {
+public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
 
-    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException)
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException, builtIns)
 
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {

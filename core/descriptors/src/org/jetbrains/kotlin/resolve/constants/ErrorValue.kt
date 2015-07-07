@@ -31,7 +31,7 @@ public abstract class ErrorValue : CompileTimeConstant<Unit>(Unit, CompileTimeCo
 
     public class ErrorValueWithMessage(public val message: String) : ErrorValue() {
 
-        override fun getType(kotlinBuiltIns: KotlinBuiltIns) = ErrorUtils.createErrorType(message)
+        override val type = ErrorUtils.createErrorType(message)
 
         override fun toString() = message
     }

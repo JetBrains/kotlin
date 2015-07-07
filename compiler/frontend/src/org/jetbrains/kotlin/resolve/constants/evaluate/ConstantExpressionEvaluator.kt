@@ -42,6 +42,8 @@ import kotlin.platform.platformStatic
 
 public class ConstantExpressionEvaluator private constructor(val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 
+    private val builtIns = KotlinBuiltIns.getInstance()
+
     companion object {
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
             val evaluator = ConstantExpressionEvaluator(trace)
@@ -86,7 +88,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
     }
 
     private val stringExpressionEvaluator = object : JetVisitor<StringValue, Nothing>() {
-        private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(true, false, false))
+        private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(true, false, false), builtIns)
 
         fun evaluate(entry: JetStringTemplateEntry): StringValue? {
             return entry.accept(this, null)
@@ -108,7 +110,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
         val text = expression.getText() ?: return null
 
         val nodeElementType = expression.getNode().getElementType()
-        if (nodeElementType == JetNodeTypes.NULL) return NullValue
+        if (nodeElementType == JetNodeTypes.NULL) return NullValue(builtIns)
 
         val result: Any? = when (nodeElementType) {
             JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
@@ -249,7 +251,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             val canBeUsedInAnnotation = canBeUsedInAnnotation(argumentForReceiver.expression) && canBeUsedInAnnotation(argumentForParameter.expression)
             val usesVariableAsConstant = usesVariableAsConstant(argumentForReceiver.expression) || usesVariableAsConstant(argumentForParameter.expression)
             val parameters = CompileTimeConstant.Parameters.Impl(canBeUsedInAnnotation, areArgumentsPure, usesVariableAsConstant)
-            val factory = CompileTimeConstantFactory(parameters)
+            val factory = CompileTimeConstantFactory(parameters, builtIns)
             return when (resultingDescriptorName) {
                 OperatorConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression, factory)
                 OperatorConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression, factory)
@@ -493,12 +495,12 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             expectedType: JetType?,
             parameters: CompileTimeConstant.Parameters
     ): CompileTimeConstant<*>? {
-        return CompileTimeConstantFactory(parameters).createCompileTimeConstant(value, if (parameters.isPure) expectedType ?: TypeUtils.NO_EXPECTED_TYPE else null)
+        return CompileTimeConstantFactory(parameters, builtIns).createCompileTimeConstant(value, if (parameters.isPure) expectedType ?: TypeUtils.NO_EXPECTED_TYPE else null)
     }
 }
 
 public fun IntegerValueTypeConstant.createCompileTimeConstantWithType(expectedType: JetType): CompileTimeConstant<*>?
-        = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(this.canBeUsedInAnnotations(), true, false)).createCompileTimeConstant(this.getValue(expectedType))
+        = CompileTimeConstantFactory(CompileTimeConstant.Parameters.Impl(this.canBeUsedInAnnotations(), true, false), KotlinBuiltIns.getInstance()).createCompileTimeConstant(this.getValue(expectedType))
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
@@ -594,13 +596,13 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
 
 private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
-        is IntegerValueTypeConstant -> CompileTimeConstantFactory(value.parameters).createStringValue(value.getValue(TypeUtils.NO_EXPECTED_TYPE).toString())
+        is IntegerValueTypeConstant -> CompileTimeConstantFactory(value.parameters, KotlinBuiltIns.getInstance()).createStringValue(value.getValue(TypeUtils.NO_EXPECTED_TYPE).toString())
         is StringValue -> value
         is IntValue, is ByteValue, is ShortValue, is LongValue,
         is CharValue,
         is DoubleValue, is FloatValue,
         is BooleanValue,
-        is NullValue -> CompileTimeConstantFactory(value.parameters).createStringValue("${value.value}")
+        is NullValue -> CompileTimeConstantFactory(value.parameters, KotlinBuiltIns.getInstance()).createStringValue("${value.value}")
         else -> null
     }
 }

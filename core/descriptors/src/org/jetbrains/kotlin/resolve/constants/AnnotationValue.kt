@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public class AnnotationValue(value: AnnotationDescriptor) :
         CompileTimeConstant<AnnotationDescriptor>(value, CompileTimeConstant.Parameters.Impl(true, false, false)) {
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = value.getType()
+    override val type: JetType
+        get() = value.getType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
 

@@ -246,10 +246,9 @@ public class ExpressionTypingUtils {
     public static JetTypeInfo createCompileTimeConstantTypeInfo(
             @NotNull CompileTimeConstant<?> value,
             @NotNull JetExpression expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull KotlinBuiltIns kotlinBuiltIns
+            @NotNull ExpressionTypingContext context
     ) {
-        JetType expressionType = value.getType(kotlinBuiltIns);
+        JetType expressionType = value.getType();
         if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
             expressionType = ((IntegerValueTypeConstant) value).getType(context.expectedType);
             ArgumentTypeResolver.updateNumberType(expressionType, expression, context);

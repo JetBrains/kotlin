@@ -39,7 +39,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val builtIns: KotlinBuiltIns
         get() = module.builtIns
 
-    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException)
+    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException, builtIns)
 
     public fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
         val annotationClass = resolveClass(nameResolver.getClassId(proto.getId()))
@@ -121,7 +121,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
             else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")
         }
 
-        if (result.getType(builtIns) isSubtypeOf expectedType) {
+        if (result.type isSubtypeOf expectedType) {
             return result
         }
         else {
