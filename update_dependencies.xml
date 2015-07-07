@@ -666,6 +666,7 @@
                     -->
                     <delete file="@{idea.dir}/lib/kotlin-runtime.jar"/>
                     <delete file="@{idea.dir}/lib/kotlin-reflect.jar"/>
+                    <delete dir="@{idea.dir}/plugins/Kotlin"/>
 
                     <echo message="@{download.dir.intellij-core}/intellij-core-analysis.jar"/>
 
