@@ -69,7 +69,7 @@ public class LazyScriptDescriptor(
         val result = ScriptCodeDescriptor(this)
         result.initialize(
                 implicitReceiver,
-                ScriptParameterResolver.resolveScriptParameters(jetScript, this),
+                ScriptParameterResolver.resolveScriptParameters(jetScript, result),
                 DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace()) {
                     scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
                 }

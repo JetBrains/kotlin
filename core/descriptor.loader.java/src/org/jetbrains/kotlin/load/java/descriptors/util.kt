@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.types.JetType
 fun createEnhancedValueParameters(
         enhancedTypes: Collection<JetType>,
         oldValueParameters: Collection<ValueParameterDescriptor>,
-        newOwner: DeclarationDescriptor
+        newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
     assert(enhancedTypes.size() == oldValueParameters.size()) {
         "Different value parameters sizes: Enhanced = ${enhancedTypes.size()}, Old = ${oldValueParameters.size()}"

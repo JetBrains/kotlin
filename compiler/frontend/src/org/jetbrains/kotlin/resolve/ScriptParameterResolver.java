@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
@@ -35,7 +36,7 @@ public final class ScriptParameterResolver {
     @NotNull
     public static List<ValueParameterDescriptor> resolveScriptParameters(
             @NotNull JetScript declaration,
-            @NotNull ScriptDescriptor scriptDescriptor
+            @NotNull ScriptCodeDescriptor scriptCodeDescriptor
     ) {
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
 
@@ -44,21 +45,14 @@ public final class ScriptParameterResolver {
 
         int index = 0;
         for (AnalyzerScriptParameter scriptParameter : scriptDefinition.getScriptParameters()) {
-            ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, scriptDescriptor);
+            ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
+                    scriptCodeDescriptor, null, index, Annotations.EMPTY, scriptParameter.getName(),
+                    scriptParameter.getType(), false, null, SourceElement.NO_SOURCE
+            );
             valueParameters.add(parameter);
             ++index;
         }
         return valueParameters;
-    }
-
-    @NotNull
-    private static ValueParameterDescriptor resolveScriptParameter(
-            @NotNull AnalyzerScriptParameter scriptParameter,
-            int index,
-            @NotNull ScriptDescriptor script
-    ) {
-        return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(),
-                                                scriptParameter.getType(), false, null, SourceElement.NO_SOURCE);
     }
 
     private ScriptParameterResolver() {

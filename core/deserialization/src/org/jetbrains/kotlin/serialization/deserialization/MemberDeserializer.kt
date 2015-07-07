@@ -170,11 +170,12 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
-        val containerOfCallable = c.containingDeclaration.getContainingDeclaration()!!.asProtoContainer()
+        val callableDescriptor = c.containingDeclaration as CallableDescriptor
+        val containerOfCallable = callableDescriptor.getContainingDeclaration().asProtoContainer()
 
         return callable.getValueParameterList().mapIndexed { i, proto ->
             ValueParameterDescriptorImpl(
-                    c.containingDeclaration, null, i,
+                    callableDescriptor, null, i,
                     getParameterAnnotations(containerOfCallable, callable, kind, proto),
                     c.nameResolver.getName(proto.getName()),
                     c.typeDeserializer.type(proto.getType()),

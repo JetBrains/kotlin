@@ -345,18 +345,7 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            JetScope scope, DeclarationDescriptor declarationDescriptor,
-            JetParameter valueParameter, int index, JetType type, BindingTrace trace
-    ) {
-        return resolveValueParameterDescriptor(declarationDescriptor, valueParameter, index, type, trace,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace));
-    }
-
-    @NotNull
-    private ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            DeclarationDescriptor declarationDescriptor,
-            JetParameter valueParameter, int index, JetType type, BindingTrace trace,
-            Annotations annotations
+            JetScope scope, FunctionDescriptor owner, JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
@@ -365,10 +354,10 @@ public class DescriptorResolver {
             variableType = getVarargParameterType(type);
         }
         ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                declarationDescriptor,
+                owner,
                 null,
                 index,
-                annotations,
+                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
                 valueParameter.hasDefaultValue(),
