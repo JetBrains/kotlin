@@ -1296,6 +1296,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testJavaMethodOverridesOmitUnitType() throws Exception {
+        doJavaTest(new JavaRefactoringProvider());
+    }
+
     @NotNull
     private LinkedHashSet<PsiMethod> findCallers(@NotNull PsiMethod method) {
         KotlinMethodNode rootNode =

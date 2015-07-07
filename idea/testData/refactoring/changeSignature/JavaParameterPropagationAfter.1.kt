@@ -1,5 +1,5 @@
 open class C: A() {
-    override fun foo(n: Int, s: String): Unit {
+    override fun foo(n: Int, s: String) {
 
     }
 

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePack
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -236,7 +237,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
             String returnTypeText = changeInfo.renderReturnType((JetCallableDefinitionUsage<PsiElement>) this);
 
             //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-            if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
+            if (!(returnTypeText.equals("Unit") || returnTypeText.equals("kotlin.Unit"))) {
                 ShortenPackage.addToShorteningWaitSet(
                         callable.setTypeReference(JetPsiFactory(callable).createType(returnTypeText)),
                         Options.DEFAULT
