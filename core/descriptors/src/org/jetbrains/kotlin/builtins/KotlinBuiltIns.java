@@ -111,7 +111,7 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
