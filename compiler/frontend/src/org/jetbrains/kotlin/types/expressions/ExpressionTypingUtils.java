@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
@@ -248,10 +248,19 @@ public class ExpressionTypingUtils {
             @NotNull JetExpression expression,
             @NotNull ExpressionTypingContext context
     ) {
-        JetType expressionType = value.getType();
-        if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
-            expressionType = ((IntegerValueTypeConstant) value).getType(context.expectedType);
-            ArgumentTypeResolver.updateNumberType(expressionType, expression, context);
+        JetType expressionType;
+        if (value instanceof IntegerValueTypeConstant) {
+            IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
+            if (context.contextDependency == INDEPENDENT) {
+                expressionType = integerValueTypeConstant.getType(context.expectedType);
+                ArgumentTypeResolver.updateNumberType(expressionType, expression, context);
+            }
+            else {
+                expressionType = integerValueTypeConstant.getUnknownIntegerType();
+            }
+        }
+        else {
+            expressionType = ((TypedCompileTimeConstant<?>) value).getType();
         }
 
         return TypeInfoFactoryPackage.createCheckedTypeInfo(expressionType, context, expression);

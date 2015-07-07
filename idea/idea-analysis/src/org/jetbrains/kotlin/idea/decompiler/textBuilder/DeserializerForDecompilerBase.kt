@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -43,7 +43,7 @@ public abstract class DeserializerForDecompilerBase(
 
     protected abstract val classDataFinder: ClassDataFinder
 
-    protected abstract val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>>
+    protected abstract val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>>
 
     protected val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS
 

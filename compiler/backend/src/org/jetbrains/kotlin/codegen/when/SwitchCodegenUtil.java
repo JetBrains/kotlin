@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
@@ -36,7 +36,7 @@ public class SwitchCodegenUtil {
     public static boolean checkAllItemsAreConstantsSatisfying(
             @NotNull JetWhenExpression expression,
             @NotNull BindingContext bindingContext,
-            Function1<CompileTimeConstant, Boolean> predicate
+            Function1<ConstantValue<?>, Boolean> predicate
     ) {
         for (JetWhenEntry entry : expression.getEntries()) {
             for (JetWhenCondition condition : entry.getConditions()) {
@@ -49,7 +49,7 @@ public class SwitchCodegenUtil {
 
                 if (patternExpression == null) return false;
 
-                CompileTimeConstant constant = ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext);
+                ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext);
                 if (constant == null || !predicate.invoke(constant)) {
                     return false;
                 }
@@ -60,11 +60,11 @@ public class SwitchCodegenUtil {
     }
 
     @NotNull
-    public static Iterable<CompileTimeConstant> getAllConstants(
+    public static Iterable<ConstantValue<?>> getAllConstants(
             @NotNull JetWhenExpression expression,
             @NotNull BindingContext bindingContext
     ) {
-        List<CompileTimeConstant> result = new ArrayList<CompileTimeConstant>();
+        List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
 
         for (JetWhenEntry entry : expression.getEntries()) {
             addConstantsFromEntry(result, entry, bindingContext);
@@ -74,7 +74,7 @@ public class SwitchCodegenUtil {
     }
 
     private static void addConstantsFromEntry(
-            @NotNull List<CompileTimeConstant> result,
+            @NotNull List<ConstantValue<?>> result,
             @NotNull JetWhenEntry entry,
             @NotNull BindingContext bindingContext
     ) {
@@ -89,11 +89,11 @@ public class SwitchCodegenUtil {
     }
 
     @NotNull
-    public static Iterable<CompileTimeConstant> getConstantsFromEntry(
+    public static Iterable<ConstantValue<?>> getConstantsFromEntry(
             @NotNull JetWhenEntry entry,
             @NotNull BindingContext bindingContext
     ) {
-        List<CompileTimeConstant> result = new ArrayList<CompileTimeConstant>();
+        List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
         addConstantsFromEntry(result, entry, bindingContext);
         return result;
     }
@@ -132,7 +132,7 @@ public class SwitchCodegenUtil {
             @NotNull JetWhenExpression expression,
             @NotNull BindingContext bindingContext
     ) {
-        for (CompileTimeConstant constant : getAllConstants(expression, bindingContext)) {
+        for (ConstantValue<?> constant : getAllConstants(expression, bindingContext)) {
             if (constant != null && !(constant instanceof NullValue)) return true;
         }
 
@@ -150,10 +150,10 @@ public class SwitchCodegenUtil {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<CompileTimeConstant, Boolean>() {
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<ConstantValue<?>, Boolean>() {
             @Override
             public Boolean invoke(
-                    @NotNull CompileTimeConstant constant
+                    @NotNull ConstantValue<?> constant
             ) {
                 return constant instanceof IntegerValueConstant;
             }
@@ -170,10 +170,10 @@ public class SwitchCodegenUtil {
             return false;
         }
 
-        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<CompileTimeConstant, Boolean>() {
+        return checkAllItemsAreConstantsSatisfying(expression, bindingContext, new Function1<ConstantValue<?>, Boolean>() {
             @Override
             public Boolean invoke(
-                    @NotNull CompileTimeConstant constant
+                    @NotNull ConstantValue<?> constant
             ) {
                 return constant instanceof StringValue || constant instanceof NullValue;
             }

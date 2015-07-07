@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtension
@@ -48,10 +47,10 @@ public object KotlinJavascriptSerializerExtension : SerializerExtension() {
             proto.addExtension(JsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
         val propertyDescriptor = callable as? PropertyDescriptor ?: return
-        val compileTimeConstant = propertyDescriptor.getCompileTimeInitializer()
-        if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
-            val type = compileTimeConstant.type
-            proto.setExtension(JsProtoBuf.compileTimeValue, annotationSerializer.valueProto(compileTimeConstant, type, stringTable).build())
+        val constantInitializer = propertyDescriptor.getCompileTimeInitializer()
+        if (constantInitializer != null && constantInitializer !is NullValue) {
+            val type = constantInitializer.type
+            proto.setExtension(JsProtoBuf.compileTimeValue, annotationSerializer.valueProto(constantInitializer, type, stringTable).build())
         }
     }
 

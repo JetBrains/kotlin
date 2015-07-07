@@ -1,6 +1,6 @@
 package
 
-B(args = {IntegerValueType(1), "b"}) internal fun test(): kotlin.Unit
+B(args = {1, "b"}) internal fun test(): kotlin.Unit
 
 kotlin.annotation.annotation() internal final class B : kotlin.Annotation {
     public constructor B(/*0*/ vararg args: kotlin.String /*kotlin.Array<out kotlin.String>*/)

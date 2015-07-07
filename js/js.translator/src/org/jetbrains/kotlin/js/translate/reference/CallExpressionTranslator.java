@@ -130,7 +130,7 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(jsCodeExpression, bindingTrace, stringType);
 
         assert constant != null: "jsCode must be compile time string " + jsCodeExpression;
-        String jsCode = (String) constant.getValue();
+        String jsCode = (String) constant.getValue(stringType);
         assert jsCode != null: jsCodeExpression.toString();
 
         // Parser can change local or global scope.

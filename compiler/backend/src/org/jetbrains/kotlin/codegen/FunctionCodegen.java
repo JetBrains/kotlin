@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
@@ -538,7 +538,7 @@ public class FunctionCodegen {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
 
-        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
         if (values.isEmpty()) return ArrayUtil.EMPTY_STRING_ARRAY;
 
         Object value = values.iterator().next();
@@ -547,9 +547,9 @@ public class FunctionCodegen {
 
         List<String> strings = ContainerUtil.mapNotNull(
                 arrayValue.getValue(),
-                new Function<CompileTimeConstant<?>, String>() {
+                new Function<ConstantValue<?>, String>() {
                     @Override
-                    public String fun(CompileTimeConstant<?> constant) {
+                    public String fun(ConstantValue<?> constant) {
                         if (constant instanceof KClassValue) {
                             KClassValue classValue = (KClassValue) constant;
                             ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());

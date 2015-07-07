@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 
 public abstract class DefaultAnnotationArgumentVisitor<R, D> implements AnnotationArgumentVisitor<R, D> {
-    public abstract R visitValue(@NotNull CompileTimeConstant<?> value, D data);
+    public abstract R visitValue(@NotNull ConstantValue<?> value, D data);
 
     @Override
     public R visitLongValue(@NotNull LongValue value, D data) {
@@ -90,11 +90,6 @@ public abstract class DefaultAnnotationArgumentVisitor<R, D> implements Annotati
 
     @Override
     public R visitAnnotationValue(AnnotationValue value, D data) {
-        return visitValue(value, data);
-    }
-
-    @Override
-    public R visitNumberTypeValue(IntegerValueTypeConstant value, D data) {
         return visitValue(value, data);
     }
 }

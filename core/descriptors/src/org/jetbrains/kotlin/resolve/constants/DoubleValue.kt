@@ -18,16 +18,11 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class DoubleValue(
         value: Double,
-        parameters: CompileTimeConstant.Parameters,
         builtIns: KotlinBuiltIns
-) : CompileTimeConstant<Double>(value, parameters) {
-
-    override fun isPure() = false
-
+) : ConstantValue<Double>(value) {
     override val type = builtIns.getDoubleType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitDoubleValue(this, data)

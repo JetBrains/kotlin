@@ -29,7 +29,7 @@ Ann(i = {}) Ann(i = {1}) Ann(i = {}) Ann(i = {1}) Ann(i = {}) Ann(i = {1}) Ann(i
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnAnn(i = {Ann(i = {IntegerValueType(1)})}) AnnAnn(i = {}) internal final class TestAnn {
+AnnAnn(i = {Ann(i = {1})}) AnnAnn(i = {}) internal final class TestAnn {
     public constructor TestAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

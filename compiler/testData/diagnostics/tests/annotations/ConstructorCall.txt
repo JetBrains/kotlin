@@ -1,7 +1,7 @@
 package
 
-Ann2(a = Ann1(a = IntegerValueType(1))) internal val a: kotlin.Int = 1
-Ann2(a = Ann1(a = IntegerValueType(1))) internal val c: kotlin.Int = 2
+Ann2(a = Ann1(a = 1)) internal val a: kotlin.Int = 1
+Ann2(a = Ann1(a = 1)) internal val c: kotlin.Int = 2
 internal fun bar(/*0*/ a: Ann = ...): kotlin.Unit
 internal fun foo(): kotlin.Unit
 internal fun </*0*/ T> javaClass(): java.lang.Class<T>

@@ -50,7 +50,7 @@ public class RuntimeModuleData private constructor(public val module: ModuleDesc
             val globalJavaResolverContext = GlobalJavaResolverContext(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, ExternalSignatureResolver.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
-                    JavaPropertyInitializerEvaluator.DO_NOTHING, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver
+                    JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver
             )
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module))
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module)

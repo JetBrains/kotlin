@@ -17,43 +17,84 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.*
 
-public abstract class CompileTimeConstant<T> protected constructor(
-        public open val value: T,
-        public val parameters: CompileTimeConstant.Parameters
-) {
-    public open fun canBeUsedInAnnotations(): Boolean = parameters.canBeUsedInAnnotation
+public interface CompileTimeConstant<out T> {
+    public val isError: Boolean
+        get() = false
 
-    public open fun isPure(): Boolean = parameters.isPure
+    public val parameters: CompileTimeConstant.Parameters
 
-    public open fun usesVariableAsConstant(): Boolean = parameters.usesVariableAsConstant
+    public fun toConstantValue(expectedType: JetType): ConstantValue<T>
 
-    public abstract val type: JetType
+    public fun getValue(expectedType: JetType): T = toConstantValue(expectedType).value
 
-    public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
+    public val canBeUsedInAnnotations: Boolean get() = parameters.canBeUsedInAnnotation
 
-    override fun toString() = value.toString()
+    public val usesVariableAsConstant: Boolean get() = parameters.usesVariableAsConstant
 
-    public interface Parameters {
-        public open val canBeUsedInAnnotation: Boolean
-        public open val isPure: Boolean
-        public open val usesVariableAsConstant: Boolean
+    public val isPure: Boolean get() = parameters.isPure
 
-        public class Impl(
-                override val canBeUsedInAnnotation: Boolean,
-                override val isPure: Boolean,
-                override val usesVariableAsConstant: Boolean
-        ) : Parameters
+    public class Parameters(
+            public val canBeUsedInAnnotation: Boolean,
+            public val isPure: Boolean,
+            public val usesVariableAsConstant: Boolean
+    )
+}
 
-        public object ThrowException : Parameters {
-            override val canBeUsedInAnnotation: Boolean
-                get() = error("Should not be called")
-            override val isPure: Boolean
-                get() = error("Should not be called")
-            override val usesVariableAsConstant: Boolean
-                get() = error("Should not be called")
+public class TypedCompileTimeConstant<out T>(
+        public val constantValue: ConstantValue<T>,
+        override val parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<T> {
+    override val isError: Boolean
+        get() = constantValue is ErrorValue
+
+    public val type: JetType = constantValue.type
+
+    override fun toConstantValue(expectedType: JetType): ConstantValue<T> = constantValue
+}
+
+public fun <T> ConstantValue<T>.wrap(parameters: CompileTimeConstant.Parameters): TypedCompileTimeConstant<T>
+        = TypedCompileTimeConstant(this, parameters)
+
+public fun <T> ConstantValue<T>.wrap(
+        canBeUsedInAnnotation: Boolean =  this !is NullValue,
+        isPure: Boolean = false,
+        usesVariableAsConstant: Boolean = false
+): TypedCompileTimeConstant<T>
+        = wrap(CompileTimeConstant.Parameters(canBeUsedInAnnotation, isPure, usesVariableAsConstant))
+
+public class IntegerValueTypeConstant(
+        private val value: Number,
+        override val parameters: CompileTimeConstant.Parameters
+) : CompileTimeConstant<Number> {
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong())
+
+    override fun toConstantValue(expectedType: JetType): ConstantValue<Number> {
+        val factory = ConstantValueFactory(KotlinBuiltIns.getInstance())
+        return when (getType(expectedType)) {
+            KotlinBuiltIns.getInstance().getIntType() -> {
+                factory.createIntValue(value.toInt())
+            }
+            KotlinBuiltIns.getInstance().getByteType() -> {
+                factory.createByteValue(value.toByte())
+            }
+            KotlinBuiltIns.getInstance().getShortType() -> {
+                factory.createShortValue(value.toShort())
+            }
+            else -> {
+                factory.createLongValue(value.toLong())
+            }
         }
     }
+
+    val unknownIntegerType = JetTypeImpl(
+            Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(),
+            ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
+    )
+
+    public fun getType(expectedType: JetType): JetType = TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
+
+    override fun toString() = typeConstructor.toString()
 }

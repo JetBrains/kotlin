@@ -20,37 +20,28 @@ import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import com.google.dart.compiler.backend.js.ast.JsProgram
 import com.google.dart.compiler.backend.js.ast.JsRootScope
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
-import com.google.gwt.dev.js.rhino.*
-import com.google.gwt.dev.js.rhino.Utils.*
-import org.jetbrains.annotations.TestOnly
+import com.google.gwt.dev.js.rhino.CodePosition
+import com.google.gwt.dev.js.rhino.ErrorReporter
+import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.ParametrizedDiagnostic
+import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
-import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.JetStringTemplateExpression
-import org.jetbrains.kotlin.renderer.Renderer
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.types.JetType
-
-import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.js.parser.parse
-import java.io.StringReader
-
 import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 
 public class JsCallChecker : CallChecker {
 
@@ -84,7 +75,7 @@ public class JsCallChecker : CallChecker {
             return
         }
 
-        val code = evaluationResult.value as String
+        val code = evaluationResult.getValue(stringType) as String
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
 
         try {

@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class FloatValue(
         value: Float,
-        parameters: CompileTimeConstant.Parameters,
         builtIns: KotlinBuiltIns
-) : CompileTimeConstant<Float>(value, parameters) {
-    override fun isPure() = false
-
+) : ConstantValue<Float>(value) {
     override val type = builtIns.getFloatType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitFloatValue(this, data)

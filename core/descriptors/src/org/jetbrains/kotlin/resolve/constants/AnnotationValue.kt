@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.JetType
 
-public class AnnotationValue(value: AnnotationDescriptor) :
-        CompileTimeConstant<AnnotationDescriptor>(value, CompileTimeConstant.Parameters.Impl(true, false, false)) {
+public class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDescriptor>(value) {
     override val type: JetType
         get() = value.getType()
 

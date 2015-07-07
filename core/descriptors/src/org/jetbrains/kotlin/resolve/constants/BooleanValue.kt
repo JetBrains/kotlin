@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class BooleanValue(
         value: Boolean,
-        parameters: CompileTimeConstant.Parameters,
         builtIns: KotlinBuiltIns
-) : CompileTimeConstant<Boolean>(value, parameters) {
-    override fun isPure(): Boolean = false
-
+) : ConstantValue<Boolean>(value) {
     override val type = builtIns.getBooleanType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitBooleanValue(this, data)

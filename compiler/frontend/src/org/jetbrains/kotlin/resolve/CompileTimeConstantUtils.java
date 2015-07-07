@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.BooleanValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -113,7 +115,7 @@ public class CompileTimeConstantUtils {
                 annotatedDescriptor.getAnnotations().findAnnotation(new FqName("kotlin.jvm.internal.Intrinsic"));
         if (intrinsicAnnotation == null) return null;
 
-        Collection<CompileTimeConstant<?>> values = intrinsicAnnotation.getAllValueArguments().values();
+        Collection<ConstantValue<?>> values = intrinsicAnnotation.getAllValueArguments().values();
         if (values.isEmpty()) return null;
 
         Object value = values.iterator().next().getValue();
@@ -132,9 +134,13 @@ public class CompileTimeConstantUtils {
         if (expression == null) return false;
         CompileTimeConstant<?> compileTimeConstant =
                 ConstantExpressionEvaluator.evaluate(expression, trace, KotlinBuiltIns.getInstance().getBooleanType());
-        if (!(compileTimeConstant instanceof BooleanValue) || compileTimeConstant.usesVariableAsConstant()) return false;
+        if (!(compileTimeConstant instanceof TypedCompileTimeConstant) || compileTimeConstant.getUsesVariableAsConstant()) return false;
 
-        Boolean value = ((BooleanValue) compileTimeConstant).getValue();
+        ConstantValue constantValue = ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue();
+
+        if (!(constantValue instanceof BooleanValue)) return false;
+
+        Boolean value = ((BooleanValue) constantValue).getValue();
         return expectedValue == null || expectedValue.equals(value);
     }
 

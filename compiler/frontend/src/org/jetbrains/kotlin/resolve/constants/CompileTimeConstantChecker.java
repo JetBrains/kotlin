@@ -51,7 +51,7 @@ public class CompileTimeConstantChecker {
 
     // return true if there is an error
     public boolean checkConstantExpressionType(
-            @Nullable CompileTimeConstant compileTimeConstant,
+            @Nullable ConstantValue<?> compileTimeConstant,
             @NotNull JetConstantExpression expression,
             @NotNull JetType expectedType
     ) {
@@ -76,7 +76,7 @@ public class CompileTimeConstantChecker {
     }
 
     private boolean checkIntegerValue(
-            @Nullable CompileTimeConstant value,
+            @Nullable ConstantValue<?> value,
             @NotNull JetType expectedType,
             @NotNull JetConstantExpression expression
     ) {
@@ -98,7 +98,7 @@ public class CompileTimeConstantChecker {
     }
 
     private boolean checkFloatValue(
-            @Nullable CompileTimeConstant value,
+            @Nullable ConstantValue<?> value,
             @NotNull JetType expectedType,
             @NotNull JetConstantExpression expression
     ) {
@@ -125,7 +125,7 @@ public class CompileTimeConstantChecker {
         return false;
     }
 
-    private boolean checkCharValue(CompileTimeConstant<?> constant, JetType expectedType, JetConstantExpression expression) {
+    private boolean checkCharValue(ConstantValue<?> constant, JetType expectedType, JetConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType)
             && !JetTypeChecker.DEFAULT.isSubtypeOf(builtIns.getCharType(), expectedType)) {
             return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));

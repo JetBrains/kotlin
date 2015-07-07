@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.utils.sure
 
 public class EnumValue(
         value: ClassDescriptor
-) : CompileTimeConstant<ClassDescriptor>(value, CompileTimeConstant.Parameters.Impl(true, false, false)) {
+) : ConstantValue<ClassDescriptor>(value) {
 
     override val type: JetType
         get() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }

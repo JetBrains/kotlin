@@ -37,10 +37,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -868,17 +866,13 @@ public class DescriptorResolver {
         if (!variable.hasInitializer()) return;
 
         variableDescriptor.setCompileTimeInitializer(
-            storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+            storageManager.createRecursionTolerantNullableLazyValue(new Function0<ConstantValue<?>>() {
                 @Nullable
                 @Override
-                public CompileTimeConstant<?> invoke() {
+                public ConstantValue<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(initializer, trace, initializerType);
-                    if (constant instanceof IntegerValueTypeConstant) {
-                        return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
-                    }
-                    return constant;
+                    return ConstantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
                 }
             }, null)
         );

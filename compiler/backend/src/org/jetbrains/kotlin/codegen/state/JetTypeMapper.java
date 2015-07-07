@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
@@ -721,10 +721,10 @@ public class JetTypeMapper {
         AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
         if (platformNameAnnotation == null) return null;
 
-        Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = platformNameAnnotation.getAllValueArguments();
+        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = platformNameAnnotation.getAllValueArguments();
         if (arguments.isEmpty()) return null;
 
-        CompileTimeConstant<?> name = arguments.values().iterator().next();
+        ConstantValue<?> name = arguments.values().iterator().next();
         if (!(name instanceof StringValue)) return null;
 
         return ((StringValue) name).getValue();

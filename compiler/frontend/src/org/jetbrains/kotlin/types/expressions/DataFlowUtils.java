@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.TypesPackage;
@@ -176,12 +174,9 @@ public class DataFlowUtils {
         }
 
         if (expression instanceof JetConstantExpression) {
-            CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, c.trace, c.expectedType);
-            if (value instanceof IntegerValueTypeConstant) {
-                value = EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) value, c.expectedType);
-            }
+            ConstantValue<?> constantValue = ConstantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
             boolean error = new CompileTimeConstantChecker(c.trace, true)
-                    .checkConstantExpressionType(value, (JetConstantExpression) expression, c.expectedType);
+                    .checkConstantExpressionType(constantValue, (JetConstantExpression) expression, c.expectedType);
             if (hasError != null) hasError.set(error);
             return expressionType;
         }

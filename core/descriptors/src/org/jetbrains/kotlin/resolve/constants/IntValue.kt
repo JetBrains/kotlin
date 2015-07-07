@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class IntValue(
         value: Int,
-        parameters: CompileTimeConstant.Parameters,
         builtIns: KotlinBuiltIns
-) : IntegerValueConstant<Int>(value, parameters) {
+) : IntegerValueConstant<Int>(value) {
 
     override val type = builtIns.getIntType()
 

@@ -1,11 +1,11 @@
 package
 
-Ann(x = IntegerValueType(1)) Ann(x = IntegerValueType(2)) Ann(x = IntegerValueType(3)) private final class A {
+Ann(x = 1) Ann(x = 2) Ann(x = 3) private final class A {
     Ann() public constructor A()
     Ann() internal final val x: kotlin.Int = 1
-    internal final fun bar(/*0*/ x: @[Ann(x = IntegerValueType(1)) Ann(x = IntegerValueType(2)) Ann(x = IntegerValueType(3))] kotlin.Int): kotlin.Unit
+    internal final fun bar(/*0*/ x: @[Ann(x = 1) Ann(x = 2) Ann(x = 3)] kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    Ann(x = IntegerValueType(5)) internal final fun foo(): kotlin.Unit
+    Ann(x = 5) internal final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

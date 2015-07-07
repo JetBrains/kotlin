@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -47,7 +47,7 @@ public class StringSwitchCodegen extends SwitchCodegen {
 
     @Override
     protected void processConstant(
-            @NotNull CompileTimeConstant constant, @NotNull Label entryLabel
+            @NotNull ConstantValue<?> constant, @NotNull Label entryLabel
     ) {
         assert constant instanceof StringValue : "guaranteed by usage contract";
         int hashCode = constant.hashCode();

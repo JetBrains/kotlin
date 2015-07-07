@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMapping;
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 
 import static kotlin.KotlinPackage.firstOrNull;
@@ -53,7 +53,7 @@ public class InlineUtil {
         if (annotation == null) {
             return InlineStrategy.NOT_INLINE;
         }
-        CompileTimeConstant<?> argument = firstOrNull(annotation.getAllValueArguments().values());
+        ConstantValue<?> argument = firstOrNull(annotation.getAllValueArguments().values());
         if (argument == null) {
             return InlineStrategy.AS_FUNCTION;
         }
@@ -72,9 +72,9 @@ public class InlineUtil {
     private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {
         AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.inlineOptions);
         if (annotation != null) {
-            CompileTimeConstant<?> argument = firstOrNull(annotation.getAllValueArguments().values());
+            ConstantValue<?> argument = firstOrNull(annotation.getAllValueArguments().values());
             if (argument instanceof ArrayValue) {
-                for (CompileTimeConstant<?> value : ((ArrayValue) argument).getValue()) {
+                for (ConstantValue<?> value : ((ArrayValue) argument).getValue()) {
                     if (value instanceof EnumValue && ((EnumValue) value).getValue().getName().asString().equals(option.name())) {
                         return true;
                     }

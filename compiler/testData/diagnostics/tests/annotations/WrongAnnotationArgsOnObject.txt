@@ -11,7 +11,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    test.BadAnnotation(s = IntegerValueType(1)) internal object SomeObject {
+    test.BadAnnotation(s = 1) internal object SomeObject {
         private constructor SomeObject()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

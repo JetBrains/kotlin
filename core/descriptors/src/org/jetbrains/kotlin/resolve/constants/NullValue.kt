@@ -18,11 +18,10 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class NullValue(
         builtIns: KotlinBuiltIns
-) : CompileTimeConstant<Void?>(null, CompileTimeConstant.Parameters.Impl(false, false, false)) {
+) : ConstantValue<Void?>(null) {
 
     override val type = builtIns.getNullableNothingType()
 

@@ -18,7 +18,7 @@ A(arg = kotlin.String::class) internal final class MyClass1 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(arg = kotlin.String::class, x = IntegerValueType(2)) internal final class MyClass2 {
+A(arg = kotlin.String::class, x = 2) internal final class MyClass2 {
     public constructor MyClass2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

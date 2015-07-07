@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.types.JetType
 
 public class CharValue(
         value: Char,
-        parameters: CompileTimeConstant.Parameters,
         builtIns: KotlinBuiltIns
-) : IntegerValueConstant<Char>(value, parameters) {
+) : IntegerValueConstant<Char>(value) {
 
     override val type = builtIns.getCharType()
 
@@ -37,7 +35,7 @@ public class CharValue(
             '\b' -> return "\\b"
             '\t' -> return "\\t"
             '\n' -> return "\\n"
-            //TODO_R: can't escape form feed in Kotlin
+            //TODO: KT-8507
             12.toChar() -> return "\\f"
             '\r' -> return "\\r"
             else -> return if (isPrintableUnicode(c)) Character.toString(c) else "?"

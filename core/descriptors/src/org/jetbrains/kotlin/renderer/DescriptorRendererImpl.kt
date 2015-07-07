@@ -20,23 +20,20 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.DefaultAnnotationArgumentVisitor
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
-import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import org.jetbrains.kotlin.utils.*
-
-import java.util.*
-
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import java.util.ArrayList
 
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
@@ -384,7 +381,7 @@ internal class DescriptorRendererImpl(
         return (defaultList + argumentList).sort()
     }
 
-    private fun renderConstant(value: CompileTimeConstant<*>): String {
+    private fun renderConstant(value: ConstantValue<*>): String {
         return when (value) {
             is ArrayValue -> value.value.map { renderConstant(it) }.joinToString(", ", "{", "}")
             is AnnotationValue -> renderAnnotation(value.value)
@@ -709,9 +706,8 @@ internal class DescriptorRendererImpl(
 
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {
         if (includePropertyConstant) {
-            val initializer = variable.getCompileTimeInitializer()
-            if (initializer != null) {
-                builder.append(" = ").append(escape(renderConstant(initializer)))
+            variable.getCompileTimeInitializer()?.let { constant ->
+                builder.append(" = ").append(escape(renderConstant(constant)))
             }
         }
     }

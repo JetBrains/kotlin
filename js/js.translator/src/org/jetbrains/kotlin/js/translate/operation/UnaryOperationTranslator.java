@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetConstantExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetUnaryExpression;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;

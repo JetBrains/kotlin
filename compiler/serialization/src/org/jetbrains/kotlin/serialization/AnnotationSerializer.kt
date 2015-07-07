@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.constants.*
@@ -28,8 +27,6 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
 public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
-
-    private val factory = CompileTimeConstantFactory(CompileTimeConstant.Parameters.ThrowException, builtIns)
 
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
@@ -52,7 +49,7 @@ public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
         }
     }
 
-    fun valueProto(constant: CompileTimeConstant<*>, type: JetType, nameTable: StringTable): Value.Builder = with(Value.newBuilder()) {
+    fun valueProto(constant: ConstantValue<*>, type: JetType, nameTable: StringTable): Value.Builder = with(Value.newBuilder()) {
         constant.accept(object : AnnotationArgumentVisitor<Unit, Unit> {
             override fun visitAnnotationValue(value: AnnotationValue, data: Unit) {
                 setType(Type.ANNOTATION)
@@ -119,22 +116,6 @@ public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
 
             override fun visitNullValue(value: NullValue, data: Unit) {
                 throw UnsupportedOperationException("Null should not appear in annotation arguments")
-            }
-
-            override fun visitNumberTypeValue(constant: IntegerValueTypeConstant, data: Unit) {
-                // TODO: IntegerValueTypeConstant should not occur in annotation arguments
-                val number = constant.getValue(type)
-                val specificConstant = with(KotlinBuiltIns.getInstance()) {
-                    when (type) {
-                        getLongType() -> factory.createLongValue(number.toLong())
-                        getIntType() -> factory.createIntValue(number.toInt())
-                        getShortType() -> factory.createShortValue(number.toShort())
-                        getByteType() -> factory.createByteValue(number.toByte())
-                        else -> throw IllegalStateException("Integer constant $constant has non-integer type $type")
-                    }
-                }
-
-                specificConstant.accept(this, data)
             }
 
             override fun visitShortValue(value: ShortValue, data: Unit) {

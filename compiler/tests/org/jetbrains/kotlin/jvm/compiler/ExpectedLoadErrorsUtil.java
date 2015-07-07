@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
@@ -84,7 +84,7 @@ public class ExpectedLoadErrorsUtil {
                 if (annotation == null) return null;
 
                 // we expect exactly one annotation argument
-                CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();
+                ConstantValue<?> argument = annotation.getAllValueArguments().values().iterator().next();
 
                 String error = (String) argument.getValue();
                 //noinspection ConstantConditions

@@ -16,17 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class ShortValue(
-        value: Short,
-        builtIns: KotlinBuiltIns
-) : IntegerValueConstant<Short>(value) {
+public abstract class ConstantValue<out T>(public open val value: T) {
+    public abstract val type: JetType
 
-    override val type = builtIns.getShortType()
+    public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitShortValue(this, data)
+    override fun toString() = value.toString()
 
-    override fun toString() = "$value.toShort()"
 }

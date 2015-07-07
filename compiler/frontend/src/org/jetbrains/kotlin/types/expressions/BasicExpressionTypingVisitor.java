@@ -55,9 +55,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
@@ -121,19 +119,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
+        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
 
-        if (!(value instanceof IntegerValueTypeConstant)) {
+        if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
-            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(value, expression, context.expectedType);
+            ConstantValue constantValue = compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
+            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
                 return TypeInfoFactoryPackage.createTypeInfo(getDefaultType(elementType), context);
             }
         }
 
-        assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return createCompileTimeConstantTypeInfo(value, expression, context);
+        assert compileTimeConstant != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
+        return createCompileTimeConstantTypeInfo(compileTimeConstant, expression, context);
     }
 
     @NotNull

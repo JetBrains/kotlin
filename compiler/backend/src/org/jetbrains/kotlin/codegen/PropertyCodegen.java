@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -180,7 +180,7 @@ public class PropertyCodegen {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             JetExpression defaultValue = p.getDefaultValue();
             if (defaultValue != null) {
-                CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
+                ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
                 assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, typeMapper);
                 annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
@@ -311,7 +311,7 @@ public class PropertyCodegen {
         Object value = null;
 
         if (shouldWriteFieldInitializer(propertyDescriptor)) {
-            CompileTimeConstant<?> initializer = propertyDescriptor.getCompileTimeInitializer();
+            ConstantValue<?> initializer = propertyDescriptor.getCompileTimeInitializer();
             if (initializer != null) {
                 value = initializer.getValue();
             }

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -537,7 +537,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         WhenByEnumsMapping mapping = new WhenByEnumsMapping(classDescriptor, currentClassName, fieldNumber);
 
-        for (CompileTimeConstant constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
+        for (ConstantValue<?> constant : SwitchCodegenUtil.getAllConstants(expression, bindingContext)) {
             if (constant instanceof NullValue) continue;
 
             assert constant instanceof EnumValue : "expression in when should be EnumValue";
@@ -554,9 +554,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                SwitchCodegenUtil.checkAllItemsAreConstantsSatisfying(
                        expression,
                        bindingContext,
-                       new Function1<CompileTimeConstant, Boolean>() {
+                       new Function1<ConstantValue<?>, Boolean>() {
                            @Override
-                           public Boolean invoke(@NotNull CompileTimeConstant constant) {
+                           public Boolean invoke(@NotNull ConstantValue<?> constant) {
                                return constant instanceof EnumValue || constant instanceof NullValue;
                            }
                        }

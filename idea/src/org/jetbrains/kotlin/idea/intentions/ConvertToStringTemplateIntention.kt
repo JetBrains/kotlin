@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
 public class ConvertToStringTemplateInspection : IntentionBasedInspection<JetBinaryExpression>(
@@ -90,13 +89,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
             is JetConstantExpression -> {
                 val bindingContext = expression.analyze()
                 val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
-                if (constant is IntegerValueTypeConstant) {
-                    val type = bindingContext.getType(expression)!!
-                    constant.getValue(type).toString()
-                }
-                else {
-                    constant?.value.toString()
-                }
+                constant?.getValue(bindingContext.getType(expression)!!).toString()
             }
 
             is JetStringTemplateExpression -> {

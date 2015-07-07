@@ -181,7 +181,7 @@ class LazyJavaClassDescriptor(
                     getAnnotations().
                     findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION) ?: return null
 
-            val fqNameString = (annotation.getAllValueArguments().values().singleOrNull() as? StringValue)?.getValue() ?: return null
+            val fqNameString = (annotation.getAllValueArguments().values().singleOrNull() as? StringValue)?.value ?: return null
             if (!isValidJavaFqName(fqNameString)) return null
 
             return FqName(fqNameString)

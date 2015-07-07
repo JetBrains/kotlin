@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -369,7 +368,7 @@ public class CallExpressionResolver {
         }
 
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
-        if (value instanceof IntegerValueConstant && ((IntegerValueConstant) value).isPure()) {
+        if (value != null && value.getIsPure()) {
             return ExpressionTypingUtils.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 

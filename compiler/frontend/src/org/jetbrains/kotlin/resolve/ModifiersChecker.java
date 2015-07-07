@@ -26,13 +26,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 
 import java.util.*;
@@ -302,9 +302,9 @@ public class ModifiersChecker {
         }
 
         String value = null;
-        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
         if (!values.isEmpty()) {
-            CompileTimeConstant<?> name = values.iterator().next();
+            ConstantValue<?> name = values.iterator().next();
             if (name instanceof StringValue) {
                 value = ((StringValue) name).getValue();
             }
