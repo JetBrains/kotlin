@@ -52,7 +52,7 @@ fun generators(): List<GenericFunction> {
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then all elements of the given [collection]." }
         returns("List<T>")
-        returns("SELF", ArraysOfObjects, ArraysOfPrimitives, Sets, Sequences)
+        returns("SELF", Sets, Sequences)
         body {
             """
             if (this is Collection) return this.plus(collection)
@@ -64,14 +64,19 @@ fun generators(): List<GenericFunction> {
         }
         body(Collections) {
             """
-            if (collection is Collection) return this.plus(collection)
-            val result = ArrayList<T>(this)
-            result.addAll(collection)
-            return result
+            if (collection is Collection) {
+                val result = ArrayList<T>(this.size() + collection.size())
+                result.addAll(this)
+                result.addAll(collection)
+                return result
+            } else {
+                val result = ArrayList<T>(this)
+                result.addAll(collection)
+                return result
+            }
             """
         }
 
-        // TODO: try to precalculate size
         // TODO: use immutable set builder when available
         doc(Sets) { "Returns a set containing all elements both of the original set and the given [collection]." }
         body(Sets) {
@@ -87,20 +92,6 @@ fun generators(): List<GenericFunction> {
         body(Sequences) {
             """
             return sequenceOf(this, collection.asSequence()).flatten()
-            """
-        }
-    }
-
-    templates add f("plus(collection: Collection<T>)") {
-        only(Collections)
-        doc { "Returns a list containing all elements of the original collection and then all elements of the given [collection]." }
-        returns("List<T>")
-        body {
-            """
-            val result = ArrayList<T>(this.size() + collection.size())
-            result.addAll(this)
-            result.addAll(collection)
-            return result
             """
         }
     }

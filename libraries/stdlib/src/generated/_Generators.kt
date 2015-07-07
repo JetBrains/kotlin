@@ -638,21 +638,17 @@ public fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
 /**
  * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun <T> Collection<T>.plus(collection: Collection<T>): List<T> {
-    val result = ArrayList<T>(this.size() + collection.size())
-    result.addAll(this)
-    result.addAll(collection)
-    return result
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [collection].
- */
 public fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
-    if (collection is Collection) return this.plus(collection)
-    val result = ArrayList<T>(this)
-    result.addAll(collection)
-    return result
+    if (collection is Collection) {
+        val result = ArrayList<T>(this.size() + collection.size())
+        result.addAll(this)
+        result.addAll(collection)
+        return result
+    } else {
+        val result = ArrayList<T>(this)
+        result.addAll(collection)
+        return result
+    }
 }
 
 /**
