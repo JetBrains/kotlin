@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -25,7 +26,7 @@ open class KFunctionImpl protected constructor(
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, FunctionImpl(),
+) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl(),
         KLocalFunction<Any?>, KMemberFunction<Any, Any?>, KTopLevelExtensionFunction<Any?, Any?>, KTopLevelFunction<Any?> {
     constructor(container: KCallableContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
@@ -33,7 +34,7 @@ open class KFunctionImpl protected constructor(
             container, descriptor.getName().asString(), RuntimeTypeMapper.mapSignature(descriptor), descriptor
     )
 
-    protected val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
+    override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
     }
 

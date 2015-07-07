@@ -19,6 +19,8 @@ package kotlin.jvm.internal;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 
+import java.util.List;
+
 @SuppressWarnings("deprecation")
 public class FunctionReference
         extends FunctionImpl
@@ -55,6 +57,11 @@ public class FunctionReference
     }
 
     public String getSignature() {
+        throw error();
+    }
+
+    @Override
+    public List<KParameter> getParameters() {
         throw error();
     }
 

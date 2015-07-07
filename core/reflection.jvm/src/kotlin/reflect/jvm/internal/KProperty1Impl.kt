@@ -24,7 +24,7 @@ import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
-open class KProperty1Impl<T, out R> : DescriptorBasedProperty, KProperty1<T, R>, KPropertyImpl<R> {
+open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, R>, KPropertyImpl<R> {
     constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -56,7 +56,7 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty, KProperty1<T, R>,
         }
     }
 
-    class Getter<T, out R>(override val property: KProperty1Impl<T, R>) : KPropertyImpl.Getter<R>, KProperty1.Getter<T, R> {
+    class Getter<T, out R>(override val property: KProperty1Impl<T, R>) : KPropertyImpl.Getter<R>(), KProperty1.Getter<T, R> {
         override fun invoke(receiver: T): R = property.get(receiver)
     }
 }
@@ -92,7 +92,7 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
         }
     }
 
-    class Setter<T, R>(override val property: KMutableProperty1Impl<T, R>) : KMutablePropertyImpl.Setter<R>, KMutableProperty1.Setter<T, R> {
+    class Setter<T, R>(override val property: KMutableProperty1Impl<T, R>) : KMutablePropertyImpl.Setter<R>(), KMutableProperty1.Setter<T, R> {
         override fun invoke(receiver: T, value: R): Unit = property.set(receiver, value)
     }
 }

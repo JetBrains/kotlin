@@ -31,4 +31,9 @@ public interface KCallable<out R> {
      *   the setter, similarly, will have the name "<set-foo>".
      */
     public val name: String
+
+    /**
+     * Parameters required to make a call to this callable.
+     */
+    public val parameters: List<KParameter>
 }

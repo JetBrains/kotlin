@@ -18,7 +18,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -27,12 +26,12 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-abstract class DescriptorBasedProperty protected constructor(
+abstract class DescriptorBasedProperty<out R> protected constructor(
         container: KCallableContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: PropertyDescriptor?
-) {
+) : KCallableImpl<R> {
     constructor(container: KCallableContainerImpl, name: String, signature: String) : this(
             container, name, signature, null
     )
@@ -50,7 +49,7 @@ abstract class DescriptorBasedProperty protected constructor(
             val signature: JvmProtoBuf.JvmPropertySignature
     )
 
-    protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
+    override val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
         container.findPropertyDescriptor(name, signature)
     }
 
@@ -88,7 +87,7 @@ abstract class DescriptorBasedProperty protected constructor(
     }
 
     override fun equals(other: Any?): Boolean =
-            other is DescriptorBasedProperty && descriptor == other.descriptor
+            other is DescriptorBasedProperty<*> && descriptor == other.descriptor
 
     override fun hashCode(): Int =
             descriptor.hashCode()
