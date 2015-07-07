@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
@@ -49,8 +52,15 @@ public class KotlinIndicesHelper(
         private val resolutionFacade: ResolutionFacade,
         private val scope: GlobalSearchScope,
         private val moduleDescriptor: ModuleDescriptor,
-        private val visibilityFilter: (DeclarationDescriptor) -> Boolean
+        visibilityFilter: (DeclarationDescriptor) -> Boolean,
+        applyExcludeSettings: Boolean
 ) {
+    private val descriptorFilter =
+            if (applyExcludeSettings)
+                { d -> visibilityFilter(d) && !isExcludedFromAutoImport(d) }
+            else
+                visibilityFilter
+
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val declarations = HashSet<JetNamedDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
@@ -62,7 +72,7 @@ public class KotlinIndicesHelper(
             else {
                 (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
             }
-        }.filter { it.getExtensionReceiverParameter() == null && visibilityFilter(it) }
+        }.filter { it.getExtensionReceiverParameter() == null && descriptorFilter(it) }
     }
 
     private fun MutableSet<JetNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
@@ -78,7 +88,7 @@ public class KotlinIndicesHelper(
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
-                .flatMap { findTopLevelCallables(it).filter(visibilityFilter) }
+                .flatMap { findTopLevelCallables(it).filter(descriptorFilter) }
     }
 
     public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<CallableDescriptor> {
@@ -148,7 +158,7 @@ public class KotlinIndicesHelper(
         val result = LinkedHashSet<CallableDescriptor>()
 
         fun processDescriptor(descriptor: CallableDescriptor) {
-            if (visibilityFilter(descriptor)) {
+            if (descriptorFilter(descriptor)) {
                 for ((receiverValue, callType) in receiverValues) {
                     result.addAll(descriptor.substituteExtensionIfCallable(receiverValue, callType, bindingContext, dataFlowInfo, moduleDescriptor))
                 }
@@ -172,7 +182,14 @@ public class KotlinIndicesHelper(
         return result
     }
 
-    public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+    public fun getJvmClassesByName(name: String): Collection<ClassifierDescriptor>
+            = PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
+            .map { resolutionFacade.psiClassToDescriptor(it) }
+            .filterNotNull()
+            .filter(descriptorFilter)
+            .toSet()
+
+    public fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return JetFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
@@ -190,7 +207,7 @@ public class KotlinIndicesHelper(
 
         // Note: Can't search with psi element as analyzer could be built over temp files
         return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it.getKind()) }
-                .filter(visibilityFilter)
+                .filter(descriptorFilter)
     }
 
     private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
@@ -198,11 +215,12 @@ public class KotlinIndicesHelper(
                 .filterIsInstance<CallableDescriptor>()
                 .filter { it.getExtensionReceiverParameter() == null }
     }
+
+    private fun isExcludedFromAutoImport(descriptor: DeclarationDescriptor): Boolean {
+        val fqName = descriptor.importableFqName?.asString() ?: return false
+
+        return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
+                .any { excluded -> fqName == excluded || (fqName.startsWith(excluded) && fqName[excluded.length()] == '.') }
+    }
 }
 
-public fun isInExcludedPackage(descriptor: DeclarationDescriptor): Boolean {
-    val fqName = DescriptorUtils.getFqName(descriptor).asString()
-
-    return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
-            .any { excluded -> fqName == excluded || fqName.startsWith(excluded + ".") }
-}

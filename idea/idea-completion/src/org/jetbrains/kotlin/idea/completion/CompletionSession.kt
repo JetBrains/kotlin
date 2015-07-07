@@ -165,7 +165,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter)
+        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter, true)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
@@ -247,17 +247,16 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
         val descriptors = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
-        return filterShadowedNonImportedAndExcluded(descriptors, reference!!)
+        return filterShadowedNonImported(descriptors, reference!!)
     }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
         val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression, bindingContext)
-        return filterShadowedNonImportedAndExcluded(descriptors, reference)
+        return filterShadowedNonImported(descriptors, reference)
     }
 
-    private fun filterShadowedNonImportedAndExcluded(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
-        val notExcluded = descriptors.filter { !isInExcludedPackage(it) }
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(notExcluded, referenceVariants, reference.expression)
+    private fun filterShadowedNonImported(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(descriptors, referenceVariants, reference.expression)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {

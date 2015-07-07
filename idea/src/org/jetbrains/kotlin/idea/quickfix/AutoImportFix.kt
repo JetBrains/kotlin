@@ -24,8 +24,6 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
-import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiUtil
@@ -48,8 +45,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.CachedValueProperty
 import java.util.ArrayList
-import com.intellij.codeInsight.*
-import org.jetbrains.kotlin.idea.core.isInExcludedPackage
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -140,30 +135,22 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         val result = ArrayList<DeclarationDescriptor>()
 
         val moduleDescriptor = resolutionFacade.findModuleDescriptor(element)
-        val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, searchScope, moduleDescriptor, ::isVisible)
+        val indicesHelper = KotlinIndicesHelper(file.getProject(), resolutionFacade, searchScope, moduleDescriptor, ::isVisible, true)
 
         if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
             if (ProjectStructureUtil.isJsKotlinModule(file)) {
-                result.addAll(indicesHelper.getClassDescriptors({ it == referenceName }, { true }))
+                result.addAll(indicesHelper.getKotlinClasses({ it == referenceName }, { true }))
             }
             else {
-                getClasses(referenceName, file, searchScope).filterTo(result, ::isVisible)
+                result.addAll(indicesHelper.getJvmClassesByName(referenceName))
             }
             result.addAll(indicesHelper.getTopLevelCallablesByName(referenceName))
         }
 
         result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == referenceName }, element, bindingContext))
 
-        return result.filter { it -> !isInExcludedPackage(it) }
+        return result
     }
-
-    private fun getClasses(name: String, file: JetFile, searchScope: GlobalSearchScope): Collection<DeclarationDescriptor>
-            = getShortNamesCache(file).getClassesByName(name, searchScope)
-            .map { element.getResolutionFacade().psiClassToDescriptor(it) }
-            .filterNotNull()
-            .toSet()
-
-    private fun getShortNamesCache(jetFile: JetFile): PsiShortNamesCache = PsiShortNamesCache.getInstance(jetFile.getProject())
 
     companion object {
         private val ERRORS = setOf(Errors.UNRESOLVED_REFERENCE, Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER)

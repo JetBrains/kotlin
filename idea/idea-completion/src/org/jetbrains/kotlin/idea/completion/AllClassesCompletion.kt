@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.isInExcludedPackage
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
@@ -42,12 +41,11 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
         //TODO: this is a temporary hack until we have built-ins in indices
         val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses()
         val filteredBuiltIns = builtIns
-                .filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) && !isInExcludedPackage(it) }
+                .filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         filteredBuiltIns.forEach { classDescriptorCollector(it) }
 
         kotlinIndicesHelper
-                .getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter)
-                .filter { !isInExcludedPackage(it) }
+                .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
                 .forEach { classDescriptorCollector(it) }
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
