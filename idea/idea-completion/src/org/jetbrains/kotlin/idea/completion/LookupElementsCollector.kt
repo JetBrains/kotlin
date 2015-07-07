@@ -117,8 +117,8 @@ class LookupElementsCollector(
 
                                 val tails = presentation.getTailFragments()
                                 presentation.clearTail()
-                                presentation.appendTailText(" " + buildLambdaPresentation(parameterType), false)
-                                tails.drop(1)/*drop old function signature*/.forEach { presentation.appendTailText(it.text, it.isGrayed()) }
+                                presentation.appendTailText(" " + buildLambdaPresentation(parameterType) + " ", false)
+                                tails.forEach { presentation.appendTailText(it.text, true) }
                             }
 
                             override fun handleInsert(context: InsertionContext) {
