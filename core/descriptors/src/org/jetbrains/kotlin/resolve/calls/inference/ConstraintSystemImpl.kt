@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundC
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.equalsOrContains
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.FunctionPlaceholderTypeConstructor
@@ -84,7 +84,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         override fun hasContradiction() = hasTypeConstructorMismatch() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
 
-        override fun hasViolatedUpperBound() = !isSuccessful() && getSystemWithoutWeakConstraints().getStatus().isSuccessful()
+        override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
 
         override fun hasConflictingConstraints() = typeParameterBounds.values().any { it.values.size() > 1 }
 
@@ -92,10 +92,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasTypeConstructorMismatch() = errors.any { it is TypeConstructorMismatch }
 
-        override fun hasOnlyErrorsFromPosition(constraintPosition: ConstraintPosition): Boolean {
+        override fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean {
             if (isSuccessful()) return false
-            if (filterConstraintsOut(constraintPosition).getStatus().isSuccessful()) return true
-            return errors.isNotEmpty() && errors.all { it.constraintPosition.equalsOrContains(constraintPosition) }
+            if (filterConstraintsOut(kind).getStatus().isSuccessful()) return true
+            return errors.isNotEmpty() && errors.all { it.constraintPosition.derivedFrom(kind) }
         }
 
         override fun hasErrorInConstrainingTypes() = errors.any { it is ErrorInConstrainingType }
@@ -175,22 +175,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis { true }
 
-    public fun filterConstraintsOut(excludePosition: ConstraintPosition): ConstraintSystem {
-        return filterConstraints { !it.equalsOrContains(excludePosition) }
-    }
-
-    public fun filterConstraints(condition: (ConstraintPosition) -> Boolean): ConstraintSystem {
-        return createNewConstraintSystemFromThis(condition)
-    }
-
-    public fun getSystemWithoutWeakConstraints(): ConstraintSystem {
-        return filterConstraints(fun (constraintPosition): Boolean {
-            if (constraintPosition !is CompoundConstraintPosition) return constraintPosition.isStrong()
-
-            // 'isStrong' for compound means 'has some strong constraints'
-            // but for testing absence of weak constraints we need 'has only strong constraints' here
-            return constraintPosition.positions.all { it.isStrong() }
-        })
+    public fun filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
+        return createNewConstraintSystemFromThis { !it.derivedFrom(excludePositionKind) }
     }
 
     private fun createNewConstraintSystemFromThis(
@@ -252,7 +238,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 if (isMyTypeVariable(typeProjection.getType())) return false
                 val myTypeVariable = getMyTypeVariable(typeVariable)
 
-                if (myTypeVariable != null && constraintPosition.isCaptureAllowed()) {
+                if (myTypeVariable != null && constraintPosition.isParameter()) {
                     if (depth > 0) {
                         errors.add(CannotCapture(constraintPosition, myTypeVariable))
                     }

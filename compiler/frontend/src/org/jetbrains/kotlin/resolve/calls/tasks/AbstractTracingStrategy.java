@@ -208,12 +208,12 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        if (status.hasOnlyErrorsFromPosition(EXPECTED_TYPE_POSITION.position())) {
+        if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
-                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION.position());
+                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
             JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo

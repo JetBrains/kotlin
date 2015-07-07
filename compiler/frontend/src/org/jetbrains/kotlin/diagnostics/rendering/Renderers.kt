@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -244,7 +245,7 @@ public object Renderers {
         LOG.assertTrue(status.hasViolatedUpperBound(),
                        renderDebugMessage("Upper bound violated renderer is applied for incorrect status", inferenceErrorData))
 
-        val systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints()
+        val systemWithoutWeakConstraints = constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
         val typeParameterDescriptor = inferenceErrorData.descriptor.getTypeParameters().firstOrNull { 
             !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true)
         }

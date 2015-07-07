@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
 public trait ConstraintSystemStatus {
     /**
@@ -69,7 +69,7 @@ public trait ConstraintSystemStatus {
      * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */
-    public fun hasOnlyErrorsFromPosition(constraintPosition: ConstraintPosition): Boolean
+    public fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean
 
     /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>

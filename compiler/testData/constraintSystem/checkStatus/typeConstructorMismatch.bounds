@@ -10,7 +10,7 @@ status:
 -hasConflictingConstraints: false
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: true
+-hasTypeConstructorMismatch: false
 -hasTypeInferenceIncorporationError: true
 -hasUnknownParameters: true
 -hasViolatedUpperBound: false
