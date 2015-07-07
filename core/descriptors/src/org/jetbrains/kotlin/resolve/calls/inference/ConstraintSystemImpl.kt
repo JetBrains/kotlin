@@ -56,7 +56,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private val allTypeParameterBounds = LinkedHashMap<TypeParameterDescriptor, TypeBoundsImpl>()
     private val externalTypeParameters = HashSet<TypeParameterDescriptor>()
-    private val typeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>
+    private val localTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>
         get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
             else allTypeParameterBounds.filter { !externalTypeParameters.contains(it.key) }
 
@@ -86,9 +86,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
 
-        override fun hasConflictingConstraints() = typeParameterBounds.values().any { it.values.size() > 1 }
+        override fun hasConflictingConstraints() = localTypeParameterBounds.values().any { it.values.size() > 1 }
 
-        override fun hasUnknownParameters() = typeParameterBounds.values().any { it.values.isEmpty() }
+        override fun hasUnknownParameters() = localTypeParameterBounds.values().any { it.values.isEmpty() }
 
         override fun hasTypeConstructorMismatch() = errors.any { it is TypeConstructorMismatch }
 
