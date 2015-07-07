@@ -98,7 +98,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
-                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position)
+                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position, topLevel = true)
             }
         }
         if (fixVariables) constraintSystem.fixVariables()

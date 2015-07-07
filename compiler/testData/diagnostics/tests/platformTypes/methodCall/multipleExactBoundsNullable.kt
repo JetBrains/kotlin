@@ -25,7 +25,7 @@ interface WithFoo {
     fun foo()
 }
 
-fun <M2: WithFoo> foo(delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2> {
+fun <M2: WithFoo> foo(delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2?> {
     val descriptorByModule = MyMap<M2, String>()
     val result = ResolverForProjectImpl(descriptorByModule, delegateResolver)
     result.exposeM.foo() // M is not M2?

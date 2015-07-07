@@ -203,15 +203,21 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, newSubjectType, constrainingType, constraintPosition)
+        addConstraint(SUB_TYPE, newSubjectType, constrainingType, constraintPosition, topLevel = true)
     }
 
     override fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition) {
         val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, constrainingType, newSubjectType, constraintPosition)
+        addConstraint(SUB_TYPE, constrainingType, newSubjectType, constraintPosition, topLevel = true)
     }
 
-    fun addConstraint(constraintKind: ConstraintKind, subType: JetType?, superType: JetType?, constraintPosition: ConstraintPosition) {
+    fun addConstraint(
+            constraintKind: ConstraintKind,
+            subType: JetType?,
+            superType: JetType?,
+            constraintPosition: ConstraintPosition,
+            topLevel: Boolean
+    ) {
         val typeCheckingProcedure = TypeCheckingProcedure(object : TypeCheckingProcedureCallbacks {
             private var depth = 0
 
@@ -253,7 +259,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
                 return true
             }
         })
-        doAddConstraint(constraintKind, subType, superType, constraintPosition, typeCheckingProcedure, topLevel = true)
+        doAddConstraint(constraintKind, subType, superType, constraintPosition, typeCheckingProcedure, topLevel)
     }
 
     private fun isErrorOrSpecialType(type: JetType?, constraintPosition: ConstraintPosition): Boolean {
@@ -447,7 +453,6 @@ public class ConstraintSystemImpl : ConstraintSystem {
             replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
 
     private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: JetType, superType: JetType, position: ConstraintPosition) {
-        if (position is CompoundConstraintPosition) return
         initialConstraints.add(Constraint(constraintKind, subType, superType, position))
     }
 

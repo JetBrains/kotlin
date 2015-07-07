@@ -1,6 +1,6 @@
 package
 
-internal fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2>
+internal fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2?>
 
 public/*package*/ open class MyMap</*0*/ K, /*1*/ V> : java.util.AbstractMap<K!, V!> {
     public/*package*/ constructor MyMap</*0*/ K, /*1*/ V>()
