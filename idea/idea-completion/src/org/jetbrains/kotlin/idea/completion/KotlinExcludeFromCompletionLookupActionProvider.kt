@@ -33,25 +33,22 @@ public class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvi
     override fun fillActions(element: LookupElement, lookup: Lookup, consumer: Consumer<LookupElementAction>) {
         val lookupObject = element.getObject() as? DeclarationLookupObject ?: return
 
-        lookupObject.descriptor?.let {
-            it.importableFqName?.let {
-                addExcludes(consumer, lookup.getPsiFile().getProject(), it)
-                return
-            }
+        val project = lookup.getPsiFile().getProject()
+
+        lookupObject.descriptor?.importableFqName?.let {
+            addExcludes(consumer, project, it.asString())
+            return
         }
 
-        lookupObject.psiElement?.let {
-            val fakeLookupElement = object : LookupElement() {
-                override fun getLookupString() = ""
-                override fun getObject() = it
-            }
-
-            ExcludeFromCompletionLookupActionProvider().fillActions(fakeLookupElement, lookup, consumer)
+        val psiElement = lookupObject.psiElement
+        if (psiElement is PsiClass) {
+            val qualifiedName = psiElement.getQualifiedName() ?: return
+            addExcludes(consumer, project, qualifiedName)
         }
     }
 
-    private fun addExcludes(consumer: Consumer<LookupElementAction>, project: Project, fqName: FqName) {
-        for (s in AddImportAction.getAllExcludableStrings(fqName.asString())) {
+    private fun addExcludes(consumer: Consumer<LookupElementAction>, project: Project, fqName: String) {
+        for (s in AddImportAction.getAllExcludableStrings(fqName)) {
             consumer.consume(ExcludeFromCompletionAction(project, s))
         }
     }
