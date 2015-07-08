@@ -10530,6 +10530,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("intchar.kt")
+            public void testIntchar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/intchar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("itselfAsUpperBound.kt")
             public void testItselfAsUpperBound() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBound.kt");
