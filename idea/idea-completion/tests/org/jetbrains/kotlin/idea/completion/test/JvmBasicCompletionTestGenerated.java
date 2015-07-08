@@ -1299,6 +1299,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("ParameterName5.kt")
+            public void testParameterName5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName5.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterType1.kt")
             public void testParameterType1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType1.kt");
@@ -1320,6 +1326,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("ParameterType4.kt")
             public void testParameterType4() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType5.kt")
+            public void testParameterType5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType5.kt");
                 doTest(fileName);
             }
         }
