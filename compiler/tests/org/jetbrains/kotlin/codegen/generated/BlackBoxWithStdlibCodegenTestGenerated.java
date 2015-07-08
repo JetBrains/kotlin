@@ -3027,6 +3027,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("simpleGetFunctions.kt")
+            public void testSimpleGetFunctions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/simpleGetFunctions.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("simpleNames.kt")
             public void testSimpleNames() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/simpleNames.kt");

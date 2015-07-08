@@ -16,9 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
@@ -86,14 +84,20 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                     }
                     .map { descriptor ->
                         descriptor.accept(object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Nothing>() {
-                            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?): KCallable<*>? {
-                                if (declaredOnly && !descriptor.getKind().isReal()) return null
+                            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
+                                if (declaredOnly && !descriptor.getKind().isReal()) return true
 
                                 val isExtension = descriptor.getExtensionReceiverParameter() != null
-                                if (isExtension && !extensions) return null
-                                if (!isExtension && !nonExtensions) return null
+                                if (isExtension && !extensions) return true
+                                if (!isExtension && !nonExtensions) return true
 
-                                return if (!isExtension) {
+                                return false
+                            }
+
+                            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?): KCallable<*>? {
+                                if (skipCallable(descriptor)) return null
+
+                                return if (descriptor.getExtensionReceiverParameter() == null) {
                                     if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
                                     else KProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
                                 }
@@ -101,6 +105,12 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                                     if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
                                     else KProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
                                 }
+                            }
+
+                            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?): KCallable<*>? {
+                                if (skipCallable(descriptor)) return null
+
+                                return KFunctionImpl(this@KClassImpl, descriptor)
                             }
                         }, null)
                     }

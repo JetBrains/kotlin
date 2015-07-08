@@ -41,7 +41,9 @@ object RuntimeTypeMapper {
         if (function is DeserializedSimpleFunctionDescriptor) {
             val proto = function.getProto()
             if (!proto.hasExtension(JvmProtoBuf.methodSignature)) {
-                throw KotlinReflectionInternalError("No metadata found for $function")
+                // If it's a deserialized function but has no JVM signature, it must be from built-ins
+                return mapIntrinsicFunctionSignature(function) ?:
+                       throw KotlinReflectionInternalError("No metadata found for $function")
             }
             val signature = proto.getExtension(JvmProtoBuf.methodSignature)
             return SignatureDeserializer(function.getNameResolver()).methodSignatureString(signature)
@@ -126,6 +128,31 @@ object RuntimeTypeMapper {
             }.toString()
         }
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
+    }
+
+    private fun mapIntrinsicFunctionSignature(function: DeserializedSimpleFunctionDescriptor): String? {
+        val parameters = function.getValueParameters()
+
+        when (function.getName().asString()) {
+            "equals" -> {
+                if (parameters.size() == 1 && KotlinBuiltIns.isNullableAny(parameters.single().getType())) {
+                    return "equals(Ljava/lang/Object;)Z"
+                }
+            }
+            "hashCode" -> {
+                if (parameters.isEmpty()) {
+                    return "hashCode()I"
+                }
+            }
+            "toString" -> {
+                if (parameters.isEmpty()) {
+                    return "toString()Ljava/lang/String;"
+                }
+            }
+            // TODO: generalize and support other functions from built-ins
+        }
+
+        return null
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {

@@ -5,6 +5,8 @@ fun foo(bar: String): Int = bar.length()
 
 class A(val c: String) {
     fun foz(baz: Int) {}
+
+    fun Double.mext(mez: Long) {}
 }
 
 fun Int.qux(zux: String) {}
@@ -20,6 +22,8 @@ fun box(): String {
     checkParameters(::foo, listOf("bar"))
     checkParameters(A::foz, listOf(null, "baz"))
     checkParameters(Int::qux, listOf(null, "zux"))
+
+    checkParameters(A::class.functions.single { it.name == "mext" }, listOf(null, null, "mez"))
 
     checkParameters(::A, listOf("c"))
 
