@@ -52,19 +52,25 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
 
     private fun syntheticPropertyInClass(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
         val memberScope = javaClass.getMemberScope(type.getArguments())
-        val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull {
-            it.getValueParameters().isEmpty() && it.getTypeParameters().isEmpty() && it.getVisibility() == Visibilities.PUBLIC //TODO: what about protected and package-local?
-        } ?: return null
+        val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull { isGoodGetMethod(it) } ?: return null
 
         val propertyType = getMethod.getReturnType() ?: return null
-        val setMethod = memberScope.getFunctions(toSetMethodName(name)).singleOrNull {
-            it.getValueParameters().singleOrNull()?.getType() == propertyType
-            && it.getTypeParameters().isEmpty()
-            && it.getReturnType()?.let { KotlinBuiltIns.isUnit(it) } ?: false
-            && it.getVisibility() == Visibilities.PUBLIC
-        }
+        val setMethod = memberScope.getFunctions(toSetMethodName(name)).singleOrNull { isGoodSetMethod(it, propertyType) }
 
         return MyPropertyDescriptor(javaClass, getMethod, setMethod, name, propertyType, type)
+    }
+
+    private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
+        return descriptor.getValueParameters().isEmpty()
+               && descriptor.getTypeParameters().isEmpty()
+               && descriptor.getVisibility() == Visibilities.PUBLIC //TODO: what about protected and package-local?
+    }
+
+    private fun isGoodSetMethod(descriptor: FunctionDescriptor, propertyType: JetType): Boolean {
+        return descriptor.getValueParameters().singleOrNull()?.getType() == propertyType
+               && descriptor.getTypeParameters().isEmpty()
+               && descriptor.getReturnType()?.let { KotlinBuiltIns.isUnit(it) } ?: false
+               && descriptor.getVisibility() == Visibilities.PUBLIC
     }
 
     override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
