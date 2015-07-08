@@ -28,7 +28,7 @@ fun test() {
 
     other(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>11<!>)
 
-    <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
     r checkType { _<Comparable<*>>() }

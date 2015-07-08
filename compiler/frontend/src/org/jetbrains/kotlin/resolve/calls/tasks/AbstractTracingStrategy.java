@@ -227,8 +227,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else if (status.hasViolatedUpperBound()) {
             trace.report(TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data));
         }
-        else if (status.hasTypeConstructorMismatch()) {
-            trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
+        else if (status.hasParameterConstraintError()) {
+            trace.report(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR.on(reference, data));
         }
         else if (status.hasConflictingConstraints()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));

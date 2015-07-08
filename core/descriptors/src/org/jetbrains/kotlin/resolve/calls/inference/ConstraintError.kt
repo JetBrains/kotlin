@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 
 open class ConstraintError(val constraintPosition: ConstraintPosition)
 
-class TypeConstructorMismatch(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
+class ParameterConstraintError(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
 class ErrorInConstrainingType(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
@@ -30,5 +30,5 @@ class TypeInferenceError(constraintPosition: ConstraintPosition): ConstraintErro
 
 class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeParameterDescriptor): ConstraintError(constraintPosition)
 
-fun newTypeInferenceOrConstructorMismatchError(constraintPosition: ConstraintPosition) =
-        if (constraintPosition.isParameter()) TypeConstructorMismatch(constraintPosition) else TypeInferenceError(constraintPosition)
+fun newTypeInferenceOrParameterConstraintError(constraintPosition: ConstraintPosition) =
+        if (constraintPosition.isParameter()) ParameterConstraintError(constraintPosition) else TypeInferenceError(constraintPosition)

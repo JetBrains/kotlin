@@ -81,7 +81,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun isSuccessful() = !hasContradiction() && !hasUnknownParameters()
 
-        override fun hasContradiction() = hasTypeConstructorMismatch() || hasConflictingConstraints()
+        override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
@@ -90,7 +90,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasUnknownParameters() = localTypeParameterBounds.values().any { it.values.isEmpty() }
 
-        override fun hasTypeConstructorMismatch() = errors.any { it is TypeConstructorMismatch }
+        override fun hasParameterConstraintError() = errors.any { it is ParameterConstraintError }
 
         override fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean {
             if (isSuccessful()) return false
@@ -255,7 +255,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             }
 
             override fun noCorrespondingSupertype(subtype: JetType, supertype: JetType): Boolean {
-                errors.add(newTypeInferenceOrConstructorMismatchError(constraintPosition))
+                errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
                 return true
             }
         })
@@ -322,7 +322,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             else {
                 typeCheckingProcedure.isSubtypeOf(subTypeNotNullable, superType)
             }
-            if (!result) errors.add(newTypeInferenceOrConstructorMismatchError(constraintPosition))
+            if (!result) errors.add(newTypeInferenceOrParameterConstraintError(constraintPosition))
         }
         if (topLevel) {
             storeInitialConstraint(constraintKind, subType, superType, constraintPosition)

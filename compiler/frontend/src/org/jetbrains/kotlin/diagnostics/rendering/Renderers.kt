@@ -123,8 +123,8 @@ public object Renderers {
         renderConflictingSubstitutionsInferenceError(it, TabledDescriptorRenderer.create()).toString()
     }
 
-    public val TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER: Renderer<InferenceErrorData> = Renderer {
-        renderTypeConstructorMismatchError(it, TabledDescriptorRenderer.create()).toString()
+    public val TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        renderParameterConstraintError(it, TabledDescriptorRenderer.create()).toString()
     }
 
     public val TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {
@@ -195,11 +195,11 @@ public object Renderers {
     }
 
     platformStatic
-    public fun renderTypeConstructorMismatchError(
+    public fun renderParameterConstraintError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
         val constraintErrors = (inferenceErrorData.constraintSystem as ConstraintSystemImpl).constraintErrors
-        val errorPositions = constraintErrors.filter { it is TypeConstructorMismatch }.map { it.constraintPosition }
+        val errorPositions = constraintErrors.filter { it is ParameterConstraintError }.map { it.constraintPosition }
         return renderer.table(
                 TabledDescriptorRenderer
                         .newTable()
