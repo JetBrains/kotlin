@@ -131,6 +131,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("IncorrectGetters")
+    public void testIncorrectGetters() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/IncorrectGetters/");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaInnerClasses")
     public void testJavaInnerClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/JavaInnerClasses/");

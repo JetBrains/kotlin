@@ -52,6 +52,10 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     private fun syntheticPropertyInClassNotCached(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
+        if (name.isSpecial()) return null
+        val firstChar = name.getIdentifier()[0]
+        if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
+
         val memberScope = javaClass.getMemberScope(type.getArguments())
         val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull { isGoodGetMethod(it) } ?: return null
 
@@ -75,8 +79,6 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
-        if (name.isSpecial()) return emptyList()
-        if (name.getIdentifier()[0].isUpperCase()) return emptyList()
         return collectSyntheticPropertiesByName(null, receiverType.makeNotNullable(), name) ?: emptyList()
     }
 
@@ -138,7 +140,9 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (methodName.isSpecial()) return null
         val identifier = methodName.getIdentifier()
         if (!identifier.startsWith("get")) return null
-        return Name.identifier(identifier.removePrefix("get").decapitalize())
+        val name = identifier.removePrefix("get").decapitalize()
+        if (!Name.isValidIdentifier(name)) return null
+        return Name.identifier(name)
     }
 
     private class MyPropertyDescriptor(
