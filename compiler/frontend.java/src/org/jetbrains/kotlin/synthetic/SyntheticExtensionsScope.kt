@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -76,7 +77,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
         if (name.isSpecial()) return emptyList()
         if (name.getIdentifier()[0].isUpperCase()) return emptyList()
-        return collectSyntheticPropertiesByName(null, receiverType, name) ?: emptyList()
+        return collectSyntheticPropertiesByName(null, receiverType.makeNotNullable(), name) ?: emptyList()
     }
 
     private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name): SmartList<PropertyDescriptor>? {
@@ -96,7 +97,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
 
     override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
-        result.collectSyntheticProperties(receiverType)
+        result.collectSyntheticProperties(receiverType.makeNotNullable())
         return result
     }
 
