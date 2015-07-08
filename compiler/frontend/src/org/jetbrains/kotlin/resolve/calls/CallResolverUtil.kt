@@ -69,7 +69,7 @@ private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constrai
     val returnType = getReturnType() ?: return false
 
     val nestedTypeVariables = with (constraintSystem as ConstraintSystemImpl) {
-        returnType.getNestedTypeVariables(original = true)
+        returnType.getNestedTypeVariables()
     }
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }

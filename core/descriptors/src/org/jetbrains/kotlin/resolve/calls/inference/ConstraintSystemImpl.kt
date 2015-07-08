@@ -167,7 +167,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
     }
 
-    fun JetType.getNestedTypeVariables(original: Boolean = false): List<TypeParameterDescriptor> {
+    fun JetType.getNestedTypeVariables(original: Boolean = true): List<TypeParameterDescriptor> {
         return getNestedArguments().map { typeProjection ->
             typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
@@ -344,7 +344,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         typeBounds.addBound(bound)
 
         if (!bound.isProper) {
-            for (dependentTypeVariable in bound.constrainingType.getNestedTypeVariables()) {
+            for (dependentTypeVariable in bound.constrainingType.getNestedTypeVariables(original = false)) {
                 val dependentBounds = usedInBounds.getOrPut(dependentTypeVariable) { arrayListOf() }
                 dependentBounds.add(bound)
             }
@@ -477,7 +477,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (typeBounds.isFixed) return
         typeBounds.setFixed()
 
-        val nestedTypeVariables = typeBounds.bounds.flatMap { it.constrainingType.getNestedTypeVariables() }
+        val nestedTypeVariables = typeBounds.bounds.flatMap { it.constrainingType.getNestedTypeVariables(original = false) }
         nestedTypeVariables.forEach { fixVariable(it) }
 
         val value = typeBounds.value ?: return

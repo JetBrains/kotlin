@@ -89,7 +89,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
 
     fun addNewBound(newConstrainingType: JetType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
-        val nestedTypeVariables = newConstrainingType.getNestedTypeVariables()
+        val nestedTypeVariables = newConstrainingType.getNestedTypeVariables(original = false)
         if (nestedTypeVariables.contains(bound.typeVariable)) return
 
         // We don't generate constraint if a type variable was substituted twice
