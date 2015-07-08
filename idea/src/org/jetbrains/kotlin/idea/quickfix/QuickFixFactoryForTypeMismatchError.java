@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -74,7 +75,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             DiagnosticWithParameters1<JetConstantExpression, JetType> diagnosticWithParameters =
                     Errors.NULL_FOR_NONNULL_TYPE.cast(diagnostic);
             expectedType = diagnosticWithParameters.getA();
-            expressionType = UtilPackage.makeNullable(expectedType);
+            expressionType = TypeUtilPackage.makeNullable(expectedType);
         }
         else if (diagnostic.getFactory() == Errors.CONSTANT_EXPECTED_TYPE_MISMATCH) {
             DiagnosticWithParameters2<JetConstantExpression, String, JetType> diagnosticWithParameters =

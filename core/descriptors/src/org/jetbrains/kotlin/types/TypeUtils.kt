@@ -28,6 +28,29 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
+public enum class TypeNullability {
+    NOT_NULL,
+    NULLABLE,
+    FLEXIBLE
+}
+
+public fun JetType.nullability(): TypeNullability {
+    return when {
+        isNullabilityFlexible() -> TypeNullability.FLEXIBLE
+        TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
+        else -> TypeNullability.NOT_NULL
+    }
+}
+
+fun JetType.makeNullable() = TypeUtils.makeNullable(this)
+fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
+
+fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
+
+fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
+fun JetType.isAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+
 private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
     if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMod
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
-import org.jetbrains.kotlin.idea.util.isUnit
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*

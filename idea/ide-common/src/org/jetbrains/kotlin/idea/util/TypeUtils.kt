@@ -27,16 +27,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.substitute
-
-fun JetType.makeNullable() = TypeUtils.makeNullable(this)
-fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
-
-fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
-
-fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
-fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
-fun JetType.isAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true): JetType {
     if (jetType.isDynamic()) return jetType
@@ -80,20 +73,6 @@ public fun JetType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(J
 private fun JetType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnotations()) {
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
-
-public enum class TypeNullability {
-    NOT_NULL,
-    NULLABLE,
-    FLEXIBLE
-}
-
-public fun JetType.nullability(): TypeNullability {
-    return when {
-        isNullabilityFlexible() -> TypeNullability.FLEXIBLE
-        TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
-        else -> TypeNullability.NOT_NULL
-    }
-}
 
 fun JetType.isResolvableInScope(scope: JetScope?, checkTypeParameters: Boolean): Boolean {
     if (canBeReferencedViaImport()) return true

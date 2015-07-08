@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntr
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
