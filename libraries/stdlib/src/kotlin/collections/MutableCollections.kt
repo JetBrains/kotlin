@@ -1,6 +1,28 @@
 package kotlin
 
 /**
+ * Adds the specified [element] to this mutable collection.
+ */
+public fun <T> MutableCollection<in T>.plusAssign(element: T) {
+    this.add(element)
+}
+
+/**
+ * Adds all elements of the given [collection] to this mutable collection.
+ */
+public fun <T> MutableCollection<in T>.plusAssign(collection: Iterable<T>) {
+    this.addAll(collection)
+}
+
+/**
+ * Adds all elements of the given [array] to this mutable collection.
+ */
+public fun <T> MutableCollection<in T>.plusAssign(array: Array<T>) {
+    this.addAll(array)
+}
+
+
+/**
  * Adds all elements of the given [iterable] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(iterable: Iterable<T>) {

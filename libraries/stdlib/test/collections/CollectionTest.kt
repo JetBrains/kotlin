@@ -233,6 +233,12 @@ class CollectionTest {
         l += arrayOf("cheese", "wine")
         assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine"), l)
         assertTrue(l !== lOriginal)
+
+        val ml = arrayListOf("cheese")
+        ml += "foo"
+        ml += listOf("beer")
+        ml += arrayOf("cheese", "wine")
+        assertEquals(l, ml)
     }
 
     test fun requireNoNulls() {
