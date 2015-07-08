@@ -132,37 +132,40 @@ public class SequenceTest {
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
     }
 
-    test fun plus() {
+    test fun plusElement() {
         val sequence = sequenceOf("foo", "bar")
-        val sequenceCheese = sequence + "cheese"
+        val sequenceCheese: Sequence<String> = sequence + "cheese"
         assertEquals(listOf("foo", "bar", "cheese"), sequenceCheese.toList())
-
-        // lets use a mutable variable
-        var mi = sequenceOf("a", "b")
-        mi += "c"
-        assertEquals(listOf("a", "b", "c"), mi.toList())
     }
 
     test fun plusCollection() {
         val a = sequenceOf("foo", "bar")
         val b = listOf("cheese", "wine")
-        val sequence = a + b
+        val sequence: Sequence<String> = a + b
         assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
+    }
 
+    test fun plusArray() {
+        val a = sequenceOf("foo", "bar")
+        val b = listOf("cheese", "wine")
+        val sequence: Sequence<String> = a + b
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
+    }
+
+    test fun plusAssign() {
         // lets use a mutable variable
         var ml = sequenceOf("a")
-        ml += a
-        ml += "beer"
-        ml += b
-        ml += "z"
-        assertEquals(listOf("a", "foo", "bar", "beer", "cheese", "wine", "z"), ml.toList())
+        ml += "foo"
+        ml += listOf("beer")
+        ml += arrayOf("cheese", "wine")
+        assertEquals(listOf("a", "foo", "beer", "cheese", "wine"), ml.toList())
     }
 
 
     test fun iterationOverSequence() {
         var s = ""
         for (i in sequenceOf(0, 1, 2, 3, 4, 5)) {
-            s = s + i.toString()
+            s += i.toString()
         }
         assertEquals("012345", s)
     }

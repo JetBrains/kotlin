@@ -281,4 +281,33 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val result = data.joinToString(separator = "-") { it.toUpperCase() }
         assertEquals("FOO-BAR", result)
     }
+
+    Test
+    fun plusElement() {
+        val result = data + "zoo" + "g"
+        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
+    }
+
+    Test
+    fun plusCollection() {
+        val result = data + listOf("zoo", "g")
+        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
+    }
+
+    Test
+    fun plusArray() {
+        val result = data + arrayOf("zoo", "g")
+        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
+    }
+
+    Test
+    fun plusAssign() {
+        // lets use a mutable variable
+        var result: Iterable<String> = data
+        result += "foo"
+        result += listOf("beer")
+        result += arrayOf("cheese", "wine")
+        assertEquals(listOf("foo", "bar", "foo", "beer", "cheese", "wine"), result)
+    }
+
 }

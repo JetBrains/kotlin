@@ -360,6 +360,15 @@ class ArraysTest {
         assertArrayNotSameButEquals(longArrayOf(1, 2), longOnePlus(2), "LongArray.plus")
     }
 
+    test fun plusAssign() {
+        // lets use a mutable variable
+        var result = arrayOf("a")
+        result += "foo"
+        result += listOf("beer")
+        result += arrayOf("cheese", "wine")
+        assertArrayNotSameButEquals(arrayOf("a", "foo", "beer", "cheese", "wine"), result)
+    }
+
     test fun first() {
         expect(1) { arrayOf(1, 2, 3).first() }
         expect(2) { arrayOf(1, 2, 3).first { it % 2 == 0 } }

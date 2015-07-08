@@ -32,4 +32,34 @@ class SetOperationsTest {
         assertEquals(listOf(1, 3, 5), listOf(1, 3, 5).intersect(listOf(1, 3, 5)).toList())
         assertTrue(listOf<Int>().intersect(listOf(1)).none())
     }
+
+    test fun plusElement() {
+        val set = setOf("foo")
+        val result: Set<String> = set + "bar" + "bar"
+        assertEquals(setOf("foo", "bar"), result)
+    }
+
+    test fun plusCollection() {
+        val set = setOf("foo")
+        val result: Set<String> = set + listOf("bar", "bar")
+        assertEquals(setOf("foo", "bar"), result)
+    }
+
+    test fun plusArray() {
+        val set = setOf("foo")
+        val result: Set<String> = set + arrayOf("foo", "bar")
+        assertEquals(setOf("foo", "bar"), result)
+    }
+
+    test fun plusAssign() {
+        // lets use a mutable variable
+        var set = setOf("a")
+        val setOriginal = set
+        set += "foo"
+        set += listOf("beer")
+        set += arrayOf("cheese", "wine")
+        assertEquals(setOf("a", "foo", "beer", "cheese", "wine"), set)
+        assertTrue(set !== setOriginal)
+    }
+
 }
