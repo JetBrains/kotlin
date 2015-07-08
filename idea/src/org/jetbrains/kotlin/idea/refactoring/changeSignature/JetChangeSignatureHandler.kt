@@ -18,13 +18,16 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
@@ -126,6 +129,16 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
 
             if (callableDescriptor is JavaCallableMemberDescriptor) {
                 val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, callableDescriptor)
+                if (declaration is PsiClass) {
+                    val message = RefactoringBundle.getCannotRefactorMessage(
+                            RefactoringBundle.message("error.wrong.caret.position.method.or.class.name")
+                    )
+                    CommonRefactoringUtil.showErrorHint(project,
+                                                        editor,
+                                                        message,
+                                                        ChangeSignatureHandler.REFACTORING_NAME, "refactoring.changeSignature")
+                    return
+                }
                 assert(declaration is PsiMethod) { "PsiMethod expected: $callableDescriptor" }
                 ChangeSignatureUtil.invokeChangeSignatureOn(declaration as PsiMethod, project)
                 return
