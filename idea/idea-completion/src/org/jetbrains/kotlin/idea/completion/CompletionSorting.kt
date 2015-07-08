@@ -51,7 +51,7 @@ public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters
         sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 
-    sorter = sorter.weighAfter("stats", JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile))
+    sorter = sorter.weighAfter("stats", DeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile))
 
     sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
@@ -121,7 +121,7 @@ private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMa
     }
 }
 
-private class JetDeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
+private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
     private val importCache = ImportCache()
 
     private enum class Weight {
