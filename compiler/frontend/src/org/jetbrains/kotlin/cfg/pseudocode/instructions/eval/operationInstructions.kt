@@ -59,7 +59,7 @@ public class CallInstruction private constructor(
         val resolvedCall: ResolvedCall<*>,
         override val receiverValues: Map<PseudoValue, ReceiverValue>,
         public val arguments: Map<PseudoValue, ValueParameterDescriptor>
-) : OperationInstruction(element, lexicalScope, receiverValues.keySet() + arguments.keySet()), InstructionWithReceivers {
+) : OperationInstruction(element, lexicalScope, (receiverValues.keySet() as Collection<PseudoValue>) + arguments.keySet()), InstructionWithReceivers {
     public constructor (
             element: JetElement,
             lexicalScope: LexicalScope,
