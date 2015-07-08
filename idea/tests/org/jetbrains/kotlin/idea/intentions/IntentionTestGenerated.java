@@ -7382,4 +7382,79 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/intentions/usePropertyAccessSyntax")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UsePropertyAccessSyntax extends AbstractIntentionTest {
+        @TestMetadata("accessThroughKotlinClassInstance.kt")
+        public void testAccessThroughKotlinClassInstance() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/accessThroughKotlinClassInstance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("accessThroughKotlinClassInstanceWithOverride.kt")
+        public void testAccessThroughKotlinClassInstanceWithOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/accessThroughKotlinClassInstanceWithOverride.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInUsePropertyAccessSyntax() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/usePropertyAccessSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("conflict1.kt")
+        public void testConflict1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/conflict1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conflict2.kt")
+        public void testConflict2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/conflict2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("get.kt")
+        public void testGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/get.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getImplicitReceiver.kt")
+        public void testGetImplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/getImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getSafeCall.kt")
+        public void testGetSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/getSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("set.kt")
+        public void testSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/set.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("setImplicitReceiver.kt")
+        public void testSetImplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("setSafeCall.kt")
+        public void testSetSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/superCall.kt");
+            doTest(fileName);
+        }
+    }
 }

@@ -942,6 +942,11 @@
           <category>Kotlin</category>
       </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="Add 'replaceWith' argument to 'deprecated' annotation"
                      groupName="Kotlin"
@@ -1025,6 +1030,13 @@
                        enabledByDefault="true"
                        level="WEAK WARNING"
           />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
+                     displayName="Use property access syntax"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
         displayName="Unused Symbol"
