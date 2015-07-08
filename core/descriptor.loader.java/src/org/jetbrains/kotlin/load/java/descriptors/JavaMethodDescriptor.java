@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -100,16 +101,20 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull List<JetType> enhancedValueParametersTypes,
             @NotNull JetType enhancedReturnType
     ) {
-        JavaMethodDescriptor enhancedMethod = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
-        enhancedMethod.initialize(
-                enhancedReceiverType,
-                getDispatchReceiverParameter(),
-                getTypeParameters(),
-                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhancedMethod),
-                enhancedReturnType,
-                getModality(),
-                getVisibility()
+        List<ValueParameterDescriptor> enhancedValueParameters =
+                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), this);
+
+        // We use `doSubstitute` here because it does exactly what we need:
+        // 1. creates full copy of descriptor
+        // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
+        JavaMethodDescriptor enhancedMethod = (JavaMethodDescriptor) doSubstitute(
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), getOriginal(),
+                /* copyOverrides = */ false, getKind(),
+                enhancedValueParameters, enhancedReceiverType, enhancedReturnType
         );
+
+        assert enhancedMethod != null : "null after substitution while enhancing " + toString();
+
         for (FunctionDescriptor overridden : getOverriddenDescriptors()) {
             enhancedMethod.addOverriddenDescriptor(overridden);
         }
