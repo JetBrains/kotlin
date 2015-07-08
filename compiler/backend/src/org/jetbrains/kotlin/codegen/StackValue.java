@@ -248,7 +248,7 @@ public abstract class StackValue {
     @NotNull
     public static Property property(
             @NotNull PropertyDescriptor descriptor,
-            @NotNull Type backingFieldOwner,
+            @Nullable Type backingFieldOwner,
             @NotNull Type type,
             boolean isStaticBackingField,
             @Nullable String fieldName,
@@ -989,7 +989,7 @@ public abstract class StackValue {
         private final String fieldName;
 
         public Property(
-                @NotNull PropertyDescriptor descriptor, @NotNull Type backingFieldOwner,
+                @NotNull PropertyDescriptor descriptor, @Nullable Type backingFieldOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStaticBackingField,
                 @Nullable String fieldName, @NotNull Type type, @NotNull GenerationState state,
                 @NotNull StackValue receiver
@@ -1007,6 +1007,7 @@ public abstract class StackValue {
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             if (getter == null) {
                 assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
+                assert backingFieldOwner != null : "Property should have either a getter or a backingFieldOwner: " + descriptor;
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
                 genNotNullAssertionForField(v, state, descriptor);
                 coerceTo(type, v);
@@ -1022,6 +1023,7 @@ public abstract class StackValue {
             coerceFrom(topOfStackType, v);
             if (setter == null) {
                 assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
+                assert backingFieldOwner != null : "Property should have either a setter or a backingFieldOwner: " + descriptor;
                 v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {

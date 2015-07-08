@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
+import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -2144,6 +2145,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull MethodKind methodKind,
             StackValue receiver
     ) {
+        if (propertyDescriptor instanceof SyntheticExtensionPropertyDescriptor) {
+            return intermediateValueForSyntheticExtensionProperty((SyntheticExtensionPropertyDescriptor) propertyDescriptor, receiver);
+        }
+
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
@@ -2166,10 +2171,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (isBackingFieldInAnotherClass && forceField) {
             backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
-            skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
+            skipPropertyAccessors =
+                    (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
-                changeOwnerOnTypeMapping = changeOwnerOnTypeMapping && !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
+                changeOwnerOnTypeMapping =
+                        changeOwnerOnTypeMapping && !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
             }
         }
 
@@ -2191,7 +2198,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null) {
-                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
+                    callableGetter =
+                            typeMapper.mapToCallableMethod(getter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
                 }
             }
 
@@ -2202,14 +2210,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         callableSetter = null;
                     }
                     else {
-                        callableSetter = typeMapper.mapToCallableMethod(setter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
+                        callableSetter =
+                                typeMapper.mapToCallableMethod(setter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
                     }
                 }
             }
         }
 
         propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
-        Type backingFieldOwner = typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
+        Type backingFieldOwner =
+                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
                                     isCallInsideSameModuleAsDeclared(propertyDescriptor, context, state.getOutDirectory()));
 
         String fieldName;
@@ -2226,9 +2236,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         return StackValue.property(propertyDescriptor, backingFieldOwner,
-                            typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                            isStaticBackingField, fieldName, callableGetter, callableSetter, state, receiver);
+                                   typeMapper.mapType(
+                                           isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
+                                   isStaticBackingField, fieldName, callableGetter, callableSetter, state, receiver);
+    }
 
+    @NotNull
+    private StackValue.Property intermediateValueForSyntheticExtensionProperty(@NotNull SyntheticExtensionPropertyDescriptor propertyDescriptor, StackValue receiver) {
+        Type type = typeMapper.mapType(propertyDescriptor.getOriginal().getType());
+        CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false, context);
+        FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();
+        CallableMethod callableSetter = setMethod != null ? typeMapper.mapToCallableMethod(setMethod, false, context) : null;
+        return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, state, receiver);
     }
 
     @Override

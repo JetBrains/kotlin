@@ -827,6 +827,39 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SyntheticExtensions extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSyntheticExtensions() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("getter.kt")
+        public void testGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/getter.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/implicitReceiver.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("plusPlus.kt")
+        public void testPlusPlus() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/plusPlus.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("setter.kt")
+        public void testSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/setter.kt");
+            doTestAgainstJava(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
