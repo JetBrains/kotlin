@@ -47,10 +47,10 @@ class AdditionalScopesWithSyntheticExtensions(storageManager: StorageManager) : 
 
 class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Triple<JavaClassDescriptor, JetType, Name>, PropertyDescriptor> { triple ->
-        syntheticPropertyInClass(triple.first, triple.second, triple.third)
+        syntheticPropertyInClassNotCached(triple.first, triple.second, triple.third)
     }
 
-    private fun syntheticPropertyInClass(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
+    private fun syntheticPropertyInClassNotCached(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
         val memberScope = javaClass.getMemberScope(type.getArguments())
         val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull { isGoodGetMethod(it) } ?: return null
 
@@ -107,7 +107,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
             for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = fromGetMethodName(descriptor.getName()) ?: continue
-                    addIfNotNull(syntheticPropertyInClass(classifier, type, propertyName))
+                    addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
                 }
             }
         }
