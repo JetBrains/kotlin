@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.light.LightMemberReference;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -114,7 +115,14 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof JetClassOrObject) {
-            processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+            JetPrimaryConstructor constructor = ((JetClassOrObject) element).getPrimaryConstructor();
+            if (constructor != null) {
+                PsiMethod lightMethod = LightClassUtil.getLightClassMethod(constructor);
+                processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
+            }
+            else {
+                processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+            }
         }
 
         Object[] callers = methodToDescriptorMap.values().toArray(new Object[methodToDescriptorMap.size()]);
@@ -204,6 +212,11 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     else {
                         return true;
                     }
+                }
+                else if (ref instanceof LightMemberReference) {
+                    PsiElement refTarget = ref.resolve();
+                    // Accept implicit superclass constructor reference in Java code
+                    if (!(refTarget instanceof PsiMethod && ((PsiMethod) refTarget).isConstructor())) return true;
                 }
 
                 PsiElement refElement = ref.getElement();

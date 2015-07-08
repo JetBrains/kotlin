@@ -358,6 +358,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest(fileName);
         }
 
+        @TestMetadata("kotlinPrimaryConstructorImplicitCalls")
+        public void testKotlinPrimaryConstructorImplicitCalls() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrimaryConstructorImplicitCalls/");
+            doCallerHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinPrivateClass")
         public void testKotlinPrivateClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrivateClass/");
@@ -385,6 +391,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("kotlinSecondaryConstructor")
         public void testKotlinSecondaryConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructor/");
+            doCallerHierarchyTest(fileName);
+        }
+
+        @TestMetadata("kotlinSecondaryConstructorImplicitCalls")
+        public void testKotlinSecondaryConstructorImplicitCalls() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructorImplicitCalls/");
             doCallerHierarchyTest(fileName);
         }
 
