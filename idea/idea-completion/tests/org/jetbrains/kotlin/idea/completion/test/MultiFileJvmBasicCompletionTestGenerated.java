@@ -281,6 +281,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtensionForGenericClass")
+    public void testSyntheticExtensionForGenericClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/SyntheticExtensionForGenericClass/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/TopLevelFunction/");
