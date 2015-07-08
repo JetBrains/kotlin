@@ -119,6 +119,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtension.kt")
+    public void testSyntheticExtension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SyntheticExtension.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/exclChar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

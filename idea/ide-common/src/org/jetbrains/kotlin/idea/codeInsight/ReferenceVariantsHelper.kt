@@ -88,6 +88,8 @@ public class ReferenceVariantsHelper(
 
         val descriptors = LinkedHashSet<DeclarationDescriptor>()
 
+        val dataFlowInfo = context.getDataFlowInfo(expression)
+
         val pair = getExplicitReceiverData(expression)
         if (pair != null) {
             val (receiverExpression, callType) = pair
@@ -104,25 +106,17 @@ public class ReferenceVariantsHelper(
                                         context.getType(receiverExpression)
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                val dataFlowInfo = context.getDataFlowInfo(expression)
-
-                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
-                    descriptors.addMembersFromReceiver(variant, callType, kindFilter, nameFilter)
-                }
+                descriptors.addMembersFromReceiverAndSyntheticExtensions(receiverValue, callType, kindFilter, nameFilter, resolutionScope, dataFlowInfo)
 
                 descriptors.addCallableExtensions(resolutionScope, receiverValue, dataFlowInfo, callType, kindFilter, nameFilter)
             }
         }
         else {
-            val dataFlowInfo = context.getDataFlowInfo(expression)
-
             // process instance members that can be called via implicit receiver's instances
             val receivers = resolutionScope.getImplicitReceiversWithInstance()
             val receiverValues = receivers.map { it.getValue() }
             for (receiverValue in receiverValues) {
-                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
-                    descriptors.addMembersFromReceiver(variant, CallType.NORMAL, kindFilter, nameFilter)
-                }
+                descriptors.addMembersFromReceiverAndSyntheticExtensions(receiverValue, CallType.NORMAL, kindFilter, nameFilter, resolutionScope, dataFlowInfo)
             }
 
             // process extensions and non-instance members
@@ -143,22 +137,36 @@ public class ReferenceVariantsHelper(
         return descriptors
     }
 
-    private fun MutableCollection<DeclarationDescriptor>.addMembersFromReceiver(
-            receiverType: JetType,
+    private fun MutableSet<DeclarationDescriptor>.addMembersFromReceiverAndSyntheticExtensions(
+            receiverValue: ReceiverValue,
             callType: CallType,
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
+            resolutionScope: JetScope,
+            dataFlowInfo: DataFlowInfo
     ) {
-        var memberFilter = kindFilter exclude DescriptorKindExclude.Extensions
-        val members = receiverType.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
-        for (member in members) {
-            if (member is ClassDescriptor) {
-                if (member.isInner()) {
-                    member.getConstructors().filterTo(this) { callType.canCall(it) && memberFilter.accepts(it) }
+        val memberFilter = kindFilter exclude DescriptorKindExclude.Extensions
+        val containingDeclaration = resolutionScope.getContainingDeclaration()
+
+        for (receiverType in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
+            val members = receiverType.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
+            for (member in members) {
+                if (member is ClassDescriptor) {
+                    if (member.isInner()) {
+                        member.getConstructors().filterTo(this) { callType.canCall(it) && memberFilter.accepts(it) }
+                    }
+                }
+                else if (callType.canCall(member) && memberFilter.accepts(member)) {
+                    this.add(member)
                 }
             }
-            else if (callType.canCall(member) && memberFilter.accepts(member)) {
-                this.add(member)
+
+            if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
+                for (extension in resolutionScope.getSyntheticExtensionProperties(receiverType)) {
+                    if (nameFilter(extension.getName()) && kindFilter.accepts(extension)) {
+                        addAll(extension.substituteExtensionIfCallable(receiverValue, callType, context, dataFlowInfo, containingDeclaration))
+                    }
+                }
             }
         }
     }

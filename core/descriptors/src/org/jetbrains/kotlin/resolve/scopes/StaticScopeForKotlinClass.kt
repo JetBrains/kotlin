@@ -27,7 +27,7 @@ import kotlin.properties.Delegates
 
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
-) : JetScope {
+) : JetScopeImpl() {
     override fun getClassifier(name: Name) = null // TODO
 
     private val functions: List<FunctionDescriptor> by Delegates.lazy {
@@ -46,13 +46,7 @@ public class StaticScopeForKotlinClass(
 
     override fun getFunctions(name: Name) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
 
-    override fun getPackage(name: Name) = null
-    override fun getProperties(name: Name) = listOf<VariableDescriptor>()
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
-    override fun getLocalVariable(name: Name) = null
     override fun getContainingDeclaration() = containingClass
-    override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
-    override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")

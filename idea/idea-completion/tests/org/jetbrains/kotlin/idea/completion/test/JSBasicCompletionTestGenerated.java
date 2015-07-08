@@ -1209,6 +1209,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("SyntheticExtensions1.kt")
+            public void testSyntheticExtensions1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensions2.kt")
+            public void testSyntheticExtensions2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WrongExplicitReceiver.kt")
             public void testWrongExplicitReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/WrongExplicitReceiver.kt");

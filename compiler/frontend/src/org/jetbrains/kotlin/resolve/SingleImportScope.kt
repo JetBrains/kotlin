@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
-class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScope {
+class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
     override fun getClassifier(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
@@ -36,19 +36,9 @@ class SingleImportScope(private val aliasName: Name, private val descriptors: Co
     override fun getFunctions(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<FunctionDescriptor>() else emptyList()
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> = emptyList()
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
     override fun getContainingDeclaration(): DeclarationDescriptor = throw UnsupportedOperationException()
 
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = emptyList()
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = descriptors
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = emptyList()
-
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), ": ", aliasName)

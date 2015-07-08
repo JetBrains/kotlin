@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
@@ -34,7 +34,7 @@ import java.util.LinkedHashSet
 public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         membersList: Collection<ProtoBuf.Callable>
-) : JetScope {
+) : JetScopeImpl() {
 
     private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
     private enum class Kind { FUNCTION, PROPERTY }
@@ -112,15 +112,7 @@ public abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
-
-    override fun getPackage(name: Name): PackageViewDescriptor? = null
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
     override fun getContainingDeclaration() = c.containingDeclaration
-
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {

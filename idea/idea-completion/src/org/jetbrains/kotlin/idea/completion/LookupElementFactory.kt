@@ -217,16 +217,20 @@ public class LookupElementFactory(
 
         if (descriptor is CallableDescriptor) {
             if (descriptor.getExtensionReceiverParameter() != null) {
-                val container = descriptor.getContainingDeclaration()
-                val containerPresentation = if (container is ClassDescriptor) {
-                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
-                }
-                else {
-                    DescriptorUtils.getFqName(container).toString()
-                }
                 val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
                 val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
-                element = element.appendTailText(" for $receiverPresentation in $containerPresentation", true)
+                element = element.appendTailText(" for $receiverPresentation", true)
+
+                val container = descriptor.getContainingDeclaration()
+                val containerPresentation = if (container is ClassDescriptor)
+                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
+                else if (container is PackageFragmentDescriptor)
+                    container.fqName.toString()
+                else
+                    null
+                if (containerPresentation != null) {
+                    element = element.appendTailText(" in $containerPresentation", true)
+                }
             }
             else {
                 val container = descriptor.getContainingDeclaration()

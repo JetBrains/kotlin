@@ -22,28 +22,18 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : JetScope {
+public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
     override fun getClassifier(name: Name) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
     override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
     override fun getProperties(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
     override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
-
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> = listOf()
 
     override fun getContainingDeclaration() = throw UnsupportedOperationException()
 
-    override fun getDeclarationsByLabel(labelName: Name) = emptyList<DeclarationDescriptor>()
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = descriptors
-
-    override fun getImplicitReceiversHierarchy() = emptyList<ReceiverParameterDescriptor>()
-
-    override fun getOwnDeclaredDescriptors() = emptyList<DeclarationDescriptor>()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getName())

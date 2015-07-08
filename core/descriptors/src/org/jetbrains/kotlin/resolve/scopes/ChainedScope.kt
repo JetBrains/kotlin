@@ -68,6 +68,9 @@ public open class ChainedScope(
     override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverType, name) }
 
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverType) }
+
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
             val result = ArrayList<ReceiverParameterDescriptor>()
@@ -82,12 +85,8 @@ public open class ChainedScope(
 
     override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val result = LinkedHashSet<DeclarationDescriptor>()
-        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
-        return result
-    }
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = getFromAllScopes { it.getDescriptors(kindFilter, nameFilter) }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
         throw UnsupportedOperationException()

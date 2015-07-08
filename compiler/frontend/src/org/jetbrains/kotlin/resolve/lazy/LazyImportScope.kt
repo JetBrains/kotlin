@@ -260,6 +260,17 @@ class LazyImportScope(
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionProperties(receiverType, name) }
     }
 
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
+        return importResolver.resolveSession.getStorageManager().compute {
+            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<VariableDescriptor>()) { import ->
+                importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionProperties(receiverType)
+            }
+        }
+    }
+
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {

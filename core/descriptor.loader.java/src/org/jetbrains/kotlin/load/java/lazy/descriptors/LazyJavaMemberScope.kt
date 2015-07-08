@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -51,7 +52,7 @@ import java.util.LinkedHashSet
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContext,
         private val containingDeclaration: DeclarationDescriptor
-) : JetScope {
+) : JetScopeImpl() {
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
@@ -296,11 +297,6 @@ public abstract class LazyJavaMemberScope(
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
-
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-    override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 

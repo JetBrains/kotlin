@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -41,7 +42,7 @@ protected constructor(
         protected val declarationProvider: DP,
         protected val thisDescriptor: D,
         protected val trace: BindingTrace
-) : JetScope {
+) : JetScopeImpl() {
 
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
@@ -111,12 +112,6 @@ protected constructor(
 
     protected abstract fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>)
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name) = listOf<VariableDescriptor>()
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
-    override fun getDeclarationsByLabel(labelName: Name) = setOf<DeclarationDescriptor>()
-
     protected fun computeDescriptorsFromDeclaredElements(kindFilter: DescriptorKindFilter,
                                                          nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
@@ -162,8 +157,6 @@ protected constructor(
         }
         return result.toReadOnlyList()
     }
-
-    override fun getImplicitReceiversHierarchy() = listOf<ReceiverParameterDescriptor>()
 
     // Do not change this, override in concrete subclasses:
     // it is very easy to compromise laziness of this class, and fail all the debugging

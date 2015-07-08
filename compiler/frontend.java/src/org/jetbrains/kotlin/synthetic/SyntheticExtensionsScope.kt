@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
@@ -50,12 +52,12 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
 
     private fun syntheticPropertyInClass(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
         val memberScope = javaClass.getMemberScope(type.getArguments())
-        val getMethod = memberScope.getFunctions(name.toGetMethodName()).singleOrNull {
+        val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull {
             it.getValueParameters().isEmpty() && it.getTypeParameters().isEmpty() && it.getVisibility() == Visibilities.PUBLIC //TODO: what about protected and package-local?
         } ?: return null
 
         val propertyType = getMethod.getReturnType() ?: return null
-        val setMethod = memberScope.getFunctions(name.toSetMethodName()).singleOrNull {
+        val setMethod = memberScope.getFunctions(toSetMethodName(name)).singleOrNull {
             it.getValueParameters().singleOrNull()?.getType() == propertyType
             && it.getTypeParameters().isEmpty()
             && it.getReturnType()?.let { KotlinBuiltIns.isUnit(it) } ?: false
@@ -68,10 +70,10 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
         if (name.isSpecial()) return emptyList()
         if (name.getIdentifier()[0].isUpperCase()) return emptyList()
-        return collectSyntheticProperties(null, receiverType, name) ?: emptyList()
+        return collectSyntheticPropertiesByName(null, receiverType, name) ?: emptyList()
     }
 
-    private fun collectSyntheticProperties(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name): SmartList<PropertyDescriptor>? {
+    private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name): SmartList<PropertyDescriptor>? {
         @suppress("NAME_SHADOWING")
         var result = result
 
@@ -81,9 +83,30 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
             result = result.add(syntheticPropertyInClass(Triple(classifier, type, name)))
         }
 
-        typeConstructor.getSupertypes().forEach { result = collectSyntheticProperties(result, it, name) }
+        typeConstructor.getSupertypes().forEach { result = collectSyntheticPropertiesByName(result, it, name) }
 
         return result
+    }
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
+        val result = ArrayList<PropertyDescriptor>()
+        result.collectSyntheticProperties(receiverType)
+        return result
+    }
+
+    private fun MutableList<PropertyDescriptor>.collectSyntheticProperties(type: JetType) {
+        val typeConstructor = type.getConstructor()
+        val classifier = typeConstructor.getDeclarationDescriptor()
+        if (classifier is JavaClassDescriptor) {
+            for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
+                if (descriptor is FunctionDescriptor) {
+                    val propertyName = fromGetMethodName(descriptor.getName()) ?: continue
+                    addIfNotNull(syntheticPropertyInClass(classifier, type, propertyName))
+                }
+            }
+        }
+
+        typeConstructor.getSupertypes().forEach { collectSyntheticProperties(it) }
     }
 
     private fun SmartList<PropertyDescriptor>?.add(property: PropertyDescriptor?): SmartList<PropertyDescriptor>? {
@@ -96,12 +119,19 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     //TODO: "is"?
     //TODO: methods like "getURL"?
     //TODO: reuse code with generation?
-    private fun Name.toGetMethodName(): Name {
-        return Name.identifier("get" + getIdentifier().capitalize())
+    private fun toGetMethodName(propertyName: Name): Name {
+        return Name.identifier("get" + propertyName.getIdentifier().capitalize())
     }
 
-    private fun Name.toSetMethodName(): Name {
-        return Name.identifier("set" + getIdentifier().capitalize())
+    private fun toSetMethodName(propertyName: Name): Name {
+        return Name.identifier("set" + propertyName.getIdentifier().capitalize())
+    }
+
+    private fun fromGetMethodName(methodName: Name): Name? {
+        if (methodName.isSpecial()) return null
+        val identifier = methodName.getIdentifier()
+        if (!identifier.startsWith("get")) return null
+        return Name.identifier(identifier.removePrefix("get").decapitalize())
     }
 
     private class MyPropertyDescriptor(
