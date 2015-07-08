@@ -8,22 +8,44 @@ import org.junit.Test as test
 
 class MutableCollectionTest {
 
-    test fun fromIterable() {
-        val data: Iterable<String> = listOf("foo", "bar")
+    // TODO: Use apply scope function
 
-        val collection = ArrayList<String>()
-        collection.addAll(data)
+    test fun addAll() {
+        val data = listOf("foo", "bar")
 
-        assertEquals(data, collection)
+        fun assertAdd(f: MutableList<String>.() -> Unit) = assertEquals(data, arrayListOf<String>().let { it.f(); it })
+
+        assertAdd { addAll(data) }
+        assertAdd { addAll(data.toTypedArray()) }
+        assertAdd { addAll(data.toTypedArray().asIterable()) }
+        assertAdd { addAll(data.asSequence()) }
     }
 
-    test fun fromSequence() {
-        val list = listOf("foo", "bar")
-        val collection = ArrayList<String>()
+    test fun removeAll() {
+        val content = arrayOf("foo", "bar", "bar")
+        val data = listOf("bar")
+        val expected = listOf("foo")
 
-        collection.addAll(list.asSequence())
+        fun assertRemove(f: MutableList<String>.() -> Unit) = assertEquals(expected, arrayListOf(*content).let { it.f(); it })
 
-        assertEquals(list, collection)
+        assertRemove { removeAll(data) }
+        assertRemove { removeAll(data.toTypedArray()) }
+        assertRemove { removeAll(data.toTypedArray().asIterable()) }
+        assertRemove { removeAll(data.asSequence()) }
+    }
+
+
+    test fun retainAll() {
+        val content = arrayOf("foo", "bar", "bar")
+        val data = listOf("bar")
+        val expected = listOf("bar", "bar")
+
+        fun assertRetain(f: MutableList<String>.() -> Unit) = assertEquals(expected, arrayListOf(*content).let { it.f(); it })
+
+        assertRetain { retainAll(data) }
+        assertRetain { retainAll(data.toTypedArray()) }
+        assertRetain { retainAll(data.toTypedArray().asIterable()) }
+        assertRetain { retainAll(data.asSequence()) }
     }
 
 }

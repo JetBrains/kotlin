@@ -47,31 +47,31 @@ public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
 }
 
 /**
- * Removes all elements of the given [iterable] from this [MutableCollection].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [iterable].
  */
 public fun <T> MutableCollection<in T>.removeAll(iterable: Iterable<T>) {
     when (iterable) {
         is Collection -> removeAll(iterable)
-        else -> for (item in iterable) remove(item)
+        else -> removeAll(iterable.toHashSet())
     }
 }
 
 /**
- * Removes all elements of the given [sequence] from this [MutableCollection].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [sequence].
  */
 public fun <T> MutableCollection<in T>.removeAll(sequence: Sequence<T>) {
-    for (item in sequence) remove(item)
+    removeAll(sequence.toHashSet())
 }
 
 /**
- * Removes all elements of the given [array] from this [MutableCollection].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [array].
  */
 public fun <T> MutableCollection<in T>.removeAll(array: Array<out T>) {
-    for (item in array) remove(item)
+    removeAll(array.toHashSet())
 }
 
 /**
- * Retains only elements of the given [iterable] in this [MutableCollection].
+ * Retains only elements of this [MutableCollection] that are contained in the given [iterable].
  */
 public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
     when (iterable) {
@@ -81,8 +81,15 @@ public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
 }
 
 /**
- * Retains only elements of the given [array] in this [MutableCollection].
+ * Retains only elements of this [MutableCollection] that are contained in the given [array].
  */
 public fun <T> MutableCollection<in T>.retainAll(array: Array<out T>) {
     retainAll(array.toHashSet())
+}
+
+/**
+ * Retains only elements of this [MutableCollection] that are contained in the given [sequence].
+ */
+public fun <T> MutableCollection<in T>.retainAll(sequence: Sequence<T>) {
+    retainAll(sequence.toHashSet())
 }

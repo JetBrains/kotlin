@@ -12,6 +12,29 @@ import org.junit.Test as test
 
 class CollectionJVMTest {
 
+    private fun <T> identitySetOf(vararg values: T): MutableSet<T> {
+        val map = IdentityHashMap<T, String>()
+        values.forEach { map.put(it, "") }
+        return map.keySet()
+    }
+
+    private data class IdentityData(public val value: Int)
+
+    test fun removeAllWithDifferentEquality() {
+        val data = listOf(IdentityData(1), IdentityData(1))
+        val list = data.toArrayList()
+        list -= identitySetOf(data[0]) as Iterable<IdentityData>
+        assertTrue(list.single() === data[1], "Identity contains should be used")
+
+        val list2 = data.toArrayList()
+        list2 -= hashSetOf(data[0]) as Iterable<IdentityData>
+        assertTrue(list2.isEmpty(), "Equality contains should be used")
+
+        val set3: MutableSet<IdentityData> = identitySetOf(*data.toTypedArray())
+        set3 -= arrayOf(data[1])
+        assertTrue(set3.isEmpty(), "Array doesn't have contains, equality contains is used instead")
+    }
+
     test fun flatMap() {
         val data = listOf("", "foo", "bar", "x", "")
         val characters = data.flatMap { it.toCharList() }
