@@ -19,13 +19,37 @@ package kotlin.reflect
 import kotlin.reflect.jvm.internal.KClassImpl
 
 /**
+ * Returns non-extension properties declared in this class and all of its superclasses.
+ */
+public val <T> KClass<T>.properties: Collection<KProperty1<T, *>>
+    get() = (this as KClassImpl<T>)
+            .getMembers(declaredOnly = false, nonExtensions = true, extensions = false)
+            .filterIsInstance<KProperty1<T, *>>()
+            .toList()
+
+/**
+ * Returns extension properties declared in this class and all of its superclasses.
+ */
+public val <T> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
+    get() = (this as KClassImpl<T>)
+            .getMembers(declaredOnly = false, nonExtensions = false, extensions = true)
+            .filterIsInstance<KProperty2<T, *, *>>()
+            .toList()
+
+/**
  * Returns non-extension properties declared in this class.
  */
 public val <T> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
-    get() = (this as KClassImpl<T>).getProperties(declared = true)
+    get() = (this as KClassImpl<T>)
+            .getMembers(declaredOnly = true, nonExtensions = true, extensions = false)
+            .filterIsInstance<KProperty1<T, *>>()
+            .toList()
 
 /**
  * Returns extension properties declared in this class.
  */
 public val <T> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
-    get() = (this as KClassImpl<T>).getExtensionProperties(declared = true)
+    get() = (this as KClassImpl<T>)
+            .getMembers(declaredOnly = true, nonExtensions = false, extensions = true)
+            .filterIsInstance<KProperty2<T, *, *>>()
+            .toList()

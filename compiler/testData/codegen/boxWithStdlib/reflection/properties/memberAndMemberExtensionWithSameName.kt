@@ -1,6 +1,5 @@
 import kotlin.reflect.jvm.kotlin
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KProperty2
+import kotlin.reflect.*
 
 class A {
     val foo: String = "member"

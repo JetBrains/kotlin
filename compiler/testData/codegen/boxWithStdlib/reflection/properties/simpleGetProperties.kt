@@ -1,3 +1,4 @@
+import kotlin.reflect.*
 import kotlin.reflect.jvm.kotlin
 
 class A(param: String) {

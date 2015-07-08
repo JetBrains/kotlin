@@ -16,13 +16,17 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import kotlin.reflect.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
+import kotlin.reflect.KotlinReflectionInternalError
 
 class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
     val descriptor by ReflectProperties.lazySoft {
@@ -72,34 +76,35 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
         }
     }
 
-    override val properties: Collection<KProperty1<T, *>>
-            get() = getProperties(declared = false)
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(declaredOnly = false, nonExtensions = true, extensions = true).toList()
 
-    override val extensionProperties: Collection<KProperty2<T, *, *>>
-            get() = getExtensionProperties(declared = false)
-
-    fun getProperties(declared: Boolean): Collection<KProperty1<T, *>> =
-            getProperties(extension = false, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this, descriptor)
-                else KProperty1Impl<T, Any?>(this, descriptor)
-            }
-
-    fun getExtensionProperties(declared: Boolean): Collection<KProperty2<T, *, *>> =
-            getProperties(extension = true, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this, descriptor)
-                else KProperty2Impl<T, Any?, Any?>(this, descriptor)
-            }
-
-    private fun <P : KProperty<*>> getProperties(extension: Boolean, declared: Boolean, create: (PropertyDescriptor) -> P): Collection<P> =
+    fun getMembers(declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> =
             scope.getAllDescriptors().asSequence()
-                    .filterIsInstance<PropertyDescriptor>()
                     .filter { descriptor ->
-                        (descriptor.getExtensionReceiverParameter() != null) == extension &&
-                        (descriptor.getKind().isReal() || !declared) &&
-                        descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                        descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
                     }
-                    .map(create)
-                    .toList()
+                    .map { descriptor ->
+                        descriptor.accept(object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Nothing>() {
+                            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?): KCallable<*>? {
+                                if (declaredOnly && !descriptor.getKind().isReal()) return null
+
+                                val isExtension = descriptor.getExtensionReceiverParameter() != null
+                                if (isExtension && !extensions) return null
+                                if (!isExtension && !nonExtensions) return null
+
+                                return if (!isExtension) {
+                                    if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
+                                    else KProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
+                                }
+                                else {
+                                    if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
+                                    else KProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
+                                }
+                            }
+                        }, null)
+                    }
+                    .filterNotNull()
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

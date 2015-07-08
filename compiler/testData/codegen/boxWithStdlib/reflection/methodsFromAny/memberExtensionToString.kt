@@ -1,4 +1,5 @@
 import kotlin.reflect.jvm.kotlin
+import kotlin.reflect.*
 
 class A {
     var String.id: String

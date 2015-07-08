@@ -1,4 +1,4 @@
-import kotlin.reflect.KMutableProperty2
+import kotlin.reflect.*
 import kotlin.test.assertEquals
 
 class C(var state: String) {

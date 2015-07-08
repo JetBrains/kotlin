@@ -18,10 +18,7 @@ package kotlin.reflect.jvm
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KPackage
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KMutablePropertyImpl
 import kotlin.reflect.jvm.internal.KPackageImpl

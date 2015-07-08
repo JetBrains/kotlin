@@ -1,3 +1,5 @@
+import kotlin.reflect.*
+
 open class A(private val p: Int)
 class B : A(42)
 

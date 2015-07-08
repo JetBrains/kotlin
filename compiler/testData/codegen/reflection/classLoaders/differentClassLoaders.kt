@@ -1,6 +1,6 @@
 package test
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 import kotlin.test.*
 
 class K(val p: String)

@@ -1,5 +1,4 @@
-import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.*
 import kotlin.reflect.jvm.accessible
 
 class A {

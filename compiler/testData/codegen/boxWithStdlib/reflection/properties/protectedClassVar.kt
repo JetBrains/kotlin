@@ -1,6 +1,5 @@
-import kotlin.reflect.IllegalPropertyAccessException
+import kotlin.reflect.*
 import kotlin.reflect.jvm.accessible
-import kotlin.reflect.KMutableProperty1
 
 class A(param: String) {
     protected var v: String = param

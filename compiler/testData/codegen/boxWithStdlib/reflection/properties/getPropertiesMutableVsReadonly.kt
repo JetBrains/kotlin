@@ -1,5 +1,5 @@
 import kotlin.reflect.jvm.kotlin
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.*
 
 class A(val readonly: String) {
     var mutable: String = "before"

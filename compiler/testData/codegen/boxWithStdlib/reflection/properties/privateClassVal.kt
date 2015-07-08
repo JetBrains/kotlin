@@ -1,5 +1,4 @@
-import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KProperty1
+import kotlin.reflect.*
 import kotlin.reflect.jvm.accessible
 
 class Result {

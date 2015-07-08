@@ -17,5 +17,6 @@ fun n10() = (Foo::func).invoke(Foo(""))
 fun n11() = (Foo::func)(Foo(""))
 
 fun y01() = Foo::prop.<!NO_REFLECTION_IN_CLASS_PATH!>getter<!>
-fun y02() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>properties<!>
+fun y02() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
 fun y03() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>simpleName<!>
+fun y04() = Foo::class.<!UNRESOLVED_REFERENCE!>properties<!>
