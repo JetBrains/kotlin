@@ -97,6 +97,7 @@ public class LazyScriptClassMemberScope protected constructor(
 
         val returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType()
         assert(returnType != null) { "Return type not initialized for " + scriptDescriptor }
+        returnType!!
 
         propertyDescriptor.setType(
                 returnType,

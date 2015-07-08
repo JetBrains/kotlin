@@ -100,7 +100,7 @@ class KotlinFieldBreakpoint(
     override fun reload(psiFile: PsiFile?) {
         val property = getProperty(getSourcePosition())
         if (property != null) {
-            setFieldName(property.getName())
+            setFieldName(property.getName()!!)
 
             if (property is JetProperty && property.isTopLevel()) {
                 getProperties().myClassName = PackageClassUtils.getPackageClassFqName(property.getContainingJetFile().getPackageFqName()).asString()
@@ -196,7 +196,7 @@ class KotlinFieldBreakpoint(
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
             }
 
-            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)) {
+            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)!!) {
                 BreakpointType.FIELD
             }
             else {

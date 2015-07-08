@@ -270,7 +270,7 @@ fun LookupElementFactory.createLookupElement(
         element = element.keepOldArgumentListOnTab()
     }
 
-    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]) {
+    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
         element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
     }
 

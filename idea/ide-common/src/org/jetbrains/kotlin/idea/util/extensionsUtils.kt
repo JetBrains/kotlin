@@ -102,7 +102,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors.map { substitute(it) }.toList()
+        return substitutors.map { substitute(it)!! }.toList()
     }
 }
 

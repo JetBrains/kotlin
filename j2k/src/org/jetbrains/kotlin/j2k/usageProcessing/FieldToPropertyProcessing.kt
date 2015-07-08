@@ -124,7 +124,7 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
             binary = setCall.getArgumentList().getExpressions().single() as PsiBinaryExpression
             getCall = binary.getLOperand() as PsiMethodCallExpression
 
-            return listOf(getCall.getMethodExpression().getReference(), setCall.getMethodExpression().getReference())
+            return listOf(getCall.getMethodExpression().getReference()!!, setCall.getMethodExpression().getReference()!!)
         }
 
         private fun generateGetterCall(qualifier: PsiExpression?): PsiMethodCallExpression {

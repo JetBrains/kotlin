@@ -492,19 +492,19 @@ public abstract class ElementResolver protected constructor(
     ) : BodiesResolveContext {
         override fun getFiles(): Collection<JetFile> = setOf()
 
-        override fun getDeclaredClasses(): Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> = mapOf()
+        override fun getDeclaredClasses(): MutableMap<JetClassOrObject, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
-        override fun getAnonymousInitializers(): Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> = mapOf()
+        override fun getAnonymousInitializers(): MutableMap<JetClassInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
-        override fun getSecondaryConstructors(): Map<JetSecondaryConstructor, ConstructorDescriptor> = mapOf()
+        override fun getSecondaryConstructors(): MutableMap<JetSecondaryConstructor, ConstructorDescriptor> = hashMapOf()
 
-        override fun getProperties(): Map<JetProperty, PropertyDescriptor> = mapOf()
+        override fun getProperties(): MutableMap<JetProperty, PropertyDescriptor> = hashMapOf()
 
-        override fun getFunctions(): Map<JetNamedFunction, SimpleFunctionDescriptor> = mapOf()
+        override fun getFunctions(): MutableMap<JetNamedFunction, SimpleFunctionDescriptor> = hashMapOf()
 
         override fun getDeclaringScope(declaration: JetDeclaration): JetScope? = declaringScopes(declaration)
 
-        override fun getScripts(): Map<JetScript, ScriptDescriptor> = mapOf()
+        override fun getScripts(): MutableMap<JetScript, ScriptDescriptor> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 

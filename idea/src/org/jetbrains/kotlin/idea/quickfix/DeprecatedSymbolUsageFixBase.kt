@@ -112,7 +112,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             if (pattern.isEmpty()) return null
             val importValues = replaceWithValue.argumentValue("imports"/*TODO: kotlin.ReplaceWith::imports.name*/) as? List<*> ?: return null
             if (importValues.any { it !is StringValue }) return null
-            val imports = importValues.map { (it as StringValue).getValue() }
+            val imports = importValues.map { (it as StringValue).getValue()!! }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
             if (descriptor is CallableDescriptor &&
@@ -681,7 +681,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                         var explicitType: JetType? = null
                         if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
                             val valueTypeWithoutExpectedType = value.analyzeInContext(
-                                    resolutionScope,
+                                    resolutionScope!!,
                                     dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
                             ).getType(value)
                             if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
@@ -690,7 +690,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                         }
 
                         val name = suggestName { name ->
-                            resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                            resolutionScope!!.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
                         }
 
                         var declaration = psiFactory.createDeclarationByPattern<JetVariableDeclaration>("val $0 = $1", name, value)

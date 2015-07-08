@@ -64,7 +64,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                 if (accessorKind == AccessorKind.GETTER) {
                     if (arguments.size() != 0) return null // incorrect call
                     propertyNameExpr = callExpr.replace(propertyNameExpr) as JetSimpleNameExpression
-                    return listOf(propertyNameExpr.getReference())
+                    return listOf(propertyNameExpr.getReference()!!)
                 }
                 else {
                     val value = arguments.singleOrNull()?.getArgumentExpression() ?: return null
@@ -76,12 +76,12 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                         callExpr.replace(propertyNameExpr)
                         assignment.getLeft()!!.replace(qualifiedExpression)
                         assignment = qualifiedExpression.replace(assignment) as JetBinaryExpression
-                        return listOf((assignment.getLeft() as JetQualifiedExpression).getSelectorExpression()!!.getReference())
+                        return listOf((assignment.getLeft() as JetQualifiedExpression).getSelectorExpression()!!.getReference()!!)
                     }
                     else {
                         assignment.getLeft()!!.replace(propertyNameExpr)
                         assignment = callExpr.replace(assignment) as JetBinaryExpression
-                        return listOf(assignment.getLeft()!!.getReference())
+                        return listOf(assignment.getLeft()!!.getReference()!!)
                     }
                 }
 

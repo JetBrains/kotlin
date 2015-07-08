@@ -297,7 +297,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .subtract(substitutionMap.keySet())
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size())
                 collectSubstitutionsForCallableTypeParameters(fakeFunction, typeArgumentsForFakeFunction, substitutionMap)
-                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it], scope) }
+                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it]!!, scope) }
             }
             else {
                 fakeFunction = null
@@ -949,7 +949,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 is JetProperty -> {
                     if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
-                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo].firstOrNull()?.theType
+                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
                                                ?: KotlinBuiltIns.getInstance().getAnyType()
                         val defaultValue = CodeInsightUtils.defaultInitializer(defaultValueType) ?: "null"
                         val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
@@ -975,7 +975,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val caretModel = containingFileEditor.getCaretModel()
             caretModel.moveToOffset(jetFileToEdit.getNode().getStartOffset())
 
-            val declaration = declarationPointer.getElement()
+            val declaration = declarationPointer.getElement()!!
 
             val builder = TemplateBuilderImpl(jetFileToEdit)
             if (declaration is JetProperty) {

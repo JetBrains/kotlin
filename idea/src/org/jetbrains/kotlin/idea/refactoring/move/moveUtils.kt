@@ -311,7 +311,7 @@ public fun moveFilesOrDirectories(
                 }
 
                 elementsToMove.forEach {
-                    MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
+                    MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir!!)
                     if (it is JetFile && it.isInJavaSourceRoot()) {
                         it.updatePackageDirective = updatePackageDirective
                     }

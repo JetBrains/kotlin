@@ -182,7 +182,7 @@ object ReplaceWithAnnotationAnalyzer {
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
-                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]
+                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]!!
             }
 
             //TODO?

@@ -62,7 +62,7 @@ public abstract class AndroidResourceManager(val project: Project) {
                 .map { psiManager.findFile(it) }
                 .filterNotNull()
                 .groupBy { it.getName().substringBeforeLast('.') }
-                .mapValues { it.getValue().sortBy { it.getParent().getName().length() } }
+                .mapValues { it.getValue().sortBy { it.getParent()!!.getName().length() } }
     }
 
     companion object {

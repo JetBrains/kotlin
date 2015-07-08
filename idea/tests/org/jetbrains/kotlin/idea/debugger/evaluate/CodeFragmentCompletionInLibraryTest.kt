@@ -42,7 +42,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
         override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry?) {
             super.configureModule(module, model, contentEntry)
 
-            val library = model.getModuleLibraryTable().getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)
+            val library = model.getModuleLibraryTable().getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
             val modifiableModel = library.getModifiableModel()
 
             modifiableModel.addRoot(findLibrarySourceDir(), OrderRootType.SOURCES)
@@ -75,7 +75,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
     }
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {
-        val sourceFile = findLibrarySourceDir().findChild("customLibrary.kt")
+        val sourceFile = findLibrarySourceDir().findChild("customLibrary.kt")!!
         val jetFile = PsiManager.getInstance(getProject()).findFile(sourceFile) as JetFile
         val fooFunctionFromLibrary = jetFile.getDeclarations().first() as JetFunction
         val codeFragment = JetPsiFactory(fooFunctionFromLibrary).createExpressionCodeFragment(

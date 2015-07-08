@@ -144,9 +144,9 @@ public fun JetElement.getCalleeHighlightingRange(): TextRange {
             ) ?: return getTextRange()
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
-                      ?: annotationEntry.getCalleeExpression().startOffset
+                      ?: annotationEntry.getCalleeExpression()!!.startOffset
 
-    return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
+    return TextRange(startOffset, annotationEntry.getCalleeExpression()!!.endOffset)
 }
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------

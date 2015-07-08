@@ -39,7 +39,7 @@ fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
                 factory.createExpressionByPattern("$0 == $1", subject, getExpression() ?: "")
             }
             else {
-                getExpression()
+                getExpression()!!
             }
         }
 

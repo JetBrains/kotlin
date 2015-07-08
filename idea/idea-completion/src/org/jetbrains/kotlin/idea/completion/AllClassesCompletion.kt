@@ -72,7 +72,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
-        if (!getName().contains('$')) return false // optimization to not analyze annotations of all classes
+        if (!getName()!!.contains('$')) return false // optimization to not analyze annotations of all classes
         return getModifierList()?.findAnnotation(javaClass<kotlin.jvm.internal.KotlinSyntheticClass>().getName()) != null
     }
 }

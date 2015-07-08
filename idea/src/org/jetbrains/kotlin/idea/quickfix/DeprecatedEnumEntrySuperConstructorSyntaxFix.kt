@@ -41,7 +41,7 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
 
     override fun getText(): String = "Change to short enum entry super constructor"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) = changeConstructorToShort(element)
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) = changeConstructorToShort(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
             = super<JetIntentionAction>.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedSuperConstructor(element)

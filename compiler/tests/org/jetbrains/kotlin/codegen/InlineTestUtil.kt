@@ -194,9 +194,9 @@ public object InlineTestUtil {
                 override fun getFileContents(): ByteArray = throw UnsupportedOperationException()
                 override fun hashCode(): Int = throw UnsupportedOperationException()
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()
-                override fun toString(): String? = throw UnsupportedOperationException()
+                override fun toString(): String = throw UnsupportedOperationException()
             }
-        }.getClassHeader()
+        }!!.getClassHeader()
     }
 
     private class InlineInfo(val inlineMethods: Set<MethodInfo>, val classHeaders: Map<String, KotlinClassHeader>)

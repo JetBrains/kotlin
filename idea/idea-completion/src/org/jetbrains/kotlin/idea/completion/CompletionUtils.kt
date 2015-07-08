@@ -289,7 +289,7 @@ fun LookupElementFactory.createBackingFieldLookupElement(
     if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
 
     val bindingContext = resolutionFacade.analyze(declaration)
-    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]) return null
+    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
 
     val lookupElement = createLookupElement(property, true)
     return object : LookupElementDecorator<LookupElement>(lookupElement) {

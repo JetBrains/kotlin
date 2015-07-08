@@ -63,7 +63,7 @@ fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterD
 
 public fun JetType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
     // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
-    val typeParameters = getContainedTypeParameters() + getConstructor().getDeclarationDescriptor().getCapturedTypeParameters()
+    val typeParameters = getContainedTypeParameters() + getConstructor().getDeclarationDescriptor()!!.getCapturedTypeParameters()
     return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
 }
 

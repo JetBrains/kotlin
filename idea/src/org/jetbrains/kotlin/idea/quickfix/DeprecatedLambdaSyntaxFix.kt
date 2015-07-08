@@ -110,6 +110,7 @@ private class LambdaToFunctionExpression(
         assert(functionLiteralType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(functionLiteralType)) {
             "Broken function type for expression: ${functionLiteralExpression.getText()}, at: ${DiagnosticUtils.atLocation(functionLiteralExpression)}"
         }
+        functionLiteralType!!
         receiverType = KotlinBuiltIns.getReceiverType(functionLiteralType)?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) }
         returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(functionLiteralType).let {
             if (KotlinBuiltIns.isUnit(it))

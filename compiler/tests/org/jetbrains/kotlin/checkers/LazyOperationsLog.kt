@@ -152,7 +152,7 @@ class LazyOperationsLog(
             }
             o.javaClass.getSimpleName() == "LazyJavaClassTypeConstructor" -> {
                 val javaClass = o.field<Any>("this\$0").field<JavaClassImpl>("jClass")
-                javaClass.getPsi().getName().appendQuoted()
+                javaClass.getPsi().getName()!!.appendQuoted()
             }
             o.javaClass.getSimpleName() == "DeserializedType" -> {
                 val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
@@ -161,7 +161,7 @@ class LazyOperationsLog(
                 val text = when (typeProto.getConstructor().getKind()) {
                     ProtoBuf.Type.Constructor.Kind.CLASS -> context.nameResolver.getFqName(typeProto.getConstructor().getId()).asString()
                     ProtoBuf.Type.Constructor.Kind.TYPE_PARAMETER -> {
-                        val classifier = (o as JetType).getConstructor().getDeclarationDescriptor()
+                        val classifier = (o as JetType).getConstructor().getDeclarationDescriptor()!!
                         "" + classifier.getName() + " in " + DescriptorUtils.getFqName(classifier.getContainingDeclaration())
                     }
                     else -> "???"

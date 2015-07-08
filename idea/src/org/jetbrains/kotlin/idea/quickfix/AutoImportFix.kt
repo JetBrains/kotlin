@@ -86,7 +86,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
             = (super<JetHintAction>.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
             createAction(project, editor!!).execute()
         }

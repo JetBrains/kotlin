@@ -139,7 +139,7 @@ public object LabelNormalizationMethodTransformer : MethodTransformer() {
     }
 
     private fun isRemoved(labelNode: LabelNode): Boolean = removedLabelNodes.contains(labelNode)
-    private fun getNew(oldLabelNode: LabelNode): LabelNode = newLabelNodes[oldLabelNode]
+    private fun getNew(oldLabelNode: LabelNode): LabelNode = newLabelNodes[oldLabelNode]!!
 }
 
 private fun InsnList.replaceNodeGetNext(oldNode: AbstractInsnNode, newNode: AbstractInsnNode): AbstractInsnNode? {

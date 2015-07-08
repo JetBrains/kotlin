@@ -172,7 +172,7 @@ public class PublicFieldAnnotationChecker: DeclarationChecker {
         if (descriptor !is PropertyDescriptor) {
             report()
         }
-        else if (!bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)) {
+        else if (!bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
             report()
         }
     }
@@ -301,7 +301,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         val baseExpression = expression.getLeft()
                         val baseExpressionType = baseExpression?.let{ c.trace.getType(it) } ?: return
                         doIfNotNull(
-                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
+                                DataFlowValueFactory.createDataFlowValue(baseExpression!!, baseExpressionType, c),
                                 c
                         ) {
                             c.trace.report(Errors.USELESS_ELVIS.on(expression, baseExpressionType))
@@ -364,7 +364,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
         else {
             doIfNotNull(dataFlowValue, c) {
-                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
+                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode()!!.getPsi(), receiverArgument.getType()))
             }
         }
     }

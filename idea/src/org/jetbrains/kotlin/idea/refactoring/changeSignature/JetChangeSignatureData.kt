@@ -99,7 +99,7 @@ public class JetChangeSignatureData(
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
-            JetCallableDefinitionUsage<PsiElement>(declaration, it, null, null)
+            JetCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
         }
     }
 

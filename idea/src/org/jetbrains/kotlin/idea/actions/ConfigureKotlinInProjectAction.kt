@@ -34,7 +34,7 @@ public abstract class ConfigureKotlinInProjectAction : AnAction() {
         if (project == null) return
 
         if (ConfigureKotlinInProjectUtils.isProjectConfigured(project)) {
-            Messages.showInfoMessage("All modules with kotlin files are configured", e.getPresentation().getText())
+            Messages.showInfoMessage("All modules with kotlin files are configured", e.getPresentation().getText()!!)
             return
         }
 
@@ -42,9 +42,9 @@ public abstract class ConfigureKotlinInProjectAction : AnAction() {
 
         when {
             configurators.size() == 1 -> configurators.first().configure(project)
-            configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", e.getPresentation().getText())
+            configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", e.getPresentation().getText()!!)
             else -> {
-                Messages.showErrorDialog("More than one configurator is available", e.getPresentation().getText())
+                Messages.showErrorDialog("More than one configurator is available", e.getPresentation().getText()!!)
                 ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(project)
             }
         }

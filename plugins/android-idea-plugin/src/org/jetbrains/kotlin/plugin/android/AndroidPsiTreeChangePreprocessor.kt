@@ -64,7 +64,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
         val info = androidModuleInfo ?: return listOf()
 
         val fileManager = VirtualFileManager.getInstance()
-        return info.resDirectories.map { fileManager.findFileByUrl("file://" + it) }
+        return info.resDirectories.map { fileManager.findFileByUrl("file://" + it)!! }
     }
 
     private fun PsiFile.isLayoutXmlFile(): Boolean {

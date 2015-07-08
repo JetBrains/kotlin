@@ -104,7 +104,7 @@ public class LookupElementFactory(
         val lookupObject = object : DeclarationLookupObjectImpl(null, psiClass, resolutionFacade) {
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
-        var element = LookupElementBuilder.create(lookupObject, psiClass.getName())
+        var element = LookupElementBuilder.create(lookupObject, psiClass.getName()!!)
                 .withInsertHandler(KotlinClassInsertHandler)
 
         val typeParams = psiClass.getTypeParameters()
@@ -123,7 +123,7 @@ public class LookupElementFactory(
                     itemText = containerName.substringAfterLast('.') + "." + itemText
                     containerName = containerName.substringBeforeLast('.', FqName.ROOT.toString())
                 }
-                element = element.withPresentableText(itemText)
+                element = element.withPresentableText(itemText!!)
             }
         }
 

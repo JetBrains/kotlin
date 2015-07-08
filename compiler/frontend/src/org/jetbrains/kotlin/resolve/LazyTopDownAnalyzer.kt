@@ -210,7 +210,7 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
-                    val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())
+                    val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())!!
                     c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver!!.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
                 }
 

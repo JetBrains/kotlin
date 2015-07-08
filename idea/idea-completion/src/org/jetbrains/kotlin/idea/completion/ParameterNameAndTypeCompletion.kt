@@ -134,7 +134,7 @@ class ParameterNameAndTypeCompletion(
     }
 
     private fun addSuggestionsForJavaClass(psiClass: PsiClass, userPrefix: String, prefixMatcher: PrefixMatcher) {
-        addSuggestions(psiClass.getName(), userPrefix, prefixMatcher, JavaClassType(psiClass))
+        addSuggestions(psiClass.getName()!!, userPrefix, prefixMatcher, JavaClassType(psiClass))
     }
 
     private fun addSuggestions(className: String, userPrefix: String, prefixMatcher: PrefixMatcher, type: Type) {

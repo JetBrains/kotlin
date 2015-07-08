@@ -41,7 +41,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
 
     private val keywordToUse = if (isThis) "this" else "super"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val newDelegationCall = element.replaceImplicitDelegationCallWithExplicit(isThis)
 
         val resolvedCall = newDelegationCall.getResolvedCall(newDelegationCall.analyze())
@@ -55,7 +55,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
         editor?.moveCaret(leftParOffset + 1)
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file) && element.hasImplicitDelegationCall()
     }
 

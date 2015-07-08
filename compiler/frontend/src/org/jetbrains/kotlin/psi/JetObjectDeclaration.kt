@@ -75,5 +75,5 @@ public class JetObjectDeclaration : JetClassOrObject {
 
     public fun isObjectLiteral(): Boolean = getStub()?.isObjectLiteral() ?: (getParent() is JetObjectLiteralExpression)
 
-    public fun getObjectKeyword(): PsiElement = findChildByType(JetTokens.OBJECT_KEYWORD)
+    public fun getObjectKeyword(): PsiElement = findChildByType(JetTokens.OBJECT_KEYWORD)!!
 }

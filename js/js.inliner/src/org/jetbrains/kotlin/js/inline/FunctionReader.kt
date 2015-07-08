@@ -123,8 +123,8 @@ public class FunctionReader(private val context: TranslationContext) {
         val moduleNameLiteral = context.program().getStringLiteral(moduleName)
         val moduleReference =  context.namer().getModuleReference(moduleNameLiteral)
 
-        val replacements = hashMapOf(moduleRootVariable[moduleName] to moduleReference,
-                                     moduleKotlinVariable[moduleName] to Namer.KOTLIN_OBJECT_REF)
+        val replacements = hashMapOf(moduleRootVariable[moduleName]!! to moduleReference,
+                                     moduleKotlinVariable[moduleName]!! to Namer.KOTLIN_OBJECT_REF)
         replaceExternalNames(function, replacements)
         return function
     }

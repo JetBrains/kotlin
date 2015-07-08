@@ -119,7 +119,7 @@ public class KotlinFindClassUsagesHandler(
         var stringsToSearch: Collection<String>
         object: JavaFindUsagesHandler(psiClass, JavaFindUsagesHandlerFactory.getInstance(element.getProject())) {
             init {
-                stringsToSearch = getStringsToSearch(psiClass)
+                stringsToSearch = getStringsToSearch(psiClass)!!
             }
         }
         return stringsToSearch

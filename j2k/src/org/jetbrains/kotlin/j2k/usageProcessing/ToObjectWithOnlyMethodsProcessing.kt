@@ -30,7 +30,7 @@ class ToObjectWithOnlyMethodsProcessing(private val psiClass: PsiClass) : UsageP
             val factory = PsiElementFactory.SERVICE.getInstance(psiClass.getProject())
             var qualifiedExpr = factory.createExpressionFromText(refExpr.getText() + "." + JvmAbi.INSTANCE_FIELD, null) as PsiReferenceExpression
             qualifiedExpr = refExpr.replace(qualifiedExpr) as PsiReferenceExpression
-            return listOf(qualifiedExpr.getReference())
+            return listOf(qualifiedExpr.getReference()!!)
         }
     }
 

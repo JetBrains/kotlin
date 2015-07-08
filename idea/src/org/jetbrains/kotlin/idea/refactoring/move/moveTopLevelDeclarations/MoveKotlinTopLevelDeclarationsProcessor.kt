@@ -103,7 +103,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
     private val kotlinToLightElements = elementsToMove.keysToMap { it.toLightElements() }
     private val conflicts = MultiMap<PsiElement, String>()
 
-    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>?): UsageViewDescriptor {
+    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return MoveMultipleElementsViewDescriptor(
                 elementsToMove.toTypedArray(),
                 MoveClassesOrPackagesUtil.getPackageName(options.moveTarget.packageWrapper)

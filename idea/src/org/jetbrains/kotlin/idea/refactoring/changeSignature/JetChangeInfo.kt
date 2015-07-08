@@ -212,7 +212,7 @@ public class JetChangeInfo(
     public fun renderReturnType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return newReturnTypeText
         val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return newReturnTypeText
-        return currentBaseFunction.getReturnType().renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
+        return currentBaseFunction.getReturnType()!!.renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
     }
 
     public fun primaryMethodUpdated() {

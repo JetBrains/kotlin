@@ -203,6 +203,6 @@ val ProtoBuf.Callable.annotatedCallableKind: AnnotatedCallableKind
         }
     }
 
-fun Name.ref() = StringRef.fromString(this.asString())
+fun Name.ref() = StringRef.fromString(this.asString())!!
 
-fun FqName.ref() = StringRef.fromString(this.asString())
+fun FqName.ref() = StringRef.fromString(this.asString())!!

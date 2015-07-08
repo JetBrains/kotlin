@@ -171,7 +171,7 @@ public class JetChangeSignature(project: Project,
         val params = (preview.getParameterList().getParameters() zip ktChangeInfo.getNewParameters()).map {
             val (param, paramInfo) = it
             // Keep original default value for proper update of Kotlin usages
-            KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName(), param.getType(), paramInfo.defaultValueForCall)
+            KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName()!!, param.getType(), paramInfo.defaultValueForCall)
         }.toTypedArray()
 
         return preview to JavaChangeInfoImpl(visibility,

@@ -39,7 +39,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
     }
 
     fun allocateVariablesForSaveStackMarker(saveStackMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
-        val numRestoreStackMarkers = context.restoreStackMarkersForSaveMarker[saveStackMarker].size()
+        val numRestoreStackMarkers = context.restoreStackMarkersForSaveMarker[saveStackMarker]!!.size()
         return allocateNewHandle(numRestoreStackMarkers, saveStackMarker, savedStackValues)
     }
 
@@ -54,7 +54,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun getSavedStackDescriptorOrNull(restoreStackMarker: AbstractInsnNode): SavedStackDescriptor {
         val saveStackMarker = context.saveStackMarkerForRestoreMarker[restoreStackMarker]
-        return allocatedHandles[saveStackMarker].savedStackDescriptor
+        return allocatedHandles[saveStackMarker]!!.savedStackDescriptor
     }
 
     private fun getFirstUnusedLocalVariableIndex(): Int =
@@ -64,7 +64,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun markRestoreStackMarkerEmitted(restoreStackMarker: AbstractInsnNode) {
         val saveStackMarker = context.saveStackMarkerForRestoreMarker[restoreStackMarker]
-        markEmitted(saveStackMarker)
+        markEmitted(saveStackMarker!!)
     }
 
     fun allocateVariablesForBeforeInlineMarker(beforeInlineMarker: AbstractInsnNode, savedStackValues: List<BasicValue>): SavedStackDescriptor {
@@ -73,16 +73,16 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun getBeforeInlineDescriptor(afterInlineMarker: AbstractInsnNode): SavedStackDescriptor {
         val beforeInlineMarker = context.openingInlineMethodMarker[afterInlineMarker]
-        return allocatedHandles[beforeInlineMarker].savedStackDescriptor
+        return allocatedHandles[beforeInlineMarker]!!.savedStackDescriptor
     }
 
     fun markAfterInlineMarkerEmitted(afterInlineMarker: AbstractInsnNode) {
         val beforeInlineMarker = context.openingInlineMethodMarker[afterInlineMarker]
-        markEmitted(beforeInlineMarker)
+        markEmitted(beforeInlineMarker!!)
     }
 
     private fun markEmitted(saveStackMarker: AbstractInsnNode) {
-        val allocatedHandle = allocatedHandles[saveStackMarker]
+        val allocatedHandle = allocatedHandles[saveStackMarker]!!
         allocatedHandle.markRestoreNodeEmitted()
         if (allocatedHandle.isFullyEmitted()) {
             allocatedHandles.remove(saveStackMarker)

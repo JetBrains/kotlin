@@ -106,7 +106,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
             val settings = CodeStyleSettingsManager.getSettings(file.getProject())
             val old = settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE
             settings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = false
-            val elt = file.findElementAt(caretOffset - 1).getStrictParentOfType<JetBlockExpression>()
+            val elt = file.findElementAt(caretOffset - 1)!!.getStrictParentOfType<JetBlockExpression>()
             if (elt != null) {
                 reformat(elt)
             }

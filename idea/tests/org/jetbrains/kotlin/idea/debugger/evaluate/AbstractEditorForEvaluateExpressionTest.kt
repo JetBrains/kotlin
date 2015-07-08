@@ -99,7 +99,7 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
         file.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
             val codeFragment = JetPsiFactory(getProject()).createBlockCodeFragment("val xxx: $typeStr" , PsiTreeUtil.getParentOfType(elementAt, javaClass<JetElement>()))
             val context = codeFragment.analyzeFully()
-            val typeReference: JetTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), javaClass())
+            val typeReference: JetTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), javaClass())!!
             context[BindingContext.TYPE, typeReference]
         })
     }

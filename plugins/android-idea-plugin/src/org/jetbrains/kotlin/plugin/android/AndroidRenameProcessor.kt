@@ -147,7 +147,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             newName: String,
             allRenames: MutableMap<PsiElement, String>
     ) {
-        val oldName = field.getName()
+        val oldName = field.getName()!!
         val processor = ServiceManager.getService(field.getProject(), javaClass<AndroidUIXmlProcessor>())
         renameSyntheticProperties(allRenames, newName, oldName, processor)
     }

@@ -50,7 +50,7 @@ object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
 
                 // first try to resolve short name for faster handling
                 val token = file.findElementAt(startOffset)
-                val nameRef = token.getParent() as? JetNameReferenceExpression
+                val nameRef = token!!.getParent() as? JetNameReferenceExpression
                 if (nameRef != null) {
                     val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]

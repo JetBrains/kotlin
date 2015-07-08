@@ -49,7 +49,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 
     fun doBuildFileStub(file: VirtualFile): PsiFileStub<JetFile>? {
-        val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
+        val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)!!
         val header = kotlinBinaryClass.getClassHeader()
         val classId = kotlinBinaryClass.getClassId()
         val packageFqName = classId.getPackageFqName()

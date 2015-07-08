@@ -37,8 +37,8 @@ public class ExtraSteppingFilter : engine.ExtraSteppingFilter {
         }
 
         val debugProcess = context.getDebugProcess()
-        val positionManager = JetPositionManager(debugProcess)
-        val location = context.getFrameProxy().location()
+        val positionManager = JetPositionManager(debugProcess!!)
+        val location = context.getFrameProxy()!!.location()
         return runReadAction {
             shouldFilter(positionManager, location)
         }

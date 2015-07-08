@@ -39,7 +39,7 @@ public class KotlinStringLiteralTextEscaper(host: JetStringTemplateExpression): 
             }
             when (child) {
                 is JetLiteralStringTemplateEntry -> {
-                    val textRange = rangeInsideHost.intersection(childRange).shiftRight(-childRange.getStartOffset())
+                    val textRange = rangeInsideHost.intersection(childRange)!!.shiftRight(-childRange.getStartOffset())
                     outChars.append(child.getText(), textRange.getStartOffset(), textRange.getEndOffset())
                     textRange.getLength().times {
                         sourceOffsetsList.add(sourceOffset++)

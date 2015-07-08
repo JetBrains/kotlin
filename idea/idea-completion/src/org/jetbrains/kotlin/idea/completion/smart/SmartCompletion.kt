@@ -391,7 +391,7 @@ class SmartCompletion(
             null
         }
 
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
         val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope)
 
         return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it, loopVarType) }
@@ -403,7 +403,7 @@ class SmartCompletion(
         if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
 
         val leftOperandType = binaryExpression.getLeft()?.let { bindingContext.getType(it) } ?: return null
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
         val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
 
         return buildResultByTypeFilter(expressionWithType, receiver, null) { detector.hasContains(it) }

@@ -309,7 +309,7 @@ val ControlFlow.possibleReturnTypes: List<JetType>
             returnType.isAnnotatedNotNull(), returnType.isAnnotatedNullable() ->
                 listOf(approximateFlexibleTypes(returnType))
             else ->
-                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it.upperBound, it.lowerBound) }
+                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it!!.upperBound, it.lowerBound) }
         }
     }
 
