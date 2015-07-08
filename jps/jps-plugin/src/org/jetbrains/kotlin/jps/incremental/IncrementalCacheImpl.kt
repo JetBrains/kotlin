@@ -150,14 +150,14 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val decision = when {
             header.isCompatiblePackageFacadeKind() ->
                 getRecompilationDecision(
-                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!)),
                         constantsChanged = false,
                         inlinesChanged = false
                 )
             header.isCompatibleClassKind() ->
                 when (header.classKind!!) {
                     JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
-                            protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                            protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!)),
                             constantsChanged = constantsMap.process(className, fileBytes),
                             inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
                     )
