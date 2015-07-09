@@ -393,7 +393,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            val list = ArrayList<V>(collectionSizeOrDefault(10))
+            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -402,11 +402,12 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val first = iterator()
-            val second = other.iterator()
-            val list = ArrayList<V>(size())
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val arraySize = size()
+            val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+            var i = 0
+            for (element in other) {
+                if (i >= arraySize) break
+                list.add(transform(this[i++], element))
             }
             return list
             """
@@ -426,22 +427,22 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(collectionSizeOrDefault(10))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val arraySize = array.size()
+            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+            var i = 0
+            for (element in this) {
+                if (i >= arraySize) break
+                list.add(transform(element, array[i++]))
             }
             return list
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(Math.min(size(), array.size()))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val size = Math.min(size(), array.size())
+            val list = ArrayList<V>(size)
+            for (i in 0..size-1) {
+                list.add(transform(this[i], array[i]))
             }
             return list
             """
@@ -462,11 +463,10 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(Math.min(size(), array.size()))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val size = Math.min(size(), array.size())
+            val list = ArrayList<V>(size)
+            for (i in 0..size-1) {
+                list.add(transform(this[i], array[i]))
             }
             return list
             """

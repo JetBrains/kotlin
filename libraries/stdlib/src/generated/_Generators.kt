@@ -14,11 +14,10 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -27,11 +26,10 @@ public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -40,11 +38,10 @@ public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boo
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -53,11 +50,10 @@ public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -66,11 +62,10 @@ public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -79,11 +74,10 @@ public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Doub
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -92,11 +86,10 @@ public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -105,11 +98,10 @@ public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -118,11 +110,10 @@ public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -131,11 +122,12 @@ public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(collectionSizeOrDefault(10))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = array.size()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in this) {
+        if (i >= arraySize) break
+        list.add(transform(element, array[i++]))
     }
     return list
 }
@@ -144,11 +136,10 @@ public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> BooleanArray.merge(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -157,11 +148,10 @@ public inline fun <V> BooleanArray.merge(array: BooleanArray, transform: (Boolea
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ByteArray.merge(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -170,11 +160,10 @@ public inline fun <V> ByteArray.merge(array: ByteArray, transform: (Byte, Byte) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> CharArray.merge(array: CharArray, transform: (Char, Char) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -183,11 +172,10 @@ public inline fun <V> CharArray.merge(array: CharArray, transform: (Char, Char) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> DoubleArray.merge(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -196,11 +184,10 @@ public inline fun <V> DoubleArray.merge(array: DoubleArray, transform: (Double, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> FloatArray.merge(array: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -209,11 +196,10 @@ public inline fun <V> FloatArray.merge(array: FloatArray, transform: (Float, Flo
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> IntArray.merge(array: IntArray, transform: (Int, Int) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -222,11 +208,10 @@ public inline fun <V> IntArray.merge(array: IntArray, transform: (Int, Int) -> V
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> LongArray.merge(array: LongArray, transform: (Long, Long) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -235,11 +220,10 @@ public inline fun <V> LongArray.merge(array: LongArray, transform: (Long, Long) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ShortArray.merge(array: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -248,11 +232,12 @@ public inline fun <V> ShortArray.merge(array: ShortArray, transform: (Short, Sho
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -261,11 +246,12 @@ public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -274,11 +260,12 @@ public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Bool
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -287,11 +274,12 @@ public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -300,11 +288,12 @@ public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -313,11 +302,12 @@ public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Doubl
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -326,11 +316,12 @@ public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -339,11 +330,12 @@ public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -352,11 +344,12 @@ public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -367,7 +360,7 @@ public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short,
 public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = ArrayList<V>(collectionSizeOrDefault(10))
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
