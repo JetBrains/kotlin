@@ -124,7 +124,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (classifier is JavaClassDescriptor) {
             for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
-                    val propertyName = fromGetMethodName(descriptor.getName()) ?: continue
+                    val propertyName = propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
                 }
             }
@@ -152,11 +152,11 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     companion object {
-        public fun fromGetMethodName(methodName: Name): Name? = fromAccessorMethodName(methodName, "get")
+        public fun propertyNameByGetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "get")
 
-        public fun fromSetMethodName(methodName: Name): Name? = fromAccessorMethodName(methodName, "set")
+        public fun propertyNameBySetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "set")
 
-        private fun fromAccessorMethodName(methodName: Name, prefix: String): Name? {
+        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String): Name? {
             if (methodName.isSpecial()) return null
             val identifier = methodName.getIdentifier()
             if (!identifier.startsWith(prefix)) return null

@@ -145,9 +145,9 @@ public class JetSimpleNameReference(
             if (Name.isValidIdentifier(newElementName)) {
                 val newNameAsName = Name.identifier(newElementName)
                 val newName = when (access()) {
-                    Access.READ -> SyntheticExtensionsScope.fromGetMethodName(newNameAsName)
-                    Access.WRITE -> SyntheticExtensionsScope.fromSetMethodName(newNameAsName)
-                    Access.READ_WRITE -> SyntheticExtensionsScope.fromGetMethodName(newNameAsName) ?: SyntheticExtensionsScope.fromSetMethodName(newNameAsName)
+                    Access.READ -> SyntheticExtensionsScope.propertyNameByGetMethodName(newNameAsName)
+                    Access.WRITE -> SyntheticExtensionsScope.propertyNameBySetMethodName(newNameAsName)
+                    Access.READ_WRITE -> SyntheticExtensionsScope.propertyNameByGetMethodName(newNameAsName) ?: SyntheticExtensionsScope.propertyNameBySetMethodName(newNameAsName)
                 } ?: return expression //TODO: handle the case when get/set becomes ordinary method
                 newElementName = newName.getIdentifier()
             }
