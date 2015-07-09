@@ -2795,7 +2795,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
                 //noinspection ConstantConditions
                 ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
+                // Instantiate annotation classes as foreign due to bug in JDK 6 and 7:
+                // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6857918
+                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule() ||
+                        DescriptorUtils.isAnnotationClass(descriptor)) {
                     putJavaLangClassInstance(v, classAsmType);
                     wrapJavaClassIntoKClass(v);
                 }
