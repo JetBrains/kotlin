@@ -20,6 +20,7 @@ import java.io.File
 import java.io.Reader
 import java.io.StringReader
 import javax.tools.FileObject
+import kotlin.properties.Delegates
 
 public abstract class KotlinAnnotationProvider {
 
@@ -34,7 +35,7 @@ public abstract class KotlinAnnotationProvider {
         val CLASS_DECLARATION = "d"
     }
 
-    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by lazy {
+    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by Delegates.lazy {
         readAnnotations()
     }
 
