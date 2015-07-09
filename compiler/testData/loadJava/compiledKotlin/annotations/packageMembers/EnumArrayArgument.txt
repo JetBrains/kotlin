@@ -5,7 +5,7 @@ test.Anno(t = {ElementType.PACKAGE}) internal val bar: kotlin.Int = 42
 test.Anno(t = {}) internal fun baz(): kotlin.Unit
 test.Anno(t = {ElementType.METHOD, ElementType.FIELD}) internal fun foo(): kotlin.Unit
 
-kotlin.annotation.annotation() internal final annotation class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: java.lang.annotation.ElementType /*kotlin.Array<out java.lang.annotation.ElementType>*/)
     internal final val t: kotlin.Array<out java.lang.annotation.ElementType>
         internal final fun <get-t>(): kotlin.Array<out java.lang.annotation.ElementType>

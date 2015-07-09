@@ -3,7 +3,7 @@ package
 internal fun foo(/*0*/ ann: A): kotlin.Unit
 internal fun A.bar(): kotlin.Unit
 
-public final annotation class A : kotlin.Annotation {
+public final class A : kotlin.Annotation {
     public constructor A(/*0*/ value: kotlin.String, /*1*/ arg: kotlin.Int)
     public final val arg: kotlin.Int
     public final val value: kotlin.String

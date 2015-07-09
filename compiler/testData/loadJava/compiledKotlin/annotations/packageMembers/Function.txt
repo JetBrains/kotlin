@@ -2,6 +2,6 @@ package test
 
 test.Anno() internal fun function(): kotlin.Unit
 
-kotlin.annotation.annotation() internal final annotation class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

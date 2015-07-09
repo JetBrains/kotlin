@@ -8,12 +8,12 @@ test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) internal final class C2 
     public constructor C2()
 }
 
-kotlin.annotation.annotation() internal final annotation class EnumArray : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class EnumArray : kotlin.Annotation {
     public constructor EnumArray(/*0*/ enumArray: kotlin.Array<test.Weapon>)
     internal final val enumArray: kotlin.Array<test.Weapon>
 }
 
-kotlin.annotation.annotation() internal final annotation class JustEnum : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class JustEnum : kotlin.Annotation {
     public constructor JustEnum(/*0*/ weapon: test.Weapon)
     internal final val weapon: test.Weapon
 }

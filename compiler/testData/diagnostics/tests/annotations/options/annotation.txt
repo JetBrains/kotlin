@@ -34,7 +34,7 @@ internal final enum class Target : kotlin.Enum<Target> {
     public final /*synthesized*/ fun values(): kotlin.Array<Target>
 }
 
-target(allowedTargets = {Target.CLASSIFIER}) annotation(retention = AnnotationRetention.SOURCE) public final annotation class annotation : kotlin.Annotation {
+target(allowedTargets = {Target.CLASSIFIER}) annotation(retention = AnnotationRetention.SOURCE) public final class annotation : kotlin.Annotation {
     public constructor annotation(/*0*/ retention: kotlin.annotation.AnnotationRetention = ..., /*1*/ repeatable: kotlin.Boolean = ...)
     internal final val repeatable: kotlin.Boolean
     internal final val retention: kotlin.annotation.AnnotationRetention
@@ -43,14 +43,14 @@ target(allowedTargets = {Target.CLASSIFIER}) annotation(retention = AnnotationRe
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-annotation() internal final annotation class some : kotlin.Annotation {
+annotation() internal final class some : kotlin.Annotation {
     public constructor some()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-target(allowedTargets = {Target.CLASSIFIER}) annotation() public final annotation class target : kotlin.Annotation {
+target(allowedTargets = {Target.CLASSIFIER}) annotation() public final class target : kotlin.Annotation {
     public constructor target(/*0*/ vararg allowedTargets: Target /*kotlin.Array<out Target>*/)
     internal final val allowedTargets: kotlin.Array<out Target>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

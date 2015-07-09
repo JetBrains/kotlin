@@ -37,7 +37,7 @@ base() internal final enum class My : kotlin.Enum<My> {
     public final /*synthesized*/ fun values(): kotlin.Array<My>
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) kotlin.annotation.annotation() internal final annotation class base : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) kotlin.annotation.annotation() internal final class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -53,7 +53,7 @@ base() internal final class correct {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-base() kotlin.annotation.annotation() internal final annotation class derived : kotlin.Annotation {
+base() kotlin.annotation.annotation() internal final class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

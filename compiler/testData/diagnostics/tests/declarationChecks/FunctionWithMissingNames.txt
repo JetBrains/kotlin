@@ -29,7 +29,7 @@ internal final class Outer {
     internal final fun B.<no name provided>(): kotlin.Unit
 }
 
-kotlin.annotation.annotation() internal final annotation class a : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class a : kotlin.Annotation {
     public constructor a()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

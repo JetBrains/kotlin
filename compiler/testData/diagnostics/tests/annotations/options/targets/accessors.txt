@@ -9,21 +9,21 @@ internal final class My {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() internal final annotation class base : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() internal final class base : kotlin.Annotation {
     public constructor base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) kotlin.annotation.annotation() internal final annotation class smartget : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.PROPERTY_GETTER}) kotlin.annotation.annotation() internal final class smartget : kotlin.Annotation {
     public constructor smartget()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.annotation() internal final annotation class smartset : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.PROPERTY_SETTER}) kotlin.annotation.annotation() internal final class smartset : kotlin.Annotation {
     public constructor smartset()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -32,11 +32,11 @@ internal final enum class My : kotlin.Enum<test.My> {
     public final /*synthesized*/ fun values(): kotlin.Array<test.My>
 }
 
-kotlin.annotation.annotation() internal final annotation class ann : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ann : kotlin.Annotation {
     public constructor ann(/*0*/ vararg m: test.My /*kotlin.Array<out test.My>*/)
     internal final val m: kotlin.Array<out test.My>
 }
 
-test.ann(m = {My.ALPHA, My.BETA}) kotlin.annotation.annotation() internal final annotation class annotated : kotlin.Annotation {
+test.ann(m = {My.ALPHA, My.BETA}) kotlin.annotation.annotation() internal final class annotated : kotlin.Annotation {
     public constructor annotated()
 }

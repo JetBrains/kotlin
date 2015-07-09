@@ -138,7 +138,7 @@ package illegal_modifiers {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    kotlin.annotation.annotation() internal final annotation class annotated : kotlin.Annotation {
+    kotlin.annotation.annotation() internal final class annotated : kotlin.Annotation {
         public constructor annotated(/*0*/ text: kotlin.String = ...)
         internal final val text: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -5,7 +5,7 @@ A(a = IntegerValueType(2), b = 2.0.toDouble(), value = "v2", x = true) internal 
 A(a = IntegerValueType(4), b = 3.0.toDouble(), value = "v2", x = true) internal fun foo3(): kotlin.Unit
 A(a = IntegerValueType(4), b = 3.0.toDouble(), value = "v2", x = true) internal fun foo4(): kotlin.Unit
 
-public final annotation class A : kotlin.Annotation {
+public final class A : kotlin.Annotation {
     public constructor A(/*0*/ value: kotlin.String, /*1*/ a: kotlin.Int, /*2*/ b: kotlin.Double, /*3*/ x: kotlin.Boolean)
     public final val a: kotlin.Int
     public final val b: kotlin.Double

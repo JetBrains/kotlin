@@ -6,14 +6,14 @@ internal final class A {
     public companion object Companion {
         /*primary*/ private constructor Companion()
 
-        kotlin.annotation.annotation() internal final annotation class Anno1 : kotlin.Annotation {
+        kotlin.annotation.annotation() internal final class Anno1 : kotlin.Annotation {
             /*primary*/ public constructor Anno1()
         }
 
         internal final class B {
             /*primary*/ public constructor B()
 
-            kotlin.annotation.annotation() internal final annotation class Anno2 : kotlin.Annotation {
+            kotlin.annotation.annotation() internal final class Anno2 : kotlin.Annotation {
                 /*primary*/ public constructor Anno2()
             }
         }

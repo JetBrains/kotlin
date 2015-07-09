@@ -1,5 +1,5 @@
 package test
 
-kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) internal final annotation class Anno : kotlin.Annotation {
+kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) internal final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }

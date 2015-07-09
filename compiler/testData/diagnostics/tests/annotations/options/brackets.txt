@@ -7,7 +7,7 @@ emptyBrackets() internal final class base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.annotation() internal final annotation class emptyBrackets : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class emptyBrackets : kotlin.Annotation {
     public constructor emptyBrackets()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

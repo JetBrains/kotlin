@@ -2,7 +2,7 @@ package
 
 internal fun foo(): kotlin.Int
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.EXPRESSION}) kotlin.annotation.annotation() internal final annotation class ann : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.EXPRESSION}) kotlin.annotation.annotation() internal final class ann : kotlin.Annotation {
     public constructor ann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

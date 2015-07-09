@@ -1,10 +1,10 @@
 package test
 
-kotlin.annotation.annotation() internal final annotation class A : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 
-kotlin.annotation.annotation() internal final annotation class B : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class B : kotlin.Annotation {
     /*primary*/ public constructor B()
 }
 

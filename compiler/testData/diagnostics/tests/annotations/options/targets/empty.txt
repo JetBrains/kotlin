@@ -46,14 +46,14 @@ empty() internal final class correct {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-empty() kotlin.annotation.annotation() internal final annotation class derived : kotlin.Annotation {
+empty() kotlin.annotation.annotation() internal final class derived : kotlin.Annotation {
     public constructor derived()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.annotation() internal final annotation class empty : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.annotation() internal final class empty : kotlin.Annotation {
     public constructor empty()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -35,9 +35,9 @@ public class WithReified<reified A, reified out B>
 public interface TwoUpperBounds<T> where T : Number, T : Any
 
 //package rendererTest
-//kotlin.annotation.annotation internal final annotation class TheAnnotation : kotlin.Annotation defined in rendererTest
+//kotlin.annotation.annotation internal final class TheAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor TheAnnotation() defined in rendererTest.TheAnnotation
-//kotlin.annotation.annotation internal final annotation class AnotherAnnotation : kotlin.Annotation defined in rendererTest
+//kotlin.annotation.annotation internal final class AnotherAnnotation : kotlin.Annotation defined in rendererTest
 //public constructor AnotherAnnotation() defined in rendererTest.AnotherAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : kotlin.Int, X> defined in rendererTest
 //<out T : kotlin.Int> defined in rendererTest.TheClass
