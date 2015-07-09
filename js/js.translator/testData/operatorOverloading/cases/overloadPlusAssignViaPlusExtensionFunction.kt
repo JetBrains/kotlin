@@ -1,19 +1,16 @@
 package foo
 
-import java.util.*
+open class Foo<out T>(open val value: T)
+open class MutableFoo<T>(override var value: T): Foo<T>(value)
 
-fun <T> ArrayList<T>.plus(other: Collection<T>): ArrayList<T> {
-    val c = ArrayList<T>()
-    c.addAll(this)
-    c.addAll(other)
-    return c
-}
+fun <T> Foo<T>.plus(x: T): Foo<T> = Foo(x)
+
+// overloading:
+fun <T> MutableFoo<T>.plus(x: T): MutableFoo<T> = MutableFoo(x)
+
 
 fun box(): Boolean {
-    var v1 = ArrayList<String>()
-    val v2 = ArrayList<String>()
-    v1.add("foo")
-    v2.add("bar")
-    v1 += v2
-    return (v1.size() == 2 && v1[0] == "foo" && v1[1] == "bar")
+    var f = MutableFoo(1)
+    f += 2
+    return (f is MutableFoo && f.value == 2)
 }
