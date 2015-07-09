@@ -42,6 +42,9 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
 
     companion object {
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticExtensionPropertyDescriptor? {
+            val name = getterOrSetter.getName()
+            if (propertyNameByGetMethodName(name) == null && propertyNameBySetMethodName(name) == null) return null // optimization
+
             val owner = getterOrSetter.getContainingDeclaration()
             if (owner !is JavaClassDescriptor) return null
 
