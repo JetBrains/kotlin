@@ -74,7 +74,9 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, propertyType: JetType): Boolean {
-        return descriptor.getValueParameters().singleOrNull()?.getType() == propertyType
+        val parameter = descriptor.getValueParameters().singleOrNull() ?: return false
+        return parameter.getType() == propertyType
+               && parameter.getVarargElementType() == null
                && descriptor.getTypeParameters().isEmpty()
                && descriptor.getReturnType()?.let { KotlinBuiltIns.isUnit(it) } ?: false
                && descriptor.getVisibility() == Visibilities.PUBLIC

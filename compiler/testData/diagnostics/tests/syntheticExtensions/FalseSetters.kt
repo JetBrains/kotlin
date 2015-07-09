@@ -5,6 +5,7 @@ fun foo(javaClass: JavaClass) {
     <!VAL_REASSIGNMENT!>javaClass.something3<!>++
     <!VAL_REASSIGNMENT!>javaClass.something4<!>++
     <!VAL_REASSIGNMENT!>javaClass.something5<!>++
+    <!VAL_REASSIGNMENT!>javaClass.something6<!> = null
 }
 
 // FILE: JavaClass.java
@@ -23,4 +24,7 @@ public class JavaClass {
 
     public int getSomething5() { return 1; }
     public static void setSomething5(int value) { }
+
+    public int[] getSomething6() { return null; }
+    public void setSomething6(int... value) { }
 }

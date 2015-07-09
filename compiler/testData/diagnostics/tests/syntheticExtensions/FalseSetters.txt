@@ -10,11 +10,13 @@ public open class JavaClass {
     public open fun getSomething3(): kotlin.Int
     public open fun getSomething4(): kotlin.Int
     public open fun getSomething5(): kotlin.Int
+    public open fun getSomething6(): kotlin.IntArray!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open fun setSomething1(/*0*/ value: kotlin.Int, /*1*/ c: kotlin.Char): kotlin.Unit
     public open fun setSomething2(/*0*/ value: kotlin.String!): kotlin.Unit
     public open fun setSomething3(/*0*/ value: kotlin.Int): kotlin.Int
     public open fun </*0*/ T> setSomething4(/*0*/ value: kotlin.Int): kotlin.Unit
+    public open fun setSomething6(/*0*/ vararg value: kotlin.Int /*kotlin.IntArray!*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
