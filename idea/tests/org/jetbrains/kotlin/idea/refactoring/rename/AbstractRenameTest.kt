@@ -299,11 +299,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
 
 private  fun String.toClassId(): ClassId {
-    val lastSlash = lastIndexOf("/")
-    if (lastSlash == -1) {
-        throw IllegalArgumentException("Class id should contain slash: $this")
-    }
-    val relativeClassName = FqName(substring(lastSlash + 1))
-    val packageFqName = FqName(substring(0, lastSlash).replace('/', '.'))
+    val relativeClassName = FqName(substringAfterLast('/'))
+    val packageFqName = FqName(substringBeforeLast('/', "").replace('/', '.'))
     return ClassId(packageFqName, relativeClassName, false)
 }

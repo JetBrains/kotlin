@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticExtensionsScope
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -135,6 +137,22 @@ public class JetSimpleNameReference(
             }
         }
 
+        @suppress("NAME_SHADOWING")
+        var newElementName = newElementName!!
+
+        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+        if (bindingContext[BindingContext.REFERENCE_TARGET, expression] is SyntheticExtensionPropertyDescriptor) {
+            if (Name.isValidIdentifier(newElementName)) {
+                val newNameAsName = Name.identifier(newElementName)
+                val newName = when (access()) {
+                    Access.READ -> SyntheticExtensionsScope.fromGetMethodName(newNameAsName)
+                    Access.WRITE -> SyntheticExtensionsScope.fromSetMethodName(newNameAsName)
+                    Access.READ_WRITE -> SyntheticExtensionsScope.fromGetMethodName(newNameAsName) ?: SyntheticExtensionsScope.fromSetMethodName(newNameAsName)
+                } ?: return expression //TODO: handle the case when get/set becomes ordinary method
+                newElementName = newName.getIdentifier()
+            }
+        }
+
         val psiFactory = JetPsiFactory(expression)
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
@@ -156,23 +174,21 @@ public class JetSimpleNameReference(
         var nameElement = expression.getReferencedNameElement()
 
         val elementType = nameElement.getNode()?.getElementType()
-        val opExpression =
-                PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
+        val opExpression = PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
         if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null && opExpression != null) {
-            val oldDescriptor = expression.analyze()[BindingContext.REFERENCE_TARGET, expression]
+            val oldDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression]
             val newExpression = OperatorToFunctionIntention.convert(opExpression)
-            newExpression.accept(
-                    object: JetTreeVisitorVoid() {
-                        override fun visitCallExpression(expression: JetCallExpression) {
-                            val callee = expression.getCalleeExpression() as? JetSimpleNameExpression
-                            if (callee != null && callee.analyze()[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
-                                nameElement = callee.getReferencedNameElement()
-                            }
-                            else {
-                                super.visitCallExpression(expression)
-                            }
-                        }
+            newExpression.accept(object : JetTreeVisitorVoid() {
+                override fun visitCallExpression(expression: JetCallExpression) {
+                    val callee = expression.getCalleeExpression() as? JetSimpleNameExpression
+                    if (callee != null && bindingContext[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
+                        nameElement = callee.getReferencedNameElement()
                     }
+                    else {
+                        super.visitCallExpression(expression)
+                    }
+                }
+            }
             )
         }
 

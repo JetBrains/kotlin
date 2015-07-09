@@ -151,13 +151,19 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return Name.identifier("set" + propertyName.getIdentifier().capitalize())
     }
 
-    private fun fromGetMethodName(methodName: Name): Name? {
-        if (methodName.isSpecial()) return null
-        val identifier = methodName.getIdentifier()
-        if (!identifier.startsWith("get")) return null
-        val name = identifier.removePrefix("get").decapitalize()
-        if (!Name.isValidIdentifier(name)) return null
-        return Name.identifier(name)
+    companion object {
+        public fun fromGetMethodName(methodName: Name): Name? = fromAccessorMethodName(methodName, "get")
+
+        public fun fromSetMethodName(methodName: Name): Name? = fromAccessorMethodName(methodName, "set")
+
+        private fun fromAccessorMethodName(methodName: Name, prefix: String): Name? {
+            if (methodName.isSpecial()) return null
+            val identifier = methodName.getIdentifier()
+            if (!identifier.startsWith(prefix)) return null
+            val name = identifier.removePrefix(prefix).decapitalize()
+            if (!Name.isValidIdentifier(name)) return null
+            return Name.identifier(name)
+        }
     }
 
     private class MyPropertyDescriptor(
