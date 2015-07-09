@@ -81,7 +81,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, callExpression.getProject(), ::isVisible)
         val propertyName = property.getName()
-        val accessibleVariables = referenceVariantsHelper.getReferenceVariants(callee, DescriptorKindFilter.VARIABLES, false, { it == propertyName })
+        val accessibleVariables = referenceVariantsHelper.getReferenceVariants(callee, DescriptorKindFilter.VARIABLES, { it == propertyName })
         if (property !in accessibleVariables) return null // shadowed by something else
 
         return property

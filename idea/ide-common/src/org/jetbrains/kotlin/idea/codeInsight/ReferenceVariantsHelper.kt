@@ -60,8 +60,8 @@ public class ReferenceVariantsHelper(
     public fun getReferenceVariants(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
-            useRuntimeReceiverType: Boolean,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
+            useRuntimeReceiverType: Boolean = false
     ): Collection<DeclarationDescriptor> {
         val variants = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
                 .filter(visibilityFilter)

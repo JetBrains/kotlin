@@ -209,7 +209,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
         if (descriptorKindFilter != null) {
             val expression = reference!!.expression
-            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, false, prefixMatcher.asNameFilter())
+            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, prefixMatcher.asNameFilter())
                     .excludeNonInitializedVariable(expression)
         }
         else {
@@ -231,7 +231,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, true, prefixMatcher.asNameFilter())
+        val descriptors = referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, prefixMatcher.asNameFilter(), useRuntimeReceiverType = true)
         return descriptors.filter { descriptor ->
             referenceVariants.none { comparePossiblyOverridingDescriptors(project, it, descriptor) }
         }
