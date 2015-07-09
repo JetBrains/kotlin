@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionsScope
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -145,9 +144,10 @@ public class JetSimpleNameReference(
             if (Name.isValidIdentifier(newElementName)) {
                 val newNameAsName = Name.identifier(newElementName)
                 val newName = when (access()) {
-                    Access.READ -> SyntheticExtensionsScope.propertyNameByGetMethodName(newNameAsName)
-                    Access.WRITE -> SyntheticExtensionsScope.propertyNameBySetMethodName(newNameAsName)
-                    Access.READ_WRITE -> SyntheticExtensionsScope.propertyNameByGetMethodName(newNameAsName) ?: SyntheticExtensionsScope.propertyNameBySetMethodName(newNameAsName)
+                    Access.READ -> SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
+                    Access.WRITE -> SyntheticExtensionPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
+                    Access.READ_WRITE -> SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
+                                         ?: SyntheticExtensionPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
                 } ?: return expression //TODO: handle the case when get/set becomes ordinary method
                 newElementName = newName.getIdentifier()
             }

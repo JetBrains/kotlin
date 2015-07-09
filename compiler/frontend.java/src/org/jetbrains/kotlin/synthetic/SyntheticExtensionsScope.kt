@@ -49,6 +49,19 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
                     .filterIsInstance<SyntheticExtensionPropertyDescriptor>()
                     .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
         }
+
+        fun propertyNameByGetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "get")
+
+        fun propertyNameBySetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "set")
+
+        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String): Name? {
+            if (methodName.isSpecial()) return null
+            val identifier = methodName.getIdentifier()
+            if (!identifier.startsWith(prefix)) return null
+            val name = identifier.removePrefix(prefix).decapitalize()
+            if (!Name.isValidIdentifier(name)) return null
+            return Name.identifier(name)
+        }
     }
 }
 
@@ -124,7 +137,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (classifier is JavaClassDescriptor) {
             for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
-                    val propertyName = propertyNameByGetMethodName(descriptor.getName()) ?: continue
+                    val propertyName = SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
                 }
             }
@@ -149,21 +162,6 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
 
     private fun toSetMethodName(propertyName: Name): Name {
         return Name.identifier("set" + propertyName.getIdentifier().capitalize())
-    }
-
-    companion object {
-        public fun propertyNameByGetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "get")
-
-        public fun propertyNameBySetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "set")
-
-        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String): Name? {
-            if (methodName.isSpecial()) return null
-            val identifier = methodName.getIdentifier()
-            if (!identifier.startsWith(prefix)) return null
-            val name = identifier.removePrefix(prefix).decapitalize()
-            if (!Name.isValidIdentifier(name)) return null
-            return Name.identifier(name)
-        }
     }
 
     private class MyPropertyDescriptor(
