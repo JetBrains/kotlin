@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -75,6 +77,19 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 else -> return false
             }
             return lightElement != null && javaInspection.isEntryPoint(lightElement)
+        }
+
+        private fun JetProperty.isSerializationImplicitlyUsedField(): Boolean {
+            val ownerObject = getNonStrictParentOfType<JetClassOrObject>()
+            if (ownerObject is JetObjectDeclaration && ownerObject.isCompanion()) {
+                val lightClass = ownerObject.getNonStrictParentOfType<JetClass>()?.toLightClass() ?: return false
+                return lightClass.getFields().any { it.getName() == getName() && HighlightUtil.isSerializationImplicitlyUsedField(it) }
+            }
+            return false
+        }
+
+        private fun JetObjectDeclaration.hasSerializationImplicitlyUsedField(): Boolean {
+            return getDeclarations().any { it is JetProperty && it.isSerializationImplicitlyUsedField() }
         }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
@@ -141,6 +156,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // More expensive, resolve-based checks
                 if (isEntryPoint(declaration)) return
+                if (declaration is JetProperty && declaration.isSerializationImplicitlyUsedField()) return
+                if (isCompanionObject && (declaration as JetObjectDeclaration).hasSerializationImplicitlyUsedField()) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
                 if (declaration is JetParameter && declaration.dataClassComponentFunctionName() != null) return
 
