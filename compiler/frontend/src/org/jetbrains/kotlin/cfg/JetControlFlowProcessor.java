@@ -585,7 +585,15 @@ public class JetControlFlowProcessor {
                 accessTarget = getDeclarationAccessTarget(left);
             }
 
-            recordWrite(left, accessTarget, rhsDeferredValue.invoke(), receiverValues, parentExpression);
+            if (accessTarget == AccessTarget.BlackBox.INSTANCE$ && !(left instanceof JetProperty)) {
+                generateInstructions(left);
+                createSyntheticValue(left, MagicKind.VALUE_CONSUMER, left);
+            }
+
+            PseudoValue rightValue = rhsDeferredValue.invoke();
+            PseudoValue rValue =
+                    rightValue != null ? rightValue : createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS);
+            builder.write(parentExpression, left, rValue, accessTarget, receiverValues);
         }
 
         private void generateArrayAssignment(
@@ -661,24 +669,6 @@ public class JetControlFlowProcessor {
                 }
             }
             return argumentValues;
-        }
-
-        private void recordWrite(
-                @NotNull JetExpression left,
-                @NotNull AccessTarget target,
-                @Nullable PseudoValue rightValue,
-                @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
-                @NotNull JetExpression parentExpression
-        ) {
-            if (target == AccessTarget.BlackBox.INSTANCE$) {
-                List<PseudoValue> values = ContainerUtil.createMaybeSingletonList(rightValue);
-                builder.magic(parentExpression, parentExpression, values, defaultTypeMap(values), MagicKind.UNSUPPORTED_ELEMENT);
-            }
-            else {
-                PseudoValue rValue =
-                        rightValue != null ? rightValue : createSyntheticValue(parentExpression, MagicKind.UNRECOGNIZED_WRITE_RHS);
-                builder.write(parentExpression, left, rValue, target, receiverValues);
-            }
         }
 
         private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> resolvedCall) {

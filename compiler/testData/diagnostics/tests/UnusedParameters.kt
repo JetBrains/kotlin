@@ -26,3 +26,7 @@ fun get(p: Any) {
 
 fun set(p: Any) {
 }
+
+fun foo(s: String) {
+    s.<!UNRESOLVED_REFERENCE!>xxx<!> = 1
+}

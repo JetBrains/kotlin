@@ -39,7 +39,7 @@ class D() {
 fun foo(): Unit {}
 
 fun cannotBe() {
-    var <!UNUSED_VARIABLE!>i<!>: Int = 5
+    var i: Int = 5
 
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
     <!VARIABLE_EXPECTED!>""<!> = "";
