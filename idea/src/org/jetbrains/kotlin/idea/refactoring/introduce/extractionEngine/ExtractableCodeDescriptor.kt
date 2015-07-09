@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -82,7 +83,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
     override fun invoke(e: JetElement): JetElement {
-        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).getQualifiedExpressionForSelectorOrThis()
+        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = JetPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
                 if (e.getText().startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName

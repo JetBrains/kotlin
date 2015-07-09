@@ -16,33 +16,80 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.refactoring.fqName.changeQualifiedName
-import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.psiUtil.*
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.refactoring.fqName.changeQualifiedName
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
 ) : JetSimpleReference<JetSimpleNameExpression>(jetSimpleNameExpression) {
+
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        val targets = super.getTargetDescriptors(context)
+        if (targets.none { it is SyntheticExtensionPropertyDescriptor }) return targets
+
+        val newTargets = SmartList<DeclarationDescriptor>()
+        for (target in targets) {
+            if (!(target !is SyntheticExtensionPropertyDescriptor)) {
+                val access = access()
+                if (access == Access.READ || access == Access.READ_WRITE) {
+                    newTargets.add(target.getMethod)
+                }
+                if (access == Access.WRITE || access == Access.READ_WRITE) {
+                    newTargets.addIfNotNull(target.setMethod)
+                }
+            }
+            else {
+                newTargets.add(target)
+            }
+        }
+        return newTargets
+    }
+
+    //TODO: there should be some common util for that
+    private enum class Access {
+        READ, WRITE, READ_WRITE
+    }
+
+    private fun access(): Access {
+        var expression = myElement.getQualifiedExpressionForSelectorOrThis()
+        while (expression.getParent() is JetParenthesizedExpression) {
+            expression = expression.getParent() as JetParenthesizedExpression
+        }
+
+        val assignment = expression.getAssignmentByLHS()
+        if (assignment != null) {
+            return if (assignment.getOperationToken() == JetTokens.EQ) Access.WRITE else Access.READ_WRITE
+        }
+
+        return if ((expression.getParent() as? JetUnaryExpression)?.getOperationToken() in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
+            Access.READ_WRITE
+        else
+            Access.READ
+    }
 
     override fun isReferenceTo(element: PsiElement?): Boolean {
         if (element != null) {

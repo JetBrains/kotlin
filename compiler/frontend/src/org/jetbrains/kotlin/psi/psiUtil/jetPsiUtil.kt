@@ -130,7 +130,7 @@ public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpressio
     return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
 }
 
-public fun JetElement.getQualifiedExpressionForSelectorOrThis(): JetElement {
+public fun JetExpression.getQualifiedExpressionForSelectorOrThis(): JetExpression {
     return getQualifiedExpressionForSelector() ?: this
 }
 

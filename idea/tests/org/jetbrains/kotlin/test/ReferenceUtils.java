@@ -21,16 +21,10 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PathUtil;
-import kotlin.KotlinPackage;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.junit.Assert;
-
-import java.util.List;
 
 public final class ReferenceUtils {
     private ReferenceUtils() {
@@ -59,19 +53,5 @@ public final class ReferenceUtils {
                // for PsiPackage, presentableText is FQ name of current package
                ? presentableText
                : locationString + "." + presentableText;
-    }
-
-    // purpose of this helper is to deal with the case when navigation element is a file
-    // see ReferenceResolveInJavaTestGenerated.testPackageFacade()
-    @NotNull
-    public static List<String> getExpectedReferences(@NotNull String text) {
-        List<String> prefixes = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// REF:");
-        return KotlinPackage.map(prefixes, new Function1<String, String>() {
-            @Override
-            public String invoke(String s) {
-                String replaced = s.replace("<test dir>", PluginTestCaseBase.getTestDataPathBase());
-                return PathUtil.toSystemDependentName(replaced).replace("//", "/"); //happens on Unix
-            }
-        });
     }
 }
