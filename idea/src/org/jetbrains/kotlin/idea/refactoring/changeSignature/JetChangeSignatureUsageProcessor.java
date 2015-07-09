@@ -394,6 +394,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!RefactoringPackage.isTrueJavaMethod(method)) return;
 
         FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+        assert methodDescriptor != null;
 
         DeclarationDescriptor containingDescriptor = methodDescriptor.getContainingDeclaration();
         if (!(containingDescriptor instanceof JavaClassDescriptor)) return;
@@ -958,6 +959,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             boolean startedFromJava = method instanceof PsiMethod;
             if (startedFromJava && originalJavaMethodDescriptor == null) {
                 FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+                assert methodDescriptor != null;
                 originalJavaMethodDescriptor =
                         new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));;
 

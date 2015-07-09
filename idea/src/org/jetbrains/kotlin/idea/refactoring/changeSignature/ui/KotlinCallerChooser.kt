@@ -83,7 +83,7 @@ public class KotlinMethodNode(
         val descriptor = when (myMethod) {
             is JetFunction -> myMethod.resolveToDescriptor() as FunctionDescriptor
             is JetClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor() ?: return
-            is PsiMethod -> myMethod.getJavaMethodDescriptor()
+            is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
         val containerName = sequence<DeclarationDescriptor>(descriptor) { it.getContainingDeclaration() }

@@ -388,7 +388,7 @@ public fun JetChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodD
 public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMethodDescriptor): JetChangeInfo {
     val method = getMethod() as PsiMethod
 
-    val functionDescriptor = method.getJavaMethodDescriptor()
+    val functionDescriptor = method.getJavaMethodDescriptor()!!
     val parameterDescriptors = functionDescriptor.getValueParameters()
 
     //noinspection ConstantConditions

@@ -89,7 +89,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
 
         val changeInfo = createChangeInfo(data, element) ?: return true
         // Java method is already updated at this point
-        val addedParameterType = data.getMethodToReplaceIn().getJavaMethodDescriptor().getValueParameters().last().getType()
+        val addedParameterType = data.getMethodToReplaceIn().getJavaMethodDescriptor()!!.getValueParameters().last().getType()
         changeInfo.getNewParameters().last().currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(addedParameterType)
 
         val scope = element.getUseScope().let {

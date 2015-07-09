@@ -45,32 +45,21 @@ public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDes
             KotlinCacheService.getInstance(project)[this](element).second
 }
 
-fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor {
+fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     val method = getOriginalElement() as PsiMethod
     val resolver = JavaResolveExtension.getResolver(method.getProject(), method)
-    val methodDescriptor = when {
+    return when {
         method.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(method))
         else -> resolver.resolveMethod(JavaMethodImpl(method))
     }
-    assert(methodDescriptor != null) { "No descriptor found for " + method.getText() }
-
-    return methodDescriptor!!
 }
 
-fun PsiClass.getJavaClassDescriptor(): ClassDescriptor {
-    val resolver = JavaResolveExtension.getResolver(getProject(), this)
-    val classDescriptor = resolver.resolveClass(JavaClassImpl(this))
-    assert(classDescriptor != null) { "No descriptor found for " + getText() }
-
-    return classDescriptor!!
+fun PsiClass.getJavaClassDescriptor(): ClassDescriptor? {
+    return JavaResolveExtension.getResolver(getProject(), this).resolveClass(JavaClassImpl(this))
 }
 
-fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor {
-    val resolver = JavaResolveExtension.getResolver(getProject(), this)
-    val fieldDescriptor = resolver.resolveField(JavaFieldImpl(this))
-    assert(fieldDescriptor != null) { "No descriptor found for " + getText() }
-
-    return fieldDescriptor!!
+fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor? {
+    return JavaResolveExtension.getResolver(getProject(), this).resolveField(JavaFieldImpl(this))
 }
 
 fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {

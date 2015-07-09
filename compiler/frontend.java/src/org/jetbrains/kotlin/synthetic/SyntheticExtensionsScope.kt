@@ -39,6 +39,17 @@ import java.util.*
 interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
+
+    companion object {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticExtensionPropertyDescriptor? {
+            val owner = getterOrSetter.getContainingDeclaration()
+            if (owner !is JavaClassDescriptor) return null
+
+            return resolutionScope.getSyntheticExtensionProperties(owner.getDefaultType())
+                    .filterIsInstance<SyntheticExtensionPropertyDescriptor>()
+                    .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
+        }
+    }
 }
 
 class AdditionalScopesWithSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes() {

@@ -88,22 +88,13 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
     }
 
     private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticExtensionPropertyDescriptor? {
-        findSyntheticPropertyNoOverriddenCheck(function, resolutionScope)?.let { return it }
+        SyntheticExtensionPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
         for (overridden in function.getOverriddenDescriptors()) {
             findSyntheticProperty(overridden, resolutionScope)?.let { return it }
         }
 
         return null
-    }
-
-    private fun findSyntheticPropertyNoOverriddenCheck(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticExtensionPropertyDescriptor? {
-        val owner = function.getContainingDeclaration()
-        if (owner !is JavaClassDescriptor) return null
-
-        return resolutionScope.getSyntheticExtensionProperties(owner.getDefaultType())
-                .filterIsInstance<SyntheticExtensionPropertyDescriptor>()
-                .firstOrNull { function == it.getMethod || function == it.setMethod }
     }
 
     private fun replaceWithPropertyGet(callExpression: JetCallExpression, propertyName: Name) {
