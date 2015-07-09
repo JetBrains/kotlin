@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -69,6 +70,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return descriptor.getValueParameters().isEmpty()
                && descriptor.getTypeParameters().isEmpty()
                && descriptor.getVisibility() == Visibilities.PUBLIC //TODO: what about protected and package-local?
+               && !(descriptor.getReturnType()?.isUnit() ?: true)
     }
 
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, propertyType: JetType): Boolean {
