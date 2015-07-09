@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCaller
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
@@ -328,7 +326,7 @@ public class JetChangeInfo(
         ): JavaChangeInfo? {
             val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
             val newJavaParameters = getJavaParameterInfos(currentPsiMethod, newParameterList).toTypedArray()
-            val newName = if (isGetter) PropertyCodegen.getterName(Name.identifier(getNewName())) else getNewName()
+            val newName = if (isGetter) JvmAbi.getterName(getNewName()) else getNewName()
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, currentPsiMethod.getReturnType(), newJavaParameters)
         }
 
@@ -344,7 +342,7 @@ public class JetChangeInfo(
                 newJavaParameters.add(ParameterInfoImpl(oldIndex, "receiver", PsiType.VOID))
             }
 
-            val newName = PropertyCodegen.setterName(Name.identifier(getNewName()))
+            val newName = JvmAbi.setterName(getNewName())
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, PsiType.VOID, newJavaParameters.toTypedArray())
         }
 

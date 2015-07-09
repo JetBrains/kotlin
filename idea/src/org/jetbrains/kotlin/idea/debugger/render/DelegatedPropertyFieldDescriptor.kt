@@ -27,7 +27,6 @@ import com.sun.jdi.Field
 import com.sun.jdi.Method
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.Value
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 
@@ -86,8 +85,6 @@ class DelegatedPropertyFieldDescriptor(
         val fieldName = getName()
         if (!Name.isValidIdentifier(fieldName)) return null
 
-        val getterName = PropertyCodegen.getterName(Name.identifier(fieldName))
-        return getObject().referenceType().methodsByName(getterName)?.firstOrNull()
+        return getObject().referenceType().methodsByName(JvmAbi.getterName(fieldName))?.firstOrNull()
     }
 }
-

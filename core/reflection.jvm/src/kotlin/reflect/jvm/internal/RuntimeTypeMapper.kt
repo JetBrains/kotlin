@@ -111,7 +111,7 @@ object RuntimeTypeMapper {
             val field = signature.getField()
 
             // TODO: some kind of test on the Java Bean convention?
-            return getterName(nameResolver.getString(field.getName())) +
+            return JvmAbi.getterName(nameResolver.getString(field.getName())) +
                    "()" +
                    deserializer.typeDescriptor(field.getType())
         }
@@ -120,20 +120,12 @@ object RuntimeTypeMapper {
                          throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property")
 
             return StringBuilder {
-                append(getterName(method.getName().asString()))
+                append(JvmAbi.getterName(method.getName().asString()))
                 append("()")
                 appendJavaType(method.getType())
             }.toString()
         }
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
-    }
-
-    private fun getterName(propertyName: String): String {
-        return JvmAbi.GETTER_PREFIX + propertyName.capitalizeWithJavaBeanConvention()
-    }
-
-    private fun String.capitalizeWithJavaBeanConvention(): String {
-        return if (length() > 1 && this[1].isUpperCase()) this else capitalize()
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {

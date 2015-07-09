@@ -25,7 +25,6 @@ import com.intellij.psi.*
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
@@ -91,7 +91,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val conflicts = MultiMap<PsiElement, String>()
-            val getterName = PropertyCodegen.getterName(callableDescriptor.getName())
+            val getterName = JvmAbi.getterName(callableDescriptor.getName().asString())
             val callables = getAffectedCallables(project, descriptorsForChange)
             val kotlinCalls = ArrayList<JetCallElement>()
             val foreignRefs = ArrayList<PsiReference>()

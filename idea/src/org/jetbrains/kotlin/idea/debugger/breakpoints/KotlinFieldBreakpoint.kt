@@ -41,13 +41,12 @@ import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.request.MethodEntryRequest
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetParameter
@@ -165,17 +164,17 @@ class KotlinFieldBreakpoint(
                     }
                 }
                 BreakpointType.METHOD -> {
-                    val propertyName = Name.identifier(getFieldName())
+                    val fieldName = getFieldName()
 
                     if (getProperties().WATCH_ACCESS) {
-                        val getter = refType.methodsByName(PropertyCodegen.getterName(propertyName)).firstOrNull()
+                        val getter = refType.methodsByName(JvmAbi.getterName(fieldName)).firstOrNull()
                         if (getter != null) {
                             createMethodBreakpoint(debugProcess, refType, getter)
                         }
                     }
 
                     if (getProperties().WATCH_MODIFICATION) {
-                        val setter = refType.methodsByName(PropertyCodegen.setterName(propertyName)).firstOrNull()
+                        val setter = refType.methodsByName(JvmAbi.setterName(fieldName)).firstOrNull()
                         if (setter != null) {
                             createMethodBreakpoint(debugProcess, refType, setter)
                         }
@@ -255,9 +254,8 @@ class KotlinFieldBreakpoint(
     }
 
     private fun getMethodsName(): List<String> {
-        val propertyName = Name.identifier(getFieldName())
-        return arrayListOf(PropertyCodegen.getterName(propertyName), PropertyCodegen.setterName(propertyName))
-
+        val fieldName = getFieldName()
+        return listOf(JvmAbi.getterName(fieldName), JvmAbi.setterName(fieldName))
     }
 
     override fun getEventMessage(event: LocatableEvent): String {
