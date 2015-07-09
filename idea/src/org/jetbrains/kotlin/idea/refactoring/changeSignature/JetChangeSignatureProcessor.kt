@@ -29,6 +29,7 @@ import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
@@ -101,7 +102,7 @@ public class JetChangeSignatureProcessor(project: Project,
         return true
     }
 
-    override fun isPreviewUsages(usages: Array<UsageInfo>?) = isPreviewUsages()
+    override fun isPreviewUsages(NotNull usages: Array<out UsageInfo>): Boolean = isPreviewUsages()
 
     override fun getCommandName() = commandName
 }

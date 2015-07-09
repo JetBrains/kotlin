@@ -406,7 +406,7 @@ public class JetChangeSignatureDialog(
         private fun evaluateChangeInfo(parametersModel: JetCallableParameterTableModel,
                                        returnTypeCodeFragment: PsiCodeFragment?,
                                        methodDescriptor: JetMethodDescriptor,
-                                       visibility: Visibility,
+                                       visibility: Visibility?,
                                        methodName: String,
                                        defaultValueContext: PsiElement): JetChangeInfo {
             val parameters = parametersModel.getItems().map { parameter ->
@@ -428,7 +428,7 @@ public class JetChangeSignatureDialog(
                                  methodName,
                                  returnType,
                                  returnTypeText,
-                                 visibility,
+                                 visibility ?: Visibilities.INTERNAL,
                                  parameters,
                                  parametersModel.getReceiver(),
                                  defaultValueContext)
