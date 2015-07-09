@@ -61,11 +61,15 @@ import kotlin.properties.Delegates
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
-        val completeNonAccessibleDeclarations: Boolean)
+        val completeNonAccessibleDeclarations: Boolean,
+        val filterOutJavaGettersAndSetters: Boolean
+)
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
         completeNonImportedDeclarations = parameters.getInvocationCount() >= 2,
-        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2)
+        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2,
+        filterOutJavaGettersAndSetters = parameters.getInvocationCount() < 2
+)
 
 abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
@@ -208,7 +212,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
         if (descriptorKindFilter != null) {
             val expression = reference!!.expression
-            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, prefixMatcher.asNameFilter())
+            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, prefixMatcher.asNameFilter(), filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters)
                     .excludeNonInitializedVariable(expression)
         }
         else {

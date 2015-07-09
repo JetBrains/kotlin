@@ -1,7 +1,7 @@
-import java.io.File
-
-fun File.foo() {
+fun Thread.foo() {
     <caret>
 }
 
-// EXIST_JAVA_ONLY: { lookupString: "absolutePath", itemText: "absolutePath", tailText: " for File", typeText: "String!" }
+// EXIST_JAVA_ONLY: { lookupString: "priority", itemText: "priority", tailText: " for Thread", typeText: "Int" }
+// ABSENT: getPriority
+// ABSENT: setPriority

@@ -18,11 +18,11 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -37,9 +37,11 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 public class ReferenceVariantsHelper(
@@ -61,11 +63,28 @@ public class ReferenceVariantsHelper(
             expression: JetSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
+            filterOutJavaGettersAndSetters: Boolean = false,
             useRuntimeReceiverType: Boolean = false
     ): Collection<DeclarationDescriptor> {
-        val variants = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
+        var variants: Collection<DeclarationDescriptor>
+                = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
                 .filter(visibilityFilter)
-        return ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
+
+        variants = ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
+
+        if (filterOutJavaGettersAndSetters) {
+            val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
+            for (variant in variants) {
+                if (variant is SyntheticExtensionPropertyDescriptor) {
+                    accessorMethodsToRemove.add(variant.getMethod)
+                    accessorMethodsToRemove.addIfNotNull(variant.setMethod)
+                }
+            }
+
+            variants = variants.filter { it !in accessorMethodsToRemove }
+        }
+
+        return variants
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(

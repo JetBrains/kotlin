@@ -5,3 +5,4 @@ fun foo(file: File) {
 }
 
 // EXIST_JAVA_ONLY: { lookupString: "absolutePath", itemText: "absolutePath", tailText: " for File", typeText: "String!" }
+// ABSENT: getAbsolutePath
