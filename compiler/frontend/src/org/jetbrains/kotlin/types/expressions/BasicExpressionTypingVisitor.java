@@ -517,7 +517,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
-            return TypeInfoFactoryPackage.createTypeInfo(components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c);
+            return TypeInfoFactoryPackage.createCheckedTypeInfo(
+                    components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
+            );
         }
 
         return TypeInfoFactoryPackage.createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c);
