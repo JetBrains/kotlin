@@ -205,7 +205,6 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val descriptorKindFilter: DescriptorKindFilter?
 
-    // set is used only for completion in code fragments
     protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
         if (descriptorKindFilter != null) {
             val expression = reference!!.expression
