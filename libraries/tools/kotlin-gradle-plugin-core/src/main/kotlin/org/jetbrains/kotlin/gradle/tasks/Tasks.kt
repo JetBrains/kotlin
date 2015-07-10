@@ -55,7 +55,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
-    [TaskAction]
+    @TaskAction
     override fun compile() {
         getLogger().debug("Starting ${javaClass} task")
         val args = createBlankArgs()
@@ -126,17 +126,12 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         getLogger().kotlinDebug("args.destination = ${args.destination}")
 
         val extraProperties = getExtensions().getExtraProperties()
-        args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
+        args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
         getLogger().kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
-        val basePluginOptions = (extraProperties.get("compilerPluginArguments") as? Array<String>) ?: array()
+        val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
-
-        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
-        if (kaptAnnotationsFile != null) {
-            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
-        }
+        handleKaptProperties(extraProperties, pluginOptions)
 
         args.pluginOptions = pluginOptions.toTypedArray()
         getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
@@ -155,6 +150,24 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noOptimize = kotlinOptions.noOptimize
         args.noCallAssertions = kotlinOptions.noCallAssertions
         args.noParamAssertions = kotlinOptions.noParamAssertions
+    }
+
+    private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
+        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
+        if (kaptAnnotationsFile != null) {
+            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
+        }
+
+        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
+        if (kaptClassFileStubsDir != null) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+        }
+
+        val supportInheritedAnnotations = extraProperties.getOrNull<Boolean>("kaptInheritedAnnotations")
+        if (supportInheritedAnnotations != null && supportInheritedAnnotations) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:inherited=true")
+        }
     }
 
     private fun getJavaSourceRoots(): Set<File> =
@@ -334,16 +347,18 @@ public open class KDoc() : SourceTask() {
     }
 }
 
-private inline fun <reified T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
+private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     try {
-        return get(id) as T
-    } catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
+        @suppress("UNCHECKED_CAST")
+        return get(id) as? T
+    }
+    catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
         return null
     }
 }
 
 fun getAnnotations(project: Project, logger: Logger): Collection<File> {
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
     if (!annotations.isEmpty()) {

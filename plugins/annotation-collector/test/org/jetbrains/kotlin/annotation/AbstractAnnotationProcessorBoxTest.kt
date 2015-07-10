@@ -35,12 +35,15 @@ import org.junit.Assert.*
 public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
 
     public fun doTest(path: String) {
-        val fileName = path + getTestName(true) + ".kt"
-        val collectorExtension = createTestEnvironment()
+        val testName = getTestName(true)
+        val fileName = path + testName + ".kt"
+        val supportInheritedAnnotations = testName.startsWith("inherited")
+
+        val collectorExtension = createTestEnvironment(supportInheritedAnnotations)
         loadFileByFullPath(fileName)
         CodegenTestUtil.generateFiles(myEnvironment, myFiles)
 
-        val actualAnnotations = collectorExtension.stringWriter.toString()
+        val actualAnnotations = JetTestUtils.replaceHashWithStar(collectorExtension.stringWriter.toString())
         val expectedAnnotationsFile = File(path + "annotations.txt")
 
         JetTestUtils.assertEqualsToFile(expectedAnnotationsFile, actualAnnotations)
@@ -50,12 +53,12 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         return "plugins/annotation-collector/testData/codegen/"
     }
 
-    fun createTestEnvironment(): AnnotationCollectorExtensionForTests {
+    fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project
 
-        val collectorExtension = AnnotationCollectorExtensionForTests()
+        val collectorExtension = AnnotationCollectorExtensionForTests(supportInheritedAnnotations)
         ClassBuilderInterceptorExtension.registerExtension(project, collectorExtension)
 
         myEnvironment = environment
@@ -63,7 +66,9 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         return collectorExtension
     }
 
-    private class AnnotationCollectorExtensionForTests : AnnotationCollectorExtensionBase() {
+    private class AnnotationCollectorExtensionForTests(
+            supportInheritedAnnotations: Boolean
+    ) : AnnotationCollectorExtensionBase(supportInheritedAnnotations) {
         val stringWriter = StringWriter()
 
         override fun getWriter(diagnostic: DiagnosticSink) = stringWriter

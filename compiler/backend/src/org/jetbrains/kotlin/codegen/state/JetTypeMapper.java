@@ -789,6 +789,10 @@ public class JetTypeMapper {
         return result;
     }
 
+    public ClassBuilderMode getClassBuilderMode() {
+        return classBuilderMode;
+    }
+
     private static boolean isConstructor(@NotNull Method method) {
         return "<init>".equals(method.getName());
     }
