@@ -32,6 +32,10 @@ public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null
 }
 
+public fun DeclarationDescriptor.findPublicFieldAnnotation(): AnnotationDescriptor? {
+    return getAnnotations().findAnnotation(FqName("kotlin.jvm.publicField"))
+}
+
 public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.internal.Intrinsic")) != null
 }

@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
@@ -31,8 +30,6 @@ import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryCoreUtil;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
-
-import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.showInfoNotification;
 
 public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator {
     public static final String NAME = "java";
@@ -95,49 +92,11 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
         );
     }
 
-    public void copySourcesToPathFromLibrary(@NotNull Library library) {
-        String dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES);
-        assert dirToJarFromLibrary != null : "Directory to file from library should be non null";
-
-        copyFileToDir(getExistingJarFiles().getRuntimeSourcesJar(), dirToJarFromLibrary);
-    }
-
-    public boolean changeOldSourcesPathIfNeeded(@NotNull Library library) {
-        if (!removeOldSourcesRootIfNeeded(library)) {
-            return false;
-        }
-
-        String parentDir = getPathFromLibrary(library, OrderRootType.CLASSES);
-        assert parentDir != null : "Parent dir for classes jar should exists for Kotlin library";
-
-        return addSourcesToLibraryIfNeeded(library, getExistingJarFiles().getRuntimeSourcesDestination(parentDir));
-    }
-
-    private static boolean removeOldSourcesRootIfNeeded(@NotNull Library library) {
+    @Nullable
+    @Override
+    protected String getOldSourceRootUrl(@NotNull Library library) {
         VirtualFile runtimeJarPath = JavaRuntimePresentationProvider.getRuntimeJar(library);
-        if (runtimeJarPath == null) {
-            return false;
-        }
-
-        String oldLibrarySourceRoot = runtimeJarPath.getUrl() + "src";
-
-        String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
-        for (String sourceRoot : librarySourceRoots) {
-            if (sourceRoot.equals(oldLibrarySourceRoot)) {
-                final Library.ModifiableModel model = library.getModifiableModel();
-                model.removeRoot(oldLibrarySourceRoot, OrderRootType.SOURCES);
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        model.commit();
-                    }
-                });
-
-                showInfoNotification("Source root '" + oldLibrarySourceRoot + "' was removed for " + library.getName() + " library");
-                return true;
-            }
-        }
-        return false;
+        return runtimeJarPath != null ? runtimeJarPath.getUrl() + "src" : null;
     }
 
     @Override

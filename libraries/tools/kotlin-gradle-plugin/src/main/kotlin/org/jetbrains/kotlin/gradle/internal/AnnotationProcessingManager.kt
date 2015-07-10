@@ -16,23 +16,28 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.android.build.gradle.BaseExtension
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Opcodes.*
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 import java.util.zip.ZipFile
 
 public class AnnotationProcessingManager(
         private val task: AbstractCompile,
-        val javaTask: JavaCompile,
-        val taskQualifier: String,
-        val aptFiles: Set<File>,
-        val aptOutputDir: File,
-        val aptWorkingDir: File) {
+        private val javaTask: JavaCompile,
+        private val taskQualifier: String,
+        private val aptFiles: Set<File>,
+        private val aptOutputDir: File,
+        private val aptWorkingDir: File,
+        private val coreClassLoader: ClassLoader,
+        private val androidVariant: Any? = null) {
 
     private val project = task.getProject()
 
@@ -40,33 +45,48 @@ public class AnnotationProcessingManager(
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val WRAPPERS_DIRECTORY = "wrappers"
         val GEN_ANNOTATION = "__gen/annotation"
+
+        private val ANDROID_APT_PLUGIN_ID = "com.neenbedankt.android-apt"
     }
 
     fun getAnnotationFile(): File {
-        aptWorkingDir.mkdirs()
+        if (!aptWorkingDir.exists()) aptWorkingDir.mkdirs()
         return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/annotations.$taskQualifier.txt")
     }
 
     fun setupKapt() {
         if (aptFiles.isEmpty()) return
 
-        generateJavaHackFile(aptWorkingDir, javaTask)
-
-        javaTask.appendClasspath(aptFiles)
+        if (project.getPlugins().findPlugin("com.neenbedankt.android-apt") != null) {
+            project.getLogger().warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
+        }
 
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
-        generateAnnotationProcessorStubs(aptWorkingDir, javaTask, annotationProcessorFqNames)
+
+        val stubOutputDir = File(aptWorkingDir, WRAPPERS_DIRECTORY)
+        generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, stubOutputDir)
+
+        val processorPath = setOf(stubOutputDir) + aptFiles
+        setProcessorPath(javaTask, processorPath.joinToString(File.pathSeparator))
+        javaTask.appendClasspath(stubOutputDir)
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
+
+        appendAnnotationsFileLocationArgument()
+        appendAdditionalComplerArgs()
     }
 
     fun afterJavaCompile() {
         val generatedFile = File(javaTask.getDestinationDir(), "$GEN_ANNOTATION/Cl.class")
-        if (generatedFile.exists()) generatedFile.delete()
+        if (generatedFile.exists()) {
+            generatedFile.delete()
+        } else {
+            project.getLogger().kotlinDebug("kapt: Java file stub was not found at $generatedFile")
+        }
     }
 
-    private fun generateJavaHackFile(aptDir: File, javaTask: JavaCompile) {
-        val javaAptSourceDir = File(aptDir, "java_src")
+    fun generateJavaHackFile() {
+        val javaAptSourceDir = File(aptWorkingDir, "java_src")
         val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
 
         javaHackPackageDir.mkdirs()
@@ -76,119 +96,108 @@ public class AnnotationProcessingManager(
                 "package __gen.annotation;" +
                 "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
 
+        project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
         javaTask.source(javaAptSourceDir)
     }
 
-    private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, processorFqNames: Set<String>) {
-        val stubOutputDir = File(aptDir, "$WRAPPERS_DIRECTORY")
+    private fun appendAnnotationsFileLocationArgument() {
+        javaTask.modifyCompilerArguments { list ->
+            list.add("-Akapt.annotations=" + getAnnotationFile())
+        }
+    }
 
-        generateKotlinAptAnnotation(stubOutputDir)
+    private fun appendAdditionalComplerArgs() {
+        val kaptExtension = project.getExtensions().getByType(javaClass<KaptExtension>())
+        val args = kaptExtension.getAdditionalArguments(project, androidVariant, getAndroidExtension())
+        if (args.isEmpty()) return
 
-        val stubOutputPackageDir = File(stubOutputDir, "__gen")
+        javaTask.modifyCompilerArguments { list ->
+            list.addAll(args)
+        }
+    }
+
+    private fun generateAnnotationProcessorStubs(javaTask: JavaCompile, processorFqNames: Set<String>, outputDir: File) {
+        val aptAnnotationFile = invokeCoreKaptMethod("generateKotlinAptAnnotation", outputDir) as File
+        project.getLogger().kotlinDebug("kapt: Stub annotation generated: $aptAnnotationFile")
+
+        val stubOutputPackageDir = File(outputDir, "__gen")
         stubOutputPackageDir.mkdirs()
 
-        for (processor in processorFqNames) {
-            generateAnnotationProcessorWrapper(processor, "__gen", stubOutputPackageDir)
+        for (processorFqName in processorFqNames) {
+            val wrapperFile = invokeCoreKaptMethod("generateAnnotationProcessorWrapper",
+                    processorFqName,
+                    "__gen",
+                    stubOutputPackageDir,
+                    getProcessorStubClassName(processorFqName),
+                    taskQualifier) as File
+
+            project.getLogger().kotlinDebug("kapt: Wrapper for $processorFqName generated: $wrapperFile")
         }
 
         val annotationProcessorWrapperFqNames = processorFqNames
                 .map { fqName -> "__gen." + getProcessorStubClassName(fqName) }
                 .joinToString(",")
 
-        javaTask.appendClasspath(stubOutputDir)
         addWrappersToCompilerArgs(javaTask, annotationProcessorWrapperFqNames)
     }
 
     private fun JavaCompile.appendClasspath(file: File) = setClasspath(getClasspath() + project.files(file))
 
-    private fun JavaCompile.appendClasspath(files: Iterable<File>) = setClasspath(getClasspath() + project.files(files))
-
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {
-        val compilerArgs = javaTask.getOptions().getCompilerArgs()
-        val argIndex = compilerArgs.indexOfFirst { "-processor" == it }
-
-        // Already has a "-processor" argument (and it is not the last one)
-        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
-            compilerArgs[argIndex + 1] =
-                    compilerArgs[argIndex + 1] + "," + wrapperFqNames
+        javaTask.addCompilerArgument("-processor") { prevValue ->
+            if (prevValue != null) "$prevValue,$wrapperFqNames" else wrapperFqNames
         }
-        else {
-            compilerArgs.add("-processor")
-            compilerArgs.add(wrapperFqNames)
-        }
+    }
 
-        javaTask.getOptions().setCompilerArgs(compilerArgs)
+    private fun getAndroidExtension(): BaseExtension? {
+        try {
+            return project.getExtensions().getByName("android") as BaseExtension
+        } catch (e: UnknownDomainObjectException) {
+            return null
+        }
+    }
+
+    private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
+        outputDir.mkdirs()
+
+        javaTask.addCompilerArgument("-s") { prevValue ->
+            if (prevValue != null)
+                javaTask.getLogger().warn("Destination for generated sources was modified by kapt. Previous value = $prevValue")
+            outputDir.getAbsolutePath()
+        }
+    }
+
+    private fun setProcessorPath(javaTask: JavaCompile, path: String) {
+        javaTask.addCompilerArgument("-processorpath") { prevValue ->
+            if (prevValue != null)
+                javaTask.getLogger().warn("Processor path was modified by kapt. Previous value = $prevValue")
+            path
+        }
     }
 
     private fun getProcessorStubClassName(processorFqName: String): String {
         return "AnnotationProcessorWrapper_${taskQualifier}_${processorFqName.replace('.', '_')}"
     }
 
-    private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
-        outputDir.mkdirs()
+    private inline fun JavaCompile.addCompilerArgument(name: String, value: (String?) -> String) {
+        modifyCompilerArguments { args ->
+            val argIndex = args.indexOfFirst { name == it }
 
-        val compilerArgs = javaTask.getOptions().getCompilerArgs().toArrayList()
-
-        val argIndex = compilerArgs.indexOfFirst { "-s" == it }
-
-        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
-            task.getLogger().warn("Destination for generated sources was modified by kapt. " +
-                    "Previous value = " + compilerArgs[argIndex + 1])
-
-            compilerArgs[argIndex + 1] = outputDir.getAbsolutePath()
-        }
-        else {
-            compilerArgs.add("-s")
-            compilerArgs.add(outputDir.getAbsolutePath())
-        }
-
-        javaTask.getOptions().setCompilerArgs(compilerArgs)
-    }
-
-    private fun generateKotlinAptAnnotation(outputDirectory: File) {
-        val packageName = "__gen"
-        val className = "KotlinAptAnnotation"
-        val classFqName = "$packageName/$className"
-
-        val bytes = with (ClassWriter(0)) {
-            visit(49, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE + ACC_ANNOTATION, classFqName,
-                    null, null, arrayOf("java/lang/annotation/Annotation"))
-            visitSource(null, null)
-            visitEnd()
-            toByteArray()
-        }
-
-        val injectPackage = File(outputDirectory, packageName)
-        injectPackage.mkdirs()
-        File(injectPackage, "$className.class").writeBytes(bytes)
-    }
-
-    private fun generateAnnotationProcessorWrapper(processorFqName: String, packageName: String, outputDirectory: File) {
-        val className = getProcessorStubClassName(processorFqName)
-        val classFqName = "$packageName/$className"
-
-        val bytes = with (ClassWriter(0)) {
-            val superClass = "org/jetbrains/kotlin/annotation/AnnotationProcessorWrapper"
-
-            visit(49, ACC_PUBLIC + ACC_SUPER, classFqName, null,
-                    superClass, null)
-
-            visitSource(null, null)
-
-            with (visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)) {
-                visitVarInsn(ALOAD, 0)
-                visitLdcInsn(processorFqName)
-                visitLdcInsn(taskQualifier)
-                visitMethodInsn(INVOKESPECIAL, superClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V", false)
-                visitInsn(RETURN)
-                visitMaxs(3 /*max stack*/, 1 /*max locals*/)
-                visitEnd()
+            if (argIndex >= 0 && args.size() > (argIndex + 1)) {
+                args[argIndex + 1] = value(args[argIndex + 1])
             }
-
-            visitEnd()
-            toByteArray()
+            else {
+                args.add(name)
+                args.add(value(null))
+            }
         }
-        File(outputDirectory, "$className.class").writeBytes(bytes)
+    }
+
+    private inline fun JavaCompile.modifyCompilerArguments(modifier: (MutableList<String>) -> Unit) {
+        val compilerArgs: List<Any> = getOptions().getCompilerArgs()
+        val newCompilerArgs = compilerArgs.mapTo(arrayListOf<String>()) { it.toString() }
+        modifier(newCompilerArgs)
+        getOptions().setCompilerArgs(newCompilerArgs)
     }
 
     private fun lookupAnnotationProcessors(files: Set<File>): Set<String> {
@@ -232,7 +241,19 @@ public class AnnotationProcessingManager(
             }
         }
 
+        project.getLogger().kotlinDebug("kapt: Discovered annotation processors: ${annotationProcessors.joinToString()}")
         return annotationProcessors
+    }
+
+    private fun invokeCoreKaptMethod(methodName: String, vararg args: Any): Any {
+        val array = arrayOfNulls<Class<*>>(args.size())
+        args.forEachIndexed { i, arg -> array[i] = arg.javaClass }
+        val method = getCoreKaptPackageClass().getMethod(methodName, *array)
+        return method.invoke(null, *args)
+    }
+
+    private fun getCoreKaptPackageClass(): Class<*> {
+        return Class.forName("org.jetbrains.kotlin.gradle.tasks.kapt.KaptPackage", false, coreClassLoader)
     }
 
 }

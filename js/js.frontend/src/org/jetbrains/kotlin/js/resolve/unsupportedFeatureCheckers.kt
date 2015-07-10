@@ -26,12 +26,17 @@ import org.jetbrains.kotlin.diagnostics.rendering.renderKindWithName
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class ClassDeclarationChecker : DeclarationChecker {
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
-
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
         if (declaration !is JetClassOrObject || declaration is JetObjectDeclaration || declaration is JetEnumEntry) return
 
         // hack to avoid to get diagnostics when compile kotlin builtins

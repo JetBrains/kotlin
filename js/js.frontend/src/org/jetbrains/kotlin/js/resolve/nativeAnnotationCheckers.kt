@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -35,9 +36,13 @@ private abstract class AbstractNativeAnnotationsChecker(private val requiredAnno
 
     open fun additionalCheck(declaration: JetNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {}
 
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
-        val annotationDescriptor = descriptor.getAnnotations().findAnnotation(requiredAnnotation.fqName)
-        if (annotationDescriptor == null) return
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
+        val annotationDescriptor = descriptor.getAnnotations().findAnnotation(requiredAnnotation.fqName) ?: return
 
         if (declaration !is JetNamedFunction || descriptor !is FunctionDescriptor) {
             diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(declaration, annotationDescriptor.getType()))

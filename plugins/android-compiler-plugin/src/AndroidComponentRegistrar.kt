@@ -68,7 +68,7 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 
 public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = ServiceManager.getService<AndroidUIXmlProcessor>(project, javaClass<AndroidUIXmlProcessor>())
+        val parser = ServiceManager.getService(project, javaClass<AndroidUIXmlProcessor>())
         return parser.parseToPsi() ?: listOf()
     }
 }

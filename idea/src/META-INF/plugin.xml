@@ -444,7 +444,6 @@
 
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryPresentationProvider"/>
 
     <typeHierarchyProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider"/>
     <callHierarchyProvider
@@ -1044,6 +1043,8 @@
     <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider"/>
+
+    <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>

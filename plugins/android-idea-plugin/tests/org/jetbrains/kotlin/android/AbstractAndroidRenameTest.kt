@@ -37,8 +37,8 @@ public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
         val editor = f.getEditor()
         val file = f.getFile()
         val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file)
-        val element = TargetElementUtilBase.findTargetElement(completionEditor,
-                                                              TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
+        val element = TargetElementUtilBase.findTargetElement(
+                completionEditor, TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED)
 
         assert(element != null)
         assertTrue(element is JetProperty)

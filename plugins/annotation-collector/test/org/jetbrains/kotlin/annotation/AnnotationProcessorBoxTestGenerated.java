@@ -77,6 +77,18 @@ public class AnnotationProcessorBoxTestGenerated extends AbstractAnnotationProce
         doTest(fileName);
     }
 
+    @TestMetadata("inheritedSimple")
+    public void testInheritedSimple() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedSimple/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inheritedTopLevel")
+    public void testInheritedTopLevel() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedTopLevel/");
+        doTest(fileName);
+    }
+
     @TestMetadata("localClasses")
     public void testLocalClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/localClasses/");

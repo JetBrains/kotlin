@@ -58,4 +58,54 @@ class KotlinGradleIT: BaseGradleIT() {
             assertContains(":compileKotlin", ":compileTestKotlin")
         }
     }
+
+    Test fun testKaptSimple() {
+        Project("kaptSimple", "1.12").build("build") {
+            assertSuccessful()
+            assertContains("kapt: Class file stubs are not used")
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+        }
+    }
+
+    Test fun testKaptStubs() {
+        Project("kaptStubs", "1.12").build("build") {
+            assertSuccessful()
+            assertContains("kapt: Using class file stubs")
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+        }
+    }
+
+    Test fun testKaptArguments() {
+        Project("kaptArguments", "1.12").build("build") {
+            assertSuccessful()
+            assertContains("kapt: Using class file stubs")
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
+
+    Test fun testKaptInheritedAnnotations() {
+        Project("kaptInheritedAnnotations", "1.12").build("build") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/AncestorClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
+        }
+    }
+
 }
