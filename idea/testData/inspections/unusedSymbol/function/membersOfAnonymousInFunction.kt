@@ -30,16 +30,4 @@ fun main(args: Array<String>) {
     }
 
     a.b.c.d
-
-
-    class LocalClass {
-        fun f() {
-        }
-
-        val p = 5
-    }
-
-
-    LocalClass().f()
-    LocalClass().p
 }
