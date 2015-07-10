@@ -49,6 +49,16 @@ import java.io.File;
 import java.util.*;
 
 public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
+    private final List<Editor> editors = new ArrayList<Editor>();
+
+    private static final String[] EXTENSIONS = {".kt", ".java"};
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        editors.clear();
+    }
+
     public void testBadSelection() throws Exception {
         configureByFile(getTestName(false) + "Before.kt");
         Editor editor = getEditor();
@@ -915,10 +925,6 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
     }
-
-    private final List<Editor> editors = new ArrayList<Editor>();
-
-    private static final String[] EXTENSIONS = {".kt", ".java"};
 
     private void configureFiles() throws Exception {
         editors.clear();
