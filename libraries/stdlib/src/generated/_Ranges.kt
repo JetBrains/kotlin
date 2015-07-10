@@ -11,6 +11,216 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun IntRange.contains(item: Byte): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun LongRange.contains(item: Byte): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ShortRange.contains(item: Byte): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun DoubleRange.contains(item: Byte): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun FloatRange.contains(item: Byte): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun IntRange.contains(item: Double): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun LongRange.contains(item: Double): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ByteRange.contains(item: Double): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ShortRange.contains(item: Double): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun FloatRange.contains(item: Double): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun IntRange.contains(item: Float): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun LongRange.contains(item: Float): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ByteRange.contains(item: Float): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ShortRange.contains(item: Float): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun DoubleRange.contains(item: Float): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun LongRange.contains(item: Int): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ByteRange.contains(item: Int): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ShortRange.contains(item: Int): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun DoubleRange.contains(item: Int): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun FloatRange.contains(item: Int): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun IntRange.contains(item: Long): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ByteRange.contains(item: Long): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ShortRange.contains(item: Long): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun DoubleRange.contains(item: Long): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun FloatRange.contains(item: Long): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun IntRange.contains(item: Short): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun LongRange.contains(item: Short): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun ByteRange.contains(item: Short): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun DoubleRange.contains(item: Short): Boolean {
+    return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+public fun FloatRange.contains(item: Short): Boolean {
+    return start <= item && item <= end
+}
+
+/**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */

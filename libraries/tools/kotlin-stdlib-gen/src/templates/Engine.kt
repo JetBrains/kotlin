@@ -50,8 +50,6 @@ enum class PrimitiveType {
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
 
         fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
-
-        val primitivePermutations = numericPrimitives.flatMap { fromType -> numericPrimitives map { toType -> fromType to toType } } + (Char to Char)
     }
 }
 

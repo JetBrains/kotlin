@@ -72,7 +72,11 @@ fun ranges(): List<GenericFunction> {
         body { "return $progressionType($fromExpr, $toExpr, $incrementExpr)" }
     }
 
-    templates addAll PrimitiveType.primitivePermutations.map { downTo(it.first, it.second) }
+    val numericPrimitives = PrimitiveType.numericPrimitives
+    val numericPermutations = numericPrimitives flatMap { fromType -> numericPrimitives map { toType -> fromType to toType }}
+    val primitivePermutations = numericPermutations + (PrimitiveType.Char to PrimitiveType.Char)
+
+    templates addAll primitivePermutations.map { downTo(it.first, it.second) }
 
     fun until(fromType: PrimitiveType, toType: PrimitiveType) = f("until(to: $toType)") {
         only(Primitives)
@@ -109,9 +113,19 @@ fun ranges(): List<GenericFunction> {
         }
     }
 
-    templates addAll PrimitiveType.primitivePermutations
+    templates addAll primitivePermutations
             .filter { it.first.isIntegral() && it.second.isIntegral() }
             .map { until(it.first, it.second) }
+
+    fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
+        only(RangesOfPrimitives)
+        only(rangeType)
+        returns("Boolean")
+        doc { "Checks if the specified [item] belongs to this range." }
+        body { "return start <= item && item <= end" }
+    }
+
+    templates addAll numericPermutations.filter { it.first != it.second }.map { contains(it.first, it.second) }
 
     return templates
 }
