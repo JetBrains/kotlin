@@ -73,8 +73,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        super.setUp();
 
         UsefulTestCase.edt(new Runnable() {
             @Override
@@ -110,8 +110,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
         super.tearDown();
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
     }
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
