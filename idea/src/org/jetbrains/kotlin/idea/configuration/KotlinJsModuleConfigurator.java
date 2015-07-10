@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.js.JavaScript;
@@ -87,5 +91,12 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     }
 
     KotlinJsModuleConfigurator() {
+    }
+
+    @Nullable
+    @Override
+    protected String getOldSourceRootUrl(@NotNull Library library) {
+        VirtualFile jsStdLibJar = JSLibraryStdPresentationProvider.getJsStdLibJar(library);
+        return jsStdLibJar != null ? jsStdLibJar.getUrl() : null;
     }
 }

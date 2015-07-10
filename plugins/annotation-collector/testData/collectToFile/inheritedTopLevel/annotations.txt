@@ -1,0 +1,6 @@
+p org.test 0
+d 0/TestPackage$inheritedTopLevel$*
+a org.jetbrains.annotations.NotNull 0
+m 0 0/TestPackage$inheritedTopLevel$* getTopLevelProperty
+d 0/TestPackage
+m 0 0/TestPackage getTopLevelProperty

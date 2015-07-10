@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.annotation
 
+import java.io.File
+import java.io.Reader
+import java.io.StringReader
 import javax.tools.FileObject
 import kotlin.properties.Delegates
 
@@ -28,13 +31,23 @@ public abstract class KotlinAnnotationProvider {
 
         val SHORTENED_ANNOTATION = "a"
         val SHORTENED_PACKAGE_NAME = "p"
+
+        val CLASS_DECLARATION = "d"
     }
 
     public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by Delegates.lazy {
         readAnnotations()
     }
 
-    protected abstract val serializedAnnotations: String
+    private val kotlinClassesInternal = hashSetOf<String>()
+
+    public val kotlinClasses: Set<String>
+        get() = kotlinClassesInternal
+
+    public val supportInheritedAnnotations: Boolean
+        get() = kotlinClassesInternal.isNotEmpty()
+
+    protected abstract val serializedAnnotations: Reader
 
     private fun readAnnotations(): MutableMap<String, MutableSet<AnnotatedElementDescriptor>> {
         val shortenedAnnotationCache = hashMapOf<String, String>()
@@ -53,40 +66,46 @@ public abstract class KotlinAnnotationProvider {
 
         val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> = hashMapOf()
 
-        for (line in serializedAnnotations.lines()) {
-            if (line.isEmpty()) continue
-            val lineParts = line.split(' ')
+        serializedAnnotations.useLines { lines ->
+            for (line in lines) {
+                if (line.isEmpty()) continue
+                val lineParts = line.split(' ')
 
-            val type = lineParts[0]
-            when (type) {
-                SHORTENED_ANNOTATION -> handleShortenedName(shortenedAnnotationCache, lineParts)
-                SHORTENED_PACKAGE_NAME -> handleShortenedName(shortenedPackageNameCache, lineParts)
+                val type = lineParts[0]
+                when (type) {
+                    SHORTENED_ANNOTATION -> handleShortenedName(shortenedAnnotationCache, lineParts)
+                    SHORTENED_PACKAGE_NAME -> handleShortenedName(shortenedPackageNameCache, lineParts)
+                    CLASS_DECLARATION -> {
+                        val classFqName = expandClassName(lineParts[1]).replace('$', '.')
+                        kotlinClassesInternal.add(classFqName)
+                    }
 
-                ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
-                    val annotationName = expandAnnotation(lineParts[1])
-                    val classFqName = expandClassName(lineParts[2]).replace('$', '.')
-                    val elementName = if (lineParts.size() == 4) lineParts[3] else null
+                    ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
+                        val annotationName = expandAnnotation(lineParts[1])
+                        val classFqName = expandClassName(lineParts[2]).replace('$', '.')
+                        val elementName = if (lineParts.size() == 4) lineParts[3] else null
 
-                    val set = annotatedKotlinElements.getOrPut(annotationName) { hashSetOf() }
-                    set.add(when (type) {
-                        ANNOTATED_CLASS -> AnnotatedClassDescriptor(classFqName)
-                        ANNOTATED_FIELD -> {
-                            val name = elementName ?: throw AssertionError("Name for field must be provided")
-                            AnnotatedFieldDescriptor(classFqName, name)
-                        }
-                        ANNOTATED_METHOD -> {
-                            val name = elementName ?: throw AssertionError("Name for method must be provided")
+                        val set = annotatedKotlinElements.getOrPut(annotationName) { hashSetOf() }
+                        set.add(when (type) {
+                            ANNOTATED_CLASS -> AnnotatedClassDescriptor(classFqName)
+                            ANNOTATED_FIELD -> {
+                                val name = elementName ?: throw AssertionError("Name for field must be provided")
+                                AnnotatedFieldDescriptor(classFqName, name)
+                            }
+                            ANNOTATED_METHOD -> {
+                                val name = elementName ?: throw AssertionError("Name for method must be provided")
 
-                            if ("<init>" == name)
-                                AnnotatedConstructorDescriptor(classFqName)
-                            else
-                                AnnotatedMethodDescriptor(classFqName, name)
-                        }
-                        else -> throw AssertionError("Unknown type: $type")
-                    })
+                                if ("<init>" == name)
+                                    AnnotatedConstructorDescriptor(classFqName)
+                                else
+                                    AnnotatedMethodDescriptor(classFqName, name)
+                            }
+                            else -> throw AssertionError("Unknown type: $type")
+                        })
 
+                    }
+                    else -> throw AssertionError("Unknown type: $type")
                 }
-                else -> throw AssertionError("Unknown type: $type")
             }
         }
 
@@ -101,7 +120,11 @@ public abstract class KotlinAnnotationProvider {
 
 }
 
-public class FileObjectKotlinAnnotationProvider(val annotationsFileObject: FileObject): KotlinAnnotationProvider() {
-    override val serializedAnnotations: String
-        get() = annotationsFileObject.getCharContent(false).toString()
+public class FileKotlinAnnotationProvider(val annotationsFile: File): KotlinAnnotationProvider() {
+    override val serializedAnnotations: Reader
+        get() = annotationsFile.reader().buffered()
+}
+
+public class EmptyKotlinAnnotationsProvider : KotlinAnnotationProvider() {
+    override val serializedAnnotations = StringReader("")
 }

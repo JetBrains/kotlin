@@ -183,7 +183,7 @@ public abstract class AnnotationCodegen {
         ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
         RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
-        if (rp == RetentionPolicy.SOURCE) {
+        if (rp == RetentionPolicy.SOURCE && typeMapper.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
             return null;
         }
 

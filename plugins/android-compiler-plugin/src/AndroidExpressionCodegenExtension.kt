@@ -199,7 +199,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     }
 
     private fun CallableDescriptor.getAndroidPackage(): String? {
-        return DescriptorToSourceUtils.getContainingFile(this)?.getUserData<String>(AndroidConst.ANDROID_USER_PACKAGE)
+        return DescriptorToSourceUtils.getContainingFile(this)?.getUserData(AndroidConst.ANDROID_USER_PACKAGE)
     }
 
     private fun ResolvedCall<*>.getReceiverDeclarationDescriptor(): ClassifierDescriptor? {
@@ -337,6 +337,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
                 loadId()
                 iv.invokevirtual("android/view/View", "findViewById", "(I)Landroid/view/View;", false)
             }
+            else -> throw IllegalStateException("Can't generate code for $androidClassType")
         }
         iv.store(2, viewType)
 

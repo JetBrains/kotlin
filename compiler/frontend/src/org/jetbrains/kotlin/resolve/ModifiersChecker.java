@@ -402,7 +402,7 @@ public class ModifiersChecker {
 
     private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
         for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
-            checker.check(declaration, descriptor, trace);
+            checker.check(declaration, descriptor, trace, trace.getBindingContext());
         }
     }
 

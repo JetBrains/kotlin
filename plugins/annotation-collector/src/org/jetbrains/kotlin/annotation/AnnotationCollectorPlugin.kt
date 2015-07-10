@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException
@@ -47,7 +48,11 @@ public object AnnotationCollectorConfigurationKeys {
     public val ANNOTATION_FILTER_LIST: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation filter regular expressions")
     public val OUTPUT_FILENAME: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>("output file")
+            CompilerConfigurationKey.create<String>("annotation file name")
+    public val STUBS_PATH: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("stubs output directory")
+    public val INHERITED: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("support inherited annotations")
 }
 
 public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
@@ -59,11 +64,19 @@ public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
 
         public val OUTPUT_FILENAME_OPTION: CliOption =
                 CliOption("output", "<path>", "File in which annotated declarations will be placed", required = false)
+
+        public val STUBS_PATH_OPTION: CliOption =
+                CliOption("stubs", "<path>", "Output path for stubs", required = false)
+
+        public val INHERITED_ANNOTATIONS_OPTION: CliOption =
+                CliOption("inherited", "<true/false>",
+                          "True if collecting Kotlin class names for inherited annotations is needed", required = false)
     }
 
     override val pluginId: String = ANNOTATION_COLLECTOR_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption> = listOf(ANNOTATION_FILTER_LIST_OPTION, OUTPUT_FILENAME_OPTION)
+    override val pluginOptions: Collection<CliOption> =
+            listOf(ANNOTATION_FILTER_LIST_OPTION, OUTPUT_FILENAME_OPTION, STUBS_PATH_OPTION, INHERITED_ANNOTATIONS_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -72,6 +85,8 @@ public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
                 configuration.put(AnnotationCollectorConfigurationKeys.ANNOTATION_FILTER_LIST, annotations)
             }
             OUTPUT_FILENAME_OPTION -> configuration.put(AnnotationCollectorConfigurationKeys.OUTPUT_FILENAME, value)
+            STUBS_PATH_OPTION -> configuration.put(AnnotationCollectorConfigurationKeys.STUBS_PATH, value)
+            INHERITED_ANNOTATIONS_OPTION -> configuration.put(AnnotationCollectorConfigurationKeys.INHERITED, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -79,12 +94,18 @@ public class AnnotationCollectorCommandLineProcessor : CommandLineProcessor {
 
 public class AnnotationCollectorComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        val supportInheritedAnnotations = "true" == (configuration.get(AnnotationCollectorConfigurationKeys.INHERITED) ?: "true")
+
         val annotationFilterList = configuration.get(AnnotationCollectorConfigurationKeys.ANNOTATION_FILTER_LIST)
         val outputFilename = configuration.get(AnnotationCollectorConfigurationKeys.OUTPUT_FILENAME)
-
         if (outputFilename != null) {
-            val collectorExtension = AnnotationCollectorExtension(annotationFilterList, outputFilename)
+            val collectorExtension = AnnotationCollectorExtension(annotationFilterList, outputFilename, supportInheritedAnnotations)
             ClassBuilderInterceptorExtension.registerExtension(project, collectorExtension)
+        }
+
+        val stubs = configuration.get(AnnotationCollectorConfigurationKeys.STUBS_PATH)
+        if (stubs != null) {
+            AnalysisCompletedHandlerExtension.registerExtension(project, StubProducerExtension(File(stubs)))
         }
     }
 }

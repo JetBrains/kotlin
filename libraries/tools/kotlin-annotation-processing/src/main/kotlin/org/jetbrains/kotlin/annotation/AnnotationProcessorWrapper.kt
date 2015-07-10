@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.annotation
 
+import java.io.File
+import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.AnnotationMirror
@@ -41,6 +43,10 @@ public abstract class AnnotationProcessorWrapper(
         private val processorFqName: String,
         private val taskQualifier: String
 ) : Processor {
+
+    private companion object {
+        val KAPT_ANNOTATION_OPTION = "kapt.annotations"
+    }
 
     private val processor: Processor by Delegates.lazy {
         try {
@@ -75,8 +81,16 @@ public abstract class AnnotationProcessorWrapper(
             return
         }
 
-        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.$taskQualifier.txt")
-        kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
+        val annotationsFile = processingEnv.getOptions().get(KAPT_ANNOTATION_OPTION)
+        if (annotationsFile != null) {
+            try {
+                kotlinAnnotationsProvider = FileKotlinAnnotationProvider(File(annotationsFile))
+            }
+            catch (e: IOException) {
+                kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
+            }
+        }
+        else kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
 
         processor.init(processingEnv)
     }
@@ -94,14 +108,16 @@ public abstract class AnnotationProcessorWrapper(
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         roundCounter += 1
 
-        val annotatedKotlinElements = kotlinAnnotationsProvider.annotatedKotlinElements
-        val roundEnvironmentWrapper = RoundEnvironmentWrapper(processingEnv, roundEnv, roundCounter, annotatedKotlinElements)
+        val roundEnvironmentWrapper = RoundEnvironmentWrapper(
+                processingEnv, roundEnv, roundCounter, kotlinAnnotationsProvider)
         processor.process(annotations, roundEnvironmentWrapper)
         return false
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
-        return processor.getSupportedOptions()
+        val supportedOptions = processor.getSupportedOptions().toHashSet()
+        supportedOptions.add(KAPT_ANNOTATION_OPTION)
+        return supportedOptions
     }
 
     private fun ProcessingEnvironment.err(message: String) {
