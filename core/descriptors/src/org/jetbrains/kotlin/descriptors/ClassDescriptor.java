@@ -32,6 +32,9 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
     @NotNull
+    JetScope getUnsubstitutedMemberScope();
+
+    @NotNull
     JetScope getUnsubstitutedInnerClassesScope();
 
     @NotNull

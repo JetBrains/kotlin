@@ -77,7 +77,7 @@ private class MissingDependencyErrorClassDescriptor(
 
     override fun substitute(substitutor: TypeSubstitutor) = this
 
-    override fun getScopeForMemberLookup() = scope
+    override fun getUnsubstitutedMemberScope() = scope
 
     override fun getMemberScope(typeArguments: List<TypeProjection?>) = scope
 }

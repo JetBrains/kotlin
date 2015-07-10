@@ -91,7 +91,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    protected JetScope getScopeForMemberLookup() {
+    public JetScope getUnsubstitutedMemberScope() {
         return scope;
     }
 

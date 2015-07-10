@@ -65,7 +65,7 @@ public class LazyScriptDescriptor(
 
     override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript) as LazyScriptClassDescriptor
 
-    override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getScopeForMemberLookup().getScriptResultProperty()
+    override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getUnsubstitutedMemberScope().getScriptResultProperty()
 
     private val scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
         val result = ScriptCodeDescriptor(this)

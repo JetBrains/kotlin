@@ -91,7 +91,7 @@ public class DeserializedClassDescriptor(
 
     override fun getAnnotations() = annotations
 
-    override fun getScopeForMemberLookup() = memberScope
+    override fun getUnsubstitutedMemberScope() = memberScope
 
     override fun getStaticScope() = staticScope
 

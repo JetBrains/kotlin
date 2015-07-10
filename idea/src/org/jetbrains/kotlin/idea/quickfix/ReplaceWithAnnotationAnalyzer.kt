@@ -42,11 +42,11 @@ import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
@@ -172,13 +172,18 @@ object ReplaceWithAnnotationAnalyzer {
             is ClassDescriptorWithResolutionScopes ->
                 descriptor.getScopeForMemberDeclarationResolution()
 
+            is ClassDescriptor -> {
+                val outerScope = getResolutionScope(descriptor.getContainingDeclaration())
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).getScopeForMemberDeclarationResolution()
+            }
+
             is FunctionDescriptor ->
                 FunctionDescriptorUtil.getFunctionInnerScope(getResolutionScope(descriptor.getContainingDeclaration()),
                                                              descriptor, RedeclarationHandler.DO_NOTHING)
 
             is PropertyDescriptor ->
                 JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                               getResolutionScope(descriptor.getContainingDeclaration()!!),
+                                                               getResolutionScope(descriptor.getContainingDeclaration()),
                                                                RedeclarationHandler.DO_NOTHING)
             is LocalVariableDescriptor -> {
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration

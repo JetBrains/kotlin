@@ -71,7 +71,7 @@ public class FunctionClassDescriptor(
 
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
-    override fun getScopeForMemberLookup() = memberScope
+    override fun getUnsubstitutedMemberScope() = memberScope
 
     override fun getCompanionObjectDescriptor() = null
     override fun getConstructors() = emptyList<ConstructorDescriptor>()

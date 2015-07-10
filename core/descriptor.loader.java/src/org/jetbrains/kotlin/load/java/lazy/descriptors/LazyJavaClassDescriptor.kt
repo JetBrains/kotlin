@@ -77,10 +77,10 @@ class LazyJavaClassDescriptor(
     private val typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
     override fun getTypeConstructor(): TypeConstructor = typeConstructor()
 
-    private val scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass)
-    override fun getScopeForMemberLookup() = scopeForMemberLookup
+    private val unsubstitutedMemberScope = LazyJavaClassMemberScope(c, this, jClass)
+    override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
 
-    private val innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
+    private val innerClassesScope = InnerClassesScopeWrapper(getUnsubstitutedMemberScope())
     override fun getUnsubstitutedInnerClassesScope(): JetScope = innerClassesScope
 
     private val staticScope = LazyJavaStaticClassScope(c, jClass, this)
@@ -90,14 +90,14 @@ class LazyJavaClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
 
-    override fun getConstructors() = scopeForMemberLookup.constructors()
+    override fun getConstructors() = unsubstitutedMemberScope.constructors()
 
     private val annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
     override fun getAnnotations() = annotations()
 
     private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         c.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
-            scopeForMemberLookup.resolveMethodToFunctionDescriptor(method, false)
+            unsubstitutedMemberScope.resolveMethodToFunctionDescriptor(method, false)
         }
     }
 
