@@ -46,7 +46,7 @@ public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDes
 }
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
-    val method = getOriginalElement() as PsiMethod
+    val method = getOriginalElement() as? PsiMethod ?: return null
     val resolver = JavaResolveExtension.getResolver(method.getProject(), method)
     return when {
         method.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(method))
