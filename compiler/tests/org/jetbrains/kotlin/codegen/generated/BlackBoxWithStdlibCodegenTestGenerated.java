@@ -3123,15 +3123,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("equalsHashCode.kt")
-            public void testEqualsHashCode() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/equalsHashCode.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("extensionPropertyReceiverToString.kt")
             public void testExtensionPropertyReceiverToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/extensionPropertyReceiverToString.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("functionEqualsHashCode.kt")
+            public void testFunctionEqualsHashCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/functionEqualsHashCode.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("functionToString.kt")
+            public void testFunctionToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/functionToString.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -3150,6 +3156,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("packageToString.kt")
             public void testPackageToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/packageToString.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("propertyEqualsHashCode.kt")
+            public void testPropertyEqualsHashCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/propertyEqualsHashCode.kt");
                 doTestWithStdlib(fileName);
             }
 

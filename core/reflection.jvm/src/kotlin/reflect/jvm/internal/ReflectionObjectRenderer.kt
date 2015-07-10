@@ -55,7 +55,6 @@ object ReflectionObjectRenderer {
     }
 
     fun renderFunction(descriptor: FunctionDescriptor): String {
-        // TODO: add tests
         return StringBuilder {
             append("fun ")
             appendReceiversAndName(descriptor)
