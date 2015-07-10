@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
@@ -215,7 +216,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
 
             val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size() - 1]
-            val segmentReference = packageSegment.getReference()!!
+            val segmentReference = packageSegment.mainReference
 
             val psiElement = segmentReference.resolve()!!
 

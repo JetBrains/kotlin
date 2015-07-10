@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
+import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.HashSet
 
@@ -111,6 +113,25 @@ fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newNa
     if (newName == null) return expression
 
     val expr = OperatorToFunctionIntention.convert(expression) as JetQualifiedExpression
-    val newCallee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression()!!.getReference()!!.handleElementRename(newName)
+    val callee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression() as JetSimpleNameExpression
+    val newCallee = callee.mainReference.handleElementRename(newName)
     return newCallee.getStrictParentOfType<JetQualifiedExpression>() as JetExpression
 }
+
+val JetSimpleNameExpression.mainReference: JetSimpleNameReference
+    get() = getReferences().firstIsInstance()
+
+val JetReferenceExpression.mainReference: JetReference
+    get() = if (this is JetSimpleNameExpression) mainReference else getReferences().firstIsInstance<JetReference>()
+
+val KDocName.mainReference: KDocReference
+    get() = getReferences().firstIsInstance()
+
+val JetElement.mainReference: JetReference?
+    get() {
+        return when {
+            this is JetSimpleNameExpression -> mainReference
+            this is KDocName -> mainReference
+            else -> getReferences().firstIsInstanceOrNull<JetReference>()
+        }
+    }

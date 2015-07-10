@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.references.JetArrayAccessReference
 import org.jetbrains.kotlin.idea.references.JetInvokeFunctionReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -161,8 +162,7 @@ public object UsageTypeUtils {
         }
 
         fun getFunctionUsageType(descriptor: FunctionDescriptor): UsageTypeEnum? {
-            val ref = refExpr.getReference()
-            when (ref) {
+            when (refExpr.mainReference) {
                 is JetArrayAccessReference -> {
                     return when {
                         context[BindingContext.INDEXED_LVALUE_GET, refExpr] != null -> IMPLICIT_GET
@@ -216,7 +216,7 @@ public object UsageTypeUtils {
                 else -> getClassUsageType()
             }
             is PackageViewDescriptor -> {
-                if (refExpr.getReference()?.resolve() is PsiPackage) getPackageUsageType() else getClassUsageType()
+                if (refExpr.mainReference.resolve() is PsiPackage) getPackageUsageType() else getClassUsageType()
             }
             is VariableDescriptor -> getVariableUsageType()
             is FunctionDescriptor -> getFunctionUsageType(descriptor)

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
+import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
@@ -1009,7 +1010,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         if (usageInfo instanceof MoveRenameUsageInfo && isJavaMethodUsage) {
             JetSimpleNameExpression callee = PsiTreeUtil.getParentOfType(usageInfo.getElement(), JetSimpleNameExpression.class, false);
-            PsiReference ref = callee != null ? callee.getReference() : null;
+            PsiReference ref = callee != null ? ReferencesPackage.getMainReference(callee) : null;
             if (ref instanceof JetSimpleNameReference) {
                 ((JetSimpleNameReference) ref).handleElementRename(((PsiMethod)method).getName());
                 return true;

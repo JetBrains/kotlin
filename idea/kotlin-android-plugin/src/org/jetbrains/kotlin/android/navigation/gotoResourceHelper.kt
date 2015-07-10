@@ -25,6 +25,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.android.util.AndroidUtils
 import com.android.SdkConstants
 import org.jetbrains.android.augment.AndroidPsiElementFinder
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.JetExpression
@@ -65,9 +66,7 @@ private fun getReferredInfo(
 
     val firstPart = getReceiverAsSimpleNameExpression(middlePart) ?: return null
 
-    val reference = firstPart.getReference() ?: return null
-
-    val resolvedClass = reference.resolve() as? PsiClass ?: return null
+    val resolvedClass = firstPart.mainReference.resolve() as? PsiClass ?: return null
 
     //the following code is copied from
     // org.jetbrains.android.util.AndroidResourceUtil.getReferredResourceOrManifestField

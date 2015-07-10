@@ -82,7 +82,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
         return null
     }
 
-    private val stringExpressionEvaluator = object : JetVisitor<TypedCompileTimeConstant<String>, Nothing>() {
+    private val stringExpressionEvaluator = object : JetVisitor<TypedCompileTimeConstant<String>, Nothing?>() {
         private fun createStringConstant(compileTimeConstant: CompileTimeConstant<*>): TypedCompileTimeConstant<String>? {
             val constantValue = compileTimeConstant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)
             return when (constantValue) {

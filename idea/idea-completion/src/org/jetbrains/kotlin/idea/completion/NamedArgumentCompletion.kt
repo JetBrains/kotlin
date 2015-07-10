@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
@@ -80,9 +81,8 @@ object NamedArgumentCompletion {
         val callElement = valueArgument.getStrictParentOfType<JetCallElement>() ?: return
         val callSimpleName = callElement.getCallNameExpression() ?: return
 
-        val callReference = callSimpleName.getReference() as JetReference
-
-        val functionDescriptors = callReference.resolveToDescriptors(bindingContext).map { it as? FunctionDescriptor }.filterNotNull()
+        val functionDescriptors = callSimpleName.mainReference.resolveToDescriptors(bindingContext)
+                .filterIsInstance<FunctionDescriptor>()
 
         for (funDescriptor in functionDescriptors) {
             if (!funDescriptor.hasStableParameterNames()) continue

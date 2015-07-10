@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.Collections
 
-public trait JetReference : PsiPolyVariantReference {
-    public fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
+public interface JetReference : PsiPolyVariantReference {
+    fun resolveToDescriptors(bindingContext: BindingContext): Collection<DeclarationDescriptor>
+
+    override fun getElement(): JetElement
 }
 
 public abstract class AbstractJetReference<T : JetElement>(element: T)

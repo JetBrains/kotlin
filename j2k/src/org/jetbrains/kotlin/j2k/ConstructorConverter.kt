@@ -265,7 +265,7 @@ class ConstructorConverter(
             if (expression is PsiReferenceExpression && expression.getQualifier() == null) {
                 val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
                 if (replacement != null) {
-                    val target = expression.getReference()?.resolve()
+                    val target = expression.resolve()
                     if (target is PsiParameter) {
                         val scope = target.getDeclarationScope()
                         // we do not check for exactly this constructor because default values reference parameters in other constructors

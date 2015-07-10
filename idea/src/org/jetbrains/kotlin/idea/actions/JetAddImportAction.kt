@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 /**
@@ -166,10 +167,8 @@ public class JetAddImportAction(
                 val file = element.getContainingFile() as JetFile
                 val descriptor = selectedVariant.descriptorToImport
                 // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
-                if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
-                    val fqName = descriptor.importableFqNameSafe
-                    val reference = element.getReference() as JetSimpleNameReference
-                    reference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
+                if (element is JetSimpleNameExpression && (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor)) {
+                    element.mainReference.bindToFqName(descriptor.importableFqNameSafe, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
                 }
                 else {
                     ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)

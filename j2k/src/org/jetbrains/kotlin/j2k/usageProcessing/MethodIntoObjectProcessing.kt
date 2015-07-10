@@ -24,19 +24,19 @@ public class MethodIntoObjectProcessing(private val method: PsiMethod, private v
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null
 
     override val javaCodeProcessor = object: ExternalCodeProcessor {
-        override fun processUsage(reference: PsiReference): Collection<PsiReference>? {
+        override fun processUsage(reference: PsiReference): Array<PsiReference>? {
             val refExpr = reference.getElement() as? PsiReferenceExpression ?: return null
             val qualifier = refExpr.getQualifierExpression()
             val factory = PsiElementFactory.SERVICE.getInstance(method.getProject())
             if (qualifier != null) {
                 val newQualifier = factory.createExpressionFromText(qualifier.getText() + "." + objectName, null)
                 qualifier.replace(newQualifier)
-                return listOf(reference)
+                return arrayOf(reference)
             }
             else {
                 var qualifiedExpr = factory.createExpressionFromText(objectName + "." + refExpr.getText(), null) as PsiReferenceExpression
                 qualifiedExpr = refExpr.replace(qualifiedExpr) as PsiReferenceExpression
-                return listOf(qualifiedExpr.getReference()!!)
+                return arrayOf(qualifiedExpr)
             }
         }
     }

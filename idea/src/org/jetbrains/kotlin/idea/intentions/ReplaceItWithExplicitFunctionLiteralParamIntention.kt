@@ -22,6 +22,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -35,8 +36,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTarge
             = isAutoCreatedItUsage(element)
 
     override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
-        val reference = element.getReference() as JetReference
-        val target = reference.resolveToDescriptors(element.analyze()).single()
+        val target = element.mainReference.resolveToDescriptors(element.analyze()).single()
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 

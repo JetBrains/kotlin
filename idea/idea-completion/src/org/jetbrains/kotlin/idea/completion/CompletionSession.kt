@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -84,7 +85,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val expression: JetExpression?
 
     init {
-        val reference = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
+        val reference = (position.getParent() as? JetSimpleNameExpression)?.mainReference
         if (reference != null) {
             if (reference.expression is JetLabelReferenceExpression) {
                 this.nameExpression = null

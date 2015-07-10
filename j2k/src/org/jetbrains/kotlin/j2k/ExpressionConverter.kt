@@ -397,7 +397,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
 
         val referenceName = expression.getReferenceName()!!
-        val target = expression.getReference()?.resolve()
+        val target = expression.resolve()
         val isNullable = target is PsiVariable && typeConverter.variableNullability(target).isNullable(codeConverter.settings)
         val qualifier = expression.getQualifierExpression()
 

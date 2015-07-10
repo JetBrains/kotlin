@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -110,7 +111,7 @@ public class JetParameterInfo(
                                 }
 
                                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                                    val ref = expression.getReference() as? JetReference ?: return
+                                    val ref = expression.mainReference
                                     val descriptor = getRelevantDescriptor(expression, ref) ?: return
                                     map[ref] = descriptor
                                 }

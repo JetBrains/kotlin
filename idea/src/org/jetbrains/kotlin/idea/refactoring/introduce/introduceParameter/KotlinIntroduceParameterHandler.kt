@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
@@ -367,7 +368,7 @@ private fun findInternalUsagesOfParametersAndReceiver(
                     override fun visitThisExpression(expression: JetThisExpression) {
                         super.visitThisExpression(expression)
 
-                        if (expression.getInstanceReference().getReference()?.resolve() == targetDescriptor) {
+                        if (expression.getInstanceReference().mainReference.resolve() == targetDescriptor) {
                             usages.putValue(receiverTypeRef, expression)
                         }
                     }

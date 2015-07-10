@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
@@ -118,7 +119,7 @@ class FqNameReplacement(val fqName: FqName): Replacement {
             return thisExpr.replaced(JetPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
         }
 
-        val newExpr = (e.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
+        val newExpr = (e as? JetSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
         return if (newExpr is JetQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
     }
 }

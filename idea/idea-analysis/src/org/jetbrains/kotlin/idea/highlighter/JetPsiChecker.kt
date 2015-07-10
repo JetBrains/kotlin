@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.kdoc.KDocHighlightingVisitor
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
@@ -104,7 +105,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     when (factory) {
                         in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS -> {
                             val referenceExpression = diagnostic.getPsiElement() as JetReferenceExpression
-                            val reference = referenceExpression.getReference()
+                            val reference = referenceExpression.mainReference
                             if (reference is MultiRangeReference) {
                                 for (range in reference.getRanges()) {
                                     val annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic))

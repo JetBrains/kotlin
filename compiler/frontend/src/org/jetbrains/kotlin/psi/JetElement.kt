@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.NavigatablePsiElement;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.NavigatablePsiElement
+import com.intellij.psi.PsiReference
 
-public interface JetElement extends NavigatablePsiElement {
-    @NotNull
-    JetFile getContainingJetFile();
+public interface JetElement : NavigatablePsiElement {
+    public fun getContainingJetFile(): JetFile
 
-    <D> void acceptChildren(@NotNull JetVisitor<Void, D> visitor, D data);
+    public fun <D> acceptChildren(visitor: JetVisitor<Void, D>, data: D)
 
-    <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
+    public fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R
+
+    @deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
+    override fun getReference(): PsiReference?
 }

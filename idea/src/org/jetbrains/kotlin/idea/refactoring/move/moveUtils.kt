@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.Mo
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -119,7 +120,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
             packageName == packageNameInfo.oldPackageName,
             packageName == packageNameInfo.newPackageName,
             isImported(descriptor) -> {
-                (refExpr.getReference() as? JetSimpleNameReference)?.let { createMoveUsageInfoIfPossible(it, declaration, false) }
+                refExpr.mainReference?.let { createMoveUsageInfoIfPossible(it, declaration, false) }
             }
 
             else -> null

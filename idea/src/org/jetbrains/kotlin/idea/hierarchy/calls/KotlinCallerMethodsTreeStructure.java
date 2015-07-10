@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
 import org.jetbrains.kotlin.idea.references.JetReference;
+import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -75,7 +76,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {
                 @Override
-                protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                protected void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration) {
                     if (!declaration.equals(element)) return;
 
                     //noinspection unchecked
@@ -88,7 +89,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     }
 
                     if (container != null) {
-                        referencesToElements.put(reference.getReference(), container);
+                        referencesToElements.put(ReferencesPackage.getMainReference(reference), container);
                     }
                 }
             });

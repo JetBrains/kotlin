@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
@@ -428,7 +429,7 @@ private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<
 fun JetTypeParameter.collectRelevantConstraints(): List<JetTypeConstraint> {
     val typeConstraints = getNonStrictParentOfType<JetTypeParameterListOwner>()?.getTypeConstraints()
     if (typeConstraints == null) return Collections.emptyList()
-    return typeConstraints.filter { it.getSubjectTypeParameterName()?.getReference()?.resolve() == this}
+    return typeConstraints.filter { it.getSubjectTypeParameterName()?.mainReference?.resolve() == this}
 }
 
 fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<JetType> {
@@ -780,7 +781,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
             object : JetTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                    val target = expression.getReference()?.resolve()
+                    val target = expression.mainReference.resolve()
                     if (target is JetNamedDeclaration
                         && target.isInsideOf(originalElements)
                         && target.getStrictParentOfType<JetDeclaration>() == enclosingDeclaration) {
@@ -1006,7 +1007,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
             object : JetTreeVisitorVoid() {
                 override fun visitUserType(userType: JetUserType) {
                     val refExpr = userType.getReferenceExpression() ?: return
-                    val declaration = refExpr.getReference()?.resolve() as? PsiNamedElement ?: return
+                    val declaration = refExpr.mainReference.resolve() as? PsiNamedElement ?: return
                     val diagnostics = bindingContext.getDiagnostics().forElement(refExpr)
                     diagnostics.firstOrNull { it.getFactory() == Errors.INVISIBLE_REFERENCE }?.let {
                         conflicts.putValue(declaration, getDeclarationMessage(declaration, "0.will.become.invisible.after.extraction"))
