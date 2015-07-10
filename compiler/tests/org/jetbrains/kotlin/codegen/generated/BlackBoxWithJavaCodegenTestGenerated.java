@@ -285,9 +285,21 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("javaStaticField")
+        public void testJavaStaticField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/javaStaticField/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("kotlinPropertyInheritedInJava")
         public void testKotlinPropertyInheritedInJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/kotlinPropertyInheritedInJava/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("noConflictOnKotlinGetterAndJavaField")
+        public void testNoConflictOnKotlinGetterAndJavaField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/noConflictOnKotlinGetterAndJavaField/");
             doTestWithJava(fileName);
         }
 
