@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
@@ -90,15 +88,14 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         }
         if ((parent as? PsiNewExpression)?.resolveConstructor()?.unwrapped == unwrappedCandidate) return true
     }
-    if (this is PsiReferenceExpression && candidateTarget is JetObjectDeclaration && unwrappedTargets.size() == 1) {
+    if (this is PsiJavaCodeReferenceElement && candidateTarget is JetObjectDeclaration && unwrappedTargets.size() == 1) {
         val referredClass = unwrappedTargets.first()
         if (referredClass is JetClass && candidateTarget in referredClass.getCompanionObjects()) {
-            val parentReference = getParent().getReference()
-            if (parentReference != null) {
-                return parentReference.unwrappedTargets.any {
-                    (it is JetProperty || it is JetNamedFunction) && it.getParent()?.getParent() == candidateTarget
-                }
-            }
+            if (getParent() is PsiImportStaticStatement) return true
+
+            return getParent().getReference()?.unwrappedTargets?.any {
+                (it is JetProperty || it is JetNamedFunction) && it.getParent()?.getParent() == candidateTarget
+            } ?: false
         }
     }
     return false

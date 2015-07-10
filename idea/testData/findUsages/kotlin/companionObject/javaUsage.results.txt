@@ -1,3 +1,4 @@
-Class static member access (3: 28) System.out.println(Foo.CONST);
-Class static member access (4: 9) Foo.s();
-Unclassified usage (5: 13) Foo.Companion.f();
+Class static member access (5: 28) System.out.println(Foo.CONST);
+Class static member access (6: 9) Foo.s();
+Unclassified usage (1: 15) import static Foo.*;
+Unclassified usage (7: 13) Foo.Companion.f();
