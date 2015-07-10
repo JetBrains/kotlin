@@ -21,8 +21,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.SmartList
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -35,69 +33,21 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.constant
 
-public class JetSimpleNameReference(
-        jetSimpleNameExpression: JetSimpleNameExpression
-) : JetSimpleReference<JetSimpleNameExpression>(jetSimpleNameExpression) {
-
-    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val targets = super.getTargetDescriptors(context)
-        if (targets.none { it is SyntheticExtensionPropertyDescriptor }) return targets
-
-        val newTargets = SmartList<DeclarationDescriptor>()
-        for (target in targets) {
-            if (!(target !is SyntheticExtensionPropertyDescriptor)) {
-                val access = access()
-                if (access == Access.READ || access == Access.READ_WRITE) {
-                    newTargets.add(target.getMethod)
-                }
-                if (access == Access.WRITE || access == Access.READ_WRITE) {
-                    newTargets.addIfNotNull(target.setMethod)
-                }
-            }
-            else {
-                newTargets.add(target)
-            }
-        }
-        return newTargets
-    }
-
-    //TODO: there should be some common util for that
-    private enum class Access {
-        READ, WRITE, READ_WRITE
-    }
-
-    private fun access(): Access {
-        var expression = myElement.getQualifiedExpressionForSelectorOrThis()
-        while (expression.getParent() is JetParenthesizedExpression) {
-            expression = expression.getParent() as JetParenthesizedExpression
-        }
-
-        val assignment = expression.getAssignmentByLHS()
-        if (assignment != null) {
-            return if (assignment.getOperationToken() == JetTokens.EQ) Access.WRITE else Access.READ_WRITE
-        }
-
-        return if ((expression.getParent() as? JetUnaryExpression)?.getOperationToken() in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
-            Access.READ_WRITE
-        else
-            Access.READ
-    }
-
+class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleReference<JetSimpleNameExpression>(expression) {
     override fun isReferenceTo(element: PsiElement?): Boolean {
         if (element != null) {
             if (!canBeReferenceTo(element)) return false
 
-            val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(
-                    SimpleNameReferenceExtension.EP_NAME).getExtensions()
+            val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).getExtensions()
             for (extension in extensions) {
                 val value = extension.isReferenceTo(this, element)
                 if (value != null) {
@@ -124,7 +74,7 @@ public class JetSimpleNameReference(
         return true
     }
 
-    public override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String?): PsiElement {
         if (!canRename()) throw IncorrectOperationException()
         if (newElementName == null) return expression;
 
@@ -136,38 +86,15 @@ public class JetSimpleNameReference(
             }
         }
 
-        @suppress("NAME_SHADOWING")
-        var newElementName = newElementName!!
-
-        val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-        if (bindingContext[BindingContext.REFERENCE_TARGET, expression] is SyntheticExtensionPropertyDescriptor) {
-            if (Name.isValidIdentifier(newElementName)) {
-                val newNameAsName = Name.identifier(newElementName)
-                val newName = when (access()) {
-                    Access.READ -> SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
-                    Access.WRITE -> SyntheticExtensionPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
-                    Access.READ_WRITE -> SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
-                                         ?: SyntheticExtensionPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
-                } ?: return expression //TODO: handle the case when get/set becomes ordinary method
-                newElementName = newName.getIdentifier()
-            }
-        }
-
         val psiFactory = JetPsiFactory(expression)
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
-            else -> {
-                val extensions = Extensions.getArea(expression.getProject()).getExtensionPoint(
-                        SimpleNameReferenceExtension.EP_NAME).getExtensions()
 
-                var handled: PsiElement? = null
-                for (extension in extensions) {
-                    handled = extension.handleElementRename(this, psiFactory, newElementName)
-                    if (handled != null) {
-                        break
-                    }
-                }
-                handled ?: psiFactory.createNameIdentifier(newElementName)
+            else -> {
+                Extensions.getArea(expression.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).getExtensions()
+                        .asSequence()
+                        .map { it.handleElementRename(this, psiFactory, newElementName) }
+                        .firstOrNull { it != null } ?: psiFactory.createNameIdentifier(newElementName)
             }
         }
 
@@ -176,6 +103,7 @@ public class JetSimpleNameReference(
         val elementType = nameElement.getNode()?.getElementType()
         val opExpression = PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
         if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null && opExpression != null) {
+            val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
             val oldDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression]
             val newExpression = OperatorToFunctionIntention.convert(opExpression)
             newExpression.accept(object : JetTreeVisitorVoid() {
@@ -209,7 +137,7 @@ public class JetSimpleNameReference(
     fun bindToElement(element: PsiElement, shorteningMode: ShorteningMode): PsiElement =
             element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName, shorteningMode) } ?: expression
 
-    public fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
+    fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
         if (fqName.isRoot()) return expression
 
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
@@ -229,10 +157,6 @@ public class JetSimpleNameReference(
         }
 
         return newExpression
-    }
-
-    override fun toString(): String {
-        return javaClass<JetSimpleNameReference>().getSimpleName() + ": " + expression.getText()
     }
 
     override fun getCanonicalText(): String = expression.getText()

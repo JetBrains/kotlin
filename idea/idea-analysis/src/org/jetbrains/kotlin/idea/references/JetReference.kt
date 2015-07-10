@@ -114,6 +114,8 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
         }
         return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
     }
+
+    override fun toString() = javaClass.getSimpleName() + ": " + expression.getText()
 }
 
 public abstract class JetSimpleReference<T : JetReferenceExpression>(expression: T) : AbstractJetReference<T>(expression) {
