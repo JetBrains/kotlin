@@ -49,7 +49,8 @@ fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
 
 fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
-fun JetType.isAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun JetType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun JetType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 
 private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -53,9 +54,11 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
                     .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
         }
 
-        fun propertyNameByGetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "get")
+        fun propertyNameByGetMethodName(methodName: Name): Name?
+                = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is")
 
-        fun propertyNameBySetMethodName(methodName: Name): Name? = propertyNameFromAccessorMethodName(methodName, "set")
+        fun propertyNameBySetMethodName(methodName: Name): Name?
+                = propertyNameFromAccessorMethodName(methodName, "set")
 
         private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String): Name? {
             if (methodName.isSpecial()) return null
@@ -85,19 +88,25 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
 
         val memberScope = javaClass.getMemberScope(type.getArguments())
-        val getMethod = memberScope.getFunctions(toGetMethodName(name)).singleOrNull { isGoodGetMethod(it) } ?: return null
+        val getMethod = possibleGetMethodNames(name)
+                                .asSequence()
+                                .flatMap { memberScope.getFunctions(it).asSequence() }
+                                .singleOrNull { isGoodGetMethod(it) } ?: return null
 
         val propertyType = getMethod.getReturnType() ?: return null
-        val setMethod = memberScope.getFunctions(toSetMethodName(name)).singleOrNull { isGoodSetMethod(it, propertyType) }
+        val setMethod = memberScope.getFunctions(possibleSetMethodName(name)).singleOrNull { isGoodSetMethod(it, propertyType) }
 
         return MyPropertyDescriptor(javaClass, getMethod, setMethod, name, propertyType, type)
     }
 
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
+        val returnType = descriptor.getReturnType() ?: return false
+        if (returnType.isUnit()) return false
+        if (descriptor.getName().asString().startsWith("is") && !returnType.isBoolean()) return false
+
         return descriptor.getValueParameters().isEmpty()
                && descriptor.getTypeParameters().isEmpty()
                && descriptor.getVisibility() == Visibilities.PUBLIC //TODO: what about protected and package-local?
-               && !(descriptor.getReturnType()?.isUnit() ?: true)
     }
 
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, propertyType: JetType): Boolean {
@@ -105,7 +114,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return parameter.getType() == propertyType
                && parameter.getVarargElementType() == null
                && descriptor.getTypeParameters().isEmpty()
-               && descriptor.getReturnType()?.let { KotlinBuiltIns.isUnit(it) } ?: false
+               && descriptor.getReturnType()?.let { it.isUnit() } ?: false
                && descriptor.getVisibility() == Visibilities.PUBLIC
     }
 
@@ -156,14 +165,15 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return list
     }
 
-    //TODO: "is"?
     //TODO: methods like "getURL"?
     //TODO: reuse code with generation?
-    private fun toGetMethodName(propertyName: Name): Name {
-        return Name.identifier("get" + propertyName.getIdentifier().capitalize())
+
+    private fun possibleGetMethodNames(propertyName: Name): Collection<Name> {
+        val capitalized = propertyName.getIdentifier().capitalize()
+        return listOf(Name.identifier("get" + capitalized), Name.identifier("is" + capitalized))
     }
 
-    private fun toSetMethodName(propertyName: Name): Name {
+    private fun possibleSetMethodName(propertyName: Name): Name {
         return Name.identifier("set" + propertyName.getIdentifier().capitalize())
     }
 
