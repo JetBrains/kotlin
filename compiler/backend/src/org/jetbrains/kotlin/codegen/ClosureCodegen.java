@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
+import kotlin.KotlinPackage;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -268,17 +269,18 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         iv.load(0, asmType);
 
-        ReceiverParameterDescriptor receiver = funDescriptor.getExtensionReceiverParameter();
-        int count = 1;
-        if (receiver != null) {
-            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(receiver.getType()), iv);
-            count++;
-        }
+        Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
-        for (ValueParameterDescriptor param : params) {
-            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(param.getType()), iv);
-            count++;
+        List<ParameterDescriptor> calleeParameters = KotlinPackage.plus(
+                UtilsPackage.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
+                funDescriptor.getValueParameters()
+        );
+
+        int slot = 1;
+        for (int i = 0; i < calleeParameters.size(); i++) {
+            Type type = myParameterTypes[i];
+            StackValue.local(slot, type).put(typeMapper.mapType(calleeParameters.get(i)), iv);
+            slot += type.getSize();
         }
 
         iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
