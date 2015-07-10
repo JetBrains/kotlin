@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -202,7 +203,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance(asmType);
+            generateConstInstance(asmType, asmType, UtilsPackage.<InstructionAdapter>doNothing());
         }
 
         genClosureFields(closure, v, typeMapper);

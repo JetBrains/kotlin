@@ -54,11 +54,27 @@ public class PropertyReferenceCodegen(
 ) : MemberCodegen<JetCallableReferenceExpression>(state, parentCodegen, context, expression, classBuilder) {
     private val target = resolvedCall.getResultingDescriptor()
     private val asmType = typeMapper.mapClass(classDescriptor)
-    private val superAsmType: Type
+
+    // e.g. MutablePropertyReference0
+    private val superAsmType = typeMapper.mapClass(classDescriptor.getSuperClassNotAny().sure { "No super class for $classDescriptor" })
+
+    // e.g. mutableProperty0(Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
+    private val wrapperMethod: Method
 
     init {
-        val superClass = classDescriptor.getSuperClassNotAny().sure { "No super class for $classDescriptor" }
-        superAsmType = typeMapper.mapClass(superClass)
+        val hasReceiver = target.getDispatchReceiverParameter() != null || target.getExtensionReceiverParameter() != null
+        val isMutable = target.isVar()
+
+        wrapperMethod = when {
+            hasReceiver -> when {
+                isMutable -> method("mutableProperty1", K_MUTABLE_PROPERTY1_TYPE, MUTABLE_PROPERTY_REFERENCE1)
+                else -> method("property1", K_PROPERTY1_TYPE, PROPERTY_REFERENCE1)
+            }
+            else -> when {
+                isMutable -> method("mutableProperty0", K_MUTABLE_PROPERTY0_TYPE, MUTABLE_PROPERTY_REFERENCE0)
+                else -> method("property0", K_PROPERTY0_TYPE, PROPERTY_REFERENCE0)
+            }
+        }
     }
 
     override fun generateDeclaration() {
@@ -77,8 +93,9 @@ public class PropertyReferenceCodegen(
 
     // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     override fun generateBody() {
-        // TODO: instance should be already wrapped by Reflection
-        generateConstInstance(asmType)
+        generateConstInstance(asmType, wrapperMethod.getReturnType()) { iv ->
+            iv.invokestatic(REFLECTION, wrapperMethod.getName(), wrapperMethod.getDescriptor(), false)
+        }
 
         generateMethod("property reference init", 0, method("<init>", Type.VOID_TYPE)) {
             load(0, OBJECT_TYPE)
@@ -102,7 +119,7 @@ public class PropertyReferenceCodegen(
                 defaultGetter
             }
 
-            val method = typeMapper.mapSignature(getter.sure { "No getter: $target" }).getAsmMethod()
+            val method = typeMapper.mapSignature(getter).getAsmMethod()
             aconst(method.getName() + method.getDescriptor())
         }
 
@@ -178,24 +195,8 @@ public class PropertyReferenceCodegen(
         writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER)
     }
 
-    public fun putInstanceOnStack(): StackValue {
-        val hasReceiver = target.getDispatchReceiverParameter() != null || target.getExtensionReceiverParameter() != null
-
-        val method =
-                when {
-                    hasReceiver -> when {
-                        target.isVar() -> method("mutableProperty1", K_MUTABLE_PROPERTY1_TYPE, MUTABLE_PROPERTY_REFERENCE1)
-                        else -> method("property1", K_PROPERTY1_TYPE, PROPERTY_REFERENCE1)
-                    }
-                    else -> when {
-                        target.isVar() -> method("mutableProperty0", K_MUTABLE_PROPERTY0_TYPE, MUTABLE_PROPERTY_REFERENCE0)
-                        else -> method("property0", K_PROPERTY0_TYPE, PROPERTY_REFERENCE0)
-                    }
-                }
-
-        return StackValue.operation(method.getReturnType()) { iv ->
-            iv.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor())
-            iv.invokestatic(REFLECTION, method.getName(), method.getDescriptor(), false)
-        }
-    }
+    public fun putInstanceOnStack(): StackValue =
+            StackValue.operation(wrapperMethod.getReturnType()) { iv ->
+                iv.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, wrapperMethod.getReturnType().getDescriptor())
+            }
 }
