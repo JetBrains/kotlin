@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -35,7 +34,8 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
+import java.beans.Introspector
+import java.util.ArrayList
 
 interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
@@ -64,7 +64,7 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
             if (methodName.isSpecial()) return null
             val identifier = methodName.getIdentifier()
             if (!identifier.startsWith(prefix)) return null
-            val name = identifier.removePrefix(prefix).decapitalize()
+            val name = Introspector.decapitalize(identifier.removePrefix(prefix))
             if (!Name.isValidIdentifier(name)) return null
             return Name.identifier(name)
         }
@@ -84,8 +84,16 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
 
     private fun syntheticPropertyInClassNotCached(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
         if (name.isSpecial()) return null
-        val firstChar = name.getIdentifier()[0]
-        if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
+        val identifier = name.getIdentifier()
+        if (identifier.isEmpty()) return null
+        val firstChar = identifier[0]
+        if (!firstChar.isJavaIdentifierStart()) return null
+        if (identifier.length() > 1) {
+            if (firstChar.isUpperCase() != identifier[1].isUpperCase()) return null
+        }
+        else {
+            if (firstChar.isUpperCase()) return null
+        }
 
         val memberScope = javaClass.getMemberScope(type.getArguments())
         val getMethod = possibleGetMethodNames(name)
@@ -165,7 +173,6 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return list
     }
 
-    //TODO: methods like "getURL"?
     //TODO: reuse code with generation?
 
     private fun possibleGetMethodNames(propertyName: Name): Collection<Name> {
