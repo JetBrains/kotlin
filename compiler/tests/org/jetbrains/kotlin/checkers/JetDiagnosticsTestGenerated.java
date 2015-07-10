@@ -2328,6 +2328,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericArrays.kt")
+            public void testGenericArrays() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/genericArrays.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericClasses.kt")
             public void testGenericClasses() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/genericClasses.kt");

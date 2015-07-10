@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -581,7 +582,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isAllowedInClassLiteral(@NotNull JetType type) {
-        if (type.isMarkedNullable()) return false;
+        return isClassAvailableAtRuntime(type, false);
+    }
+
+    private static boolean isClassAvailableAtRuntime(@NotNull JetType type, boolean canBeNullable) {
+        if (type.isMarkedNullable() && !canBeNullable) return false;
 
         TypeConstructor typeConstructor = type.getConstructor();
         ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
@@ -590,8 +595,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
             if (parameters.size() != type.getArguments().size()) return false;
 
+            Iterator<TypeProjection> typeArgumentsIterator = type.getArguments().iterator();
             for (TypeParameterDescriptor parameter : parameters) {
                 if (!parameter.isReified()) return false;
+                TypeProjection typeArgument = typeArgumentsIterator.next();
+                if (typeArgument == null) return false;
+                if (typeArgument.isStarProjection()) return false;
+                if (!isClassAvailableAtRuntime(typeArgument.getType(), true)) return false;
             }
 
             return true;
