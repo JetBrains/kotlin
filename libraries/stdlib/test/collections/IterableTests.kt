@@ -308,4 +308,45 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals(listOf("foo", "bar", "foo", "beer", "cheese", "wine", "zoo", "g"), result)
     }
 
+    Test
+    fun minusElement() {
+        val result = data - "foo" - "g"
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusCollection() {
+        val result = data - listOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusArray() {
+        val result = data - arrayOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusSequence() {
+        val result = data - sequenceOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusAssign() {
+        // lets use a mutable variable
+        var result: Iterable<String> = data
+        result -= "foo"
+        assertEquals(listOf("bar"), result)
+        result = data
+        result -= listOf("beer", "bar")
+        assertEquals(listOf("foo"), result)
+        result = data
+        result -= arrayOf("bar", "foo")
+        assertEquals(emptyList<String>(), result)
+        result = data
+        result -= sequenceOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
 }

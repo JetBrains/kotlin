@@ -234,6 +234,53 @@ class CollectionTest {
         assertEquals(l, ml)
     }
 
+
+    private fun testMinus(expected: List<String>? = null, doMinus: (List<String>) -> List<String>) {
+        val a = listOf("foo", "bar", "bar")
+        val b: List<String> = doMinus(a)
+        val expected_ = expected ?: listOf("foo")
+        assertEquals(expected_, b.toList())
+    }
+
+    test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
+    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+
+    test fun minusIsEager() {
+        val source = listOf("foo", "bar")
+        val list = arrayListOf<String>()
+        val result = source - list
+
+        list += "foo"
+        assertEquals(source, result)
+        list += "bar"
+        assertEquals(source, result)
+    }
+
+    test fun minusAssign() {
+        // lets use a mutable variable of readonly list
+        val data: List<String> = listOf("cheese", "foo", "beer", "cheese", "wine")
+        var l = data
+        l -= "cheese"
+        assertEquals(listOf("foo", "beer", "cheese", "wine"), l)
+        l = data
+        l -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), l)
+        l -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), l)
+
+        val ml = arrayListOf("cheese", "cheese", "foo", "beer", "cheese", "wine")
+        ml -= "cheese"
+        assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine"), ml)
+        ml -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), ml)
+        ml -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), ml)
+    }
+
+
+
     test fun requireNoNulls() {
         val data = arrayListOf<String?>("foo", "bar")
         val notNull = data.requireNoNulls()

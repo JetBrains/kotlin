@@ -64,4 +64,15 @@ class SetOperationsTest {
         assertEquals(set, mset)
     }
 
+    private fun testMinus(doMinus: (Set<String>) -> Set<String>) {
+        val a = setOf("foo", "bar")
+        val b: Set<String> = doMinus(a)
+        assertEquals(setOf("foo"), b)
+    }
+
+    test fun minusElement() = testMinus { it - "bar" - "zoo" }
+    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+
 }

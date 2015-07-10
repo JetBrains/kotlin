@@ -156,6 +156,43 @@ public class SequenceTest {
         assertEquals(listOf("a", "foo", "beer", "cheese", "wine", "bar", "foo"), seq.toList())
     }
 
+    private fun testMinus(expected: List<String>? = null, doMinus: (Sequence<String>) -> Sequence<String>) {
+        val a = sequenceOf("foo", "bar", "bar")
+        val b: Sequence<String> = doMinus(a)
+        val expected_ = expected ?: listOf("foo")
+        assertEquals(expected_, b.toList())
+    }
+
+    test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
+    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+
+    test fun minusIsLazyIterated() {
+        val seq = sequenceOf("foo", "bar")
+        val list = arrayListOf<String>()
+        val result = seq - list
+
+        list += "foo"
+        assertEquals(listOf("bar"), result.toList())
+        list += "bar"
+        assertEquals(emptyList<String>(), result.toList())
+    }
+
+    test fun minusAssign() {
+        // lets use a mutable variable of readonly list
+        val data = sequenceOf("cheese", "foo", "beer", "cheese", "wine")
+        var l = data
+        l -= "cheese"
+        assertEquals(listOf("foo", "beer", "cheese", "wine"), l.toList())
+        l = data
+        l -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), l.toList())
+        l -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), l.toList())
+    }
+
+
 
     test fun iterationOverSequence() {
         var s = ""
