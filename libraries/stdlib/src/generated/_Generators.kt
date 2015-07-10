@@ -718,10 +718,40 @@ public fun <T> Set<T>.plus(element: T): Set<T> {
 }
 
 /**
+ * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ */
+public fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
+    val result = ArrayList<T>(this.size() + 10)
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ */
+public fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
+}
+
+/**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
  */
 public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
     return sequenceOf(this, sequence).flatten()
+}
+
+/**
+ * Returns a set containing all elements both of the original set and the given [sequence].
+ */
+public fun <T> Set<T>.plus(sequence: Sequence<T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
 }
 
 /**

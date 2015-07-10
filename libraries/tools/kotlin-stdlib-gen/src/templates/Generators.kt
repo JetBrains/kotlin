@@ -137,10 +137,40 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("plus(sequence: Sequence<T>)") {
-        only(Sequences)
-        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]." }
-        returns("Sequence<T>")
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [sequence]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
         body {
+            """
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+        body(Collections) {
+            """
+            val result = ArrayList<T>(this.size() + 10)
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+
+        // TODO: use immutable set builder when available
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [sequence]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]." }
+        body(Sequences) {
             """
             return sequenceOf(this, sequence).flatten()
             """

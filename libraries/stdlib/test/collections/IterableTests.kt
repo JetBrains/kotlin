@@ -282,23 +282,20 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals("FOO-BAR", result)
     }
 
-    Test
-    fun plusElement() {
-        val result = data + "zoo" + "g"
+    fun testPlus(doPlus: (Iterable<String>) -> List<String>) {
+        val result: List<String> = doPlus(data)
         assertEquals(listOf("foo", "bar", "zoo", "g"), result)
+        assertFalse(result === data)
     }
 
     Test
-    fun plusCollection() {
-        val result = data + listOf("zoo", "g")
-        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
-    }
-
+    fun plusElement() = testPlus { it + "zoo" + "g" }
     Test
-    fun plusArray() {
-        val result = data + arrayOf("zoo", "g")
-        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
-    }
+    fun plusCollection() = testPlus { it + listOf("zoo", "g") }
+    Test
+    fun plusArray() = testPlus { it + arrayOf("zoo", "g") }
+    Test
+    fun plusSequence() = testPlus { it + sequenceOf("zoo", "g") }
 
     Test
     fun plusAssign() {
@@ -307,7 +304,8 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         result += "foo"
         result += listOf("beer")
         result += arrayOf("cheese", "wine")
-        assertEquals(listOf("foo", "bar", "foo", "beer", "cheese", "wine"), result)
+        result += sequenceOf("zoo", "g")
+        assertEquals(listOf("foo", "bar", "foo", "beer", "cheese", "wine", "zoo", "g"), result)
     }
 
 }

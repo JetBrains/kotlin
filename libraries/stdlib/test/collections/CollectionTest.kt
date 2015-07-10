@@ -197,32 +197,23 @@ class CollectionTest {
         assertEquals(listOf(2, 4, 6), range)
     }
 
-    test fun plusElement() {
+    fun testPlus(doPlus: (List<String>) -> List<String>) {
         val list = listOf("foo", "bar")
-        val list2: List<String> = list + "cheese"
+        val list2: List<String> = doPlus(list)
         assertEquals(listOf("foo", "bar"), list)
-        assertEquals(listOf("foo", "bar", "cheese"), list2)
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), list2)
     }
+
+    test fun plusElement() = testPlus { it + "cheese" + "wine" }
+    test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
+    test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
+    test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
 
     test fun plusCollectionBug() {
         val list = listOf("foo", "bar") + listOf("cheese", "wine")
         assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
     }
 
-    test fun plusCollection() {
-        val a = listOf("foo", "bar")
-        val b = listOf("cheese", "wine")
-        val list: List<String> = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
-    }
-
-    test fun plusArray() {
-        val a = listOf("foo", "bar")
-        val b = arrayOf("cheese", "wine")
-        val list: List<String> = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
-
-    }
 
     test fun plusAssign() {
         // lets use a mutable variable of readonly list
@@ -231,13 +222,15 @@ class CollectionTest {
         l += "foo"
         l += listOf("beer")
         l += arrayOf("cheese", "wine")
-        assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine"), l)
+        l += sequenceOf("bar", "foo")
+        assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine", "bar", "foo"), l)
         assertTrue(l !== lOriginal)
 
         val ml = arrayListOf("cheese")
         ml += "foo"
         ml += listOf("beer")
         ml += arrayOf("cheese", "wine")
+        ml += sequenceOf("bar", "foo")
         assertEquals(l, ml)
     }
 

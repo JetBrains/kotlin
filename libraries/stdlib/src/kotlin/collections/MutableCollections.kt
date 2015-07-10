@@ -21,6 +21,12 @@ public fun <T> MutableCollection<in T>.plusAssign(array: Array<T>) {
     this.addAll(array)
 }
 
+/**
+ * Adds all elements of the given [sequence] to this mutable collection.
+ */
+public fun <T> MutableCollection<in T>.plusAssign(sequence: Sequence<T>) {
+    this.addAll(sequence)
+}
 
 /**
  * Adds all elements of the given [iterable] to this [MutableCollection].

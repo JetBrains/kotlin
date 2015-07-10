@@ -33,33 +33,35 @@ class SetOperationsTest {
         assertTrue(listOf<Int>().intersect(listOf(1)).none())
     }
 
-    test fun plusElement() {
-        val set = setOf("foo")
-        val result: Set<String> = set + "bar" + "bar"
-        assertEquals(setOf("foo", "bar"), result)
+    fun testPlus(doPlus: (Set<String>) -> Set<String>) {
+        val set = setOf("foo", "bar")
+        val set2: Set<String> = doPlus(set)
+        assertEquals(setOf("foo", "bar"), set)
+        assertEquals(setOf("foo", "bar", "cheese", "wine"), set2)
     }
 
-    test fun plusCollection() {
-        val set = setOf("foo")
-        val result: Set<String> = set + listOf("bar", "bar")
-        assertEquals(setOf("foo", "bar"), result)
-    }
-
-    test fun plusArray() {
-        val set = setOf("foo")
-        val result: Set<String> = set + arrayOf("foo", "bar")
-        assertEquals(setOf("foo", "bar"), result)
-    }
+    test fun plusElement() = testPlus { it + "bar" + "cheese" + "wine" }
+    test fun plusCollection() = testPlus { it + listOf("bar", "cheese", "wine") }
+    test fun plusArray() = testPlus { it + arrayOf("bar", "cheese", "wine") }
+    test fun plusSequence() = testPlus { it + sequenceOf("bar", "cheese", "wine") }
 
     test fun plusAssign() {
         // lets use a mutable variable
         var set = setOf("a")
         val setOriginal = set
         set += "foo"
-        set += listOf("beer")
-        set += arrayOf("cheese", "wine")
-        assertEquals(setOf("a", "foo", "beer", "cheese", "wine"), set)
+        set += listOf("beer", "a")
+        set += arrayOf("cheese", "beer")
+        set += sequenceOf("bar", "foo")
+        assertEquals(setOf("a", "foo", "beer", "cheese", "bar"), set)
         assertTrue(set !== setOriginal)
+
+        val mset = hashSetOf("a")
+        mset += "foo"
+        mset += listOf("beer", "a")
+        mset += arrayOf("cheese", "beer")
+        mset += sequenceOf("bar", "foo")
+        assertEquals(set, mset)
     }
 
 }

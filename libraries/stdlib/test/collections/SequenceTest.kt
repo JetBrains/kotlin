@@ -132,33 +132,28 @@ public class SequenceTest {
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
     }
 
-    test fun plusElement() {
-        val sequence = sequenceOf("foo", "bar")
-        val sequenceCheese: Sequence<String> = sequence + "cheese"
-        assertEquals(listOf("foo", "bar", "cheese"), sequenceCheese.toList())
+
+    fun testPlus(doPlus: (Sequence<String>) -> Sequence<String>) {
+        val seq = sequenceOf("foo", "bar")
+        val seq2: Sequence<String> = doPlus(seq)
+        assertEquals(listOf("foo", "bar"), seq.toList())
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), seq2.toList())
     }
 
-    test fun plusCollection() {
-        val a = sequenceOf("foo", "bar")
-        val b = listOf("cheese", "wine")
-        val sequence: Sequence<String> = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
-    }
 
-    test fun plusArray() {
-        val a = sequenceOf("foo", "bar")
-        val b = listOf("cheese", "wine")
-        val sequence: Sequence<String> = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
-    }
+    test fun plusElement() = testPlus { it + "cheese" + "wine" }
+    test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
+    test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
+    test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
 
     test fun plusAssign() {
         // lets use a mutable variable
-        var ml = sequenceOf("a")
-        ml += "foo"
-        ml += listOf("beer")
-        ml += arrayOf("cheese", "wine")
-        assertEquals(listOf("a", "foo", "beer", "cheese", "wine"), ml.toList())
+        var seq = sequenceOf("a")
+        seq += "foo"
+        seq += listOf("beer")
+        seq += arrayOf("cheese", "wine")
+        seq += sequenceOf("bar", "foo")
+        assertEquals(listOf("a", "foo", "beer", "cheese", "wine", "bar", "foo"), seq.toList())
     }
 
 
