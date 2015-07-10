@@ -86,7 +86,8 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     public fun add(e: E): Boolean
 
     /**
-     * Removes the specified element from the collection.
+     * Removes a single instance of the specified element from this
+     * collection, if it is present.
      *
      * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
      */
@@ -101,14 +102,14 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     public fun addAll(c: Collection<E>): Boolean
 
     /**
-     * Removes all of the elements in the specified collection from this collection.
+     * Removes all of this collection's elements that are also contained in the specified collection.
      *
      * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
      */
     public fun removeAll(c: Collection<Any?>): Boolean
 
     /**
-     * Removes all of the elements not contained in the specified collection from this collection.
+     * Retains only the elements in this collection that are contained in the specified collection.
      *
      * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
      */
