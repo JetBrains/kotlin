@@ -37,6 +37,39 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
         }
 
+        @TestMetadata("idea/testData/findUsages/kotlin/companionObject")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CompanionObject extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInCompanionObject() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/companionObject"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("inContainingClass.0.kt")
+            public void testInContainingClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/companionObject/inContainingClass.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaUsage.0.kt")
+            public void testJavaUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/companionObject/javaUsage.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("named.0.kt")
+            public void testNamed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/companionObject/named.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.0.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/companionObject/simple.0.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/findUsages/kotlin/conventions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -144,39 +177,6 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("unaryMinus.0.kt")
             public void testUnaryMinus() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/conventions/unaryMinus.0.kt");
-                doTest(fileName);
-            }
-        }
-
-        @TestMetadata("idea/testData/findUsages/kotlin/defaultObject")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class DefaultObject extends AbstractJetFindUsagesTest {
-            public void testAllFilesPresentInDefaultObject() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/defaultObject"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
-            }
-
-            @TestMetadata("inContainingClass.0.kt")
-            public void testInContainingClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/inContainingClass.0.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("javaUsage.0.kt")
-            public void testJavaUsage() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/javaUsage.0.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("named.0.kt")
-            public void testNamed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/named.0.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("simple.0.kt")
-            public void testSimple() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/defaultObject/simple.0.kt");
                 doTest(fileName);
             }
         }
