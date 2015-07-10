@@ -18,10 +18,14 @@ package kotlin.reflect.jvm
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import java.lang.reflect.Modifier
-import kotlin.jvm.internal.Reflection
-import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KPackage
+import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.internal.KClassImpl
+import kotlin.reflect.jvm.internal.KMutablePropertyImpl
+import kotlin.reflect.jvm.internal.KPackageImpl
+import kotlin.reflect.jvm.internal.KPropertyImpl
 
 // Kotlin reflection -> Java reflection
 
@@ -74,16 +78,14 @@ public val KMutableProperty<*>.javaSetter: Method?
 public val <T> Class<T>.kotlin: KClass<T>
     get() = KClassImpl(this)
 
-// TODO: getstatic $kotlinPackage
-// TODO: make nullable or throw exception
 /**
  * Returns a [KPackage] instance corresponding to the Java [Class] instance.
  * The given class is generated from top level functions and properties in the Kotlin package.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#package-level-functions)
  * for more information.
  */
-public val Class<*>.kotlinPackage: KPackage
-    get() = KPackageImpl(this)
+public val Class<*>.kotlinPackage: KPackage?
+    get() = if (getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) KPackageImpl(this) else null
 
 
 /**
