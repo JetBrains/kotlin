@@ -82,7 +82,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
-        if (reference == null) {
+        if (nameExpression == null) {
             val parameter = position.getParent() as? JetParameter
             return if (parameter != null && position == parameter.getNameIdentifier())
                 CompletionKind.PARAMETER_NAME
@@ -107,7 +107,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         val typeReference = position.getStrictParentOfType<JetTypeReference>()
         if (typeReference != null) {
             val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
-            if (firstPartReference == reference.expression) {
+            if (firstPartReference == nameExpression) {
                 return CompletionKind.TYPES
             }
         }

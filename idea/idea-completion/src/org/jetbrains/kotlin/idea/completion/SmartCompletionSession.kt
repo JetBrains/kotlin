@@ -57,7 +57,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             if (result != null) {
                 collector.addElements(result.additionalItems)
 
-                if (reference != null) {
+                if (nameExpression != null) {
                     val filter = result.declarationFilter
                     if (filter != null) {
                         referenceVariants.forEach { collector.addElements(filter(it)) }
@@ -86,8 +86,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
     // special completion for outside parenthesis lambda argument
     private fun addFunctionLiteralArgumentCompletions() {
-        if (reference != null) {
-            val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(reference.expression)
+        if (nameExpression != null) {
+            val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression)
             if (receiverData != null && receiverData.second == CallType.INFIX) {
                 val call = receiverData.first.getCall(bindingContext)
                 if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
