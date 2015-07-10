@@ -7956,6 +7956,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("computeIfAbsentConcurrent.kt")
+            public void testComputeIfAbsentConcurrent() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/computeIfAbsentConcurrent.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("GenericsInSupertypes.kt")
             public void testGenericsInSupertypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/GenericsInSupertypes.kt");
@@ -8097,6 +8103,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("OverrideVararg.kt")
             public void testOverrideVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/OverrideVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overrideWithSamAndTypeParameter.kt")
+            public void testOverrideWithSamAndTypeParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/overrideWithSamAndTypeParameter.kt");
                 doTest(fileName);
             }
 

@@ -1580,6 +1580,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava(fileName);
                 }
 
+                @TestMetadata("NoSamForClassTypeParameter.java")
+                public void testNoSamForClassTypeParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForClassTypeParameter.java");
+                    doTestCompiledJava(fileName);
+                }
+
+                @TestMetadata("NoSamForMethodTypeParameter.java")
+                public void testNoSamForMethodTypeParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForMethodTypeParameter.java");
+                    doTestCompiledJava(fileName);
+                }
+
                 @TestMetadata("NonTrivialFunctionType.java")
                 public void testNonTrivialFunctionType() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/NonTrivialFunctionType.java");
