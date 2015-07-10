@@ -46,5 +46,32 @@ fun ranges(): List<GenericFunction> {
         }
     }
 
+    fun downTo(fromType: PrimitiveType, toType: PrimitiveType) = f("downTo(to: $toType)") {
+        only(Primitives)
+        only(fromType)
+        val elementType = PrimitiveType.getMaxCapacityType(fromType, toType)
+        val progressionType = elementType.name + "Progression"
+        returns(progressionType)
+
+        doc {
+            """
+            Returns a progression from this value down to the specified [to] value with the increment -1.
+            The [to] value has to be less than this value.
+            """
+        }
+
+        val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+        val toExpr = if (elementType == toType) "to" else "to.to$elementType()"
+        val incrementExpr = when (elementType) {
+            PrimitiveType.Long -> "-1L"
+            PrimitiveType.Float -> "-1.0F"
+            PrimitiveType.Double -> "-1.0"
+            else -> "-1"
+        }
+        body { "return $progressionType($fromExpr, $toExpr, $incrementExpr)" }
+    }
+
+    templates addAll PrimitiveType.primitivePermutations.map { downTo(it.first, it.second) }
+
     return templates
 }

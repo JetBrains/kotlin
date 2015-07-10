@@ -44,7 +44,13 @@ enum class PrimitiveType {
 
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
-        val numericPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
+        val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
+
+        val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
+
+        fun getMaxCapacityType(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
+
+        val primitivePermutations = numericPrimitives.flatMap { fromType -> numericPrimitives map { toType -> fromType to toType } } + (Char to Char)
     }
 }
 
