@@ -648,6 +648,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("objectExpressionMemberInClass.0.kt")
+            public void testObjectExpressionMemberInClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMemberInClass.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("synthesizedFunction.0.kt")
             public void testSynthesizedFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/synthesizedFunction.0.kt");
