@@ -85,6 +85,14 @@ public class RangeIterationTest {
                 listOf<Float>(3.0.toFloat(), 4.0.toFloat(), 5.0.toFloat(), 6.0.toFloat(), 7.0.toFloat(), 8.0.toFloat(), 9.0.toFloat()))
     }
 
+    test fun openRange() {
+        doTest(1 until 5, 1, 4, 1, listOf(1, 2, 3, 4))
+        doTest(1.toByte() until 5.toByte(), 1.toByte(), 4.toByte(), 1, listOf<Byte>(1, 2, 3, 4))
+        doTest(1.toShort() until 5.toShort(), 1.toShort(), 4.toShort(), 1, listOf<Short>(1, 2, 3, 4))
+        doTest(1L until 5L, 1L, 4L, 1L, listOf<Long>(1, 2, 3, 4))
+        doTest('a' until 'd', 'a', 'c', 1, listOf('a', 'b', 'c'))
+    }
+
 
     test fun emptyDownto() {
         doTest(5 downTo 10, 5, 10, -1, listOf())

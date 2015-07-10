@@ -49,7 +49,7 @@ fun ranges(): List<GenericFunction> {
     fun downTo(fromType: PrimitiveType, toType: PrimitiveType) = f("downTo(to: $toType)") {
         only(Primitives)
         only(fromType)
-        val elementType = PrimitiveType.getMaxCapacityType(fromType, toType)
+        val elementType = PrimitiveType.maxByCapacity(fromType, toType)
         val progressionType = elementType.name + "Progression"
         returns(progressionType)
 
@@ -68,10 +68,50 @@ fun ranges(): List<GenericFunction> {
             PrimitiveType.Double -> "-1.0"
             else -> "-1"
         }
+
         body { "return $progressionType($fromExpr, $toExpr, $incrementExpr)" }
     }
 
     templates addAll PrimitiveType.primitivePermutations.map { downTo(it.first, it.second) }
+
+    fun until(fromType: PrimitiveType, toType: PrimitiveType) = f("until(to: $toType)") {
+        only(Primitives)
+        only(fromType)
+        val elementType = PrimitiveType.maxByCapacity(fromType, toType)
+        val progressionType = elementType.name + "Range"
+        returns(progressionType)
+
+        doc {
+            """
+            Returns a range from this value up to but excluding the specified [to] value.
+            ${ if (elementType == toType) "The [to] value must be greater than [$elementType.MIN_VALUE]." else "" }
+            """
+        }
+
+        val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+
+        if (elementType == toType) {
+            // hack to work around incorrect char overflow behavior in JVM and int overflow behavior in JS
+            val toExpr = when (toType) {
+                PrimitiveType.Char -> "to.toInt()"
+                PrimitiveType.Int -> "to.toLong()"
+                else -> "to"
+            }
+            body {
+                """
+                val to_  = ($toExpr - 1).to$elementType()
+                if (to_ > to) throw IllegalArgumentException("The to argument value '${'$'}to' was too small.")
+                return $fromExpr .. to_
+                """
+            }
+        } else {
+            body { "return $fromExpr .. (to.to$elementType() - 1).to$elementType()" }
+        }
+    }
+
+    templates addAll PrimitiveType.primitivePermutations
+            .filter { it.first.isIntegral() && it.second.isIntegral() }
+            .map { until(it.first, it.second) }
 
     return templates
 }

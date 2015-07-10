@@ -518,3 +518,155 @@ public fun ShortRange.step(step: Int): ShortProgression {
     return ShortProgression(start, end, step)
 }
 
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Int.until(to: Byte): IntRange {
+    return this .. (to.toInt() - 1).toInt()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Long.until(to: Byte): LongRange {
+    return this .. (to.toLong() - 1).toLong()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Byte.MIN_VALUE].
+ */
+public fun Byte.until(to: Byte): ByteRange {
+    val to_  = (to - 1).toByte()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Short.until(to: Byte): ShortRange {
+    return this .. (to.toShort() - 1).toShort()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Char.MIN_VALUE].
+ */
+public fun Char.until(to: Char): CharRange {
+    val to_  = (to.toInt() - 1).toChar()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Int.MIN_VALUE].
+ */
+public fun Int.until(to: Int): IntRange {
+    val to_  = (to.toLong() - 1).toInt()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Long.until(to: Int): LongRange {
+    return this .. (to.toLong() - 1).toLong()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Int.MIN_VALUE].
+ */
+public fun Byte.until(to: Int): IntRange {
+    val to_  = (to.toLong() - 1).toInt()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toInt() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Int.MIN_VALUE].
+ */
+public fun Short.until(to: Int): IntRange {
+    val to_  = (to.toLong() - 1).toInt()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toInt() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Long.MIN_VALUE].
+ */
+public fun Int.until(to: Long): LongRange {
+    val to_  = (to - 1).toLong()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toLong() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Long.MIN_VALUE].
+ */
+public fun Long.until(to: Long): LongRange {
+    val to_  = (to - 1).toLong()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Long.MIN_VALUE].
+ */
+public fun Byte.until(to: Long): LongRange {
+    val to_  = (to - 1).toLong()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toLong() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Long.MIN_VALUE].
+ */
+public fun Short.until(to: Long): LongRange {
+    val to_  = (to - 1).toLong()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toLong() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Int.until(to: Short): IntRange {
+    return this .. (to.toInt() - 1).toInt()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ */
+public fun Long.until(to: Short): LongRange {
+    return this .. (to.toLong() - 1).toLong()
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Short.MIN_VALUE].
+ */
+public fun Byte.until(to: Short): ShortRange {
+    val to_  = (to - 1).toShort()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this.toShort() .. to_
+}
+
+/**
+ * Returns a range from this value up to but excluding the specified [to] value.
+ * The [to] value must be greater than [Short.MIN_VALUE].
+ */
+public fun Short.until(to: Short): ShortRange {
+    val to_  = (to - 1).toShort()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return this .. to_
+}
+

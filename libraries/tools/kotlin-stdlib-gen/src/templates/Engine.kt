@@ -45,15 +45,17 @@ enum class PrimitiveType {
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
+        val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
 
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
 
-        fun getMaxCapacityType(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
+        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
 
         val primitivePermutations = numericPrimitives.flatMap { fromType -> numericPrimitives map { toType -> fromType to toType } } + (Char to Char)
     }
 }
 
+fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 
 
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
