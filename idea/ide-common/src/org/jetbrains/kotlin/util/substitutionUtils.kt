@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature
+package org.jetbrains.kotlin.types.substitutions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import java.util.LinkedHashMap
 
-private fun getTypeSubstitution(baseType: JetType, derivedType: JetType): LinkedHashMap<TypeConstructor, TypeProjection>? {
+public fun getTypeSubstitution(baseType: JetType, derivedType: JetType): LinkedHashMap<TypeConstructor, TypeProjection>? {
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
 
     val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size())
@@ -35,7 +33,7 @@ private fun getTypeSubstitution(baseType: JetType, derivedType: JetType): Linked
     return substitution
 }
 
-private fun getCallableSubstitution(
+public fun getCallableSubstitution(
         baseCallable: CallableDescriptor,
         derivedCallable: CallableDescriptor
 ): MutableMap<TypeConstructor, TypeProjection>? {
@@ -50,23 +48,13 @@ private fun getCallableSubstitution(
     return substitution
 }
 
-fun getTypeSubstitutor(baseType: JetType, derivedType: JetType): TypeSubstitutor? {
-    return getTypeSubstitution(baseType, derivedType)?.let { TypeSubstitutor.create(it) }
-}
-
-fun getCallableSubstitutor(
-        baseFunction: JetCallableDefinitionUsage<*>,
-        derivedCallable: JetCallableDefinitionUsage<*>
+public fun getCallableSubstitutor(
+        baseCallable: CallableDescriptor,
+        derivedCallable: CallableDescriptor
 ): TypeSubstitutor? {
-    val currentBaseFunction = baseFunction.getCurrentCallableDescriptor()
-    val currentDerivedFunction = derivedCallable.getCurrentCallableDescriptor()
-    if (currentBaseFunction == null || currentDerivedFunction == null) return null
-
-    return getCallableSubstitution(currentBaseFunction, currentDerivedFunction)?.let { TypeSubstitutor.create(it) }
+    return getCallableSubstitution(baseCallable, derivedCallable)?.let { TypeSubstitutor.create(it) }
 }
 
-fun JetType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
-    val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
-    val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
-    return renderer.renderType(newType)
+public fun getTypeSubstitutor(baseType: JetType, derivedType: JetType): TypeSubstitutor? {
+    return getTypeSubstitution(baseType, derivedType)?.let { TypeSubstitutor.create(it) }
 }

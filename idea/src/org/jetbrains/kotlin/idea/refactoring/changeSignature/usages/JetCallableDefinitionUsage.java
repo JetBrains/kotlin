@@ -26,7 +26,6 @@ import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePack
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -50,6 +48,8 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.types.TypesPackage;
+import org.jetbrains.kotlin.types.substitutions.SubstitutionsPackage;
 
 import java.util.List;
 
@@ -126,7 +126,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
                 if (!(classDescriptor instanceof ClassDescriptor)) return null;
 
-                typeSubstitutor = ChangeSignaturePackage.getTypeSubstitutor(
+                typeSubstitutor = SubstitutionsPackage.getTypeSubstitutor(
                         ((ClassDescriptor) classDescriptor).getDefaultType(),
                         samCallType
                 );
