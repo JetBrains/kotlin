@@ -54,6 +54,7 @@ enum class PrimitiveType {
 }
 
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
+fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
 
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {
