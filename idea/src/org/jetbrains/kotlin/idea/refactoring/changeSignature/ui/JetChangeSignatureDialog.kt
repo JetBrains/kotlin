@@ -250,7 +250,7 @@ public class JetChangeSignatureDialog(
                         val columnInfo = parametersTableModel.getColumnInfos()[column]
 
                         if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
-                            return (components.get(column) as JComboBox).getSelectedItem()
+                            return (components.get(column) as @suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).getSelectedItem()
                         else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
                             return item.typeCodeFragment
                         else if (JetCallableParameterTableModel.isNameColumn(columnInfo))
