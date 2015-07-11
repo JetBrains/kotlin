@@ -89,7 +89,7 @@ public class RangeIterationTest {
         doTest(1 until 5, 1, 4, 1, listOf(1, 2, 3, 4))
         doTest(1.toByte() until 5.toByte(), 1.toByte(), 4.toByte(), 1, listOf<Byte>(1, 2, 3, 4))
         doTest(1.toShort() until 5.toShort(), 1.toShort(), 4.toShort(), 1, listOf<Short>(1, 2, 3, 4))
-        doTest(1L until 5L, 1L, 4L, 1L, listOf<Long>(1, 2, 3, 4))
+        doTest(1.toLong() until 5.toLong(), 1L, 4L, 1L, listOf<Long>(1, 2, 3, 4))
         doTest('a' until 'd', 'a', 'c', 1, listOf('a', 'b', 'c'))
     }
 
