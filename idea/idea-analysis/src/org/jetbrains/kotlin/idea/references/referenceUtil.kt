@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -112,10 +113,9 @@ private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
 fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newName: String?): JetExpression {
     if (newName == null) return expression
 
-    val expr = OperatorToFunctionIntention.convert(expression) as JetQualifiedExpression
-    val callee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression() as JetSimpleNameExpression
-    val newCallee = callee.mainReference.handleElementRename(newName)
-    return newCallee.getStrictParentOfType<JetQualifiedExpression>() as JetExpression
+    val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(expression)
+    newNameElement.mainReference.handleElementRename(newName)
+    return newExpression
 }
 
 val JetSimpleNameExpression.mainReference: JetSimpleNameReference

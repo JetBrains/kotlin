@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -98,26 +95,16 @@ class JetSimpleNameReference(expression: JetSimpleNameExpression) : JetSimpleRef
             }
         }
 
-        var nameElement = expression.getReferencedNameElement()
+        val nameElement = expression.getReferencedNameElement()
 
-        val elementType = nameElement.getNode()?.getElementType()
-        val opExpression = PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetUnaryExpression>(), javaClass<JetBinaryExpression>())
-        if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null && opExpression != null) {
-            val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-            val oldDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, expression]
-            val newExpression = OperatorToFunctionIntention.convert(opExpression)
-            newExpression.accept(object : JetTreeVisitorVoid() {
-                override fun visitCallExpression(expression: JetCallExpression) {
-                    val callee = expression.getCalleeExpression() as? JetSimpleNameExpression
-                    if (callee != null && bindingContext[BindingContext.REFERENCE_TARGET, callee] == oldDescriptor) {
-                        nameElement = callee.getReferencedNameElement()
-                    }
-                    else {
-                        super.visitCallExpression(expression)
-                    }
-                }
+        val elementType = nameElement.getNode().getElementType()
+        if (elementType is JetToken && OperatorConventions.getNameForOperationSymbol(elementType) != null) {
+            val opExpression = expression.getParent() as? JetOperationExpression
+            if (opExpression != null) {
+                val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(opExpression)
+                newNameElement.replace(element)
+                return newExpression
             }
-            )
         }
 
         nameElement.replace(element)
