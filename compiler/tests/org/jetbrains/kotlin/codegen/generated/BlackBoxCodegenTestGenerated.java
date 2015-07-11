@@ -322,9 +322,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("longOverflow.kt")
-        public void testLongOverflow() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/longOverflow.kt");
+        @TestMetadata("overflowChar.kt")
+        public void testOverflowChar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overflowInt.kt")
+        public void testOverflowInt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overflowLong.kt")
+        public void testOverflowLong() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowLong.kt");
             doTest(fileName);
         }
     }
