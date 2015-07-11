@@ -2,14 +2,11 @@ package kotlin.template
 
 import kotlin.dom. *
 import org.w3c.dom.Node
-import com.sun.org.apache.xalan.internal.xsltc.dom.UnionIterator
 import java.util.Locale
 import java.text.NumberFormat
 import java.text.DateFormat
 import java.util.Date
 
-// TODO this class should move into the runtime
-// in kotlin.StringTemplate
 deprecated("This class is part of an experimental implementation of string templates and is going to be removed")
 public class StringTemplate(private val values: Array<Any?>) {
 
