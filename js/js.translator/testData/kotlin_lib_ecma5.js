@@ -175,9 +175,7 @@ var Kotlin = {};
     Kotlin.createObjectNow = function (bases, constructor, functions) {
         var noNameClass = Kotlin.createClassNow(bases, constructor, functions);
         var obj = new noNameClass();
-        obj.$metadata$ = {
-            type: Kotlin.TYPE.OBJECT
-        };
+        noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
         return  obj;
     };
 
