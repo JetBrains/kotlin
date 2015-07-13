@@ -14,204 +14,143 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.findUsages.handlers;
+package org.jetbrains.kotlin.idea.findUsages.handlers
 
-import com.intellij.find.findUsages.AbstractFindUsagesDialog;
-import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.searches.MethodReferencesSearch;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.CommonProcessors;
-import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.idea.findUsages.*;
-import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog;
-import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog;
-import org.jetbrains.kotlin.idea.search.declarationsSearch.DeclarationsSearchPackage;
-import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchRequest;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.find.findUsages.AbstractFindUsagesDialog
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
+import com.intellij.psi.search.PsiElementProcessor
+import com.intellij.psi.search.PsiElementProcessorAdapter
+import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.usageView.UsageInfo
+import com.intellij.util.CommonProcessors
+import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.idea.findUsages.*
+import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog
+import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
+import org.jetbrains.kotlin.idea.search.declarationsSearch.*
+import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchRequest
+import org.jetbrains.kotlin.psi.*
+import java.util.Collections
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
+    protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
+    : KotlinFindUsagesHandler<T>(declaration, elementsToSearch, factory) {
 
-public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaration> extends KotlinFindUsagesHandler<T> {
-    private static class Function extends KotlinFindMemberUsagesHandler<JetFunction> {
-        public Function(
-                @NotNull JetFunction declaration,
-                @NotNull Collection<? extends PsiElement> elementsToSearch,
-                @NotNull KotlinFindUsagesHandlerFactory factory
-        ) {
-            super(declaration, elementsToSearch, factory);
+    private class Function(declaration: JetFunction,
+                           elementsToSearch: Collection<PsiElement>,
+                           factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<JetFunction>(declaration, elementsToSearch, factory) {
+
+        override fun getSearchHelper(options: KotlinCallableFindUsagesOptions): UsagesSearchHelper<JetFunction> {
+            return (options as KotlinFunctionFindUsagesOptions).toHelper()
         }
 
-        @Override
-        protected UsagesSearchHelper<JetFunction> getSearchHelper(KotlinCallableFindUsagesOptions options) {
-            return FindUsagesPackage.toHelper((KotlinFunctionFindUsagesOptions) options);
-        }
+        override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findFunctionOptions
 
-        @NotNull
-        @Override
-        public FindUsagesOptions getFindUsagesOptions(@Nullable DataContext dataContext) {
-            return getFactory().getFindFunctionOptions();
-        }
-
-        @NotNull
-        @Override
-        public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
-            KotlinFunctionFindUsagesOptions options = getFactory().getFindFunctionOptions();
-            Iterator<PsiMethod> lightMethods = getLightMethods(getElement()).iterator();
+        override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
+            val options = factory.findFunctionOptions
+            val lightMethods = getLightMethods(getElement())!!.iterator()
             if (lightMethods.hasNext()) {
-                return new KotlinFindFunctionUsagesDialog(
-                        lightMethods.next(), getProject(), options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this
-                );
+                return KotlinFindFunctionUsagesDialog(lightMethods.next(), getProject(), options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
             }
 
-            return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab);
+            return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
         }
     }
 
-    private static class Property extends KotlinFindMemberUsagesHandler<JetNamedDeclaration> {
-        public Property(
-                @NotNull JetNamedDeclaration declaration,
-                @NotNull Collection<? extends PsiElement> elementsToSearch,
-                @NotNull KotlinFindUsagesHandlerFactory factory
-        ) {
-            super(declaration, elementsToSearch, factory);
+    private class Property(declaration: JetNamedDeclaration, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<JetNamedDeclaration>(declaration, elementsToSearch, factory) {
+
+        override fun getSearchHelper(options: KotlinCallableFindUsagesOptions): UsagesSearchHelper<JetNamedDeclaration> {
+            return (options as KotlinPropertyFindUsagesOptions).toHelper()
         }
 
-        @Override
-        protected UsagesSearchHelper<JetNamedDeclaration> getSearchHelper(KotlinCallableFindUsagesOptions options) {
-            return FindUsagesPackage.toHelper((KotlinPropertyFindUsagesOptions) options);
-        }
+        override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findPropertyOptions
 
-        @NotNull
-        @Override
-        public FindUsagesOptions getFindUsagesOptions(@Nullable DataContext dataContext) {
-            return getFactory().getFindPropertyOptions();
-        }
-
-        @NotNull
-        @Override
-        public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
-            return new KotlinFindPropertyUsagesDialog(
-                    getElement(), getProject(), getFactory().getFindPropertyOptions(), toShowInNewTab, mustOpenInNewTab, isSingleFile, this
-            );
+        override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
+            return KotlinFindPropertyUsagesDialog(getElement(), getProject(), factory.findPropertyOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
         }
     }
 
-    protected KotlinFindMemberUsagesHandler(
-            @NotNull T declaration,
-            @NotNull Collection<? extends PsiElement> elementsToSearch,
-            @NotNull KotlinFindUsagesHandlerFactory factory
-    ) {
-        super(declaration, elementsToSearch, factory);
-    }
+    protected abstract fun getSearchHelper(options: KotlinCallableFindUsagesOptions): UsagesSearchHelper<T>
 
-    protected abstract UsagesSearchHelper<T> getSearchHelper(KotlinCallableFindUsagesOptions options);
+    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        return ApplicationManager.getApplication().runReadAction(object : Computable<Boolean> {
+            override fun compute(): Boolean? {
+                val kotlinOptions = options as KotlinCallableFindUsagesOptions
 
-    private static Iterable<PsiMethod> getLightMethods(JetNamedDeclaration element) {
-        if (element instanceof JetFunction) {
-            PsiMethod method = LightClassUtil.getLightClassMethod((JetFunction) element);
-            return method != null ? Collections.singletonList(method) : Collections.<PsiMethod>emptyList();
-        }
+                @SuppressWarnings("unchecked")
+                val request = getSearchHelper(kotlinOptions).newRequest(options.toSearchTarget<T>(element as T, true))
 
-        if (element instanceof JetProperty) {
-            return LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
-        }
+                val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
 
-        if (element instanceof JetParameter) {
-            return LightClassUtil.getLightClassPropertyMethods((JetParameter) element);
-        }
+                for (ref in UsagesSearch.search(request)) {
+                    KotlinFindUsagesHandler.Companion.processUsage(uniqueProcessor, ref)
+                }
 
-        return null;
-    }
-
-    @Override
-    protected boolean searchReferences(
-            @NotNull final PsiElement element, @NotNull final Processor<UsageInfo> processor, @NotNull final FindUsagesOptions options
-    ) {
-        return ApplicationManager.getApplication().runReadAction(
-                new Computable<Boolean>() {
-                    @Override
-                    public Boolean compute() {
-                        KotlinCallableFindUsagesOptions kotlinOptions = (KotlinCallableFindUsagesOptions) options;
-
-                        @SuppressWarnings("unchecked")
-                        UsagesSearchRequest request =
-                                getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.<T>toSearchTarget(options, (T) element, true));
-
-                        final CommonProcessors.UniqueProcessor<UsageInfo> uniqueProcessor =
-                                new CommonProcessors.UniqueProcessor<UsageInfo>(processor);
-
-                        for (PsiReference ref : UsagesSearch.INSTANCE$.search(request)) {
-                            Companion.processUsage(uniqueProcessor, ref);
-                        }
-
-                        PsiMethod psiMethod =
-                                element instanceof PsiMethod
-                                ? (PsiMethod) element
-                                : element instanceof JetConstructor
-                                  ? LightClassUtil.getLightClassMethod((JetFunction) element)
-                                  : null;
-                        if (psiMethod != null) {
-                            for (PsiReference ref : MethodReferencesSearch.search(psiMethod, options.searchScope, true)) {
-                                Companion.processUsage(uniqueProcessor, ref);
-                            }
-                        }
-
-                        if (kotlinOptions.getSearchOverrides()) {
-                            DeclarationsSearchPackage.searchOverriders(
-                                    new HierarchySearchRequest<PsiElement>(element, options.searchScope, true)
-                            ).forEach(
-                                    new PsiElementProcessorAdapter<PsiMethod>(
-                                            new PsiElementProcessor<PsiMethod>() {
-                                                @Override
-                                                public boolean execute(@NotNull PsiMethod method) {
-                                                    return Companion.processUsage(uniqueProcessor, method.getNavigationElement());
-                                                }
-                                            }
-                                    )
-                            );
-                        }
-
-                        return true;
+                val psiMethod = if (element is PsiMethod)
+                    element
+                else if (element is JetConstructor<*>)
+                    LightClassUtil.getLightClassMethod(element as JetFunction)
+                else
+                    null
+                if (psiMethod != null) {
+                    for (ref in MethodReferencesSearch.search(psiMethod, options.searchScope, true)) {
+                        KotlinFindUsagesHandler.Companion.processUsage(uniqueProcessor, ref.getElement())
                     }
                 }
-        );
+
+                if (kotlinOptions.searchOverrides) {
+                    HierarchySearchRequest<PsiElement>(element, options.searchScope, true).searchOverriders().forEach(PsiElementProcessorAdapter(object : PsiElementProcessor<PsiMethod> {
+                        override fun execute(method: PsiMethod): Boolean {
+                            return KotlinFindUsagesHandler.Companion.processUsage(uniqueProcessor, method.getNavigationElement())
+                        }
+                    }))
+                }
+
+                return true
+            }
+        })
     }
 
-    @Override
-    protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
-        return !isSingleFile;
-    }
+    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile
 
-    @NotNull
-    public static KotlinFindMemberUsagesHandler<? extends JetNamedDeclaration> getInstance(
-            @NotNull JetNamedDeclaration declaration,
-            @NotNull Collection<? extends PsiElement> elementsToSearch,
-            @NotNull KotlinFindUsagesHandlerFactory factory) {
-        return declaration instanceof JetFunction
-               ? new Function((JetFunction) declaration, elementsToSearch, factory)
-               : new Property(declaration, elementsToSearch, factory);
-    }
+    companion object {
 
-    @NotNull
-    public static KotlinFindMemberUsagesHandler<? extends JetNamedDeclaration> getInstance(
-            @NotNull JetNamedDeclaration declaration,
-            @NotNull KotlinFindUsagesHandlerFactory factory) {
-        return getInstance(declaration, Collections.<PsiElement>emptyList(), factory);
+        internal fun getLightMethods(element: JetNamedDeclaration): Iterable<PsiMethod>? = when(element) {
+            is JetFunction -> {
+                val method = LightClassUtil.getLightClassMethod(element)
+                if (method != null) listOf(method) else emptyList<PsiMethod>()
+            }
+
+            is JetProperty ->
+                LightClassUtil.getLightClassPropertyMethods(element)
+
+            is JetParameter ->
+                LightClassUtil.getLightClassPropertyMethods(element)
+
+            else -> null
+        }
+
+        public fun getInstance(declaration: JetNamedDeclaration,
+                               elementsToSearch: Collection<PsiElement>,
+                               factory: KotlinFindUsagesHandlerFactory): KotlinFindMemberUsagesHandler<out JetNamedDeclaration> {
+            return if (declaration is JetFunction)
+                Function(declaration, elementsToSearch, factory)
+            else
+                Property(declaration, elementsToSearch, factory)
+        }
+
+        public fun getInstance(declaration: JetNamedDeclaration, factory: KotlinFindUsagesHandlerFactory): KotlinFindMemberUsagesHandler<out JetNamedDeclaration> {
+            return getInstance(declaration, emptyList<PsiElement>(), factory)
+        }
     }
 }
