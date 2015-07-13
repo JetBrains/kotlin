@@ -1300,6 +1300,23 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doJavaTest(new JavaRefactoringProvider());
     }
 
+    private List<Editor> editors = null;
+
+    private static final String[] EXTENSIONS = {".kt", ".java"};
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        editors = new ArrayList<Editor>();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        editors.clear();
+        editors = null;
+    }
+
     @NotNull
     private LinkedHashSet<PsiMethod> findCallers(@NotNull PsiMethod method) {
         KotlinMethodNode rootNode =
@@ -1325,10 +1342,6 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
     }
-
-    private final List<Editor> editors = new ArrayList<Editor>();
-
-    private static final String[] EXTENSIONS = {".kt", ".java"};
 
     private void configureFiles() throws Exception {
         editors.clear();
