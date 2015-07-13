@@ -177,7 +177,7 @@ public class CandidateResolver {
         checkNonExtensionCalledWithReceiver(context);
     }
 
-    private static <D extends CallableDescriptor> void checkExtensionReceiver(@NotNull CallCandidateResolutionContext<D> context) {
+    private <D extends CallableDescriptor> void checkExtensionReceiver(@NotNull CallCandidateResolutionContext<D> context) {
         MutableResolvedCall<D> candidateCall = context.candidateCall;
         ReceiverParameterDescriptor receiverParameter = candidateCall.getCandidateDescriptor().getExtensionReceiverParameter();
         ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
@@ -196,7 +196,7 @@ public class CandidateResolver {
         }
     }
 
-    private static boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
+    private boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
         MutableResolvedCall<? extends CallableDescriptor> candidateCall = context.candidateCall;
         CallableDescriptor candidateDescriptor = candidateCall.getCandidateDescriptor();
         ReceiverValue dispatchReceiver = candidateCall.getDispatchReceiver();
@@ -221,7 +221,7 @@ public class CandidateResolver {
         return true;
     }
 
-    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
+    private boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
         if (context.call.getExplicitReceiver().exists() || context.call.getDispatchReceiver().exists()) return true;
 
@@ -231,7 +231,7 @@ public class CandidateResolver {
         return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
     }
 
-    private static <D extends CallableDescriptor> void checkAbstractAndSuper(@NotNull CallCandidateResolutionContext<D> context) {
+    private <D extends CallableDescriptor> void checkAbstractAndSuper(@NotNull CallCandidateResolutionContext<D> context) {
         MutableResolvedCall<D> candidateCall = context.candidateCall;
         CallableDescriptor descriptor = candidateCall.getCandidateDescriptor();
         JetExpression expression = context.candidateCall.getCall().getCalleeExpression();
@@ -263,7 +263,7 @@ public class CandidateResolver {
         }
     }
 
-    private static void checkNonExtensionCalledWithReceiver(@NotNull CallCandidateResolutionContext<?> context) {
+    private void checkNonExtensionCalledWithReceiver(@NotNull CallCandidateResolutionContext<?> context) {
         MutableResolvedCall<?> candidateCall = context.candidateCall;
 
         if (TasksPackage.isSynthesizedInvoke(candidateCall.getCandidateDescriptor()) &&
@@ -274,7 +274,7 @@ public class CandidateResolver {
     }
 
     @Nullable
-    private static JetSuperExpression getReceiverSuper(@NotNull ReceiverValue receiver) {
+    private JetSuperExpression getReceiverSuper(@NotNull ReceiverValue receiver) {
         if (receiver instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
             JetExpression expression = expressionReceiver.getExpression();
@@ -286,7 +286,7 @@ public class CandidateResolver {
     }
 
     @Nullable
-    private static ClassDescriptor getDeclaringClass(@NotNull CallableDescriptor candidate) {
+    private ClassDescriptor getDeclaringClass(@NotNull CallableDescriptor candidate) {
         ReceiverParameterDescriptor expectedThis = candidate.getDispatchReceiverParameter();
         if (expectedThis == null) return null;
         DeclarationDescriptor descriptor = expectedThis.getContainingDeclaration();
@@ -314,7 +314,7 @@ public class CandidateResolver {
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceivers(
+    private <D extends CallableDescriptor> ResolutionStatus checkReceivers(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull BindingTrace trace
     ) {
@@ -397,7 +397,7 @@ public class CandidateResolver {
     }
 
     @Nullable
-    private static JetType smartCastValueArgumentTypeIfPossible(
+    private JetType smartCastValueArgumentTypeIfPossible(
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull JetType actualType,
@@ -413,7 +413,7 @@ public class CandidateResolver {
         return null;
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         MutableResolvedCall<D> candidateCall = context.candidateCall;
@@ -431,7 +431,7 @@ public class CandidateResolver {
         return status;
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
             @NotNull CallCandidateResolutionContext<D> context,
             @Nullable ReceiverParameterDescriptor receiverParameterDescriptor,
             @NotNull ReceiverValue receiverArgument
@@ -450,7 +450,7 @@ public class CandidateResolver {
         return SUCCESS;
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolvedCall<D> candidateCall,
             @NotNull BindingTrace trace,
@@ -493,7 +493,7 @@ public class CandidateResolver {
         return SUCCESS;
     }
 
-    public static class ValueArgumentsCheckingResult {
+    public class ValueArgumentsCheckingResult {
         @NotNull
         public final List<JetType> argumentTypes;
         @NotNull
@@ -505,7 +505,7 @@ public class CandidateResolver {
         }
     }
 
-    private static void checkGenericBoundsInAFunctionCall(
+    private void checkGenericBoundsInAFunctionCall(
             @NotNull List<JetTypeProjection> jetTypeArguments,
             @NotNull List<JetType> typeArguments,
             @NotNull CallableDescriptor functionDescriptor,
