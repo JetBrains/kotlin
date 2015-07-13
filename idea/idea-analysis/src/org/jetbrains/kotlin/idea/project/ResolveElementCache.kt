@@ -24,15 +24,10 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BodyResolveCache
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.lazy.ElementResolver
-import org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 
 public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
@@ -41,20 +36,48 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
             object : CachedValueProvider<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
                 override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
                     val manager = resolveSession.getStorageManager()
-                    val elementsCacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetElement, BindingContext> { element ->
+                    val cacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetElement, BindingContext> { element ->
                         performElementAdditionalResolve(element, element, BodyResolveMode.FULL)
                     }
-                    return CachedValueProvider.Result.create(elementsCacheFunction,
+                    return CachedValueProvider.Result.create(cacheFunction,
                                                              PsiModificationTracker.MODIFICATION_COUNT,
                                                              resolveSession.getExceptionTracker())
                 }
             },
             false)
 
-    override fun getElementAdditionalResolve(jetElement: JetElement)
-            = additionalResolveCache.getValue().invoke(jetElement)
+    private val partialBodyResolveCache: CachedValue<MemoizedFunctionToNotNull<JetExpression, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MemoizedFunctionToNotNull<JetExpression, BindingContext>> {
+                override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetExpression, BindingContext>> {
+                    val manager = resolveSession.getStorageManager()
+                    val cacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetExpression, BindingContext> { expression ->
+                        val resolveElement = findElementOfAdditionalResolve(expression)!!
+                        performElementAdditionalResolve(resolveElement, expression, BodyResolveMode.PARTIAL)
+                    }
+                    return CachedValueProvider.Result.create(cacheFunction,
+                                                             PsiModificationTracker.MODIFICATION_COUNT,
+                                                             resolveSession.getExceptionTracker())
+                }
+            },
+            false)
 
-    override fun hasElementAdditionalResolveCached(jetElement: JetElement)
+    override fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+        if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(resolveElement) && resolveElement is JetDeclaration) {
+            if (bodyResolveMode == BodyResolveMode.PARTIAL) {
+                val partialResolveElement = PartialBodyResolveFilter.findResolveElement(contextElement, resolveElement)
+                if (partialResolveElement != null) {
+                    return partialBodyResolveCache.getValue().invoke(partialResolveElement)
+                }
+            }
+            else {
+                return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode)
+            }
+        }
+
+        return additionalResolveCache.getValue().invoke(resolveElement)
+    }
+
+    private fun hasElementAdditionalResolveCached(jetElement: JetElement)
             = additionalResolveCache.hasUpToDateValue() && additionalResolveCache.getValue().isComputed(jetElement)
 
     override fun createAdditionalCheckerProvider(jetFile: JetFile, module: ModuleDescriptor)
@@ -71,5 +94,5 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
     }
 
     override fun resolveFunctionBody(function: JetNamedFunction)
-            = getElementAdditionalResolve(function)
+            = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
 }

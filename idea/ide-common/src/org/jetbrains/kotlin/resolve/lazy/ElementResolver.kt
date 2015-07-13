@@ -46,41 +46,26 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 public abstract class ElementResolver protected constructor(
         public val resolveSession: ResolveSession
 ) {
-
-    public open fun getElementAdditionalResolve(jetElement: JetElement): BindingContext {
-        return performElementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL)
+    public open fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+        return performElementAdditionalResolve(resolveElement, resolveElement, bodyResolveMode)
     }
-
-    public open fun hasElementAdditionalResolveCached(jetElement: JetElement): Boolean = false
 
     protected open fun probablyNothingCallableNames(): ProbablyNothingCallableNames
             = throw UnsupportedOperationException("Cannot use partial body resolve with no Nothing-functions index");
 
-    public fun resolveToElement(jetElement: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
-        @suppress("NAME_SHADOWING")
-        var jetElement = jetElement
+    public fun resolveToElement(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
+        var contextElement = element
 
-        val elementOfAdditionalResolve = findElementOfAdditionalResolve(jetElement)
+        val elementOfAdditionalResolve = findElementOfAdditionalResolve(contextElement)
 
-        if (elementOfAdditionalResolve != null) {
-            if (elementOfAdditionalResolve !is JetParameter) {
-                if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(elementOfAdditionalResolve)) {
-                    return performElementAdditionalResolve(elementOfAdditionalResolve, jetElement, bodyResolveMode)
-                }
-
-                return getElementAdditionalResolve(elementOfAdditionalResolve)
-            }
-
-            val klass = elementOfAdditionalResolve.getParentOfType<JetClass>(true)
-            if (klass != null && elementOfAdditionalResolve.getParent() == klass.getPrimaryConstructorParameterList()) {
-                return getElementAdditionalResolve(klass)
-            }
-
-            // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
-            jetElement = elementOfAdditionalResolve
+        if (elementOfAdditionalResolve is JetParameter) {
+            contextElement = elementOfAdditionalResolve
+        }
+        else if (elementOfAdditionalResolve != null) {
+            return getElementAdditionalResolve(elementOfAdditionalResolve, contextElement, bodyResolveMode)
         }
 
-        val declaration = jetElement.getParentOfType<JetDeclaration>(false)
+        val declaration = contextElement.getParentOfType<JetDeclaration>(false)
         if (declaration != null && declaration !is JetClassInitializer) {
             // Activate descriptor resolution
             resolveSession.resolveToDescriptor(declaration)
@@ -89,8 +74,8 @@ public abstract class ElementResolver protected constructor(
         return resolveSession.getBindingContext()
     }
 
-    private fun findElementOfAdditionalResolve(element: JetElement): JetElement? {
-        var elementOfAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(
+    protected fun findElementOfAdditionalResolve(element: JetElement): JetElement? {
+        val elementOfAdditionalResolve = JetPsiUtil.getTopmostParentOfTypes(
                 element,
                 javaClass<JetNamedFunction>(),
                 javaClass<JetClassInitializer>(),
@@ -104,13 +89,22 @@ public abstract class ElementResolver protected constructor(
                 javaClass<JetTypeParameter>(),
                 javaClass<JetTypeConstraint>(),
                 javaClass<JetPackageDirective>(),
-                javaClass<JetCodeFragment>()) as JetElement?
+                javaClass<JetCodeFragment>()) as JetElement? ?: return null
 
-        if (elementOfAdditionalResolve is JetPackageDirective) {
-            return element
+        when (elementOfAdditionalResolve) {
+            is JetPackageDirective -> return element
+
+            is JetParameter -> {
+                val klass = elementOfAdditionalResolve.getParentOfType<JetClass>(strict = true)
+                if (klass != null && elementOfAdditionalResolve.getParent() == klass.getPrimaryConstructorParameterList()) {
+                    return klass
+                }
+
+                return elementOfAdditionalResolve
+            }
+
+            else -> return elementOfAdditionalResolve
         }
-
-        return elementOfAdditionalResolve
     }
 
     protected fun performElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {

@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.utils.addToStdlib.swap
 import org.jetbrains.kotlin.util.isProbablyNothing
@@ -538,6 +539,10 @@ class PartialBodyResolveFilter(
     }
 
     companion object {
+        public fun findResolveElement(element: JetElement, declaration: JetDeclaration): JetExpression? {
+            return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as JetExpression?
+        }
+
         private fun JetElement.blocks(): Collection<JetBlockExpression> {
             val result = ArrayList<JetBlockExpression>(1)
             this.accept(object : JetVisitorVoid() {
