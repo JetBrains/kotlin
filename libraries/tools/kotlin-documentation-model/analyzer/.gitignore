@@ -2,3 +2,5 @@
 out
 doc
 target
+build
+.gradle
