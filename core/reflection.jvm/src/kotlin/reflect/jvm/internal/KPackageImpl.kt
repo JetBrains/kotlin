@@ -16,10 +16,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import kotlin.jvm.internal.KotlinPackage
-import kotlin.reflect.*
+import kotlin.reflect.KPackage
 
 class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KPackage {
     val descriptor by ReflectProperties.lazySoft {
@@ -30,6 +31,9 @@ class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KP
     }
 
     override val scope: JetScope get() = descriptor.memberScope
+
+    override val constructorDescriptors: Collection<ConstructorDescriptor>
+        get() = emptyList()
 
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass

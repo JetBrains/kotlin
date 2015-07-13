@@ -39,8 +39,13 @@ public interface KClass<T> : KDeclarationContainer {
     public val qualifiedName: String?
 
     /**
-     * All elements accessible in this class, including functions and properties
-     * declared in this class and all of its superclasses.
+     * All functions and properties accessible in this class, including those declared in this class
+     * and all of its superclasses. Does not include constructors.
      */
     public val members: Collection<KCallable<*>>
+
+    /**
+     * All constructors declared in this class.
+     */
+    public val constructors: Collection<KFunction<T>>
 }

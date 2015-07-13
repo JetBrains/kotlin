@@ -31,22 +31,22 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper {
     fun mapSignature(function: FunctionDescriptor): String {
-        if (function is DeserializedSimpleFunctionDescriptor) {
-            val proto = function.getProto()
+        if (function is DeserializedCallableMemberDescriptor) {
+            val proto = function.proto
             if (!proto.hasExtension(JvmProtoBuf.methodSignature)) {
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
                 return mapIntrinsicFunctionSignature(function) ?:
                        throw KotlinReflectionInternalError("No metadata found for $function")
             }
             val signature = proto.getExtension(JvmProtoBuf.methodSignature)
-            return SignatureDeserializer(function.getNameResolver()).methodSignatureString(signature)
+            return SignatureDeserializer(function.nameResolver).methodSignatureString(signature)
         }
         else if (function is JavaMethodDescriptor) {
             val method = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaMethod ?:
@@ -130,7 +130,7 @@ object RuntimeTypeMapper {
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
     }
 
-    private fun mapIntrinsicFunctionSignature(function: DeserializedSimpleFunctionDescriptor): String? {
+    private fun mapIntrinsicFunctionSignature(function: FunctionDescriptor): String? {
         val parameters = function.getValueParameters()
 
         when (function.getName().asString()) {

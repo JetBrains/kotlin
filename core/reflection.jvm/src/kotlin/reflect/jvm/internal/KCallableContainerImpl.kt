@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -43,6 +44,8 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
 
     abstract val scope: JetScope
 
+    abstract val constructorDescriptors: Collection<ConstructorDescriptor>
+
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val properties = scope
                 .getProperties(Name.guess(name))
@@ -63,8 +66,7 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val functions = scope
-                .getFunctions(Name.guess(name))
+        val functions = (if (name == "<init>") constructorDescriptors.toList() else scope.getFunctions(Name.guess(name)))
                 .filter { descriptor ->
                     RuntimeTypeMapper.mapSignature(descriptor) == signature
                 }

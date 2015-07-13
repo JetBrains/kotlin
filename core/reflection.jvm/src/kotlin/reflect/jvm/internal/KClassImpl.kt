@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 
 class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
@@ -42,6 +43,15 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     override val scope: JetScope get() = ChainedScope(
             descriptor, "KClassImpl scope", descriptor.getDefaultType().getMemberScope(), descriptor.getStaticScope()
     )
+
+    override val constructorDescriptors: Collection<ConstructorDescriptor>
+        get() {
+            val descriptor = descriptor
+            if (descriptor.getKind() == ClassKind.CLASS || descriptor.getKind() == ClassKind.ENUM_CLASS) {
+                return descriptor.getConstructors()
+            }
+            return emptyList()
+        }
 
     override val simpleName: String? get() {
         if (jClass.isAnonymousClass()) return null
@@ -77,44 +87,57 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     override val members: Collection<KCallable<*>>
         get() = getMembers(declaredOnly = false, nonExtensions = true, extensions = true).toList()
 
-    fun getMembers(declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> =
-            scope.getAllDescriptors().asSequence()
-                    .filter { descriptor ->
-                        descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
-                    }
-                    .map { descriptor ->
-                        descriptor.accept(object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Nothing>() {
-                            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
-                                if (declaredOnly && !descriptor.getKind().isReal()) return true
+    @suppress("UNCHECKED_CAST")
+    override val constructors: Collection<KFunction<T>>
+        get() = constructorDescriptors.map {
+            KFunctionImpl(this, it) as KFunction<T>
+        }
 
-                                val isExtension = descriptor.getExtensionReceiverParameter() != null
-                                if (isExtension && !extensions) return true
-                                if (!isExtension && !nonExtensions) return true
+    fun getMembers(declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
+        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Nothing>() {
+            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
+                if (declaredOnly && !descriptor.getKind().isReal()) return true
 
-                                return false
-                            }
+                val isExtension = descriptor.getExtensionReceiverParameter() != null
+                if (isExtension && !extensions) return true
+                if (!isExtension && !nonExtensions) return true
 
-                            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?): KCallable<*>? {
-                                if (skipCallable(descriptor)) return null
+                return false
+            }
 
-                                return if (descriptor.getExtensionReceiverParameter() == null) {
-                                    if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
-                                    else KProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
-                                }
-                                else {
-                                    if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
-                                    else KProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
-                                }
-                            }
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Nothing?): KCallable<*>? {
+                if (skipCallable(descriptor)) return null
 
-                            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?): KCallable<*>? {
-                                if (skipCallable(descriptor)) return null
+                return if (descriptor.getExtensionReceiverParameter() == null) {
+                    if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
+                    else KProperty1Impl<T, Any?>(this@KClassImpl, descriptor)
+                }
+                else {
+                    if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
+                    else KProperty2Impl<T, Any?, Any?>(this@KClassImpl, descriptor)
+                }
+            }
 
-                                return KFunctionImpl(this@KClassImpl, descriptor)
-                            }
-                        }, null)
-                    }
-                    .filterNotNull()
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?): KCallable<*>? {
+                if (skipCallable(descriptor)) return null
+
+                return KFunctionImpl(this@KClassImpl, descriptor)
+            }
+
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Nothing?): KCallable<*>? {
+                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
+            }
+        }
+
+        return scope.getAllDescriptors().asSequence()
+                .filter { descriptor ->
+                    descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                }
+                .map { descriptor ->
+                    descriptor.accept(visitor, null)
+                }
+                .filterNotNull()
+    }
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass
