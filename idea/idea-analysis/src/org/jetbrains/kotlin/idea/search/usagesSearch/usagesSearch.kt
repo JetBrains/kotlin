@@ -153,9 +153,10 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
     }
 
     public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {
+        val scope = runReadAction { item.target.effectiveScope }
         return item.words.all { word ->
             val textProcessor = ResultTextProcessorImpl(item, consumer)
-            processElementsWithWord(textProcessor, item.target.effectiveScope, word, item.target.location.searchContext, true)
+            processElementsWithWord(textProcessor, scope, word, item.target.location.searchContext, true)
         }
     }
 }

@@ -26,6 +26,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 import java.util.ArrayList
 import java.util.Collections
@@ -53,16 +54,12 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     protected fun searchTextOccurrences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val scope = options.searchScope
 
-        val searchText = options.isSearchForTextOccurrences && scope is GlobalSearchScope
-
-        if (searchText) {
-            if (options.fastTrack != null) {
-                options.fastTrack.searchCustom {
-                     processUsagesInText(element, processor, scope as GlobalSearchScope)
-                }
+        if (options.isSearchForTextOccurrences && scope is GlobalSearchScope) {
+            if (options.fastTrack == null) {
+                return processUsagesInText(element, processor, scope)
             }
-            else {
-                return processUsagesInText(element, processor, scope as GlobalSearchScope)
+            options.fastTrack.searchCustom {
+                processUsagesInText(element, processor, scope)
             }
         }
         return true
@@ -94,12 +91,13 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
 
         protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference?): Boolean {
             if (ref == null) return true
-            val rangeInElement = ref.getRangeInElement()
-            return processor.process(UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false))
+            val usageInfo = runReadAction {
+                val rangeInElement = ref.getRangeInElement()
+                UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false)
+            }
+            return processor.process(usageInfo)
         }
 
-        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean {
-            return processor.process(UsageInfo(element))
-        }
+        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean = processor.process(UsageInfo(element))
     }
 }
