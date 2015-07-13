@@ -66,12 +66,6 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/unknownParameters.constraints");
             doTest(fileName);
         }
-
-        @TestMetadata("violatedUpperBound.constraints")
-        public void testViolatedUpperBound() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/violatedUpperBound.constraints");
-            doTest(fileName);
-        }
     }
 
     @TestMetadata("compiler/testData/constraintSystem/computeValues")

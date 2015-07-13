@@ -1,7 +1,7 @@
 VARIABLES T P
 
-EQUAL T My<P>
-EQUAL P Two<T,P>
+T := My<P>
+P := Two<T,P>
 
 type parameter bounds:
 T := My<P>*

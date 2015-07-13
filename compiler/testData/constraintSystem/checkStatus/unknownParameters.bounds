@@ -1,6 +1,6 @@
 VARIABLES T
 
-SUBTYPE Any Any
+Any <: Any
 
 type parameter bounds:
 T

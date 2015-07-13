@@ -1,4 +1,4 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUPERTYPE T String
+T >: IntegerValueType(1)
+T >: String

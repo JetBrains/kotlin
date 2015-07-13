@@ -1,5 +1,5 @@
 VARIABLES T P E
 
-SUBTYPE T Producer<P>
-SUBTYPE P Producer<E>
-SUBTYPE E Producer<P>
+T <: Producer<P>
+P <: Producer<E>
+E <: Producer<P>

@@ -1,7 +1,7 @@
 VARIABLES T P
 
-SUBTYPE T Int
-SUBTYPE P T
+T <: Int
+P <: T
 
 type parameter bounds:
 T <: Int, >: P*

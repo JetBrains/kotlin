@@ -1,4 +1,4 @@
 VARIABLES T P
 
-SUBTYPE T Int
-SUBTYPE P T
+T <: Int
+P <: T

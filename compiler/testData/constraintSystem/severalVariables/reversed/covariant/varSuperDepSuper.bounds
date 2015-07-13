@@ -1,7 +1,7 @@
 VARIABLES T P
 
-SUPERTYPE P Producer<T>
-SUPERTYPE T Int
+P >: Producer<T>
+T >: Int
 
 type parameter bounds:
 T >: Int

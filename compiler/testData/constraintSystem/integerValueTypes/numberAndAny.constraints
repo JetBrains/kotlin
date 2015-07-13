@@ -1,4 +1,4 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUBTYPE T Any
+T >: IntegerValueType(1)
+T <: Any

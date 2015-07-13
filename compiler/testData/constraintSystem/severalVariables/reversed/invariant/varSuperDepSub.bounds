@@ -1,7 +1,7 @@
 VARIABLES T P
 
-SUBTYPE P My<T>
-SUPERTYPE T Int
+P <: My<T>
+T >: Int
 
 type parameter bounds:
 T >: Int

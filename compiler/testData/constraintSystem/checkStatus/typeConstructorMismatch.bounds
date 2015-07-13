@@ -1,6 +1,6 @@
 VARIABLES T
 
-SUBTYPE List<T> Int
+List<T> <: Int
 
 type parameter bounds:
 T

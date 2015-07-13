@@ -1,4 +1,4 @@
 VARIABLES T P
 
-EQUAL P Consumer<T>
-EQUAL T Int
+P := Consumer<T>
+T := Int

@@ -1,4 +1,4 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUPERTYPE T IntegerValueType(10000000000)
+T >: IntegerValueType(1)
+T >: IntegerValueType(10000000000)

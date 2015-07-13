@@ -1,7 +1,7 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1000)
-SUBTYPE T Byte
+T >: IntegerValueType(1000)
+T <: Byte
 
 type parameter bounds:
 T >: IntegerValueType(1000), <: Byte

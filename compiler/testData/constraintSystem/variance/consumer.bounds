@@ -1,6 +1,6 @@
 VARIABLES T
 
-SUBTYPE Consumer<A> Consumer<T>
+Consumer<A> <: Consumer<T>
 
 type parameter bounds:
 T <: A

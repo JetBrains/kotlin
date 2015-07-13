@@ -17,30 +17,24 @@
 package org.jetbrains.kotlin.resolve.constraintSystem
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.tests.di.createContainerForTests
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.ArrayList
-import java.util.LinkedHashMap
-import java.util.regex.Pattern
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
-    private val typePattern = """([\w|<|\,|>|?|\(|\)]+)"""
-    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE|EQUAL)\s+$typePattern\s+$typePattern\s*(weak)?""")
-    val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
-    val fixVariablesPattern = "FIX_VARIABLES"
 
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
@@ -72,7 +66,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     }
 
     private fun analyzeDeclarations(): ConstraintSystemTestData {
-        val fileName = "declarations/declarations.kt"
+        val fileName = "declarations.kt"
 
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
@@ -81,24 +75,29 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
     public fun doTest(filePath: String) {
         val constraintsFile = File(filePath)
-        val constraintsFileText = JetTestUtils.doLoadFile(constraintsFile)!!
+        val constraintsFileText = constraintsFile.readLines()
 
         val constraintSystem = ConstraintSystemImpl()
 
         val variables = parseVariables(constraintsFileText)
-        val fixVariables = constraintsFileText.contains(fixVariablesPattern)
+        val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
         val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
         constraintSystem.registerTypeVariables(typeParameterDescriptors, { Variance.INVARIANT })
 
         val constraints = parseConstraints(constraintsFileText)
+        fun JetType.assertNotError(): JetType {
+            assert(!ErrorUtils.containsErrorType(this)) { "Type $this is resolved to or contains error type" }
+            return this
+        }
         for (constraint in constraints) {
-            val firstType = testDeclarations.getType(constraint.firstType)
-            val secondType = testDeclarations.getType(constraint.secondType)
-            val position = if (constraint.isWeak) TYPE_BOUND_POSITION.position(0) else SPECIAL.position()
+            val firstType = testDeclarations.getType(constraint.firstType).assertNotError()
+            val secondType = testDeclarations.getType(constraint.secondType).assertNotError()
+            val position = SPECIAL.position()
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
-                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position, topLevel = true)
+                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(
+                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position, topLevel = true)
             }
         }
         if (fixVariables) constraintSystem.fixVariables()
@@ -109,38 +108,37 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val result = typeParameterDescriptors.map {
             val parameterType = testDeclarations.getType(it.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
-            "${it.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
+            "${it.getName()}=${resultType?.let { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
         }.join("\n", prefix = "result:\n")
 
         val boundsFile = File(filePath.replace("constraints", "bounds"))
-        JetTestUtils.assertEqualsToFile(boundsFile, "$constraintsFileText\n\n$resultingStatus\n\n$result")
+        JetTestUtils.assertEqualsToFile(boundsFile, "${constraintsFileText.join("\n")}\n\n$resultingStatus\n\n$result")
     }
 
-    class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)
-    enum class MyConstraintKind {
-        SUBTYPE, SUPERTYPE, EQUAL
+    class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String)
+    enum class MyConstraintKind
+    private constructor(val token: String) {
+        SUBTYPE("<:"), SUPERTYPE(">:"), EQUAL(":=")
     }
 
-    private fun parseVariables(text: String): List<String> {
-        val matcher = variablesPattern.matcher(text)
-        if (matcher.find()) {
-            val variablesText = matcher.group(1)!!
-            val variables = variablesText.split(' ')
-            return variables.toList()
+    private fun parseVariables(lines: List<String>): List<String> {
+        val first = lines.first()
+        val variablesString = "VARIABLES "
+        assert (first.startsWith(variablesString)) { "The first line should contain variables: $first"}
+        val variables = first.substringAfter(variablesString).split(' ')
+        return variables.toList()
+    }
+
+    private fun parseConstraints(lines: List<String>): List<MyConstraint> {
+        val kindsMap = MyConstraintKind.values().map { it.token to it }.toMap()
+        val kinds = kindsMap.keySet()
+        val linesWithConstraints = lines.filter { line -> kinds.any { kind -> line.contains(kind) } }
+        return linesWithConstraints.map {
+            line ->
+            val kind = kinds.first { line.contains(it) }
+            val firstType = line.substringBefore(kind).trim()
+            val secondType = line.substringAfter(kind).trim()
+            MyConstraint(kindsMap[kind]!!, firstType, secondType)
         }
-        throw AssertionError("Type variable names should be declared")
-    }
-
-    private fun parseConstraints(text: String): List<MyConstraint> {
-        val constraints = ArrayList<MyConstraint>()
-        val matcher = constraintPattern.matcher(text)
-        while (matcher.find()) {
-            val kind = MyConstraintKind.valueOf(matcher.group(1)!!)
-            val firstType = matcher.group(2)!!
-            val secondType = matcher.group(3)!!
-            val isWeak = matcher.groupCount() == 4 && matcher.group(4) == "weak"
-            constraints.add(MyConstraint(kind, firstType, secondType, isWeak))
-        }
-        return constraints
     }
 }

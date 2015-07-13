@@ -1,6 +1,6 @@
 VARIABLES T P
 
-SUBTYPE T Int
+T <: Int
 
 type parameter bounds:
 T <: Int

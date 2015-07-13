@@ -1,4 +1,4 @@
 VARIABLES T P
 
-SUPERTYPE T Int
-SUPERTYPE P Consumer<T?>
+T >: Int
+P >: Consumer<T?>

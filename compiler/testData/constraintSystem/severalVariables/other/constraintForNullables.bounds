@@ -1,7 +1,7 @@
 VARIABLES T P
 
-SUBTYPE T? P?
-SUBTYPE P Int
+T? <: P?
+P <: Int
 
 type parameter bounds:
 T <: P?*, <: P*, <: Int, <: Int?

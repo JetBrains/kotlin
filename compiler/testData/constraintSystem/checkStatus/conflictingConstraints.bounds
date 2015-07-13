@@ -1,7 +1,7 @@
 VARIABLES T
 
-SUBTYPE T Int
-SUPERTYPE T String
+T <: Int
+T >: String
 
 type parameter bounds:
 T <: Int, >: String

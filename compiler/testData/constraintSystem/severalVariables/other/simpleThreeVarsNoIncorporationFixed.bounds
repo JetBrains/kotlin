@@ -1,9 +1,9 @@
 VARIABLES T P E
 FIX_VARIABLES
 
-SUBTYPE T P
-SUBTYPE P E
-SUBTYPE Int E
+T <: P
+P <: E
+Int <: E
 
 type parameter bounds:
 T <: P*, <: E*, <: Int, := Int

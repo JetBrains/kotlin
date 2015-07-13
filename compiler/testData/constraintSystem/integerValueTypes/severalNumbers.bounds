@@ -1,7 +1,7 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUPERTYPE T IntegerValueType(1000)
+T >: IntegerValueType(1)
+T >: IntegerValueType(1000)
 
 type parameter bounds:
 T >: IntegerValueType(1), >: IntegerValueType(1000)

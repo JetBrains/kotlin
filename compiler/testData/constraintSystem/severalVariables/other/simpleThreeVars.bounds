@@ -1,8 +1,8 @@
 VARIABLES T P E
 
-SUBTYPE T P
-SUBTYPE P E
-SUBTYPE E Int
+T <: P
+P <: E
+E <: Int
 
 type parameter bounds:
 T <: P*, <: E*, <: Int

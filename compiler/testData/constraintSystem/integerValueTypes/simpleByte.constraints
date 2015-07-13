@@ -1,4 +1,4 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUBTYPE T Byte
+T >: IntegerValueType(1)
+T <: Byte

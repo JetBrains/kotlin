@@ -1,6 +1,6 @@
 VARIABLES T
 
-SUBTYPE Producer<A> Producer<T>
+Producer<A> <: Producer<T>
 
 type parameter bounds:
 T >: A

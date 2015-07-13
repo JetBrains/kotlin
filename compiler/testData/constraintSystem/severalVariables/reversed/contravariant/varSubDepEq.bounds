@@ -1,7 +1,7 @@
 VARIABLES T P
 
-EQUAL P Consumer<T>
-SUBTYPE T Int
+P := Consumer<T>
+T <: Int
 
 type parameter bounds:
 T <: Int

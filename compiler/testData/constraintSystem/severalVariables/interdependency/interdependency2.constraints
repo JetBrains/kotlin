@@ -1,6 +1,6 @@
 VARIABLES T P E
 FIX_VARIABLES
 
-SUBTYPE P My<T>
-SUBTYPE Int T
-SUBTYPE Successor<E> P
+P <: My<T>
+Int <: T
+Successor<E> <: P

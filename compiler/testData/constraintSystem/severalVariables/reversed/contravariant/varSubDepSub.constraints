@@ -1,4 +1,4 @@
 VARIABLES T P
 
-SUBTYPE P Consumer<T>
-SUBTYPE T Int
+P <: Consumer<T>
+T <: Int

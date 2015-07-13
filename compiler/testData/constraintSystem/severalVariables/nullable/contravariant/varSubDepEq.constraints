@@ -1,4 +1,4 @@
 VARIABLES T P
 
-SUBTYPE T Int
-EQUAL P Consumer<T?>
+T <: Int
+P := Consumer<T?>

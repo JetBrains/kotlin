@@ -1,4 +1,4 @@
 VARIABLES T
 
-SUBTYPE T A
-SUBTYPE T B
+T <: A
+T <: B

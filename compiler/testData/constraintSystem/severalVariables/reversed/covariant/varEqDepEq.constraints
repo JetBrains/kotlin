@@ -1,4 +1,4 @@
 VARIABLES T P
 
-EQUAL P Producer<T>
-EQUAL T Int
+P := Producer<T>
+T := Int

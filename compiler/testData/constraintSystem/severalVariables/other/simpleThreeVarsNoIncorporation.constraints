@@ -1,5 +1,5 @@
 VARIABLES T P E
 
-SUBTYPE T P
-SUBTYPE P E
-SUBTYPE Int E
+T <: P
+P <: E
+Int <: E

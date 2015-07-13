@@ -1,4 +1,4 @@
 VARIABLES T P
 
-EQUAL P Consumer<T>
-SUPERTYPE T Int
+P := Consumer<T>
+T >: Int

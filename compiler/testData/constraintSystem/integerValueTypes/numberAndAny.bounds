@@ -1,7 +1,7 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUBTYPE T Any
+T >: IntegerValueType(1)
+T <: Any
 
 type parameter bounds:
 T >: IntegerValueType(1), <: Any

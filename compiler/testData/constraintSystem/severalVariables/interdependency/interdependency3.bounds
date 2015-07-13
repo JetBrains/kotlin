@@ -1,9 +1,9 @@
 VARIABLES T P E
 FIX_VARIABLES
 
-SUBTYPE Int T
-SUBTYPE Successor<E> P
-SUBTYPE P My<T>
+Int <: T
+Successor<E> <: P
+P <: My<T>
 
 type parameter bounds:
 T >: Int, := T*, := E*, := Int

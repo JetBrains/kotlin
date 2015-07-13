@@ -1,4 +1,4 @@
 VARIABLES T P
 
-SUBTYPE T Int
-EQUAL P Producer<T?>
+T <: Int
+P := Producer<T?>

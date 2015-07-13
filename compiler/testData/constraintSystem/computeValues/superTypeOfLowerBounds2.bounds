@@ -1,8 +1,8 @@
 VARIABLES T
 
-SUBTYPE T A
-SUPERTYPE T B
-SUPERTYPE T C
+T <: A
+T >: B
+T >: C
 
 type parameter bounds:
 T <: A, >: B, >: C

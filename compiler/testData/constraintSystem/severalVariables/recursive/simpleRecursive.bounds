@@ -1,7 +1,7 @@
 VARIABLES T
 
-EQUAL T Int
-EQUAL T My<T>
+T := Int
+T := My<T>
 
 type parameter bounds:
 T := Int, := My<T>*, := My<Int>

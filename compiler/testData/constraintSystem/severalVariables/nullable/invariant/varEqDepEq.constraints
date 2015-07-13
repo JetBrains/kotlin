@@ -1,4 +1,4 @@
 VARIABLES T P
 
-EQUAL T Int
-EQUAL P My<T?>
+T := Int
+P := My<T?>

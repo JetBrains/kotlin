@@ -1,4 +1,4 @@
 VARIABLES T P
 
-EQUAL T Int
-SUBTYPE P My<T>
+T := Int
+P <: My<T>

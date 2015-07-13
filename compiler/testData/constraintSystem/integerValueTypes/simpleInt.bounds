@@ -1,6 +1,6 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
+T >: IntegerValueType(1)
 
 type parameter bounds:
 T >: IntegerValueType(1)
