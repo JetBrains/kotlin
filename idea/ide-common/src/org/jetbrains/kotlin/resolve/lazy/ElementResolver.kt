@@ -84,7 +84,7 @@ public abstract class ElementResolver protected constructor(
                 javaClass<JetParameter>(),
                 javaClass<JetDelegationSpecifierList>(),
                 javaClass<JetInitializerList>(),
-                javaClass<JetImportDirective>(),
+                javaClass<JetImportList>(),
                 javaClass<JetAnnotationEntry>(),
                 javaClass<JetTypeParameter>(),
                 javaClass<JetTypeConstraint>(),
@@ -128,7 +128,7 @@ public abstract class ElementResolver protected constructor(
 
             is JetInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as JetEnumEntry, file)
 
-            is JetImportDirective -> {
+            is JetImportList -> {
                 val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
                 scope.forceResolveAllImports()
                 resolveSession.getTrace()
