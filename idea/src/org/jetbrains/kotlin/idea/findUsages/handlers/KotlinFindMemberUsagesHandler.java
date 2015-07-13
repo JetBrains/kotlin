@@ -157,7 +157,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                                 new CommonProcessors.UniqueProcessor<UsageInfo>(processor);
 
                         for (PsiReference ref : UsagesSearch.INSTANCE$.search(request)) {
-                            processUsage(uniqueProcessor, ref);
+                            Companion.processUsage(uniqueProcessor, ref);
                         }
 
                         PsiMethod psiMethod =
@@ -168,7 +168,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                                   : null;
                         if (psiMethod != null) {
                             for (PsiReference ref : MethodReferencesSearch.search(psiMethod, options.searchScope, true)) {
-                                processUsage(uniqueProcessor, ref);
+                                Companion.processUsage(uniqueProcessor, ref);
                             }
                         }
 
@@ -180,7 +180,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                                             new PsiElementProcessor<PsiMethod>() {
                                                 @Override
                                                 public boolean execute(@NotNull PsiMethod method) {
-                                                    return processUsage(uniqueProcessor, method.getNavigationElement());
+                                                    return Companion.processUsage(uniqueProcessor, method.getNavigationElement());
                                                 }
                                             }
                                     )

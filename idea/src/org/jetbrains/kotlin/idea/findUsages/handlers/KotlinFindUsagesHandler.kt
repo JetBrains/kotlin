@@ -14,127 +14,91 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.findUsages.handlers;
+package org.jetbrains.kotlin.idea.findUsages.handlers
 
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
-import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo;
+import com.intellij.find.findUsages.FindUsagesHandler
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.SearchScope
+import com.intellij.usageView.UsageInfo
+import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList
+import java.util.Collections
 
-public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends FindUsagesHandler {
-    private final KotlinFindUsagesHandlerFactory factory;
-    private final Collection<? extends PsiElement> elementsToSearch;
+public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T, private val elementsToSearch: Collection<PsiElement>, public val factory: KotlinFindUsagesHandlerFactory) : FindUsagesHandler(psiElement) {
 
-    public KotlinFindUsagesHandler(
-            @NotNull T psiElement,
-            @NotNull Collection<? extends PsiElement> elementsToSearch,
-            @NotNull KotlinFindUsagesHandlerFactory factory
-    ) {
-        super(psiElement);
-        this.factory = factory;
-        this.elementsToSearch = elementsToSearch;
+    @suppress("UNCHECKED_CAST")
+    public fun getElement(): T {
+        return getPsiElement() as T
     }
 
-    @SuppressWarnings("unchecked")
-    @NotNull
-    public T getElement() {
-        return (T)getPsiElement();
+    public constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList<PsiElement>(), factory) {
     }
 
-    public KotlinFindUsagesHandler(@NotNull T psiElement, @NotNull KotlinFindUsagesHandlerFactory factory) {
-        this(psiElement, Collections.<PsiElement>emptyList(), factory);
+    override fun getPrimaryElements(): Array<PsiElement> {
+        return if (elementsToSearch.isEmpty())
+            arrayOf(getPsiElement())
+        else
+            elementsToSearch.toTypedArray()
     }
 
-    @NotNull
-    public final KotlinFindUsagesHandlerFactory getFactory() {
-        return factory;
-    }
+    protected fun searchTextOccurrences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        val scope = options.searchScope
 
-    protected static boolean processUsage(@NotNull Processor<UsageInfo> processor, @NotNull PsiReference ref) {
-        return processor.process(new KotlinReferenceUsageInfo(ref));
-    }
-
-    protected static boolean processUsage(@NotNull Processor<UsageInfo> processor, @NotNull PsiElement element) {
-        return processor.process(new UsageInfo(element));
-    }
-
-    @NotNull
-    @Override
-    public PsiElement[] getPrimaryElements() {
-        return elementsToSearch.isEmpty()
-               ? new PsiElement[] {getPsiElement()}
-               : elementsToSearch.toArray(new PsiElement[elementsToSearch.size()]);
-    }
-
-    protected boolean searchTextOccurrences(
-            @NotNull final PsiElement element,
-            @NotNull final Processor<UsageInfo> processor,
-            @NotNull FindUsagesOptions options
-    ) {
-        final SearchScope scope = options.searchScope;
-
-        boolean searchText = options.isSearchForTextOccurrences && scope instanceof GlobalSearchScope;
+        val searchText = options.isSearchForTextOccurrences && scope is GlobalSearchScope
 
         if (searchText) {
             if (options.fastTrack != null) {
-                options.fastTrack.searchCustom(new Processor<Processor<PsiReference>>() {
-                    @Override
-                    public boolean process(Processor<PsiReference> consumer) {
-                        return processUsagesInText(element, processor, (GlobalSearchScope)scope);
+                options.fastTrack.searchCustom(object : Processor<Processor<PsiReference>> {
+                    override fun process(consumer: Processor<PsiReference>): Boolean {
+                        return processUsagesInText(element, processor, scope as GlobalSearchScope)
                     }
-                });
+                })
             }
             else {
-                return processUsagesInText(element, processor, (GlobalSearchScope)scope);
+                return processUsagesInText(element, processor, scope as GlobalSearchScope)
             }
         }
-        return true;
+        return true
     }
 
-    @Override
-    public boolean processElementUsages(
-            @NotNull PsiElement element,
-            @NotNull Processor<UsageInfo> processor,
-            @NotNull FindUsagesOptions options
-    ) {
-        return searchReferences(element, processor, options) && searchTextOccurrences(element, processor, options);
+    override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+        return searchReferences(element, processor, options) && searchTextOccurrences(element, processor, options)
     }
 
-    protected abstract boolean searchReferences(
-            @NotNull PsiElement element, @NotNull Processor<UsageInfo> processor, @NotNull FindUsagesOptions options
-    );
+    protected abstract fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean
 
-    @NotNull
-    @Override
-    public Collection<PsiReference> findReferencesToHighlight(@NotNull PsiElement target, @NotNull SearchScope searchScope
-    ) {
-        final List<PsiReference> results = new ArrayList<PsiReference>();
-        FindUsagesOptions options = getFindUsagesOptions();
-        options.searchScope = searchScope;
-        searchReferences(target,
-                         new Processor<UsageInfo>() {
-                             @Override
-                             public boolean process(UsageInfo info) {
-                                 PsiReference reference = info.getReference();
-                                 if (reference != null) {
-                                     results.add(reference);
-                                 }
-                                 return true;
-                             }
-                         },
-                         options);
-        return results;
+    override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
+        val results = ArrayList<PsiReference>()
+        val options = getFindUsagesOptions()
+        options.searchScope = searchScope
+        searchReferences(target, object : Processor<UsageInfo> {
+            override fun process(info: UsageInfo): Boolean {
+                val reference = info.getReference()
+                if (reference != null) {
+                    results.add(reference)
+                }
+                return true
+            }
+        }, options)
+        return results
+    }
+
+    companion object {
+
+        protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference?): Boolean {
+            if (ref == null) return true
+            val rangeInElement = ref.getRangeInElement()
+            return processor.process(UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false))
+        }
+
+        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean {
+            return processor.process(UsageInfo(element))
+        }
     }
 }
