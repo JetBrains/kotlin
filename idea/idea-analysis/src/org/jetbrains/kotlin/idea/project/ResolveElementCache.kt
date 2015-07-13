@@ -21,6 +21,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
@@ -37,7 +38,7 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
                 override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
                     val manager = resolveSession.getStorageManager()
                     val cacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetElement, BindingContext> { element ->
-                        performElementAdditionalResolve(element, element, BodyResolveMode.FULL)
+                        performElementAdditionalResolve(element, element, BodyResolveMode.FULL).first
                     }
                     return CachedValueProvider.Result.create(cacheFunction,
                                                              PsiModificationTracker.MODIFICATION_COUNT,
@@ -46,15 +47,10 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
             },
             false)
 
-    private val partialBodyResolveCache: CachedValue<MemoizedFunctionToNotNull<JetExpression, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MemoizedFunctionToNotNull<JetExpression, BindingContext>> {
-                override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetExpression, BindingContext>> {
-                    val manager = resolveSession.getStorageManager()
-                    val cacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetExpression, BindingContext> { expression ->
-                        val resolveElement = findElementOfAdditionalResolve(expression)!!
-                        performElementAdditionalResolve(resolveElement, expression, BodyResolveMode.PARTIAL)
-                    }
-                    return CachedValueProvider.Result.create(cacheFunction,
+    private val partialBodyResolveCache: CachedValue<MutableMap<JetExpression, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MutableMap<JetExpression, BindingContext>> {
+                override fun compute(): CachedValueProvider.Result<MutableMap<JetExpression, BindingContext>> {
+                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetExpression, BindingContext>(),
                                                              PsiModificationTracker.MODIFICATION_COUNT,
                                                              resolveSession.getExceptionTracker())
                 }
@@ -64,27 +60,38 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
     override fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
         if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(resolveElement) && resolveElement is JetDeclaration) {
             if (bodyResolveMode == BodyResolveMode.PARTIAL) {
-                val partialResolveElement = PartialBodyResolveFilter.findResolveElement(contextElement, resolveElement)
-                if (partialResolveElement != null) {
-                    return partialBodyResolveCache.getValue().invoke(partialResolveElement)
+                val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
+                if (statementToResolve != null) {
+                    val map = partialBodyResolveCache.getValue()
+                    map[statementToResolve]?.let { return it }
+
+                    val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, statementToResolve, BodyResolveMode.PARTIAL)
+
+                    for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
+                        if (!map.containsKey(statement)) {
+                            map[statement] = bindingContext
+                        }
+                    }
+
+                    return bindingContext
                 }
             }
             else {
-                return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode)
+                return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode).first
             }
         }
 
         return additionalResolveCache.getValue().invoke(resolveElement)
     }
 
-    private fun hasElementAdditionalResolveCached(jetElement: JetElement)
-            = additionalResolveCache.hasUpToDateValue() && additionalResolveCache.getValue().isComputed(jetElement)
+    private fun hasElementAdditionalResolveCached(element: JetElement)
+            = additionalResolveCache.hasUpToDateValue() && additionalResolveCache.getValue().isComputed(element)
 
-    override fun createAdditionalCheckerProvider(jetFile: JetFile, module: ModuleDescriptor)
-            = TargetPlatformDetector.getPlatform(jetFile).createAdditionalCheckerProvider(module)
+    override fun createAdditionalCheckerProvider(file: JetFile, module: ModuleDescriptor)
+            = TargetPlatformDetector.getPlatform(file).createAdditionalCheckerProvider(module)
 
-    override fun getDynamicTypesSettings(jetFile: JetFile)
-            = TargetPlatformDetector.getPlatform(jetFile).getDynamicTypesSettings()
+    override fun getDynamicTypesSettings(file: JetFile)
+            = TargetPlatformDetector.getPlatform(file).getDynamicTypesSettings()
 
     override fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
         return object : ProbablyNothingCallableNames {

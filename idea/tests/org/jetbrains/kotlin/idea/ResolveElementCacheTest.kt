@@ -31,7 +31,8 @@ public class ResolveElementCacheTest : JetLightCodeInsightFixtureTestCase() {
 class C {
     fun a() {
         b(1, 2)
-        c()
+        val x = c()
+        d(x)
     }
 
     fun b() {
@@ -130,6 +131,17 @@ class C {
             val bindingContext1 = argument1.analyze(BodyResolveMode.PARTIAL)
             val bindingContext2 = argument2.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext2)
+        }
+    }
+
+    public fun testPartialResolveCachedForAllStatementsResolved() {
+        doTest {
+            val bindingContext1 = statements[2].analyze(BodyResolveMode.PARTIAL) // resolve 'd(x)'
+            val bindingContext2 = (statements[1] as JetVariableDeclaration).getInitializer()!!.analyze(BodyResolveMode.PARTIAL) // resolve initializer in 'val x = c()' - it required for resolved 'd(x)' and should be already resolved
+            assert(bindingContext1 === bindingContext2)
+
+            val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext3 !== bindingContext1)
         }
     }
 }

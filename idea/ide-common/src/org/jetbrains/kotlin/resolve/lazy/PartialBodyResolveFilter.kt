@@ -46,7 +46,10 @@ class PartialBodyResolveFilter(
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingVariableNames = HashSet(probablyNothingCallableNames.propertyNames())
 
-    override val filter: ((JetExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.SKIP }
+    override val filter: ((JetExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.NONE }
+
+    val allStatementsToResolve: Collection<JetExpression>
+        get() = statementMarks.allMarkedStatements()
 
     init {
         assert(declaration.isAncestor(elementToResolve))
@@ -532,14 +535,14 @@ class PartialBodyResolveFilter(
     }
 
     private enum class MarkLevel {
-        SKIP,
+        NONE,
         TAKE,
         NEED_REFERENCE_RESOLVE,
         NEED_COMPLETION
     }
 
     companion object {
-        public fun findResolveElement(element: JetElement, declaration: JetDeclaration): JetExpression? {
+        public fun findStatementToResolve(element: JetElement, declaration: JetDeclaration): JetExpression? {
             return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as JetExpression?
         }
 
@@ -628,7 +631,7 @@ class PartialBodyResolveFilter(
                 statementMarks[statement] = level
 
                 val block = statement.getParent() as JetBlockExpression
-                val currentBlockLevel = blockLevels[block] ?: MarkLevel.SKIP
+                val currentBlockLevel = blockLevels[block] ?: MarkLevel.NONE
                 if (currentBlockLevel < level) {
                     blockLevels[block] = level
                 }
@@ -636,10 +639,13 @@ class PartialBodyResolveFilter(
         }
 
         fun statementMark(statement: JetExpression): MarkLevel
-                = statementMarks[statement] ?: MarkLevel.SKIP
+                = statementMarks[statement] ?: MarkLevel.NONE
+
+        fun allMarkedStatements(): Collection<JetExpression>
+                = statementMarks.keySet()
 
         fun lastMarkedStatement(block: JetBlockExpression, minLevel: MarkLevel): JetExpression? {
-            val level = blockLevels[block] ?: MarkLevel.SKIP
+            val level = blockLevels[block] ?: MarkLevel.NONE
             if (level < minLevel) return null // optimization
             return block.getLastChild().siblings(forward = false)
                     .filterIsInstance<JetExpression>()
