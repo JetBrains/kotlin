@@ -566,7 +566,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     containingElement is PsiClass -> {
                         if (declaration is JetSecondaryConstructor) {
                             val wrappingClass = psiFactory.createClass("class ${containingElement.getName()} {\n}")
-                            addDeclarationToClassOrObject(wrappingClass, declaration, psiFactory)
+                            addDeclarationToClassOrObject(wrappingClass, declaration)
                             (jetFileToEdit.add(wrappingClass) as JetClass).getDeclarations().first() as JetNamedDeclaration
                         }
                         else {
@@ -575,7 +575,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
 
                     containingElement is JetClassOrObject -> {
-                        addDeclarationToClassOrObject(containingElement, declaration, psiFactory)
+                        addDeclarationToClassOrObject(containingElement, declaration)
                     }
                     else -> throw AssertionError("Invalid containing element: ${containingElement.getText()}")
                 }
@@ -593,14 +593,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun addDeclarationToClassOrObject(classOrObject: JetClassOrObject,
-                                                  declaration: JetNamedDeclaration,
-                                                  psiFactory: JetPsiFactory): JetNamedDeclaration {
-            var classBody = classOrObject.getBody()
-            if (classBody == null) {
-                classBody = classOrObject.add(psiFactory.createEmptyClassBody()) as JetClassBody
-                classOrObject.addBefore(psiFactory.createWhiteSpace(), classBody)
-            }
-
+                                                  declaration: JetNamedDeclaration): JetNamedDeclaration {
+            val classBody = classOrObject.getOrCreateBody()
             return if (declaration is JetNamedFunction) {
                 val anchor = PsiTreeUtil.skipSiblingsBackward(
                         classBody.getRBrace() ?: classBody.getLastChild()!!,

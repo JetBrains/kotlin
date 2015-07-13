@@ -44,6 +44,8 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
 
     public fun getBody(): JetClassBody? = getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
 
+    public fun getOrCreateBody(): JetClassBody = getBody() ?: add(JetPsiFactory(this).createEmptyClassBody()) as JetClassBody
+
     public fun isTopLevel(): Boolean = getStub()?.isTopLevel() ?: (getParent() is JetFile)
 
     public fun isLocal(): Boolean = getStub()?.isLocal() ?: JetPsiUtil.isLocal(this)

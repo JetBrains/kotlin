@@ -86,12 +86,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                     @Override
                     public void run() {
                         JetPsiFactory psiFactory = JetPsiFactory(classifierDeclaration);
-                        JetClassBody body = classifierDeclaration.getBody();
-                        if (body == null) {
-                            PsiElement whitespaceBefore = classifierDeclaration.add(psiFactory.createWhiteSpace());
-                            body = (JetClassBody) classifierDeclaration.addAfter(psiFactory.createEmptyClassBody(), whitespaceBefore);
-                            classifierDeclaration.addAfter(psiFactory.createNewLine(), body);
-                        }
+                        JetClassBody body = classifierDeclaration.getOrCreateBody();
 
                         String functionBody = "";
                         if (typeDescriptor.getKind() != ClassKind.INTERFACE && functionDescriptor.getModality() != Modality.ABSTRACT) {
