@@ -61,20 +61,19 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
         if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(resolveElement) && resolveElement is JetDeclaration) {
             if (bodyResolveMode == BodyResolveMode.PARTIAL) {
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
-                if (statementToResolve != null) {
-                    val map = partialBodyResolveCache.getValue()
-                    map[statementToResolve]?.let { return it }
+                val map = partialBodyResolveCache.getValue()
+                map[statementToResolve ?: resolveElement]?.let { return it }
 
-                    val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, statementToResolve, BodyResolveMode.PARTIAL)
+                val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
-                    for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                        if (!map.containsKey(statement)) {
-                            map[statement] = bindingContext
-                        }
+                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
+                    if (!map.containsKey(statement)) {
+                        map[statement] = bindingContext
                     }
-
-                    return bindingContext
                 }
+                map[resolveElement] = bindingContext // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
+
+                return bindingContext
             }
             else {
                 return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode).first

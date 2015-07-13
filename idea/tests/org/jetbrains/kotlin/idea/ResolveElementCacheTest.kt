@@ -29,7 +29,7 @@ public class ResolveElementCacheTest : JetLightCodeInsightFixtureTestCase() {
     private val FILE_TEXT =
 """
 class C {
-    fun a() {
+    fun a(p: Int = 0) {
         b(1, 2)
         val x = c()
         d(x)
@@ -142,6 +142,18 @@ class C {
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext3 !== bindingContext1)
+        }
+    }
+
+    public fun testPartialResolveCachedForDefaultParameterValue() {
+        doTest {
+            val defaultValue = (members[0] as JetNamedFunction).getValueParameters()[0].getDefaultValue()
+            val bindingContext1 = defaultValue!!.analyze(BodyResolveMode.PARTIAL)
+            val bindingContext2 = defaultValue.analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext1 === bindingContext2)
+
+            val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
+            assert(bindingContext3 !== bindingContext2)
         }
     }
 }
