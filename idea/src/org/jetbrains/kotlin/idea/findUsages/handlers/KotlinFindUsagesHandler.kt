@@ -30,14 +30,17 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import java.util.ArrayList
 import java.util.Collections
 
-public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T, private val elementsToSearch: Collection<PsiElement>, public val factory: KotlinFindUsagesHandlerFactory) : FindUsagesHandler(psiElement) {
+public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
+                                                              private val elementsToSearch: Collection<PsiElement>,
+                                                              public val factory: KotlinFindUsagesHandlerFactory)
+    : FindUsagesHandler(psiElement) {
 
     @suppress("UNCHECKED_CAST")
     public fun getElement(): T {
         return getPsiElement() as T
     }
 
-    public constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList<PsiElement>(), factory) {
+    public constructor(psiElement: T, factory: KotlinFindUsagesHandlerFactory) : this(psiElement, emptyList(), factory) {
     }
 
     override fun getPrimaryElements(): Array<PsiElement> {
@@ -54,11 +57,9 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T, pri
 
         if (searchText) {
             if (options.fastTrack != null) {
-                options.fastTrack.searchCustom(object : Processor<Processor<PsiReference>> {
-                    override fun process(consumer: Processor<PsiReference>): Boolean {
-                        return processUsagesInText(element, processor, scope as GlobalSearchScope)
-                    }
-                })
+                options.fastTrack.searchCustom {
+                     processUsagesInText(element, processor, scope as GlobalSearchScope)
+                }
             }
             else {
                 return processUsagesInText(element, processor, scope as GlobalSearchScope)
