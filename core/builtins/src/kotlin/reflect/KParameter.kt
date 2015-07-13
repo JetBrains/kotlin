@@ -34,4 +34,9 @@ public interface KParameter {
      * compiled without the debug information, and others.
      */
     public val name: String?
+
+    /**
+     * Type of this parameter.
+     */
+    public val type: KType
 }
