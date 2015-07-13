@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
-import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
@@ -97,7 +96,6 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetTypeInfo> EXPRESSION_TYPE_INFO = new BasicWritableSlice<JetExpression, JetTypeInfo>(DO_NOTHING);
     WritableSlice<JetExpression, JetType> EXPECTED_EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
     WritableSlice<JetFunction, JetType> EXPECTED_RETURN_TYPE = new BasicWritableSlice<JetFunction, JetType>(DO_NOTHING);
-    WritableSlice<JetExpression, Approximation.Info> EXPRESSION_RESULT_APPROXIMATION = new BasicWritableSlice<JetExpression, Approximation.Info>(DO_NOTHING);
     WritableSlice<JetExpression, DataFlowInfo> DATAFLOW_INFO_AFTER_CONDITION = Slices.createSimpleSlice();
 
     /**
