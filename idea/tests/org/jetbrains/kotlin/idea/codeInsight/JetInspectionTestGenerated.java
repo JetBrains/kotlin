@@ -94,6 +94,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedImport/inspectionData/inspections.test")
+        public void testUnusedImport_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedImport/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedReceiverParameter/inspectionData/inspections.test")
         public void testUnusedReceiverParameter_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/inspections/unusedReceiverParameter/inspectionData/inspections.test");

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -173,52 +174,63 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         }
 
         private fun detectDescriptorsToImport(): Set<DeclarationDescriptor> {
-            val usedDescriptors = HashSet<DeclarationDescriptor>()
-            file.accept(object : JetVisitorVoid() {
-                override fun visitElement(element: PsiElement) {
-                    ProgressIndicatorProvider.checkCanceled()
-                    element.acceptChildren(this)
-                }
+            val visitor = CollectUsedDescriptorsVisitor(file, recursive = true)
+            file.accept(visitor)
+            return visitor.descriptors
+        }
+    }
 
-                override fun visitImportList(importList: JetImportList) {
-                }
+    public class CollectUsedDescriptorsVisitor(val file: JetFile, val recursive: Boolean) : JetVisitorVoid() {
+        private val _descriptors = HashSet<DeclarationDescriptor>()
 
-                override fun visitPackageDirective(directive: JetPackageDirective) {
-                }
+        public val descriptors: Set<DeclarationDescriptor>
+            get() = _descriptors
 
-                override fun visitJetElement(element: JetElement) {
-                    for (reference in element.getReferences()) {
-                        if (reference is JetReference) {
-                            val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+        override fun visitElement(element: PsiElement) {
+            if (recursive) {
+                ProgressIndicatorProvider.checkCanceled()
+                element.acceptChildren(this)
+            }
+        }
 
-                            val bindingContext = element.analyze()
-                            //class qualifiers that refer to companion objects should be considered (containing) class references
-                            val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
-                                          ?: reference.resolveToDescriptors(bindingContext)
-                            for (target in targets) {
-                                if (!target.canBeReferencedViaImport()) continue
-                                if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
+        override fun visitImportList(importList: JetImportList) {
+        }
 
-                                if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
-                                    if (element !is JetNameReferenceExpression) continue
-                                    if (element.getIdentifier() == null) continue // skip 'this' etc
-                                    if (element.getReceiverExpression() != null) continue
-                                }
+        override fun visitPackageDirective(directive: JetPackageDirective) {
+        }
 
-                                val importableDescriptor = target.getImportableDescriptor()
-                                if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
+        override fun visitJetElement(element: JetElement) {
+            if (!recursive && element.parents.any { it is JetImportDirective || it is JetPackageDirective }) return
 
-                                if (isAccessibleAsMember(importableDescriptor, element)) continue
+            for (reference in element.getReferences()) {
+                if (reference !is JetReference) continue
 
-                                usedDescriptors.add(importableDescriptor)
-                            }
-                        }
+                val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+
+                val bindingContext = element.analyze()
+                //class qualifiers that refer to companion objects should be considered (containing) class references
+                val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
+                              ?: reference.resolveToDescriptors(bindingContext)
+                for (target in targets) {
+                    if (!target.canBeReferencedViaImport()) continue
+                    if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
+
+                    if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
+                        if (element !is JetNameReferenceExpression) continue
+                        if (element.getIdentifier() == null) continue // skip 'this' etc
+                        if (element.getReceiverExpression() != null) continue
                     }
 
-                    super.visitJetElement(element)
+                    val importableDescriptor = target.getImportableDescriptor()
+                    if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
+
+                    if (isAccessibleAsMember(importableDescriptor, element)) continue
+
+                    _descriptors.add(importableDescriptor)
                 }
-            })
-            return usedDescriptors
+            }
+
+            super.visitJetElement(element)
         }
 
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement): Boolean {
