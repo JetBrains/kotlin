@@ -14,113 +14,85 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.project;
+package org.jetbrains.kotlin.idea.project
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex;
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BodyResolveCache;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.lazy.ElementResolver;
-import org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.storage.LazyResolveStorageManager;
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.kotlin.types.DynamicTypesSettings;
+import com.intellij.openapi.project.Project
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BodyResolveCache
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.ElementResolver
+import org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.storage.LazyResolveStorageManager
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
+import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-import java.util.Collection;
+public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
+    private val additionalResolveCache: CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>>
 
-public class ResolveElementCache extends ElementResolver implements BodyResolveCache {
-    private final Project project;
-    private final CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>> additionalResolveCache;
-
-    public ResolveElementCache(ResolveSession resolveSession, Project project) {
-        super(resolveSession);
-        this.project = project;
+    init {
 
         // Recreate internal cache after change of modification count
-        this.additionalResolveCache =
-                CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<MemoizedFunctionToNotNull<JetElement, BindingContext>>() {
-                            @Nullable
-                            @Override
-                            public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
-                                ResolveSession resolveSession = ResolveElementCache.this.getResolveSession();
-                                LazyResolveStorageManager manager = resolveSession.getStorageManager();
-                                MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
-                                        manager.createSoftlyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
-                                            @Override
-                                            public BindingContext invoke(JetElement jetElement) {
-                                                return performElementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL);
-                                            }
-                                        });
+        this.additionalResolveCache = CachedValuesManager.getManager(project).createCachedValue(object : CachedValueProvider<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
+            override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetElement, BindingContext>>? {
+                val resolveSession = this@ResolveElementCache.resolveSession
+                val manager = resolveSession.getStorageManager()
+                val elementsCacheFunction = manager.createSoftlyRetainedMemoizedFunction(object : Function1<JetElement, BindingContext> {
+                    override fun invoke(jetElement: JetElement): BindingContext {
+                        return performElementAdditionalResolve(jetElement, jetElement, BodyResolveMode.FULL)
+                    }
+                })
 
-                                return Result.create(elementsCacheFunction,
-                                                     PsiModificationTracker.MODIFICATION_COUNT,
-                                                     resolveSession.getExceptionTracker());
-                            }
-                        },
-                        false);
+                return CachedValueProvider.Result.create(elementsCacheFunction,
+                                                         PsiModificationTracker.MODIFICATION_COUNT,
+                                                         resolveSession.getExceptionTracker())
+            }
+        },
+                                                                                                false)
     }
 
-    @NotNull
-    @Override
-    public BindingContext getElementAdditionalResolve(@NotNull JetElement jetElement) {
-        return additionalResolveCache.getValue().invoke(jetElement);
+    override fun getElementAdditionalResolve(jetElement: JetElement): BindingContext {
+        return additionalResolveCache.getValue().invoke(jetElement)
     }
 
-    @Override
-    public boolean hasElementAdditionalResolveCached(@NotNull JetElement jetElement) {
-        if (!additionalResolveCache.hasUpToDateValue()) return false;
-        return additionalResolveCache.getValue().isComputed(jetElement);
+    override fun hasElementAdditionalResolveCached(jetElement: JetElement): Boolean {
+        if (!additionalResolveCache.hasUpToDateValue()) return false
+        return additionalResolveCache.getValue().isComputed(jetElement)
     }
 
-    @NotNull
-    @Override
-    public AdditionalCheckerProvider createAdditionalCheckerProvider(@NotNull JetFile jetFile, @NotNull ModuleDescriptor module) {
-        return TargetPlatformDetector.getPlatform(jetFile).createAdditionalCheckerProvider(module);
+    override fun createAdditionalCheckerProvider(jetFile: JetFile, module: ModuleDescriptor): AdditionalCheckerProvider {
+        return TargetPlatformDetector.getPlatform(jetFile).createAdditionalCheckerProvider(module)
     }
 
-    @NotNull
-    @Override
-    public DynamicTypesSettings getDynamicTypesSettings(@NotNull JetFile jetFile) {
-        return TargetPlatformDetector.getPlatform(jetFile).getDynamicTypesSettings();
+    override fun getDynamicTypesSettings(jetFile: JetFile): DynamicTypesSettings {
+        return TargetPlatformDetector.getPlatform(jetFile).getDynamicTypesSettings()
     }
 
-    @NotNull
-    @Override
-    protected ProbablyNothingCallableNames probablyNothingCallableNames() {
-        return new ProbablyNothingCallableNames() {
-            @NotNull
-            @Override
-            public Collection<String> functionNames() {
+    override fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
+        return object : ProbablyNothingCallableNames {
+            override fun functionNames(): Collection<String> {
                 // we have to add hardcoded-names until we have Kotlin compiled classes in caches
-                return JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project);
+                return JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
             }
 
-            @NotNull
-            @Override
-            public Collection<String> propertyNames() {
-                return JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project);
+            override fun propertyNames(): Collection<String> {
+                return JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
             }
-        };
+        }
     }
 
-    @NotNull
-    @Override
-    public BindingContext resolveFunctionBody(@NotNull JetNamedFunction function) {
-        return getElementAdditionalResolve(function);
+    override fun resolveFunctionBody(function: JetNamedFunction): BindingContext {
+        return getElementAdditionalResolve(function)
     }
 }
