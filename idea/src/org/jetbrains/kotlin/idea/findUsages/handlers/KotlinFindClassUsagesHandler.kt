@@ -43,6 +43,7 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
@@ -98,7 +99,7 @@ public class KotlinFindClassUsagesHandler(
                 for (constructor in constructors) {
                     if (constructor !is KotlinLightMethod) continue
                     constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
-                        it.getCalleeExpression()?.getReference()?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
+                        it.getCalleeExpression()?.mainReference?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
                     }
                 }
             }

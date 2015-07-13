@@ -38,9 +38,9 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
                 if (it.getReferencedNameElementType() != JetTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
                 when (it.access()) {
-                    Access.READ -> arrayOf(SyntheticPropertyAccessorReference(it, true))
-                    Access.WRITE -> arrayOf(SyntheticPropertyAccessorReference(it, false))
-                    Access.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference(it, true), SyntheticPropertyAccessorReference(it, false))
+                    Access.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
+                    Access.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
+                    Access.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
                 }
             }
 

@@ -168,7 +168,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                                   : null;
                         if (psiMethod != null) {
                             for (PsiReference ref : MethodReferencesSearch.search(psiMethod, options.searchScope, true)) {
-                                processUsage(uniqueProcessor, ref.getElement());
+                                processUsage(uniqueProcessor, ref);
                             }
                         }
 

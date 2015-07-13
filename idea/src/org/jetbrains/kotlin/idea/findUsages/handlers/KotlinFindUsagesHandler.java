@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.findUsages.handlers;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -27,6 +26,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
+import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,10 +62,8 @@ public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends Find
         return factory;
     }
 
-    protected static boolean processUsage(Processor<UsageInfo> processor, PsiReference ref) {
-        if (ref == null) return true;
-        TextRange rangeInElement = ref.getRangeInElement();
-        return processor.process(new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false));
+    protected static boolean processUsage(@NotNull Processor<UsageInfo> processor, @NotNull PsiReference ref) {
+        return processor.process(new KotlinReferenceUsageInfo(ref));
     }
 
     protected static boolean processUsage(@NotNull Processor<UsageInfo> processor, @NotNull PsiElement element) {

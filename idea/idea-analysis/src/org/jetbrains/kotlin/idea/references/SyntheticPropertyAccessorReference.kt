@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
+sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
         if (descriptors.none { it is SyntheticExtensionPropertyDescriptor }) return emptyList()
@@ -66,4 +66,7 @@ class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression,
         expression.getReferencedNameElement().replace(nameIdentifier)
         return expression
     }
+
+    public class Getter(expression: JetNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
+    public class Setter(expression: JetNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
 }
