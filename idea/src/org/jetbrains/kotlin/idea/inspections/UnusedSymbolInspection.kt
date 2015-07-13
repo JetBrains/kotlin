@@ -110,7 +110,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 return object : LocalQuickFix {
                     override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.getName())
 
-                    override fun getFamilyName() = "whatever"
+                    override fun getFamilyName() = "Safe delete"
 
                     override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
                         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return

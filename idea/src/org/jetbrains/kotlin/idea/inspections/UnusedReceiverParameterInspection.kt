@@ -99,6 +99,6 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             declaration.setReceiverTypeReference(null)
         }
 
-        override fun getFamilyName(): String = "whatever"
+        override fun getFamilyName(): String = getName()
     }
 }
