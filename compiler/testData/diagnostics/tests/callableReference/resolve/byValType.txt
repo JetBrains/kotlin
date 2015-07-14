@@ -1,0 +1,8 @@
+package
+
+internal val x1: [ERROR : Type for ::foo]
+internal val x2: () -> kotlin.Unit
+internal val x3: (kotlin.String) -> kotlin.Unit
+internal val x4: (kotlin.Int) -> kotlin.Unit
+internal fun foo(): kotlin.Unit
+internal fun foo(/*0*/ s: kotlin.String): kotlin.Unit

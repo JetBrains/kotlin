@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedT
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
@@ -194,7 +194,7 @@ public class CallCompleter(
             context: BasicCallResolutionContext,
             results: OverloadResolutionResultsImpl<D>
     ) {
-        if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return
+        if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return
 
         val getArgumentMapping: (ValueArgument) -> ArgumentMapping
         val getDataFlowInfoForArgument: (ValueArgument) -> DataFlowInfo
@@ -247,10 +247,15 @@ public class CallCompleter(
 
         // While the expected type is not known, the function literal arguments are not analyzed (to analyze function literal bodies once),
         // but they should be analyzed when the expected type is known (during the call completion).
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression, context)) {
-            argumentTypeResolver.getFunctionLiteralTypeInfo(
-                    expression, ArgumentTypeResolver.getFunctionLiteralArgument(expression, context),
-                    context, RESOLVE_FUNCTION_ARGUMENTS)
+        ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(expression, context)?.let { functionLiteralArgument ->
+            argumentTypeResolver.getFunctionLiteralTypeInfo(expression, functionLiteralArgument, context, RESOLVE_FUNCTION_ARGUMENTS)
+        }
+
+        // While the expected type is not known, (possibly overloaded) callable references can have placeholder types
+        // (to avoid exponential search for overloaded higher-order functions).
+        // They should be analyzed now.
+        ArgumentTypeResolver.getCallableReferenceExpressionIfAny(expression, context)?.let { callableReferenceArgument ->
+            argumentTypeResolver.getCallableReferenceTypeInfo(expression, callableReferenceArgument, context, RESOLVE_FUNCTION_ARGUMENTS)
         }
 
         DataFlowUtils.checkType(updatedType, deparenthesized, context)

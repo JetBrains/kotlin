@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -33,6 +34,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
+import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
+import java.util.*
 
 public enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -41,29 +44,33 @@ public enum class ResolveArgumentsMode {
 
 
 public fun hasUnknownFunctionParameter(type: JetType): Boolean {
-    assert(KotlinBuiltIns.isFunctionOrExtensionFunctionType(type))
-    val arguments = type.getArguments()
-    // last argument is return type of function type
-    val functionParameters = arguments.subList(0, arguments.size() - 1)
-    return functionParameters.any {
+    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
+    return getParameterArgumentsOfCallableType(type).any {
         TypeUtils.containsSpecialType(it.getType(), DONT_CARE) || ErrorUtils.containsUninferredParameter(it.getType())
     }
 }
 
 public fun hasUnknownReturnType(type: JetType): Boolean {
-    assert(KotlinBuiltIns.isFunctionOrExtensionFunctionType(type))
-    val returnTypeFromFunctionType = KotlinBuiltIns.getReturnTypeFromFunctionType(type)
-    return ErrorUtils.containsErrorType(returnTypeFromFunctionType)
+    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
+    return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
 public fun replaceReturnTypeByUnknown(type: JetType): JetType {
-    assert(KotlinBuiltIns.isFunctionOrExtensionFunctionType(type))
-    val arguments = type.getArguments()
+    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
     val newArguments = Lists.newArrayList<TypeProjection>()
-    newArguments.addAll(arguments.subList(0, arguments.size() - 1))
+    newArguments.addAll(getParameterArgumentsOfCallableType(type))
     newArguments.add(TypeProjectionImpl(Variance.INVARIANT, DONT_CARE))
-    return JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+    return replaceTypeArguments(type, newArguments)
 }
+
+private fun replaceTypeArguments(type: JetType, newArguments: List<TypeProjection>) =
+        JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+
+private fun getParameterArgumentsOfCallableType(type: JetType) =
+        type.getArguments().dropLast(1)
+
+private fun getReturnTypeForCallable(type: JetType) =
+        type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
     val returnType = getReturnType() ?: return false

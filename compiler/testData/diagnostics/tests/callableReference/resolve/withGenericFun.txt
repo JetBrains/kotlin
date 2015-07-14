@@ -1,0 +1,8 @@
+package
+
+internal val x1: kotlin.Unit
+internal val x2: kotlin.Unit
+internal val x3: [ERROR : Type for apply(true, ::foo)]
+internal fun </*0*/ T, /*1*/ R> apply(/*0*/ x: T, /*1*/ f: (T) -> R): R
+internal fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+internal fun foo(/*0*/ s: kotlin.String): kotlin.Unit

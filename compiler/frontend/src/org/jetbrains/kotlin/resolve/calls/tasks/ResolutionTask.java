@@ -53,7 +53,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,

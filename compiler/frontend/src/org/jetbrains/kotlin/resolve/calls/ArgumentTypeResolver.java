@@ -20,16 +20,20 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
@@ -60,17 +64,23 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
     @NotNull private final TypeResolver typeResolver;
+    @NotNull private final CallResolver callResolver;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final KotlinBuiltIns builtIns;
+    @NotNull private final ReflectionTypes reflectionTypes;
 
     public ArgumentTypeResolver(
-            @NotNull KotlinBuiltIns builtIns,
+            @NotNull TypeResolver typeResolver,
+            @NotNull CallResolver callResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
-            @NotNull TypeResolver typeResolver
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull ReflectionTypes reflectionTypes
     ) {
-        this.builtIns = builtIns;
-        this.expressionTypingServices = expressionTypingServices;
         this.typeResolver = typeResolver;
+        this.callResolver = callResolver;
+        this.expressionTypingServices = expressionTypingServices;
+        this.builtIns = builtIns;
+        this.reflectionTypes = reflectionTypes;
     }
 
     public static boolean isSubtypeOfForArgumentType(
@@ -92,7 +102,7 @@ public class ArgumentTypeResolver {
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
     ) {
-        if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
+        if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
@@ -117,7 +127,7 @@ public class ArgumentTypeResolver {
     }
 
     public void checkTypesForFunctionArgumentsWithNoCallee(@NotNull CallResolutionContext<?> context) {
-        if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
+        if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
@@ -148,7 +158,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    private static JetFunction getFunctionLiteralArgumentIfAny(
+    public static JetFunction getFunctionLiteralArgumentIfAny(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
         JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
@@ -181,6 +191,18 @@ public class ArgumentTypeResolver {
         return deparenthesizedExpression;
     }
 
+    @Nullable
+    public static JetCallableReferenceExpression getCallableReferenceExpressionIfAny(
+            @NotNull JetExpression expression,
+            @NotNull CallResolutionContext<?> context
+    ) {
+        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
+        if (deparenthesizedExpression instanceof JetCallableReferenceExpression) {
+            return (JetCallableReferenceExpression) deparenthesizedExpression;
+        }
+        return null;
+    }
+
     @NotNull
     public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
@@ -190,16 +212,56 @@ public class ArgumentTypeResolver {
         if (expression == null) {
             return TypeInfoFactoryPackage.noTypeInfo(context);
         }
-        if (isFunctionLiteralArgument(expression, context)) {
-            return getFunctionLiteralTypeInfo(expression, getFunctionLiteralArgument(expression, context), context, resolveArgumentsMode);
+
+        JetFunction functionLiteralArgument = getFunctionLiteralArgumentIfAny(expression, context);
+        if (functionLiteralArgument != null) {
+            return getFunctionLiteralTypeInfo(expression, functionLiteralArgument, context, resolveArgumentsMode);
         }
+
+        JetCallableReferenceExpression callableReferenceExpression = getCallableReferenceExpressionIfAny(expression, context);
+        if (callableReferenceExpression != null) {
+            return getCallableReferenceTypeInfo(expression, callableReferenceExpression, context, resolveArgumentsMode);
+        }
+
         JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
+
         ResolutionContext newContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(DEPENDENT);
 
         return expressionTypingServices.getTypeInfo(expression, newContext);
+    }
+
+    @NotNull
+    public JetTypeInfo getCallableReferenceTypeInfo(
+            @NotNull JetExpression expression,
+            @NotNull JetCallableReferenceExpression callableReferenceExpression,
+            @NotNull CallResolutionContext<?> context,
+            @NotNull ResolveArgumentsMode resolveArgumentsMode
+    ) {
+        if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
+            JetType type = getShapeTypeOfCallableReference(callableReferenceExpression, context, true);
+            return TypeInfoFactoryPackage.createTypeInfo(type);
+        }
+        return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
+    }
+
+    @Nullable
+    public JetType getShapeTypeOfCallableReference(
+            @NotNull JetCallableReferenceExpression callableReferenceExpression,
+            @NotNull CallResolutionContext<?> context,
+            boolean expectedTypeIsUnknown
+    ) {
+        JetType receiverType =
+                CallableReferencesPackage.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
+        OverloadResolutionResults<CallableDescriptor> overloadResolutionResults =
+                CallableReferencesPackage.resolvePossiblyAmbiguousCallableReference(
+                        callableReferenceExpression, receiverType, context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS,
+                        callResolver);
+        return CallableReferencesPackage.getResolvedCallableReferenceShapeType(
+                callableReferenceExpression, overloadResolutionResults, context, expectedTypeIsUnknown,
+                reflectionTypes, builtIns);
     }
 
     @NotNull

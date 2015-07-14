@@ -164,7 +164,7 @@ public class CallResolver {
             @NotNull JetReferenceExpression functionReference,
             @NotNull Name name
     ) {
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED);
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
         return computeTasksAndResolveCall(
                 callResolutionContext, name, functionReference,
                 CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
@@ -263,7 +263,7 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
-                        trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                        trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                         additionalCheckerProvider.getCallChecker(), additionalCheckerProvider.getSymbolUsageValidator(),
                         additionalCheckerProvider.getTypeChecker(), isAnnotationContext)
         );
@@ -344,7 +344,7 @@ public class CallResolver {
                 trace, scope,
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
                 NO_EXPECTED_TYPE,
-                dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 callChecker, additionalCheckerProvider.getSymbolUsageValidator(), additionalCheckerProvider.getTypeChecker(), false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
@@ -430,7 +430,7 @@ public class CallResolver {
             @Override
             public OverloadResolutionResults<FunctionDescriptor> invoke() {
                 BasicCallResolutionContext basicCallResolutionContext =
-                        BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED, dataFlowInfoForArguments);
+                        BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments);
 
                 List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                         taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
@@ -484,7 +484,7 @@ public class CallResolver {
 
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                 results.getResultingCall(), context, tracing);
-        genericCandidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
+        genericCandidateResolver.completeTypeInferenceDependentOnFunctionArgumentsForCall(candidateContext);
     }
 
     private static <F extends CallableDescriptor> void cacheResults(
@@ -515,7 +515,7 @@ public class CallResolver {
             @NotNull CallTransformer<D, F> callTransformer,
             @NotNull TracingStrategy tracing
     ) {
-        if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
+        if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
         }
         Collection<ResolvedCall<F>> allCandidates = Lists.newArrayList();

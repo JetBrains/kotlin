@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
@@ -39,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -197,7 +196,7 @@ class GenericCandidateResolver(
         return TypeUtils.intersect(JetTypeChecker.DEFAULT, possibleTypes)
     }
 
-    public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionLiteralsForCall(
+    public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(
             context: CallCandidateResolutionContext<D>
     ) {
         val resolvedCall = context.candidateCall
@@ -210,30 +209,35 @@ class GenericCandidateResolver(
             val valueParameterDescriptor = entry.getKey()
 
             for (valueArgument in resolvedValueArgument.getArguments()) {
-                addConstraintForFunctionLiteral(valueArgument, valueParameterDescriptor, constraintSystem, context)
+                valueArgument.getArgumentExpression()?.let { argumentExpression ->
+                    ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, context)?.let { functionLiteral ->
+                        addConstraintForFunctionLiteral(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, context)
+                    }
+                    ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, context)?.let { callableReference ->
+                        addConstraintForCallableReference(callableReference, valueArgument, valueParameterDescriptor, constraintSystem, context)
+                    }
+                }
             }
         }
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor())
     }
 
     private fun <D : CallableDescriptor> addConstraintForFunctionLiteral(
+            functionLiteral: JetFunction,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<D>
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
-        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression, context)) return
-
-        val functionLiteral = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression, context)
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
         var expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
         }
-        if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
-            || hasUnknownFunctionParameter(expectedType)) {
+        if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType) ||
+            hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.getDataFlowInfoForArguments()
@@ -266,6 +270,56 @@ class GenericCandidateResolver(
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
+    }
+
+    private fun <D : CallableDescriptor> addConstraintForCallableReference(
+            callableReference: JetCallableReferenceExpression,
+            valueArgument: ValueArgument,
+            valueParameterDescriptor: ValueParameterDescriptor,
+            constraintSystem: ConstraintSystem,
+            context: CallCandidateResolutionContext<D>
+    ) {
+        val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
+        val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
+                           ?: return
+        val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
+        val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
+        constraintSystem.addSubtypeConstraint(resolvedType, effectiveExpectedType, position)
+    }
+
+    private fun <D : CallableDescriptor> getExpectedTypeForCallableReference(
+            callableReference: JetCallableReferenceExpression,
+            constraintSystem: ConstraintSystem,
+            context: CallCandidateResolutionContext<D>,
+            effectiveExpectedType: JetType
+    ): JetType? {
+        val substitutedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
+        if (substitutedType != null && !TypeUtils.isDontCarePlaceholder(substitutedType))
+            return substitutedType
+
+        val shapeType = argumentTypeResolver.getShapeTypeOfCallableReference(callableReference, context, false)
+        if (shapeType != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(shapeType) && !hasUnknownFunctionParameter(shapeType))
+            return shapeType
+
+        return null
+    }
+
+    private fun <D : CallableDescriptor> getResolvedTypeForCallableReference(
+            callableReference: JetCallableReferenceExpression,
+            context: CallCandidateResolutionContext<D>,
+            expectedType: JetType,
+            valueArgument: ValueArgument
+    ): JetType? {
+        val dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument)
+        val expectedTypeWithoutReturnType = if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
+        val newContext = context
+                .replaceExpectedType(expectedTypeWithoutReturnType)
+                .replaceDataFlowInfo(dataFlowInfoForArgument)
+                .replaceContextDependency(INDEPENDENT)
+        val argumentExpression = valueArgument.getArgumentExpression()!!
+        val type = argumentTypeResolver.getCallableReferenceTypeInfo(
+                argumentExpression, callableReference, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
+        return type
     }
 }
 
