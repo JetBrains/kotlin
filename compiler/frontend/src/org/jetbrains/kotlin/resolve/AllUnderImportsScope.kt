@@ -53,11 +53,11 @@ class AllUnderImportsScope : JetScope {
         return scopes.flatMap { it.getFunctions(name) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionProperties(receiverType, name) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionProperties(receiverType) }
     }
 

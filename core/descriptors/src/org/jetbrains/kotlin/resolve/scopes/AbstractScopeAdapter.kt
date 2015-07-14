@@ -47,11 +47,11 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getProperties(name)
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverType, name)
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverType)
     }
 

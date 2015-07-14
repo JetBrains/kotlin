@@ -65,10 +65,10 @@ public open class ChainedScope(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getFunctions(name) }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor>
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverType, name) }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor>
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverType) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {

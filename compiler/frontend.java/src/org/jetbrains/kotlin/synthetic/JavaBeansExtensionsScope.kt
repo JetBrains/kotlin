@@ -127,7 +127,7 @@ class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by Jet
                && descriptor.getVisibility() == Visibilities.PUBLIC
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> {
         return collectSyntheticPropertiesByName(null, receiverType.makeNotNullable(), name) ?: emptyList()
     }
 
@@ -146,7 +146,7 @@ class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         result.collectSyntheticProperties(receiverType.makeNotNullable())
         return result

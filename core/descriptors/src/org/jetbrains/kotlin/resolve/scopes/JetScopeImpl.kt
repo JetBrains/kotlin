@@ -32,9 +32,9 @@ public abstract class JetScopeImpl : JetScope {
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> = setOf()
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<VariableDescriptor> = listOf()
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> = listOf()
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<VariableDescriptor> = listOf()
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> = listOf()
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
