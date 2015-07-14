@@ -1,5 +1,12 @@
 package kotlin
 
+
+/**
+ * Always throws an [UnsupportedOperationException] stating that operation is not implemented.
+ */
+public val TODO: Nothing get() = throw UnsupportedOperationException("An operation is not implemented.")
+
+
 /**
  * Creates a tuple of type [Pair] from this and [that].
  *
