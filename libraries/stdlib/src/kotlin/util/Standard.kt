@@ -4,7 +4,14 @@ package kotlin
 /**
  * Always throws an [UnsupportedOperationException] stating that operation is not implemented.
  */
-public val TODO: Nothing get() = throw UnsupportedOperationException("An operation is not implemented.")
+public fun TODO(): Nothing = throw UnsupportedOperationException("An operation is not implemented.")
+
+/**
+ * Always throws an [UnsupportedOperationException] stating that operation is not implemented.
+ *
+ * @param reason a string explaining why the implementation is missing.
+ */
+public fun TODO(reason: String): Nothing = throw UnsupportedOperationException("An operation is not implemented: $reason")
 
 
 /**
