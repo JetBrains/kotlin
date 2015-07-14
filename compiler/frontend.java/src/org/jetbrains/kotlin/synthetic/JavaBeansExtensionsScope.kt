@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -155,7 +156,7 @@ class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         val typeConstructor = type.getConstructor()
         val classifier = typeConstructor.getDeclarationDescriptor()
         if (classifier is JavaClassDescriptor) {
-            for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
+            for (descriptor in classifier.getMemberScope(type.getArguments()).getDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = SyntheticJavaBeansPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
