@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -216,27 +217,36 @@ public class LookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
-            if (descriptor.getExtensionReceiverParameter() != null) {
-                val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
-                val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
-                element = element.appendTailText(" for $receiverPresentation", true)
-
-                val container = descriptor.getContainingDeclaration()
-                val containerPresentation = if (container is ClassDescriptor)
-                    DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
-                else if (container is PackageFragmentDescriptor)
-                    container.fqName.toString()
-                else
-                    null
-                if (containerPresentation != null) {
-                    element = element.appendTailText(" in $containerPresentation", true)
+            when {
+                descriptor is SyntheticJavaBeansPropertyDescriptor -> {
+                    var from = descriptor.getMethod.getName().asString() + "()"
+                    descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
+                    element = element.appendTailText(" (from $from)", true)
                 }
-            }
-            else {
-                val container = descriptor.getContainingDeclaration()
-                if (container is PackageFragmentDescriptor) { // we show container only for global functions and properties
-                    //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
-                    element = element.appendTailText(" (${container.fqName})", true)
+
+                descriptor.getExtensionReceiverParameter() != null -> {
+                    val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
+                    val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
+                    element = element.appendTailText(" for $receiverPresentation", true)
+
+                    val container = descriptor.getContainingDeclaration()
+                    val containerPresentation = if (container is ClassDescriptor)
+                        DescriptorUtils.getFqNameFromTopLevelClass(container).toString()
+                    else if (container is PackageFragmentDescriptor)
+                        container.fqName.toString()
+                    else
+                        null
+                    if (containerPresentation != null) {
+                        element = element.appendTailText(" in $containerPresentation", true)
+                    }
+                }
+
+                else -> {
+                    val container = descriptor.getContainingDeclaration()
+                    if (container is PackageFragmentDescriptor) { // we show container only for global functions and properties
+                        //TODO: it would be probably better to show it also for static declarations which are not from the current class (imported)
+                        element = element.appendTailText(" (${container.fqName})", true)
+                    }
                 }
             }
         }
