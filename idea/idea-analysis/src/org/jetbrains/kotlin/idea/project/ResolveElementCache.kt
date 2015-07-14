@@ -66,9 +66,11 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
-                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (!map.containsKey(statement)) {
-                        map[statement] = bindingContext
+                if (statementFilter is PartialBodyResolveFilter) {
+                    for (statement in statementFilter.allStatementsToResolve) {
+                        if (!map.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
+                            map[statement] = bindingContext
+                        }
                     }
                 }
                 map[resolveElement] = bindingContext // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
