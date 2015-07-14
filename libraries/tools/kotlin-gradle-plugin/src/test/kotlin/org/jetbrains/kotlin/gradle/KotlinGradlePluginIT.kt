@@ -158,4 +158,19 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
         }
     }
+
+    Test fun testKaptOutputKotlinCode() {
+        Project("kaptOutputKotlinCode", "1.12").build("build") {
+            assertSuccessful()
+            assertContains("kapt: Using class file stubs")
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
+            assertFileExists("build/generated/source/kapt/main/TestClassCustomized.java")
+            assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
+
 }

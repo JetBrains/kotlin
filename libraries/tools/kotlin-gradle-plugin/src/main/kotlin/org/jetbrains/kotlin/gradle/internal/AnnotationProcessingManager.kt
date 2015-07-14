@@ -54,6 +54,12 @@ public class AnnotationProcessingManager(
         return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/annotations.$taskQualifier.txt")
     }
 
+    fun getGeneratedKotlinSourceDir(): File {
+        val kotlinGeneratedDir = File(aptWorkingDir, "kotlinGenerated")
+        if (!kotlinGeneratedDir.exists()) kotlinGeneratedDir.mkdirs()
+        return kotlinGeneratedDir
+    }
+
     fun setupKapt() {
         if (aptFiles.isEmpty()) return
 
@@ -72,7 +78,8 @@ public class AnnotationProcessingManager(
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
 
-        appendAnnotationsFileLocationArgument()
+
+        appendAnnotationsArguments()
         appendAdditionalComplerArgs()
     }
 
@@ -102,9 +109,10 @@ public class AnnotationProcessingManager(
         }
     }
 
-    private fun appendAnnotationsFileLocationArgument() {
+    private fun appendAnnotationsArguments() {
         javaTask.modifyCompilerArguments { list ->
             list.add("-Akapt.annotations=" + getAnnotationFile())
+            list.add("-Akapt.kotlin.generated=" + getGeneratedKotlinSourceDir())
         }
     }
 

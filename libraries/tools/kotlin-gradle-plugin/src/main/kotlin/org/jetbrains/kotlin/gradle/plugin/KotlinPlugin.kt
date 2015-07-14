@@ -609,11 +609,13 @@ private fun Project.initKapt(
 
     kotlinTask.doFirst {
         kaptManager.generateJavaHackFile()
+        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
     }
 
     javaTask.doFirst {
         kaptManager.setupKapt()
         kaptManager.generateJavaHackFile()
+        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
     }
 
     javaTask.doLast {
