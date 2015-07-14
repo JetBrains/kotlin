@@ -54,16 +54,12 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     protected fun searchTextOccurrences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val scope = options.searchScope
 
-        val searchText = options.isSearchForTextOccurrences && scope is GlobalSearchScope
-
-        if (searchText) {
-            if (options.fastTrack != null) {
-                options.fastTrack.searchCustom {
-                     processUsagesInText(element, processor, scope as GlobalSearchScope)
-                }
+        if (options.isSearchForTextOccurrences && scope is GlobalSearchScope) {
+            if (options.fastTrack == null) {
+                return processUsagesInText(element, processor, scope)
             }
-            else {
-                return processUsagesInText(element, processor, scope as GlobalSearchScope)
+            options.fastTrack.searchCustom {
+                processUsagesInText(element, processor, scope)
             }
         }
         return true
