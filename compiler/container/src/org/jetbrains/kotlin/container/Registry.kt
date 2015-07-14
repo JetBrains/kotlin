@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.MultiMap
 import java.util.ArrayList
+import java.lang.reflect.*
 
 internal class ComponentRegistry {
-    fun buildRegistrationMap(descriptors: Collection<ComponentDescriptor>): MultiMap<Class<*>, ComponentDescriptor> {
-        val registrationMap = MultiMap<Class<*>, ComponentDescriptor>()
+    fun buildRegistrationMap(descriptors: Collection<ComponentDescriptor>): MultiMap<Type, ComponentDescriptor> {
+        val registrationMap = MultiMap<Type, ComponentDescriptor>()
         for (descriptor in descriptors) {
             for (registration in descriptor.getRegistrations()) {
                 registrationMap.putValue(registration, descriptor)
@@ -30,13 +31,13 @@ internal class ComponentRegistry {
         return registrationMap
     }
 
-    private var registrationMap = MultiMap.createLinkedSet<Class<*>, ComponentDescriptor>()
+    private var registrationMap = MultiMap.createLinkedSet<Type, ComponentDescriptor>()
 
     public fun addAll(descriptors: Collection<ComponentDescriptor>) {
         registrationMap.putAllValues(buildRegistrationMap(descriptors))
     }
 
-    public fun tryGetEntry(request: Class<*>): Collection<ComponentDescriptor> {
+    public fun tryGetEntry(request: Type): Collection<ComponentDescriptor> {
         return registrationMap.get(request)
     }
 }

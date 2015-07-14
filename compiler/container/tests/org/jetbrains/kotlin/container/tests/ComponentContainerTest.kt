@@ -17,52 +17,10 @@
 package org.jetbrains.kotlin.container.tests
 
 import org.jetbrains.kotlin.container.*
+import org.junit.Ignore
 import org.junit.Test
-import java.io.Closeable
 import javax.inject.Inject
 import kotlin.test.*
-
-interface TestComponentInterface {
-    public val disposed: Boolean
-    fun foo()
-}
-
-interface TestClientComponentInterface
-
-class TestComponent : TestComponentInterface, Closeable {
-    public override var disposed: Boolean = false
-    override fun close() {
-        disposed = true
-    }
-
-    override fun foo() {
-        throw UnsupportedOperationException()
-    }
-}
-
-class ManualTestComponent(val name: String) : TestComponentInterface, Closeable {
-    public override var disposed: Boolean = false
-    override fun close() {
-        disposed = true
-    }
-
-    override fun foo() {
-        throw UnsupportedOperationException()
-    }
-}
-
-class TestClientComponent(val dep: TestComponentInterface) : TestClientComponentInterface, Closeable {
-    override fun close() {
-        if (dep.disposed)
-            throw Exception("Dependency shouldn't be disposed before dependee")
-        disposed = true
-    }
-
-    var disposed: Boolean = false
-}
-
-class TestClientComponent2() : TestClientComponentInterface {
-}
 
 class ComponentContainerTest {
     Test fun should_throw_when_not_composed() {
@@ -152,6 +110,76 @@ class ComponentContainerTest {
             assertNotNull(descriptor2)
             assertTrue(descriptor1 == descriptor2)
             assertTrue(descriptor1!!.getValue() == descriptor2!!.getValue())
+        }
+    }
+
+    Test fun should_resolve_adhoc_types_to_same_instances() {
+        createContainer("test") {
+            useImpl<TestAdhocComponent1>()
+            useImpl<TestAdhocComponent2>()
+        }.use {
+            val descriptor1 = it.resolve<TestAdhocComponent1>()
+            assertNotNull(descriptor1)
+            val descriptor2 = it.resolve<TestAdhocComponent2>()
+            assertNotNull(descriptor2)
+            val component1 = descriptor1!!.getValue() as TestAdhocComponent1
+            val component2 = descriptor2!!.getValue() as TestAdhocComponent2
+            assertTrue(component1.service === component2.service)
+        }
+    }
+
+    Test fun should_resolve_iterable() {
+        createContainer("test") {
+            useImpl<TestComponent>()
+            useImpl<TestClientComponent>()
+            useImpl<TestClientComponent2>()
+            useImpl<TestIterableComponent>()
+        }.use {
+            val descriptor = it.resolve<TestIterableComponent>()
+            assertNotNull(descriptor)
+            val iterableComponent = descriptor!!.getValue() as TestIterableComponent
+            assertEquals(2, iterableComponent.components.count())
+            assertTrue(iterableComponent.components.any { it is TestClientComponent })
+            assertTrue(iterableComponent.components.any { it is TestClientComponent2 })
+        }
+    }
+
+    Test fun should_distinguish_generic() {
+        createContainer("test") {
+            useImpl<TestGenericClient>()
+            useImpl<TestStringComponent>()
+            useImpl<TestIntComponent>()
+        }.use {
+            val descriptor = it.resolve<TestGenericClient>()
+            assertNotNull(descriptor)
+            val genericClient = descriptor!!.getValue() as TestGenericClient
+            assertTrue(genericClient.component1 is TestStringComponent)
+            assertTrue(genericClient.component2 is TestIntComponent)
+        }
+    }
+
+    Ignore("Need generic type substitution")
+    Test fun should_resolve_generic_adhoc() {
+        createContainer("test") {
+            useImpl<TestImplicitGenericClient>()
+        }.use {
+            val descriptor = it.resolve<TestImplicitGenericClient>()
+            assertNotNull(descriptor)
+            val genericClient = descriptor!!.getValue() as TestImplicitGenericClient
+            assertTrue(genericClient.component is TestImplicitGeneric)
+        }
+    }
+
+    Test fun should_fail_with_invalid_cardinality() {
+        createContainer("test") {
+            useImpl<TestComponent>()
+            useInstance(TestComponent())
+        }.use {
+            assertTrue {
+                fails {
+                    it.resolve<TestComponent>()
+                } is InvalidCardinalityException
+            }
         }
     }
 

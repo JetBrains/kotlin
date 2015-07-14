@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.container
 import com.intellij.util.containers.MultiMap
 import java.io.Closeable
 import java.lang.reflect.Modifier
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
@@ -30,13 +32,15 @@ public enum class ComponentStorageState {
     Disposed
 }
 
+class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
+
 public class ComponentStorage(val myId: String) : ValueResolver {
     var state = ComponentStorageState.Initial
     val registry = ComponentRegistry()
     val descriptors = LinkedHashSet<ComponentDescriptor>()
-    val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Class<*>>()
+    val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
 
-    override fun resolve(request: Class<*>, context: ValueResolveContext): ValueDescriptor? {
+    override fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         if (state == ComponentStorageState.Initial)
             throw ContainerConsistencyException("Container was not composed before resolving")
 
@@ -44,12 +48,14 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         if (entry.isNotEmpty()) {
             registerDependency(request, context)
 
+            if (entry.size() > 1)
+                throw InvalidCardinalityException("Request $request cannot be satisfied because there is more than one type registered", entry)
             return entry.singleOrNull()
         }
         return null
     }
 
-    private fun registerDependency(request: Class<*>, context: ValueResolveContext) {
+    private fun registerDependency(request: Type, context: ValueResolveContext) {
         if (context is ComponentResolveContext) {
             val descriptor = context.requestingDescriptor
             if (descriptor is ComponentDescriptor) {
@@ -58,7 +64,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
-    public fun resolveMultiple(request: Class<*>, context: ValueResolveContext): Iterable<ValueDescriptor> {
+    public fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
         registerDependency(request, context)
         return registry.tryGetEntry(request)
     }
@@ -89,7 +95,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
 
         registry.addAll(descriptors)
 
-        val implicits = inspectDependenciesAndRegisterImplicits(context, descriptors)
+        val implicits = inspectDependenciesAndRegisterAdhoc(context, descriptors)
 
         injectProperties(context, descriptors + implicits)
     }
@@ -102,30 +108,38 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
-    private fun inspectDependenciesAndRegisterImplicits(context: ComponentResolveContext, descriptors: Collection<ComponentDescriptor>): LinkedHashSet<ComponentDescriptor> {
-        val implicits = LinkedHashSet<ComponentDescriptor>()
-        val visitedTypes = HashSet<Class<*>>()
+    private fun inspectDependenciesAndRegisterAdhoc(context: ComponentResolveContext, descriptors: Collection<ComponentDescriptor>): LinkedHashSet<ComponentDescriptor> {
+        val adhoc = LinkedHashSet<ComponentDescriptor>()
+        val visitedTypes = HashSet<Type>()
         for (descriptor in descriptors) {
-            registerImplicits(context, descriptor, visitedTypes, implicits)
+            collectAdhocComponents(context, descriptor, visitedTypes, adhoc)
         }
-        registry.addAll(implicits)
-        return implicits
+        registry.addAll(adhoc)
+        return adhoc
     }
 
-    private fun registerImplicits(
-            context: ComponentResolveContext, descriptor: ComponentDescriptor,
-            visitedTypes: HashSet<Class<*>>, implicitDescriptors: LinkedHashSet<ComponentDescriptor>
+    private fun collectAdhocComponents(context: ComponentResolveContext, descriptor: ComponentDescriptor,
+            visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
     ) {
         val dependencies = descriptor.getDependencies(context)
         for (type in dependencies) {
-            if (!visitedTypes.add(type)) continue
+            if (!visitedTypes.add(type))
+                continue
 
             val entry = registry.tryGetEntry(type)
             if (entry.isEmpty()) {
-                if (!Modifier.isAbstract(type.getModifiers()) && !type.isPrimitive()) {
-                    val implicitDescriptor = SingletonTypeComponentDescriptor(context.container, type)
-                    implicitDescriptors.add(implicitDescriptor)
-                    registerImplicits(context, implicitDescriptor, visitedTypes, implicitDescriptors)
+                val rawType : Class<*>? = when(type){
+                                              is Class<*> -> type
+                                              is ParameterizedType -> type.getRawType() as? Class<*>
+                                              else -> null
+                                          }
+                if (rawType == null)
+                    continue
+
+                if (!Modifier.isAbstract(rawType.getModifiers()) && !rawType.isPrimitive()) {
+                    val implicitDescriptor = SingletonTypeComponentDescriptor(context.container, rawType)
+                    adhocDescriptors.add(implicitDescriptor)
+                    collectAdhocComponents(context, implicitDescriptor, visitedTypes, adhocDescriptors)
                 }
             }
         }

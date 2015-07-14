@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.container
 import java.io.Closeable
 import java.util.ArrayList
 import kotlin.properties.Delegates
+import java.lang.reflect.*
 
 enum class ComponentState {
     Null,
@@ -116,7 +117,7 @@ public abstract class SingletonDescriptor(val container: ComponentContainer) : C
 }
 
 public abstract class SingletonComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
-    public override fun getRegistrations(): Iterable<Class<*>> = klass.getInfo().registrations
+    public override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 }
 
 public class SingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonComponentDescriptor(container, klass) {
@@ -139,7 +140,7 @@ public class SingletonTypeComponentDescriptor(container: ComponentContainer, kla
         return instance
     }
 
-    override fun getDependencies(context: ValueResolveContext): Collection<Class<*>> {
+    override fun getDependencies(context: ValueResolveContext): Collection<Type> {
         val classInfo = klass.getInfo()
         return classInfo.constructorInfo?.parameters.orEmpty() + classInfo.setterInfos.flatMap { it.parameters }
     }

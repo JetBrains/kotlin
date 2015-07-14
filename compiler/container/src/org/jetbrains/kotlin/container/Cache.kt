@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.ContainerUtil
-import java.lang.reflect.Constructor
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
@@ -44,17 +42,17 @@ fun Class<*>.getInfo(): ClassInfo {
 data class ClassInfo(
         val constructorInfo: ConstructorInfo?,
         val setterInfos: List<SetterInfo>,
-        val registrations: List<Class<*>>
+        val registrations: List<Type>
 )
 
 data class ConstructorInfo(
         val constructor: Constructor<*>,
-        val parameters: List<Class<*>>
+        val parameters: List<Type>
 )
 
 data class SetterInfo(
         val method: Method,
-        val parameters: List<Class<*>>
+        val parameters: List<Type>
 )
 
 private fun traverseClass(c: Class<*>): ClassInfo {
@@ -66,7 +64,7 @@ private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
     for (method in c.getMethods()) {
         for (annotation in method.getDeclaredAnnotations()) {
             if (annotation.annotationType().getName().endsWith(".Inject")) {
-                setterInfos.add(SetterInfo(method, method.getParameterTypes().toList()))
+                setterInfos.add(SetterInfo(method, method.getGenericParameterTypes().toList()))
             }
         }
     }
@@ -83,25 +81,37 @@ private fun getConstructorInfo(c: Class<*>): ConstructorInfo? {
         return null
 
     val constructor = constructors.single()
-    return ConstructorInfo(constructor, constructor.getParameterTypes().toList())
+    return ConstructorInfo(constructor, constructor.getGenericParameterTypes().toList())
 }
 
 
-private fun collectInterfacesRecursive(cl: Class<*>, result: MutableSet<Class<*>>) {
-    cl.getInterfaces().forEach {
+private fun collectInterfacesRecursive(type: Type, result: MutableSet<Type>) {
+    // TODO: should apply generic substitution through hierarchy
+    val klass : Class<*>? = when(type) {
+        is Class<*> -> type
+        is ParameterizedType -> type.getRawType() as? Class<*>
+        else -> null
+    }
+    klass?.getGenericInterfaces()?.forEach {
         if (result.add(it)) {
             collectInterfacesRecursive(it, result)
         }
     }
 }
 
-private fun getRegistrations(klass: Class<*>): List<Class<*>> {
-    val registrations = ArrayList<Class<*>>()
+private fun getRegistrations(klass: Class<*>): List<Type> {
+    val registrations = ArrayList<Type>()
 
-    val superClasses = sequence(klass) { (it as Class<Any>).getSuperclass() }
+    val superClasses = sequence<Type>(klass) {
+        when (it) {
+            is Class<*> -> it.getGenericSuperclass()
+            is ParameterizedType -> (it.getRawType() as? Class<*>)?.getGenericSuperclass()
+            else -> null
+        }
+    }
     registrations.addAll(superClasses)
 
-    val interfaces = LinkedHashSet<Class<*>>()
+    val interfaces = LinkedHashSet<Type>()
     superClasses.forEach { collectInterfacesRecursive(it, interfaces) }
     registrations.addAll(interfaces)
     registrations.remove(javaClass<Any>())
