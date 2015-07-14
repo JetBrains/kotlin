@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
@@ -29,14 +30,15 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import java.util.*
 import kotlin.properties.Delegates
 
-public class OutOfBoundChecker(val subroutine: JetElement, val trace: BindingTrace) {
-    public val pseudocode: Pseudocode = JetControlFlowProcessor(trace).generatePseudocode(subroutine)
+public class OutOfBoundChecker(val subroutine: JetDeclaration, val bindingContext: BindingContext) {
+    public val pseudocode: Pseudocode = PseudocodeUtil.generatePseudocode(subroutine, bindingContext)
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
-            PseudocodeIntegerVariablesDataCollector(pseudocode)
+            PseudocodeIntegerVariablesDataCollector(pseudocode, bindingContext)
 
     public fun checkOutOfBoundErrors() {
         val instructionsToIntVarsValues = pseudocodeVariablesDataCollector.integerVariablesValues

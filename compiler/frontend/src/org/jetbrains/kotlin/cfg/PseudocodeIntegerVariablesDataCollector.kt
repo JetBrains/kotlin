@@ -21,10 +21,9 @@ import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.JetType
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -41,7 +41,7 @@ import kotlin.properties.Delegates
 // but collects information about integer variables' values. Semantically it would be better to
 // merge functionality in this two files
 
-public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode) {
+public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
     public var integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
         private set
 
@@ -105,56 +105,71 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode)
         when(instruction) {
             is VariableDeclarationInstruction -> {
                 // process variable declaration
-                val declarationName = instruction.variableDeclarationElement.getName() ?:
-                                      throw Exception("Variable declaration name is null")
-                updatedData.variablesToValues.put(declarationName, IntegerVariableValues.empty())
+                val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                               ?: throw Exception("Variable descriptor is null")
+                // todo: there should be easier way to define type, for example JetType constants (or consider JetTypeMapper)
+                val typeName: String = variableDescriptor.getType().getConstructor().getDeclarationDescriptor()?.getName()?.asString()
+                               ?: throw Exception("Variable declaration type name is null")
+                if(typeName == "Int") {
+                    val declaredName = variableDescriptor.getName().asString()
+                    updatedData.variablesToValues.put(declaredName, IntegerVariableValues.empty())
+                }
             }
             is ReadValueInstruction -> {
-                // process literal occurrence (all integer literals are stored to fake vars by read instruction)
                 val element = instruction.outputValue.element
-                if (element is JetConstantExpression) {
-                    val node = element.getNode()
-                    val nodeType = node.getElementType() as? JetNodeType ?:
-                                   throw Exception("Node's elementType has wrong type for JetConstantExpression")
-                    if (nodeType == JetNodeTypes.INTEGER_CONSTANT) {
-                        val literalValue = Integer.parseInt(node.getText())
-                        val fakeVariableName = instruction.outputValue.debugName
-                        updatedData.fakeVariablesToValues.put(fakeVariableName, IntegerVariableValues.singleton(literalValue))
+                when (element) {
+                    is JetConstantExpression -> {
+                        // process literal occurrence (all integer literals are stored to fake variables by read instruction)
+                        val node = element.getNode()
+                        val nodeType = node.getElementType() as? JetNodeType ?:
+                                       throw Exception("Node's elementType has wrong type for JetConstantExpression")
+                        if (nodeType == JetNodeTypes.INTEGER_CONSTANT) {
+                            val literalValue = Integer.parseInt(node.getText())
+                            val fakeVariableName = instruction.outputValue.debugName
+                            updatedData.fakeVariablesToValues.put(fakeVariableName, IntegerVariableValues.singleton(literalValue))
+                        }
                     }
+                    is JetNameReferenceExpression -> {
+                        // process variable reference
+                        val referencedVariableName = element.getReferencedName()
+                        val referencedVariableValues = updatedData.variablesToValues.getOrElse(referencedVariableName, { null })
+                        if(referencedVariableValues != null) {
+                            // we have the information about value, so it is definitely of integer type
+                            // (assuming there are no undeclared variables)
+                            val newFakeVariableName = instruction.outputValue.debugName
+                            updatedData.fakeVariablesToValues.put(newFakeVariableName, referencedVariableValues)
+                        }
+                    }
+                }
+            }
+            is WriteValueInstruction -> {
+                // process assignment to variable
+                val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                                         ?: throw Exception("Variable descriptor is null")
+                val fakeVariableName = instruction.rValue.debugName
+                val valuesToAssign = updatedData.fakeVariablesToValues.get(fakeVariableName)
+                val assignmentTarget = variableDescriptor.getName().asString()
+                if(valuesToAssign != null) {
+                    updatedData.variablesToValues.put(assignmentTarget, valuesToAssign)
+                } else {
+                    updatedData.variablesToValues.put(assignmentTarget, IntegerVariableValues.cantBeDefined())
+                }
+            }
+            is CallInstruction -> {
+                if(instruction.element is JetBinaryExpression) {
+                    processBinaryArithmeticOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
                 when(instruction.kind) {
-                    MagicKind.UNSUPPORTED_ELEMENT -> {
-                        // process assignment to variable
-                        assert(instruction.inputValues.size().equals(1), "Assignment instruction is supposed to have one input value")
-                        val fakeVariableName = instruction.inputValues.get(0).debugName
-                        val valuesToAssign = updatedData.fakeVariablesToValues.get(fakeVariableName)
-                        val assignmentTarget = tryGetAssignmentName(instruction)
-                        if(assignmentTarget != null) {
-                            if(valuesToAssign != null) {
-                                updatedData.variablesToValues.put(assignmentTarget, valuesToAssign)
-                            } else {
-                                updatedData.variablesToValues.put(assignmentTarget, IntegerVariableValues.cantBeDefined())
-                            }
-                        } else throw Exception("Assignment target's name can't is null")
-                    }
-                    MagicKind.UNRESOLVED_CALL -> {
-                        when(instruction.element) {
-                            is JetNameReferenceExpression -> {
-                                // process variable reference
-                                val referencedVariableName = instruction.element.getReferencedName()
-                                val referencedVariableValues = updatedData.variablesToValues.getOrElse(referencedVariableName, { null })
-                                if(referencedVariableValues != null) {
-                                    // we have the information about value, so it is definitely of integer type
-                                    // (assuming there are no undeclared variables)
-                                    val newFakeVariableName = instruction.outputValue.debugName
-                                    updatedData.fakeVariablesToValues.put(newFakeVariableName, referencedVariableValues)
-                                }
-                            }
-                            is JetBinaryExpression ->
-                                processBinaryArithmeticOperation(instruction.element.getOperationToken(), instruction, updatedData)
-                        }
+                    MagicKind.LOOP_RANGE_ITERATION -> {
+                        // process range operator result storing in fake variable
+                        assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
+                        val rangeValuesFakeVariableName = instruction.inputValues.get(0).debugName
+                        val rangeValues = updatedData.fakeVariablesToValues.get(rangeValuesFakeVariableName)
+                                          ?: throw Exception("Range values are not computed")
+                        val targetName = instruction.outputValue.debugName
+                        updatedData.fakeVariablesToValues.put(targetName, rangeValues)
                     }
                 }
             }
@@ -162,17 +177,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode)
         return updatedData
     }
 
-    private fun tryGetAssignmentName(instruction: MagicInstruction): String? =
-            when(instruction.element) {
-                is JetProperty -> instruction.element.getName()
-                is JetBinaryExpression -> tryGetReferenceExprName(instruction.element.getLeft())
-                else -> null
-            }
-
-    private fun tryGetReferenceExprName(expression: JetExpression?) =
-            (expression as? JetNameReferenceExpression)?.getReferencedName()
-
-    private fun processBinaryArithmeticOperation(token: IElementType, instruction: MagicInstruction, updatedData: ValuesData) {
+    private fun processBinaryArithmeticOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
         assert(instruction.inputValues.size().equals(2),
                "Binary expression instruction is supposed to have two input values")
         val leftOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(0).debugName)
@@ -180,6 +185,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode)
         if (leftOperandValues == null || rightOperandValues == null) {
             return
         }
+        val resultValue = instruction.outputValue ?: return
         val result: IntegerVariableValues =
             if(!leftOperandValues.areDefined || !rightOperandValues.areDefined) {
                 IntegerVariableValues.cantBeDefined()
@@ -206,7 +212,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode)
                 }
                 else -> throw Exception("OutOfBoundChecker: Unsupported binary operation")
             }
-        updatedData.fakeVariablesToValues.put(instruction.outputValue.debugName, result)
+        updatedData.fakeVariablesToValues.put(resultValue.debugName, result)
     }
 
     private fun applyEachToEach(left: IntegerVariableValues, right: IntegerVariableValues, operation: (Int, Int) -> Int)
