@@ -635,10 +635,6 @@ public class DeclarationsChecker {
     }
 
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
-        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
-        assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
-        ClassDescriptor enumClass = (ClassDescriptor) declaration;
-
         if (enumEntryUsesDeprecatedSuperConstructor(enumEntry)) {
             trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.on(enumEntry, classDescriptor));
         }
@@ -650,23 +646,34 @@ public class DeclarationsChecker {
             trace.report(Errors.ENUM_ENTRY_AFTER_ENUM_MEMBER.on(enumEntry, classDescriptor));
         }
 
-        List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
-        ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-        if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
-            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
-        }
+        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
+        if (DescriptorUtils.isEnumClass(declaration)) {
+            ClassDescriptor enumClass = (ClassDescriptor) declaration;
 
-        for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-            JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-            if (typeReference != null) {
-                JetType type = trace.getBindingContext().get(TYPE, typeReference);
-                if (type != null) {
-                    JetType enumType = enumClass.getDefaultType();
-                    if (!type.getConstructor().equals(enumType.getConstructor())) {
-                        trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
+            List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
+            ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
+            if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
+                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
+            }
+
+            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                if (typeReference != null) {
+                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
+                    if (type != null) {
+                        JetType enumType = enumClass.getDefaultType();
+                        if (!type.getConstructor().equals(enumType.getConstructor())) {
+                            trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
+                        }
                     }
                 }
             }
         }
+        else {
+            assert DescriptorUtils.isTrait(declaration) : "Enum entry should be declared in enum class: " +
+                                                          classDescriptor + " " +
+                                                          classDescriptor.getKind();
+        }
     }
+
 }

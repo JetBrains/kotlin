@@ -5193,6 +5193,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("interfaceWithEnumKeyword.kt")
+            public void testInterfaceWithEnumKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/interfaceWithEnumKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("isEnumEntry.kt")
             public void testIsEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/isEnumEntry.kt");
