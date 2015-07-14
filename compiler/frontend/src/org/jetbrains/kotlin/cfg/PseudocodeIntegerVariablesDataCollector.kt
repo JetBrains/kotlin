@@ -215,21 +215,22 @@ public class PseudocodeIntegerVariablesDataCollector(
         if (leftOperandValues == null || rightOperandValues == null) {
             return
         }
-        val resultValue = instruction.outputValue ?: return
-        val result: IntegerVariableValues =
-            if(!leftOperandValues.areDefined || !rightOperandValues.areDefined) {
-                IntegerVariableValues.cantBeDefined()
-            } else when (token) {
-                JetTokens.PLUS -> applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l + r }
-                JetTokens.MINUS -> applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l - r }
-                JetTokens.MUL -> applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l * r }
-                JetTokens.DIV -> applyEachToEach(leftOperandValues, rightOperandValues) { l, r ->
+        val resultVariable = instruction.outputValue ?: return
+        val putResultValue: (IntegerVariableValues) -> Unit = { value -> updatedData.fakeVariablesToValues.put(resultVariable, value) }
+        if(!leftOperandValues.areDefined || !rightOperandValues.areDefined) {
+            putResultValue(IntegerVariableValues.cantBeDefined())
+        } else {
+            when (token) {
+                JetTokens.PLUS -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l + r })
+                JetTokens.MINUS -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l - r })
+                JetTokens.MUL -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l * r })
+                JetTokens.DIV -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r ->
                     if (rightOperandValues.equals(0)) {
                         throw Exception("OutOfBoundChecker: Division by zero detected")
                     } else {
                         l / r
                     }
-                }
+                })
                 JetTokens.RANGE -> {
                     // we can safely use casts below because of areDefined checks above
                     val minOfLeft = leftOperandValues.getValues().min() as Int
@@ -238,11 +239,10 @@ public class PseudocodeIntegerVariablesDataCollector(
                     for(value in minOfLeft..maxOfRight) {
                         rangeValues.add(value)
                     }
-                    rangeValues
+                    putResultValue(rangeValues)
                 }
-                else -> throw Exception("OutOfBoundChecker: Unsupported binary operation")
             }
-        updatedData.fakeVariablesToValues.put(resultValue, result)
+        }
     }
 
     private fun applyEachToEach(left: IntegerVariableValues, right: IntegerVariableValues, operation: (Int, Int) -> Int)
@@ -261,9 +261,9 @@ public class PseudocodeIntegerVariablesDataCollector(
             currentInstruction: Instruction,
             edgeData: ValuesData
     ): ValuesData {
-        val filteredMap = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.variablesToValues)
-        val mutableFilteredMap = HashMap(filteredMap)
-        return edgeData.copy(variablesToValues = mutableFilteredMap)
+        val filteredVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.variablesToValues)
+        val filteredFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.fakeVariablesToValues)
+        return ValuesData(HashMap(filteredVars), HashMap(filteredFakeVars))
     }
 
     // this function is fully copied from PseudocodeVariableDataCollector
@@ -280,6 +280,25 @@ public class PseudocodeIntegerVariablesDataCollector(
         // Thus they can be filtered out upon leaving the inner scope.
         return data.filterKeys { variable ->
             val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
+            // '-1' for variables declared outside this pseudocode
+            val depth = lexicalScope?.depth ?: -1
+            depth <= toDepth
+        }
+    }
+
+    private fun <D> filterOutFakeVariablesOutOfScope(
+            from: Instruction,
+            to: Instruction,
+            data: Map<PseudoValue, D>
+    ): Map<PseudoValue, D> {
+        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
+        val toDepth = to.lexicalScope.depth
+        if (toDepth >= from.lexicalScope.depth) return data
+
+        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
+        // Thus they can be filtered out upon leaving the inner scope.
+        return data.filterKeys { variable ->
+            val lexicalScope = variable.createdAt?.lexicalScope
             // '-1' for variables declared outside this pseudocode
             val depth = lexicalScope?.depth ?: -1
             depth <= toDepth
