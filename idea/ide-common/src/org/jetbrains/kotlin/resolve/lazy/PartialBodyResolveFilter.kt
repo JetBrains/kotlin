@@ -69,7 +69,7 @@ class PartialBodyResolveFilter(
         }
 
         statementMarks.mark(elementToResolve, if (forCompletion) MarkLevel.NEED_COMPLETION else MarkLevel.NEED_REFERENCE_RESOLVE)
-        declaration.forEachBlock { processBlock(it) }
+        declaration.forTopLevelBlocksInside { processBlock(it) }
     }
 
     //TODO: do..while is special case
@@ -123,7 +123,7 @@ class PartialBodyResolveFilter(
 
             val level = statementMarks.statementMark(statement)
             if (level > MarkLevel.TAKE) { // otherwise there are no statements inside that need processBlock which only works when reference resolve needed
-                statement.forEachBlock { nestedBlock ->
+                statement.forTopLevelBlocksInside { nestedBlock ->
                     val childFilter = processBlock(nestedBlock)
                     nameFilter.addNamesFromFilter(childFilter)
                 }
@@ -523,7 +523,7 @@ class PartialBodyResolveFilter(
             return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as JetExpression?
         }
 
-        private fun JetElement.forEachBlock(action: (JetBlockExpression) -> Unit) {
+        private fun JetElement.forTopLevelBlocksInside(action: (JetBlockExpression) -> Unit) {
             forEachDescendantOfType({ it !is JetBlockExpression }, action)
         }
 
