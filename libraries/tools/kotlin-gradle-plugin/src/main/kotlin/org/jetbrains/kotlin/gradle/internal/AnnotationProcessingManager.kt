@@ -63,7 +63,7 @@ public class AnnotationProcessingManager(
     fun setupKapt() {
         if (aptFiles.isEmpty()) return
 
-        if (project.getPlugins().findPlugin("com.neenbedankt.android-apt") != null) {
+        if (project.getPlugins().findPlugin(ANDROID_APT_PLUGIN_ID) != null) {
             project.getLogger().warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
         }
 
