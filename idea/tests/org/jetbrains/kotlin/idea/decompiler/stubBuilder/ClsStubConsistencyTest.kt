@@ -25,12 +25,8 @@ import org.jetbrains.kotlin.name.FqName
 import kotlin.properties.Delegates
 
 public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
-
-    override val packages: List<FqName> = listOf(FqName("kotlin"))
-
-    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
-        JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-    }
+    override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
+    override fun getPackages(): List<FqName> = listOf(FqName("kotlin"))
 
     override fun createStubBuilder() = KotlinClsStubBuilder()
 
