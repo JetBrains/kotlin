@@ -228,7 +228,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     public fun addLibraryFiles(vararg fs: String) {
-        kotlinOptions.libraryFiles = (kotlinOptions.libraryFiles + (fs as Array<String>)).copyToArray()
+        kotlinOptions.libraryFiles += fs
     }
 
     public fun addLibraryFiles(vararg fs: File) {
@@ -261,7 +261,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
                         .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
                         .map { it.getAbsolutePath() }
 
-        args.libraryFiles = (kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies).copyToArray()
+        args.libraryFiles = kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies
         args.target = kotlinOptions.target
         args.sourceMap = kotlinOptions.sourceMap
 

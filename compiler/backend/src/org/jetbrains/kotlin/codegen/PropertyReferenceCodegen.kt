@@ -172,7 +172,7 @@ public class PropertyReferenceCodegen(
 
         if (!target.isVar()) return
 
-        val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE)).toTypedArray()
+        val setterParameters = (getterParameters + arrayOf(OBJECT_TYPE)).toList().toTypedArray()
         generateAccessor(method("set", Type.VOID_TYPE, *setterParameters)) { value ->
             // Hard-coded 1 or 2 is safe here because there's only java/lang/Object in the signature, no double/long parameters
             value.store(StackValue.local(if (receiverType != null) 2 else 1, OBJECT_TYPE), this)
