@@ -182,22 +182,4 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         }
         return super.createMethodFilter(stepTarget)
     }
-
-    class KotlinBasicStepMethodFilter(val stepTarget: KotlinMethodSmartStepTarget): BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines()) {
-        override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-            if (super.locationMatches(process, location)) return true
-
-            val containingFile = runReadAction { stepTarget.resolvedElement.getContainingFile() }
-            if (containingFile !is JetFile) return false
-
-            val positionManager = process.getPositionManager() ?: return false
-
-            val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = stepTarget.resolvedElement))
-
-            val method = location.method()
-            return stepTarget.getMethod().getName() == method.name() &&
-                myTargetMethodSignature?.getName(process) == method.signature() &&
-                classes.contains(location.declaringType())
-        }
-    }
 }
