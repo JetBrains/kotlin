@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
@@ -53,9 +54,9 @@ public object AnnotationTargetChecker {
 
     private val ALL_TARGET_LIST = Target.values().map { it.name() }
 
-    public fun check(annotated: JetAnnotated, trace: BindingTrace) {
+    public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
-        val actualTargets = getActualTargetList(annotated)
+        val actualTargets = getActualTargetList(annotated, descriptor)
         for (entry in annotated.getAnnotationEntries()) {
             checkAnnotationEntry(entry, actualTargets, trace)
         }
@@ -110,10 +111,15 @@ public object AnnotationTargetChecker {
         trace.report(Errors.WRONG_ANNOTATION_TARGET.on(entry, actualTargets.firstOrNull()?.description ?: "unidentified target"))
     }
 
-    private fun getActualTargetList(annotated: JetAnnotated): List<Target> {
+    private fun getActualTargetList(annotated: JetAnnotated, descriptor: ClassDescriptor?): List<Target> {
         if (annotated is JetClassOrObject) {
             if (annotated is JetEnumEntry) return listOf(Target.PROPERTY, Target.FIELD)
-            return if (annotated.isAnnotation()) listOf(Target.ANNOTATION_CLASS, Target.CLASSIFIER) else listOf(Target.CLASSIFIER)
+            return if (descriptor?.getKind() == ClassKind.ANNOTATION_CLASS) {
+                listOf(Target.ANNOTATION_CLASS, Target.CLASSIFIER)
+            }
+            else {
+                listOf(Target.CLASSIFIER)
+            }
         }
         if (annotated is JetProperty) {
             return if (annotated.isLocal()) listOf(Target.LOCAL_VARIABLE) else listOf(Target.PROPERTY, Target.FIELD)

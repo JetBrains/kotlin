@@ -138,7 +138,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAbstract = true;
                 isInterface = true;
             }
-            else if (jetClass.isAnnotation()) {
+            else if (descriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 isAbstract = true;
                 isInterface = true;
                 isAnnotation = true;

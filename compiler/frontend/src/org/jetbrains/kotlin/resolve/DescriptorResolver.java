@@ -131,7 +131,7 @@ public class DescriptorResolver {
         }
 
         if (supertypes.isEmpty()) {
-            JetType defaultSupertype = getDefaultSupertype(jetClass, trace);
+            JetType defaultSupertype = getDefaultSupertype(jetClass, trace, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
             addValidSupertype(supertypes, defaultSupertype);
         }
 
@@ -154,7 +154,7 @@ public class DescriptorResolver {
         return false;
     }
 
-    private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
+    private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace, boolean isAnnotation) {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
             JetClassOrObject parent = JetStubbedPsiUtil.getContainingDeclaration(jetClass, JetClassOrObject.class);
@@ -167,7 +167,7 @@ public class DescriptorResolver {
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
-        else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
+        else if (isAnnotation) {
             return builtIns.getAnnotationType();
         }
         return builtIns.getAnyType();

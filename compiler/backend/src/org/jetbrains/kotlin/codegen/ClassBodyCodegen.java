@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -80,7 +77,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
             }
         }
 
-        generatePrimaryConstructorProperties(propertyCodegen, myClass);
+        generatePrimaryConstructorProperties();
     }
 
     private static boolean shouldProcessFirst(JetDeclaration declaration) {
@@ -101,8 +98,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
         }
     }
 
-    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {
-        boolean isAnnotation = origin instanceof JetClass && ((JetClass) origin).isAnnotation();
+    private void generatePrimaryConstructorProperties() {
+        boolean isAnnotation = descriptor.getKind() == ClassKind.ANNOTATION_CLASS;
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVar()) {
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);

@@ -1,12 +1,12 @@
 annotation class B
 
 class A {
-   annotation companion object {}
+   <!WRONG_ANNOTATION_TARGET!>annotation<!> companion object {}
 }
 
-annotation object O {}
+<!WRONG_ANNOTATION_TARGET!>annotation<!> object O {}
 
-annotation interface T {}
+<!WRONG_ANNOTATION_TARGET!>annotation<!> interface T {}
 
 <!WRONG_ANNOTATION_TARGET!>annotation<!> fun f() = 0
 
