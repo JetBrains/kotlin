@@ -65,6 +65,12 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         doTest(fileName);
     }
 
+    @TestMetadata("ClassInitializerHasNoValue.kt")
+    public void testClassInitializerHasNoValue() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/ClassInitializerHasNoValue.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DeclarationsBefore.kt")
     public void testDeclarationsBefore() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");

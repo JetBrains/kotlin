@@ -552,6 +552,8 @@ class PartialBodyResolveFilter(
                         true
                 }
 
+                is JetClassInitializer -> false
+
                 else -> true
             }
         }
