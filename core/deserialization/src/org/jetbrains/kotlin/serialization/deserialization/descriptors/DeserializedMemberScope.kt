@@ -106,7 +106,7 @@ public abstract class DeserializedMemberScope protected constructor(
 
     override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = properties.invoke(name)
 
-    override fun getClassifier(name: Name) = getClassDescriptor(name)
+    override fun getClassifier(name: Name, location: Location) = getClassDescriptor(name)
 
     protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
 

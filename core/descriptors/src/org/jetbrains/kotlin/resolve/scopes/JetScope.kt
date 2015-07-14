@@ -25,7 +25,7 @@ import java.lang.reflect.Modifier
 
 public interface JetScope {
 
-    public fun getClassifier(name: Name): ClassifierDescriptor?
+    public fun getClassifier(name: Name, location: Location = Location.NOWHERE): ClassifierDescriptor?
 
     public fun getPackage(name: Name): PackageViewDescriptor?
 

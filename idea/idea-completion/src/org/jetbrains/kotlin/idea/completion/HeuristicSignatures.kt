@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -109,6 +110,6 @@ public object HeuristicSignatures {
     private class TypeParametersScope(params: Collection<TypeParameterDescriptor>) : JetScope by JetScope.Empty {
         private val paramsByName = params.map { it.getName() to it }.toMap()
 
-        override fun getClassifier(name: Name) = paramsByName[name]
+        override fun getClassifier(name: Name, location: Location) = paramsByName[name]
     }
 }

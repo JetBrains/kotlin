@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.Location;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.LazyType;
@@ -387,7 +388,8 @@ public class DescriptorUtils {
 
     @Nullable
     public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName) {
-        ClassifierDescriptor classifier = classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName));
+        ClassifierDescriptor classifier =
+                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), Location.NOWHERE);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());

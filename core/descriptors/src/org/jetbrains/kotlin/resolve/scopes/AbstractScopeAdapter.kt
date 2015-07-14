@@ -39,7 +39,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getPackage(name)
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
         return workerScope.getClassifier(name)
     }
 

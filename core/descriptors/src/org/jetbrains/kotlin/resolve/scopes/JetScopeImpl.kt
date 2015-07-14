@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
 public abstract class JetScopeImpl : JetScope {
-    override fun getClassifier(name: Name): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? = null
 
     override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = setOf()
 

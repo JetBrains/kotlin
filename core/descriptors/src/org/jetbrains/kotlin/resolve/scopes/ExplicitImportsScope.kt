@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
-    override fun getClassifier(name: Name) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
+    override fun getClassifier(name: Name, location: Location) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
     override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 

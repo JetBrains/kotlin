@@ -81,8 +81,9 @@ public class ErrorUtils {
             this.debugMessage = debugMessage;
         }
 
+        @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull Location location) {
             return createErrorClass(name.asString());
         }
 
@@ -180,7 +181,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull Location location) {
             throw new IllegalStateException();
         }
 

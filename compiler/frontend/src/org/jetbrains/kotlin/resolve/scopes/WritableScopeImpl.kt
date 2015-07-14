@@ -166,7 +166,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
         checkMayRead()
 
         return variableOrClassDescriptorByName(name) as? ClassifierDescriptor
@@ -276,7 +276,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
             return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name))
         }
 
-        override fun getClassifier(name: Name): ClassifierDescriptor? {
+        override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
             checkMayRead()
 
             return variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor

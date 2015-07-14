@@ -33,7 +33,7 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
 
     override fun getPackage(name: Name) = filterDescriptor(workerScope.getPackage(name))
 
-    override fun getClassifier(name: Name) = filterDescriptor(workerScope.getClassifier(name))
+    override fun getClassifier(name: Name, location: Location) = filterDescriptor(workerScope.getClassifier(name))
 
     override fun getProperties(name: Name, location: Location) = workerScope.getProperties(name).filter(predicate)
 

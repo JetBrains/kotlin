@@ -50,7 +50,7 @@ public open class ChainedScope(
         return result ?: emptySet()
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor?
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor?
             = getFirstMatch { it.getClassifier(name) }
 
     override fun getPackage(name: Name): PackageViewDescriptor?

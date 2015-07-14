@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.utils.Printer
 
 class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
-    override fun getClassifier(name: Name)
+    override fun getClassifier(name: Name, location: Location)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
     override fun getPackage(name: Name)

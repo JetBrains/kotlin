@@ -426,7 +426,7 @@ public class DescriptorValidator {
         public Void visitTypeParameterDescriptor(
                 TypeParameterDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName()), true);
+            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), Location.NOWHERE), true);
             return null;
         }
 
@@ -434,7 +434,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName()), true);
+            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), Location.NOWHERE), true);
             return null;
         }
 

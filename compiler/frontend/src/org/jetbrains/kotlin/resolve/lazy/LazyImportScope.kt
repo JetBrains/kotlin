@@ -234,7 +234,7 @@ class LazyImportScope(
         return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name ->
             val descriptor = scope.getClassifier(name)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null

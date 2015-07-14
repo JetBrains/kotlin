@@ -62,7 +62,7 @@ protected constructor(
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name): ClassDescriptor? = classDescriptors(name).firstOrNull()
+    override fun getClassifier(name: Name, location: Location): ClassDescriptor? = classDescriptors(name).firstOrNull()
 
     override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = functionDescriptors(name)
 

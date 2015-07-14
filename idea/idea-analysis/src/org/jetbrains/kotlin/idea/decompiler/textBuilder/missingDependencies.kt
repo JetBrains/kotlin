@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import org.jetbrains.kotlin.utils.Printer
 
 private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
@@ -47,7 +48,7 @@ private class ScopeWithMissingDependencies(val fqName: FqName, val containing: D
         p.println("Special scope for decompiler, containing class with any name")
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
         return MissingDependencyErrorClassDescriptor(getContainingDeclaration(), fqName.child(name))
     }
 }

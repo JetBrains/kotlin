@@ -206,7 +206,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected static ClassDescriptor getClassDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name className = Name.identifier(name);
-        ClassifierDescriptor aClass = packageView.getMemberScope().getClassifier(className);
+        ClassifierDescriptor aClass = packageView.getMemberScope().getClassifier(className, Location.NOWHERE);
         assertNotNull("Failed to find class: " + packageView.getName() + "." + className, aClass);
         assert aClass instanceof ClassDescriptor : "Not a class: " + aClass;
         return (ClassDescriptor) aClass;
@@ -216,7 +216,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        ClassifierDescriptor innerClass = memberScope.getClassifier(propertyName);
+        ClassifierDescriptor innerClass = memberScope.getClassifier(propertyName, Location.NOWHERE);
         assert innerClass instanceof ClassDescriptor : "Failed to find inner class " +
                                                        propertyName +
                                                        " in class " +

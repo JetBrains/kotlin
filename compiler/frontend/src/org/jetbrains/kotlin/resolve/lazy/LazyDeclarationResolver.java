@@ -70,7 +70,7 @@ public class LazyDeclarationResolver {
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(classOrObject.getNameAsSafeName());
+        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(classOrObject.getNameAsSafeName(), Location.NOWHERE);
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {

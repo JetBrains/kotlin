@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 
 public class InnerClassesScopeWrapper(override val workerScope: JetScope) : AbstractScopeAdapter() {
-    override fun getClassifier(name: Name) = workerScope.getClassifier(name) as? ClassDescriptor
+    override fun getClassifier(name: Name, location: Location) = workerScope.getClassifier(name) as? ClassDescriptor
 
     override fun getDeclarationsByLabel(labelName: Name) = workerScope.getDeclarationsByLabel(labelName).filterIsInstance<ClassDescriptor>()
 

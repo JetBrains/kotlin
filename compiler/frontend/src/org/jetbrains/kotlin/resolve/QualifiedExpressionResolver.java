@@ -228,7 +228,7 @@ public class QualifiedExpressionResolver {
             descriptors.add(packageDescriptor);
         }
 
-        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
+        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName, Location.NOWHERE);
         if (classifierDescriptor != null) {
             descriptors.add(classifierDescriptor);
         }

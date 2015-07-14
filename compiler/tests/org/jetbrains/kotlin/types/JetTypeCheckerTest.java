@@ -623,7 +623,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             else {
                 Name shortName = fqName.shortName();
                 assert shortName.equals(defaultImport.getImportedName());
-                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName));
+                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName, Location.NOWHERE));
             }
         }
         scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());

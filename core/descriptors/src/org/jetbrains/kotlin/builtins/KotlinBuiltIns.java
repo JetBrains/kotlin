@@ -237,7 +237,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName);
+        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
                                                        (classifier == null ? "null" : classifier.toString());
         return (ClassDescriptor) classifier;
@@ -252,7 +252,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, Location.NOWHERE);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -401,7 +401,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull Name name) {
-        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(name);
+        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(name, UsageLocation.NO_LOCATION);
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
 

@@ -42,7 +42,7 @@ class AllUnderImportsScope : JetScope {
         return scopes.flatMap { it.getDescriptors(kindFilter, nameFilter) }
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
         return scopes.asSequence().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
     }
 

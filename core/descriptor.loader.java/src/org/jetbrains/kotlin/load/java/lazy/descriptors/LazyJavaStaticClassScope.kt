@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.resolve.DescriptorFactory.*
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
+import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.Location
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
@@ -54,7 +58,7 @@ public class LazyJavaStaticClassScope(
             memberIndex().getAllFieldNames()
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
-    override fun getClassifier(name: Name): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? = null
 
     override fun getSubPackages(): Collection<FqName> = listOf()
 
