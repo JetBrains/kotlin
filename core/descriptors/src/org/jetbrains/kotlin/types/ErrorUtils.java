@@ -124,7 +124,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull Location location) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -204,7 +204,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull Location location) {
             throw new IllegalStateException();
         }
 

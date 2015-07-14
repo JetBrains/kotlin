@@ -218,7 +218,7 @@ public abstract class LazyJavaMemberScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getFunctions(name: Name) = functions(name)
+    override fun getFunctions(name: Name, location: Location) = functions(name)
 
     protected open fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = memberIndex().getMethodNames(nameFilter)

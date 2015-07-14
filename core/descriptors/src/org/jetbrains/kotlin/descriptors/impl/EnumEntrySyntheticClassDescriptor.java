@@ -204,13 +204,13 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull Location location) {
             return functions.invoke(name);
         }
 
         @NotNull
         private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name));
+            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, Location.NOWHERE));
         }
 
         @NotNull
@@ -266,7 +266,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         private Collection<DeclarationDescriptor> computeAllDeclarations() {
             Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
             for (Name name : enumMemberNames.invoke()) {
-                result.addAll(getFunctions(name));
+                result.addAll(getFunctions(name, Location.NOWHERE));
                 result.addAll(getProperties(name, Location.NOWHERE));
             }
             return result;

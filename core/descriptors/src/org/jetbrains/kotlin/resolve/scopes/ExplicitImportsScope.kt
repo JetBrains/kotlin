@@ -29,7 +29,7 @@ public class ExplicitImportsScope(private val descriptors: Collection<Declaratio
 
     override fun getProperties(name: Name, location: Location) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
-    override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
+    override fun getFunctions(name: Name, location: Location) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
 
     override fun getContainingDeclaration() = throw UnsupportedOperationException()
 

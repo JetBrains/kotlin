@@ -67,7 +67,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     override fun getClassifier(name: Name) = substitute(workerScope.getClassifier(name))
 
-    override fun getFunctions(name: Name) = substitute(workerScope.getFunctions(name))
+    override fun getFunctions(name: Name, location: Location) = substitute(workerScope.getFunctions(name))
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name))
 

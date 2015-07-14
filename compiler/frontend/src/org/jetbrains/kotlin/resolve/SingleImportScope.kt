@@ -33,7 +33,7 @@ class SingleImportScope(private val aliasName: Name, private val descriptors: Co
     override fun getProperties(name: Name, location: Location)
             = if (name == aliasName) descriptors.filterIsInstance<VariableDescriptor>() else emptyList()
 
-    override fun getFunctions(name: Name)
+    override fun getFunctions(name: Name, location: Location)
             = if (name == aliasName) descriptors.filterIsInstance<FunctionDescriptor>() else emptyList()
 
     override fun getContainingDeclaration(): DeclarationDescriptor = throw UnsupportedOperationException()

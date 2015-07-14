@@ -31,7 +31,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getImplicitReceiversHierarchy()
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
         return workerScope.getFunctions(name)
     }
 

@@ -30,7 +30,7 @@ public abstract class JetScopeImpl : JetScope {
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = setOf()
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = setOf()
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = listOf()
 

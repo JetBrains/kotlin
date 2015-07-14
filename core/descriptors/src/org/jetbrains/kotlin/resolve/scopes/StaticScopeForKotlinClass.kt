@@ -44,7 +44,7 @@ public class StaticScopeForKotlinClass(
 
     override fun getOwnDeclaredDescriptors() = functions
 
-    override fun getFunctions(name: Name) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
+    override fun getFunctions(name: Name, location: Location) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
 
     override fun getContainingDeclaration() = containingClass
 

@@ -115,7 +115,7 @@ public open class LazyClassMemberScope(
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
         val functions = super.getFunctions(name)
         resolveUnknownVisibilitiesForMembers(functions)

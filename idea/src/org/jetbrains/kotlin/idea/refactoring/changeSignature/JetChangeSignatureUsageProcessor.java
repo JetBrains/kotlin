@@ -579,7 +579,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? callableScope.getFunctions(newName)
+                                                                 ? callableScope.getFunctions(newName, Location.NOWHERE)
                                                                  : callableScope.getProperties(newName, Location.NOWHERE);
             for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;

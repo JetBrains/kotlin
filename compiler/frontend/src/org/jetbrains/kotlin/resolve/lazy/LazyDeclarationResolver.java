@@ -134,7 +134,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
                 JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(function);
-                scopeForDeclaration.getFunctions(function.getNameAsSafeName());
+                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), Location.NOWHERE);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 

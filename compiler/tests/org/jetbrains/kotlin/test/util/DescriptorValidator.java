@@ -418,7 +418,7 @@ public class DescriptorValidator {
         public Void visitFunctionDescriptor(
                 FunctionDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getFunctions(descriptor.getName()));
+            assertFound(scope, descriptor, scope.getFunctions(descriptor.getName(), Location.NOWHERE));
             return null;
         }
 

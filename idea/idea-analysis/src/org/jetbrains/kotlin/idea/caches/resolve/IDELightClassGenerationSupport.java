@@ -140,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
-                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, Location.NOWHERE);
                     for (FunctionDescriptor descriptor : functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }

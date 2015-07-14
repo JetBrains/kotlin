@@ -50,7 +50,7 @@ class AllUnderImportsScope : JetScope {
         return scopes.flatMap { it.getProperties(name) }
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
         return scopes.flatMap { it.getFunctions(name) }
     }
 

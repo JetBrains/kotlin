@@ -64,7 +64,7 @@ protected constructor(
 
     override fun getClassifier(name: Name): ClassDescriptor? = classDescriptors(name).firstOrNull()
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functionDescriptors(name)
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = functionDescriptors(name)
 
     private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
         val result = Sets.newLinkedHashSet<FunctionDescriptor>()

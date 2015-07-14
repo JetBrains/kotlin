@@ -93,7 +93,7 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functions(name)
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<VariableDescriptor> {
         val descriptors = computeMembers<PropertyDescriptor>(name, Kind.PROPERTY)

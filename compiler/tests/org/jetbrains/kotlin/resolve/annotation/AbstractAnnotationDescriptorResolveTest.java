@@ -153,7 +153,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     protected static FunctionDescriptor getFunctionDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name functionName = Name.identifier(name);
         JetScope memberScope = packageView.getMemberScope();
-        Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName);
+        Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, Location.NOWHERE);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + packageView.getName();
         return functions.iterator().next();
     }
@@ -162,7 +162,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
         JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName);
+        Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, Location.NOWHERE);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
     }

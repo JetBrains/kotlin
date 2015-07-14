@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: JetScope, private val predicate: (DeclarationDescriptor) -> Boolean) : JetScope {
 
-    override fun getFunctions(name: Name) = workerScope.getFunctions(name).filter(predicate)
+    override fun getFunctions(name: Name, location: Location) = workerScope.getFunctions(name).filter(predicate)
 
     override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
 

@@ -33,7 +33,7 @@ public interface JetScope {
 
     public fun getLocalVariable(name: Name): VariableDescriptor?
 
-    public fun getFunctions(name: Name): Collection<FunctionDescriptor>
+    public fun getFunctions(name: Name, location: Location = Location.NOWHERE): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
 

@@ -48,7 +48,7 @@ class FunctionClassScope(
         return allDescriptors()
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
         return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.getName() == name }
     }
 

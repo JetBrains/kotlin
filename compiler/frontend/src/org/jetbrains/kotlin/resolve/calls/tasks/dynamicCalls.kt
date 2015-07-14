@@ -49,7 +49,7 @@ object DynamicCallableDescriptors {
             p.println(javaClass.getSimpleName(), ": dynamic candidates for " + call)
         }
 
-        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+        override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
             if (call.getCallType() == Call.CallType.INVOKE
                 && call.getValueArgumentList() == null && call.getFunctionLiteralArguments().isEmpty()) {

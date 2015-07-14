@@ -156,7 +156,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
         checkMayRead()
 
         return concatInOrder(functionsByName(name), workerScope.getFunctions(name))
@@ -270,7 +270,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
             return workerScope.getLocalVariable(name)
         }
 
-        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+        override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
             checkMayRead()
 
             return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name))
