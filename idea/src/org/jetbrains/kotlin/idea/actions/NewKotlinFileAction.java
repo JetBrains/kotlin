@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class NewKotlinFileAction extends CreateFileFromTemplateAction implements DumbAware {
     public NewKotlinFileAction() {
-        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file", JetFileType.INSTANCE.getIcon());
+        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", JetFileType.INSTANCE.getIcon());
     }
 
     @Override
@@ -55,8 +55,8 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
     @Override
     protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
         builder
-                .setTitle(JetBundle.message("new.kotlin.file.action"))
-                .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File")
+                .setTitle("New Kotlin File/Class")
+                .addKind("File", JetFileType.INSTANCE.getIcon(), "Kotlin File")
                 .addKind("Class", JetIcons.CLASS, "Kotlin Class")
                 .addKind("Interface", JetIcons.TRAIT, "Kotlin Interface")
                 .addKind("Enum class", JetIcons.ENUM, "Kotlin Enum")
