@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
-        if (descriptors.none { it is SyntheticExtensionPropertyDescriptor }) return emptyList()
+        if (descriptors.none { it is SyntheticJavaBeansPropertyDescriptor }) return emptyList()
 
         val result = SmartList<FunctionDescriptor>()
         for (descriptor in descriptors) {
-            if (descriptor is SyntheticExtensionPropertyDescriptor) {
+            if (descriptor is SyntheticJavaBeansPropertyDescriptor) {
                 if (getter) {
                     result.add(descriptor.getMethod)
                 }
@@ -57,9 +57,9 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
 
         val newNameAsName = Name.identifier(newElementName)
         val newName = if (getter)
-            SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
+            SyntheticJavaBeansPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
         else
-            SyntheticExtensionPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
+            SyntheticJavaBeansPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
         val nameIdentifier = JetPsiFactory(expression).createNameIdentifier(newName.getIdentifier())

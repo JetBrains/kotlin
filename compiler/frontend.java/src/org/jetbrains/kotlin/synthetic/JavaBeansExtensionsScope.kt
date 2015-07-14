@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.beans.Introspector
 import java.util.ArrayList
 
-interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
+interface SyntheticJavaBeansPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticExtensionPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaBeansPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (propertyNameByGetMethodName(name) == null && propertyNameBySetMethodName(name) == null) return null // optimization
 
@@ -50,7 +50,7 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
             if (owner !is JavaClassDescriptor) return null
 
             return resolutionScope.getSyntheticExtensionProperties(owner.getDefaultType())
-                    .filterIsInstance<SyntheticExtensionPropertyDescriptor>()
+                    .filterIsInstance<SyntheticJavaBeansPropertyDescriptor>()
                     .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
         }
 
@@ -72,12 +72,12 @@ interface SyntheticExtensionPropertyDescriptor : PropertyDescriptor {
 }
 
 class AdditionalScopesWithSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes() {
-    private val scope = SyntheticExtensionsScope(storageManager)
+    private val scope = JavaBeansExtensionsScope(storageManager)
 
     override fun scopes(file: JetFile) = listOf(scope)
 }
 
-class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
+class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Triple<JavaClassDescriptor, JetType, Name>, PropertyDescriptor> { triple ->
         syntheticPropertyInClassNotCached(triple.first, triple.second, triple.third)
     }
@@ -157,7 +157,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (classifier is JavaClassDescriptor) {
             for (descriptor in classifier.getMemberScope(type.getArguments()).getAllDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
-                    val propertyName = SyntheticExtensionPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
+                    val propertyName = SyntheticJavaBeansPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
                 }
             }
@@ -191,7 +191,7 @@ class SyntheticExtensionsScope(storageManager: StorageManager) : JetScope by Jet
             name: Name,
             type: JetType,
             receiverType: JetType
-    ) : SyntheticExtensionPropertyDescriptor, PropertyDescriptorImpl(
+    ) : SyntheticJavaBeansPropertyDescriptor, PropertyDescriptorImpl(
             DescriptorUtils.getContainingModule(javaClass)/* TODO:is it ok? */,
             null,
             Annotations.EMPTY,

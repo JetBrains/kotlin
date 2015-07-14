@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -75,7 +75,7 @@ public class ReferenceVariantsHelper(
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
             for (variant in variants) {
-                if (variant is SyntheticExtensionPropertyDescriptor) {
+                if (variant is SyntheticJavaBeansPropertyDescriptor) {
                     accessorMethodsToRemove.add(variant.getMethod)
                     accessorMethodsToRemove.addIfNotNull(variant.setMethod)
                 }

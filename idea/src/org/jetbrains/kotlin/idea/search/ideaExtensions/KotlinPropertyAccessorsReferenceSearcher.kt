@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionPropertyDescriptor
-import org.jetbrains.kotlin.synthetic.SyntheticExtensionsScope
+import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.JavaBeansExtensionsScope
 
 public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
@@ -54,8 +54,8 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
         }
 
         val functionDescriptor = method.getJavaMethodDescriptor() ?: return null
-        val syntheticExtensionsScope = SyntheticExtensionsScope(LockBasedStorageManager())
-        val property = SyntheticExtensionPropertyDescriptor.findByGetterOrSetter(functionDescriptor, syntheticExtensionsScope) ?: return null
+        val syntheticExtensionsScope = JavaBeansExtensionsScope(LockBasedStorageManager())
+        val property = SyntheticJavaBeansPropertyDescriptor.findByGetterOrSetter(functionDescriptor, syntheticExtensionsScope) ?: return null
         return property.getName().asString()
     }
 
