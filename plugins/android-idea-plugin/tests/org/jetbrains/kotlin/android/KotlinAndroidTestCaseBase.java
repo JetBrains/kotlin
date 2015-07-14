@@ -76,6 +76,8 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
             @Override
             public void run() throws Exception {
                 KotlinAndroidTestCaseBase.super.tearDown();
+                androidJar = null;
+                androidSdk = null;
             }
         });
     }
