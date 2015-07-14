@@ -34,27 +34,27 @@ import org.junit.Assert
 
 public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
 
-    protected abstract val packages: List<FqName>
+    protected abstract fun getPackages(): List<FqName>
 
-    protected abstract val topLevelMembers: Map<String, String>
+    protected abstract fun getTopLevelMembers(): Map<String, String>
 
-    protected abstract val virtualFileFinder: VirtualFileFinder
+    protected abstract fun getVirtualFileFinder(): VirtualFileFinder
 
     protected abstract fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler? = null): String
 
     protected abstract fun getModuleDescriptor(): ModuleDescriptor
 
     public fun testConsistency() {
-        packages.forEach { doTest(it) }
+        getPackages().forEach { doTest(it) }
     }
 
     private fun doTest(packageFqName: FqName) {
-        val packageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
+        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
         val projectBasedText = getDecompiledText(packageFile, ResolverForDecompilerImpl(getModuleDescriptor()))
         val deserializedText = getDecompiledText(packageFile)
         Assert.assertEquals(projectBasedText, deserializedText)
         // sanity checks
-        topLevelMembers[packageFqName.asString()]?.let {
+        getTopLevelMembers()[packageFqName.asString()]?.let {
             Assert.assertTrue(projectBasedText.contains(it))
         }
         Assert.assertFalse(projectBasedText.contains("ERROR"))
