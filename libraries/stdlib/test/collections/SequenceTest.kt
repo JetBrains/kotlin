@@ -291,8 +291,7 @@ public class SequenceTest {
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
-    test
-    fun flatten() {
+    test fun flatten() {
         val data = sequenceOf(1, 2).map { sequenceOf(0..it) }
         assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
     }
@@ -307,6 +306,12 @@ public class SequenceTest {
         assertEquals(listOf(13, 34, 55, 144), sequence.distinctBy { it % 4 }.toList())
     }
 
+    test fun unzip() {
+        val seq = sequenceOf(1 to 'a', 2 to 'b', 3 to 'c')
+        val (ints, chars) = seq.unzip()
+        assertEquals(listOf(1, 2, 3), ints)
+        assertEquals(listOf('a', 'b', 'c'), chars)
+    }
 
     /*
     test fun pairIterator() {
