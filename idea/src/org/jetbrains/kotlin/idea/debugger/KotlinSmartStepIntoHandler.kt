@@ -24,7 +24,6 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
@@ -200,12 +199,4 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 classes.contains(location.declaringType())
         }
     }
-
-    class KotlinMethodSmartStepTarget(val resolvedElement: JetElement,
-                                      psiMethod: PsiMethod,
-                                      label: String?,
-                                      highlightElement: PsiElement,
-                                      needBreakpointRequest: Boolean,
-                                      lines: Range<Int>
-    ): MethodSmartStepTarget(psiMethod, label, highlightElement, needBreakpointRequest, lines)
 }
