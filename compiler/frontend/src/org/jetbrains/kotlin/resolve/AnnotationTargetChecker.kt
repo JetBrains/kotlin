@@ -27,32 +27,12 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import java.lang.annotation.ElementType
 import java.util.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget
+import kotlin.annotation
 
 public object AnnotationTargetChecker {
-
-    // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget
-    public enum class Target(val description: String, val isDefault: Boolean = true) {
-        PACKAGE("package"),
-        CLASSIFIER("classifier"),
-        ANNOTATION_CLASS("annotation class"),
-        TYPE_PARAMETER("type parameter", false),
-        PROPERTY("property"),
-        FIELD("field"),
-        LOCAL_VARIABLE("local variable"),
-        VALUE_PARAMETER("value parameter"),
-        CONSTRUCTOR("constructor"),
-        FUNCTION("function"),
-        PROPERTY_GETTER("getter"),
-        PROPERTY_SETTER("setter"),
-        TYPE("type usage", false),
-        EXPRESSION("expression", false),
-        FILE("file", false)
-    }
-
-    private val DEFAULT_TARGET_LIST = Target.values().filter { it.isDefault }.map { it.name() }
-
-    private val ALL_TARGET_LIST = Target.values().map { it.name() }
 
     public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
@@ -82,7 +62,7 @@ public object AnnotationTargetChecker {
 
     public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
         for (entry in expression.getAnnotationEntries()) {
-            checkAnnotationEntry(entry, listOf(Target.EXPRESSION), trace)
+            checkAnnotationEntry(entry, listOf(AnnotationTarget.EXPRESSION), trace)
         }
         if (expression is JetFunctionLiteralExpression) {
             for (parameter in expression.getValueParameters()) {
@@ -91,51 +71,55 @@ public object AnnotationTargetChecker {
         }
     }
 
-    private fun possibleTargetList(entry: JetAnnotationEntry, trace: BindingTrace): List<String> {
-        val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return DEFAULT_TARGET_LIST
-        // For descriptor with error type, all targets are considered as possible
-        if (descriptor.getType().isError()) return ALL_TARGET_LIST
-        val classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType()) ?: return DEFAULT_TARGET_LIST
+    public fun possibleTargetSet(classDescriptor: ClassDescriptor): Set<AnnotationTarget>? {
         val targetEntryDescriptor = classDescriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
-                                    ?: return DEFAULT_TARGET_LIST
+                                    ?: return null
         val valueArguments = targetEntryDescriptor.getAllValueArguments()
-        val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return DEFAULT_TARGET_LIST
-        return valueArgument.value.filterIsInstance<EnumValue>().map { it.value.getName().asString() }
+        val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return null
+        return valueArgument.value.filterIsInstance<EnumValue>().map {
+            AnnotationTarget.valueOrNull(it.value.getName().asString())
+        }.filterNotNull().toSet()
     }
 
-    private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: List<Target>, trace: BindingTrace) {
-        val possibleTargets = possibleTargetList(entry, trace)
-        for (actualTarget in actualTargets) {
-            if (actualTarget.name() in possibleTargets) return
-        }
+    private fun possibleTargetSet(entry: JetAnnotationEntry, trace: BindingTrace): Set<AnnotationTarget> {
+        val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return AnnotationTarget.DEFAULT_TARGET_SET
+        // For descriptor with error type, all targets are considered as possible
+        if (descriptor.getType().isError()) return AnnotationTarget.ALL_TARGET_SET
+        val classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType()) ?: return AnnotationTarget.DEFAULT_TARGET_SET
+        return possibleTargetSet(classDescriptor) ?: AnnotationTarget.DEFAULT_TARGET_SET
+    }
+
+    private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: List<AnnotationTarget>, trace: BindingTrace) {
+        val possibleTargets = possibleTargetSet(entry, trace)
+        if (actualTargets.any { it in possibleTargets }) return
         trace.report(Errors.WRONG_ANNOTATION_TARGET.on(entry, actualTargets.firstOrNull()?.description ?: "unidentified target"))
     }
 
-    private fun getActualTargetList(annotated: JetAnnotated, descriptor: ClassDescriptor?): List<Target> {
+    private fun getActualTargetList(annotated: JetAnnotated, descriptor: ClassDescriptor?): List<AnnotationTarget> {
         if (annotated is JetClassOrObject) {
-            if (annotated is JetEnumEntry) return listOf(Target.PROPERTY, Target.FIELD)
+            if (annotated is JetEnumEntry) return listOf(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
             return if (descriptor?.getKind() == ClassKind.ANNOTATION_CLASS) {
-                listOf(Target.ANNOTATION_CLASS, Target.CLASSIFIER)
+                listOf(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASSIFIER)
             }
             else {
-                listOf(Target.CLASSIFIER)
+                listOf(AnnotationTarget.CLASSIFIER)
             }
         }
         if (annotated is JetProperty) {
-            return if (annotated.isLocal()) listOf(Target.LOCAL_VARIABLE) else listOf(Target.PROPERTY, Target.FIELD)
+            return if (annotated.isLocal()) listOf(AnnotationTarget.LOCAL_VARIABLE) else listOf(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
         }
         if (annotated is JetParameter) {
-            return if (annotated.hasValOrVar()) listOf(Target.PROPERTY, Target.FIELD) else listOf(Target.VALUE_PARAMETER)
+            return if (annotated.hasValOrVar()) listOf(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD) else listOf(AnnotationTarget.VALUE_PARAMETER)
         }
-        if (annotated is JetConstructor<*>) return listOf(Target.CONSTRUCTOR)
-        if (annotated is JetFunction) return listOf(Target.FUNCTION)
+        if (annotated is JetConstructor<*>) return listOf(AnnotationTarget.CONSTRUCTOR)
+        if (annotated is JetFunction) return listOf(AnnotationTarget.FUNCTION)
         if (annotated is JetPropertyAccessor) {
-            return if (annotated.isGetter()) listOf(Target.PROPERTY_GETTER) else listOf(Target.PROPERTY_SETTER)
+            return if (annotated.isGetter()) listOf(AnnotationTarget.PROPERTY_GETTER) else listOf(AnnotationTarget.PROPERTY_SETTER)
         }
-        if (annotated is JetPackageDirective) return listOf(Target.PACKAGE)
-        if (annotated is JetTypeReference) return listOf(Target.TYPE)
-        if (annotated is JetFile) return listOf(Target.FILE)
-        if (annotated is JetTypeParameter) return listOf(Target.TYPE_PARAMETER)
+        if (annotated is JetPackageDirective) return listOf(AnnotationTarget.PACKAGE)
+        if (annotated is JetTypeReference) return listOf(AnnotationTarget.TYPE)
+        if (annotated is JetFile) return listOf(AnnotationTarget.FILE)
+        if (annotated is JetTypeParameter) return listOf(AnnotationTarget.TYPE_PARAMETER)
         return listOf()
     }
 }

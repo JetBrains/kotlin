@@ -41,6 +41,7 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
@@ -52,6 +53,7 @@ public class RecursiveDescriptorComparator {
     static {
         excludedAnnotations.add(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME));
         excludedAnnotations.add(new FqName(Retention.class.getName()));
+        excludedAnnotations.add(new FqName(Target.class.getName()));
     }
 
     private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(

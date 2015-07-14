@@ -1,0 +1,5 @@
+package test
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FIELD}) kotlin.annotation.annotation() java.lang.annotation.Target(value = {ElementType.FIELD}) internal final class field : kotlin.Annotation {
+    public constructor field()
+}

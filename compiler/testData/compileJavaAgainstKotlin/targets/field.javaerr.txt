@@ -1,0 +1,4 @@
+field.java:6:5:compiler.err.annotation.type.not.applicable
+
+
+
