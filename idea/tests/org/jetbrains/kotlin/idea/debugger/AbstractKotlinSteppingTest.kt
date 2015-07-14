@@ -22,8 +22,9 @@ import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinBasicStepMethodFilter
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File

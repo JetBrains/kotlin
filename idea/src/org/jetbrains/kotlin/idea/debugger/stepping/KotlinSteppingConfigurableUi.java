@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.debugger;
+package org.jetbrains.kotlin.idea.debugger.stepping;
 
 
 import com.intellij.openapi.options.ConfigurableUi;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings;
 
 import javax.swing.*;
 

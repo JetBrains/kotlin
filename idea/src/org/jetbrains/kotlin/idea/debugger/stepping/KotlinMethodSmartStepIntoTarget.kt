@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.idea.debugger
+package org.jetbrains.kotlin.idea.debugger.stepping
 
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.psi.PsiElement

@@ -28,6 +28,7 @@ import com.intellij.xdebugger.settings.DebuggerSettingsCategory
 import com.intellij.xdebugger.settings.XDebuggerSettings
 
 import com.intellij.xdebugger.XDebuggerUtil
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingConfigurableUi
 
 State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
 public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
