@@ -77,7 +77,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             COLONCOLON, // callable reference
 
             LPAR, // parenthesized
-            HASH, // Tuple
 
             // literal constant
             TRUE_KEYWORD, FALSE_KEYWORD,
@@ -87,8 +86,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             LBRACE, // functionLiteral
             FUN_KEYWORD, // expression function
-
-            LPAR, // tuple
 
             THIS_KEYWORD, // this
             SUPER_KEYWORD, // super
