@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarat
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -42,7 +43,12 @@ import kotlin.properties.Delegates
 // but collects information about integer variables' values. Semantically it would be better to
 // merge functionality in this two files
 
-public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
+public class PseudocodeIntegerVariablesDataCollector(
+        val pseudocode: Pseudocode,
+        val bindingContext: BindingContext
+) {
+    val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
+
     public var integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
         private set
 
@@ -55,12 +61,36 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         integerVariablesValues = collectVariableValuesData()
     }
 
+    // this function is fully copied from PseudocodeVariableDataCollector
+    private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
+        val lexicalScopeVariableInfo = LexicalScopeVariableInfoImpl()
+        pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
+            if (instruction is VariableDeclarationInstruction) {
+                val variableDeclarationElement = instruction.variableDeclarationElement
+                val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
+                if (descriptor != null) {
+                    // TODO: investigate why tests fail without this eager computation here
+                    descriptor.toString()
+
+                    assert(descriptor is VariableDescriptor) {
+                        "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
+                        "Descriptor: $descriptor"
+                    }
+                    lexicalScopeVariableInfo.registerVariableDeclaredInScope(
+                            descriptor as VariableDescriptor, instruction.lexicalScope
+                    )
+                }
+            }
+        })
+        return lexicalScopeVariableInfo
+    }
+
     private  fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
         return pseudocode.collectData(
                 TraversalOrder.FORWARD,
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
-                { i, j, e -> e},
+                { previous, current, edgeData -> removeOutOfScopeVariables(previous, current, edgeData) },
                 ValuesData(HashMap(), HashMap())
         )
     }
@@ -224,5 +254,35 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
         }
         return IntegerVariableValues.ofCollection(resultSet)
+    }
+
+    private fun removeOutOfScopeVariables(
+            previousInstruction: Instruction,
+            currentInstruction: Instruction,
+            edgeData: ValuesData
+    ): ValuesData {
+        val filteredMap = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.variablesToValues)
+        val mutableFilteredMap = HashMap(filteredMap)
+        return edgeData.copy(variablesToValues = mutableFilteredMap)
+    }
+
+    // this function is fully copied from PseudocodeVariableDataCollector
+    private fun <D> filterOutVariablesOutOfScope(
+            from: Instruction,
+            to: Instruction,
+            data: Map<VariableDescriptor, D>
+    ): Map<VariableDescriptor, D> {
+        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
+        val toDepth = to.lexicalScope.depth
+        if (toDepth >= from.lexicalScope.depth) return data
+
+        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
+        // Thus they can be filtered out upon leaving the inner scope.
+        return data.filterKeys { variable ->
+            val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
+            // '-1' for variables declared outside this pseudocode
+            val depth = lexicalScope?.depth ?: -1
+            depth <= toDepth
+        }
     }
 }
