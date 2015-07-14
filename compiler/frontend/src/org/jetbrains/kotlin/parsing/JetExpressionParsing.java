@@ -604,7 +604,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * atomicExpression
-     *   : tupleLiteral // or parenthesized element
      *   : "this" label?
      *   : "super" ("<" type ">")? label?
      *   : objectLiteral
@@ -627,9 +626,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
-        }
-        else if (at(HASH)) {
-            parseTupleExpression();
         }
         else if (at(PACKAGE_KEYWORD)) {
             parseOneTokenExpression(ROOT_PACKAGE);
@@ -1780,49 +1776,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
         myBuilder.restoreNewlinesState();
 
         mark.done(PARENTHESIZED);
-    }
-
-    /*
-     * tupleLiteral
-     *   : "#" "(" (((SimpleName "=")? expression){","})? ")"
-     *   ;
-     */
-    @Deprecated // Tuples are dropped, but parsing is left to minimize surprising. This code should be removed some time (in Kotlin 1.0?)
-    private void parseTupleExpression() {
-        assert _at(HASH);
-        PsiBuilder.Marker mark = mark();
-
-        advance(); // HASH
-        advance(); // LPAR
-        myBuilder.disableNewlines();
-        if (!at(RPAR)) {
-            while (true) {
-                while (at(COMMA)) {
-                    advance();
-                }
-
-                if (at(IDENTIFIER) && lookahead(1) == EQ) {
-                    advance(); // IDENTIFIER
-                    advance(); // EQ
-                    parseExpression();
-                }
-                else {
-                    parseExpression();
-                }
-
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-
-                if (at(RPAR)) {
-                    break;
-                }
-            }
-
-        }
-        consumeIf(RPAR);
-        myBuilder.restoreNewlinesState();
-
-        mark.error("Tuples are not supported. Use data classes instead.");
     }
 
     /*
