@@ -235,7 +235,7 @@ public class QualifiedExpressionResolver {
 
         if (lookupMode == LookupMode.EVERYTHING) {
             descriptors.addAll(outerScope.getFunctions(referencedName));
-            descriptors.addAll(outerScope.getProperties(referencedName));
+            descriptors.addAll(outerScope.getProperties(referencedName, Location.NOWHERE));
 
             VariableDescriptor localVariable = outerScope.getLocalVariable(referencedName);
             if (localVariable != null) {

@@ -410,7 +410,7 @@ public class DescriptorValidator {
         public Void visitVariableDescriptor(
                 VariableDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getProperties(descriptor.getName()));
+            assertFound(scope, descriptor, scope.getProperties(descriptor.getName(), Location.NOWHERE));
             return null;
         }
 

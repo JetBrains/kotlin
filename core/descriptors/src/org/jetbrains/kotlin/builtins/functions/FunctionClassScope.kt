@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -51,7 +52,7 @@ class FunctionClassScope(
         return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.getName() == name }
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> {
         return allDescriptors().filterIsInstance<PropertyDescriptor>().filter { it.getName() == name }
     }
 

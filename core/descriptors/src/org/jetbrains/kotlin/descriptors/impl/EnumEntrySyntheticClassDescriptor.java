@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -195,14 +192,14 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @NotNull
         @Override
         @SuppressWarnings("unchecked")
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull Location location) {
             return (Collection) properties.invoke(name);
         }
 
         @NotNull
         @SuppressWarnings("unchecked")
         private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
-            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name));
+            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, Location.NOWHERE));
         }
 
         @NotNull
@@ -270,7 +267,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
             for (Name name : enumMemberNames.invoke()) {
                 result.addAll(getFunctions(name));
-                result.addAll(getProperties(name));
+                result.addAll(getProperties(name, Location.NOWHERE));
             }
             return result;
         }

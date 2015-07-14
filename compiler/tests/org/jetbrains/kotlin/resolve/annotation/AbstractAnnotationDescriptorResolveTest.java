@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.Location;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -170,13 +171,13 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = packageView.getMemberScope();
-        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName);
+        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, Location.NOWHERE);
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
                 if (descriptor instanceof ClassDescriptor) {
                     Collection<VariableDescriptor> classProperties =
                             ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())
-                                    .getProperties(propertyName);
+                                    .getProperties(propertyName, Location.NOWHERE);
                     if (!classProperties.isEmpty()) {
                         properties = classProperties;
                         break;
@@ -197,7 +198,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName);
+        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, Location.NOWHERE);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
         return (PropertyDescriptor) properties.iterator().next();
     }

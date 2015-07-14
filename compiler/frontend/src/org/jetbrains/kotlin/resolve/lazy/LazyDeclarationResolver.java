@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.Location;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
 
 import javax.inject.Inject;
@@ -146,7 +146,7 @@ public class LazyDeclarationResolver {
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.hasValOrVar()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName());
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), Location.NOWHERE);
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -189,7 +189,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
                 JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(property);
-                scopeForDeclaration.getProperties(property.getNameAsSafeName());
+                scopeForDeclaration.getProperties(property.getNameAsSafeName(), Location.NOWHERE);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 

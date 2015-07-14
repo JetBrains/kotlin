@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -88,7 +89,7 @@ protected constructor(
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = propertyDescriptors(name)
+    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = propertyDescriptors(name)
 
     public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
         val result = LinkedHashSet<VariableDescriptor>()

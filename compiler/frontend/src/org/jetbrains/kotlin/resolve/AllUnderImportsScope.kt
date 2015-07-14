@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
@@ -45,7 +46,7 @@ class AllUnderImportsScope : JetScope {
         return scopes.asSequence().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> {
         return scopes.flatMap { it.getProperties(name) }
     }
 

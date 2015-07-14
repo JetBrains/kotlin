@@ -61,7 +61,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         return result
     }
 
-    override fun getProperties(name: Name) = substitute(workerScope.getProperties(name))
+    override fun getProperties(name: Name, location: Location) = substitute(workerScope.getProperties(name))
 
     override fun getLocalVariable(name: Name) = substitute(workerScope.getLocalVariable(name))
 

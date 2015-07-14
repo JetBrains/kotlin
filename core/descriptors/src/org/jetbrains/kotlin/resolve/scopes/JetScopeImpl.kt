@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 public abstract class JetScopeImpl : JetScope {
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = setOf()
+    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = setOf()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 

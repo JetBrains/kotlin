@@ -27,7 +27,7 @@ public class ExplicitImportsScope(private val descriptors: Collection<Declaratio
 
     override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
-    override fun getProperties(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
+    override fun getProperties(name: Name, location: Location) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
     override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
 

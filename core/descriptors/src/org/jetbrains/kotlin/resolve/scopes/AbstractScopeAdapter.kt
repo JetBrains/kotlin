@@ -43,7 +43,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getClassifier(name)
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> {
         return workerScope.getProperties(name)
     }
 

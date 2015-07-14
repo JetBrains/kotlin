@@ -30,7 +30,7 @@ class SingleImportScope(private val aliasName: Name, private val descriptors: Co
     override fun getPackage(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<PackageViewDescriptor>().singleOrNull() else null
 
-    override fun getProperties(name: Name)
+    override fun getProperties(name: Name, location: Location)
             = if (name == aliasName) descriptors.filterIsInstance<VariableDescriptor>() else emptyList()
 
     override fun getFunctions(name: Name)

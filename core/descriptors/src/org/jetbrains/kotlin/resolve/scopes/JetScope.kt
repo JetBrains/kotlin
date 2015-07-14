@@ -29,7 +29,7 @@ public interface JetScope {
 
     public fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getProperties(name: Name): Collection<VariableDescriptor>
+    public fun getProperties(name: Name, location: Location = Location.NOWHERE): Collection<VariableDescriptor>
 
     public fun getLocalVariable(name: Name): VariableDescriptor?
 

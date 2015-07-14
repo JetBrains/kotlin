@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.Location
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.DynamicType
 import org.jetbrains.kotlin.types.JetType
@@ -76,7 +77,7 @@ object DynamicCallableDescriptors {
             return false
         }
 
-        override fun getProperties(name: Name): Collection<VariableDescriptor> {
+        override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> {
             return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
                 listOf(createDynamicProperty(owner, name, call))
             }

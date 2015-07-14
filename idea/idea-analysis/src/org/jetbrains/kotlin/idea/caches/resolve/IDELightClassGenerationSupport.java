@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.Location;
 
 import java.io.IOException;
 import java.util.*;
@@ -147,7 +148,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 else if (declaration instanceof JetProperty) {
                     JetProperty jetProperty = (JetProperty) declaration;
                     Name name = jetProperty.getNameAsSafeName();
-                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name);
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, Location.NOWHERE);
                     for (VariableDescriptor descriptor : properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
