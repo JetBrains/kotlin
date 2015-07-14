@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper {
-    fun mapSignature(function: FunctionDescriptor): String {
+    fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): String {
+        val function = possiblySubstitutedFunction.getOriginal()
+
         if (function is DeserializedCallableMemberDescriptor) {
             val proto = function.proto
             if (!proto.hasExtension(JvmProtoBuf.methodSignature)) {

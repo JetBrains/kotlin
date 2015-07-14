@@ -92,8 +92,6 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         return result;
     }
 
-
-
     @Override
     @NotNull
     public JavaMethodDescriptor enhance(
@@ -109,16 +107,11 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
         JavaMethodDescriptor enhancedMethod = (JavaMethodDescriptor) doSubstitute(
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(), getOriginal(),
-                /* copyOverrides = */ false, getKind(),
+                /* copyOverrides = */ true, getKind(),
                 enhancedValueParameters, enhancedReceiverType, enhancedReturnType
         );
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
-
-        for (FunctionDescriptor overridden : getOverriddenDescriptors()) {
-            enhancedMethod.addOverriddenDescriptor(overridden);
-        }
-
         return enhancedMethod;
     }
 }
