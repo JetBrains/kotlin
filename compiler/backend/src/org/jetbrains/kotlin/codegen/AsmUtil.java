@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
@@ -637,10 +637,10 @@ public class AsmUtil {
     public static StackValue genNotNullAssertions(
             @NotNull GenerationState state,
             @NotNull final StackValue stackValue,
-            @Nullable final Approximation.Info approximationInfo
+            @Nullable final RuntimeAssertionInfo runtimeAssertionInfo
     ) {
         if (!state.isCallAssertionsEnabled()) return stackValue;
-        if (approximationInfo == null || !TypesPackage.assertNotNull(approximationInfo)) return stackValue;
+        if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
         return new StackValue(stackValue.type) {
 
@@ -649,7 +649,7 @@ public class AsmUtil {
                 stackValue.put(type, v);
                 if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
                     v.dup();
-                    v.visitLdcInsn(approximationInfo.getMessage());
+                    v.visitLdcInsn(runtimeAssertionInfo.getMessage());
                     v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
                                    "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }

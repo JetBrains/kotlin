@@ -45,10 +45,10 @@ fun checkAssertions(illegalStateExpected: Boolean) {
     check("plus") { A() + A() }
     
     // field
-    // check("NULL") { A().NULL }
+    check("NULL") { A().NULL }
     
     // static field
-    // check("STATIC_NULL") { A.STATIC_NULL }
+    check("STATIC_NULL") { A.STATIC_NULL }
 
     // postfix expression
     // TODO:

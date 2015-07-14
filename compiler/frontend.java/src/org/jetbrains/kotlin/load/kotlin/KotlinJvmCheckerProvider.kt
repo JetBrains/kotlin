@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
@@ -63,7 +64,7 @@ public class KotlinJvmCheckerProvider(private val module: ModuleDescriptor) : Ad
                                         JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker(),
                                         ReflectionAPICallChecker(module)),
 
-        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker()),
+        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker(), RuntimeAssertionsTypeChecker),
         additionalSymbolUsageValidators = listOf()
 )
 

@@ -49,10 +49,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -75,7 +77,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -280,12 +281,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             StackValue stackValue = selector.accept(visitor, receiver);
 
-            Approximation.Info approximationInfo = null;
+            RuntimeAssertionInfo runtimeAssertionInfo = null;
             if (selector instanceof JetExpression) {
-                approximationInfo = bindingContext.get(BindingContext.EXPRESSION_RESULT_APPROXIMATION, (JetExpression) selector);
+                runtimeAssertionInfo = bindingContext.get(BindingContextSlicesPackage.getRUNTIME_ASSERTION_INFO(), (JetExpression) selector);
             }
 
-            return genNotNullAssertions(state, stackValue, approximationInfo);
+            return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
         catch (ProcessCanceledException e) {
             throw e;

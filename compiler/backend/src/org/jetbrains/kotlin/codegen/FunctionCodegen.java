@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -51,8 +52,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.types.Approximation;
-import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -834,10 +833,10 @@ public class FunctionCodegen {
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
                                 StackValue.onStack(delegateToMethod.getReturnType()),
-                                TypesPackage.getApproximationTo(
-                                        delegatedTo.getReturnType(),
+                                RuntimeAssertionInfo.create(
                                         delegateFunction.getReturnType(),
-                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
+                                        delegatedTo.getReturnType(),
+                                        new RuntimeAssertionInfo.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
                                 )
                         );
 

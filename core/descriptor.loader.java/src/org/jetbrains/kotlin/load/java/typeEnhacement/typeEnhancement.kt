@@ -18,12 +18,19 @@ package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.typeEnhacement.JavaTypeQualifiers
 import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NULL
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.types.*
 
 // The index in the lambda is the position of the type component:
@@ -68,7 +75,7 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
                         ?: return Result(this, 1)
 
     val effectiveQualifiers = qualifiers(index)
-    val enhancedClassifier = originalClass.enhanceMutability(effectiveQualifiers, position)
+    val (enhancedClassifier, enhancedMutabilityAnnotations) = originalClass.enhanceMutability(effectiveQualifiers, position)
 
     var globalArgIndex = index + 1
     val enhancedArguments = getArguments().mapIndexed {
@@ -87,10 +94,17 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
         }
     }
 
-    val enhancedType = JetTypeImpl(
+    val (enhancedNullability, enhancedNullabilityAnnotations) = this.getEnhancedNullability(effectiveQualifiers, position)
+    val newAnnotations = listOf(
             getAnnotations(),
+            enhancedMutabilityAnnotations,
+            enhancedNullabilityAnnotations
+    ).filterNotNull().compositeAnnotationsOrSingle()
+
+    val enhancedType = JetTypeImpl(
+            newAnnotations,
             enhancedClassifier.getTypeConstructor(),
-            this.getEnhancedNullability(effectiveQualifiers, position),
+            enhancedNullability,
             enhancedArguments,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(enhancedArguments)
@@ -99,36 +113,72 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
     return Result(enhancedType, globalArgIndex - index)
 }
 
+private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size()) {
+    0 -> error("At least one Annotations object expected")
+    1 -> single()
+    else -> CompositeAnnotations(this)
+}
+
 private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
-private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): ClassifierDescriptor {
-    if (!position.shouldEnhance()) return this
-    if (this !is ClassDescriptor) return this // mutability is not applicable for type parameters
+private data class EnhancementResult<T>(val result: T, val enhancementAnnotations: Annotations?)
+private fun <T> T.noChange() = EnhancementResult(this, null)
+private fun <T> T.enhancedNullability() = EnhancementResult(this, ENHANCED_NULLABILITY_ANNOTATIONS)
+private fun <T> T.enhancedMutability() = EnhancementResult(this, ENHANCED_MUTABILITY_ANNOTATIONS)
+
+private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<ClassifierDescriptor> {
+    if (!position.shouldEnhance()) return this.noChange()
+    if (this !is ClassDescriptor) return this.noChange() // mutability is not applicable for type parameters
 
     val mapping = JavaToKotlinClassMap.INSTANCE
 
     when (qualifiers.mutability) {
         READ_ONLY -> {
             if (position == TypeComponentPosition.FLEXIBLE_LOWER && mapping.isMutable(this)) {
-                return mapping.convertMutableToReadOnly(this)
+                return mapping.convertMutableToReadOnly(this).enhancedMutability()
             }
         }
         MUTABLE -> {
             if (position == TypeComponentPosition.FLEXIBLE_UPPER && mapping.isReadOnly(this) ) {
-                return mapping.convertReadOnlyToMutable(this)
+                return mapping.convertReadOnlyToMutable(this).enhancedMutability()
             }
         }
     }
 
-    return this
+    return this.noChange()
 }
 
-private fun JetType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): Boolean {
-    if (!position.shouldEnhance()) return this.isMarkedNullable()
+private fun JetType.getEnhancedNullability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): EnhancementResult<Boolean> {
+    if (!position.shouldEnhance()) return this.isMarkedNullable().noChange()
 
     return when (qualifiers.nullability) {
-        NULLABLE -> true
-        NOT_NULL -> false
-        else -> this.isMarkedNullable()
+        NULLABLE -> true.enhancedNullability()
+        NOT_NULL -> false.enhancedNullability()
+        else -> this.isMarkedNullable().noChange()
     }
+}
+
+private val ENHANCED_NULLABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
+private val ENHANCED_MUTABILITY_ANNOTATIONS = EnhancedTypeAnnotations(JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION)
+
+private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annotations {
+    override fun isEmpty() = false
+
+    override fun findAnnotation(fqName: FqName) = when (fqName) {
+        fqNameToMatch -> EnhancedTypeAnnotationDescriptor
+        else -> null
+    }
+
+    override fun findExternalAnnotation(fqName: FqName) = null
+
+    // Note, that this class may break Annotations contract (!isEmpty && iterator.isEmpty())
+    // It's a hack that we need unless we have stable "user data" in JetType
+    override fun iterator(): Iterator<AnnotationDescriptor> = emptyList<AnnotationDescriptor>().iterator()
+}
+
+private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
+    private fun throwError() = error("No methods should be called on this descriptor. Only it's presence matters")
+    override fun getType() = throwError()
+    override fun getAllValueArguments() = throwError()
+    override fun toString() = "[EnhancedType]"
 }
