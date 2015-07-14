@@ -28,19 +28,16 @@ import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BodyResolveCache
+import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 
 public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
     // Recreate internal cache after change of modification count
-    private val additionalResolveCache: CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
-                override fun compute(): CachedValueProvider.Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> {
-                    val manager = resolveSession.getStorageManager()
-                    val cacheFunction = manager.createSoftlyRetainedMemoizedFunction<JetElement, BindingContext> { element ->
-                        performElementAdditionalResolve(element, element, BodyResolveMode.FULL).first
-                    }
-                    return CachedValueProvider.Result.create(cacheFunction,
+    private val fullResolveCache: CachedValue<MutableMap<JetElement, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MutableMap<JetElement, BindingContext>> {
+                override fun compute(): CachedValueProvider.Result<MutableMap<JetElement, BindingContext>> {
+                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetElement, BindingContext>(),
                                                              PsiModificationTracker.MODIFICATION_COUNT,
                                                              resolveSession.getExceptionTracker())
                 }
@@ -58,35 +55,52 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
             false)
 
     override fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(resolveElement) && resolveElement is JetDeclaration) {
-            if (bodyResolveMode == BodyResolveMode.PARTIAL) {
+        val fullResolveMap = fullResolveCache.getValue()
+        fullResolveMap[resolveElement]?.let { return it } // check if full additional resolve already performed
+
+        when (bodyResolveMode) {
+            BodyResolveMode.FULL -> {
+                val bindingContext = performElementAdditionalResolve(resolveElement, resolveElement, BodyResolveMode.FULL).first
+                fullResolveMap[resolveElement] = bindingContext
+                return bindingContext
+            }
+
+            BodyResolveMode.PARTIAL -> {
+                if (resolveElement !is JetDeclaration) {
+                    return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
+                }
+
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
-                val map = partialBodyResolveCache.getValue()
-                map[statementToResolve ?: resolveElement]?.let { return it }
+                val partialResolveMap = partialBodyResolveCache.getValue()
+                partialResolveMap[statementToResolve ?: resolveElement]?.let { return it } // partial resolve is already cached for this statement
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
-                if (statementFilter is PartialBodyResolveFilter) {
-                    for (statement in statementFilter.allStatementsToResolve) {
-                        if (!map.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
-                            map[statement] = bindingContext
-                        }
+                if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
+                    fullResolveMap[resolveElement] = bindingContext
+                    return bindingContext
+                }
+
+                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
+                    if (!partialResolveMap.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
+                        partialResolveMap[statement] = bindingContext
                     }
                 }
-                map[resolveElement] = bindingContext // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
+                partialResolveMap[resolveElement] = bindingContext // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
 
                 return bindingContext
             }
-            else {
+
+            BodyResolveMode.PARTIAL_FOR_COMPLETION -> {
+                if (resolveElement !is JetDeclaration) {
+                    return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
+                }
+
+                // not cached
                 return performElementAdditionalResolve(resolveElement, contextElement, bodyResolveMode).first
             }
         }
-
-        return additionalResolveCache.getValue().invoke(resolveElement)
     }
-
-    private fun hasElementAdditionalResolveCached(element: JetElement)
-            = additionalResolveCache.hasUpToDateValue() && additionalResolveCache.getValue().isComputed(element)
 
     override fun createAdditionalCheckerProvider(file: JetFile, module: ModuleDescriptor)
             = TargetPlatformDetector.getPlatform(file).createAdditionalCheckerProvider(module)

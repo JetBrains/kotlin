@@ -28,7 +28,7 @@ public class ResolveElementCacheTest : JetLightCodeInsightFixtureTestCase() {
 
     private val FILE_TEXT =
 """
-class C {
+class C(param1: String = "", param2: Int = 0) {
     fun a(p: Int = 0) {
         b(1, 2)
         val x = c()
@@ -45,6 +45,7 @@ class C {
 
     private data class Data(
             val file: JetFile,
+            val klass: JetClass,
             val members: List<JetDeclaration>,
             val statements: List<JetExpression>,
             val factory: JetPsiFactory
@@ -57,7 +58,7 @@ class C {
         val function = members.first() as JetNamedFunction
         val statements = (function.getBodyExpression() as JetBlockExpression).getStatements()
         myFixture.getProject().executeWriteCommand("") {
-            Data(file, members, statements, JetPsiFactory(getProject())).handler()
+            Data(file, klass, members, statements, JetPsiFactory(getProject())).handler()
         }
     }
 
@@ -154,6 +155,16 @@ class C {
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext3 !== bindingContext2)
+        }
+    }
+
+    public fun testFullResolvedCachedWhenPartialForConstructorInvoked() {
+        doTest {
+            val defaultValue1 = klass.getPrimaryConstructorParameters()[0].getDefaultValue()!!
+            val defaultValue2 = klass.getPrimaryConstructorParameters()[1].getDefaultValue()!!
+            val bindingContext1 = defaultValue1.analyze(BodyResolveMode.PARTIAL)
+            val bindingContext2 = defaultValue2.analyze(BodyResolveMode.FULL)
+            assert(bindingContext1 === bindingContext2)
         }
     }
 }

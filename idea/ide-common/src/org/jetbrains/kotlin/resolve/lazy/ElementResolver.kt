@@ -110,19 +110,28 @@ public abstract class ElementResolver protected constructor(
     protected fun performElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): Pair<BindingContext, StatementFilter> {
         val file = resolveElement.getContainingJetFile()
 
-        val statementFilter = if (bodyResolveMode != BodyResolveMode.FULL && resolveElement is JetDeclaration)
-            PartialBodyResolveFilter(contextElement, resolveElement, probablyNothingCallableNames(), bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION)
-        else
-            StatementFilter.NONE
+        var statementFilterUsed = StatementFilter.NONE
+
+        fun createStatementFilter(): StatementFilter {
+            assert(resolveElement is JetDeclaration)
+            if (bodyResolveMode != BodyResolveMode.FULL) {
+                statementFilterUsed = PartialBodyResolveFilter(
+                        contextElement,
+                        resolveElement as JetDeclaration,
+                        probablyNothingCallableNames(),
+                        bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            }
+            return statementFilterUsed
+        }
 
         val trace : BindingTrace = when (resolveElement) {
-            is JetNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
+            is JetNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is JetClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
+            is JetClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is JetSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
+            is JetSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is JetProperty -> propertyAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
+            is JetProperty -> propertyAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
             is JetDelegationSpecifierList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as JetClassOrObject, file)
 
@@ -136,7 +145,7 @@ public abstract class ElementResolver protected constructor(
 
             is JetAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
 
-            is JetClass -> constructorAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
+            is JetClass -> constructorAdditionalResolve(resolveSession, resolveElement, file)
 
             is JetTypeParameter -> typeParameterAdditionalResolve(resolveSession, resolveElement)
 
@@ -158,7 +167,7 @@ public abstract class ElementResolver protected constructor(
         JetFlowInformationProvider(resolveElement, controlFlowTrace).checkDeclaration()
         controlFlowTrace.addOwnDataTo(trace, null, false)
 
-        return Pair(trace.getBindingContext(), statementFilter)
+        return Pair(trace.getBindingContext(), statementFilterUsed)
     }
 
     private fun packageRefAdditionalResolve(resolveSession: ResolveSession, jetElement: JetElement): BindingTrace {
@@ -339,7 +348,7 @@ public abstract class ElementResolver protected constructor(
         return trace
     }
 
-    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile): BindingTrace {
         val trace = createDelegatingTrace(klass)
         val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass)
 
@@ -347,7 +356,7 @@ public abstract class ElementResolver protected constructor(
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
                                     ?: error("Can't get primary constructor for descriptor '$classDescriptor' in from class '${klass.getElementTextWithContext()}'")
 
-        val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
+        val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(DataFlowInfo.EMPTY, trace, klass, constructorDescriptor, scope)
 
         return trace
