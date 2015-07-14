@@ -27,9 +27,3 @@ import java.lang.annotation.RetentionPolicy
  */
 Retention(RetentionPolicy.CLASS)
 public annotation class jvmOverloads
-
-/**
- * Instructs the Kotlin compiler to generate a public backing field for this property.
- */
-Retention(RetentionPolicy.SOURCE)
-public annotation class publicField
