@@ -69,6 +69,8 @@ class FilteredAnnotations(
 class CompositeAnnotations(
         private val delegates: List<Annotations>
 ) : Annotations {
+    constructor(vararg delegates: Annotations): this(delegates.toList())
+
     override fun isEmpty() = delegates.all { it.isEmpty() }
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().map { it.findAnnotation(fqName) }.filterNotNull().firstOrNull()

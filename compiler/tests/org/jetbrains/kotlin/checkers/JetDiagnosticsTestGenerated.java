@@ -10463,6 +10463,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("saveAnnotationAfterSubstitution.kt")
+                public void testSaveAnnotationAfterSubstitution() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/saveAnnotationAfterSubstitution.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("supertypeDifferentParameterNullability.kt")
                 public void testSupertypeDifferentParameterNullability() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement/supertypeDifferentParameterNullability.kt");

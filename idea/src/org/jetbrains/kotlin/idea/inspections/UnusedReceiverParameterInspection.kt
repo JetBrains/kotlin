@@ -95,7 +95,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             return JetBundle.message("unused.receiver.parameter.remove")
         }
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             declaration.setReceiverTypeReference(null)
         }
 

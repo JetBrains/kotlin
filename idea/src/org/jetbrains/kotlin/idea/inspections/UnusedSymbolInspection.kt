@@ -112,7 +112,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                     override fun getFamilyName() = "Safe delete"
 
-                    override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
+                    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return
                         SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
                     }
