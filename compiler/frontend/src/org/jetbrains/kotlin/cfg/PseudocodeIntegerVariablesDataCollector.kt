@@ -20,6 +20,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.cfg
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -46,8 +47,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         private set
 
     public data class ValuesData(
-            val variablesToValues: MutableMap<String, IntegerVariableValues>,
-            val fakeVariablesToValues: MutableMap<String, IntegerVariableValues>
+            val variablesToValues: MutableMap<VariableDescriptor, IntegerVariableValues>,
+            val fakeVariablesToValues: MutableMap<PseudoValue, IntegerVariableValues>
     )
 
     public fun recollectIntegerVariablesValues() {
@@ -71,8 +72,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData {
-        val unitedVariables: MutableMap<String, IntegerVariableValues> = HashMap()
-        val unitedFakeVariables: MutableMap<String, IntegerVariableValues> = HashMap()
+        val unitedVariables: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
+        val unitedFakeVariables: MutableMap<PseudoValue, IntegerVariableValues> = HashMap()
         for(data in incomingEdgesData) {
             mergeCorrespondingVariables(unitedVariables, data.variablesToValues)
             mergeCorrespondingVariables(unitedFakeVariables, data.fakeVariablesToValues)
@@ -80,11 +81,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return ValuesData(unitedVariables, unitedFakeVariables)
     }
 
-    private fun mergeCorrespondingVariables(
-            targetVariablesMap: MutableMap<String, IntegerVariableValues>,
-            variablesToConsume: MutableMap<String, IntegerVariableValues>
+    private fun mergeCorrespondingVariables<K>(
+            targetVariablesMap: MutableMap<K, IntegerVariableValues>,
+            variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
-        val unionByKey: (String) -> Unit = { key ->
+        val unionByKey: (K) -> Unit = { key ->
             val values1 = targetVariablesMap.getOrElse(key, { IntegerVariableValues.empty() })
             val values2 = variablesToConsume.getOrElse(key, { IntegerVariableValues.empty() })
             if(values1.cantBeDefined || values2.cantBeDefined) {
@@ -111,8 +112,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 val typeName: String = variableDescriptor.getType().getConstructor().getDeclarationDescriptor()?.getName()?.asString()
                                ?: throw Exception("Variable declaration type name is null")
                 if(typeName == "Int") {
-                    val declaredName = variableDescriptor.getName().asString()
-                    updatedData.variablesToValues.put(declaredName, IntegerVariableValues.empty())
+                    updatedData.variablesToValues.put(variableDescriptor, IntegerVariableValues.empty())
                 }
             }
             is ReadValueInstruction -> {
@@ -121,23 +121,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     is JetConstantExpression -> {
                         // process literal occurrence (all integer literals are stored to fake variables by read instruction)
                         val node = element.getNode()
-                        val nodeType = node.getElementType() as? JetNodeType ?:
-                                       throw Exception("Node's elementType has wrong type for JetConstantExpression")
+                        val nodeType = node.getElementType() as? JetNodeType
+                                       ?: throw Exception("Node's elementType has wrong type for JetConstantExpression")
                         if (nodeType == JetNodeTypes.INTEGER_CONSTANT) {
                             val literalValue = Integer.parseInt(node.getText())
-                            val fakeVariableName = instruction.outputValue.debugName
-                            updatedData.fakeVariablesToValues.put(fakeVariableName, IntegerVariableValues.singleton(literalValue))
+                            val fakeVariable = instruction.outputValue
+                            updatedData.fakeVariablesToValues.put(fakeVariable, IntegerVariableValues.singleton(literalValue))
                         }
                     }
                     is JetNameReferenceExpression -> {
                         // process variable reference
-                        val referencedVariableName = element.getReferencedName()
-                        val referencedVariableValues = updatedData.variablesToValues.getOrElse(referencedVariableName, { null })
+                        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                                                 ?: throw Exception("Variable descriptor is null")
+                        val referencedVariableValues = updatedData.variablesToValues.getOrElse(variableDescriptor, { null })
                         if(referencedVariableValues != null) {
                             // we have the information about value, so it is definitely of integer type
                             // (assuming there are no undeclared variables)
-                            val newFakeVariableName = instruction.outputValue.debugName
-                            updatedData.fakeVariablesToValues.put(newFakeVariableName, referencedVariableValues)
+                            val newFakeVariable = instruction.outputValue
+                            updatedData.fakeVariablesToValues.put(newFakeVariable, referencedVariableValues)
                         }
                     }
                 }
@@ -146,13 +147,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 // process assignment to variable
                 val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                          ?: throw Exception("Variable descriptor is null")
-                val fakeVariableName = instruction.rValue.debugName
-                val valuesToAssign = updatedData.fakeVariablesToValues.get(fakeVariableName)
-                val assignmentTarget = variableDescriptor.getName().asString()
+                val fakeVariable = instruction.rValue
+                val valuesToAssign = updatedData.fakeVariablesToValues.get(fakeVariable)
                 if(valuesToAssign != null) {
-                    updatedData.variablesToValues.put(assignmentTarget, valuesToAssign)
+                    updatedData.variablesToValues.put(variableDescriptor, valuesToAssign)
                 } else {
-                    updatedData.variablesToValues.put(assignmentTarget, IntegerVariableValues.cantBeDefined())
+                    updatedData.variablesToValues.put(variableDescriptor, IntegerVariableValues.cantBeDefined())
                 }
             }
             is CallInstruction -> {
@@ -165,11 +165,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     MagicKind.LOOP_RANGE_ITERATION -> {
                         // process range operator result storing in fake variable
                         assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
-                        val rangeValuesFakeVariableName = instruction.inputValues.get(0).debugName
-                        val rangeValues = updatedData.fakeVariablesToValues.get(rangeValuesFakeVariableName)
+                        val rangeValuesFakeVariable = instruction.inputValues.get(0)
+                        val rangeValues = updatedData.fakeVariablesToValues.get(rangeValuesFakeVariable)
                                           ?: throw Exception("Range values are not computed")
-                        val targetName = instruction.outputValue.debugName
-                        updatedData.fakeVariablesToValues.put(targetName, rangeValues)
+                        val target = instruction.outputValue
+                        updatedData.fakeVariablesToValues.put(target, rangeValues)
                     }
                 }
             }
@@ -180,8 +180,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processBinaryArithmeticOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
         assert(instruction.inputValues.size().equals(2),
                "Binary expression instruction is supposed to have two input values")
-        val leftOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(0).debugName)
-        val rightOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(1).debugName)
+        val leftOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(0))
+        val rightOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(1))
         if (leftOperandValues == null || rightOperandValues == null) {
             return
         }
@@ -212,7 +212,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
                 else -> throw Exception("OutOfBoundChecker: Unsupported binary operation")
             }
-        updatedData.fakeVariablesToValues.put(resultValue.debugName, result)
+        updatedData.fakeVariablesToValues.put(resultValue, result)
     }
 
     private fun applyEachToEach(left: IntegerVariableValues, right: IntegerVariableValues, operation: (Int, Int) -> Int)
