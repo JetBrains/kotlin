@@ -16,56 +16,51 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.actions.JvmSmartStepIntoHandler
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.actions.SmartStepTarget
-import java.util.Collections
+import com.intellij.debugger.actions.JvmSmartStepIntoHandler
 import com.intellij.debugger.actions.MethodSmartStepTarget
-import com.intellij.util.containers.OrderedSet
-import com.intellij.util.Range
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import com.intellij.debugger.engine.MethodFilter
+import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.sun.jdi.Location
-import com.intellij.psi.PsiMethod
+import com.intellij.debugger.engine.MethodFilter
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.util.Range
+import com.intellij.util.containers.OrderedSet
+import com.sun.jdi.Location
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.codeInsight.*
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun isAvailable(position: SourcePosition?) = position?.getFile() is JetFile
 
     override fun findSmartStepTargets(position: SourcePosition): List<SmartStepTarget> {
-        if (position.getLine() < 0) return Collections.emptyList()
+        if (position.getLine() < 0) return emptyList()
 
         val file = position.getFile()
 
-        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.getLine())
-        if (lineStart == null) return Collections.emptyList()
+        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.getLine()) ?: return emptyList()
 
-        val elementAtOffset = file.findElementAt(lineStart)
-        if (elementAtOffset == null) return Collections.emptyList()
+        val elementAtOffset = file.findElementAt(lineStart) ?: return emptyList()
 
         val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
-        if (element !is JetElement) return Collections.emptyList()
+        if (element !is JetElement) return emptyList()
 
-        val elementTextRange = element.getTextRange()
-        if (elementTextRange == null) return Collections.emptyList()
+        val elementTextRange = element.getTextRange() ?: return emptyList()
 
-        val doc = PsiDocumentManager.getInstance(file.getProject()).getDocument(file)
-        if (doc == null) return Collections.emptyList()
+        val doc = PsiDocumentManager.getInstance(file.getProject()).getDocument(file) ?: return emptyList()
 
-        val lines = Range<Int>(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
+        val lines = Range(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
         val bindingContext = element.analyze()
         val result = OrderedSet<SmartStepTarget>()
 
@@ -159,8 +154,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             private fun recordFunction(expression: JetExpression) {
-                val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall == null) return
+                val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
                 if (descriptor is CallableMemberDescriptor) {
@@ -196,8 +190,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             val containingFile = runReadAction { stepTarget.resolvedElement.getContainingFile() }
             if (containingFile !is JetFile) return false
 
-            val positionManager = process.getPositionManager()
-            if (positionManager == null) return false
+            val positionManager = process.getPositionManager() ?: return false
 
             val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = stepTarget.resolvedElement))
 
@@ -206,16 +199,6 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 myTargetMethodSignature?.getName(process) == method.signature() &&
                 classes.contains(location.declaringType())
         }
-    }
-
-    private fun getTopmostElementAtOffset(element: PsiElement, offset: Int): PsiElement? {
-        var resultElement: PsiElement? = element
-        while (resultElement?.getParent()?.getTextRange() != null &&
-                resultElement?.getParent()?.getTextRange()!!.getStartOffset() >= offset) {
-            resultElement = resultElement!!.getParent()
-        }
-
-        return resultElement
     }
 
     class KotlinMethodSmartStepTarget(val resolvedElement: JetElement,
