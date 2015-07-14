@@ -72,7 +72,7 @@ interface SyntheticJavaBeansPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class AdditionalScopesWithSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes() {
+class AdditionalScopesWithJavaSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes() {
     private val scope = JavaBeansExtensionsScope(storageManager)
 
     override fun scopes(file: JetFile) = listOf(scope)
