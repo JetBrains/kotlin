@@ -807,6 +807,181 @@ public fun String.elementAtOrNull(index: Int): Char? {
 }
 
 /**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
+ */
+public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the first character matching the given [predicate], or `null` if character was not found.
+ */
+public inline fun String.find(predicate: (Char) -> Boolean): Char? {
+    return firstOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ */
+public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
+    return lastOrNull(predicate)
+}
+
+/**
+ * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ */
+public inline fun String.findLast(predicate: (Char) -> Boolean): Char? {
+    return lastOrNull(predicate)
+}
+
+/**
  * Returns first element.
  * @throws [NoSuchElementException] if the collection is empty.
  */

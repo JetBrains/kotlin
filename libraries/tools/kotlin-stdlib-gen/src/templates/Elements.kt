@@ -398,6 +398,14 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("find(predicate: (T) -> Boolean)") {
+        inline(true)
+        doc { "Returns the first element matching the given [predicate], or `null` if element was not found." }
+        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
+        returns("T?")
+        body { "return firstOrNull(predicate)"}
+    }
+
     templates add f("last()") {
         doc { """Returns the last element.
         @throws [NoSuchElementException] if the collection is empty.""" }
@@ -582,6 +590,15 @@ fun elements(): List<GenericFunction> {
             return null
             """
         }
+    }
+
+    templates add f("findLast(predicate: (T) -> Boolean)") {
+        inline(true)
+        include(Lists)
+        doc { "Returns the last element matching the given [predicate], or `null` if no such element was found." }
+        doc(Strings) { "Returns the last character matching the given [predicate], or `null` if no such character was found." }
+        returns("T?")
+        body { "return lastOrNull(predicate)"}
     }
 
     templates add f("single()") {
