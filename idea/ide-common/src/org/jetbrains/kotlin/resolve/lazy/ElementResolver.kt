@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 public abstract class ElementResolver protected constructor(
         public val resolveSession: ResolveSession
 ) {
-    public open fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+    protected open fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
         return performElementAdditionalResolve(resolveElement, resolveElement, bodyResolveMode).first
     }
 
@@ -59,6 +59,7 @@ public abstract class ElementResolver protected constructor(
         val elementOfAdditionalResolve = findElementOfAdditionalResolve(contextElement)
 
         if (elementOfAdditionalResolve is JetParameter) {
+            // Parameters for function literal could be met inside other parameters. We can't make resolveToDescriptors for internal elements.
             contextElement = elementOfAdditionalResolve
         }
         else if (elementOfAdditionalResolve != null) {

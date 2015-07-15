@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -217,16 +218,14 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findReference(data: KotlinReferenceData, file: JetFile, blockStart: Int): JetReference? {
         val startOffset = data.startOffset + blockStart
         val endOffset = data.endOffset + blockStart
-        val element = file.findElementAt(startOffset)
+        val element = file.findElementAt(startOffset) ?: return null
         val desiredRange = TextRange(startOffset, endOffset)
-        var current = element
-        while (current != null) {
+        for (current in element.parentsWithSelf) {
             val range = current.range
             if (current is JetElement && range == desiredRange) {
                 current.mainReference?.let { return it }
             }
             if (range !in desiredRange) return null
-            current = current.getParent()
         }
         return null
     }

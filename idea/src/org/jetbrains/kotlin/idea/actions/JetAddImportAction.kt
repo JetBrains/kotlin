@@ -107,7 +107,7 @@ public class JetAddImportAction(
         // TODO: Validate resolution variants. See AddImportAction.execute()
 
         if (variants.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
-            addImport(element, project, variants.first())
+            addImport(variants.first())
         }
         else {
             chooseCandidateAndImport()
@@ -124,7 +124,7 @@ public class JetAddImportAction(
                 if (selectedValue == null) return null
 
                 if (finalChoice) {
-                    addImport(element, project, selectedValue)
+                    addImport(selectedValue)
                     return null
                 }
 
@@ -156,23 +156,20 @@ public class JetAddImportAction(
         JBPopupFactory.getInstance().createListPopup(getImportSelectionPopup()).showInBestPositionFor(editor)
     }
 
-    companion object {
+    private fun addImport(selectedVariant: Variant) {
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        protected fun addImport(element: PsiElement, project: Project, selectedVariant: Variant) {
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
+        project.executeWriteCommand(QuickFixBundle.message("add.import")) {
+            if (!element.isValid()) return@executeWriteCommand
 
-            project.executeWriteCommand(QuickFixBundle.message("add.import")) {
-                if (!element.isValid()) return@executeWriteCommand
-
-                val file = element.getContainingFile() as JetFile
-                val descriptor = selectedVariant.descriptorToImport
-                // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
-                if (element is JetSimpleNameExpression && (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor)) {
-                    element.mainReference.bindToFqName(descriptor.importableFqNameSafe, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
-                }
-                else {
-                    ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
-                }
+            val file = element.getContainingFile() as JetFile
+            val descriptor = selectedVariant.descriptorToImport
+            // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
+            if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
+                element.mainReference.bindToFqName(descriptor.importableFqNameSafe, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
+            }
+            else {
+                ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
             }
         }
     }

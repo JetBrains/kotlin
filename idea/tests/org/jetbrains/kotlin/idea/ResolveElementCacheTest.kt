@@ -80,7 +80,7 @@ class C(param1: String = "", param2: Int = 0) {
 
             statement1.getParent().addAfter(factory.createExpression("x()"), statement1)
 
-            val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
+            val bindingContext5 = statement1.analyze(BodyResolveMode.FULL)
             assert(bindingContext5 !== bindingContext4)
         }
     }

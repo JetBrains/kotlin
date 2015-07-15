@@ -130,7 +130,7 @@ val KDocName.mainReference: KDocReference
 val JetElement.mainReference: JetReference?
     get() {
         return when {
-            this is JetSimpleNameExpression -> mainReference
+            this is JetReferenceExpression -> mainReference
             this is KDocName -> mainReference
             else -> getReferences().firstIsInstanceOrNull<JetReference>()
         }

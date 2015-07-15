@@ -524,7 +524,7 @@ class PartialBodyResolveFilter(
         }
 
         private fun JetElement.forTopLevelBlocksInside(action: (JetBlockExpression) -> Unit) {
-            forEachDescendantOfType({ it !is JetBlockExpression }, action)
+            forEachDescendantOfType(canGoInside = { it !is JetBlockExpression }, action = action)
         }
 
         private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
