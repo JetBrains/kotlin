@@ -143,11 +143,10 @@ private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupEl
             return Weight.thisFile
         }
 
-        val qualifiedName = o.qualifiedName()
+        val fqName = o.importableFqName
         // Invalid name can be met for companion object descriptor: Test.MyTest.A.<no name provided>.testOther
-        if (qualifiedName != null && isValidJavaFqName(qualifiedName)) {
-            val importPath = ImportPath(qualifiedName)
-            val fqName = importPath.fqnPart()
+        if (fqName != null) {
+            val importPath = ImportPath(fqName, false)
             return when {
                 JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
                 ImportInsertHelper.getInstance(file.getProject()).isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport

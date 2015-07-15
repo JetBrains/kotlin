@@ -35,15 +35,9 @@ public class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvi
 
         val project = lookup.getPsiFile().getProject()
 
-        lookupObject.descriptor?.importableFqName?.let {
+        lookupObject.importableFqName?.let {
             addExcludes(consumer, project, it.asString())
             return
-        }
-
-        val psiElement = lookupObject.psiElement
-        if (psiElement is PsiClass) {
-            val qualifiedName = psiElement.getQualifiedName() ?: return
-            addExcludes(consumer, project, qualifiedName)
         }
     }
 

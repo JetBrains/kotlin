@@ -21,15 +21,18 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import javax.swing.Icon
 
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
@@ -137,6 +141,24 @@ public class LookupElementFactory(
         return element.withIconFromLookupObject()
     }
 
+    public fun createLookupElementForPackage(shortName: Name): LookupElement {
+        return LookupElementBuilder.create(PackageLookupObject(shortName), shortName.asString())
+                .withInsertHandler(BaseDeclarationInsertHandler())
+                .withIconFromLookupObject()
+    }
+
+    private data class PackageLookupObject(override val name: Name) : DeclarationLookupObject {
+        override val psiElement: PsiElement? get() = null
+
+        override val descriptor: DeclarationDescriptor? get() = null
+
+        override val importableFqName: FqName? get() = null
+
+        override val isDeprecated: Boolean get() = false
+
+        override fun getIcon(flags: Int) = PlatformIcons.PACKAGE_ICON
+    }
+
     private fun createLookupElement(
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?,
@@ -150,6 +172,10 @@ public class LookupElementFactory(
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates
             return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
+        }
+
+        if (descriptor is PackageViewDescriptor || descriptor is PackageFragmentDescriptor) {
+            return createLookupElementForPackage(descriptor.getName())
         }
 
         // for constructor use name and icon of containing class
