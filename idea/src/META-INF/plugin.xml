@@ -34,11 +34,8 @@
       <implementation-class>org.jetbrains.kotlin.idea.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
     </component>
-      <component>
-          <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
-      </component>
   </project-components>
 
  <application-components>

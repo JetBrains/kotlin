@@ -46,6 +46,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Deprecated after moving to platform types.
+ */
+@Deprecated
 public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     public static final String EXTERNAL_ANNOTATIONS_GROUP_ID = "Kotlin External annotations";
     private volatile Alarm notificationAlarm;
