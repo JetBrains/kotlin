@@ -13,3 +13,6 @@ fun foo(list: ArrayList<String>) {
     list.add("")
     Date()
 }
+
+// WITH_RUNTIME
+// FULL_JDK
