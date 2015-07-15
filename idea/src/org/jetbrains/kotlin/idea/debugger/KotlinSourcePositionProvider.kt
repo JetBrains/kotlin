@@ -34,6 +34,7 @@ import com.sun.jdi.ClassNotPreparedException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -62,7 +63,7 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
 
     private fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val place = PositionUtil.getContextElement(context) ?: return null
-        val contextElement = PsiTreeUtil.getParentOfType(place, javaClass<JetElement>()) ?: return null
+        val contextElement = KotlinCodeFragmentFactory.getContextElement(place) ?: return null
 
         val codeFragment = JetPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
         val expression = codeFragment.getContentElement()
