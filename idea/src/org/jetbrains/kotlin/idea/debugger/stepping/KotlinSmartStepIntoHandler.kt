@@ -20,25 +20,23 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.JvmSmartStepIntoHandler
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.debugger.engine.BasicStepMethodFilter
-import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
-import com.sun.jdi.Location
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.debugger.MockSourcePosition
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -68,7 +66,18 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         element.accept(object: JetTreeVisitorVoid() {
 
             override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
-                // skip calls in function literals
+                val context = expression.analyzeAndGetResult().bindingContext
+                val resolvedCall = expression.getParentCall(context).getResolvedCall(context)
+                if (resolvedCall != null && !InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
+                    val arguments = resolvedCall.getValueArguments()
+                    for ((param, argument) in arguments) {
+                        if (argument.getArguments().any { it.getArgumentExpression() == expression}) {
+                            val label = KotlinLambdaSmartStepTarget.calcLabel(resolvedCall.getResultingDescriptor(), param.getName())
+                            result.add(KotlinLambdaSmartStepTarget(label, expression, lines))
+                            break
+                        }
+                    }
+                }
             }
 
             override fun visitObjectLiteralExpression(expression: JetObjectLiteralExpression) {
@@ -177,9 +186,10 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
     }
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
-        if (stepTarget is KotlinMethodSmartStepTarget) {
-            return KotlinBasicStepMethodFilter(stepTarget)
+        return when (stepTarget) {
+            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget)
+            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!! )
+            else -> super.createMethodFilter(stepTarget)
         }
-        return super.createMethodFilter(stepTarget)
     }
 }

@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.util.PsiFormatUtilBase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -40,7 +41,7 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
 
         val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 
-        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { renderTarget(it) }
+        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.getPresentation() }
 
         val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
 
@@ -70,30 +71,6 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
             sb.append("\n")
         }
 
-        return sb.toString()
-    }
-
-    private fun renderTarget(target: SmartStepTarget): String {
-        val sb = StringBuilder()
-
-        val label = target.getLabel()
-        if (label != null) {
-            sb.append(label)
-        }
-        when (target) {
-            is MethodSmartStepTarget -> {
-                sb.append(PsiFormatUtil.formatMethod(
-                        target.getMethod(),
-                        PsiSubstitutor.EMPTY,
-                        PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS,
-                        PsiFormatUtilBase.SHOW_TYPE,
-                        999
-                ))
-            }
-            else -> {
-                sb.append("Renderer for ${target.javaClass} should be implemented")
-            }
-        }
         return sb.toString()
     }
 
