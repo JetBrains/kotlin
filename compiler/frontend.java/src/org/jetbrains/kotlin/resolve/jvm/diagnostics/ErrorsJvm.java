@@ -59,8 +59,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory2<JetElement, String, String> JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<JetElement> INAPPLICABLE_PUBLIC_FIELD = DiagnosticFactory0.create(ERROR);
-
     // TODO: make this a warning
     DiagnosticFactory1<JetExpression, JetExpression> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory1.create(ERROR);
 
