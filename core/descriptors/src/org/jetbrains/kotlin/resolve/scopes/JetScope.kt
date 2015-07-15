@@ -243,3 +243,9 @@ public interface DescriptorKindExclude {
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 }
+
+public interface Location {
+    companion object {
+        val NOWHERE = object : Location {}
+    }
+}
