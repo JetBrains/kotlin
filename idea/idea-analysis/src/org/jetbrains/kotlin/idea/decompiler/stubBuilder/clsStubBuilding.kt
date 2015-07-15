@@ -116,7 +116,8 @@ enum class FlagsToModifiers {
                 ProtoBuf.Modality.ABSTRACT -> JetTokens.ABSTRACT_KEYWORD
                 ProtoBuf.Modality.FINAL -> JetTokens.FINAL_KEYWORD
                 ProtoBuf.Modality.OPEN -> JetTokens.OPEN_KEYWORD
-                else -> throw IllegalStateException("Unexpected modality: $modality")
+                ProtoBuf.Modality.SEALED -> JetTokens.SEALED_KEYWORD
+                null -> throw IllegalStateException("Unexpected modality: null")
             }
         }
     },
