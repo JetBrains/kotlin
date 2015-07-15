@@ -25,15 +25,15 @@ import java.lang.reflect.Modifier
 
 public interface JetScope {
 
-    public fun getClassifier(name: Name, location: Location = Location.NOWHERE): ClassifierDescriptor?
+    public fun getClassifier(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): ClassifierDescriptor?
 
     public fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getProperties(name: Name, location: Location = Location.NOWHERE): Collection<VariableDescriptor>
+    public fun getProperties(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<VariableDescriptor>
 
     public fun getLocalVariable(name: Name): VariableDescriptor?
 
-    public fun getFunctions(name: Name, location: Location = Location.NOWHERE): Collection<FunctionDescriptor>
+    public fun getFunctions(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
 
@@ -244,8 +244,8 @@ public interface DescriptorKindExclude {
     }
 }
 
-public interface Location {
+public interface UsageLocation {
     companion object {
-        val NOWHERE = object : Location {}
+        val NO_LOCATION = object : UsageLocation {}
     }
 }

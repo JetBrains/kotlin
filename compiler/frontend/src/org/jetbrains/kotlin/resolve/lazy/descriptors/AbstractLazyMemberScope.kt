@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.Location
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -62,9 +62,9 @@ protected constructor(
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name, location: Location): ClassDescriptor? = classDescriptors(name).firstOrNull()
+    override fun getClassifier(name: Name, location: UsageLocation): ClassDescriptor? = classDescriptors(name).firstOrNull()
 
-    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = functionDescriptors(name)
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> = functionDescriptors(name)
 
     private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
         val result = Sets.newLinkedHashSet<FunctionDescriptor>()
@@ -89,7 +89,7 @@ protected constructor(
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = propertyDescriptors(name)
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> = propertyDescriptors(name)
 
     public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
         val result = LinkedHashSet<VariableDescriptor>()

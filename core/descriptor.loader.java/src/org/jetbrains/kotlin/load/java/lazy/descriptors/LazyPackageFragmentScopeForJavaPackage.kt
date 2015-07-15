@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.Location
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyPackageFragmentScopeForJavaPackage(
@@ -70,10 +70,10 @@ public class LazyPackageFragmentScopeForJavaPackage(
         }
     }
 
-    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? = classes(name)
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = classes(name)
 
-    override fun getProperties(name: Name, location: Location) = deserializedPackageScope().getProperties(name)
-    override fun getFunctions(name: Name, location: Location) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
+    override fun getProperties(name: Name, location: UsageLocation) = deserializedPackageScope().getProperties(name)
+    override fun getFunctions(name: Name, location: UsageLocation) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.Location;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -252,7 +252,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, Location.NOWHERE);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -1019,6 +1019,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), Location.NOWHERE));
+        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), UsageLocation.NO_LOCATION));
     }
 }

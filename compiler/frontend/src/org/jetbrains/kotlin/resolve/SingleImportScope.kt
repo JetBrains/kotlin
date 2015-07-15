@@ -20,20 +20,20 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.Location
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.utils.Printer
 
 class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
-    override fun getClassifier(name: Name, location: Location)
+    override fun getClassifier(name: Name, location: UsageLocation)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
     override fun getPackage(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<PackageViewDescriptor>().singleOrNull() else null
 
-    override fun getProperties(name: Name, location: Location)
+    override fun getProperties(name: Name, location: UsageLocation)
             = if (name == aliasName) descriptors.filterIsInstance<VariableDescriptor>() else emptyList()
 
-    override fun getFunctions(name: Name, location: Location)
+    override fun getFunctions(name: Name, location: UsageLocation)
             = if (name == aliasName) descriptors.filterIsInstance<FunctionDescriptor>() else emptyList()
 
     override fun getContainingDeclaration(): DeclarationDescriptor = throw UnsupportedOperationException()

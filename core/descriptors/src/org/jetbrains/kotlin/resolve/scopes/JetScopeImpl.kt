@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
 public abstract class JetScopeImpl : JetScope {
-    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = null
 
-    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> = setOf()
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> = setOf()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> = setOf()
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> = setOf()
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = listOf()
 

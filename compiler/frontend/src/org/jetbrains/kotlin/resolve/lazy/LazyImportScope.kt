@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.Location
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
@@ -234,7 +234,7 @@ class LazyImportScope(
         return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
-    override fun getClassifier(name: Name, location: Location): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name ->
             val descriptor = scope.getClassifier(name)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
@@ -246,14 +246,14 @@ class LazyImportScope(
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name -> scope.getPackage(name) }
     }
 
-    override fun getProperties(name: Name, location: Location): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name) }
     }
 
     override fun getLocalVariable(name: Name) = null
 
-    override fun getFunctions(name: Name, location: Location): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
     }

@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : JetScopeImpl() {
-    override fun getClassifier(name: Name, location: Location) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
+    override fun getClassifier(name: Name, location: UsageLocation) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
     override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
-    override fun getProperties(name: Name, location: Location) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
+    override fun getProperties(name: Name, location: UsageLocation) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
-    override fun getFunctions(name: Name, location: Location) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
+    override fun getFunctions(name: Name, location: UsageLocation) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
 
     override fun getContainingDeclaration() = throw UnsupportedOperationException()
 
