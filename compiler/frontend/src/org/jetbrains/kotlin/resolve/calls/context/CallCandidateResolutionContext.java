@@ -40,6 +40,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public final TracingStrategy tracing;
     @NotNull
     public final ReceiverValue explicitExtensionReceiverForInvoke;
+    @NotNull
+    public final CandidateResolveMode candidateResolveMode;
 
     private CallCandidateResolutionContext(
             @NotNull MutableResolvedCall<D> candidateCall,
@@ -58,6 +60,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             @NotNull ReceiverValue explicitExtensionReceiverForInvoke,
+            @NotNull CandidateResolveMode candidateResolveMode,
             boolean isAnnotationContext,
             boolean collectAllCandidates,
             boolean insideSafeCallChain
@@ -68,11 +71,13 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.explicitExtensionReceiverForInvoke = explicitExtensionReceiverForInvoke;
+        this.candidateResolveMode = candidateResolveMode;
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull ReceiverValue explicitExtensionReceiverForInvoke
+            @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull ReceiverValue explicitExtensionReceiverForInvoke,
+            @NotNull CandidateResolveMode candidateResolveMode
     ) {
         candidateCall.getDataFlowInfoForArguments().setInitialDataFlowInfo(context.dataFlowInfo);
         return new CallCandidateResolutionContext<D>(
@@ -80,20 +85,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
-                context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
-    }
-
-    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
-            @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing, @NotNull Call call
-    ) {
-        return create(candidateCall, context, trace, tracing, call, ReceiverValue.NO_RECEIVER);
-    }
-
-    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
-            @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing) {
-        return create(candidateCall, context, trace, tracing, context.call);
+                candidateResolveMode, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
     @NotNull
@@ -104,7 +96,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker, context.statementFilter,
-                ReceiverValue.NO_RECEIVER, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
+                ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
     @Override
@@ -122,6 +114,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter,
-                explicitExtensionReceiverForInvoke, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 }
