@@ -90,8 +90,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             for (descriptor in descriptorsToImport) {
                 val fqName = descriptor.importableFqNameSafe
                 val parentFqName = fqName.parent()
-                if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
+                if (descriptor is PackageViewDescriptor) {
                     importsToGenerate.add(ImportPath(fqName, false))
+                }
+                else if (parentFqName.isRoot()) {
+                    if (!currentPackageName.isRoot()) {
+                        importsToGenerate.add(ImportPath(fqName, false))
+                    }
                 }
                 else {
                     descriptorsByPackages.put(parentFqName, descriptor)
