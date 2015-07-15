@@ -80,7 +80,6 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             //TODO: keep existing imports? at least aliases (comments)
 
             val importInsertHelper = ImportInsertHelper.getInstance(file.getProject())
-            val currentPackageName = file.getPackageFqName()
 
             val descriptorsToImport = detectDescriptorsToImport()
 
@@ -90,13 +89,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             for (descriptor in descriptorsToImport) {
                 val fqName = descriptor.importableFqNameSafe
                 val parentFqName = fqName.parent()
-                if (descriptor is PackageViewDescriptor) {
+                if (descriptor is PackageViewDescriptor || parentFqName.isRoot()) {
                     importsToGenerate.add(ImportPath(fqName, false))
-                }
-                else if (parentFqName.isRoot()) {
-                    if (!currentPackageName.isRoot()) {
-                        importsToGenerate.add(ImportPath(fqName, false))
-                    }
                 }
                 else {
                     descriptorsByPackages.put(parentFqName, descriptor)
@@ -110,7 +104,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             for (packageName in descriptorsByPackages.keys()) {
                 val descriptors = descriptorsByPackages[packageName]
                 val fqNames = descriptors.map { it.importableFqNameSafe }.toSet()
-                val explicitImports = packageName != currentPackageName && fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+                val explicitImports = fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
                 if (explicitImports) {
                     for (fqName in fqNames) {
                         if (!isImportedByDefault(fqName)) {
@@ -125,7 +119,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                         }
                     }
 
-                    if (packageName != currentPackageName && !fqNames.all(::isImportedByDefault)) {
+                    if (!fqNames.all(::isImportedByDefault)) {
                         importsToGenerate.add(ImportPath(packageName, true))
                     }
                 }
@@ -133,7 +127,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             // now check that there are no conflicts and all classes are really imported
             val fileWithImportsText = StringBuilder {
-                append("package ").append(currentPackageName.render()).append("\n")
+                append("package ").append(file.getPackageFqName().render()).append("\n")
                 importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.getPathStr() }.joinTo(this, "\n")
             }.toString()
             val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
@@ -187,6 +181,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
     public class CollectUsedDescriptorsVisitor(val file: JetFile, val recursive: Boolean) : JetVisitorVoid() {
         private val _descriptors = HashSet<DeclarationDescriptor>()
+        private val currentPackageName = file.getPackageFqName()
 
         public val descriptors: Set<DeclarationDescriptor>
             get() = _descriptors
@@ -218,7 +213,10 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                               ?: reference.resolveToDescriptors(bindingContext)
                 for (target in targets) {
                     if (!target.canBeReferencedViaImport()) continue
-                    if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
+                    val importableDescriptor = target.getImportableDescriptor()
+                    val parentFqName = DescriptorUtils.getFqNameSafe(importableDescriptor).parent()
+                    if (target is PackageViewDescriptor && parentFqName == FqName.ROOT) continue // no need to import top-level packages
+                    if (target !is PackageViewDescriptor && parentFqName == currentPackageName) continue
 
                     if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
                         if (element !is JetNameReferenceExpression) continue
@@ -226,7 +224,6 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                         if (element.getReceiverExpression() != null) continue
                     }
 
-                    val importableDescriptor = target.getImportableDescriptor()
                     if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
 
                     if (isAccessibleAsMember(importableDescriptor, element)) continue
