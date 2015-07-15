@@ -509,7 +509,7 @@ public fun <T> Set<T>.minus(sequence: Sequence<T>): Set<T> {
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -527,7 +527,7 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -545,7 +545,7 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -563,7 +563,7 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -581,7 +581,7 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -599,7 +599,7 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -617,7 +617,7 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -635,7 +635,7 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -653,7 +653,7 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -671,7 +671,7 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -689,7 +689,7 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -707,9 +707,9 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()

@@ -339,7 +339,7 @@ fun generators(): List<GenericFunction> {
 
         doc {
             """
-            Splits original collection into pair of collections,
+            Splits the original collection into pair of collections,
             where *first* collection contains elements for which [predicate] yielded `true`,
             while *second* collection contains elements for which [predicate] yielded `false`.
             """
@@ -361,6 +361,13 @@ fun generators(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) {
+            """
+            Splits the original string into pair of strings,
+            where *first* string contains characters for which [predicate] yielded `true`,
+            while *second* string contains characters for which [predicate] yielded `false`.
+            """
+        }
         returns(Strings) { "Pair<String, String>" }
         body(Strings) {
             """
