@@ -73,8 +73,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS,
                 "This Java method uses the deprecated {0} class, which will be removed soon. " +
                 "Please change the signature to use the new {1} class instead", Renderers.TO_STRING, Renderers.TO_STRING);
-
-        MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
     }
 
     @NotNull
