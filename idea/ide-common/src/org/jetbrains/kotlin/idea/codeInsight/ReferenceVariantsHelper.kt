@@ -221,7 +221,9 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ) {
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
-        val extensionsFilter = kindFilter.exclude(DescriptorKindExclude.NonExtensions)
+        val extensionsFilter = kindFilter
+                .restrictedToKinds(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK)
+                .exclude(DescriptorKindExclude.NonExtensions)
 
         fun processExtension(descriptor: DeclarationDescriptor) {
             addAll((descriptor as CallableDescriptor).substituteExtensionIfCallable(receiver, callType, context, dataFlowInfo, resolutionScope.getContainingDeclaration()))
