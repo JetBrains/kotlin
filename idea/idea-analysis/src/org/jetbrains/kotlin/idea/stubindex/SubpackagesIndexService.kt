@@ -59,15 +59,14 @@ public class SubpackagesIndexService(private val project: Project) {
             }
         }
 
-        public fun getSubpackages(fqName: FqName, scope: GlobalSearchScope): Collection<FqName> {
+        public fun getSubpackages(fqName: FqName, scope: GlobalSearchScope, nameFilter: (Name) -> Boolean): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()
             val len = fqName.pathSegments().size()
             for (filesFqName in possibleFilesFqNames) {
                 val candidateSubPackageShortName = filesFqName.pathSegments()[len]
-                if (candidateSubPackageShortName in existingSubPackagesShortNames) {
-                    continue
-                }
+                if (candidateSubPackageShortName in existingSubPackagesShortNames || !nameFilter(candidateSubPackageShortName)) continue
+
                 val existsInThisScope = PackageIndexUtil.containsFilesWithExactPackage(filesFqName, scope, project)
                 if (existsInThisScope) {
                     existingSubPackagesShortNames.add(candidateSubPackageShortName)

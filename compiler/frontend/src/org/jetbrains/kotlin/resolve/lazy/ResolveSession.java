@@ -168,7 +168,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 if (packageDescriptor == null) {
                     return Collections.emptyList();
                 }
-                return packageDescriptor.getDeclarationProvider().getAllDeclaredSubPackages();
+                return packageDescriptor.getDeclarationProvider().getAllDeclaredSubPackages(nameFilter);
             }
         };
 

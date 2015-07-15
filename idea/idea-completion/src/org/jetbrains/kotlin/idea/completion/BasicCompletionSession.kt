@@ -204,8 +204,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             // getting root packages from scope is very slow so we do this in alternative way
             if (isNoQualifierContext() && (completionKind.descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
                 //TODO: move this code somewhere else
-                //TODO: filter by prefix for better performance?
-                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project)
+                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
                         .map { it.shortName() }
                         .toMutableSet()
 

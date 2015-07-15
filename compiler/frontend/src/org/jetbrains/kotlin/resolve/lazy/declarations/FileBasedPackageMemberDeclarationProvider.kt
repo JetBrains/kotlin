@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
 public class FileBasedPackageMemberDeclarationProvider internal constructor(
@@ -40,7 +41,7 @@ public class FileBasedPackageMemberDeclarationProvider internal constructor(
         }
     }
 
-    override fun getAllDeclaredSubPackages(): Collection<FqName> = allDeclaredSubPackages()
+    override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName> = allDeclaredSubPackages()
 
     override fun getPackageFiles() = packageFiles
 

@@ -27,14 +27,16 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.name.Name
 
 public object PackageIndexUtil {
     platformStatic public fun getSubPackageFqNames(
             packageFqName: FqName,
             scope: GlobalSearchScope,
-            project: Project
+            project: Project,
+            nameFilter: (Name) -> Boolean
     ): Collection<FqName> {
-        return SubpackagesIndexService.getInstance(project).getSubpackages(packageFqName, scope)
+        return SubpackagesIndexService.getInstance(project).getSubpackages(packageFqName, scope, nameFilter)
     }
 
     platformStatic public fun findFilesWithExactPackage(
