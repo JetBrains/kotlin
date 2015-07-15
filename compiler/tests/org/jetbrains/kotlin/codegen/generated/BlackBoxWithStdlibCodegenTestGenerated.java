@@ -3114,9 +3114,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/constructor.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("extensionProperty.kt")
             public void testExtensionProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/extensionProperty.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("functions.kt")
+            public void testFunctions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/functions.kt");
                 doTestWithStdlib(fileName);
             }
 

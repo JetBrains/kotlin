@@ -75,14 +75,14 @@ abstract class DescriptorBasedProperty<out R> protected constructor(
     open val javaGetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasGetter()) null
-        else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver,
+        else container.findMethodBySignature(proto.proto, proto.signature.getGetter(), proto.nameResolver,
                                              descriptor.getGetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
     open val javaSetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasSetter()) null
-        else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver,
+        else container.findMethodBySignature(proto.proto, proto.signature.getSetter(), proto.nameResolver,
                                              descriptor.getSetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 

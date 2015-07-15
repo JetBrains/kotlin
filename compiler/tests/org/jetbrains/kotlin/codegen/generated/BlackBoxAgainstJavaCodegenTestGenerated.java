@@ -510,9 +510,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 doTestAgainstJava(fileName);
             }
 
+            @TestMetadata("javaConstructor.kt")
+            public void testJavaConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/reflection/mapping/javaConstructor.kt");
+                doTestAgainstJava(fileName);
+            }
+
             @TestMetadata("javaFields.kt")
             public void testJavaFields() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/reflection/mapping/javaFields.kt");
+                doTestAgainstJava(fileName);
+            }
+
+            @TestMetadata("javaMethods.kt")
+            public void testJavaMethods() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/reflection/mapping/javaMethods.kt");
                 doTestAgainstJava(fileName);
             }
         }

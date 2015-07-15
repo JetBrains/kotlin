@@ -18,6 +18,17 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaConstructor
+import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaMethod
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import java.lang.reflect.Constructor
+import java.lang.reflect.Method
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.*
 
@@ -34,8 +45,55 @@ open class KFunctionImpl protected constructor(
             container, descriptor.getName().asString(), RuntimeTypeMapper.mapSignature(descriptor), descriptor
     )
 
+    private data class FunctionProtoData(
+            val proto: ProtoBuf.Callable,
+            val nameResolver: NameResolver,
+            val signature: JvmProtoBuf.JvmMethodSignature
+    )
+
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
+    }
+
+    // null if this is a function declared in a foreign (Java) class
+    private val protoData: FunctionProtoData? by ReflectProperties.lazyWeak {
+        val function = DescriptorUtils.unwrapFakeOverride(descriptor) as? DeserializedCallableMemberDescriptor
+        if (function != null) {
+            val proto = function.proto
+            if (proto.hasExtension(JvmProtoBuf.methodSignature)) {
+                return@lazyWeak FunctionProtoData(proto, function.nameResolver, proto.getExtension(JvmProtoBuf.methodSignature))
+            }
+        }
+        null
+    }
+
+    internal val javaMethod: Method? by ReflectProperties.lazySoft {
+        if (name != "<init>") {
+            val proto = protoData
+            if (proto != null) {
+                container.findMethodBySignature(proto.proto, proto.signature, proto.nameResolver,
+                                                Visibilities.isPrivate(descriptor.getVisibility()))
+            }
+            else {
+                ((descriptor.getOriginal().getSource() as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
+            }
+        }
+        else null
+    }
+
+    internal val javaConstructor: Constructor<*>? by ReflectProperties.lazySoft {
+        if (name == "<init>") {
+            val proto = protoData
+            if (proto != null) {
+                return@lazySoft container.findConstructorBySignature(
+                        proto.signature, proto.nameResolver, Visibilities.isPrivate(descriptor.getVisibility())
+                )
+            }
+            else {
+                ((descriptor.getOriginal().getSource() as? JavaSourceElement)?.javaElement as? ReflectJavaConstructor)?.member
+            }
+        }
+        else null
     }
 
     override val name: String get() = descriptor.getName().asString()

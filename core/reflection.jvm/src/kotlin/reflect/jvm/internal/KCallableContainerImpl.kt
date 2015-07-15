@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
+import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.reflect.KCallable
@@ -141,20 +142,53 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     }
 
     // TODO: check resulting method's return type
-    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver, declared: Boolean): Method? {
+    fun findMethodBySignature(
+            @suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            declared: Boolean
+    ): Method? {
         val name = nameResolver.getString(signature.getName())
-        val classLoader = jClass.classLoader
-        val parameterTypes = signature.getParameterTypeList().map { jvmType ->
-            loadJvmType(jvmType, nameResolver, classLoader)
-        }.toTypedArray()
+        if (name == "<init>") return null
+
+        val parameterTypes = loadParameterTypes(nameResolver, signature)
+
+        // Method for a top level function should be the one from the package facade.
+        // This is likely to change after the package part reform.
+        val owner = jClass
 
         return try {
-            if (declared) jClass.getDeclaredMethod(name, *parameterTypes)
-            else jClass.getMethod(name, *parameterTypes)
+            if (declared) owner.getDeclaredMethod(name, *parameterTypes)
+            else owner.getMethod(name, *parameterTypes)
         }
         catch (e: NoSuchMethodException) {
             null
         }
+    }
+
+    fun findConstructorBySignature(
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            declared: Boolean
+    ): Constructor<*>? {
+        if (nameResolver.getString(signature.getName()) != "<init>") return null
+
+        val parameterTypes = loadParameterTypes(nameResolver, signature)
+
+        return try {
+            if (declared) jClass.getDeclaredConstructor(*parameterTypes)
+            else jClass.getConstructor(*parameterTypes)
+        }
+        catch (e: NoSuchMethodException) {
+            null
+        }
+    }
+
+    private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): Array<Class<*>> {
+        val classLoader = jClass.classLoader
+        return signature.getParameterTypeList().map { jvmType ->
+            loadJvmType(jvmType, nameResolver, classLoader)
+        }.toTypedArray()
     }
 
     // TODO: check resulting field's type
@@ -166,18 +200,11 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
         val name = nameResolver.getString(signature.getName())
 
         val owner =
-                when {
-                    proto.hasExtension(JvmProtoBuf.implClassName) -> {
-                        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
-                        // TODO: store fq name of impl class name in jvm_descriptors.proto
-                        val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
-                        jClass.classLoader.loadClass(classId.asSingleFqName().asString())
-                    }
-                    signature.getIsStaticInOuter() -> {
-                        jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
-                    }
-                    else -> jClass
+                implClassForCallable(nameResolver, proto) ?:
+                if (signature.getIsStaticInOuter()) {
+                    jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
                 }
+                else jClass
 
         return try {
             owner.getDeclaredField(name)
@@ -185,6 +212,17 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
         catch (e: NoSuchFieldException) {
             null
         }
+    }
+
+    // Returns the JVM class which contains this callable. This class may be different from the one represented by descriptors
+    // in case of top level functions (their bodies are in package parts), methods with implementations in interfaces, etc.
+    private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Callable): Class<*>? {
+        if (!proto.hasExtension(JvmProtoBuf.implClassName)) return null
+
+        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
+        // TODO: store fq name of impl class name in jvm_descriptors.proto
+        val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
+        return jClass.classLoader.loadClass(classId.asSingleFqName().asString())
     }
 
     private fun loadJvmType(

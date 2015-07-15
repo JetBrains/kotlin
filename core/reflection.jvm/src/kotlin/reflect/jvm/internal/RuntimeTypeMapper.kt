@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -56,17 +57,29 @@ object RuntimeTypeMapper {
 
             return StringBuilder {
                 append(method.getName().asString())
-
-                append("(")
-                for (parameter in method.getValueParameters()) {
-                    appendJavaType(parameter.getType())
-                }
-                append(")")
-
+                appendParameters(method)
                 appendJavaType(method.getReturnType())
             }.toString()
         }
+        else if (function is JavaConstructorDescriptor) {
+            val constructor = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaConstructor ?:
+                              throw KotlinReflectionInternalError("Incorrect resolution sequence for Java constructor $function")
+
+            return StringBuilder {
+                append("<init>")
+                appendParameters(constructor)
+                append("V")
+            }.toString()
+        }
         else throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
+    }
+
+    private fun StringBuilder.appendParameters(callable: JavaCallable) {
+        append("(")
+        for (parameter in callable.getValueParameters()) {
+            appendJavaType(parameter.getType())
+        }
+        append(")")
     }
 
     // TODO: verify edge cases when it's possible to reference generic functions

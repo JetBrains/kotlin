@@ -26,7 +26,7 @@ import java.lang.reflect.Type
 import java.util.ArrayList
 
 public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaMember {
-    protected abstract val member: Member
+    internal abstract val member: Member
 
     override val element: AnnotatedElement get() = member as AnnotatedElement
 

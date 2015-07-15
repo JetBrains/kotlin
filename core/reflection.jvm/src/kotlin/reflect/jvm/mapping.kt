@@ -16,13 +16,12 @@
 
 package kotlin.reflect.jvm
 
+import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KClassImpl
-import kotlin.reflect.jvm.internal.KMutablePropertyImpl
-import kotlin.reflect.jvm.internal.KPackageImpl
-import kotlin.reflect.jvm.internal.KPropertyImpl
+import kotlin.reflect.jvm.internal.*
 
 // Kotlin reflection -> Java reflection
 
@@ -64,6 +63,21 @@ public val KMutableProperty<*>.javaSetter: Method?
     get() = (this as? KMutablePropertyImpl<*>)?.javaSetter
 
 
+/**
+ * Returns a Java [Method] instance corresponding to the given Kotlin function,
+ * or `null` if this function is a constructor or cannot be represented by a Java [Method].
+ */
+public val KFunction<*>.javaMethod: Method?
+    get() = (this as? KFunctionImpl)?.javaMethod
+
+/**
+ * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
+ * or `null` if this function is not a constructor or cannot be represented by a Java [Constructor].
+ */
+@suppress("UNCHECKED_CAST")
+public val <T> KFunction<T>.javaConstructor: Constructor<T>?
+    get() = (this as? KFunctionImpl)?.javaConstructor as Constructor<T>?
+
 
 
 // Java reflection -> Kotlin reflection
@@ -82,7 +96,8 @@ public val <T> Class<T>.kotlin: KClass<T>
  * for more information.
  */
 public val Class<*>.kotlinPackage: KPackage?
-    get() = if (getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) KPackageImpl(this) else null
+    get() = if (getSimpleName().endsWith("Package") &&
+                getAnnotation(javaClass<kotlin.jvm.internal.KotlinPackage>()) != null) KPackageImpl(this) else null
 
 
 /**
@@ -94,10 +109,38 @@ public val Field.kotlin: KProperty<*>?
     get() {
         if (isSynthetic()) return null
 
-        val clazz = getDeclaringClass().kotlin as KClassImpl
-
+        // TODO: fields in package parts
         // TODO: optimize (search by name)
-        return clazz.properties.firstOrNull { p: KProperty<*> ->
-            (p as KPropertyImpl<*>).javaField == this
+        return getDeclaringClass().kotlin.properties.firstOrNull { it.javaField == this }
+    }
+
+
+/**
+ * Returns a [KFunction] instance corresponding to the given Java [Method] instance,
+ * or `null` if this method cannot be represented by a Kotlin function
+ * (for example, if it is a synthetic method).
+ */
+public val Method.kotlinFunction: KFunction<*>?
+    get() {
+        if (isSynthetic()) return null
+
+        if (Modifier.isStatic(getModifiers())) {
+            getDeclaringClass().kotlinPackage?.let { pkg ->
+                return pkg.functions.firstOrNull { it.javaMethod == this }
+            }
         }
+
+        return getDeclaringClass().kotlin.functions.firstOrNull { it.javaMethod == this }
+    }
+
+/**
+ * Returns a [KFunction] instance corresponding to the given Java [Constructor] instance,
+ * or `null` if this constructor cannot be represented by a Kotlin function
+ * (for example, if it is a synthetic constructor).
+ */
+public val <T> Constructor<T>.kotlinFunction: KFunction<T>?
+    get() {
+        if (isSynthetic()) return null
+
+        return getDeclaringClass().kotlin.constructors.firstOrNull { it.javaConstructor == this }
     }
