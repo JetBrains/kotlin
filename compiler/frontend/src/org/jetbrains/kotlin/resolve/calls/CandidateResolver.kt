@@ -280,27 +280,17 @@ public class CandidateResolver(
         return if (descriptor is ClassDescriptor) descriptor else null
     }
 
-    private fun <D : CallableDescriptor> checkAllValueArguments(
-            context: CallCandidateResolutionContext<D>,
-            resolveFunctionArgumentBodies: ResolveArgumentsMode): ValueArgumentsCheckingResult {
-        return checkAllValueArguments(context, context.candidateCall.getTrace(), resolveFunctionArgumentBodies)
-    }
-
     public fun <D : CallableDescriptor> checkAllValueArguments(
             context: CallCandidateResolutionContext<D>,
-            trace: BindingTrace,
             resolveFunctionArgumentBodies: ResolveArgumentsMode): ValueArgumentsCheckingResult {
-        val checkingResult = checkValueArgumentTypes(
-                context, context.candidateCall, trace, resolveFunctionArgumentBodies)
+        val checkingResult = checkValueArgumentTypes(context, context.candidateCall, resolveFunctionArgumentBodies)
         var resultStatus = checkingResult.status
-        resultStatus = resultStatus.combine(checkReceivers(context, trace))
+        resultStatus = resultStatus.combine(checkReceivers(context))
 
         return ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes)
     }
 
-    private fun <D : CallableDescriptor> checkReceivers(
-            context: CallCandidateResolutionContext<D>,
-            trace: BindingTrace): ResolutionStatus {
+    private fun <D : CallableDescriptor> checkReceivers(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         var resultStatus = SUCCESS
         val candidateCall = context.candidateCall
 
@@ -309,13 +299,12 @@ public class CandidateResolver(
         // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
         // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
 
-        resultStatus = resultStatus.combine(checkReceiver(
-                context, candidateCall, trace,
+        resultStatus = resultStatus.combine(context.checkReceiver(
+                candidateCall,
                 candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
                 candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
 
-        resultStatus = resultStatus.combine(checkReceiver(
-                context, candidateCall, trace,
+        resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
                 candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
                 candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
                 // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
@@ -326,7 +315,6 @@ public class CandidateResolver(
     private fun <D : CallableDescriptor, C : CallResolutionContext<C>> checkValueArgumentTypes(
             context: CallResolutionContext<C>,
             candidateCall: MutableResolvedCall<D>,
-            trace: BindingTrace,
             resolveFunctionArgumentBodies: ResolveArgumentsMode): ValueArgumentsCheckingResult {
         var resultStatus = SUCCESS
         val argumentTypes = Lists.newArrayList<JetType>()
@@ -341,7 +329,7 @@ public class CandidateResolver(
 
                 val expectedType = getEffectiveExpectedType(parameterDescriptor, argument)
 
-                val newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument)).replaceBindingTrace(trace).replaceExpectedType(expectedType)
+                val newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument)).replaceExpectedType(expectedType)
                 val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
                         expression, newContext, resolveFunctionArgumentBodies)
                 val type = typeInfoForCall.type
@@ -416,10 +404,8 @@ public class CandidateResolver(
         }
     }
 
-    private fun <D : CallableDescriptor> checkReceiver(
-            context: CallCandidateResolutionContext<D>,
+    private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkReceiver(
             candidateCall: ResolvedCall<D>,
-            trace: BindingTrace,
             receiverParameter: ReceiverParameterDescriptor?,
             receiverArgument: ReceiverValue,
             isExplicitReceiver: Boolean,
@@ -430,12 +416,12 @@ public class CandidateResolver(
 
         val safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.getCall().isExplicitSafeCall()
         val isSubtypeBySmartCast = isSubTypeBySmartCastIgnoringNullability(
-                receiverArgument, receiverParameter.getType(), context)
+                receiverArgument, receiverParameter.getType(), this)
         if (!isSubtypeBySmartCast) {
-            context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument)
+            tracing.wrongReceiverType(trace, receiverParameter, receiverArgument)
             return OTHER_ERROR
         }
-        if (!recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess)) {
+        if (!recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), this, safeAccess)) {
             return OTHER_ERROR
         }
 
@@ -443,17 +429,17 @@ public class CandidateResolver(
 
         val bindingContext = trace.getBindingContext()
         if (!safeAccess && !receiverParameter.getType().isMarkedNullable() && receiverArgumentType.isMarkedNullable()) {
-            if (!canBeSmartCast(receiverParameter, receiverArgument, context)) {
-                context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
+            if (!canBeSmartCast(receiverParameter, receiverArgument, this)) {
+                tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
                 return UNSAFE_CALL_ERROR
             }
         }
-        val receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, context.scope.getContainingDeclaration())
-        if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
-            context.tracing.unnecessarySafeCall(trace, receiverArgumentType)
+        val receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, scope.getContainingDeclaration())
+        if (safeAccess && !dataFlowInfo.getNullability(receiverValue).canBeNull()) {
+            tracing.unnecessarySafeCall(trace, receiverArgumentType)
         }
 
-        context.additionalTypeChecker.checkReceiver(receiverParameter, receiverArgument, safeAccess, context)
+        additionalTypeChecker.checkReceiver(receiverParameter, receiverArgument, safeAccess, this)
 
         return SUCCESS
     }

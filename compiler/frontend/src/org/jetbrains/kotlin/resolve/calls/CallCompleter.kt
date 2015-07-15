@@ -171,8 +171,7 @@ public class CallCompleter(
             tracing: TracingStrategy
     ) {
         val contextWithResolvedCall = CallCandidateResolutionContext.createForCallBeingAnalyzed(this, context, tracing)
-        val valueArgumentsCheckingResult = candidateResolver.checkAllValueArguments(
-                contextWithResolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS)
+        val valueArgumentsCheckingResult = candidateResolver.checkAllValueArguments(contextWithResolvedCall, RESOLVE_FUNCTION_ARGUMENTS)
 
         val status = getStatus()
         if (getConstraintSystem()!!.getStatus().isSuccessful()) {
