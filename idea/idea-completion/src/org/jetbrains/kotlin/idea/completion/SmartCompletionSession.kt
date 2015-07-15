@@ -51,8 +51,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             addFunctionLiteralArgumentCompletions()
 
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
-                                                                                        bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
-                                                                                        mapper, lookupElementFactory)
+                                             bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
+                                             mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)
