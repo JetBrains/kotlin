@@ -226,7 +226,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             if (argumentForParameter == null) return null
 
             if (isDivisionByZero(resultingDescriptorName.asString(), argumentForParameter.value)) {
-                val parentExpression: JetExpression = PsiTreeUtil.getParentOfType(receiverExpression, javaClass())
+                val parentExpression: JetExpression = PsiTreeUtil.getParentOfType(receiverExpression, javaClass())!!
                 trace.report(Errors.DIVISION_BY_ZERO.on(parentExpression))
                 return ErrorValue.create("Division by zero")
             }
@@ -406,7 +406,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
     }
 
     override fun visitClassLiteralExpression(expression: JetClassLiteralExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val jetType = trace.getType(expression)
+        val jetType = trace.getType(expression)!!
         if (jetType.isError()) return null
         return KClassValue(jetType)
     }

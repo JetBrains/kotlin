@@ -9,7 +9,6 @@ public class Test {
 
 
 // EXIST:  abstract
-// EXIST:  annotation
 // EXIST:  class
 // EXIST:  enum
 // EXIST:  final

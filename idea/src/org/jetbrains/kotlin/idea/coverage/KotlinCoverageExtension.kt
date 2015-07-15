@@ -126,7 +126,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             }
             LOG.debug("Classfiles: [${existingClassFiles.map { it.getName() }.join()}]")
             return existingClassFiles.map {
-                val relativePath = VfsUtilCore.getRelativePath(it, outputRoot)
+                val relativePath = VfsUtilCore.getRelativePath(it, outputRoot!!)!!
                 StringUtil.trimEnd(relativePath, ".class").replace("/", ".")
             }
         }
@@ -175,13 +175,13 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             val inTests = fileIndex.isInTestSourceContent(file.getVirtualFile())
             val compilerOutputExtension = CompilerModuleExtension.getInstance(module)
             return if (inTests)
-                compilerOutputExtension.getCompilerOutputPathForTests()
+                compilerOutputExtension!!.getCompilerOutputPathForTests()
             else
-                compilerOutputExtension.getCompilerOutputPath()
+                compilerOutputExtension!!.getCompilerOutputPath()
         }
 
         private fun collectClassFilePrefixes(file: JetFile): Collection<String> {
-            val result = file.getChildren().filter { it is JetClassOrObject }.map { (it as JetClassOrObject).getName() }
+            val result = file.getChildren().filter { it is JetClassOrObject }.map { (it as JetClassOrObject).getName()!! }
             val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(file)
             return result.union(arrayListOf(packagePartFqName.shortName().asString()))
         }

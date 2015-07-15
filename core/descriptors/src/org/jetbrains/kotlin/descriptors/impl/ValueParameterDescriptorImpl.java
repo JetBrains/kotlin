@@ -39,7 +39,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final Set<? extends ValueParameterDescriptor> readOnlyOverriddenDescriptors = Collections.unmodifiableSet(overriddenDescriptors);
 
     public ValueParameterDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull CallableDescriptor containingDeclaration,
             @Nullable ValueParameterDescriptor original,
             int index,
             @NotNull Annotations annotations,
@@ -54,6 +54,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         this.index = index;
         this.declaresDefaultValue = declaresDefaultValue;
         this.varargElementType = varargElementType;
+    }
+
+    @NotNull
+    @Override
+    public CallableDescriptor getContainingDeclaration() {
+        return (CallableDescriptor) super.getContainingDeclaration();
     }
 
     public void setType(@NotNull JetType type) {
@@ -124,8 +130,11 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName) {
-        return new ValueParameterDescriptorImpl(newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType, SourceElement.NO_SOURCE);
+    public ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName) {
+        return new ValueParameterDescriptorImpl(
+                newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType,
+                SourceElement.NO_SOURCE
+        );
     }
 
     @NotNull

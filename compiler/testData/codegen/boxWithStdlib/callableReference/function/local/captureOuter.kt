@@ -8,5 +8,5 @@ class Outer {
 
 fun box(): String {
     val f = Outer.Inner::foo
-    return Outer().Inner().f()
+    return f(Outer().Inner())
 }

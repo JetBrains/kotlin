@@ -4,5 +4,5 @@ class A {
 
 fun box(): String {
     val x = A::foo
-    return A().x("OK")
+    return x(A(), "OK")
 }

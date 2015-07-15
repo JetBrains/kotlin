@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -42,7 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
@@ -51,8 +52,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.types.Approximation;
-import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -502,7 +501,7 @@ public class FunctionCodegen {
         if (isMethodOfAny(descriptor)) return;
 
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
-        if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return;
+        if (CallResolverUtilPackage.isOrOverridesSynthesized(descriptor)) return;
 
         Set<Bridge<Method>> bridgesToGenerate = BridgesPackage.generateBridgesForFunctionDescriptor(
                 descriptor,
@@ -834,10 +833,10 @@ public class FunctionCodegen {
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
                                 StackValue.onStack(delegateToMethod.getReturnType()),
-                                TypesPackage.getApproximationTo(
-                                        delegatedTo.getReturnType(),
+                                RuntimeAssertionInfo.create(
                                         delegateFunction.getReturnType(),
-                                        new Approximation.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
+                                        delegatedTo.getReturnType(),
+                                        new RuntimeAssertionInfo.DataFlowExtras.OnlyMessage(delegatedTo.getName() + "(...)")
                                 )
                         );
 

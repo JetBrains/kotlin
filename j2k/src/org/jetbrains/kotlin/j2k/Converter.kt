@@ -328,7 +328,7 @@ class Converter private constructor(
                                                       isVal && modifiers.isPrivate)
             val propertyType = typeToDeclare ?: typeConverter.convertVariableType(field)
 
-            addUsageProcessing(FieldToPropertyProcessing(field, correction?.name ?: field.getName(), propertyType.isNullable))
+            addUsageProcessing(FieldToPropertyProcessing(field, correction?.name ?: field.getName()!!, propertyType.isNullable))
 
             return Property(name,
                   annotations,

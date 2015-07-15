@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
@@ -86,14 +87,16 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredFunctions(result, name)
 
+        val enhancedResult = enhanceSignatures(result)
+
         // Make sure that lazy things are computed before we release the lock
-        for (f in result) {
+        for (f in enhancedResult) {
             for (p in f.getValueParameters()) {
                 p.hasDefaultValue()
             }
         }
 
-        result.toReadOnlyList()
+        enhancedResult.toReadOnlyList()
     }
 
     protected data class MethodSignatureData(
@@ -234,7 +237,10 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredProperties(name, properties)
 
-        properties.toReadOnlyList()
+        if (DescriptorUtils.isAnnotationClass(containingDeclaration))
+            properties.toReadOnlyList()
+        else
+            enhanceSignatures(properties).toReadOnlyList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
@@ -270,7 +276,7 @@ public abstract class LazyJavaMemberScope(
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
-                                      c.sourceElementFactory.source(field))
+                                      c.sourceElementFactory.source(field), /* original = */ null)
     }
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): JetType {
@@ -348,7 +354,7 @@ public abstract class LazyJavaMemberScope(
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
 
-        p.println("containigDeclaration: ${getContainingDeclaration()}")
+        p.println("containingDeclaration: ${getContainingDeclaration()}")
 
         p.popIndent()
         p.println("}")

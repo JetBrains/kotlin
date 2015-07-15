@@ -173,13 +173,11 @@ object InvokeIntrinsic : FunctionCallCase {
             funDeclaration == callableDescriptor.builtIns.getFunction(parameterCount) ||
             funDeclaration == reflectionTypes.getKFunction(parameterCount)
         else
-            funDeclaration == callableDescriptor.builtIns.getExtensionFunction(parameterCount) ||
-            funDeclaration == reflectionTypes.getKExtensionFunction(parameterCount) ||
-            funDeclaration == reflectionTypes.getKMemberFunction(parameterCount)
+            funDeclaration == callableDescriptor.builtIns.getExtensionFunction(parameterCount)
     }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        return JsInvocation(dispatchReceiver, argumentsInfo.translateArguments)
+        return JsInvocation(dispatchReceiver!!, argumentsInfo.translateArguments)
     }
 
     /**
@@ -242,7 +240,7 @@ object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase {
         val callType = resolvedCall.getCall().getCallType()
         return when (callType) {
             Call.CallType.INVOKE ->
-                JsInvocation(dispatchReceiver, arguments)
+                JsInvocation(dispatchReceiver!!, arguments)
             Call.CallType.ARRAY_GET_METHOD ->
                 JsArrayAccess(dispatchReceiver, arguments[0])
             Call.CallType.ARRAY_SET_METHOD ->

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
@@ -35,7 +36,7 @@ public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : Jet
 
     }
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: T): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
         val newElement = JetPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
         val elementToReplace = (element.getParent() as? JetThisExpression) ?: element
         processReplacedElement(elementToReplace.replace(newElement) as JetElement)

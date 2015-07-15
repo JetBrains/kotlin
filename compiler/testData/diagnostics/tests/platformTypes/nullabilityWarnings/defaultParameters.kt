@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -14,8 +13,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -24,7 +21,7 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    fun foo(p: J = platformNN, p1: J = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, p2: J = platformJ) {}
+    fun foo(p: J = platformNN, p1: J = <!TYPE_MISMATCH!>platformN<!>, p2: J = platformJ) {}
 
     fun foo1(p: J? = platformNN, p1: J? = platformN, p2: J? = platformJ) {}
 }

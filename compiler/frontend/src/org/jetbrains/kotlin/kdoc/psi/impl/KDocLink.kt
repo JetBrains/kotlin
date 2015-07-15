@@ -43,6 +43,6 @@ public class KDocLink(node: ASTNode) : JetElementImpl(node) {
         return if (tag != null && tag.getSubjectLink() == this) tag else null
     }
 
-    override fun getReferences(): Array<out PsiReference>? =
+    override fun getReferences(): Array<out PsiReference> =
         ReferenceProvidersRegistry.getReferencesFromProviders(this)
 }

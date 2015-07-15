@@ -234,7 +234,7 @@ public class InlineCodegenUtil {
             return type.getInternalName();
         } else if (currentDescriptor instanceof FunctionDescriptor) {
             ClassDescriptor descriptor =
-                    typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_FUNCTION, (FunctionDescriptor) currentDescriptor);
+                    typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_CALLABLE, (FunctionDescriptor) currentDescriptor);
             if (descriptor != null) {
                 Type type = typeMapper.mapType(descriptor);
                 return type.getInternalName();

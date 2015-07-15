@@ -176,7 +176,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             for (argumentBinding in getArgumentBindings()) {
                 if (argumentBinding == null || argumentBinding.typeParameterDescriptor == null) continue
 
-                val projectionKind = getEffectiveProjectionKind(argumentBinding.typeParameterDescriptor, argumentBinding.typeProjection)!!
+                val projectionKind = getEffectiveProjectionKind(argumentBinding.typeParameterDescriptor!!, argumentBinding.typeProjection)!!
                 val newPosition = when (projectionKind) {
                     OUT -> position
                     IN -> position.opposite()

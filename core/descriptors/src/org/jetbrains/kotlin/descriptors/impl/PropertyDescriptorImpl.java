@@ -255,7 +255,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
                 setter.hasBody(), setter.isDefault(), kind, original == null ? null : original.getSetter(), SourceElement.NO_SOURCE
         );
         if (newSetter != null) {
-            List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);
+            List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(
+                    newSetter, setter.getValueParameters(), substitutor
+            );
             if (substitutedValueParameters == null) {
                 // The setter is projected out, e.g. in this case:
                 //     trait Tr<T> { var v: T }

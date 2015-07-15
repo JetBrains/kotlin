@@ -77,7 +77,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         }
         else {
             val offset = editor.getCaretModel().getOffset()
-            val element = file.findElementAt(offset)
+            val element = file.findElementAt(offset)!!
             element.getNonStrictParentOfType<JetSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
         }
 

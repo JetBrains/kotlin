@@ -24,6 +24,11 @@ package kotlin.reflect
 public interface KCallable<out R> {
     /**
      * The name of this callable as it was declared in the source code.
+     * If the callable has no name, a special invented name is created.
+     * Nameless callables include:
+     * - constructors have the name "<init>",
+     * - property accessors: the getter for a property named "foo" will have the name "<get-foo>",
+     *   the setter, similarly, will have the name "<set-foo>".
      */
     public val name: String
 }

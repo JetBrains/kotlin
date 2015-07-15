@@ -1,9 +1,6 @@
 package a
 
-import java.lang.annotation.*
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann
+annotation(retention = AnnotationRetention.RUNTIME) class Ann
 
 interface Tr {
     Ann

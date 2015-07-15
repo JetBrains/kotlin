@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -19,8 +18,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 var A by J.staticNN
-var B by <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
+var B by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>J.staticN<!>
 var C by J.staticJ

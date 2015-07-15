@@ -1,0 +1,29 @@
+package
+
+public /*synthesized*/ fun </*0*/ K, /*1*/ V> ConcMap(/*0*/ function: (K!, MyFunc<in K!, out V!>!) -> V!): ConcMap<K, V>
+public /*synthesized*/ fun </*0*/ K, /*1*/ V> MyFunc(/*0*/ function: (K!) -> V!): MyFunc<K, V>
+public fun concurrentMap(): kotlin.Unit
+
+public open class ConcHashMap</*0*/ K, /*1*/ V> : ConcMap<K!, V!> {
+    public constructor ConcHashMap</*0*/ K, /*1*/ V>()
+    java.lang.Override() public/*package*/ final override /*1*/ /*synthesized*/ fun computeIfAbsent(/*0*/ key: K!, /*1*/ mappingFunction: ((K!) -> V!)!): V!
+    java.lang.Override() public/*package*/ open override /*1*/ fun computeIfAbsent(/*0*/ key: K!, /*1*/ mappingFunction: MyFunc<in K!, out V!>!): V!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ConcMap</*0*/ K, /*1*/ V> {
+    public final /*synthesized*/ fun computeIfAbsent(/*0*/ key: K!, /*1*/ mappingFunction: ((K!) -> V!)!): V!
+    public abstract fun computeIfAbsent(/*0*/ key: K!, /*1*/ mappingFunction: MyFunc<in K!, out V!>!): V!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyFunc</*0*/ K, /*1*/ V> {
+    public abstract fun apply(/*0*/ String: K!): V!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,15 +1,17 @@
 VARIABLES T
 
-SUBTYPE Any Any
+Any <: Any
 
 type parameter bounds:
 T
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: true
 -hasViolatedUpperBound: false
 -isSuccessful: false

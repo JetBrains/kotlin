@@ -14,7 +14,7 @@ enum class E {
     <!ILLEGAL_MODIFIER!>final<!> FINAL,
 
     <!ILLEGAL_MODIFIER!>inner<!> INNER,
-    <!ILLEGAL_MODIFIER!>annotation<!> ANNOTATION,
+    <!ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER!>annotation<!> ANNOTATION,
     <!ILLEGAL_MODIFIER!>enum<!> ENUM,
     <!ILLEGAL_MODIFIER!>out<!> OUT,
     <!ILLEGAL_MODIFIER!>in<!> IN,

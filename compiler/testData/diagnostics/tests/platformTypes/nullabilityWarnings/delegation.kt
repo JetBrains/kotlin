@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 import java.util.*;
@@ -14,8 +13,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 class A : List<String> by J.staticNN
-class B : List<String> by <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
+class B : List<String> by <!TYPE_MISMATCH!>J.staticN<!>
 class C : List<String> by J.staticJ

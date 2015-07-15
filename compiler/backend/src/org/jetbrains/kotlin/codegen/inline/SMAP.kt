@@ -284,7 +284,7 @@ class RawFileMapping(val name: String, val path: String) {
             if (rangeMappings.isNotEmpty() && isLastMapped && couldFoldInRange(lastMappedWithNewIndex, source)) {
                 rangeMapping = rangeMappings.last()
                 rangeMapping.range += source - lastMappedWithNewIndex
-                dest = lineMappings[lastMappedWithNewIndex] + source - lastMappedWithNewIndex
+                dest = lineMappings[lastMappedWithNewIndex]!! + source - lastMappedWithNewIndex
             }
             else {
                 dest = currentIndex + 1

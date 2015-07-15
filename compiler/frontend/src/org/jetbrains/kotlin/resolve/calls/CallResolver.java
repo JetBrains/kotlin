@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.*;
@@ -59,8 +60,8 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -71,6 +72,7 @@ public class CallResolver {
     private TypeResolver typeResolver;
     private CandidateResolver candidateResolver;
     private ArgumentTypeResolver argumentTypeResolver;
+    private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
     private TaskPrioritizer taskPrioritizer;
     private AdditionalCheckerProvider additionalCheckerProvider;
@@ -96,6 +98,11 @@ public class CallResolver {
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
         this.argumentTypeResolver = argumentTypeResolver;
+    }
+
+    @Inject
+    public void setGenericCandidateResolver(GenericCandidateResolver genericCandidateResolver) {
+        this.genericCandidateResolver = genericCandidateResolver;
     }
 
     @Inject
@@ -434,28 +441,17 @@ public class CallResolver {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
 
-        OverloadResolutionResultsImpl<F> results = null;
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);
-        if (!CallResolverUtil.isInvokeCallOnVariable(call)) {
-            ResolutionResultsCache.CachedData data = context.resolutionResultsCache.get(call);
-            if (data != null) {
-                DelegatingBindingTrace deltasTraceForResolve = data.getResolutionTrace();
-                deltasTraceForResolve.addOwnDataTo(traceToResolveCall);
-                //noinspection unchecked
-                results = (OverloadResolutionResultsImpl<F>) data.getResolutionResults();
-            }
+        BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
+
+        recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+        OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
+        DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
+        if (deltasTraceForTypeInference != null) {
+            deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
         }
-        if (results == null) {
-            BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
-            recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
-            results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
-            DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
-            if (deltasTraceForTypeInference != null) {
-                deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
-            }
-            completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
-            cacheResults(context, results, traceToResolveCall, tracing);
-        }
+        completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
+        cacheResults(context, results, traceToResolveCall, tracing);
         traceToResolveCall.commit();
 
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
@@ -470,7 +466,7 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
-        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
+        if (CallResolverUtilPackage.isInvokeCallOnVariable(context.call)) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
@@ -480,7 +476,7 @@ public class CallResolver {
 
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                 results.getResultingCall(), context, tracing);
-        candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
+        genericCandidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
     }
 
     private static <F extends CallableDescriptor> void cacheResults(
@@ -490,7 +486,7 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         Call call = context.call;
-        if (CallResolverUtil.isInvokeCallOnVariable(call)) return;
+        if (CallResolverUtilPackage.isInvokeCallOnVariable(call)) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
                 BindingContext.EMPTY, "delta trace for caching resolve of", context.call);

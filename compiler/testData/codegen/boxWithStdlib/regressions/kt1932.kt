@@ -1,8 +1,6 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Annotation
 
-Retention(RetentionPolicy.RUNTIME) annotation class foo(val name : String)
+annotation(retention = AnnotationRetention.RUNTIME) class foo(val name : String)
 
 class Test() {
     foo("OK") fun hello(input : String) {

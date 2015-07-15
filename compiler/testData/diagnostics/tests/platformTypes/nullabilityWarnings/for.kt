@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 import java.util.*;
@@ -14,8 +13,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -25,7 +22,7 @@ fun test() {
     val platformJ = J.staticJ
 
     for (x in platformNN) {}
-    for (x in <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    for (x in <!ITERATOR_MISSING!>platformN<!>) {}
     for (x in platformJ) {}
 }
 

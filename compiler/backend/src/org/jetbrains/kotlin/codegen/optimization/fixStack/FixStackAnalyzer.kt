@@ -134,18 +134,18 @@ public class FixStackAnalyzer(
             val returnValue = pop()
             clearStack()
             val savedValues = savedStacks[beforeInlineMarker]
-            pushAll(savedValues)
+            pushAll(savedValues!!)
             push(returnValue)
         }
         else {
             val savedValues = savedStacks[beforeInlineMarker]
-            pushAll(savedValues)
+            pushAll(savedValues!!)
         }
     }
 
     private fun FixStackFrame.executeRestoreStackInTryCatch(insn: AbstractInsnNode) {
         val saveNode = context.saveStackMarkerForRestoreMarker[insn]
-        val savedValues = savedStacks.getOrElse(saveNode) {
+        val savedValues = savedStacks.getOrElse(saveNode!!) {
             throw AssertionError("${indexOf(insn)}: Restore stack is unavailable for ${indexOf(saveNode)}")
         }
         pushAll(savedValues)

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 
-public trait AccessTarget {
-    public data class Declaration(val descriptor: VariableDescriptor): AccessTarget
-    public data class Call(val resolvedCall: ResolvedCall<*>): AccessTarget
-    public object BlackBox: AccessTarget
+public sealed class AccessTarget {
+    public data class Declaration(val descriptor: VariableDescriptor): AccessTarget()
+    public data class Call(val resolvedCall: ResolvedCall<*>): AccessTarget()
+    public object BlackBox: AccessTarget()
 }
 
 public abstract class AccessValueInstruction protected constructor(
@@ -49,8 +49,14 @@ public class ReadValueInstruction private constructor(
         receiverValues: Map<PseudoValue, ReceiverValue>,
         private var _outputValue: PseudoValue?
 ) : AccessValueInstruction(element, lexicalScope, target, receiverValues), InstructionWithValue {
-    private fun newResultValue(factory: PseudoValueFactory, valueElement: JetElement) {
-        _outputValue = factory.newValue(valueElement, this)
+    public constructor(
+            element: JetElement,
+            lexicalScope: LexicalScope,
+            target: AccessTarget,
+            receiverValues: Map<PseudoValue, ReceiverValue>,
+            factory: PseudoValueFactory
+    ): this(element, lexicalScope, target, receiverValues, null) {
+        _outputValue = factory.newValue(element, this)
     }
 
     override val inputValues: List<PseudoValue>
@@ -82,21 +88,6 @@ public class ReadValueInstruction private constructor(
 
     override fun createCopy(): InstructionImpl =
             ReadValueInstruction(element, lexicalScope, target, receiverValues, outputValue)
-
-    companion object Factory {
-        public fun create (
-                element: JetElement,
-                lexicalScope: LexicalScope,
-                target: AccessTarget,
-                receiverValues: Map<PseudoValue, ReceiverValue>,
-                factory: PseudoValueFactory
-        ): ReadValueInstruction {
-            return ReadValueInstruction(element, lexicalScope, target, receiverValues, null).let { instruction ->
-                instruction.newResultValue(factory, element)
-                instruction
-            }
-        }
-    }
 }
 
 public class WriteValueInstruction(

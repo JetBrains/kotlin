@@ -30,7 +30,7 @@ public class MissingConstructorKeywordFix(element: JetPrimaryConstructor) : JetI
     override fun getFamilyName(): String = getText()
     override fun getText(): String = "Add 'constructor' keyword"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         element.addConstructorKeyword()
     }
 

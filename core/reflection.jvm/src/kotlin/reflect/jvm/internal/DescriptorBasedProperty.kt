@@ -30,17 +30,17 @@ import java.lang.reflect.Method
 abstract class DescriptorBasedProperty protected constructor(
         container: KCallableContainerImpl,
         name: String,
-        receiverParameterDesc: String?,
+        signature: String,
         descriptorInitialValue: PropertyDescriptor?
 ) {
-    constructor(container: KCallableContainerImpl, name: String, receiverParameterClass: Class<*>?) : this(
-            container, name, receiverParameterClass?.desc, null
+    constructor(container: KCallableContainerImpl, name: String, signature: String) : this(
+            container, name, signature, null
     )
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : this(
             container,
             descriptor.getName().asString(),
-            descriptor.getExtensionReceiverParameter()?.getType()?.let { type -> RuntimeTypeMapper.mapTypeToJvmDesc(type) },
+            RuntimeTypeMapper.mapPropertySignature(descriptor),
             descriptor
     )
 
@@ -51,7 +51,7 @@ abstract class DescriptorBasedProperty protected constructor(
     )
 
     protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
-        container.findPropertyDescriptor(name, receiverParameterDesc)
+        container.findPropertyDescriptor(name, signature)
     }
 
     // null if this is a property declared in a foreign (Java) class
@@ -66,21 +66,21 @@ abstract class DescriptorBasedProperty protected constructor(
         null
     }
 
-    open val field: Field? by ReflectProperties.lazySoft {
+    open val javaField: Field? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null) container.jClass.getField(name)
         else if (!proto.signature.hasField()) null
         else container.findFieldBySignature(proto.proto, proto.signature.getField(), proto.nameResolver)
     }
 
-    open val getter: Method? by ReflectProperties.lazySoft {
+    open val javaGetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasGetter()) null
         else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver,
                                              descriptor.getGetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
-    open val setter: Method? by ReflectProperties.lazySoft {
+    open val javaSetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasSetter()) null
         else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver,

@@ -111,7 +111,7 @@ class NoInternalVisibilityInStdLibTest {
     }
 
     After fun tearDown() {
-        Disposer.dispose(disposable)
+        Disposer.dispose(disposable!!)
         disposable = null
     }
 

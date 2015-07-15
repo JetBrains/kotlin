@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationImpl;
-import org.jetbrains.kotlin.load.java.structure.impl.JavaAnnotationOwnerImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil;
+import org.jetbrains.kotlin.load.java.structure.impl.JavaModifierListOwnerImpl;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
@@ -35,18 +35,25 @@ public class PsiBasedExternalAnnotationResolver implements ExternalAnnotationRes
     @Nullable
     @Override
     public JavaAnnotation findExternalAnnotation(@NotNull JavaAnnotationOwner owner, @NotNull FqName fqName) {
-        PsiAnnotation psiAnnotation = findExternalAnnotation(((JavaAnnotationOwnerImpl) owner).getPsi(), fqName);
-        return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
+        if (owner instanceof JavaModifierListOwnerImpl) {
+            JavaModifierListOwnerImpl modifierListOwner = (JavaModifierListOwnerImpl) owner;
+            PsiAnnotation psiAnnotation = findExternalAnnotation(modifierListOwner.getPsi(), fqName);
+            return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
+        }
+        return null;
     }
 
     @NotNull
     @Override
     public Collection<JavaAnnotation> findExternalAnnotations(@NotNull JavaAnnotationOwner owner) {
-        PsiModifierListOwner psiOwner = ((JavaAnnotationOwnerImpl) owner).getPsi();
-        PsiAnnotation[] annotations = ExternalAnnotationsManager.getInstance(psiOwner.getProject()).findExternalAnnotations(psiOwner);
-        return annotations == null
-               ? Collections.<JavaAnnotation>emptyList()
-               : JavaElementCollectionFromPsiArrayUtil.annotations(annotations);
+        if (owner instanceof JavaModifierListOwnerImpl) {
+            PsiModifierListOwner psiOwner = ((JavaModifierListOwnerImpl) owner).getPsi();
+            PsiAnnotation[] annotations = ExternalAnnotationsManager.getInstance(psiOwner.getProject()).findExternalAnnotations(psiOwner);
+            return annotations == null
+                   ? Collections.<JavaAnnotation>emptyList()
+                   : JavaElementCollectionFromPsiArrayUtil.annotations(annotations);
+        }
+        return Collections.emptyList();
     }
 
     @Nullable

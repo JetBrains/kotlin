@@ -50,19 +50,27 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
 
         for (ValueParameterDescriptor param1 : parameters1) {
             ValueParameterDescriptor param2 = parameters2.get(param1.getIndex());
-            if (!equalClasses(param2.getType(), param1.getType())) {
+            if (differentClasses(param2.getType(), param1.getType())) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean equalClasses(@NotNull JetType type1, @NotNull JetType type2) {
+    private static boolean differentClasses(@NotNull JetType type1, @NotNull JetType type2) {
         DeclarationDescriptor declarationDescriptor1 = type1.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor1 == null) return false; // No class, classes are not equal
+        if (declarationDescriptor1 == null) return true; // No class, classes are not equal
         DeclarationDescriptor declarationDescriptor2 = type2.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor2 == null) return false; // Class of type1 is not null
-        return declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
+        if (declarationDescriptor2 == null) return true; // Class of type1 is not null
+
+        if (declarationDescriptor1 instanceof TypeParameterDescriptor && declarationDescriptor2 instanceof TypeParameterDescriptor) {
+            // if type of value parameter is some generic parameter then their equality was checked by OverridingUtil before calling ExternalOverridabilityCondition
+            // Note that it's true unless we generate sam adapter for type parameter with SAM interface as upper bound:
+            // <K extends Runnable >void foo(K runnable) {}
+            return false;
+        }
+
+        return !declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
     }
 
     // if function is or overrides declaration, returns null; otherwise, return original of sam adapter with substituted type parameters

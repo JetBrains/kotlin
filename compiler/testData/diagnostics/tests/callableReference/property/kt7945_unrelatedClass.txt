@@ -1,6 +1,6 @@
 package
 
-internal fun OtherClass.test(/*0*/ prop: kotlin.reflect.KMemberProperty<TestClass, kotlin.Int>): kotlin.Unit
+internal fun OtherClass.test(/*0*/ prop: kotlin.reflect.KProperty1<TestClass, kotlin.Int>): kotlin.Unit
 
 internal open class OtherClass {
     public constructor OtherClass()

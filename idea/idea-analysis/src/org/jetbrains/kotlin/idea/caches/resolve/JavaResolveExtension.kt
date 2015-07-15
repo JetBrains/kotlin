@@ -104,7 +104,7 @@ private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetSc
 
 private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
     return firstOrNull { member ->
-        val memberJavaElement = (member.getSource() as? JavaSourceElement)?.javaElement
+        val memberJavaElement = (member.getOriginal().getSource() as? JavaSourceElement)?.javaElement
         when {
             memberJavaElement == javaElement ->
                 true

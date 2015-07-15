@@ -1,8 +1,8 @@
 // This test was adapted from compiler/testData/codegen/boxWithStdlib/callableReference/function/.
 package foo
 
-fun <T> run(arg1: A, arg2: T, funRef:A.(T) -> T): T {
-    return arg1.funRef(arg2)
+fun <T> run(arg1: A, arg2: T, funRef:(A, T) -> T): T {
+    return funRef(arg1, arg2)
 }
 
 class A {
@@ -17,7 +17,7 @@ fun A.bar(x: Int): Int {
 fun box(): Boolean {
     val funRef = A::bar
     val obj = A()
-    var result = obj.(funRef)(25)
+    var result = funRef(obj, 25)
     if (result != 25 || obj.xx != 200) return false
 
     result = run(A(), 25, funRef)

@@ -5,5 +5,5 @@ open class A {
 }
 
 fun test() {
-    A.B.(A::foo)()
+    (A::foo)(A.B)
 }

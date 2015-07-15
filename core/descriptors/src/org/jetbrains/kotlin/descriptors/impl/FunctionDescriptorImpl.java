@@ -198,6 +198,31 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             boolean copyOverrides,
             @NotNull Kind kind
     ) {
+        return doSubstitute(originalSubstitutor,
+                newOwner, newModality, newVisibility, original, copyOverrides, kind,
+                getValueParameters(), getExtensionReceiverParameterType(), getReturnType()
+        );
+    }
+
+    @Nullable
+    protected JetType getExtensionReceiverParameterType() {
+        if (extensionReceiverParameter == null) return null;
+        return extensionReceiverParameter.getType();
+    }
+
+
+    @Nullable
+    protected FunctionDescriptor doSubstitute(@NotNull TypeSubstitutor originalSubstitutor,
+            @NotNull DeclarationDescriptor newOwner,
+            @NotNull Modality newModality,
+            @NotNull Visibility newVisibility,
+            @Nullable FunctionDescriptor original,
+            boolean copyOverrides,
+            @NotNull Kind kind,
+            @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
+            @Nullable JetType newExtensionReceiverParameterType,
+            @NotNull JetType newReturnType
+    ) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind);
 
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
@@ -207,8 +232,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         );
 
         JetType substitutedReceiverParameterType = null;
-        if (extensionReceiverParameter != null) {
-            substitutedReceiverParameterType = substitutor.substitute(getExtensionReceiverParameter().getType(), Variance.IN_VARIANCE);
+        if (newExtensionReceiverParameterType != null) {
+            substitutedReceiverParameterType = substitutor.substitute(newExtensionReceiverParameterType, Variance.IN_VARIANCE);
             if (substitutedReceiverParameterType == null) {
                 return null;
             }
@@ -232,12 +257,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             }
         }
 
-        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);
+        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(
+                substitutedDescriptor, newValueParameterDescriptors, substitutor
+        );
         if (substitutedValueParameters == null) {
             return null;
         }
 
-        JetType substitutedReturnType = substitutor.substitute(getReturnType(), Variance.OUT_VARIANCE);
+        JetType substitutedReturnType = substitutor.substitute(newReturnType, Variance.OUT_VARIANCE);
         if (substitutedReturnType == null) {
             return null;
         }
@@ -272,9 +299,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Nullable
-    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(FunctionDescriptor substitutedDescriptor, @NotNull FunctionDescriptor functionDescriptor, @NotNull TypeSubstitutor substitutor) {
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
+            FunctionDescriptor substitutedDescriptor,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull TypeSubstitutor substitutor
+    ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        List<ValueParameterDescriptor> unsubstitutedValueParameters = functionDescriptor.getValueParameters();
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
             // TODO : Lazy?
             JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);

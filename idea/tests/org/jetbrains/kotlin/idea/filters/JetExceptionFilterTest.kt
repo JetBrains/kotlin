@@ -87,21 +87,26 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
             VfsUtilCore.findRelativeFile(relativePath, rootDir);
         }
         TestCase.assertNotNull(expectedFile)
+        expectedFile!!
 
         val line = createStackTraceElementLine(linePrefix, relativePath, className(expectedFile), lineNumber)
         val result = filter.applyFilter(line, 0)
 
         TestCase.assertNotNull(result)
+        result!!
         val info = result.getFirstHyperlinkInfo()
         TestCase.assertNotNull(info)
         info as FileHyperlinkInfo
         val descriptor = info.getDescriptor()
         TestCase.assertNotNull(descriptor)
+        descriptor!!
 
         TestCase.assertEquals(expectedFile, descriptor.getFile())
 
         val document = FileDocumentManager.getInstance().getDocument(expectedFile)
         TestCase.assertNotNull(document)
+        document!!
+
         val expectedOffset = document.getLineStartOffset(lineNumber - 1)
         TestCase.assertEquals(expectedOffset, descriptor.getOffset())
     }

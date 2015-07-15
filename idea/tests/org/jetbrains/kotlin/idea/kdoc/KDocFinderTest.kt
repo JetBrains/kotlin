@@ -33,7 +33,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as JetFile).getDeclarations()[0]
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor()
+        val constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor()!!
         val doc = KDocFinder.findKDoc(constructorDescriptor)
         Assert.assertEquals("Doc for constructor of class C.", doc!!.getContent())
     }

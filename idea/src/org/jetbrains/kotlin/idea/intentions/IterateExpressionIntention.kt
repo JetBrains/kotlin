@@ -50,7 +50,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
         val type = bindingContext.getType(expression) ?: return null
         val moduleDescriptor = expression.getResolutionFacade().findModuleDescriptor(expression)
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression]
+        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression]!!
         val elementType = IterableTypesDetector(expression.getProject(), moduleDescriptor, scope).elementType(type)?.type ?: return null
         return Data(type, elementType)
     }

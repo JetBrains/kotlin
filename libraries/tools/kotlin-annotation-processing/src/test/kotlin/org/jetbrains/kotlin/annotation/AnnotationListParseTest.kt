@@ -32,6 +32,8 @@ public class AnnotationListParseTest {
 
     Test fun testSimple() = doTest("simple")
 
+    Test fun testDeclarations() = doTest("classDeclarations")
+
 
     private val resourcesRootFile = File("src/test/resources/parse")
 
@@ -59,10 +61,11 @@ public class AnnotationListParseTest {
             }
         }
 
-        val actualAnnotationsSorted = actualAnnotations.toString()
-                .lines().filter { it.isNotEmpty() }.sort().joinToString("\n")
+        val actualAnnotationsSorted = actualAnnotations.toString().lines().filter { it.isNotEmpty() }.sort()
+        val classDeclarationsSorted = annotationProvider.kotlinClasses.sort()
 
-        assertEqualsToFile(expectedFile, actualAnnotationsSorted)
+        val fileContents = (actualAnnotationsSorted + classDeclarationsSorted).joinToString("\n")
+        assertEqualsToFile(expectedFile, fileContents)
     }
 
     // JetTestUtils.assertEqualsToFile() is not reachable from here

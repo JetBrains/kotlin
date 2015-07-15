@@ -5,7 +5,7 @@ test.Anno(t = {"prosper"}) internal val bar: kotlin.Int = 42
 test.Anno(t = {}) internal fun baz(): kotlin.Unit
 test.Anno(t = {"live", "long"}) internal fun foo(): kotlin.Unit
 
-internal final annotation class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val t: kotlin.Array<out kotlin.String>
         internal final fun <get-t>(): kotlin.Array<out kotlin.String>

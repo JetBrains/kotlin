@@ -148,8 +148,7 @@ object DynamicCallableDescriptors {
         )
     }
 
-    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
-
+    private fun createValueParameters(owner: FunctionDescriptor, call: Call): List<ValueParameterDescriptor> {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
         fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {

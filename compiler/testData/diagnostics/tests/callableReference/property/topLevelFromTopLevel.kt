@@ -7,12 +7,9 @@ val y: String get() = "y"
 
 fun testX() {
     val xx = ::x
-    checkSubtype<KMutableTopLevelProperty<Int>>(xx)
-    checkSubtype<KMutableTopLevelVariable<Int>>(xx)
-    checkSubtype<KTopLevelProperty<Int>>(xx)
-    checkSubtype<KTopLevelVariable<Int>>(xx)
+    checkSubtype<KMutableProperty0<Int>>(xx)
+    checkSubtype<KProperty0<Int>>(xx)
     checkSubtype<KMutableProperty<Int>>(xx)
-    checkSubtype<KMutableVariable<Int>>(xx)
     checkSubtype<KProperty<Int>>(xx)
     checkSubtype<KCallable<Int>>(xx)
 
@@ -23,8 +20,8 @@ fun testX() {
 
 fun testY() {
     val yy = ::y
-    checkSubtype<KMutableTopLevelProperty<String>>(<!TYPE_MISMATCH!>yy<!>)
-    checkSubtype<KTopLevelVariable<String>>(yy)
+    checkSubtype<KMutableProperty0<String>>(<!TYPE_MISMATCH!>yy<!>)
+    checkSubtype<KProperty0<String>>(yy)
     checkSubtype<KMutableProperty<String>>(<!TYPE_MISMATCH!>yy<!>)
     checkSubtype<KProperty<String>>(yy)
     checkSubtype<KCallable<String>>(yy)

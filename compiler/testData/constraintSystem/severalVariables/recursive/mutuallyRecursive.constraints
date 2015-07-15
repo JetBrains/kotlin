@@ -1,0 +1,4 @@
+VARIABLES T P
+
+T := My<P>
+P := Two<T,P>

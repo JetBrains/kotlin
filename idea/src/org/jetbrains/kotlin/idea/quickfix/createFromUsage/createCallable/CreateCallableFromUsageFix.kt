@@ -120,11 +120,11 @@ public abstract class CreateCallableFromUsageFixBase(
         }
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val callableInfo = callableInfos.first()
 
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as JetElement, file!!, editor!!, isExtension).createBuilder()
+                CallableBuilderConfiguration(callableInfos, element as JetElement, file, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement

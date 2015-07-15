@@ -61,7 +61,7 @@ public class DeclarationResolver {
     public fun checkRedeclarations(c: TopDownAnalysisContext) {
         for (classDescriptor in c.getDeclaredClasses().values()) {
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
-            for (desc in classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors()) {
+            for (desc in classDescriptor.getUnsubstitutedMemberScope().getOwnDeclaredDescriptors()) {
                 if (desc is ClassDescriptor || desc is PropertyDescriptor) {
                     descriptorMap.put(desc.getName(), desc)
                 }

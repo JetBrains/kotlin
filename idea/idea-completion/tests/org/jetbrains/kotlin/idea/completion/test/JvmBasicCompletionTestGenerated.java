@@ -67,48 +67,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("BackingFields1.kt")
-        public void testBackingFields1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFields2.kt")
-        public void testBackingFields2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFields3.kt")
-        public void testBackingFields3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFields4.kt")
-        public void testBackingFields4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFields5.kt")
-        public void testBackingFields5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields5.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFields6.kt")
-        public void testBackingFields6() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFields6.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("BackingFieldsInStringTemplate.kt")
-        public void testBackingFieldsInStringTemplate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BackingFieldsInStringTemplate.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BasicAny.kt");
@@ -259,72 +217,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("FunctionLiteralParameterName0.kt")
-        public void testFunctionLiteralParameterName0() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName0.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterName1.kt")
-        public void testFunctionLiteralParameterName1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterName2.kt")
-        public void testFunctionLiteralParameterName2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterName3.kt")
-        public void testFunctionLiteralParameterName3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterName4.kt")
-        public void testFunctionLiteralParameterName4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterName5.kt")
-        public void testFunctionLiteralParameterName5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterName5.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterType1.kt")
-        public void testFunctionLiteralParameterType1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterType1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterType2.kt")
-        public void testFunctionLiteralParameterType2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterType2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterType3.kt")
-        public void testFunctionLiteralParameterType3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterType3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterType4.kt")
-        public void testFunctionLiteralParameterType4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterType4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("FunctionLiteralParameterType5.kt")
-        public void testFunctionLiteralParameterType5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionLiteralParameterType5.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("FunctionVariableCallArgument.kt")
         public void testFunctionVariableCallArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/FunctionVariableCallArgument.kt");
@@ -370,60 +262,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("HigherOrderFunction2.kt")
         public void testHigherOrderFunction2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/HigherOrderFunction2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateExtensionMembers1.kt")
-        public void testImmediateExtensionMembers1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateExtensionMembers1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateExtensionMembers2.kt")
-        public void testImmediateExtensionMembers2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateExtensionMembers2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateExtensionMembers3.kt")
-        public void testImmediateExtensionMembers3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateExtensionMembers3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateExtensionMembers4.kt")
-        public void testImmediateExtensionMembers4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateExtensionMembers4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateMembers1.kt")
-        public void testImmediateMembers1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateMembers1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateMembers2.kt")
-        public void testImmediateMembers2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateMembers2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateMembers3.kt")
-        public void testImmediateMembers3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateMembers3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateMembers4.kt")
-        public void testImmediateMembers4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateMembers4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ImmediateMembers5.kt")
-        public void testImmediateMembers5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ImmediateMembers5.kt");
             doTest(fileName);
         }
 
@@ -499,12 +337,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("InFunctionLiteral.kt")
-        public void testInFunctionLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InFunctionLiteral.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("InGlobalPropertyInitializer.kt")
         public void testInGlobalPropertyInitializer() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InGlobalPropertyInitializer.kt");
@@ -526,6 +358,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("InInnerClass.kt")
         public void testInInnerClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InInnerClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("InLambda.kt")
+        public void testInLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InLambda.kt");
             doTest(fileName);
         }
 
@@ -1047,6 +885,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("Annotated.kt")
+            public void testAnnotated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/Annotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotationArguments.kt")
+            public void testAnnotationArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotationTarget.kt")
+            public void testAnnotationTarget() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationTarget.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FunctionAnnotation1.kt")
             public void testFunctionAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/FunctionAnnotation1.kt");
@@ -1176,6 +1032,57 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("TopLevelAnnotationArg2.kt")
             public void testTopLevelAnnotationArg2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TopLevelAnnotationArg2.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/backingFields")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BackingFields extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInBackingFields() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/backingFields"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("BackingFields1.kt")
+            public void testBackingFields1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFields2.kt")
+            public void testBackingFields2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFields3.kt")
+            public void testBackingFields3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFields4.kt")
+            public void testBackingFields4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFields5.kt")
+            public void testBackingFields5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFields6.kt")
+            public void testBackingFields6() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFields6.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BackingFieldsInStringTemplate.kt")
+            public void testBackingFieldsInStringTemplate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/backingFields/BackingFieldsInStringTemplate.kt");
                 doTest(fileName);
             }
         }
@@ -1311,6 +1218,138 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("WrongImplicitReceiver.kt")
             public void testWrongImplicitReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/WrongImplicitReceiver.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/immediateMembers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ImmediateMembers extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInImmediateMembers() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/immediateMembers"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ImmediateExtensionMembers1.kt")
+            public void testImmediateExtensionMembers1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateExtensionMembers1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateExtensionMembers2.kt")
+            public void testImmediateExtensionMembers2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateExtensionMembers2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateExtensionMembers3.kt")
+            public void testImmediateExtensionMembers3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateExtensionMembers3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateExtensionMembers4.kt")
+            public void testImmediateExtensionMembers4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateExtensionMembers4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateMembers1.kt")
+            public void testImmediateMembers1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateMembers2.kt")
+            public void testImmediateMembers2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateMembers3.kt")
+            public void testImmediateMembers3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateMembers4.kt")
+            public void testImmediateMembers4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ImmediateMembers5.kt")
+            public void testImmediateMembers5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers5.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/lambdaSignature")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LambdaSignature extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInLambdaSignature() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ParameterName1.kt")
+            public void testParameterName1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterName2.kt")
+            public void testParameterName2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterName3.kt")
+            public void testParameterName3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterName4.kt")
+            public void testParameterName4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterName5.kt")
+            public void testParameterName5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterName5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType1.kt")
+            public void testParameterType1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType2.kt")
+            public void testParameterType2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType3.kt")
+            public void testParameterType3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType4.kt")
+            public void testParameterType4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParameterType5.kt")
+            public void testParameterType5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/lambdaSignature/ParameterType5.kt");
                 doTest(fileName);
             }
         }
@@ -1629,6 +1668,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("PreferCloserReceiverGeneric.kt")
+            public void testPreferCloserReceiverGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferCloserReceiverGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PreferMemberExtension.kt")
             public void testPreferMemberExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMemberExtension.kt");
@@ -1650,6 +1695,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("PreferMoreSpecificExtension.kt")
             public void testPreferMoreSpecificExtension() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMoreSpecificExtensionGeneric.kt")
+            public void testPreferMoreSpecificExtensionGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGeneric.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMoreSpecificExtensionGenericWithParam.kt")
+            public void testPreferMoreSpecificExtensionGenericWithParam() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGenericWithParam.kt");
                 doTest(fileName);
             }
         }

@@ -104,7 +104,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 fun PsiElement.isCall() = this is JetCallExpression || this is JetOperationExpression || this is JetArrayAccessExpression
 
                 if (newExpression.isCall() ||
-                        newExpression is JetQualifiedExpression && newExpression.getSelectorExpression().isCall()) {
+                        newExpression is JetQualifiedExpression && newExpression.getSelectorExpression()!!.isCall()) {
                     return null
                 }
             }

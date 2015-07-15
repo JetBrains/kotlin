@@ -1,10 +1,6 @@
 package test
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(val c1: Int)
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(val c1: Int)
 
 Ann('a' - 'a') class MyClass
 

@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.Set;
 
 public interface ValueParameterDescriptor extends VariableDescriptor, ParameterDescriptor {
+    @NotNull
+    @Override
+    CallableDescriptor getContainingDeclaration();
+
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.
      *
@@ -53,7 +57,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
     ValueParameterDescriptor getOriginal();
 
     @NotNull
-    ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName);
+    ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName);
 
     /**
      * Parameter p1 overrides p2 iff

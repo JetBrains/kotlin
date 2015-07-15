@@ -1,3 +1,0 @@
-$TESTDATA_DIR$/noReflectionInClasspath.kt
--d
-$TEMP_DIR$

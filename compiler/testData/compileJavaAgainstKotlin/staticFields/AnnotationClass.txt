@@ -1,36 +1,36 @@
 package test
 
-internal final annotation class AByte : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class AByte : kotlin.Annotation {
     public constructor AByte(/*0*/ kotlin.Byte)
     internal final val value: kotlin.Byte
 }
 
-internal final annotation class AChar : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class AChar : kotlin.Annotation {
     public constructor AChar(/*0*/ kotlin.Char)
     internal final val value: kotlin.Char
 }
 
-internal final annotation class ADouble : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ADouble : kotlin.Annotation {
     public constructor ADouble(/*0*/ kotlin.Double)
     internal final val value: kotlin.Double
 }
 
-internal final annotation class AFloat : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class AFloat : kotlin.Annotation {
     public constructor AFloat(/*0*/ kotlin.Float)
     internal final val value: kotlin.Float
 }
 
-internal final annotation class AInt : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class AInt : kotlin.Annotation {
     public constructor AInt(/*0*/ kotlin.Int)
     internal final val value: kotlin.Int
 }
 
-internal final annotation class ALong : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ALong : kotlin.Annotation {
     public constructor ALong(/*0*/ kotlin.Long)
     internal final val value: kotlin.Long
 }
 
-internal final annotation class AString : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class AString : kotlin.Annotation {
     public constructor AString(/*0*/ kotlin.String)
     internal final val value: kotlin.String
 }

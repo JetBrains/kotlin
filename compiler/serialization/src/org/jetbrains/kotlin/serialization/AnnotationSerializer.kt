@@ -64,22 +64,22 @@ public object AnnotationSerializer {
 
             override fun visitBooleanValue(value: BooleanValue, data: Unit) {
                 setType(Type.BOOLEAN)
-                setIntValue(if (value.getValue()) 1 else 0)
+                setIntValue(if (value.getValue()!!) 1 else 0)
             }
 
             override fun visitByteValue(value: ByteValue, data: Unit) {
                 setType(Type.BYTE)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.getValue()!!.toLong())
             }
 
             override fun visitCharValue(value: CharValue, data: Unit) {
                 setType(Type.CHAR)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.getValue()!!.toLong())
             }
 
             override fun visitDoubleValue(value: DoubleValue, data: Unit) {
                 setType(Type.DOUBLE)
-                setDoubleValue(value.getValue())
+                setDoubleValue(value.getValue()!!)
             }
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
@@ -95,12 +95,12 @@ public object AnnotationSerializer {
 
             override fun visitFloatValue(value: FloatValue, data: Unit) {
                 setType(Type.FLOAT)
-                setFloatValue(value.getValue())
+                setFloatValue(value.getValue()!!)
             }
 
             override fun visitIntValue(value: IntValue, data: Unit) {
                 setType(Type.INT)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.getValue()!!.toLong())
             }
 
             override fun visitKClassValue(value: KClassValue?, data: Unit?) {
@@ -110,7 +110,7 @@ public object AnnotationSerializer {
 
             override fun visitLongValue(value: LongValue, data: Unit) {
                 setType(Type.LONG)
-                setIntValue(value.getValue())
+                setIntValue(value.getValue()!!)
             }
 
             override fun visitNullValue(value: NullValue, data: Unit) {
@@ -135,12 +135,12 @@ public object AnnotationSerializer {
 
             override fun visitShortValue(value: ShortValue, data: Unit) {
                 setType(Type.SHORT)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.getValue()!!.toLong())
             }
 
             override fun visitStringValue(value: StringValue, data: Unit) {
                 setType(Type.STRING)
-                setStringValue(nameTable.getStringIndex(value.getValue()))
+                setStringValue(nameTable.getStringIndex(value.getValue()!!))
             }
         }, Unit)
 

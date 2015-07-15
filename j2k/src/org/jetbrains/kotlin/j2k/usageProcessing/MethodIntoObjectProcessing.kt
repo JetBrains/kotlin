@@ -36,7 +36,7 @@ public class MethodIntoObjectProcessing(private val method: PsiMethod, private v
             else {
                 var qualifiedExpr = factory.createExpressionFromText(objectName + "." + refExpr.getText(), null) as PsiReferenceExpression
                 qualifiedExpr = refExpr.replace(qualifiedExpr) as PsiReferenceExpression
-                return listOf(qualifiedExpr.getReference())
+                return listOf(qualifiedExpr.getReference()!!)
             }
         }
     }

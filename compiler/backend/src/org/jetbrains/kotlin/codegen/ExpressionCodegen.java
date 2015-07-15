@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
@@ -45,13 +46,15 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -60,7 +63,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -70,12 +73,10 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.types.Approximation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -85,7 +86,6 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
@@ -104,7 +104,6 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.TraitImpl;
-import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
@@ -282,12 +281,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             StackValue stackValue = selector.accept(visitor, receiver);
 
-            Approximation.Info approximationInfo = null;
+            RuntimeAssertionInfo runtimeAssertionInfo = null;
             if (selector instanceof JetExpression) {
-                approximationInfo = bindingContext.get(BindingContext.EXPRESSION_RESULT_APPROXIMATION, (JetExpression) selector);
+                runtimeAssertionInfo = bindingContext.get(BindingContextSlicesPackage.getRUNTIME_ASSERTION_INFO(), (JetExpression) selector);
             }
 
-            return genNotNullAssertions(state, stackValue, approximationInfo);
+            return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -1429,7 +1428,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         );
 
         ClosureCodegen closureCodegen = new ClosureCodegen(
-                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper), kind, strategy, parentCodegen, cv
+                state, declaration, samType, context.intoClosure(descriptor, this, typeMapper), kind,
+                functionReferenceTarget, strategy, parentCodegen, cv
         );
 
         closureCodegen.generate();
@@ -1439,7 +1439,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
         }
 
-        return closureCodegen.putInstanceOnStack(this, functionReferenceTarget);
+        return closureCodegen.putInstanceOnStack(this);
     }
 
     @Override
@@ -2038,11 +2038,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return localOrCaptured;
         }
 
-        if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
-            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (descriptor instanceof ValueParameterDescriptor && container instanceof ScriptCodeDescriptor) {
+            ScriptCodeDescriptor scriptCodeDescriptor = (ScriptCodeDescriptor) container;
+            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) scriptCodeDescriptor.getContainingDeclaration();
             Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
+            //noinspection ConstantConditions
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
             return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script,
@@ -2330,7 +2333,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
-        JetSuperExpression superCallExpression = CallResolverUtil.getSuperCallExpression(call);
+        JetSuperExpression superCallExpression = CallResolverUtilPackage.getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
         if (superCall && !isInterface(fd.getContainingDeclaration())) {
@@ -2733,15 +2736,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, StackValue data) {
-        checkReflectionIsAvailable(expression);
-
         JetType type = bindingContext.getType(expression);
         assert type != null;
 
         assert state.getReflectionTypes().getkClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
-        return generateClassLiteralReference(KotlinPackage.single(type.getArguments()).getType());
+        return generateClassLiteralReference(typeMapper, KotlinPackage.single(type.getArguments()).getType());
     }
 
     @Override
@@ -2755,96 +2756,39 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
-        if (variableDescriptor == null) {
-            throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
+        if (variableDescriptor != null) {
+            return generatePropertyReference(expression, variableDescriptor, resolvedCall);
         }
 
-        // TODO: this diagnostic should also be reported on function references once they obtain reflection
-        checkReflectionIsAvailable(expression);
-
-        VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
-
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return generateTopLevelPropertyReference(descriptor);
-        }
-        else if (containingDeclaration instanceof ClassDescriptor) {
-            return generateMemberPropertyReference(descriptor, (ClassDescriptor) containingDeclaration);
-        }
-        else if (containingDeclaration instanceof ScriptDescriptor) {
-            return generateMemberPropertyReference(descriptor, ((ScriptDescriptor) containingDeclaration).getClassDescriptor());
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
-        }
-    }
-
-    private void checkReflectionIsAvailable(@NotNull JetExpression expression) {
-        if (findClassAcrossModuleDependencies(state.getModule(), JvmAbi.REFLECTION_FACTORY_IMPL) == null) {
-            state.getDiagnostics().report(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH.on(expression, expression));
-        }
+        throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
     }
 
     @NotNull
-    private StackValue generateTopLevelPropertyReference(@NotNull final VariableDescriptor descriptor) {
-        PackageFragmentDescriptor containingPackage = (PackageFragmentDescriptor) descriptor.getContainingDeclaration();
-        final String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(containingPackage.getFqName());
-
-        final ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
-        final Method factoryMethod;
-        if (receiverParameter != null) {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE, getType(Class.class)};
-            factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes)
-                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes);
-        }
-        else {
-            Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE};
-            factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE, parameterTypes)
-                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_TYPE, parameterTypes);
-        }
-
-        return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                v.visitLdcInsn(descriptor.getName().asString());
-                v.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
-
-                if (receiverParameter != null) {
-                    putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
-                }
-
-                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
-                return Unit.INSTANCE$;
-            }
-        });
-    }
-
-    @NotNull
-    private StackValue generateMemberPropertyReference(
-            @NotNull final VariableDescriptor descriptor,
-            @NotNull final ClassDescriptor containingClass
+    private StackValue generatePropertyReference(
+            @NotNull JetCallableReferenceExpression expression,
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull ResolvedCall<?> resolvedCall
     ) {
-        final Method factoryMethod = descriptor.isVar()
-                                     ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE)
-                                     : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE);
+        ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 
-        return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                v.visitLdcInsn(descriptor.getName().asString());
-                StackValue receiverClass = generateClassLiteralReference(containingClass.getDefaultType());
-                receiverClass.put(receiverClass.type, v);
-                v.invokestatic(REFLECTION, factoryMethod.getName(), factoryMethod.getDescriptor(), false);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(
+                OtherOrigin(expression),
+                typeMapper.mapClass(classDescriptor),
+                expression.getContainingFile()
+        );
 
-                return Unit.INSTANCE$;
-            }
-        });
+        @SuppressWarnings("unchecked")
+        PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
+                state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
+                expression, classBuilder, classDescriptor, (ResolvedCall<VariableDescriptor>) resolvedCall
+        );
+        codegen.generate();
+
+        return codegen.putInstanceOnStack();
     }
 
     @NotNull
-    private StackValue generateClassLiteralReference(@NotNull final JetType type) {
+    public static StackValue generateClassLiteralReference(@NotNull final JetTypeMapper typeMapper, @NotNull final JetType type) {
         return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -2852,7 +2796,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
                 //noinspection ConstantConditions
                 ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule()) {
+                // Instantiate annotation classes as foreign due to bug in JDK 6 and 7:
+                // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6857918
+                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule() ||
+                        DescriptorUtils.isAnnotationClass(descriptor)) {
                     putJavaLangClassInstance(v, classAsmType);
                     wrapJavaClassIntoKClass(v);
                 }

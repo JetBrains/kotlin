@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.light.LightMemberReference;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -114,7 +115,14 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
         if (element instanceof JetClassOrObject) {
-            processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+            JetPrimaryConstructor constructor = ((JetClassOrObject) element).getPrimaryConstructor();
+            if (constructor != null) {
+                PsiMethod lightMethod = LightClassUtil.getLightClassMethod(constructor);
+                processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
+            }
+            else {
+                processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+            }
         }
 
         Object[] callers = methodToDescriptorMap.values().toArray(new Object[methodToDescriptorMap.size()]);
@@ -179,54 +187,74 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     private Processor<PsiReference> defaultQueryProcessor(
             final HierarchyNodeDescriptor descriptor,
             final Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
-            final boolean kotlinOnly
+            boolean kotlinOnly
     ) {
-        return new ReadActionProcessor<PsiReference>() {
+        return new CalleeReferenceProcessor(kotlinOnly) {
             @Override
-            public boolean processInReadAction(PsiReference ref) {
-                // copied from Java
-                if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
-                    if (!(ref instanceof PsiElement)) {
-                        return true;
-                    }
-
-                    PsiElement parent = ((PsiElement) ref).getParent();
-                    if (parent instanceof PsiNewExpression) {
-                        if (((PsiNewExpression) parent).getClassReference() != ref) {
-                            return true;
-                        }
-                    }
-                    else if (parent instanceof PsiAnonymousClass) {
-                        if (((PsiAnonymousClass) parent).getBaseClassReference() != ref) {
-                            return true;
-                        }
-                    }
-                    else {
-                        return true;
-                    }
-                }
-
-                PsiElement refElement = ref.getElement();
-                if (PsiTreeUtil.getParentOfType(refElement, JetImportDirective.class, true) != null) return true;
-
-                PsiElement element = HierarchyUtils.getCallHierarchyElement(refElement);
-
-                if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
-
-                // If reference belongs to property initializer, show enclosing declaration instead
-                if (element instanceof JetProperty) {
-                    JetProperty property = (JetProperty) element;
-                    if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
-                        element = HierarchyUtils.getCallHierarchyElement(element.getParent());
-                    }
-                }
-
-                if (element != null) {
-                    addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
-                }
-
-                return true;
+            protected void onAccept(@NotNull PsiReference ref, @NotNull PsiElement element) {
+                addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
             }
         };
+    }
+
+    public static abstract class CalleeReferenceProcessor extends ReadActionProcessor<PsiReference> {
+        private final boolean kotlinOnly;
+
+        public CalleeReferenceProcessor(boolean only) {
+            kotlinOnly = only;
+        }
+
+        @Override
+        public boolean processInReadAction(PsiReference ref) {
+            // copied from Java
+            if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
+                if (!(ref instanceof PsiElement)) {
+                    return true;
+                }
+
+                PsiElement parent = ((PsiElement) ref).getParent();
+                if (parent instanceof PsiNewExpression) {
+                    if (((PsiNewExpression) parent).getClassReference() != ref) {
+                        return true;
+                    }
+                }
+                else if (parent instanceof PsiAnonymousClass) {
+                    if (((PsiAnonymousClass) parent).getBaseClassReference() != ref) {
+                        return true;
+                    }
+                }
+                else if (ref instanceof LightMemberReference) {
+                    PsiElement refTarget = ref.resolve();
+                    // Accept implicit superclass constructor reference in Java code
+                    if (!(refTarget instanceof PsiMethod && ((PsiMethod) refTarget).isConstructor())) return true;
+                }
+                else {
+                    return true;
+                }
+            }
+
+            PsiElement refElement = ref.getElement();
+            if (PsiTreeUtil.getParentOfType(refElement, JetImportDirective.class, true) != null) return true;
+
+            PsiElement element = HierarchyUtils.getCallHierarchyElement(refElement);
+
+            if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
+
+            // If reference belongs to property initializer, show enclosing declaration instead
+            if (element instanceof JetProperty) {
+                JetProperty property = (JetProperty) element;
+                if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
+                    element = HierarchyUtils.getCallHierarchyElement(element.getParent());
+                }
+            }
+
+            if (element != null) {
+                onAccept(ref, element);
+            }
+
+            return true;
+        }
+
+        protected abstract void onAccept(@NotNull PsiReference ref, @NotNull PsiElement element);
     }
 }

@@ -11,5 +11,5 @@ class Foo<T> {
         return t(l)
     }
 
-    private fun t(l: String): T = map[l]
+    private fun t(l: String) = map[l]
 }

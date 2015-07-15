@@ -94,7 +94,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         }.toString()
 
         var argument = psiFactory.createArgument(psiFactory.createExpression(argumentText))
-        argument = annotationEntry.getValueArgumentList().addArgument(argument)
+        argument = annotationEntry.getValueArgumentList()!!.addArgument(argument)
         argument = ShortenReferences.DEFAULT.process(argument) as JetValueArgument
 
         PsiDocumentManager.getInstance(argument.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())

@@ -6,6 +6,6 @@ fun box(): String {
     fun A.ext() { result = "OK" }
 
     val f = A::ext
-    A().f()
+    f(A())
     return result
 }

@@ -429,6 +429,27 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PublicField extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInPublicField() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("publicFieldNotOnProperty.kt")
+            public void testPublicFieldNotOnProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField/publicFieldNotOnProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicFieldOnDelegatedProperty.kt")
+            public void testPublicFieldOnDelegatedProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/publicField/publicFieldOnDelegatedProperty.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
@@ -510,6 +531,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt1558.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt3458.kt")
+        public void testKt3458() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt3458.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt4975.kt")
+        public void testKt4975() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
@@ -586,6 +619,69 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("trait.kt")
         public void testTrait() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/native/trait.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PurelyImplementedCollection extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInPurelyImplementedCollection() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arrayList.kt")
+        public void testArrayList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/arrayList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayListNullable.kt")
+        public void testArrayListNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/arrayListNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customClassMutableCollection.kt")
+        public void testCustomClassMutableCollection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/customClassMutableCollection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customClassMutableList.kt")
+        public void testCustomClassMutableList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/customClassMutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("maps.kt")
+        public void testMaps() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/maps.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapsWithNullableKey.kt")
+        public void testMapsWithNullableKey() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/mapsWithNullableKey.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapsWithNullableValues.kt")
+        public void testMapsWithNullableValues() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/mapsWithNullableValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sets.kt")
+        public void testSets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/sets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongTypeParametersCount.kt")
+        public void testWrongTypeParametersCount() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/wrongTypeParametersCount.kt");
             doTest(fileName);
         }
     }

@@ -1823,7 +1823,6 @@ public class JetParsing extends AbstractJetParsing {
      *   : selfType
      *   : functionType
      *   : userType
-     *   : tupleType
      *   : nullableType
      *   : "dynamic"
      *   ;
@@ -1856,9 +1855,6 @@ public class JetParsing extends AbstractJetParsing {
         }
         else if (at(IDENTIFIER) || at(PACKAGE_KEYWORD) || atParenthesizedMutableForPlatformTypes(0)) {
             parseUserType();
-        }
-        else if (at(HASH)) {
-            parseTupleType();
         }
         else if (at(LPAR)) {
             PsiBuilder.Marker functionOrParenthesizedType = mark();
@@ -2115,51 +2111,6 @@ public class JetParsing extends AbstractJetParsing {
     public void parseModifierListWithUnescapedAnnotations(TokenSet lookFor, TokenSet stopAt) {
         int lastId = findLastBefore(lookFor, stopAt, false);
         createTruncatedBuilder(lastId).parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
-    }
-
-    /*
-     * tupleType
-     *   : "#" "(" type{","}? ")"
-     *   : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
-     *   ;
-     */
-    @Deprecated // Tuples are dropped, but parsing is left to minimize surprising. This code should be removed some time (in Kotlin 1.0?)
-    private void parseTupleType() {
-        assert _at(HASH);
-
-        PsiBuilder.Marker tuple = mark();
-
-        myBuilder.disableNewlines();
-        advance(); // HASH
-        consumeIf(LPAR);
-
-        if (!at(RPAR)) {
-            while (true) {
-                if (at(COLON)) {
-                    errorAndAdvance("Expecting a name for tuple entry");
-                }
-
-                if (at(IDENTIFIER) && lookahead(1) == COLON) {
-                    advance(); // IDENTIFIER
-                    advance(); // COLON
-                    parseTypeRef();
-                }
-                else if (TYPE_REF_FIRST.contains(tt())) {
-                    parseTypeRef();
-                }
-                else {
-                    error("Type expected");
-                    break;
-                }
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-            }
-        }
-
-        consumeIf(RPAR);
-        myBuilder.restoreNewlinesState();
-
-        tuple.error("Tuples are not supported. Use data classes instead.");
     }
 
     /*

@@ -373,8 +373,13 @@ public class JetPsiUtil {
 
     @Nullable
     @Contract("null, _ -> null")
-    public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
+    public static PsiElement getTopmostParentOfTypes(
+            @Nullable PsiElement element,
+            @NotNull Class<? extends PsiElement>... parentTypes) {
+        if (element instanceof PsiFile) return null;
+
         PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
+        if (answer instanceof PsiFile) return answer;
 
         do {
             PsiElement next = PsiTreeUtil.getParentOfType(answer, parentTypes);

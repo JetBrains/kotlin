@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.common;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.JetType;
@@ -62,7 +61,7 @@ public class CodegenUtil {
     ) {
         Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
         for (FunctionDescriptor function : functions) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(function)
+            if (!CallResolverUtilPackage.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()
                 && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
                 && rawTypeMatches(function.getReturnType(), returnedClassifier)) {

@@ -2,6 +2,7 @@
 
 package test
 
+target(AnnotationTarget.TYPE)
 annotation class Ann(val x: String, val y: Double)
 
 class TypeAnnotationWithArguments {

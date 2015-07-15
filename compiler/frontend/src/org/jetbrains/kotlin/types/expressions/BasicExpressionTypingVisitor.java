@@ -517,7 +517,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
-            return TypeInfoFactoryPackage.createTypeInfo(components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c);
+            return TypeInfoFactoryPackage.createCheckedTypeInfo(
+                    components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
+            );
         }
 
         return TypeInfoFactoryPackage.createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c);
@@ -694,20 +696,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return null;
         }
 
-        JetType receiverType = null;
-        if (extensionReceiver != null) {
-            receiverType = extensionReceiver.getType();
-        }
-        else if (dispatchReceiver != null) {
-            receiverType = dispatchReceiver.getType();
-        }
-        boolean isExtension = extensionReceiver != null;
+        JetType receiverType = extensionReceiver != null ? extensionReceiver.getType() :
+                               dispatchReceiver != null ? dispatchReceiver.getType() :
+                               null;
 
         if (descriptor instanceof FunctionDescriptor) {
-            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType, isExtension);
+            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType);
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType, isExtension);
+            return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType);
         }
         else if (descriptor instanceof VariableDescriptor) {
             context.trace.report(UNSUPPORTED.on(reference, "References to variables aren't supported yet"));
@@ -722,16 +719,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetCallableReferenceExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull FunctionDescriptor descriptor,
-            @Nullable JetType receiverType,
-            boolean isExtension
+            @Nullable JetType receiverType
     ) {
         //noinspection ConstantConditions
         JetType type = components.reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
                 getValueParametersTypes(descriptor.getValueParameters()),
-                descriptor.getReturnType(),
-                isExtension
+                descriptor.getReturnType()
         );
 
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
@@ -753,11 +748,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetCallableReferenceExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull PropertyDescriptor descriptor,
-            @Nullable JetType receiverType,
-            boolean isExtension
+            @Nullable JetType receiverType
     ) {
-        JetType type = components.reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.getType(), isExtension,
-                                                                   descriptor.isVar());
+        JetType type = components.reflectionTypes.getKPropertyType(
+                Annotations.EMPTY, receiverType, descriptor.getType(), descriptor.isVar()
+        );
 
         LocalVariableDescriptor localVariable =
                 new LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),

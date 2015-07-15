@@ -208,12 +208,12 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             // (it's useful, when the arguments, e.g. lambdas or calls are incomplete)
             return;
         }
-        if (status.hasOnlyErrorsFromPosition(EXPECTED_TYPE_POSITION.position())) {
+        if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) {
             JetType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
             ConstraintSystem systemWithoutExpectedTypeConstraint =
-                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION.position());
+                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
             JetType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo
@@ -227,11 +227,14 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else if (status.hasViolatedUpperBound()) {
             trace.report(TYPE_INFERENCE_UPPER_BOUND_VIOLATED.on(reference, data));
         }
-        else if (status.hasTypeConstructorMismatch()) {
-            trace.report(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH.on(reference, data));
+        else if (status.hasParameterConstraintError()) {
+            trace.report(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR.on(reference, data));
         }
         else if (status.hasConflictingConstraints()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));
+        }
+        else if (status.hasTypeInferenceIncorporationError()) {
+            trace.report(TYPE_INFERENCE_INCORPORATION_ERROR.on(reference));
         }
         else {
             assert status.hasUnknownParameters();

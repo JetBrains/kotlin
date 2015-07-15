@@ -81,6 +81,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("TargetedAnnotation.kt")
+            public void testTargetedAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -167,6 +173,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 @TestMetadata("ClassObjectInStaticNestedClass.kt")
                 public void testClassObjectInStaticNestedClass() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("DataClass.kt")
+                public void testDataClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/DataClass.kt");
                     doTest(fileName);
                 }
 

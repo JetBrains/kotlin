@@ -1,18 +1,18 @@
 package test
 
-internal final annotation class BooleanAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class BooleanAnno : kotlin.Annotation {
     /*primary*/ public constructor BooleanAnno(/*0*/ value: kotlin.Boolean)
     internal final val value: kotlin.Boolean
         internal final fun <get-value>(): kotlin.Boolean
 }
 
-internal final annotation class ByteAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ByteAnno : kotlin.Annotation {
     /*primary*/ public constructor ByteAnno(/*0*/ value: kotlin.Byte)
     internal final val value: kotlin.Byte
         internal final fun <get-value>(): kotlin.Byte
 }
 
-internal final annotation class CharAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class CharAnno : kotlin.Annotation {
     /*primary*/ public constructor CharAnno(/*0*/ value: kotlin.Char)
     internal final val value: kotlin.Char
         internal final fun <get-value>(): kotlin.Char
@@ -22,31 +22,31 @@ test.IntAnno(value = 42) test.ShortAnno(value = 42.toShort()) test.ByteAnno(valu
     /*primary*/ public constructor Class()
 }
 
-internal final annotation class DoubleAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class DoubleAnno : kotlin.Annotation {
     /*primary*/ public constructor DoubleAnno(/*0*/ value: kotlin.Double)
     internal final val value: kotlin.Double
         internal final fun <get-value>(): kotlin.Double
 }
 
-internal final annotation class FloatAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class FloatAnno : kotlin.Annotation {
     /*primary*/ public constructor FloatAnno(/*0*/ value: kotlin.Float)
     internal final val value: kotlin.Float
         internal final fun <get-value>(): kotlin.Float
 }
 
-internal final annotation class IntAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class IntAnno : kotlin.Annotation {
     /*primary*/ public constructor IntAnno(/*0*/ value: kotlin.Int)
     internal final val value: kotlin.Int
         internal final fun <get-value>(): kotlin.Int
 }
 
-internal final annotation class LongAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class LongAnno : kotlin.Annotation {
     /*primary*/ public constructor LongAnno(/*0*/ value: kotlin.Long)
     internal final val value: kotlin.Long
         internal final fun <get-value>(): kotlin.Long
 }
 
-internal final annotation class ShortAnno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ShortAnno : kotlin.Annotation {
     /*primary*/ public constructor ShortAnno(/*0*/ value: kotlin.Short)
     internal final val value: kotlin.Short
         internal final fun <get-value>(): kotlin.Short

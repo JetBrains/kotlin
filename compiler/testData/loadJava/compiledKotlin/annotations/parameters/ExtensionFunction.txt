@@ -2,6 +2,6 @@ package test
 
 internal fun kotlin.Int.foo(/*0*/ test.A() x: kotlin.Int): kotlin.Unit
 
-internal final annotation class A : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }

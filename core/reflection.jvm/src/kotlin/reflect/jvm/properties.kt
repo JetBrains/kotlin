@@ -17,8 +17,8 @@
 package kotlin.reflect.jvm
 
 import kotlin.reflect.KProperty
-import kotlin.reflect.jvm.internal.KMemberPropertyImpl
-import kotlin.reflect.jvm.internal.KMutableMemberPropertyImpl
+import kotlin.reflect.jvm.internal.KMutablePropertyImpl
+import kotlin.reflect.jvm.internal.KPropertyImpl
 
 /**
  * Provides a way to suppress JVM access checks for a property.
@@ -34,29 +34,27 @@ import kotlin.reflect.jvm.internal.KMutableMemberPropertyImpl
 public var <R> KProperty<R>.accessible: Boolean
         get() {
             return when (this) {
-                is KMutableMemberPropertyImpl<*, R> ->
-                        field?.isAccessible() ?: true &&
-                        getter?.isAccessible() ?: true &&
-                        setter?.isAccessible() ?: true
-                is KMemberPropertyImpl<*, R> ->
-                        field?.isAccessible() ?: true &&
-                        getter?.isAccessible() ?: true
-                else -> {
-                    // Non-member properties always have public visibility on JVM, thus accessible has no effect on them
-                    true
-                }
+                is KMutablePropertyImpl<R> ->
+                        javaField?.isAccessible() ?: true &&
+                        javaGetter?.isAccessible() ?: true &&
+                        javaSetter?.isAccessible() ?: true
+                is KPropertyImpl<R> ->
+                        javaField?.isAccessible() ?: true &&
+                        javaGetter?.isAccessible() ?: true
+                else -> throw UnsupportedOperationException("Unknown property: $this ($javaClass)")
             }
         }
         set(value) {
             when (this) {
-                is KMutableMemberPropertyImpl<*, R> -> {
-                    field?.setAccessible(value)
-                    getter?.setAccessible(value)
-                    setter?.setAccessible(value)
+                is KMutablePropertyImpl<R> -> {
+                    javaField?.setAccessible(value)
+                    javaGetter?.setAccessible(value)
+                    javaSetter?.setAccessible(value)
                 }
-                is KMemberPropertyImpl<*, R> -> {
-                    field?.setAccessible(value)
-                    getter?.setAccessible(value)
+                is KPropertyImpl<R> -> {
+                    javaField?.setAccessible(value)
+                    javaGetter?.setAccessible(value)
                 }
+                else -> throw UnsupportedOperationException("Unknown property: $this ($javaClass)")
             }
         }

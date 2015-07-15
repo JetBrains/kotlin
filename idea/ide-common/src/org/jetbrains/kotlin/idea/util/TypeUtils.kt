@@ -43,7 +43,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
         val lowerClass = flexible.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
-        val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutableCollection(lowerClass)
+        val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?

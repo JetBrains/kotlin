@@ -150,6 +150,7 @@ public class ModifiersChecker {
         }
         checkPlatformNameApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
+        AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace);
     }
 
     private void checkVarargsModifiers(@NotNull JetDeclaration owner, @NotNull MemberDescriptor descriptor) {
@@ -163,6 +164,7 @@ public class ModifiersChecker {
         reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
+        AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace);
     }
 
     public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -421,7 +423,7 @@ public class ModifiersChecker {
 
     private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
         for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
-            checker.check(declaration, descriptor, trace);
+            checker.check(declaration, descriptor, trace, trace.getBindingContext());
         }
     }
 

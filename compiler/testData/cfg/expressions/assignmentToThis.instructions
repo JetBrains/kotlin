@@ -9,12 +9,14 @@ L0:
     magic[FAKE_INITIALIZER](c: C) -> <v0>
     w(c|<v0>)
   2 mark({ this = c })
-    r(c) -> <v1>
-    magic[UNSUPPORTED_ELEMENT](this = c|<v1>) -> <v2>
+    r(this, <this>) -> <v1>
+    magic[VALUE_CONSUMER](this|<v1>) -> <v2>
+    r(c) -> <v3>
+    w(this|<v3>)
 L1:
-  1 <END>                                                NEXT:[<SINK>]
+  1 <END>                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                              PREV:[]
+    <ERROR>                                     PREV:[]
 sink:
-    <SINK>                                               PREV:[<ERROR>, <END>]
+    <SINK>                                      PREV:[<ERROR>, <END>]
 =====================

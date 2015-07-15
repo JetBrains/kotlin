@@ -1,0 +1,4 @@
+VARIABLES T P
+
+Int <: T
+T := P

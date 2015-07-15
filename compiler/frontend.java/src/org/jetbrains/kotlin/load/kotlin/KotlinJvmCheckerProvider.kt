@@ -20,16 +20,15 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
-import org.jetbrains.kotlin.resolve.DeclarationChecker
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.annotations.findPublicFieldAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
+import org.jetbrains.kotlin.resolve.jvm.calls.checkers.ReflectionAPICallChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.TraitDefaultMethodCallChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
@@ -57,18 +57,24 @@ public class KotlinJvmCheckerProvider(private val module: ModuleDescriptor) : Ad
                                                LocalFunInlineChecker(),
                                                ReifiedTypeParameterAnnotationChecker(),
                                                NativeFunChecker(),
-                                               OverloadsAnnotationChecker()),
+                                               OverloadsAnnotationChecker(),
+                                               PublicFieldAnnotationChecker()),
 
         additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
-                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker()),
+                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker(),
+                                        ReflectionAPICallChecker(module)),
 
-        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker()),
+        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker(), RuntimeAssertionsTypeChecker),
         additionalSymbolUsageValidators = listOf()
 )
 
 public class LocalFunInlineChecker : DeclarationChecker {
 
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext) {
         if (descriptor.hasInlineAnnotation() &&
             declaration is JetNamedFunction &&
             descriptor is FunctionDescriptor &&
@@ -80,7 +86,12 @@ public class LocalFunInlineChecker : DeclarationChecker {
 
 public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
         if (descriptor.hasPlatformStaticAnnotation()) {
             if (declaration is JetNamedFunction || declaration is JetProperty || declaration is JetPropertyAccessor) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
@@ -119,7 +130,12 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
 }
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
         if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) != null) {
             checkDeclaration(declaration, descriptor, diagnosticHolder)
         }
@@ -142,9 +158,37 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
     }
 }
 
+public class PublicFieldAnnotationChecker: DeclarationChecker {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
+        val annotation = descriptor.findPublicFieldAnnotation() ?: return
+
+        fun report() {
+            val annotationEntry = bindingContext.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation) ?: return
+            diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry))
+        }
+
+        if (descriptor !is PropertyDescriptor) {
+            report()
+        }
+        else if (!bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
+            report()
+        }
+    }
+}
+
 public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
-    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
+    override fun check(
+            declaration: JetDeclaration,
+            descriptor: DeclarationDescriptor,
+            diagnosticHolder: DiagnosticSink,
+            bindingContext: BindingContext
+    ) {
         if (descriptor.hasIntrinsicAnnotation()) return
 
         if (descriptor is CallableDescriptor && !descriptor.hasInlineAnnotation()) {
@@ -176,12 +220,18 @@ private fun checkTypeParameterDescriptorsAreNotReified(
 public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     private fun JetType.mayBeNull(): NullabilityInformationSource? {
         if (!isError() && !isFlexible() && TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+
+        if (isFlexible() && TypeUtils.isNullableType(flexibility().lowerBound)) return NullabilityInformationSource.KOTLIN
+
         if (getAnnotations().isMarkedNullable()) return NullabilityInformationSource.JAVA
         return null
     }
 
     private fun JetType.mustNotBeNull(): NullabilityInformationSource? {
         if (!isError() && !isFlexible() && !TypeUtils.isNullableType(this)) return NullabilityInformationSource.KOTLIN
+
+        if (isFlexible() && !TypeUtils.isNullableType(flexibility().upperBound)) return NullabilityInformationSource.KOTLIN
+
         if (!isMarkedNullable() && getAnnotations().isMarkedNotNull()) return NullabilityInformationSource.JAVA
         return null
     }
@@ -254,7 +304,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         val baseExpression = expression.getLeft()
                         val baseExpressionType = baseExpression?.let{ c.trace.getType(it) } ?: return
                         doIfNotNull(
-                                DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
+                                DataFlowValueFactory.createDataFlowValue(baseExpression!!, baseExpressionType, c),
                                 c
                         ) {
                             c.trace.report(Errors.USELESS_ELVIS.on(expression, baseExpressionType))
@@ -317,7 +367,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
         else {
             doIfNotNull(dataFlowValue, c) {
-                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
+                c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode()!!.getPsi(), receiverArgument.getType()))
             }
         }
     }

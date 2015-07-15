@@ -597,6 +597,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 doTestAgainstJava(fileName);
             }
 
+            @TestMetadata("doubleLongParameters.kt")
+            public void testDoubleLongParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/doubleLongParameters.kt");
+                doTestAgainstJava(fileName);
+            }
+
             @TestMetadata("fileFilter.kt")
             public void testFileFilter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/fileFilter.kt");

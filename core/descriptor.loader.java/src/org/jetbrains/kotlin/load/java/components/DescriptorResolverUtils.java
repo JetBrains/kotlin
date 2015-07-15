@@ -54,7 +54,7 @@ public final class DescriptorResolverUtils {
                 new OverridingUtil.DescriptorSink() {
                     @Override
                     @SuppressWarnings("unchecked")
-                    public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                    public void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride) {
                         OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
                             @Override
                             public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {

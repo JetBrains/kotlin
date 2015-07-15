@@ -3,11 +3,8 @@ package test.annotations
 import kotlin.*
 import kotlin.test.assertTrue
 import org.junit.Test as test
-import java.lang.annotation.*
 
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class MyAnno
+annotation(retention = AnnotationRetention.RUNTIME) class MyAnno
 
 MyAnno
 Deprecated

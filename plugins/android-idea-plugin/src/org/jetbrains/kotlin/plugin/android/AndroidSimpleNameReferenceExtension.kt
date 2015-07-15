@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
 
 public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
     override fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean? {
-        val resolvedElement = reference.resolve()
-        if (resolvedElement == null) {
-            return null
-        }
+        val resolvedElement = reference.resolve() ?: return null
+
         if (isAndroidSyntheticElement(resolvedElement)) {
             if (element is ValueResourceElementWrapper) {
                 val resource = element.getValue()

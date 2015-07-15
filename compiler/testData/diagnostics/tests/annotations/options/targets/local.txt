@@ -1,0 +1,61 @@
+package
+
+base() internal val z: kotlin.Int = 0
+base() internal fun foo(/*0*/ base() y: @[base()] kotlin.Int): kotlin.Int
+
+base() internal final enum class My : kotlin.Enum<My> {
+    base() public enum entry FIRST : My {
+        private constructor FIRST()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: My): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    base() public enum entry SECOND : My {
+        private constructor SECOND()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: My): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    private constructor My()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: My): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): My
+    public final /*synthesized*/ fun values(): kotlin.Array<My>
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.LOCAL_VARIABLE}) kotlin.annotation.annotation() internal final class base : kotlin.Annotation {
+    public constructor base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+base() internal final class correct {
+    base() public constructor correct()
+    public constructor correct(/*0*/ base() x: kotlin.Int)
+    base() internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+base() kotlin.annotation.annotation() internal final class derived : kotlin.Annotation {
+    public constructor derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

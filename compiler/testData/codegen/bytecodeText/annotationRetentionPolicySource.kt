@@ -1,9 +1,5 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
 Ann class MyClass
 
-Retention(RetentionPolicy.SOURCE)
-annotation class Ann
+annotation(retention = AnnotationRetention.SOURCE) class Ann
 
 // 0 @LAnn;()

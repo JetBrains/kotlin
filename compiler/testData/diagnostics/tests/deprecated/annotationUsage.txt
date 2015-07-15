@@ -14,14 +14,14 @@ obsoleteWithParam(text = "text") internal final class Obsolete2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.deprecated(value = "text") internal final annotation class obsolete : kotlin.Annotation {
+kotlin.deprecated(value = "text") kotlin.annotation.annotation() internal final class obsolete : kotlin.Annotation {
     public constructor obsolete()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.deprecated(value = "text") internal final annotation class obsoleteWithParam : kotlin.Annotation {
+kotlin.deprecated(value = "text") kotlin.annotation.annotation() internal final class obsoleteWithParam : kotlin.Annotation {
     public constructor obsoleteWithParam(/*0*/ text: kotlin.String)
     internal final val text: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

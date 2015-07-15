@@ -220,6 +220,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("ParameterTypeIsDerivedFromFunction.kt")
+        public void testParameterTypeIsDerivedFromFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ParameterTypeIsDerivedFromFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ReplaceByLambdaTemplateNoClosingParenth.kt")
         public void testReplaceByLambdaTemplateNoClosingParenth() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ReplaceByLambdaTemplateNoClosingParenth.kt");

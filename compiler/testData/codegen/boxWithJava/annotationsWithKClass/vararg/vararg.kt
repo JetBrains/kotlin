@@ -1,8 +1,6 @@
 import kotlin.reflect.KClass
-import java.lang.annotation.*
 
-Retention(RetentionPolicy.RUNTIME)
-annotation
+annotation(retention = AnnotationRetention.RUNTIME)
 class Ann(vararg val args: KClass<*>)
 
 fun box(): String {

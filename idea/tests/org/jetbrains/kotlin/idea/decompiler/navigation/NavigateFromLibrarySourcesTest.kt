@@ -55,7 +55,7 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
         val lightClass = LightClassUtil.getPsiClass(navigationElement as JetClassOrObject)
         assertTrue(lightClass is KotlinLightClassForDecompiledDeclaration,
                    "Light classes for decompiled declaration should be provided for library source")
-        assertEquals("Foo", lightClass.getName())
+        assertEquals("Foo", lightClass!!.getName())
     }
 
     private fun checkNavigationFromLibrarySource(referenceText: String, targetFqName: String) {

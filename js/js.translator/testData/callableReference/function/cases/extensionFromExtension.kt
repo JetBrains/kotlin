@@ -3,7 +3,7 @@ package foo
 
 class A
 
-fun A.foo() = this.(A::bar)("OK")
+fun A.foo() = (A::bar)(this, "OK")
 
 fun A.bar(x: String) = x
 

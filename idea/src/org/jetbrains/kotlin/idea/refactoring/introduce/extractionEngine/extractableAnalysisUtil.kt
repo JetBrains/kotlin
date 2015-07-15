@@ -520,7 +520,7 @@ private class MutableParameter(
 
     private val defaultType: JetType by Delegates.lazy {
         writable = false
-        TypeUtils.intersect(JetTypeChecker.DEFAULT, defaultTypes)
+        TypeUtils.intersect(JetTypeChecker.DEFAULT, defaultTypes)!!
     }
 
     private val parameterTypeCandidates: List<JetType> by Delegates.lazy {
@@ -530,7 +530,7 @@ private class MutableParameter(
 
         val typeList = if (defaultType.isNullabilityFlexible()) {
             val bounds = defaultType.getCapability(javaClass<Flexibility>())
-            if (typePredicate(bounds.upperBound)) arrayListOf(bounds.upperBound, bounds.lowerBound) else arrayListOf(bounds.lowerBound)
+            if (typePredicate(bounds!!.upperBound)) arrayListOf(bounds.upperBound, bounds.lowerBound) else arrayListOf(bounds.lowerBound)
         }
         else arrayListOf(defaultType)
 

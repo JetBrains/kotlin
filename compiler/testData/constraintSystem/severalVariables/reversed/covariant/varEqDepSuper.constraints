@@ -1,0 +1,4 @@
+VARIABLES T P
+
+P >: Producer<T>
+T := Int

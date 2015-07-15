@@ -204,6 +204,7 @@ public class CallArgumentTranslator private constructor(
 
             val argumentExpression = valueArguments.get(0).getArgumentExpression()
             assert(argumentExpression != null)
+            argumentExpression!!
 
             val jsExpression = Translation.translateAsExpression(argumentExpression, context)
             result.add(jsExpression)
@@ -250,6 +251,7 @@ public class CallArgumentTranslator private constructor(
             for (argument in arguments) {
                 val argumentExpression = argument.getArgumentExpression()
                 assert(argumentExpression != null)
+                argumentExpression!!
                 val argContext = context.innerBlock()
                 val argExpression = Translation.translateAsExpression(argumentExpression, argContext)
                 list.add(argExpression)

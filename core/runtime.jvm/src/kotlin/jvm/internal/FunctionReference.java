@@ -16,14 +16,11 @@
 
 package kotlin.jvm.internal;
 
-import kotlin.reflect.*;
+import kotlin.jvm.KotlinReflectionNotSupportedError;
+import kotlin.reflect.KDeclarationContainer;
+import kotlin.reflect.KFunction;
 
-public abstract class FunctionReference
-        extends FunctionImpl
-        implements KTopLevelFunction,
-                   KMemberFunction,
-                   KTopLevelExtensionFunction,
-                   KLocalFunction {
+public class FunctionReference extends FunctionImpl implements KFunction {
     private final int arity;
 
     public FunctionReference(int arity) {
@@ -38,5 +35,24 @@ public abstract class FunctionReference
     @Override
     public int getArity() {
         return arity;
+    }
+
+    // Most of the following methods are copies from CallableReference, since this class cannot inherit from it
+
+    public KDeclarationContainer getOwner() {
+        throw error();
+    }
+
+    @Override
+    public String getName() {
+        throw error();
+    }
+
+    public String getSignature() {
+        throw error();
+    }
+
+    protected static Error error() {
+        throw new KotlinReflectionNotSupportedError();
     }
 }

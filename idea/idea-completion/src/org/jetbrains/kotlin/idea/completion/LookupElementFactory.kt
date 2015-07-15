@@ -104,7 +104,7 @@ public class LookupElementFactory(
         val lookupObject = object : DeclarationLookupObjectImpl(null, psiClass, resolutionFacade) {
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
-        var element = LookupElementBuilder.create(lookupObject, psiClass.getName())
+        var element = LookupElementBuilder.create(lookupObject, psiClass.getName()!!)
                 .withInsertHandler(KotlinClassInsertHandler)
 
         val typeParams = psiClass.getTypeParameters()
@@ -123,7 +123,7 @@ public class LookupElementFactory(
                     itemText = containerName.substringAfterLast('.') + "." + itemText
                     containerName = containerName.substringBeforeLast('.', FqName.ROOT.toString())
                 }
-                element = element.withPresentableText(itemText)
+                element = element.withPresentableText(itemText!!)
             }
         }
 
@@ -169,11 +169,20 @@ public class LookupElementFactory(
         }
         var element = LookupElementBuilder.create(lookupObject, name)
 
+        val insertHandler = getDefaultInsertHandler(descriptor)
+        element = element.withInsertHandler(insertHandler)
+
         when (descriptor) {
             is FunctionDescriptor -> {
                 val returnType = descriptor.getReturnType()
                 element = element.withTypeText(if (returnType != null) DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) else "")
-                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), false)
+
+                val insertsLambda = (insertHandler as KotlinFunctionInsertHandler).lambdaInfo != null
+                if (insertsLambda) {
+                    element = element.appendTailText(" {...} ", false)
+                }
+
+                element = element.appendTailText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(descriptor), insertsLambda)
             }
 
             is VariableDescriptor -> {
@@ -231,9 +240,6 @@ public class LookupElementFactory(
         if (lookupObject.isDeprecated) {
             element = element.withStrikeoutness(true)
         }
-
-        val insertHandler = getDefaultInsertHandler(descriptor)
-        element = element.withInsertHandler(insertHandler)
 
         if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
             element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
@@ -303,7 +309,7 @@ public class LookupElementFactory(
 
                         1 -> {
                             val parameterType = parameters.single().getType()
-                            if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
+                            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
                                 val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                                 if (parameterCount <= 1) {
                                     // otherwise additional item with lambda template is to be added

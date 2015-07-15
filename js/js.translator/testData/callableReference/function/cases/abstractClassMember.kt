@@ -9,4 +9,4 @@ class B : A() {
     override fun foo() = "OK"
 }
 
-fun box(): String = B().(A::foo)()
+fun box(): String = (A::foo)(B())

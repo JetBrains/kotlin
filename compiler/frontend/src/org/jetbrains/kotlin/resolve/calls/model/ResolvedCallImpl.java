@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
@@ -300,7 +300,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Override
     public boolean hasInferredReturnType() {
         if (!completed) {
-            hasInferredReturnType = constraintSystem == null || CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+            hasInferredReturnType = constraintSystem == null ||
+                                    CallResolverUtilPackage.hasInferredReturnType(candidateDescriptor, constraintSystem);
         }
         assert hasInferredReturnType != null : "The property 'hasInferredReturnType' was not set when the call was completed.";
         return hasInferredReturnType;

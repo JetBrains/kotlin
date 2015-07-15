@@ -24,7 +24,6 @@ import com.intellij.psi.*
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -80,7 +80,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
             val propertyName = callableDescriptor.getName().asString()
-            val getterName = PropertyCodegen.getterName(callableDescriptor.getName())
+            val getterName = JvmAbi.getterName(callableDescriptor.getName().asString())
             val conflicts = MultiMap<PsiElement, String>()
             val callables = getAffectedCallables(project, descriptorsForChange)
             val kotlinRefs = ArrayList<JetSimpleNameExpression>()

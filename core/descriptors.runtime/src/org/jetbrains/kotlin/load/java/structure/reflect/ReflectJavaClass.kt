@@ -29,7 +29,7 @@ import java.util.Arrays
 public class ReflectJavaClass(
         private val klass: Class<*>
 ) : ReflectJavaElement(), ReflectJavaAnnotationOwner, ReflectJavaModifierListOwner, JavaClass {
-    override val element: AnnotatedElement get() = klass
+    override val element: Class<*> get() = klass
 
     override val modifiers: Int get() = klass.getModifiers()
 

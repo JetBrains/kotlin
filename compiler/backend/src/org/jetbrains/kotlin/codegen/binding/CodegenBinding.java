@@ -40,16 +40,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
-import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
 
-    public static final WritableSlice<FunctionDescriptor, ClassDescriptor> CLASS_FOR_FUNCTION = Slices.createSimpleSlice();
+    public static final WritableSlice<CallableDescriptor, ClassDescriptor> CLASS_FOR_CALLABLE = Slices.createSimpleSlice();
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
@@ -110,34 +108,41 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static ClassDescriptor anonymousClassForFunction(
+    public static ClassDescriptor anonymousClassForCallable(
             @NotNull BindingContext bindingContext,
-            @NotNull FunctionDescriptor descriptor
+            @NotNull CallableDescriptor descriptor
     ) {
         //noinspection ConstantConditions
-        return bindingContext.get(CLASS_FOR_FUNCTION, descriptor);
+        return bindingContext.get(CLASS_FOR_CALLABLE, descriptor);
     }
 
     @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
         if (expression instanceof JetObjectLiteralExpression) {
-            JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
-            expression = jetObjectLiteralExpression.getObjectDeclaration();
+            expression = ((JetObjectLiteralExpression) expression).getObjectDeclaration();
         }
 
         ClassDescriptor descriptor = bindingContext.get(CLASS, expression);
-        if (descriptor == null) {
-            SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
-            assert functionDescriptor != null : "Couldn't find function descriptor for " + PsiUtilPackage.getElementTextWithContext(expression);
+        if (descriptor != null) {
+            return getAsmType(bindingContext, descriptor);
+        }
+
+        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
+        if (functionDescriptor != null) {
             return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
 
-        return getAsmType(bindingContext, descriptor);
+        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
+        if (variableDescriptor != null) {
+            return asmTypeForAnonymousClass(bindingContext, variableDescriptor);
+        }
+
+        throw new IllegalStateException("Couldn't compute ASM type for " + PsiUtilPackage.getElementTextWithContext(expression));
     }
 
     @NotNull
-    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
-        return getAsmType(bindingContext, anonymousClassForFunction(bindingContext, descriptor));
+    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor descriptor) {
+        return getAsmType(bindingContext, anonymousClassForCallable(bindingContext, descriptor));
     }
 
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {

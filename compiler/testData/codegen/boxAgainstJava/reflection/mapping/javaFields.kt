@@ -10,8 +10,8 @@ fun box(): String {
     val s = J::s
 
     // Check that correct reflection objects are created
-    assert(i.javaClass.getSimpleName() == "KMemberPropertyImpl", "Fail i class")
-    assert(s.javaClass.getSimpleName() == "KMutableMemberPropertyImpl", "Fail s class")
+    assert(i !is KMutableProperty<*>, "Fail i class: ${i.javaClass}")
+    assert(s is KMutableProperty<*>, "Fail s class: ${s.javaClass}")
 
     // Check that no Method objects are created for such properties
     assert(i.javaGetter == null, "Fail i getter")
@@ -33,8 +33,8 @@ fun box(): String {
     assert(a.s == "def", "Fail js access")
 
     // Check that valid Kotlin reflection objects are created by those Field objects
-    val ki = ji.kotlin as KMemberProperty<J, Int>
-    val ks = js.kotlin as KMutableMemberProperty<J, String>
+    val ki = ji.kotlin as KProperty1<J, Int>
+    val ks = js.kotlin as KMutableProperty1<J, String>
     assert(ki.get(a) == 42, "Fail ki get")
     assert(ks.get(a) == "def", "Fail ks get")
     ks.set(a, "ghi")

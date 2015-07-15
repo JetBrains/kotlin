@@ -26,13 +26,18 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
         val psiElement: T,
         var javaMethodChangeInfo: JetChangeInfo): UsageInfo(psiElement) {
-    protected abstract val delegateUsage: JetUsageInfo<T>
+    abstract val delegateUsage: JetUsageInfo<T>
 
-    fun processUsage(): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, psiElement)
+    fun processUsage(allUsages: Array<UsageInfo>): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, psiElement, allUsages)
 }
 
 public class JavaMethodKotlinCallUsage(
         callElement: JetCallElement,
-        javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetCallElement>(callElement, javaMethodChangeInfo) {
-    override protected val delegateUsage = JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
+        javaMethodChangeInfo: JetChangeInfo,
+        propagationCall: Boolean): JavaMethodKotlinUsageWithDelegate<JetCallElement>(callElement, javaMethodChangeInfo) {
+    override val delegateUsage = if (propagationCall) {
+        KotlinCallerCallUsage(psiElement)
+    } else {
+        JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
+    }
 }

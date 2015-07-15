@@ -44,7 +44,7 @@ public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFix
         fixture.configureByFile(fileName)
 
         val jetFile = fixture.getFile() as JetFile
-        val element = jetFile.findElementAt(fixture.getCaretOffset())
+        val element = jetFile.findElementAt(fixture.getCaretOffset())!!
         val expression = element.getStrictParentOfType<JetExpression>()!!
         val info = expression.analyze().getDataFlowInfo(expression)
 

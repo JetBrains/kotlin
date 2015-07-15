@@ -12,18 +12,14 @@ var Int.meaning: Long
 fun test() {
     val f = String::countCharacters
     
-    checkSubtype<KTopLevelExtensionProperty<String, Int>>(f)
-    checkSubtype<KExtensionProperty<String, Int>>(f)
-    checkSubtype<KMutableExtensionProperty<String, Int>>(<!TYPE_MISMATCH!>f<!>)
+    checkSubtype<KProperty1<String, Int>>(f)
+    checkSubtype<KMutableProperty1<String, Int>>(<!TYPE_MISMATCH!>f<!>)
     checkSubtype<Int>(f.get("abc"))
     f.<!UNRESOLVED_REFERENCE!>set<!>("abc", 0)
 
     val g = Int::meaning
 
-    checkSubtype<KTopLevelExtensionProperty<Int, Long>>(g)
-    checkSubtype<KExtensionProperty<Int, Long>>(g)
-    checkSubtype<KMutableTopLevelExtensionProperty<Int, Long>>(g)
-    checkSubtype<KMutableExtensionProperty<Int, Long>>(g)
+    checkSubtype<KMutableProperty1<Int, Long>>(g)
     checkSubtype<Long>(g.get(0))
     g.set(1, 0L)
 }

@@ -16,14 +16,26 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiTypeParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
+import org.jetbrains.kotlin.name.FqName;
 
-public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaElementImpl<Psi> implements JavaClassifier {
+import java.util.Collection;
+
+public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaElementImpl<Psi> implements JavaClassifier, JavaAnnotationOwnerImpl {
     protected JavaClassifierImpl(@NotNull Psi psiClass) {
         super(psiClass);
+    }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi().getModifierList();
     }
 
     @NotNull
@@ -34,5 +46,17 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
         else {
             return new JavaClassImpl(psiClass);
         }
+    }
+
+    @NotNull
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return JavaElementUtil.getAnnotations(this);
+    }
+
+    @Nullable
+    @Override
+    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
+        return JavaElementUtil.findAnnotation(this, fqName);
     }
 }

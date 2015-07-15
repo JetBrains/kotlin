@@ -1,7 +1,0 @@
-compiler/testData/cli/jvm/noReflectionInClasspath.kt:3:12: error: expression 'Foo::prop' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath
-fun t1() = Foo::prop
-           ^
-compiler/testData/cli/jvm/noReflectionInClasspath.kt:4:12: error: expression 'Foo::class' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath
-fun t2() = Foo::class
-           ^
-COMPILATION_ERROR

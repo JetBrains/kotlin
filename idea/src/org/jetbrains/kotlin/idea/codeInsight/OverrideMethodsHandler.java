@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.core.codeInsight.OverrideImplementMethodsHandler;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.HashSet;
@@ -49,7 +49,7 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor superMethod : superMethods) {
             if (superMethod.getModality().isOverridable()) {
-                if (!CallResolverUtil.isOrOverridesSynthesized(superMethod)) {
+                if (!CallResolverUtilPackage.isOrOverridesSynthesized(superMethod)) {
                     result.add(superMethod);
                 }
             }

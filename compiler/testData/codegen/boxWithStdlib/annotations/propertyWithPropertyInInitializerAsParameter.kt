@@ -1,6 +1,3 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
 Ann(i) class MyClass
 
 fun box(): String {
@@ -10,8 +7,7 @@ fun box(): String {
     return "OK"
 }
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(val i: Int)
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(val i: Int)
 
 val i2: Int = 1
 val i: Int = i2

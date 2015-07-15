@@ -33,6 +33,6 @@ public class KotlinLightMethodForTraitFakeOverride(
     override fun getOrigin(): JetDeclaration = origin
 
     override fun copy(): PsiElement {
-        return KotlinLightMethodForTraitFakeOverride(getManager(), delegate, origin.copy() as JetDeclaration, getContainingClass())
+        return KotlinLightMethodForTraitFakeOverride(getManager(), delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
     }
 }

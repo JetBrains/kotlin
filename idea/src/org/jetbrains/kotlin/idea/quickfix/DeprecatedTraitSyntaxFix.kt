@@ -31,7 +31,7 @@ public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<P
     override fun getFamilyName() = "Replace 'trait' with 'interface'"
     override fun getText() = getFamilyName()
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?)
+    override fun invoke(project: Project, editor: Editor?, file: JetFile)
             = replaceWithInterfaceKeyword(element)
 
 
@@ -47,7 +47,7 @@ public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<P
         public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetClass>(
                     predicate = { it.getNode().findChildByType(JetTokens.TRAIT_KEYWORD) != null },
-                    taskProcessor = { replaceWithInterfaceKeyword(it.getNode().findChildByType(JetTokens.TRAIT_KEYWORD).getPsi())},
+                    taskProcessor = { replaceWithInterfaceKeyword(it.getNode().findChildByType(JetTokens.TRAIT_KEYWORD)!!.getPsi())},
                     name = "Replace 'trait' with 'interface' in whole project"
             )
         }

@@ -4,5 +4,5 @@ fun box(): String {
     }
 
     val ref = Id<String>::invoke
-    return Id<String>().ref("OK")
+    return ref(Id<String>(), "OK")
 }

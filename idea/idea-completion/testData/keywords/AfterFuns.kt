@@ -11,7 +11,6 @@ class A {
 }
 
 // EXIST:  abstract
-// EXIST:  annotation
 // EXIST:  class
 // EXIST:  enum
 // EXIST:  final

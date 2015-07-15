@@ -1,19 +1,21 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUPERTYPE T IntegerValueType(1000)
+T >: IntegerValueType(1)
+T >: IntegerValueType(1000)
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), >: IntegerValueType(1000)(SPECIAL)
+T >: IntegerValueType(1), >: IntegerValueType(1000)
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

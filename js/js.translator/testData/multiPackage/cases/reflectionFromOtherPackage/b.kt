@@ -7,9 +7,9 @@ fun A.ext2(s: String): String = "A.ext2: ${this.v} ${s}"
 fun box(): Boolean {
 
     assertEquals("topLevelFun: A", (::topLevelFun)("A"))
-    assertEquals("A.ext1: test B", A("test").(A::ext1)("B"))
-    assertEquals("A.ext2: test B", A("test").(A::ext2)("B"))
-    assertEquals("memA: test C", A("test").(A::memA)("C"))
+    assertEquals("A.ext1: test B", (A::ext1)(A("test"), "B"))
+    assertEquals("A.ext2: test B", (A::ext2)(A("test"), "B"))
+    assertEquals("memA: test C", (A::memA)(A("test"), "C"))
 
     assertEquals(100, ::topLevelVar.get())
     ::topLevelVar.set(500)
@@ -25,5 +25,5 @@ fun box(): Boolean {
     (A::extProp).set(a, "new text")
     assertEquals("new text", (A::extProp).get(a))
 
-    return true;
+    return true
 }

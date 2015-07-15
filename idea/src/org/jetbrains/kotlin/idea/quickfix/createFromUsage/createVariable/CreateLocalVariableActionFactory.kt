@@ -50,7 +50,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
         return object: CreateFromUsageFixBase(refExpr) {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyName)
 
-            override fun invoke(project: Project, editor: Editor, file: JetFile) {
+            override fun invoke(project: Project, editor: Editor?, file: JetFile) {
                 val assignment = refExpr.getAssignmentByLHS()
                 val varExpected = assignment != null
                 var originalElement = assignment ?: refExpr

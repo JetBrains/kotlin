@@ -2,7 +2,7 @@ package
 
 B(args = {IntegerValueType(1), "b"}) internal fun test(): kotlin.Unit
 
-internal final annotation class B : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class B : kotlin.Annotation {
     public constructor B(/*0*/ vararg args: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val args: kotlin.Array<out kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

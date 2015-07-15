@@ -19,13 +19,29 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.*
 import kotlin.reflect.*
 
-trait KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
-    val field: Field?
+interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
+    val javaField: Field?
 
-    val getter: Method?
+    val javaGetter: Method?
+
+    override val getter: Getter<R>
+
+    interface Accessor<out R> : KProperty.Accessor<R> {
+        override val property: KPropertyImpl<R>
+    }
+
+    interface Getter<out R> : KProperty.Getter<R>, KCallableImpl<R> {
+        override val name: String get() = "<get-${property.name}>"
+    }
 }
 
 
-trait KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
-    val setter: Method?
+interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
+    val javaSetter: Method?
+
+    override val setter: Setter<R>
+
+    interface Setter<R> : KMutableProperty.Setter<R>, KPropertyImpl.Accessor<R>, KCallableImpl<Unit> {
+        override val name: String get() = "<set-${property.name}>"
+    }
 }

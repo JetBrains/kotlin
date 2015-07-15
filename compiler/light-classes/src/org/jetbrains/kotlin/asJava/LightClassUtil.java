@@ -290,7 +290,8 @@ public class LightClassUtil {
                     new Function1<PsiMethod, Boolean>() {
                         @Override
                         public Boolean invoke(PsiMethod method) {
-                            return JvmAbi.isAccessorName(method.getName());
+                            String name = method.getName();
+                            return name.startsWith(JvmAbi.GETTER_PREFIX) || name.startsWith(JvmAbi.SETTER_PREFIX);
                         }
                     }
             );

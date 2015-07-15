@@ -22,7 +22,7 @@ fun main() {
     val y = first.A::bar
     val z = A::baz
 
-    checkSubtype<KMemberFunction0<A, Unit>>(x)
-    checkSubtype<KMemberFunction1<A, Int, Unit>>(y)
-    checkSubtype<KMemberFunction0<A, String>>(z)
+    checkSubtype<KFunction1<A, Unit>>(x)
+    checkSubtype<KFunction2<A, Int, Unit>>(y)
+    checkSubtype<KFunction1<A, String>>(z)
 }

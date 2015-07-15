@@ -58,7 +58,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
                     val lazyCandidates = {
                         candidatesList[candidateIndex]().filter { priorityProvider.getPriority(it) == priority }.toReadOnlyList()
                     }
-                    tasks.add(ResolutionTask(basicCallResolutionContext, tracing, lazyCandidates))
+                    tasks.add(ResolutionTask<D, F>(basicCallResolutionContext, tracing, lazyCandidates))
                 }
             }
 

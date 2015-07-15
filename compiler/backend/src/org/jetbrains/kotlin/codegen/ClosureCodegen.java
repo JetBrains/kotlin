@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
+import kotlin.KotlinPackage;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,13 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -46,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
@@ -53,6 +57,7 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticC
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends MemberCodegen<JetElement> {
@@ -61,6 +66,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     private final SamType samType;
     private final JetType superClassType;
     private final List<JetType> superInterfaceTypes;
+    private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
     private final Type asmType;
@@ -76,6 +82,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             @Nullable SamType samType,
             @NotNull ClosureContext context,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
+            @Nullable FunctionDescriptor functionReferenceTarget,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
             @NotNull ClassBuilder classBuilder
@@ -86,6 +93,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.classDescriptor = context.getContextDescriptor();
         this.samType = samType;
         this.syntheticClassKind = syntheticClassKind;
+        this.functionReferenceTarget = functionReferenceTarget;
         this.strategy = strategy;
 
         if (samType == null) {
@@ -189,10 +197,14 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             functionCodegen.generateBridges(descriptorForBridges);
         }
 
-        this.constructor = generateConstructor(superClassAsmType);
+        if (functionReferenceTarget != null) {
+            generateFunctionReferenceMethods(functionReferenceTarget);
+        }
+
+        this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance();
+            generateConstInstance(asmType, asmType, UtilsPackage.<InstructionAdapter>doNothing());
         }
 
         genClosureFields(closure, v, typeMapper);
@@ -214,77 +226,39 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     }
 
     @NotNull
-    public StackValue putInstanceOnStack(
-            @NotNull final ExpressionCodegen codegen,
-            @Nullable final FunctionDescriptor functionReferenceTarget
-    ) {
-        return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                if (isConst(closure)) {
-                    v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
+    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen) {
+        return StackValue.operation(
+                functionReferenceTarget != null ? K_FUNCTION : asmType,
+                new Function1<InstructionAdapter, Unit>() {
+                    @Override
+                    public Unit invoke(InstructionAdapter v) {
+                        if (isConst(closure)) {
+                            v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
+                        }
+                        else {
+                            v.anew(asmType);
+                            v.dup();
+
+                            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
+                            v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
+                        }
+
+                        if (functionReferenceTarget != null) {
+                            v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                        }
+
+                        return Unit.INSTANCE$;
+                    }
                 }
-                else {
-                    v.anew(asmType);
-                    v.dup();
-
-                    codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
-                    v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
-                }
-
-                if (functionReferenceTarget != null) {
-                    equipFunctionReferenceWithReflection(v, functionReferenceTarget);
-                }
-
-                return Unit.INSTANCE$;
-            }
-        });
-    }
-
-    private static void equipFunctionReferenceWithReflection(@NotNull InstructionAdapter v, @NotNull FunctionDescriptor target) {
-        DeclarationDescriptor container = target.getContainingDeclaration();
-
-        Type type;
-        if (container instanceof PackageFragmentDescriptor) {
-            type = target.getExtensionReceiverParameter() != null
-                   ? K_TOP_LEVEL_EXTENSION_FUNCTION
-                   : K_TOP_LEVEL_FUNCTION;
-        }
-        else if (container instanceof ClassDescriptor) {
-            type = K_MEMBER_FUNCTION;
-        }
-        else {
-            type = K_LOCAL_FUNCTION;
-        }
-
-        Method method = method("function", K_FUNCTION, FUNCTION_REFERENCE);
-        v.invokestatic(REFLECTION, method.getName(), method.getDescriptor(), false);
-        StackValue.coerce(K_FUNCTION, type, v);
-    }
-
-
-    private void generateConstInstance() {
-        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
-        InstructionAdapter iv = new InstructionAdapter(mv);
-
-        v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
-            iv.anew(asmType);
-            iv.dup();
-            iv.invokespecial(asmType.getInternalName(), "<init>", "()V", false);
-            iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-            mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "<clinit>", element);
-        }
+        );
     }
 
     private void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
+                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE,
+                            bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
@@ -295,17 +269,18 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
         iv.load(0, asmType);
 
-        ReceiverParameterDescriptor receiver = funDescriptor.getExtensionReceiverParameter();
-        int count = 1;
-        if (receiver != null) {
-            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(receiver.getType()), iv);
-            count++;
-        }
+        Type[] myParameterTypes = bridge.getArgumentTypes();
 
-        List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
-        for (ValueParameterDescriptor param : params) {
-            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(param.getType()), iv);
-            count++;
+        List<ParameterDescriptor> calleeParameters = KotlinPackage.plus(
+                UtilsPackage.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
+                funDescriptor.getValueParameters()
+        );
+
+        int slot = 1;
+        for (int i = 0; i < calleeParameters.size(); i++) {
+            Type type = myParameterTypes[i];
+            StackValue.local(slot, type).put(typeMapper.mapType(calleeParameters.get(i)), iv);
+            slot += type.getSize();
         }
 
         iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
@@ -316,8 +291,79 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         FunctionCodegen.endVisit(mv, "bridge", element);
     }
 
+    // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
+    private void generateFunctionReferenceMethods(@NotNull FunctionDescriptor descriptor) {
+        int flags = ACC_PUBLIC | ACC_FINAL;
+        boolean generateBody = state.getClassBuilderMode() == ClassBuilderMode.FULL;
+
+        {
+            MethodVisitor mv =
+                    v.newMethod(NO_ORIGIN, flags, "getOwner", Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                generateCallableReferenceDeclarationContainer(iv, descriptor, typeMapper);
+                iv.areturn(K_DECLARATION_CONTAINER_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getOwner", element);
+            }
+        }
+
+        {
+            MethodVisitor mv =
+                    v.newMethod(NO_ORIGIN, flags, "getName", Type.getMethodDescriptor(JAVA_STRING_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                iv.aconst(descriptor.getName().asString());
+                iv.areturn(JAVA_STRING_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getName", element);
+            }
+        }
+
+        {
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, flags, "getSignature", Type.getMethodDescriptor(JAVA_STRING_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+                iv.aconst(method.getName() + method.getDescriptor());
+                iv.areturn(JAVA_STRING_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getSignature", element);
+            }
+        }
+    }
+
+    public static void generateCallableReferenceDeclarationContainer(
+            @NotNull InstructionAdapter iv,
+            @NotNull CallableDescriptor descriptor,
+            @NotNull JetTypeMapper typeMapper
+    ) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (container instanceof ClassDescriptor) {
+            // TODO: getDefaultType() here is wrong and won't work for arrays
+            StackValue value = generateClassLiteralReference(typeMapper, ((ClassDescriptor) container).getDefaultType());
+            value.put(K_CLASS_TYPE, iv);
+        }
+        else if (container instanceof PackageFragmentDescriptor) {
+            String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(
+                    ((PackageFragmentDescriptor) container).getFqName()
+            );
+            iv.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
+        }
+        else if (container instanceof ScriptDescriptor) {
+            // TODO: correct container for scripts (KScript?)
+            StackValue value = generateClassLiteralReference(
+                    typeMapper, ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
+            );
+            value.put(K_CLASS_TYPE, iv);
+        }
+        else {
+            iv.aconst(null);
+        }
+    }
+
     @NotNull
-    private Method generateConstructor(@NotNull Type superClassAsmType) {
+    private Method generateConstructor() {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);

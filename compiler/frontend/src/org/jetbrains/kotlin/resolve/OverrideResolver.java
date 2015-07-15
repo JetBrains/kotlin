@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
@@ -361,7 +361,7 @@ public class OverrideResolver {
             @NotNull List<CallableMemberDescriptor> concreteOverridden
     ) {
         for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(overridden)) {
+            if (!CallResolverUtilPackage.isOrOverridesSynthesized(overridden)) {
                 if (overridden.getModality() == Modality.ABSTRACT) {
                     abstractOverridden.add(overridden);
                 }

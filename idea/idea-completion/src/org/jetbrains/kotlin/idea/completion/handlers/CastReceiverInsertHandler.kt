@@ -39,7 +39,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
             val project = context.getProject()
 
             val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()
-            val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj.getType().getConstructor().getDeclarationDescriptor())
+            val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj!!.getType().getConstructor().getDeclarationDescriptor()!!)
 
             val parentCast = JetPsiFactory(project).createExpression("(expr as $fqName)") as JetParenthesizedExpression
             val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS
@@ -51,7 +51,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
 
             val expr = receiver.replace(parentCast) as JetParenthesizedExpression
 
-            ShortenReferences.DEFAULT.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight())
+            ShortenReferences.DEFAULT.process((expr.getExpression() as JetBinaryExpressionWithTypeRHS).getRight()!!)
         }
     }
 }

@@ -1,4 +1,4 @@
-compiler/testData/cli/js/diagnosticForUnhandledElements.kt:9:17: error: cannot translate (not supported yet): '@fancy 1'
+compiler/testData/cli/js/diagnosticForUnhandledElements.kt:10:17: error: cannot translate (not supported yet): '@fancy 1'
         return (@fancy 1)
                 ^
 COMPILATION_ERROR

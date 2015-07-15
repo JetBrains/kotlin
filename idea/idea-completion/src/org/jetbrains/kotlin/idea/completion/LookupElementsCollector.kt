@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -103,37 +104,7 @@ class LookupElementsCollector(
 
         // add special item for function with one argument of function type with more than one parameter
         if (context != Context.INFIX_CALL && descriptor is FunctionDescriptor) {
-            val parameters = descriptor.getValueParameters()
-            if (parameters.size() == 1) {
-                val parameterType = parameters.get(0).getType()
-                if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
-                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                    if (parameterCount > 1) {
-                        var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
-
-                        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
-                            override fun renderElement(presentation: LookupElementPresentation) {
-                                super.renderElement(presentation)
-
-                                val tails = presentation.getTailFragments()
-                                presentation.clearTail()
-                                presentation.appendTailText(" " + buildLambdaPresentation(parameterType), false)
-                                tails.drop(1)/*drop old function signature*/.forEach { presentation.appendTailText(it.text, it.isGrayed()) }
-                            }
-
-                            override fun handleInsert(context: InsertionContext) {
-                                KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
-                            }
-                        }
-
-                        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
-                            lookupElement = lookupElement.withBracesSurrounding()
-                        }
-
-                        addElement(lookupElement)
-                    }
-                }
-            }
+            addSpecialFunctionDescriptorElementIfNeeded(descriptor)
         }
 
         if (descriptor is PropertyDescriptor) {
@@ -145,6 +116,44 @@ class LookupElementsCollector(
                 addElement(lookupElement)
             }
         }
+    }
+
+    private fun addSpecialFunctionDescriptorElementIfNeeded(descriptor: FunctionDescriptor) {
+        val parameters = descriptor.getValueParameters()
+        if (parameters.size() == 1) {
+            val parameterType = parameters.get(0).getType()
+            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                if (parameterCount > 1) {
+                    addSpecialFunctionDescriptorElement(descriptor, parameterType)
+                }
+            }
+        }
+    }
+
+    private fun addSpecialFunctionDescriptorElement(descriptor: FunctionDescriptor, parameterType: JetType) {
+        var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
+
+        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+
+                val tails = presentation.getTailFragments()
+                presentation.clearTail()
+                presentation.appendTailText(" " + buildLambdaPresentation(parameterType) + " ", false)
+                tails.forEach { presentation.appendTailText(it.text, true) }
+            }
+
+            override fun handleInsert(context: InsertionContext) {
+                KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
+            }
+        }
+
+        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
+            lookupElement = lookupElement.withBracesSurrounding()
+        }
+
+        addElement(lookupElement)
     }
 
     public fun addElement(element: LookupElement, prefixMatcher: PrefixMatcher = defaultPrefixMatcher) {

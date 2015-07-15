@@ -68,7 +68,7 @@ fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
     val context = expression.analyze()
     val reference = expression.getReference() as JetReference?
     val target = reference?.resolveToDescriptors(context)?.singleOrNull() as? ValueParameterDescriptor? ?: return false
-    return context[BindingContext.AUTO_CREATED_IT, target]
+    return context[BindingContext.AUTO_CREATED_IT, target]!!
 }
 
 fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {

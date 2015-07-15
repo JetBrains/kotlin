@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -14,8 +13,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -25,26 +22,26 @@ fun test() {
     val platformJ = J.staticJ
 
     if (platformNN) {}
-    if (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    if (<!TYPE_MISMATCH, TYPE_MISMATCH_IN_CONDITION!>platformN<!>) {}
     if (platformJ) {}
 
     while (platformNN) {}
-    while (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>) {}
+    while (<!TYPE_MISMATCH, TYPE_MISMATCH_IN_CONDITION!>platformN<!>) {}
     while (platformJ) {}
 
     do {} while (platformNN)
-    do {} while (<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
+    do {} while (<!TYPE_MISMATCH, TYPE_MISMATCH_IN_CONDITION!>platformN<!>)
     do {} while (platformJ)
 
     platformNN && false
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> && false
+    <!TYPE_MISMATCH!>platformN<!> && false
     platformJ && false
 
     platformNN || false
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> || false
+    <!TYPE_MISMATCH!>platformN<!> || false
     platformJ || false
 
     !platformNN
-    !<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    <!UNSAFE_CALL!>!<!>platformN
     !platformJ
 }

@@ -130,15 +130,18 @@ object CallableReferenceTranslator {
         assert(receiverParameterDescriptor != null, "receiverParameter for extension should not be null")
 
         val jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context)
-        if (descriptor.getVisibility() == Visibilities.LOCAL)
-            return jsFunctionRef
+        if (descriptor.getVisibility() == Visibilities.LOCAL) {
+            return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
+        }
+
         else if (AnnotationsUtils.isNativeObject(descriptor)) {
             val jetType = receiverParameterDescriptor!!.getType()
             val receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(jetType)
             return translateAsMemberFunctionReference(descriptor, receiverClassDescriptor, context)
         }
-        else
+        else {
             return JsInvocation(context.namer().callableRefForExtensionFunctionReference(), jsFunctionRef)
+        }
     }
 
     private fun translateForMemberFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {

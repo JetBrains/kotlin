@@ -4,4 +4,4 @@ fun test() {
     val s = s()
 }
 
-private fun s(): String = J.notNull()
+private fun s() = J.notNull()

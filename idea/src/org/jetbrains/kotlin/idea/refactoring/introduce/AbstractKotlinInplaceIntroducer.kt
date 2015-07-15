@@ -85,7 +85,7 @@ public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
 
     override fun updateTitle(declaration: D?) = updateTitle(declaration, null)
 
-    override fun saveSettings(declaration: D?) {
+    override fun saveSettings(declaration: D) {
 
     }
 }

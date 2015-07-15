@@ -1,9 +1,6 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
 Ann class MyClass
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann
+annotation(retention = AnnotationRetention.RUNTIME) class Ann
 
 // 1 @LAnn;()
+// 0 invisible

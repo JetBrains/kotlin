@@ -32,7 +32,7 @@ import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
-    private NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer;
+    protected NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,

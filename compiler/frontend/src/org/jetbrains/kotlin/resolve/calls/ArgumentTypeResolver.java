@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
@@ -50,12 +51,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createCorrespondingFunctionTypeForFunctionPlaceholder;
+import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createTypeForFunctionPlaceholder;
 import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -85,7 +85,7 @@ public class ArgumentTypeResolver {
             @NotNull JetType expectedType
     ) {
         if (ErrorUtils.isFunctionPlaceholder(actualType)) {
-            JetType functionType = createCorrespondingFunctionTypeForFunctionPlaceholder(actualType, expectedType);
+            JetType functionType = createTypeForFunctionPlaceholder(actualType, expectedType);
             return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);

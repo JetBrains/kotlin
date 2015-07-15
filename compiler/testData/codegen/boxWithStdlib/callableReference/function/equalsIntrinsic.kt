@@ -1,3 +1,3 @@
 class A
 
-fun box() = if (A().(A::equals)(A())) "Fail" else "OK"
+fun box() = if ((A::equals)(A(), A())) "Fail" else "OK"

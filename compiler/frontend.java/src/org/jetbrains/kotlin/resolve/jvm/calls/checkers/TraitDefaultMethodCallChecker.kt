@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 public class TraitDefaultMethodCallChecker : CallChecker {
 
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
-        val jetSuperExpression = CallResolverUtil.getSuperCallExpression(resolvedCall.getCall())
-        if (jetSuperExpression == null) return
+        if (getSuperCallExpression(resolvedCall.getCall()) == null) return
 
         val targetDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
         val containerDescriptor = targetDescriptor.getContainingDeclaration()

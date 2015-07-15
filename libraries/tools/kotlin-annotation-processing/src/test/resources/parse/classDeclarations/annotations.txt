@@ -1,0 +1,5 @@
+p example 0
+d 0/TestClass
+a example.ExampleAnnotation 0
+c 0 0/TestClass
+d 0/AncestorClass

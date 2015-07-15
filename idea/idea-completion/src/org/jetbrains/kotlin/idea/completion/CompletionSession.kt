@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
-import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
@@ -168,7 +165,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter)
+        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter, true)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false

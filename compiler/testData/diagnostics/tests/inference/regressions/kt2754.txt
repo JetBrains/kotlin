@@ -1,0 +1,38 @@
+package
+
+internal fun test(): kotlin.Unit
+internal fun </*0*/ T : Copyable<T, U>, /*1*/ U : Builder<T>> T.copy(/*0*/ fn: U.() -> kotlin.Unit): T
+
+internal interface Builder</*0*/ out T> {
+    internal abstract fun build(): T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface Copyable</*0*/ out T, /*1*/ out U : Builder<T>> {
+    internal abstract fun builder(): U
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class Foo : Copyable<Foo, Foo.FooBuilder> {
+    public constructor Foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    internal final val x: kotlin.Int
+    internal final val y: kotlin.Int
+    internal open override /*1*/ fun builder(): Foo.FooBuilder
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal open class FooBuilder : Builder<Foo> {
+        public constructor FooBuilder(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+        internal final var x: kotlin.Int
+        internal final var y: kotlin.Int
+        internal open override /*1*/ fun build(): Foo
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

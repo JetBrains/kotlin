@@ -18,4 +18,4 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.reflect.KCallable
 
-trait KCallableImpl<out R> : KCallable<R>
+interface KCallableImpl<out R> : KCallable<R>

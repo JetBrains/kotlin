@@ -19,27 +19,27 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 import com.intellij.psi.PsiConstructorCall
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.KotlinNoOriginLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.idea.findUsages.UsageTypeUtils
-import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum
+import org.jetbrains.kotlin.idea.findUsages.UsageTypeUtils
+import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.OverrideResolver
 
 val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
@@ -221,7 +221,7 @@ fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
             is JetProperty, is JetParameter -> origin as JetNamedDeclaration
             else -> null
         }
-        return declaration != null && refTarget.getName() == PropertyCodegen.getterName(declaration.getNameAsName())
+        return declaration != null && refTarget.getName() == JvmAbi.getterName(declaration.getName()!!)
     }
 
     return false
