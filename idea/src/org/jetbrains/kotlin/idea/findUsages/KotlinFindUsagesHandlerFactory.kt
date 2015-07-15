@@ -56,14 +56,14 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             is JetNamedFunction, is JetProperty, is JetParameter, is JetConstructor<*> -> {
                 val declaration = element as JetNamedDeclaration
 
-                if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)
+                if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
                 JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
                     when (callables.size()) {
                         0 -> FindUsagesHandler.NULL_HANDLER
                         1 -> {
                             val target = callables.first().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
                             if (target is JetNamedDeclaration) {
-                                KotlinFindMemberUsagesHandler.getInstance(target, this)
+                                KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
                             }
                             else {
                                 javaHandlerFactory.createFindUsagesHandler(target, false)
