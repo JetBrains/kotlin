@@ -16,9 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import kotlin.reflect.KCallable
 import kotlin.reflect.KDeclarationContainer
 import kotlin.reflect.KotlinReflectionInternalError
 
@@ -45,6 +45,64 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     abstract val scope: JetScope
 
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
+
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(declaredOnly = false, nonExtensions = true, extensions = true).toList()
+
+    fun getMembers(declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
+        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Unit>() {
+            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
+                if (declaredOnly && !descriptor.getKind().isReal()) return true
+
+                val isExtension = descriptor.getExtensionReceiverParameter() != null
+                if (isExtension && !extensions) return true
+                if (!isExtension && !nonExtensions) return true
+
+                return false
+            }
+
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallable<*>? {
+                return if (skipCallable(descriptor)) null else createProperty(descriptor)
+            }
+
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallable<*>? {
+                return if (skipCallable(descriptor)) null else KFunctionImpl(this@KCallableContainerImpl, descriptor)
+            }
+
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallable<*>? {
+                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
+            }
+        }
+
+        return scope.getAllDescriptors().asSequence()
+                .filter { descriptor ->
+                    descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                }
+                .map { descriptor ->
+                    descriptor.accept(visitor, Unit)
+                }
+                .filterNotNull()
+    }
+
+    private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {
+        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
+                            (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+
+        when {
+            descriptor.isVar -> when (receiverCount) {
+                0 -> return KMutableProperty0Impl<Any?>(this, descriptor)
+                1 -> return KMutableProperty1Impl<Any?, Any?>(this, descriptor)
+                2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(this, descriptor)
+            }
+            else -> when (receiverCount) {
+                0 -> return KProperty0Impl<Any?>(this, descriptor)
+                1 -> return KProperty1Impl<Any?, Any?>(this, descriptor)
+                2 -> return KProperty2Impl<Any?, Any?, Any?>(this, descriptor)
+            }
+        }
+
+        throw KotlinReflectionInternalError("Unsupported property: $descriptor")
+    }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val properties = scope

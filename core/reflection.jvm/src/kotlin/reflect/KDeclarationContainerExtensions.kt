@@ -16,13 +16,15 @@
 
 package kotlin.reflect
 
+import kotlin.reflect.jvm.internal.KCallableContainerImpl
+
 /**
- * Represents an entity which may contain declarations of any other entities,
- * such as a class or a package.
+ * Returns all functions declared in this container.
+ * If this container is a Java class, it includes all non-static methods declared in the class
+ * and the superclasses, as well as static methods declared in the class.
  */
-public interface KDeclarationContainer {
-    /**
-     * All functions and properties accessible in this container.
-     */
-    public val members: Collection<KCallable<*>>
-}
+public val KDeclarationContainer.functions: Collection<KFunction<*>>
+    get() = (this as KCallableContainerImpl)
+            .getMembers(declaredOnly = false, nonExtensions = true, extensions = true)
+            .filterIsInstance<KFunction<*>>()
+            .toList()

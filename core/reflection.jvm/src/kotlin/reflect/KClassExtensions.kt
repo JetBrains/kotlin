@@ -19,17 +19,6 @@ package kotlin.reflect
 import kotlin.reflect.jvm.internal.KClassImpl
 
 /**
- * Returns all functions declared in this class and all of its superclasses.
- * If this is a Java class, it includes all non-static methods declared in the class and the superclasses,
- * as well as static methods declared in the class.
- */
-public val <T> KClass<T>.functions: Collection<KFunction<*>>
-    get() = (this as KClassImpl<T>)
-            .getMembers(declaredOnly = false, nonExtensions = true, extensions = true)
-            .filterIsInstance<KFunction<*>>()
-            .toList()
-
-/**
  * Returns all functions declared in this class.
  * If this is a Java class, it includes both non-static and static methods.
  */

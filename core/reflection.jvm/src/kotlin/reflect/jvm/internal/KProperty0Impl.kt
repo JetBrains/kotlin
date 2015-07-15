@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.MutablePropertyReference0
 import kotlin.jvm.internal.PropertyReference0
@@ -24,6 +25,8 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
 open class KProperty0Impl<out R> : DescriptorBasedProperty<R>, KProperty0<R>, KPropertyImpl<R> {
+    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     override val name: String get() = descriptor.getName().asString()
@@ -48,6 +51,8 @@ open class KProperty0Impl<out R> : DescriptorBasedProperty<R>, KProperty0<R>, KP
 }
 
 open class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R>, KMutablePropertyImpl<R> {
+    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+
     constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     override val setter by ReflectProperties.lazy { Setter(this) }
