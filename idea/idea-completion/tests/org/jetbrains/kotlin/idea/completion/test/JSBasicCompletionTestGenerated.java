@@ -865,6 +865,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("TopLevelPackageInClassBody.kt")
+        public void testTopLevelPackageInClassBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelPackageInClassBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeParameterFromOuterClass.kt")
         public void testTypeParameterFromOuterClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeParameterFromOuterClass.kt");

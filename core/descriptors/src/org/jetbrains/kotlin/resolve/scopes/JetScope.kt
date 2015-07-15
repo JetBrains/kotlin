@@ -110,7 +110,7 @@ public class DescriptorKindFilter(
             = kindMask and kinds != 0
 
     public fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
-            = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
+            = DescriptorKindFilter(kindMask and exclude.fullyExcludedDescriptorKinds.inv(), excludes + listOf(exclude))
 
     public fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)
@@ -196,20 +196,29 @@ public class DescriptorKindFilter(
 public trait DescriptorKindExclude {
     public fun matches(descriptor: DeclarationDescriptor): Boolean
 
+    public val fullyExcludedDescriptorKinds: Int
+
     override fun toString() = this.javaClass.getSimpleName()
 
     public object Extensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
+
+        override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 
     public object NonExtensions : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = DescriptorKindFilter.ALL_KINDS_MASK and (DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK).inv()
     }
 
     public object EnumEntry : DescriptorKindExclude {
         override fun matches(descriptor: DeclarationDescriptor)
                 = descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
+
+        override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 }

@@ -233,11 +233,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private companion object {
         object NonAnnotationClassifierExclude : DescriptorKindExclude {
             override fun matches(descriptor: DeclarationDescriptor): Boolean {
-                return if (descriptor is ClassDescriptor)
-                    descriptor.getKind() != ClassKind.ANNOTATION_CLASS
-                else
-                    descriptor !is ClassifierDescriptor
+                if (descriptor !is ClassifierDescriptor) return false
+                return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
             }
+
+            override val fullyExcludedDescriptorKinds: Int get() = 0
         }
 
         val ANNOTATION_TYPES_FILTER = DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
