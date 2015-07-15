@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +64,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.context.CandidateResolveMode.EXIT_ON_FIRST_ERROR;
+import static org.jetbrains.kotlin.resolve.calls.context.CandidateResolveMode.FULLY;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER;
 import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -565,38 +569,22 @@ public class CallResolver {
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolution(
-            @NotNull final ResolutionTask<D, F> task,
-            @NotNull final CallTransformer<D, F> callTransformer
+            @NotNull ResolutionTask<D, F> task,
+            @NotNull CallTransformer<D, F> callTransformer
     ) {
+        List<CallCandidateResolutionContext<D>> contexts = collectCallCandidateContext(task, callTransformer, EXIT_ON_FIRST_ERROR);
+        boolean isSuccess = ContainerUtil.exists(contexts, new Condition<CallCandidateResolutionContext<D>>() {
+            @Override
+            public boolean value(CallCandidateResolutionContext<D> context) {
+                return context.candidateCall.getStatus().possibleTransformToSuccess();
+            }
+        });
+        if (!isSuccess) {
+            contexts = collectCallCandidateContext(task, callTransformer, FULLY);
+        }
 
-        for (final ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
-            candidatePerfCounter.time(new Function0<Unit>() {
-                @Override
-                public Unit invoke() {
-                    TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
-                            task.trace, "trace to resolve candidate");
-                    Collection<CallCandidateResolutionContext<D>> contexts =
-                            callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace, CandidateResolveMode.FULLY);
-                    for (CallCandidateResolutionContext<D> context : contexts) {
-
-                        candidateResolver.performResolutionForCandidateCall(context, task);
-
-                /* important for 'variable as function case': temporary bind reference to descriptor (will be rewritten)
-                to have a binding to variable while 'invoke' call resolve */
-                        task.tracing.bindReference(context.candidateCall.getTrace(), context.candidateCall);
-
-                        Collection<MutableResolvedCall<F>> resolvedCalls = callTransformer.transformCall(context, CallResolver.this, task);
-
-                        for (MutableResolvedCall<F> resolvedCall : resolvedCalls) {
-                            BindingTrace trace = resolvedCall.getTrace();
-                            task.tracing.bindReference(trace, resolvedCall);
-                            task.tracing.bindResolvedCall(trace, resolvedCall);
-                            task.addResolvedCall(resolvedCall);
-                        }
-                    }
-                    return Unit.INSTANCE$;
-                }
-            });
+        for (CallCandidateResolutionContext<D> context : contexts) {
+            addResolvedCall(task, callTransformer, context);
         }
 
         OverloadResolutionResultsImpl<F> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
@@ -605,5 +593,49 @@ public class CallResolver {
             argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());
         }
         return results;
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> List<CallCandidateResolutionContext<D>> collectCallCandidateContext(
+            @NotNull final ResolutionTask<D, F> task,
+            @NotNull final CallTransformer<D, F> callTransformer,
+            @NotNull final CandidateResolveMode candidateResolveMode
+    ) {
+        final List<CallCandidateResolutionContext<D>> candidateResolutionContexts = ContainerUtil.newArrayList();
+        for (final ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
+            candidatePerfCounter.time(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
+                            task.trace, "trace to resolve candidate");
+                    Collection<CallCandidateResolutionContext<D>> contexts =
+                            callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace, candidateResolveMode);
+                    for (CallCandidateResolutionContext<D> context : contexts) {
+                        candidateResolver.performResolutionForCandidateCall(context, task);
+                        candidateResolutionContexts.add(context);
+                    }
+                    return Unit.INSTANCE$;
+                }
+            });
+        }
+        return candidateResolutionContexts;
+    }
+
+    private <D extends CallableDescriptor, F extends D> void addResolvedCall(
+            @NotNull ResolutionTask<D, F> task,
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull CallCandidateResolutionContext<D> context) {
+        /* important for 'variable as function case': temporary bind reference to descriptor (will be rewritten)
+        to have a binding to variable while 'invoke' call resolve */
+        task.tracing.bindReference(context.candidateCall.getTrace(), context.candidateCall);
+
+        Collection<MutableResolvedCall<F>> resolvedCalls = callTransformer.transformCall(context, this, task);
+
+        for (MutableResolvedCall<F> resolvedCall : resolvedCalls) {
+            BindingTrace trace = resolvedCall.getTrace();
+            task.tracing.bindReference(trace, resolvedCall);
+            task.tracing.bindResolvedCall(trace, resolvedCall);
+            task.addResolvedCall(resolvedCall);
+        }
     }
 }
