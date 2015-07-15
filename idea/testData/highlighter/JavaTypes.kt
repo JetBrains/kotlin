@@ -1,2 +1,2 @@
-<info textAttributesKey="KOTLIN_ANNOTATION">Override</info> class <info textAttributesKey="KOTLIN_CLASS">TheClass</info> : <info textAttributesKey="KOTLIN_TRAIT">Runnable</info>, <info textAttributesKey="KOTLIN_CLASS"><info textAttributesKey="KOTLIN_CONSTRUCTOR">Thread</info></info>() {
+<info textAttributesKey="KOTLIN_ANNOTATION">SuppressWarnings</info> class <info textAttributesKey="KOTLIN_CLASS">TheClass</info> : <info textAttributesKey="KOTLIN_TRAIT">Runnable</info>, <info textAttributesKey="KOTLIN_CLASS"><info textAttributesKey="KOTLIN_CONSTRUCTOR">Thread</info></info>() {
 }
