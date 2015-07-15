@@ -190,25 +190,4 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             doTest(fileName);
         }
     }
-
-    @TestMetadata("compiler/testData/asJava/lightClasses/publicField")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PublicField extends AbstractKotlinLightClassTest {
-        public void testAllFilesPresentInPublicField() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/publicField"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("CompanionObject.kt")
-        public void testCompanionObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/publicField/CompanionObject.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("Simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/publicField/Simple.kt");
-            doTest(fileName);
-        }
-    }
 }

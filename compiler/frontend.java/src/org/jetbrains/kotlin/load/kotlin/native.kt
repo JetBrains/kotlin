@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
@@ -42,12 +41,7 @@ public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
 public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS, NATIVE_ANNOTATION_CLASS_NAME)
 
 public class NativeFunChecker : DeclarationChecker {
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (!descriptor.hasNativeAnnotation()) return
 
         if (DescriptorUtils.isTrait(descriptor.getContainingDeclaration())) {

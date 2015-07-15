@@ -20,12 +20,8 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-public interface DeclarationChecker {
+public trait DeclarationChecker {
 
-    public fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext);
+    public fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink);
 
 }

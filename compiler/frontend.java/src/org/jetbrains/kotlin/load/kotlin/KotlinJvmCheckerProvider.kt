@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.annotations.findPublicFieldAnnotation
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
+import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
@@ -65,8 +67,7 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
                                                LocalFunInlineChecker(),
                                                ReifiedTypeParameterAnnotationChecker(),
                                                NativeFunChecker(),
-                                               OverloadsAnnotationChecker(),
-                                               PublicFieldAnnotationChecker()),
+                                               OverloadsAnnotationChecker()),
 
         additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
                                         JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker(),
@@ -78,11 +79,7 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
 
 public class LocalFunInlineChecker : DeclarationChecker {
 
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasInlineAnnotation() &&
             declaration is JetNamedFunction &&
             descriptor is FunctionDescriptor &&
@@ -94,12 +91,7 @@ public class LocalFunInlineChecker : DeclarationChecker {
 
 public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasPlatformStaticAnnotation()) {
             if (declaration is JetNamedFunction || declaration is JetProperty || declaration is JetPropertyAccessor) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
@@ -138,12 +130,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
 }
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) != null) {
             checkDeclaration(declaration, descriptor, diagnosticHolder)
         }
@@ -166,37 +153,9 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
     }
 }
 
-public class PublicFieldAnnotationChecker: DeclarationChecker {
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
-        val annotation = descriptor.findPublicFieldAnnotation() ?: return
-
-        fun report() {
-            val annotationEntry = bindingContext.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation) ?: return
-            diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry))
-        }
-
-        if (descriptor !is PropertyDescriptor) {
-            report()
-        }
-        else if (!bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)) {
-            report()
-        }
-    }
-}
-
 public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
-    override fun check(
-            declaration: JetDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
         if (descriptor.hasIntrinsicAnnotation()) return
 
         if (descriptor is CallableDescriptor && !descriptor.hasInlineAnnotation()) {

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -257,28 +256,15 @@ public class PropertyCodegen {
 
         ClassBuilder builder = v;
 
-        boolean hasPublicFieldAnnotation = AnnotationsPackage.findPublicFieldAnnotation(propertyDescriptor) != null;
-
         FieldOwnerContext backingFieldContext = context;
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
-            modifiers |= ACC_STATIC;
-
-            if (hasPublicFieldAnnotation && !isDelegate) {
-                modifiers |= ACC_PUBLIC;
-            }
-            else {
-                modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
-            }
-
+            modifiers |= ACC_STATIC | getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
             if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
                 v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
-        }
-        else if (!isDelegate && hasPublicFieldAnnotation) {
-            modifiers |= ACC_PUBLIC;
         }
         else if (kind != OwnerKind.PACKAGE || isDelegate) {
             modifiers |= ACC_PRIVATE;
