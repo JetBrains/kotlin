@@ -88,7 +88,14 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
+
+            Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             return sequenceOf(this, collection.asSequence()).flatten()
@@ -127,7 +134,14 @@ fun generators(): List<GenericFunction> {
             return result
             """
         }
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [array]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence and then all elements of the given [array].
+
+            Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             return this.plus(array.asList())
@@ -169,7 +183,14 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
+
+            Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             return sequenceOf(this, sequence).flatten()
@@ -244,7 +265,14 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [collection]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
+
+            Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             return object: Sequence<T> {
@@ -281,7 +309,14 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [array]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
+
+            Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             if (array.isEmpty()) return this
@@ -318,7 +353,14 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence]." }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+
+            Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
         body(Sequences) {
             """
             return object: Sequence<T> {

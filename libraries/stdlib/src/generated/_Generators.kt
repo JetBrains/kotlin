@@ -385,6 +385,8 @@ public fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
+ * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
     if (array.isEmpty()) return this
@@ -417,6 +419,8 @@ public fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
+ * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
     return object: Sequence<T> {
@@ -486,6 +490,8 @@ public fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+ * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
@@ -747,6 +753,8 @@ public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [array].
+ * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
     return this.plus(array.asList())
@@ -791,6 +799,8 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
+ * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
     return sequenceOf(this, collection.asSequence()).flatten()
@@ -866,6 +876,8 @@ public fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
+ * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
     return sequenceOf(this, sequence).flatten()
