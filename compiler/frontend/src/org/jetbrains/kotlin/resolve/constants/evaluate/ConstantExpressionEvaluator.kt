@@ -52,145 +52,153 @@ import java.math.BigInteger
 import java.util.HashMap
 import kotlin.platform.platformStatic
 
-public class ConstantExpressionEvaluator private constructor() {
+public class ConstantExpressionEvaluator(private val builtIns: KotlinBuiltIns) {
+
+    internal fun resolveAnnotationArguments(
+            resolvedCall: ResolvedCall<*>,
+            trace: BindingTrace
+    ): Map<ValueParameterDescriptor, ConstantValue<*>> {
+        val arguments = HashMap<ValueParameterDescriptor, ConstantValue<*>>()
+        for ((parameterDescriptor, resolvedArgument) in resolvedCall.getValueArguments().entrySet()) {
+            val value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument)
+            if (value != null) {
+                arguments.put(parameterDescriptor, value)
+            }
+        }
+        return arguments
+    }
+
+    public fun getAnnotationArgumentValue(
+            trace: BindingTrace,
+            parameterDescriptor: ValueParameterDescriptor,
+            resolvedArgument: ResolvedValueArgument
+    ): ConstantValue<*>? {
+        val varargElementType = parameterDescriptor.getVarargElementType()
+        val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
+        val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.getType()
+        val compileTimeConstants = resolveValueArguments(resolvedArgument, constantType!!, trace)
+        val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
+
+        if (argumentsAsVararg) {
+            if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null
+
+            return ArrayValue(constants, parameterDescriptor.getType())
+        }
+        else {
+            // we should actually get only one element, but just in case of getting many, we take the last one
+            return constants.lastOrNull()
+        }
+    }
+
+    private fun checkCompileTimeConstant(
+            argumentExpression: JetExpression,
+            expectedType: JetType,
+            trace: BindingTrace
+    ) {
+        val expressionType = trace.getType(argumentExpression)
+
+        if (expressionType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
+            // TYPE_MISMATCH should be reported otherwise
+            return
+        }
+
+        // array(1, <!>null<!>, 3) - error should be reported on inner expression
+        if (argumentExpression is JetCallExpression) {
+            val arrayArgument = getArgumentExpressionsForArrayCall(argumentExpression, trace)
+            if (arrayArgument != null) {
+                for (expression in arrayArgument.first) {
+                    checkCompileTimeConstant(expression, arrayArgument.second!!, trace)
+                }
+            }
+        }
+
+        val constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.getBindingContext())
+        if (constant != null && constant.canBeUsedInAnnotations) {
+            return
+        }
+
+        val descriptor = expressionType.getConstructor().getDeclarationDescriptor()
+        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression))
+        }
+        else if (descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor)) {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+        }
+        else {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression))
+        }
+    }
+
+    private fun getArgumentExpressionsForArrayCall(
+            expression: JetCallExpression,
+            trace: BindingTrace
+    ): Pair<List<JetExpression>, JetType?>? {
+        val resolvedCall = expression.getResolvedCall(trace.getBindingContext())
+        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+            return null
+        }
+
+        assert(resolvedCall.getValueArguments().size() == 1, "Array function should have only one vararg parameter")
+
+        val argumentEntry = resolvedCall.getValueArguments().entrySet().iterator().next()
+
+        val elementType = argumentEntry.getKey().getVarargElementType() ?: return null
+
+        val result = arrayListOf<JetExpression>()
+        for (valueArgument in argumentEntry.getValue().getArguments()) {
+            val valueArgumentExpression = valueArgument.getArgumentExpression()
+            if (valueArgumentExpression != null) {
+                result.add(valueArgumentExpression)
+            }
+        }
+
+        return Pair<List<JetExpression>, JetType>(result, elementType)
+    }
+
+    private fun hasSpread(argument: ResolvedValueArgument): Boolean {
+        val arguments = argument.getArguments()
+        return arguments.size() == 1 && arguments.get(0).getSpreadElement() != null
+    }
+
+    private fun resolveValueArguments(
+            resolvedValueArgument: ResolvedValueArgument,
+            expectedType: JetType,
+            trace: BindingTrace): List<CompileTimeConstant<*>> {
+        val constants = Lists.newArrayList<CompileTimeConstant<*>>()
+        for (argument in resolvedValueArgument.getArguments()) {
+            val argumentExpression = argument.getArgumentExpression() ?: continue
+            val constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType)
+            if (constant is IntegerValueTypeConstant) {
+                val defaultType = constant.getType(expectedType)
+                val context = SimpleResolutionContext(trace, JetScope.Empty, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
+                                                      ContextDependency.INDEPENDENT,
+                                                      CompositeChecker(Lists.newArrayList<CallChecker>()),
+                                                      SymbolUsageValidator.Empty,
+                                                      AdditionalTypeChecker.Composite(Lists.newArrayList<AdditionalTypeChecker>()),
+                                                      StatementFilter.NONE)
+                ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context)
+            }
+            if (constant != null) {
+                constants.add(constant)
+            }
+            checkCompileTimeConstant(argumentExpression, expectedType, trace)
+        }
+        return constants
+    }
+
+    public fun evaluateExpression(
+            expression: JetExpression,
+            trace: BindingTrace,
+            expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE
+    ): CompileTimeConstant<*>? {
+        val visitor = ConstantExpressionEvaluatorVisitor(this, trace, builtIns)
+        val constant = visitor.evaluate(expression, expectedType) ?: return null
+        return if (!constant.isError) constant else null
+    }
+
     companion object {
-
-        platformStatic public fun resolveAnnotationArguments(
-                resolvedCall: ResolvedCall<*>,
-                trace: BindingTrace
-        ): Map<ValueParameterDescriptor, ConstantValue<*>> {
-            val arguments = HashMap<ValueParameterDescriptor, ConstantValue<*>>()
-            for ((parameterDescriptor, resolvedArgument) in resolvedCall.getValueArguments().entrySet()) {
-                val value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument)
-                if (value != null) {
-                    arguments.put(parameterDescriptor, value)
-                }
-            }
-            return arguments
-        }
-
-        platformStatic public fun getAnnotationArgumentValue(
-                trace: BindingTrace,
-                parameterDescriptor: ValueParameterDescriptor,
-                resolvedArgument: ResolvedValueArgument
-        ): ConstantValue<*>? {
-            val varargElementType = parameterDescriptor.getVarargElementType()
-            val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
-            val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.getType()
-            val compileTimeConstants = resolveValueArguments(resolvedArgument, constantType!!, trace)
-            val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
-
-            if (argumentsAsVararg) {
-                if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null
-
-                return ArrayValue(constants, parameterDescriptor.getType())
-            }
-            else {
-                // we should actually get only one element, but just in case of getting many, we take the last one
-                return constants.lastOrNull()
-            }
-        }
-
-        private fun checkCompileTimeConstant(
-                argumentExpression: JetExpression,
-                expectedType: JetType,
-                trace: BindingTrace
-        ) {
-            val expressionType = trace.getType(argumentExpression)
-
-            if (expressionType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
-                // TYPE_MISMATCH should be reported otherwise
-                return
-            }
-
-            // array(1, <!>null<!>, 3) - error should be reported on inner expression
-            if (argumentExpression is JetCallExpression) {
-                val arrayArgument = getArgumentExpressionsForArrayCall(argumentExpression, trace)
-                if (arrayArgument != null) {
-                    for (expression in arrayArgument.first) {
-                        checkCompileTimeConstant(expression, arrayArgument.second!!, trace)
-                    }
-                }
-            }
-
-            val constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.getBindingContext())
-            if (constant != null && constant.canBeUsedInAnnotations) {
-                return
-            }
-
-            val descriptor = expressionType.getConstructor().getDeclarationDescriptor()
-            if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
-                trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression))
-            }
-            else if (descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor)) {
-                trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
-            }
-            else {
-                trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression))
-            }
-        }
-
-        private fun getArgumentExpressionsForArrayCall(
-                expression: JetCallExpression,
-                trace: BindingTrace
-        ): Pair<List<JetExpression>, JetType?>? {
-            val resolvedCall = expression.getResolvedCall(trace.getBindingContext())
-            if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
-                return null
-            }
-
-            assert(resolvedCall.getValueArguments().size() == 1, "Array function should have only one vararg parameter")
-
-            val argumentEntry = resolvedCall.getValueArguments().entrySet().iterator().next()
-
-            val elementType = argumentEntry.getKey().getVarargElementType() ?: return null
-
-            val result = arrayListOf<JetExpression>()
-            for (valueArgument in argumentEntry.getValue().getArguments()) {
-                val valueArgumentExpression = valueArgument.getArgumentExpression()
-                if (valueArgumentExpression != null) {
-                    result.add(valueArgumentExpression)
-                }
-            }
-
-            return Pair<List<JetExpression>, JetType>(result, elementType)
-        }
-
-        private fun hasSpread(argument: ResolvedValueArgument): Boolean {
-            val arguments = argument.getArguments()
-            return arguments.size() == 1 && arguments.get(0).getSpreadElement() != null
-        }
-
-        private fun resolveValueArguments(
-                resolvedValueArgument: ResolvedValueArgument,
-                expectedType: JetType,
-                trace: BindingTrace): List<CompileTimeConstant<*>> {
-            val constants = Lists.newArrayList<CompileTimeConstant<*>>()
-            for (argument in resolvedValueArgument.getArguments()) {
-                val argumentExpression = argument.getArgumentExpression() ?: continue
-                val constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType)
-                if (constant is IntegerValueTypeConstant) {
-                    val defaultType = constant.getType(expectedType)
-                    val context = SimpleResolutionContext(trace, JetScope.Empty, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
-                                                          ContextDependency.INDEPENDENT,
-                                                          CompositeChecker(Lists.newArrayList<CallChecker>()),
-                                                          SymbolUsageValidator.Empty,
-                                                          AdditionalTypeChecker.Composite(Lists.newArrayList<AdditionalTypeChecker>()),
-                                                          StatementFilter.NONE)
-                    ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context)
-                }
-                if (constant != null) {
-                    constants.add(constant)
-                }
-                checkCompileTimeConstant(argumentExpression, expectedType, trace)
-            }
-            return constants
-        }
-
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
-            val visitor = ConstantExpressionEvaluatorVisitor(trace, KotlinBuiltIns.getInstance())
-            val constant = visitor.evaluate(expression, expectedType) ?: return null
-            return if (!constant.isError) constant else null
+            return ConstantExpressionEvaluator(KotlinBuiltIns.getInstance()).evaluateExpression(expression, trace, expectedType)
         }
 
         platformStatic public fun evaluateToConstantValue(
@@ -212,7 +220,11 @@ public class ConstantExpressionEvaluator private constructor() {
     }
 }
 
-private class ConstantExpressionEvaluatorVisitor(private val trace: BindingTrace, private val builtIns: KotlinBuiltIns) : JetVisitor<CompileTimeConstant<*>?, JetType>() {
+private class ConstantExpressionEvaluatorVisitor(
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val trace: BindingTrace,
+        private val builtIns: KotlinBuiltIns
+) : JetVisitor<CompileTimeConstant<*>?, JetType>() {
     private val factory = ConstantValueFactory(builtIns)
 
     fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -572,7 +584,7 @@ private class ConstantExpressionEvaluatorVisitor(private val trace: BindingTrace
             if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
                 val descriptor = AnnotationDescriptorImpl(
                         classDescriptor.getDefaultType(),
-                        ConstantExpressionEvaluator.resolveAnnotationArguments(call, trace)
+                        constantExpressionEvaluator.resolveAnnotationArguments(call, trace)
                 )
                 return AnnotationValue(descriptor).wrap()
             }

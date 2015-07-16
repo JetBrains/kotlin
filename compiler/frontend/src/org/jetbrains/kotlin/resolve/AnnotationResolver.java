@@ -55,6 +55,7 @@ public class AnnotationResolver {
     private CallResolver callResolver;
     private StorageManager storageManager;
     private TypeResolver typeResolver;
+    private ConstantExpressionEvaluator constantExpressionEvaluator;
 
     @Inject
     public void setCallResolver(CallResolver callResolver) {
@@ -69,6 +70,11 @@ public class AnnotationResolver {
     @Inject
     public void setTypeResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+    }
+
+    @Inject
+    public void setConstantExpressionEvaluator(ConstantExpressionEvaluator constantExpressionEvaluator) {
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     @NotNull
@@ -209,6 +215,6 @@ public class AnnotationResolver {
             @NotNull ValueParameterDescriptor valueParameter,
             @NotNull ResolvedValueArgument resolvedArgument
     ) {
-        return ConstantExpressionEvaluator.getAnnotationArgumentValue(trace, valueParameter, resolvedArgument);
+        return constantExpressionEvaluator.getAnnotationArgumentValue(trace, valueParameter, resolvedArgument);
     }
 }
