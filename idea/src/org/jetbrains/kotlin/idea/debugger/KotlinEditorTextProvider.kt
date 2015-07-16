@@ -56,9 +56,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         }
 
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): JetExpression? {
-            if (PsiTreeUtil.getParentOfType(element, javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) != null) {
-                return null
-            }
+            if (!isAcceptedAsCodeFragmentContext(element)) return null
 
             val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
             if (jetElement == null) return null
@@ -115,6 +113,14 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 else -> null
             }
 
+        }
+
+        private val NOT_ACCEPTED_AS_CONTEXT_TYPES =
+                arrayOf(javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>())
+
+        fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
+            return element.javaClass !in NOT_ACCEPTED_AS_CONTEXT_TYPES &&
+                   PsiTreeUtil.getParentOfType(element, *NOT_ACCEPTED_AS_CONTEXT_TYPES) == null
         }
     }
 }

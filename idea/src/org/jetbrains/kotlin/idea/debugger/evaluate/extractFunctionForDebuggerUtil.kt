@@ -77,11 +77,6 @@ fun getFunctionForExtractedFragment(
         val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getContext(), breakpointLine)
         if (contextElement == null) return null
 
-        // Don't evaluate smth when breakpoint is on package directive (ex. for package classes)
-        if (contextElement is JetFile) {
-            throw EvaluateExceptionUtil.createEvaluateException("Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}")
-        }
-
         addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
         val newDebugExpressions = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
@@ -158,7 +153,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
         return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.getContext(), line)
     }
 
-    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration
+    fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration || el is JetFile
 
     var elementAt = tmpFile.getElementInCopy(contextElement)
 
@@ -192,6 +187,12 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     }
 
     val elementBefore = when {
+        contextElement is JetFile -> {
+            val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
+            contextElement.add(psiFactory.createNewLine())
+            val newFakeFun = contextElement.add(fakeFunction) as JetNamedFunction
+            newFakeFun.getBodyExpression()!!.getLastChild()
+        }
         contextElement is JetProperty && !contextElement.isLocal() -> {
             val delegateExpressionOrInitializer = contextElement.getDelegateExpressionOrInitializer()
             if (delegateExpressionOrInitializer != null) {

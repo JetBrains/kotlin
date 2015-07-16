@@ -78,6 +78,10 @@ public fun JetCodeFragment.getScopeAndDataFlowForAnalyzeFragment(
             scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, correctedContext]
             dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
         }
+        is JetFile -> {
+            scopeForContextElement = resolveSession.getFileScopeProvider().getFileScope(context)
+            dataFlowInfo = DataFlowInfo.EMPTY
+        }
         else -> return null
     }
 
