@@ -101,8 +101,6 @@ public final class JvmAnnotationNames {
     @Deprecated
     public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
     @Deprecated
-    public static final FqName OLD_JET_VALUE_PARAMETER_ANNOTATION = new FqName("jet.runtime.typeinfo.JetValueParameter");
-    @Deprecated
     public static final FqName OLD_KOTLIN_CLASS = new FqName("jet.KotlinClass");
     @Deprecated
     public static final FqName OLD_KOTLIN_PACKAGE = new FqName("jet.KotlinPackage");

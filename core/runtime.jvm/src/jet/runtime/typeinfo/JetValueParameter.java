@@ -21,15 +21,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated This class is no longer used in the bytecode produced by Kotlin compiler
+ * and exists in the Kotlin Java Runtime only for compatibility with the older code.
+ * It will be deleted completely after M13.
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
 public @interface JetValueParameter {
     String name();
 
-    /**
-     * This is a hack for Kara
-     * @return <code>"?"</code> if the type of this parameter is nullable, an empty string otherwise
-     */
     String type() default "";
 }
