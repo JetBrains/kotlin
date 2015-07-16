@@ -75,10 +75,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val completionKind = calcCompletionKind()
 
-    override val descriptorKindFilter = if (isNoQualifierContext())
-        completionKind.descriptorKindFilter?.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
-    else
+    override val descriptorKindFilter = if (isNoQualifierContext()) {
+        // it's an optimization because obtaining top-level packages from scope is very slow, we obtains them in other way
+        completionKind.descriptorKindFilter?.exclude(DescriptorKindExclude.TopLevelPackages)
+    }
+    else {
         completionKind.descriptorKindFilter
+    }
 
     private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
@@ -202,8 +205,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             // getting root packages from scope is very slow so we do this in alternative way
-            if (isNoQualifierContext() && (completionKind.descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
-                //TODO: move this code somewhere else
+            if (isNoQualifierContext() && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+                //TODO: move this code somewhere else?
                 val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
                         .toMutableSet()
 

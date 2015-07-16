@@ -229,4 +229,17 @@ public trait DescriptorKindExclude {
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
+
+    public object TopLevelPackages : DescriptorKindExclude {
+        override fun excludes(descriptor: DeclarationDescriptor): Boolean {
+            val fqName = when (descriptor) {
+                is PackageFragmentDescriptor -> descriptor.fqName
+                is PackageViewDescriptor -> descriptor.fqName
+                else -> return false
+            }
+            return fqName.parent().isRoot()
+        }
+
+        override val fullyExcludedDescriptorKinds: Int get() = 0
+    }
 }

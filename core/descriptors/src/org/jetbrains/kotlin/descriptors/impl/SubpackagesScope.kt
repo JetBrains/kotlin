@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.Printer
@@ -47,6 +48,7 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
+        if (fqName.isRoot() && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
         val subFqNames = moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size())
