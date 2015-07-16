@@ -258,7 +258,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private companion object {
         object NonAnnotationClassifierExclude : DescriptorKindExclude {
-            override fun matches(descriptor: DeclarationDescriptor): Boolean {
+            override fun excludes(descriptor: DeclarationDescriptor): Boolean {
                 if (descriptor !is ClassifierDescriptor) return false
                 return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
             }
