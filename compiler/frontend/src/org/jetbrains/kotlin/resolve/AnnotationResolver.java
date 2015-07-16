@@ -17,51 +17,35 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Pair;
-import kotlin.KotlinPackage;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.psi.JetAnnotationEntry;
+import org.jetbrains.kotlin.psi.JetModifierList;
+import org.jetbrains.kotlin.psi.JetTypeParameter;
+import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
-import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker;
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
-import org.jetbrains.kotlin.resolve.calls.context.SimpleResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.constants.ArrayValue;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -210,153 +194,6 @@ public class AnnotationResolver {
         );
     }
 
-    @NotNull
-    public static Map<ValueParameterDescriptor, ConstantValue<?>> resolveAnnotationArguments(
-            @NotNull ResolvedCall<?> resolvedCall,
-            @NotNull BindingTrace trace
-    ) {
-        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = new HashMap<ValueParameterDescriptor, ConstantValue<?>>();
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
-            ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
-            ResolvedValueArgument resolvedArgument = descriptorToArgument.getValue();
-
-            ConstantValue<?> value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument);
-            if (value != null) {
-                arguments.put(parameterDescriptor, value);
-            }
-        }
-        return arguments;
-    }
-
-    @Nullable
-    public static ConstantValue<?> getAnnotationArgumentValue(
-            BindingTrace trace,
-            ValueParameterDescriptor parameterDescriptor,
-            ResolvedValueArgument resolvedArgument
-    ) {
-        JetType varargElementType = parameterDescriptor.getVarargElementType();
-        boolean argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument);
-        final JetType constantType = argumentsAsVararg ? varargElementType : parameterDescriptor.getType();
-        List<CompileTimeConstant<?>> compileTimeConstants = resolveValueArguments(resolvedArgument, constantType, trace);
-        List<ConstantValue<?>> constants = KotlinPackage.map(compileTimeConstants, new Function1<CompileTimeConstant<?>, ConstantValue<?>>() {
-            @Override
-            public ConstantValue<?> invoke(CompileTimeConstant<?> constant) {
-                return constant.toConstantValue(constantType);
-            }
-        });
-
-        if (argumentsAsVararg) {
-            if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null;
-
-            return new ArrayValue(constants, parameterDescriptor.getType());
-        }
-        else {
-            // we should actually get only one element, but just in case of getting many, we take the last one
-            return KotlinPackage.lastOrNull(constants);
-        }
-    }
-
-    private static void checkCompileTimeConstant(
-            @NotNull JetExpression argumentExpression,
-            @NotNull JetType expectedType,
-            @NotNull BindingTrace trace
-    ) {
-        JetType expressionType = trace.getType(argumentExpression);
-
-        if (expressionType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
-            // TYPE_MISMATCH should be reported otherwise
-            return;
-        }
-
-        // array(1, <!>null<!>, 3) - error should be reported on inner expression
-        if (argumentExpression instanceof JetCallExpression) {
-            Pair<List<JetExpression>, JetType> arrayArgument = getArgumentExpressionsForArrayCall((JetCallExpression) argumentExpression, trace);
-            if (arrayArgument != null) {
-                for (JetExpression expression : arrayArgument.getFirst()) {
-                    checkCompileTimeConstant(expression, arrayArgument.getSecond(), trace);
-                }
-            }
-        }
-
-        CompileTimeConstant<?> constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.getBindingContext());
-        if (constant != null && constant.getCanBeUsedInAnnotations()) {
-            return;
-        }
-
-        ClassifierDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
-        }
-        else if (descriptor instanceof ClassDescriptor && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor)) {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression));
-        }
-        else {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression));
-        }
-    }
-
-    @Nullable
-    private static Pair<List<JetExpression>, JetType> getArgumentExpressionsForArrayCall(
-            @NotNull JetCallExpression expression,
-            @NotNull BindingTrace trace
-    ) {
-        ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, trace.getBindingContext());
-        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
-            return null;
-        }
-
-        assert resolvedCall.getValueArguments().size() == 1 : "Array function should have only one vararg parameter";
-        Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentEntry = resolvedCall.getValueArguments().entrySet().iterator().next();
-
-        List<JetExpression> result = Lists.newArrayList();
-        JetType elementType = argumentEntry.getKey().getVarargElementType();
-        for (ValueArgument valueArgument : argumentEntry.getValue().getArguments()) {
-            JetExpression valueArgumentExpression = valueArgument.getArgumentExpression();
-            if (valueArgumentExpression != null) {
-                if (elementType != null) {
-                    result.add(valueArgumentExpression);
-                }
-            }
-        }
-        return new Pair<List<JetExpression>, JetType>(result, elementType);
-    }
-
-    private static boolean hasSpread(@NotNull ResolvedValueArgument argument) {
-        List<ValueArgument> arguments = argument.getArguments();
-        return arguments.size() == 1 && arguments.get(0).getSpreadElement() != null;
-    }
-
-    @NotNull
-    private static List<CompileTimeConstant<?>> resolveValueArguments(
-            @NotNull ResolvedValueArgument resolvedValueArgument,
-            @NotNull JetType expectedType,
-            @NotNull BindingTrace trace
-    ) {
-        List<CompileTimeConstant<?>> constants = Lists.newArrayList();
-        for (ValueArgument argument : resolvedValueArgument.getArguments()) {
-            JetExpression argumentExpression = argument.getArgumentExpression();
-            if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType);
-                if (constant instanceof IntegerValueTypeConstant) {
-                    JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
-                    SimpleResolutionContext context =
-                            new SimpleResolutionContext(trace, JetScope.Empty.INSTANCE$, NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
-                                                        ContextDependency.INDEPENDENT,
-                                                        new CompositeChecker(Lists.<CallChecker>newArrayList()),
-                                                        SymbolUsageValidator.Empty,
-                                                        new AdditionalTypeChecker.Composite(Lists.<AdditionalTypeChecker>newArrayList()),
-                                                        StatementFilter.NONE);
-                    ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context);
-                }
-                if (constant != null) {
-                    constants.add(constant);
-                }
-                checkCompileTimeConstant(argumentExpression, expectedType, trace);
-            }
-        }
-        return constants;
-    }
-
     public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetTypeParameter jetTypeParameter, @NotNull BindingTrace trace) {
         JetModifierList modifierList = jetTypeParameter.getModifierList();
         if (modifierList == null) return;
@@ -364,5 +201,14 @@ public class AnnotationResolver {
         for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
             trace.report(Errors.UNSUPPORTED.on(annotationEntry, "Annotations for type parameters are not supported yet"));
         }
+    }
+
+    @Nullable
+    public ConstantValue<?> getAnnotationArgumentValue(
+            @NotNull BindingTrace trace,
+            @NotNull ValueParameterDescriptor valueParameter,
+            @NotNull ResolvedValueArgument resolvedArgument
+    ) {
+        return ConstantExpressionEvaluator.getAnnotationArgumentValue(trace, valueParameter, resolvedArgument);
     }
 }
