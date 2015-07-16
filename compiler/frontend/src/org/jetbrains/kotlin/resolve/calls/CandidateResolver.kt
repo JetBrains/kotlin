@@ -313,28 +313,6 @@ public class CandidateResolver(
         return ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes)
     }
 
-    private fun <D : CallableDescriptor> checkReceivers(context: CallCandidateResolutionContext<D>): ResolutionStatus {
-        var resultStatus = SUCCESS
-        val candidateCall = context.candidateCall
-
-        // Comment about a very special case.
-        // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
-        // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
-        // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
-
-        resultStatus = resultStatus.combine(context.checkReceiver(
-                candidateCall,
-                candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
-                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
-
-        resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
-                candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
-                candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
-                // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                context.call is CallForImplicitInvoke))
-        return resultStatus
-    }
-
     private fun <D : CallableDescriptor, C : CallResolutionContext<C>> checkValueArgumentTypes(
             context: CallResolutionContext<C>,
             candidateCall: MutableResolvedCall<D>,
@@ -425,6 +403,28 @@ public class CandidateResolver(
         } else {
             SUCCESS
         }
+    }
+
+    private fun <D : CallableDescriptor> checkReceivers(context: CallCandidateResolutionContext<D>): ResolutionStatus {
+        var resultStatus = SUCCESS
+        val candidateCall = context.candidateCall
+
+        // Comment about a very special case.
+        // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
+        // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
+        // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
+
+        resultStatus = resultStatus.combine(context.checkReceiver(
+                candidateCall,
+                candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
+                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
+
+        resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
+                                                                  candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
+                                                                  candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
+                // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
+                                                                  context.call is CallForImplicitInvoke))
+        return resultStatus
     }
 
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkReceiver(
