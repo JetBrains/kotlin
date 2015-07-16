@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.codegen.state
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
-import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -34,9 +34,7 @@ import org.jetbrains.kotlin.psi.JetScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-
 import java.io.File
-import java.util.Collections
 
 public class GenerationState(
         public val project: Project,
@@ -159,9 +157,8 @@ public class GenerationState(
     }
 
     private fun markUsed() {
-        if (used) {
-            throw IllegalStateException(javaClass<GenerationState>() + " cannot be used more than once")
-        }
+        if (used) throw IllegalStateException("${GenerationState::class.java} cannot be used more than once")
+
         used = true
     }
 
