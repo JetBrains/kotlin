@@ -16,21 +16,19 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalInspectionToolSession
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
+import com.intellij.codeInspection.*
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import java.util.HashSet
 
@@ -78,8 +76,20 @@ class UnusedImportInspection : AbstractKotlinInspection() {
                 problemsHolder.registerProblem(
                         directive,
                         "Unused import directive",
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL)
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        OptimizeImportsQuickFix(file))
             }
         }
     }
+
+    private class OptimizeImportsQuickFix(private val file: JetFile): LocalQuickFix {
+        override fun getName() = "Optimize imports"
+
+        override fun getFamilyName() = getName()
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            OptimizeImportsProcessor(project, file).run()
+        }
+    }
+
 }
