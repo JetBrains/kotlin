@@ -55,16 +55,6 @@ public class TypedCompileTimeConstant<out T>(
     override fun toConstantValue(expectedType: JetType): ConstantValue<T> = constantValue
 }
 
-public fun <T> ConstantValue<T>.wrap(parameters: CompileTimeConstant.Parameters): TypedCompileTimeConstant<T>
-        = TypedCompileTimeConstant(this, parameters)
-
-public fun <T> ConstantValue<T>.wrap(
-        canBeUsedInAnnotation: Boolean =  this !is NullValue,
-        isPure: Boolean = false,
-        usesVariableAsConstant: Boolean = false
-): TypedCompileTimeConstant<T>
-        = wrap(CompileTimeConstant.Parameters(canBeUsedInAnnotation, isPure, usesVariableAsConstant))
-
 public class IntegerValueTypeConstant(
         private val value: Number,
         override val parameters: CompileTimeConstant.Parameters

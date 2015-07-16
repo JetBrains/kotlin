@@ -531,6 +531,16 @@ private class ConstantExpressionEvaluatorVisitor(private val trace: BindingTrace
             else -> factory.createLongValue(value)
         }.wrap(parameters)
     }
+
+    private fun <T> ConstantValue<T>.wrap(parameters: CompileTimeConstant.Parameters): TypedCompileTimeConstant<T>
+            = TypedCompileTimeConstant(this, parameters)
+
+    private fun <T> ConstantValue<T>.wrap(
+            canBeUsedInAnnotation: Boolean =  this !is NullValue,
+            isPure: Boolean = false,
+            usesVariableAsConstant: Boolean = false
+    ): TypedCompileTimeConstant<T>
+            = wrap(CompileTimeConstant.Parameters(canBeUsedInAnnotation, isPure, usesVariableAsConstant))
 }
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
