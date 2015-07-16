@@ -16,29 +16,48 @@
 
 package org.jetbrains.kotlin.resolve.util
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 //TODO: this code should be moved into debugger which should set correct context for its code fragment
-private fun correctContext(oldContext: PsiElement?): PsiElement? {
-    if (oldContext is JetBlockExpression) {
-        return oldContext.getStatements().lastOrNull() ?: oldContext
+private fun JetExpression.correctContextForExpression(): JetExpression {
+    when (this) {
+        is JetBlockExpression -> {
+            return this.getStatements().lastOrNull() ?: this
+        }
+        is JetFunctionLiteral -> {
+            return this.getBodyExpression()?.getStatements()?.lastOrNull() ?: this
+        }
+        else -> {
+            val previousExpression = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
+            if (previousExpression is JetExpression) {
+                return previousExpression
+            }
+            else {
+                val parentExpression = this.parents.firstIsInstanceOrNull<JetExpression>()
+                if (parentExpression is JetExpression) {
+                    return parentExpression
+                }
+            }
+        }
     }
-    return oldContext
+    return this
 }
 
 public fun JetCodeFragment.getScopeAndDataFlowForAnalyzeFragment(
         resolveSession: KotlinCodeAnalyzer,
         resolveToElement: (JetElement) -> BindingContext
 ): Pair<JetScope, DataFlowInfo>? {
-    val context = correctContext(getContext())
+    val context = getContext()
     if (context !is JetExpression) return null
 
     val scopeForContextElement: JetScope?
@@ -52,10 +71,12 @@ public fun JetCodeFragment.getScopeAndDataFlowForAnalyzeFragment(
             dataFlowInfo = DataFlowInfo.EMPTY
         }
         is JetExpression -> {
-            val contextForElement = resolveToElement(context)
+            val correctedContext = context.correctContextForExpression()
 
-            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, context]
-            dataFlowInfo = contextForElement.getDataFlowInfo(context)
+            val contextForElement = resolveToElement(correctedContext)
+
+            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, correctedContext]
+            dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
         }
         else -> return null
     }
