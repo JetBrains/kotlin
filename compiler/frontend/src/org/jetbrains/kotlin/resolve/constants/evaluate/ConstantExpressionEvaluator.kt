@@ -40,13 +40,11 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.math.BigInteger
 import kotlin.platform.platformStatic
 
-public class ConstantExpressionEvaluator private constructor(val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
-    private val factory = ConstantValueFactory(KotlinBuiltIns.getInstance())
-
+public class ConstantExpressionEvaluator private constructor()  {
     companion object {
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
-            val evaluator = ConstantExpressionEvaluator(trace)
-            val constant = evaluator.evaluate(expression, expectedType) ?: return null
+            val visitor = ConstantExpressionEvaluatorVisitor(trace, KotlinBuiltIns.getInstance())
+            val constant = visitor.evaluate(expression, expectedType) ?: return null
             return if (!constant.isError) constant else null
         }
 
@@ -63,13 +61,17 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             return if (!constant.isError) constant else null
         }
 
-        platformStatic private fun getPossiblyErrorConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+        platformStatic fun getPossiblyErrorConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression)
         }
     }
+}
 
-    private fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val recordedCompileTimeConstant = getPossiblyErrorConstant(expression, trace.getBindingContext())
+private class ConstantExpressionEvaluatorVisitor(private val trace: BindingTrace, private val builtIns: KotlinBuiltIns) : JetVisitor<CompileTimeConstant<*>?, JetType>() {
+    private val factory = ConstantValueFactory(builtIns)
+
+    fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
+        val recordedCompileTimeConstant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, trace.getBindingContext())
         if (recordedCompileTimeConstant != null) {
             return recordedCompileTimeConstant
         }
@@ -99,7 +101,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
         override fun visitStringTemplateEntryWithExpression(entry: JetStringTemplateEntryWithExpression, data: Nothing?): TypedCompileTimeConstant<String>? {
             val expression = entry.getExpression() ?: return null
 
-            return this@ConstantExpressionEvaluator.evaluate(expression, KotlinBuiltIns.getInstance().getStringType())?.let {
+            return evaluate(expression, builtIns.getStringType())?.let {
                 createStringConstant(it)
             }
         }
@@ -181,7 +183,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
 
         val operationToken = expression.getOperationToken()
         if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
-            val booleanType = KotlinBuiltIns.getInstance().getBooleanType()
+            val booleanType = builtIns.getBooleanType()
             val leftConstant = evaluate(leftExpression, booleanType)
             if (leftConstant == null) return null
 
@@ -268,11 +270,11 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
         return null
     }
 
-    private fun usesVariableAsConstant(expression: JetExpression) = getConstant(expression, trace.getBindingContext())?.usesVariableAsConstant ?: false
+    private fun usesVariableAsConstant(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.usesVariableAsConstant ?: false
 
-    private fun canBeUsedInAnnotation(expression: JetExpression) = getConstant(expression, trace.getBindingContext())?.canBeUsedInAnnotations ?: false
+    private fun canBeUsedInAnnotation(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.canBeUsedInAnnotations ?: false
 
-    private fun isPureConstant(expression: JetExpression) = getConstant(expression, trace.getBindingContext())?.isPure ?: false
+    private fun isPureConstant(expression: JetExpression) = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext())?.isPure ?: false
 
     private fun evaluateUnaryAndCheck(receiver: OperationArgument, name: String, callExpression: JetExpression): Any? {
         val functions = unaryOperations[UnaryOperationKey(receiver.ctcType, name)]
@@ -483,7 +485,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
     }
 
     private fun createOperationArgument(expression: JetExpression, expressionType: JetType, compileTimeType: CompileTimeType<*>): OperationArgument? {
-        val compileTimeConstant = evaluate(expression, trace, expressionType) ?: return null
+        val compileTimeConstant = constantExpressionEvaluator.evaluateExpression(expression, trace, expressionType) ?: return null
         val evaluationResult = compileTimeConstant.getValue(expressionType) ?: return null
         return OperationArgument(evaluationResult, compileTimeType, expression)
     }
