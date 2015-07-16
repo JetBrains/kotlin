@@ -14,8 +14,18 @@ annotationList
   : annotationPrefix "[" unescapedAnnotation+ "]"
   ;
 
+annotationUseSiteTarget
+  : "file"
+  : "field"
+  : "property"
+  : "get"
+  : "set"
+  : "param"
+  : "sparam"
+  ;
+
 annotationPrefix:
-  : ("@" (":" ("file" | "field"))?)
+  : ("@" (annotationUseSiteTarget ":")?)
   ;
 
 unescapedAnnotation

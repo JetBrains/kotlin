@@ -134,6 +134,10 @@ public interface JetTokens {
     JetToken EOL_OR_SEMICOLON   = new JetToken("EOL_OR_SEMICOLON");
     JetKeywordToken FILE_KEYWORD    = JetKeywordToken.softKeyword("file");
     JetKeywordToken FIELD_KEYWORD     = JetKeywordToken.softKeyword("field");
+    JetKeywordToken PROPERTY_KEYWORD     = JetKeywordToken.softKeyword("property");
+    JetKeywordToken RECEIVER_KEYWORD     = JetKeywordToken.softKeyword("receiver");
+    JetKeywordToken PARAM_KEYWORD     = JetKeywordToken.softKeyword("param");
+    JetKeywordToken SPARAM_KEYWORD     = JetKeywordToken.softKeyword("sparam");
     JetKeywordToken IMPORT_KEYWORD    = JetKeywordToken.softKeyword("import");
     JetKeywordToken WHERE_KEYWORD     = JetKeywordToken.softKeyword("where");
     JetKeywordToken BY_KEYWORD        = JetKeywordToken.softKeyword("by");
@@ -176,7 +180,7 @@ public interface JetTokens {
                                              OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD,
-                                             FIELD_KEYWORD
+                                             FIELD_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SPARAM_KEYWORD
     );
 
     /*
