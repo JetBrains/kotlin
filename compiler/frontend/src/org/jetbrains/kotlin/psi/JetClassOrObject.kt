@@ -21,9 +21,11 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -45,6 +47,22 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     public fun getBody(): JetClassBody? = getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
 
     public fun getOrCreateBody(): JetClassBody = getBody() ?: add(JetPsiFactory(this).createEmptyClassBody()) as JetClassBody
+
+    public fun addDeclaration(declaration: JetDeclaration): JetDeclaration {
+        val body = getOrCreateBody()
+        val anchor = PsiTreeUtil.skipSiblingsBackward(body.getRBrace() ?: body.getLastChild()!!, javaClass<PsiWhiteSpace>())
+        return body.addAfter(declaration, anchor) as JetDeclaration
+    }
+
+    public fun addDeclarationAfter(declaration: JetDeclaration, anchor: PsiElement?): JetDeclaration {
+        val anchorBefore = anchor ?: getDeclarations().lastOrNull() ?: return addDeclaration(declaration)
+        return getOrCreateBody().addAfter(declaration, anchorBefore) as JetDeclaration
+    }
+
+    public fun addDeclarationBefore(declaration: JetDeclaration, anchor: PsiElement?): JetDeclaration {
+        val anchorAfter = anchor ?: getDeclarations().firstOrNull() ?: return addDeclaration(declaration)
+        return getOrCreateBody().addBefore(declaration, anchorAfter) as JetDeclaration
+    }
 
     public fun isTopLevel(): Boolean = getStub()?.isTopLevel() ?: (getParent() is JetFile)
 

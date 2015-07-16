@@ -1,0 +1,13 @@
+// TARGET_CLASS: A
+open class A {
+    // INFO: {"checked": "true"}
+    val x: Int
+
+}
+
+open class B: A() {
+
+}
+
+class C: B() {
+}

@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.util.findElementByComment
+import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
 import java.util.Collections
@@ -106,7 +106,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 KotlinIntroduceParameterHandler(HelperImpl())
             }
             with (handler) {
-                val target = (file as JetFile).findElementByComment("// TARGET:") as? JetNamedDeclaration
+                val target = (file as JetFile).findElementByCommentPrefix("// TARGET:") as? JetNamedDeclaration
                 if (target != null) {
                     JetRefactoringUtil.selectExpression(fixture.getEditor(), file, true) { expression ->
                         invoke(fixture.getProject(), fixture.getEditor(), expression!!, target)
@@ -208,7 +208,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             val extractionTarget = propertyTargets.single {
                 it.name == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
             }
-            val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
+            val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
             val helper = object : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
                 override fun configureAndRun(
                         project: Project,
@@ -237,7 +237,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
         doTest(path) { file ->
             file as JetFile
 
-            val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
+            val explicitPreviousSibling = file.findElementByCommentPrefix("// SIBLING:")
             val fileText = file.getText() ?: ""
             val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
             val expectedReturnTypes = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_RETURN_TYPES: ")

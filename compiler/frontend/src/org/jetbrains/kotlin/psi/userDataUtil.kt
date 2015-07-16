@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import kotlin.properties.ReadWriteProperty
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.psi.PsiElement
 
 public class UserDataProperty<in R: UserDataHolder, T : Any>(val key: Key<T>, val default: T? = null) : ReadWriteProperty<R, T?> {
     override fun get(thisRef: R, desc: kotlin.PropertyMetadata): T? {
@@ -37,5 +38,15 @@ public class NotNullableUserDataProperty<in R: UserDataHolder, T : Any>(val key:
 
     override fun set(thisRef: R, desc: kotlin.PropertyMetadata, value: T) {
         thisRef.putUserData(key, value)
+    }
+}
+
+public class CopyableUserDataProperty<in R: PsiElement, T : Any>(val key: Key<T>, val default: T? = null) : ReadWriteProperty<R, T?> {
+    override fun get(thisRef: R, property: PropertyMetadata): T? {
+        return thisRef.getCopyableUserData(key)
+    }
+
+    override fun set(thisRef: R, property: PropertyMetadata, value: T?) {
+        thisRef.putCopyableUserData(key, value)
     }
 }

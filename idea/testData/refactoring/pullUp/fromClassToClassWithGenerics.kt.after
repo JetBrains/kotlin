@@ -1,0 +1,47 @@
+// WITH_RUNTIME
+interface I
+
+interface Z<T>
+
+abstract class A<T: I, U: I, V> {
+    // INFO: {"checked": "true"}
+    val foo1: T
+    // INFO: {"checked": "true"}
+    val foo2: Z<T>
+    // INFO: {"checked": "true"}
+    val foo3: Any?
+    // INFO: {"checked": "true"}
+    val foo4: Z<Any?>
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val foo5: T
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val foo6: Z<T>
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val foo7: Any?
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val foo8: Z<Any?>
+
+    // INFO: {"checked": "true"}
+    fun foo<S>(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>) {
+
+    }
+
+    // INFO: {"checked": "true"}
+    inner class Foo<S>(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>): A<T, I, Z<Any?>>(), Z<I> {
+
+    }
+}
+
+class C<W: I> {
+    inner class B<X: I, Y>(x: X, y: Y): A<X, I, Z<Y>>() {
+
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        override val foo5 = x
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        override val foo6 = object: Z<X> {}
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        override val foo7 = y
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        override val foo8 = object: Z<Y> {}
+    }
+}

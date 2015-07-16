@@ -83,6 +83,7 @@ import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
@@ -651,6 +652,10 @@ fun main(args: Array<String>) {
             model("refactoring/introduceParameter", extension = "kt", testMethod = "doIntroduceSimpleParameterTest")
             model("refactoring/introduceLambdaParameter", extension = "kt", testMethod = "doIntroduceLambdaParameterTest")
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
+        }
+
+        testClass(javaClass<AbstractPullUpTest>()) {
+            model("refactoring/pullUp", extension = "kt", singleClass = true)
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {

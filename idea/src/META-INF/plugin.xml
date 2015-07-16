@@ -527,6 +527,8 @@
         language="jet"
         implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.JetTargetElementEvaluator" />
 
+    <refactoring.pullUpHelperFactory language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHelperFactory"/>
+
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>
       <category>Kotlin</category>
