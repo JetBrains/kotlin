@@ -56,7 +56,7 @@ public class KotlinFindClassUsagesHandler(
     ): AbstractFindUsagesDialog {
         return KotlinFindClassUsagesDialog(getElement(),
                                            getProject(),
-                                           getFactory().findClassOptions,
+                                           factory.findClassOptions,
                                            toShowInNewTab,
                                            mustOpenInNewTab,
                                            isSingleFile,
@@ -130,6 +130,6 @@ public class KotlinFindClassUsagesHandler(
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
-        return getFactory().findClassOptions
+        return factory.findClassOptions
     }
 }
