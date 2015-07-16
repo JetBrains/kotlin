@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
@@ -62,7 +63,7 @@ public class GenerationUtils {
                 project, ClassBuilderFactories.TEST, Progress.DEAF,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                 files, false, false, GenerationState.GenerateClassFilter.GENERATE_ALL,
-                false, false, null, null, DiagnosticSink.DO_NOTHING, null
+                false, false, Collections.<FqName>emptySet(), null, DiagnosticSink.DO_NOTHING, null
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;

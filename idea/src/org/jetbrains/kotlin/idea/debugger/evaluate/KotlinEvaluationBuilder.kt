@@ -82,8 +82,7 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -372,7 +371,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         true, true,
                         generateClassFilter,
                         false, false,
-                        null, null,
+                        emptySet(), null,
                         DiagnosticSink.DO_NOTHING,
                         null)
 

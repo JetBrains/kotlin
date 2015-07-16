@@ -340,7 +340,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
-                    null,
+                    Collections.<FqName>emptySet(),
                     null,
                     forExtraDiagnostics,
                     null

@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -55,7 +53,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 /*disableInline =*/ false,
                 /*disableOptimization =*/ false,
-                /*packagesWithObsoleteParts =*/ null,
+                /*packagesWithObsoleteParts =*/ emptySet(),
                 /*moduleId =*/ null,
                 forExtraDiagnostics,
                 /*outDirectory =*/ null)

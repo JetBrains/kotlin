@@ -48,7 +48,7 @@ public class GenerationState(
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter,
         private val disableInline: Boolean,
         disableOptimization: Boolean,
-        packagesWithObsoleteParts: Collection<FqName>?,
+        public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
         public val moduleId: String?,
         public val diagnostics: DiagnosticSink,
@@ -87,7 +87,6 @@ public class GenerationState(
     public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
     public val reflectionTypes: ReflectionTypes
     public val jvmRuntimeTypes: JvmRuntimeTypes
-    public val packagesWithObsoleteParts: Collection<FqName>
     private val interceptedBuilderFactory: ClassBuilderFactory
 
     public constructor(
@@ -96,12 +95,11 @@ public class GenerationState(
             module: ModuleDescriptor,
             bindingContext: BindingContext,
             files: List<JetFile>) : this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
-                                         false, false, null, null, DiagnosticSink.DO_NOTHING, null) {
+                                         false, false, emptySet(), null, DiagnosticSink.DO_NOTHING, null) {
     }
 
     init {
         var builderFactory = builderFactory
-        this.packagesWithObsoleteParts = packagesWithObsoleteParts ?: emptySet<FqName>()
         this.classBuilderMode = builderFactory.getClassBuilderMode()
 
         this.bindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")

@@ -64,10 +64,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
@@ -366,7 +363,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         Collection<FqName> packagesWithObsoleteParts;
         if (moduleId == null || incrementalCompilationComponents == null) {
-            packagesWithObsoleteParts = null;
+            packagesWithObsoleteParts = Collections.emptySet();
         }
         else {
             IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
