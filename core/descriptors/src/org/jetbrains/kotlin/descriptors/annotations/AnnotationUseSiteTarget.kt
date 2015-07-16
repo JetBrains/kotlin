@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-public enum class AnnotationUseSiteTarget() {
-    FIELD,
-    FILE;
+public enum class AnnotationUseSiteTarget(renderName: String? = null) {
+    FIELD(),
+    FILE(),
+    PROPERTY_GETTER("get"),
+    PROPERTY_SETTER("set");
 
-    public val renderName: String = name().toLowerCase()
+    public val renderName: String = renderName ?: name().toLowerCase()
 }

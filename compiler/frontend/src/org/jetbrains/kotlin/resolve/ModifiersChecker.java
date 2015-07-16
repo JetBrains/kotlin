@@ -234,6 +234,27 @@ public class ModifiersChecker {
                         break;
                     case FILE:
                         throw new IllegalArgumentException("@file annotations are not allowed here");
+                    case PROPERTY_GETTER:
+                        reportIfNotPropertyDescriptor(descriptor, annotation, INAPPLICABLE_GET_TARGET);
+                        break;
+                    case PROPERTY_SETTER: {
+                        reportIfNotMutableProperty(descriptor, annotation, INAPPLICABLE_SET_TARGET);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void reportIfNotMutableProperty(
+                DeclarationDescriptor descriptor,
+                AnnotationDescriptor annotation,
+                DiagnosticFactory0<PsiElement> diagnosticFactory
+        ) {
+            reportIfNotPropertyDescriptor(descriptor, annotation, diagnosticFactory);
+
+            if (descriptor instanceof PropertyDescriptor) {
+                if (!((PropertyDescriptor) descriptor).isVar()) {
+                    reportAnnotationTargetNotApplicable(annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE);
                 }
             }
         }
