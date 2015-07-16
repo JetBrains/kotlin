@@ -13,11 +13,11 @@ class A {
     <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
     fun Int.invoke(a: String, b: Int)<!> = "OK"
 
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke
-    val foo<!> = 0
+    <!WRONG_ANNOTATION_TARGET!>nativeInvoke<!>
+    val foo = 0
 
-    nativeInvoke
-    <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj<!> {}
+    <!WRONG_ANNOTATION_TARGET!>nativeInvoke<!>
+    object Obj {}
 
     companion object {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeInvoke

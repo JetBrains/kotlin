@@ -1,16 +1,16 @@
 import kotlin.platform.platformStatic
 
-platformStatic
-class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">A</error> {
-    platformStatic
-    companion <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">object</error> {
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'classifier'">platformStatic</error>
+class A {
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'classifier'">platformStatic</error>
+    companion object {
         platformStatic fun a1() {
 
         }
     }
 
-    platformStatic
-    <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">object A</error> {
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'classifier'">platformStatic</error>
+    object A {
         platformStatic fun a2() {
 
         }
@@ -29,8 +29,8 @@ class <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not su
     }
 }
 
-platformStatic
-interface <error descr="[PLATFORM_STATIC_ILLEGAL_USAGE] This declaration does not support 'platformStatic'">B</error> {
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'classifier'">platformStatic</error>
+interface B {
     companion object {
         <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a1()</error> {
 

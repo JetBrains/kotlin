@@ -6,7 +6,6 @@ fun <T> _enumerate(o: T): T = noImpl
 native
 fun _findFirst<T>(o: Any): T = noImpl
 
-enumerable
 class Test() {
     val a: Int = 100
     val b: String = "s"

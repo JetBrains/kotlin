@@ -8,7 +8,7 @@ class State() {
     public var value: Int = 0
 }
 
-noinline fun test(state: State) {
+fun test(state: State) {
     @inline fun test3() {
         @inline fun test2() {
             @inline fun test1() {

@@ -96,10 +96,6 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
             if (declaration is JetNamedFunction || declaration is JetProperty || declaration is JetPropertyAccessor) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
             }
-            else {
-                //TODO: there should be general mechanism
-                diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE.on(declaration, descriptor));
-            }
         }
     }
 
@@ -172,10 +168,8 @@ public class PublicFieldAnnotationChecker: DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry))
         }
 
-        if (descriptor !is PropertyDescriptor) {
-            report()
-        }
-        else if (!bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
+        if (descriptor is PropertyDescriptor
+            && !bindingContext.get<PropertyDescriptor, Boolean>(BindingContext.BACKING_FIELD_REQUIRED, descriptor)!!) {
             report()
         }
     }

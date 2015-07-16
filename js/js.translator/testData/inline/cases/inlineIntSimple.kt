@@ -9,11 +9,11 @@ class Inline {
         return x
     }
 
-    public inline fun <T> identity2 (x: T, inline f: (T) -> T): T {
+    public inline fun <T> identity2 (x: T, f: (T) -> T): T {
         return f(x)
     }
 
-    public inline fun <T> identity3 (inline f: () -> T): T {
+    public inline fun <T> identity3 (f: () -> T): T {
         return f()
     }
 }

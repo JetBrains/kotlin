@@ -30,7 +30,7 @@ inline fun test3(state: State) {
     }
 }
 
-noinline fun test(state: State) {
+fun test(state: State) {
     test3(state)
 }
 

@@ -4,7 +4,7 @@ package foo
 
 data class Result(var value: Int = 0, var invocationCount: Int = 0)
 
-inline fun maxBy(a: Array<Int>, inline keyFun: (Int) -> Int): Int {
+inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     var maxVal = a[0]
     var maxKey = keyFun(maxVal)
 

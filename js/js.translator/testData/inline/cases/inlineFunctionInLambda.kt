@@ -6,7 +6,7 @@ inline fun <T> doNothing1(a: T): T {
     return a
 }
 
-inline fun <T> doNothing2(a: T, inline f: (T) -> T): T {
+inline fun <T> doNothing2(a: T, f: (T) -> T): T {
     return f(a)
 }
 

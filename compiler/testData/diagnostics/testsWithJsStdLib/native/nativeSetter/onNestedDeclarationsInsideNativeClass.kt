@@ -38,18 +38,18 @@ class A {
         }
 
         class B {
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-            val foo<!> = 0
+            <!WRONG_ANNOTATION_TARGET!>nativeSetter<!>
+            val foo = 0
 
-            nativeSetter
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
+            <!WRONG_ANNOTATION_TARGET!>nativeSetter<!>
+            object Obj1 {}
 
             companion object {
-                <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-                val foo<!> = 0
+                <!WRONG_ANNOTATION_TARGET!>nativeSetter<!>
+                val foo = 0
 
-                nativeSetter
-                <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj2<!> {}
+                <!WRONG_ANNOTATION_TARGET!>nativeSetter<!>
+                object Obj2 {}
             }
         }
 

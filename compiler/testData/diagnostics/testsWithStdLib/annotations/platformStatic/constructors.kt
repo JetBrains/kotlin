@@ -1,9 +1,9 @@
 import kotlin.platform.platformStatic
 class A {
-    platformStatic <!PLATFORM_STATIC_ILLEGAL_USAGE!>constructor()<!> {}
+    <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor() {}
     inner class B {
-        platformStatic <!PLATFORM_STATIC_ILLEGAL_USAGE!>constructor()<!> {}
+        <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor() {}
     }
 }
 
-class C platformStatic <!PLATFORM_STATIC_ILLEGAL_USAGE!>constructor()<!>
+class C <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor()

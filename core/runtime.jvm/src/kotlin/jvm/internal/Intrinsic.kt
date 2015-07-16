@@ -18,5 +18,5 @@ package kotlin.jvm.internal
 
 import java.lang.annotation.*
 
-Retention(RetentionPolicy.RUNTIME)
-public annotation class Intrinsic(val value: String)
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+public annotation(retention = AnnotationRetention.RUNTIME) class Intrinsic(val value: String)

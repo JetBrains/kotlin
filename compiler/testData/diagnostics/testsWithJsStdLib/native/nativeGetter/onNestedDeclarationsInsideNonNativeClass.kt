@@ -34,18 +34,18 @@ class A {
             <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
             fun Int.get3(a: Int): String?<!> = "OK"
 
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
-            val foo<!> = 0
+            <!WRONG_ANNOTATION_TARGET!>nativeGetter<!>
+            val foo = 0
 
-            nativeGetter
-            <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj1<!> {}
+            <!WRONG_ANNOTATION_TARGET!>nativeGetter<!>
+            object Obj1 {}
 
             companion object {
-                <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
-                val foo<!> = 0
+                <!WRONG_ANNOTATION_TARGET!>nativeGetter<!>
+                val foo = 0
 
-                nativeGetter
-                <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>object Obj2<!> {}
+                <!WRONG_ANNOTATION_TARGET!>nativeGetter<!>
+                object Obj2 {}
 
                 <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
                 fun Int.get(a: String): Int?<!> = 1

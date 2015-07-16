@@ -20,7 +20,7 @@ inline fun testInline(): Int {
     return c
 }
 
-noinline fun testNoinline(): Int {
+fun testNoinline(): Int {
     return testInline()
 }
 
