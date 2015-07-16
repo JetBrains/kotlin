@@ -18,17 +18,18 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import kotlin.jvm.internal.FunctionImpl
-import kotlin.reflect.KFunction
+import kotlin.reflect.*
 
 open class KFunctionImpl protected constructor(
         container: KCallableContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
-) : KFunction<Any?>, FunctionImpl() {
-    constructor(container: KCallableContainerImpl, name: String, signature: String): this(container, name, signature, null)
+) : KFunction<Any?>, FunctionImpl(),
+        KLocalFunction<Any?>, KMemberFunction<Any, Any?>, KTopLevelExtensionFunction<Any?, Any?>, KTopLevelFunction<Any?> {
+    constructor(container: KCallableContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
-    constructor(container: KCallableContainerImpl, descriptor: FunctionDescriptor): this(
+    constructor(container: KCallableContainerImpl, descriptor: FunctionDescriptor) : this(
             container, descriptor.getName().asString(), RuntimeTypeMapper.mapSignature(descriptor), descriptor
     )
 
