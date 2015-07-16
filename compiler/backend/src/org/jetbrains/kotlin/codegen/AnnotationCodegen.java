@@ -81,17 +81,30 @@ public abstract class AnnotationCodegen {
      * @param returnType can be null if not applicable (e.g. {@code annotated} is a class)
      */
     public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType) {
-        if (annotated == null) {
-            return;
-        }
+        genAnnotations(annotated, returnType, null);
+    }
 
-        if (!(annotated instanceof DeclarationDescriptor)) {
+    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType, @Nullable AnnotationUseSiteTarget target) {
+        if (annotated == null) {
             return;
         }
 
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<String>();
 
-        for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
+        Annotations annotations = annotated.getAnnotations();
+
+        if (target != null) {
+            for (AnnotationWithTarget annotationWithTarget : annotations.getUseSiteTargetedAnnotations()) {
+                if (target != annotationWithTarget.getTarget()) continue;
+
+                String descriptor = genAnnotation(annotationWithTarget.getAnnotation());
+                if (descriptor != null) {
+                    annotationDescriptorsAlreadyPresent.add(descriptor);
+                }
+            }
+        }
+
+        for (AnnotationDescriptor annotation : annotations) {
             String descriptor = genAnnotation(annotation);
             if (descriptor != null) {
                 annotationDescriptorsAlreadyPresent.add(descriptor);

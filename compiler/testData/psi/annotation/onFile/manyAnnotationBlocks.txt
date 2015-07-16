@@ -2,7 +2,8 @@ JetFile: manyAnnotationBlocks.kt
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
-      PsiElement(file)('file')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
       PsiElement(COLON)(':')
       CONSTRUCTOR_CALLEE
         TYPE_REFERENCE
@@ -12,7 +13,8 @@ JetFile: manyAnnotationBlocks.kt
     PsiWhiteSpace('\n')
     ANNOTATION
       PsiElement(AT)('@')
-      PsiElement(file)('file')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
       PsiElement(COLON)(':')
       PsiElement(LBRACKET)('[')
       ANNOTATION_ENTRY

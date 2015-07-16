@@ -19,8 +19,26 @@ package org.jetbrains.kotlin.descriptors.annotations
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import kotlin.platform.platformStatic
 
-public class AnnotationsImpl(private val annotations: List<AnnotationDescriptor>) : Annotations {
+public class AnnotationsImpl : Annotations {
+    private val annotations: List<AnnotationDescriptor>
+    private val targetedAnnotations: List<AnnotationWithTarget>
+
+    constructor(annotations: List<AnnotationDescriptor>) {
+        this.annotations = annotations
+        this.targetedAnnotations = annotations.map { AnnotationWithTarget(it, null) }
+    }
+
+    // List<AnnotationDescriptor> and List<AnnotationWithTarget> have the same signature
+    private constructor(
+            targetedAnnotations: List<AnnotationWithTarget>,
+            @suppress("UNUSED_PARAMETER") i: Int
+    ) {
+        this.targetedAnnotations = targetedAnnotations
+        this.annotations = targetedAnnotations.filter { it.target == null }.map { it.annotation }
+    }
+
     override fun isEmpty() = annotations.isEmpty()
 
     override fun findAnnotation(fqName: FqName) = annotations.firstOrNull {
@@ -28,9 +46,24 @@ public class AnnotationsImpl(private val annotations: List<AnnotationDescriptor>
         descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
     }
 
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
+        return targetedAnnotations
+                .filter { it.target != null }
+                .map { AnnotationWithTarget(it.annotation, it.target!!) }
+    }
+
+    override fun getAllAnnotations() = targetedAnnotations
+
     override fun findExternalAnnotation(fqName: FqName) = null
 
     override fun iterator() = annotations.iterator()
 
     override fun toString() = annotations.toString()
+
+    companion object {
+        platformStatic
+        public fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
+            return AnnotationsImpl(annotationsWithTargets, 0)
+        }
+    }
 }

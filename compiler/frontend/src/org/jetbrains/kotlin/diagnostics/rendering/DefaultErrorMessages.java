@@ -124,6 +124,9 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
 
+        MAP.put(INAPPLICABLE_FIELD_TARGET, "''@field:'' annotations could be applied only to property declarations");
+        MAP.put(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD, "Property has neither a backing field nor a delegate");
+
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");

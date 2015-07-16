@@ -11,7 +11,7 @@ JetFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION_ENTRY
         PsiElement(AT)('@')
-        PsiErrorElement:File annotations are only allowed before package declaration
+        PsiErrorElement:@file annotations are only allowed before package declaration
           PsiElement(file)('file')
           PsiElement(COLON)(':')
         CONSTRUCTOR_CALLEE
@@ -28,7 +28,7 @@ JetFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:File annotations are only allowed before package declaration
+        PsiErrorElement:@file annotations are only allowed before package declaration
           PsiElement(file)('file')
           PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
@@ -62,7 +62,7 @@ JetFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:File annotations are only allowed before package declaration
+        PsiErrorElement:@file annotations are only allowed before package declaration
           PsiElement(file)('file')
           PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')
@@ -80,7 +80,7 @@ JetFile: fileAnnotationInWrongPlace.kt
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
-      PsiErrorElement:Expected annotation identifier after '@file:'
+      PsiErrorElement:Expected annotation identifier after ':'
         PsiElement(AT)('@')
         PsiElement(IDENTIFIER)('file')
         PsiElement(COLON)(':')
@@ -93,7 +93,7 @@ JetFile: fileAnnotationInWrongPlace.kt
     MODIFIER_LIST
       ANNOTATION
         PsiElement(AT)('@')
-        PsiErrorElement:File annotations are only allowed before package declaration
+        PsiErrorElement:@file annotations are only allowed before package declaration
           PsiElement(file)('file')
           PsiElement(COLON)(':')
         PsiElement(LBRACKET)('[')

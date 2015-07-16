@@ -50,6 +50,9 @@ public interface JetStubElementTypes {
     JetPlaceHolderStubElementType<JetAnnotation> ANNOTATION =
             new JetPlaceHolderStubElementType<JetAnnotation>("ANNOTATION", JetAnnotation.class);
 
+    JetPlaceHolderStubElementType<JetAnnotationUseSiteTarget> ANNOTATION_TARGET =
+            new JetPlaceHolderStubElementType<JetAnnotationUseSiteTarget>("ANNOTATION_TARGET", JetAnnotationUseSiteTarget.class);
+
     JetPlaceHolderStubElementType<JetClassBody> CLASS_BODY =
             new JetPlaceHolderStubElementType<JetClassBody>("CLASS_BODY", JetClassBody.class);
 

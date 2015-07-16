@@ -27,6 +27,20 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
 
     public fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor?
 
+    public fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
+
+    public fun getUseSiteTargetedAnnotations(target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
+        return getUseSiteTargetedAnnotations().fold(arrayListOf<AnnotationDescriptor>()) { list, targeted ->
+            if (target == targeted.target) {
+                list.add(targeted.annotation)
+            }
+            list
+        }
+    }
+
+    // Returns both targeted and annotations without target. Annotation order is preserved.
+    public fun getAllAnnotations(): List<AnnotationWithTarget>
+
     companion object {
         public val EMPTY: Annotations = object : Annotations {
             override fun isEmpty() = true
@@ -34,6 +48,10 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
             override fun findAnnotation(fqName: FqName) = null
 
             override fun findExternalAnnotation(fqName: FqName) = null
+
+            override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
+
+            override fun getAllAnnotations() = emptyList<AnnotationWithTarget>()
 
             override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
 
@@ -54,14 +72,22 @@ class FilteredAnnotations(
             if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
             else null
 
-    override fun iterator() = delegate.asSequence()
-            .filter { annotation ->
-                val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
-                descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
-                    fqName.isSafe() && fqNameFilter(fqName.toSafe())
-                }
-            }
-            .iterator()
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
+        return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
+    }
+
+    override fun getAllAnnotations(): List<AnnotationWithTarget> {
+        return delegate.getAllAnnotations().filter { shouldBeReturned(it.annotation) }
+    }
+
+    override fun iterator() = delegate.filter { shouldBeReturned(it) }.iterator()
+
+    private fun shouldBeReturned(annotation: AnnotationDescriptor): Boolean {
+        val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
+        return descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
+            fqName.isSafe() && fqNameFilter(fqName.toSafe())
+        }
+    }
 
     override fun isEmpty() = !iterator().hasNext()
 }
@@ -76,6 +102,10 @@ class CompositeAnnotations(
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().map { it.findAnnotation(fqName) }.filterNotNull().firstOrNull()
 
     override fun findExternalAnnotation(fqName: FqName) = delegates.asSequence().map { it.findExternalAnnotation(fqName) }.filterNotNull().firstOrNull()
+
+    override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
+
+    override fun getAllAnnotations() = delegates.flatMap { it.getAllAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()
 }

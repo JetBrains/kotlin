@@ -107,4 +107,18 @@ public class JetAnnotationEntry extends JetElementImplStub<KotlinAnnotationEntry
     public PsiElement getAtSymbol() {
         return findChildByType(JetTokens.AT);
     }
+
+    @Nullable
+    public JetAnnotationUseSiteTarget getUseSiteTarget() {
+        JetAnnotationUseSiteTarget target = getStubOrPsiChild(JetStubElementTypes.ANNOTATION_TARGET);
+
+        if (target == null) {
+            PsiElement parent = getStubOrPsiParent();
+            if (parent instanceof JetAnnotation) {
+                return ((JetAnnotation) parent).getUseSiteTarget();
+            }
+        }
+
+        return target;
+    }
 }

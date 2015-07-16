@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
@@ -62,8 +63,8 @@ public class ForceResolveUtil {
 
     public static void forceResolveAllContents(@NotNull Annotations annotations) {
         doForceResolveAllContents(annotations);
-        for (AnnotationDescriptor annotation : annotations) {
-            doForceResolveAllContents(annotation);
+        for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
+            doForceResolveAllContents(annotationWithTarget.getAnnotation());
         }
     }
 

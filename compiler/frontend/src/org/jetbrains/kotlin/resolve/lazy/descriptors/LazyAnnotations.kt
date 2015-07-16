@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget
 import org.jetbrains.kotlin.resolve.AnnotationResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -33,9 +37,9 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class LazyAnnotationsContext(
-         val annotationResolver: AnnotationResolver,
-         val storageManager: StorageManager,
-         val trace: BindingTrace
+        val annotationResolver: AnnotationResolver,
+        val storageManager: StorageManager,
+        val trace: BindingTrace
 ) {
     abstract val scope: LexicalScope
 }
@@ -55,7 +59,10 @@ public class LazyAnnotations(
 
     private val annotation = c.storageManager.createMemoizedFunction {
         entry: JetAnnotationEntry ->
-        LazyAnnotationDescriptor(c, entry)
+
+        val descriptor = LazyAnnotationDescriptor(c, entry)
+        val target = entry.getUseSiteTarget()?.getAnnotationUseSiteTarget()
+        AnnotationWithTarget(descriptor, target)
     }
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
@@ -65,8 +72,7 @@ public class LazyAnnotations(
             val annotationType = annotationDescriptor.getType()
             if (annotationType.isError()) continue
 
-            val descriptor = annotationType.getConstructor().getDeclarationDescriptor()
-            if (descriptor == null) continue
+            val descriptor = annotationType.getConstructor().getDeclarationDescriptor() ?: continue
 
             if (DescriptorUtils.getFqNameSafe(descriptor) == fqName) {
                 return annotationDescriptor
@@ -78,11 +84,29 @@ public class LazyAnnotations(
 
     override fun findExternalAnnotation(fqName: FqName) = null
 
-    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
+        return annotationEntries
+                .asSequence()
+                .map {
+                    val (descriptor, target) = annotation(it)
+                    if (target == null) null else AnnotationWithTarget(descriptor, target)
+                }.filterNotNull().toList()
+    }
+
+    override fun getAllAnnotations() = annotationEntries.map(annotation)
+
+    override fun iterator(): Iterator<AnnotationDescriptor> {
+        return annotationEntries
+                .asSequence()
+                .map {
+                    val (descriptor, target) = annotation(it)
+                    if (target == null) descriptor else null // Filter out annotations with target
+                }.filterNotNull().iterator()
+    }
 
     override fun forceResolveAllContents() {
         // To resolve all entries
-        this.toList()
+        getAllAnnotations()
     }
 }
 

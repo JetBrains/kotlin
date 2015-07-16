@@ -2,7 +2,8 @@ JetFile: LineCommentAfterFileAnnotations.kt
   FILE_ANNOTATION_LIST
     ANNOTATION
       PsiElement(AT)('@')
-      PsiElement(file)('file')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
       PsiElement(COLON)(':')
       PsiElement(LBRACKET)('[')
       ANNOTATION_ENTRY

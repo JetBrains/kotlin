@@ -21,13 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetModifierList;
-import org.jetbrains.kotlin.psi.JetTypeParameter;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -45,6 +43,8 @@ import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
@@ -130,7 +130,8 @@ public class AnnotationResolver {
             boolean shouldResolveArguments
     ) {
         if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
-        List<AnnotationDescriptor> result = Lists.newArrayList();
+        List<AnnotationWithTarget> result = new ArrayList<AnnotationWithTarget>(0);
+
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
@@ -140,9 +141,15 @@ public class AnnotationResolver {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
             }
 
-            result.add(descriptor);
+            JetAnnotationUseSiteTarget target = entryElement.getUseSiteTarget();
+            if (target != null) {
+                result.add(new AnnotationWithTarget(descriptor, target.getAnnotationUseSiteTarget()));
+            }
+            else {
+                result.add(new AnnotationWithTarget(descriptor, null));
+            }
         }
-        return new AnnotationsImpl(result);
+        return AnnotationsImpl.create(result);
     }
 
     @NotNull

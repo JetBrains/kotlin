@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -293,7 +294,7 @@ public class PropertyCodegen {
 
         FieldVisitor fv = builder.newField(OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
                                                 typeMapper.mapFieldSignature(jetType), defaultValue);
-        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor, type);
+        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor, type, AnnotationUseSiteTarget.FIELD);
     }
 
     private void generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {

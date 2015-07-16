@@ -15,7 +15,7 @@ annotationList
   ;
 
 annotationPrefix:
-  : ("@" (":" "file")?)
+  : ("@" (":" ("file" | "field"))?)
   ;
 
 unescapedAnnotation

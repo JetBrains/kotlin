@@ -131,6 +131,9 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_FIELD_TARGET = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
+
     // Classes and traits
 
     DiagnosticFactory0<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
