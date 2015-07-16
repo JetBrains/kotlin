@@ -244,6 +244,17 @@ public class ModifiersChecker {
                         reportIfNotMutableProperty(descriptor, annotation, INAPPLICABLE_SET_TARGET);
                         break;
                     }
+                    case RECEIVER: {
+                        if (!(descriptor instanceof FunctionDescriptor)  && !(descriptor instanceof PropertyDescriptor)) {
+                            reportAnnotationTargetNotApplicable(annotation, INAPPLICABLE_RECEIVER_TARGET);
+                            break;
+                        }
+
+                        if (((CallableMemberDescriptor) descriptor).getExtensionReceiverParameter() == null) {
+                            reportAnnotationTargetNotApplicable(annotation, INAPPLICABLE_RECEIVER_TARGET);
+                        }
+                        break;
+                    }
                 }
             }
         }
