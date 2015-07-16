@@ -90,12 +90,13 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         val o = element.getObject()
 
         return when (o) {
+            is PackageLookupObject -> CompoundWeight(Weight.packages)
+
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
                     is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
                     is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
-                    is PackageViewDescriptor -> CompoundWeight(Weight.packages)
                     else -> CompoundWeight(Weight.default)
                 }
             }
@@ -144,9 +145,16 @@ private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupEl
         }
 
         val fqName = o.importableFqName
-        // Invalid name can be met for companion object descriptor: Test.MyTest.A.<no name provided>.testOther
         if (fqName != null) {
             val importPath = ImportPath(fqName, false)
+
+            if (o is PackageLookupObject) {
+                return when {
+                    importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
+                    else -> Weight.default
+                }
+            }
+
             return when {
                 JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
                 ImportInsertHelper.getInstance(file.getProject()).isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
