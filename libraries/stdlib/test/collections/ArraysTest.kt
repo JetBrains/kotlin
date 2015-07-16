@@ -457,6 +457,13 @@ class ArraysTest {
         assertEquals(charList, charArray.asList())
     }
 
+    test fun toTypedArray() {
+        val primitiveArray: LongArray = longArrayOf(1, 2, Long.MAX_VALUE)
+        val genericArray: Array<Long> = primitiveArray.toTypedArray()
+        expect(3) { genericArray.size() }
+        assertEquals(primitiveArray.asList(), genericArray.asList())
+    }
+
     test fun copyOf() {
         booleanArrayOf(true, false, true).let { assertArrayNotSameButEquals(it, it.copyOf()) }
         byteArrayOf(0, 1, 2, 3, 4, 5).let { assertArrayNotSameButEquals(it, it.copyOf()) }

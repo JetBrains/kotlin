@@ -21,6 +21,22 @@ fun specialJS(): List<GenericFunction> {
         body(ArraysOfPrimitives) {"""return (this as Array<T>).asList()"""}
     }
 
+
+    templates add f("toTypedArray()") {
+        only(ArraysOfPrimitives)
+        returns("Array<T>")
+        doc {
+            """
+            Returns a *typed* object array containing all of the elements of this primitive array.
+            """
+        }
+        body {
+            """
+            return copyOf() as Array<T>
+            """
+        }
+    }
+
     templates add f("copyOfRange(from: Int, to: Int)") {
         // TODO: Arguments checking as in java?
         only(ArraysOfObjects, ArraysOfPrimitives)

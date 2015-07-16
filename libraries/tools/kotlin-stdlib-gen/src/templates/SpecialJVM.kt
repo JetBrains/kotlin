@@ -216,5 +216,23 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+    templates add f("toTypedArray()") {
+        only(ArraysOfPrimitives)
+        returns("Array<T>")
+        doc {
+            """
+            Returns a *typed* object array containing all of the elements of this primitive array.
+            """
+        }
+        body {
+            """
+            val result = arrayOfNulls<T>(size())
+            for (index in indices)
+                result[index] = this[index]
+            return result as Array<T>
+            """
+        }
+    }
+
     return templates
 }
