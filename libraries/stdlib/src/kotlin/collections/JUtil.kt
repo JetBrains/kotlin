@@ -127,3 +127,26 @@ public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection
  * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
  */
 public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) size() else default
+
+/** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
+private fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
+
+/** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
+private fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
+        when(this) {
+            is Set -> this
+            is Collection ->
+                when {
+                    source is Collection && source.size() < 2 -> this
+                    else -> if (this.safeToConvertToSet()) toHashSet() else this
+                }
+            else -> toHashSet()
+        }
+
+/** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
+private fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
+        when(this) {
+            is Set -> this
+            is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
+            else -> toHashSet()
+        }

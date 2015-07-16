@@ -177,6 +177,163 @@ fun generators(): List<GenericFunction> {
         }
     }
 
+    templates add f("minus(element: T)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
+        returns("List<T>")
+        body {
+            """
+            val result = ArrayList<T>(collectionSizeOrDefault(10))
+            var removed = false
+            return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+            """
+        }
+
+        returns("SELF", Sets, Sequences)
+        doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(size()))
+            var removed = false
+            return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+            """
+        }
+
+
+        doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    var removed = false
+                    return this@minus.filter { if (!removed && it == element) { removed = true; false } else true }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+
+    templates add f("minus(collection: Iterable<T>)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [collection]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            val other = collection.convertToSetForSetOperationWith(this)
+            if (other.isEmpty())
+                return this.toList()
+
+            return this.filterNot { it in other }
+            """
+        }
+
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [collection]." }
+        body(Sets) {
+            """
+            val other = collection.convertToSetForSetOperationWith(this)
+            if (other.isEmpty())
+                return this.toSet()
+            if (other is Set)
+                return this.filterNotTo(LinkedHashSet<T>()) { it in other }
+
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(other)
+            return result
+            """
+        }
+
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [collection]." }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = collection.convertToSetForSetOperation()
+                    if (other.isEmpty())
+                        return this@minus.iterator()
+                    else
+                        return this@minus.filterNot { it in other }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("minus(array: Array<out T>)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [array]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            if (array.isEmpty()) return this.toList()
+            val other = array.toHashSet()
+            return this.filterNot { it in other }
+            """
+        }
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [array]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(array)
+            return result
+            """
+        }
+
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [array]." }
+        body(Sequences) {
+            """
+            if (array.isEmpty()) return this
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = array.toHashSet()
+                    return this@minus.filterNot { it in other }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("minus(sequence: Sequence<T>)") {
+        only(Iterables, Sets)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [sequence]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            val other = sequence.toHashSet()
+            if (other.isEmpty())
+                return this.toList()
+
+            return this.filterNot { it in other }
+            """
+        }
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [sequence]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(sequence)
+            return result
+            """
+        }
+
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence]." }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = sequence.toHashSet()
+                    if (other.isEmpty())
+                        return this@minus.iterator()
+                    else
+                        return this@minus.filterNot { it in other }.iterator()
+                }
+            }
+            """
+        }
+    }
+
     templates add f("partition(predicate: (T) -> Boolean)") {
         inline(true)
 
