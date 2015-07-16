@@ -63,21 +63,13 @@ public class GenerationState(
 
         companion object {
             public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter {
-                override fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean {
-                    return true
-                }
+                override fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean = true
 
-                override fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean {
-                    return true
-                }
+                override fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean = true
 
-                override fun shouldGenerateScript(script: JetScript): Boolean {
-                    return true
-                }
+                override fun shouldGenerateScript(script: JetScript): Boolean = true
 
-                override fun shouldGeneratePackagePart(jetFile: JetFile): Boolean {
-                    return true
-                }
+                override fun shouldGeneratePackagePart(jetFile: JetFile): Boolean = true
             }
         }
     }
@@ -138,17 +130,11 @@ public class GenerationState(
         this.inlineCycleReporter = InlineCycleReporter(diagnostics)
     }
 
-    public fun isCallAssertionsEnabled(): Boolean {
-        return !disableCallAssertions
-    }
+    public fun isCallAssertionsEnabled(): Boolean = !disableCallAssertions
 
-    public fun isParamAssertionsEnabled(): Boolean {
-        return !disableParamAssertions
-    }
+    public fun isParamAssertionsEnabled(): Boolean = !disableParamAssertions
 
-    public fun isInlineEnabled(): Boolean {
-        return !disableInline
-    }
+    public fun isInlineEnabled(): Boolean = !disableInline
 
     public fun beforeCompile() {
         markUsed()
