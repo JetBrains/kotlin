@@ -234,6 +234,9 @@ public class ModifiersChecker {
                         break;
                     case FILE:
                         throw new IllegalArgumentException("@file annotations are not allowed here");
+                    case PROPERTY:
+                        reportIfNotPropertyDescriptor(descriptor, annotation, INAPPLICABLE_PROPERTY_TARGET);
+                        break;
                     case PROPERTY_GETTER:
                         reportIfNotPropertyDescriptor(descriptor, annotation, INAPPLICABLE_GET_TARGET);
                         break;

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
@@ -110,8 +111,12 @@ public class PropertyCodegen {
         }
         else {
             assert declaration != null : "Declaration is null for different context: " + context;
-            if (!generateBackingField(declaration, descriptor)) {
-                generateSyntheticMethodIfNeeded(descriptor);
+
+            List<AnnotationDescriptor> propertyTargetedAnnotations =
+                    descriptor.getAnnotations().getUseSiteTargetedAnnotations(AnnotationUseSiteTarget.PROPERTY);
+
+            if (!generateBackingField(declaration, descriptor) || !propertyTargetedAnnotations.isEmpty()) {
+                generateSyntheticMethodIfNeeded(descriptor, !propertyTargetedAnnotations.isEmpty());
             }
         }
 
@@ -210,8 +215,8 @@ public class PropertyCodegen {
 
     // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
-    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor) {
-        if (descriptor.getAnnotations().isEmpty()) return;
+    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, boolean hasPropertyTargetedAnnotations) {
+        if (descriptor.getAnnotations().isEmpty() && !hasPropertyTargetedAnnotations) return;
 
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
@@ -220,7 +225,7 @@ public class PropertyCodegen {
         if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
-            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor, Type.VOID_TYPE);
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor, Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
             mv.visitEnd();

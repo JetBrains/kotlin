@@ -133,6 +133,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_FIELD_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_PROPERTY_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_GET_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_SET_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE = DiagnosticFactory0.create(ERROR);

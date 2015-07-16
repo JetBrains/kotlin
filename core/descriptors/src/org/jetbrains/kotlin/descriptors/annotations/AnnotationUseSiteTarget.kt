@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors.annotations
 public enum class AnnotationUseSiteTarget(renderName: String? = null) {
     FIELD(),
     FILE(),
+    PROPERTY(),
     PROPERTY_GETTER("get"),
     PROPERTY_SETTER("set");
 

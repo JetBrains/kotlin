@@ -38,6 +38,7 @@ public class JetAnnotationUseSiteTarget : JetElementImplStub<KotlinPlaceHolderSt
         return when (node.getElementType()) {
             JetTokens.FIELD_KEYWORD -> AnnotationUseSiteTarget.FIELD
             JetTokens.FILE_KEYWORD -> AnnotationUseSiteTarget.FILE
+            JetTokens.PROPERTY_KEYWORD -> AnnotationUseSiteTarget.PROPERTY
             JetTokens.GET_KEYWORD -> AnnotationUseSiteTarget.PROPERTY_GETTER
             JetTokens.SET_KEYWORD -> AnnotationUseSiteTarget.PROPERTY_SETTER
             else -> throw IllegalStateException("Unknown annotation target " + node.getText())
