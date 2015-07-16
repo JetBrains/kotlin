@@ -75,18 +75,18 @@ public class GenerationState(
     }
 
     private var used = false
-    public val classBuilderMode: ClassBuilderMode
-    public val bindingContext: BindingContext
+    public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
+    public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
+    public val bindingContext: BindingContext = bindingTrace.getBindingContext()
+    public val typeMapper: JetTypeMapper = JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory)
     public val factory: ClassFileFactory
-    public val intrinsics: IntrinsicMethods
+    public val intrinsics: IntrinsicMethods = IntrinsicMethods()
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
-    public val inlineCycleReporter: InlineCycleReporter
+    public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    public val bindingTrace: BindingTrace
-    public val typeMapper: JetTypeMapper
     public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
-    public val reflectionTypes: ReflectionTypes
-    public val jvmRuntimeTypes: JvmRuntimeTypes
+    public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
+    public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     private val interceptedBuilderFactory: ClassBuilderFactory
 
     public constructor(
@@ -100,13 +100,6 @@ public class GenerationState(
 
     init {
         var builderFactory = builderFactory
-        this.classBuilderMode = builderFactory.getClassBuilderMode()
-
-        this.bindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
-        this.bindingContext = bindingTrace.getBindingContext()
-        this.typeMapper = JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory)
-
-        this.intrinsics = IntrinsicMethods()
 
         builderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
 
@@ -121,11 +114,6 @@ public class GenerationState(
 
         this.interceptedBuilderFactory = interceptedBuilderFactory
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
-
-        this.reflectionTypes = ReflectionTypes(module)
-        this.jvmRuntimeTypes = JvmRuntimeTypes()
-
-        this.inlineCycleReporter = InlineCycleReporter(diagnostics)
     }
 
     public fun isCallAssertionsEnabled(): Boolean = !disableCallAssertions
