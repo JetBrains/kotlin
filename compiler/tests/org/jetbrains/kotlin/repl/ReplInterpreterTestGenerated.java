@@ -286,4 +286,19 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("compiler/testData/repl/useJava")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UseJava extends AbstractReplInterpreterTest {
+        public void testAllFilesPresentInUseJava() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/useJava"), Pattern.compile("^(.+)\\.repl$"), true);
+        }
+
+        @TestMetadata("syntheticProperty.repl")
+        public void testSyntheticProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/useJava/syntheticProperty.repl");
+            doTest(fileName);
+        }
+    }
 }
