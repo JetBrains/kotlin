@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.types.JetType
 
 public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(
         javaClass(), "Convert to block body"
-) {
+), LowPriorityAction {
     override fun isApplicableTo(element: JetDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is JetFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
 
