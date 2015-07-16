@@ -31,8 +31,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PullUpTestGenerated extends AbstractPullUpTest {
+    @TestMetadata("accidentalOverrides.kt")
+    public void testAccidentalOverrides() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/accidentalOverrides.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInPullUp() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp"), Pattern.compile("^(.+)\\.kt$"));
+    }
+
+    @TestMetadata("clashWithSuper.kt")
+    public void testClashWithSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/clashWithSuper.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("fromClassToClass.kt")
@@ -71,9 +83,27 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inaccessibleMemberUsed.kt")
+    public void testInaccessibleMemberUsed() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/inaccessibleMemberUsed.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("innerClassToInterface.kt")
+    public void testInnerClassToInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/innerClassToInterface.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noCaret.kt")
     public void testNoCaret() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noCaret.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("noClashWithAbstractSuper.kt")
+    public void testNoClashWithAbstractSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noClashWithAbstractSuper.kt");
         doTest(fileName);
     }
 

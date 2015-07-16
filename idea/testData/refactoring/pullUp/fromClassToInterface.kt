@@ -16,11 +16,6 @@ abstract class <caret>B: T {
     abstract fun bar(s: String)
 
     // INFO: {"checked": "true"}
-    inner class X {
-
-    }
-
-    // INFO: {"checked": "true"}
     class Y {
 
     }

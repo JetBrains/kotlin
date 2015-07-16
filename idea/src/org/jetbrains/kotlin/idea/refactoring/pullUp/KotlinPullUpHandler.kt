@@ -148,9 +148,11 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
             val helper = dataContext?.getData(PULLUP_TEST_HELPER_KEY) as TestHelper
-            KotlinPullUpDialog.createProcessor(classOrObject,
-                                               helper.chooseSuperClass(superClasses),
-                                               helper.adjustMembers(members)).run()
+            val selectedMembers = helper.adjustMembers(members)
+            val targetClass = helper.chooseSuperClass(superClasses)
+            checkConflicts(project, classOrObject, targetClass, selectedMembers) {
+                KotlinPullUpDialog.createProcessor(classOrObject, targetClass, selectedMembers).run()
+            }
         }
         else {
             val manager = classOrObject.getManager()

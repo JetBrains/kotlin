@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiComment
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
@@ -74,6 +75,8 @@ public class KotlinPullUpDialog(
 
     protected val memberInfoStorage: KotlinMemberInfoStorage get() = myMemberInfoStorage
 
+    protected val sourceClass: JetClassOrObject get() = myClass
+
     override fun getDimensionServiceKey() = "#" + javaClass.getName()
 
     override fun getSuperClass() = super.getSuperClass() as? JetClass
@@ -98,7 +101,11 @@ public class KotlinPullUpDialog(
             KotlinMemberSelectionTable(infos, null, "Make abstract")
 
     override fun doAction() {
-        invokeRefactoring(createProcessor(myClass, getSuperClass()!!, getSelectedMemberInfos()))
+        val selectedMembers = getSelectedMemberInfos()
+        val targetClass = getSuperClass()!!
+        checkConflicts(getProject(), sourceClass, targetClass, selectedMembers, { close(DialogWrapper.OK_EXIT_CODE) }) {
+            invokeRefactoring(createProcessor(sourceClass, targetClass, selectedMembers))
+        }
     }
 
     companion object {

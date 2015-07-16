@@ -109,11 +109,6 @@ class KotlinPullUpHelper(
 
     }
 
-    private fun getClashingMemberInTargetClass(memberDescriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
-        val memberInSuper = memberDescriptor.substitute(data.sourceToTargetClassSubstitutor) ?: return null
-        return data.targetClassDescriptor.findCallableMemberBySignature(memberInSuper as CallableMemberDescriptor)
-    }
-
     private fun fixOverrideAndGetClashingSuper(sourceMember: JetCallableDeclaration,
                                                targetMember: JetCallableDeclaration): JetCallableDeclaration? {
         val memberDescriptor = data.memberDescriptors[sourceMember] as CallableMemberDescriptor
@@ -123,7 +118,7 @@ class KotlinPullUpHelper(
             return null
         }
 
-        val clashingSuperDescriptor = getClashingMemberInTargetClass(memberDescriptor) ?: return null
+        val clashingSuperDescriptor = data.getClashingMemberInTargetClass(memberDescriptor) ?: return null
         if (clashingSuperDescriptor.getOverriddenDescriptors().isEmpty()) {
             targetMember.removeOverrideModifier()
         }

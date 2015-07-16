@@ -16,11 +16,6 @@ interface T {
     fun bar(s: String)
 
     // INFO: {"checked": "true", "toAbstract": "true"}
-    class X {
-
-    }
-
-    // INFO: {"checked": "true", "toAbstract": "true"}
     class Y {
 
     }
