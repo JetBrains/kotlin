@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
+import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.util.Range
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.debugger.MockSourcePosition
+import com.sun.jdi.Method
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.JetConstructor
@@ -50,10 +52,10 @@ public class KotlinBasicStepMethodFilter(
         val method = location.method()
         if (myTargetMethodName != method.name()) return false
 
+        val sourcePosition = runReadAction { SourcePosition.createFromElement(resolvedFunction) } ?: return false
         val positionManager = process.getPositionManager() ?: return false
 
-        val containingFile = runReadAction { resolvedFunction.getContainingJetFile() }
-        val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = resolvedFunction))
+        val classes = positionManager.getAllClasses(sourcePosition)
 
         return classes.contains(location.declaringType())
     }
