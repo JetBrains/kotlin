@@ -160,15 +160,6 @@ private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupEl
         return Weight.default
     }
 
-    private fun DeclarationLookupObject.qualifiedName(): String? {
-        return if (descriptor != null) {
-            DescriptorUtils.getFqName(descriptor!!).toString()
-        }
-        else {
-            (psiElement as? PsiClass)?.getQualifiedName()
-        }
-    }
-
     private inner class ImportCache {
         private val preciseImports = HashSet<FqName>()
         private val preciseImportPackages = HashSet<FqName>()
