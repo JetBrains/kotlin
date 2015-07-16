@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
@@ -334,18 +335,17 @@ internal class DescriptorRendererImpl(
             builder.append(if (FqName.ROOT.equalsTo(fqName)) "root package" else renderFqName(fqName))
         }
     }
-
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
         val annotationsBuilder = StringBuilder {
-            for (annotation in annotated.getAnnotations()) {
+            for ((annotation, target) in annotated.getAnnotations().getAllAnnotations()) {
                 val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
 
                 if (!excluded.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                    append(renderAnnotation(annotation)).append(" ")
+                    append(renderAnnotation(annotation, target)).append(" ")
                 }
             }
         }
@@ -363,8 +363,11 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderAnnotation(annotation: AnnotationDescriptor): String {
+    override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
         return StringBuilder {
+            if (target != null) {
+                append("@" + target.renderName + ":")
+            }
             append(renderType(annotation.getType()))
             if (verbose) {
                 renderAndSortAnnotationArguments(annotation).joinTo(this, ", ", "(", ")")

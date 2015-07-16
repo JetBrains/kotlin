@@ -26,12 +26,14 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetAnnotationEntry;
+import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
@@ -124,7 +126,15 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
             public String fun(JetAnnotationEntry annotationEntry) {
                 AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                 assertNotNull(annotationDescriptor);
-                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
+
+                JetAnnotationUseSiteTarget target = annotationEntry.getUseSiteTarget();
+
+                if (target != null) {
+                    return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(
+                            annotationDescriptor, target.getAnnotationUseSiteTarget());
+                }
+
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor, null);
             }
         }, " ");
 
@@ -354,10 +364,11 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     private static String renderAnnotations(Annotations annotations) {
-        return StringUtil.join(annotations, new Function<AnnotationDescriptor, String>() {
+        return StringUtil.join(annotations.getAllAnnotations(), new Function<AnnotationWithTarget, String>() {
             @Override
-            public String fun(AnnotationDescriptor annotationDescriptor) {
-                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
+            public String fun(AnnotationWithTarget annotationWithTarget) {
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(
+                        annotationWithTarget.getAnnotation(), annotationWithTarget.getTarget());
             }
         }, " ");
     }

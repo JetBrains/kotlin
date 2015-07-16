@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +44,7 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     public fun renderClassifierName(klass: ClassifierDescriptor): String
 
-    public fun renderAnnotation(annotation: AnnotationDescriptor): String
+    public fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget? = null): String
 
     override fun render(declarationDescriptor: DeclarationDescriptor): String
 
