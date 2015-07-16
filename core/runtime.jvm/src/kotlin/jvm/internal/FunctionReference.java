@@ -18,6 +18,7 @@ package kotlin.jvm.internal;
 
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -62,6 +63,11 @@ public class FunctionReference
 
     @Override
     public List<KParameter> getParameters() {
+        throw error();
+    }
+
+    @Override
+    public Object call(@NotNull Object... args) {
         throw error();
     }
 

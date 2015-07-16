@@ -34,6 +34,15 @@ public interface KCallable<out R> {
 
     /**
      * Parameters required to make a call to this callable.
+     * If this callable requires a `this` instance or an extension receiver parameter,
+     * they come first in the list in that order.
      */
     public val parameters: List<KParameter>
+
+    /**
+     * Calls this callable with the specified arguments and returns the result.
+     * Throws an exception if the number of specified arguments is not equal to the size of [parameters],
+     * or if their types do not match the types of the parameters.
+     */
+    public fun call(vararg args: Any?): R
 }

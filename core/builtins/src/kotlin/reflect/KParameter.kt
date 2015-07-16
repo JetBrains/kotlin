@@ -36,7 +36,8 @@ public interface KParameter {
     public val name: String?
 
     /**
-     * Type of this parameter.
+     * Type of this parameter. For a `vararg` parameter, this is the type of the corresponding array,
+     * not the individual element.
      */
     public val type: KType
 }

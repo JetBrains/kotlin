@@ -45,6 +45,8 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
             // TODO: default getter created this way won't have any source information
             property.descriptor.getGetter() ?: DescriptorFactory.createDefaultGetter(property.descriptor)
         }
+
+        override fun call(vararg args: Any?): R = property.call(*args)
     }
 }
 

@@ -56,6 +56,12 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, 
         }
     }
 
+    @suppress("UNCHECKED_CAST")
+    override fun call(vararg args: Any?): R {
+        require(args.size() == 1) { "Property $name expects one argument, but ${args.size()} were provided." }
+        return get(args.single() as T)
+    }
+
     class Getter<T, out R>(override val property: KProperty1Impl<T, R>) : KPropertyImpl.Getter<R>(), KProperty1.Getter<T, R> {
         override fun invoke(receiver: T): R = property.get(receiver)
     }
@@ -94,6 +100,12 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
 
     class Setter<T, R>(override val property: KMutableProperty1Impl<T, R>) : KMutablePropertyImpl.Setter<R>(), KMutableProperty1.Setter<T, R> {
         override fun invoke(receiver: T, value: R): Unit = property.set(receiver, value)
+
+        @suppress("UNCHECKED_CAST")
+        override fun call(vararg args: Any?) {
+            require(args.size() == 2) { "Property setter for ${property.name} expects two arguments, but ${args.size()} were provided." }
+            property.set(args[0] as T, args[1] as R)
+        }
     }
 }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaConstructor
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaMethod
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.*
 
@@ -68,7 +70,7 @@ open class KFunctionImpl protected constructor(
     }
 
     internal val javaMethod: Method? by ReflectProperties.lazySoft {
-        if (name != "<init>") {
+        if (!isConstructor) {
             val proto = protoData
             if (proto != null) {
                 container.findMethodBySignature(proto.proto, proto.signature, proto.nameResolver,
@@ -82,7 +84,7 @@ open class KFunctionImpl protected constructor(
     }
 
     internal val javaConstructor: Constructor<*>? by ReflectProperties.lazySoft {
-        if (name == "<init>") {
+        if (isConstructor) {
             val proto = protoData
             if (proto != null) {
                 return@lazySoft container.findConstructorBySignature(
@@ -97,6 +99,22 @@ open class KFunctionImpl protected constructor(
     }
 
     override val name: String get() = descriptor.getName().asString()
+
+    private val caller: FunctionCaller by ReflectProperties.lazySoft {
+        javaConstructor?.let { FunctionCaller.Constructor(it) } ?:
+        javaMethod?.let { method ->
+            when {
+                !Modifier.isStatic(method.modifiers) -> FunctionCaller.InstanceMethod(method)
+                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null -> FunctionCaller.PlatformStaticInObject(method)
+                else -> FunctionCaller.StaticMethod(method)
+            }
+        } ?:
+        throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor")
+    }
+
+    override fun call(vararg args: Any?): Any? = caller.call(args)
+
+    private val isConstructor: Boolean get() = name == "<init>"
 
     override fun getArity(): Int {
         // TODO: test?
@@ -113,4 +131,8 @@ open class KFunctionImpl protected constructor(
 
     override fun toString(): String =
             ReflectionObjectRenderer.renderFunction(descriptor)
+
+    private companion object {
+        val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
+    }
 }
