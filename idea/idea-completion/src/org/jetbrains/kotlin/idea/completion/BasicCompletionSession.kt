@@ -205,14 +205,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (isNoQualifierContext() && (completionKind.descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
                 //TODO: move this code somewhere else
                 val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
-                        .map { it.shortName() }
                         .toMutableSet()
 
                 if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
                     JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
                         val name = psiPackage.getName()
                         if (Name.isValidIdentifier(name!!)) {
-                            packageNames.add(Name.identifier(name))
+                            packageNames.add(FqName(name))
                         }
                     }
                 }

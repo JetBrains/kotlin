@@ -141,10 +141,17 @@ public class LookupElementFactory(
         return element.withIconFromLookupObject()
     }
 
-    public fun createLookupElementForPackage(shortName: Name): LookupElement {
-        return LookupElementBuilder.create(PackageLookupObject(shortName), shortName.asString())
-                .withInsertHandler(BaseDeclarationInsertHandler())
-                .withIconFromLookupObject()
+    public fun createLookupElementForPackage(name: FqName): LookupElement {
+        val shortName = name.shortName()
+        var element = LookupElementBuilder.create(PackageLookupObject(shortName), shortName.asString())
+
+        element = element.withInsertHandler(BaseDeclarationInsertHandler())
+
+        if (!name.parent().isRoot()) {
+            element = element.appendTailText(" (${name.asString()})", true)
+        }
+
+        return element.withIconFromLookupObject()
     }
 
     private data class PackageLookupObject(override val name: Name) : DeclarationLookupObject {
@@ -174,8 +181,11 @@ public class LookupElementFactory(
             return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
         }
 
-        if (descriptor is PackageViewDescriptor || descriptor is PackageFragmentDescriptor) {
-            return createLookupElementForPackage(descriptor.getName())
+        if (descriptor is PackageViewDescriptor) {
+            return createLookupElementForPackage(descriptor.fqName)
+        }
+        if (descriptor is PackageFragmentDescriptor) {
+            return createLookupElementForPackage(descriptor.fqName)
         }
 
         // for constructor use name and icon of containing class
