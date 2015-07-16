@@ -100,9 +100,17 @@ public fun JetScope.getDescriptorsFiltered(
 }
 
 public class DescriptorKindFilter(
-        public val kindMask: Int,
+        kindMask: Int,
         public val excludes: List<DescriptorKindExclude> = listOf()
 ) {
+    public val kindMask: Int
+
+    init {
+        var mask = kindMask
+        excludes.forEach { mask = mask and it.fullyExcludedDescriptorKinds.inv() }
+        this.kindMask = mask
+    }
+
     public fun accepts(descriptor: DeclarationDescriptor): Boolean
             = kindMask and descriptor.kind() != 0 && excludes.all { !it.matches(descriptor) }
 
@@ -110,7 +118,7 @@ public class DescriptorKindFilter(
             = kindMask and kinds != 0
 
     public fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
-            = DescriptorKindFilter(kindMask and exclude.fullyExcludedDescriptorKinds.inv(), excludes + listOf(exclude))
+            = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
 
     public fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)
