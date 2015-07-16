@@ -63,7 +63,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
         if (!stubsOutputDir.exists()) stubsOutputDir.mkdirs()
-        generationState.getFactory().writeAllTo(stubsOutputDir)
+        generationState.factory.writeAllTo(stubsOutputDir)
 
         generationState.destroy()
         return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)

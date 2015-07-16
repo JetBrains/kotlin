@@ -261,7 +261,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         methodVisitor.visitCode()
         val iv = InstructionAdapter(methodVisitor)
 
-        val classType = state.getTypeMapper().mapClass(descriptor)
+        val classType = state.typeMapper.mapClass(descriptor)
         val className = classType.getInternalName()
 
         fun loadCache() {
@@ -282,7 +282,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
     }
 
     private fun SyntheticPartsGenerateContext.generateCachedFindViewByIdFunction() {
-        val classType = state.getTypeMapper().mapClass(descriptor)
+        val classType = state.typeMapper.mapClass(descriptor)
         val className = classType.getInternalName()
 
         val viewType = Type.getObjectType("android/view/View")

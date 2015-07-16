@@ -108,7 +108,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                                   methodElement: JetElement?,
                                                   context: CodegenContext<*>,
                                                   substituteCount: Int) {
-        val typeMapper = state.getTypeMapper()
+        val typeMapper = state.typeMapper
 
         val isStatic = AsmUtil.isStaticMethod(context.getContextKind(), functionDescriptor)
         val flags = AsmUtil.getVisibilityAccessFlag(functionDescriptor) or (if (isStatic) Opcodes.ACC_STATIC else 0)
@@ -127,7 +127,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             annotationCodegen.genAnnotations(it.value, signature.getValueParameters()[it.index].getAsmType())
         }
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
+        if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) {
             mv.visitEnd()
             return
         }
@@ -210,7 +210,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         if (classOrObject.isLocal()) return false
 
-        if (CodegenBinding.canHaveOuter(state.getBindingContext(), classDescriptor)) return false
+        if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 
         if (Visibilities.isPrivate(classDescriptor.getVisibility()) || Visibilities.isPrivate(constructorDescriptor.getVisibility()))
             return false

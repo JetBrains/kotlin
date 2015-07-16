@@ -324,7 +324,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val state = GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor,
                                         analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
-            return state.getTypeMapper()
+            return state.typeMapper
         }
 
         public fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: JetFile, isInLibrary: Boolean): PositionedElement {
@@ -440,7 +440,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             val state = GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
                                         analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
-            return state.getTypeMapper()
+            return state.typeMapper
         }
 
         public fun isInlinedLambda(functionLiteral: JetFunction, context: BindingContext): Boolean {

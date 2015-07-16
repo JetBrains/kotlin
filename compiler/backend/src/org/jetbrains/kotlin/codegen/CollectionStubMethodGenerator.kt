@@ -47,7 +47,7 @@ class CollectionStubMethodGenerator(
         private val functionCodegen: FunctionCodegen,
         private val v: ClassBuilder
 ) {
-    private val typeMapper = state.getTypeMapper()
+    private val typeMapper = state.typeMapper
 
     fun generate() {
         val superCollectionClasses = findRelevantSuperCollectionClasses()

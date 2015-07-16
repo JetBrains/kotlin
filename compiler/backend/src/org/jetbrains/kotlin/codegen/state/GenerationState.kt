@@ -14,303 +14,158 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.state;
+package org.jetbrains.kotlin.codegen.state
 
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.codegen.*;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension;
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory;
-import org.jetbrains.kotlin.codegen.when.MappingsClassesForWhenByEnum;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetScript;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
+import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetScript
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.io.File
+import java.util.Collections
 
-public class GenerationState {
+public class GenerationState(
+        public val project: Project,
+        builderFactory: ClassBuilderFactory,
+        public val progress: Progress,
+        public val module: ModuleDescriptor,
+        bindingContext: BindingContext,
+        public val files: List<JetFile>,
+        private val disableCallAssertions: Boolean,
+        private val disableParamAssertions: Boolean,
+        public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter,
+        private val disableInline: Boolean,
+        disableOptimization: Boolean,
+        packagesWithObsoleteParts: Collection<FqName>?,
+        // for PackageCodegen in incremental compilation mode
+        public val moduleId: String?,
+        public val diagnostics: DiagnosticSink,
+        // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
+        public val outDirectory: File?
+) {
     public interface GenerateClassFilter {
-        boolean shouldAnnotateClass(JetClassOrObject classOrObject);
-        boolean shouldGenerateClass(JetClassOrObject classOrObject);
-        boolean shouldGeneratePackagePart(JetFile jetFile);
-        boolean shouldGenerateScript(JetScript script);
+        public fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean
+        public fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean
+        public fun shouldGeneratePackagePart(jetFile: JetFile): Boolean
+        public fun shouldGenerateScript(script: JetScript): Boolean
 
-        GenerateClassFilter GENERATE_ALL = new GenerateClassFilter() {
-            @Override
-            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
-                return true;
-            }
+        companion object {
+            public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter {
+                override fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean {
+                    return true
+                }
 
-            @Override
-            public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
-                return true;
-            }
+                override fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean {
+                    return true
+                }
 
-            @Override
-            public boolean shouldGenerateScript(JetScript script) {
-                return true;
-            }
+                override fun shouldGenerateScript(script: JetScript): Boolean {
+                    return true
+                }
 
-            @Override
-            public boolean shouldGeneratePackagePart(JetFile jetFile) {
-                return true;
+                override fun shouldGeneratePackagePart(jetFile: JetFile): Boolean {
+                    return true
+                }
             }
-        };
+        }
     }
 
-    private boolean used = false;
+    private var used = false
+    public val classBuilderMode: ClassBuilderMode
+    public val bindingContext: BindingContext
+    public val factory: ClassFileFactory
+    public val intrinsics: IntrinsicMethods
+    public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
+    public val inlineCycleReporter: InlineCycleReporter
+    public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
+    public val bindingTrace: BindingTrace
+    public val typeMapper: JetTypeMapper
+    public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+    public val reflectionTypes: ReflectionTypes
+    public val jvmRuntimeTypes: JvmRuntimeTypes
+    public val packagesWithObsoleteParts: Collection<FqName>
+    private val interceptedBuilderFactory: ClassBuilderFactory
 
-    private final Progress progress;
-    private final List<JetFile> files;
-    private final ClassBuilderMode classBuilderMode;
-    private final BindingContext bindingContext;
-    private final ClassFileFactory classFileFactory;
-    private final Project project;
-    private final IntrinsicMethods intrinsics;
-    private final SamWrapperClasses samWrapperClasses = new SamWrapperClasses(this);
-    private final InlineCycleReporter inlineCycleReporter;
-    private final MappingsClassesForWhenByEnum mappingsClassesForWhenByEnum = new MappingsClassesForWhenByEnum(this);
-    private final BindingTrace bindingTrace;
-    private final JetTypeMapper typeMapper;
-    private final boolean disableCallAssertions;
-    private final boolean disableParamAssertions;
-    private final GenerateClassFilter generateClassFilter;
-    private final boolean disableInline;
-    private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
-    private final ReflectionTypes reflectionTypes;
-    private final JvmRuntimeTypes runtimeTypes;
-    private final ModuleDescriptor module;
-    private final DiagnosticSink diagnostics;
-    private final Collection<FqName> packagesWithObsoleteParts;
-    private final ClassBuilderFactory interceptedBuilderFactory;
-
-    @Nullable
-    private final String moduleId; // for PackageCodegen in incremental compilation mode
-
-    @Nullable
-    private final File outDirectory; // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
-
-    public GenerationState(
-            @NotNull Project project,
-            @NotNull ClassBuilderFactory builderFactory,
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files
-    ) {
-        this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
-             false, false, null, null, DiagnosticSink.DO_NOTHING, null);
+    public constructor(
+            project: Project,
+            builderFactory: ClassBuilderFactory,
+            module: ModuleDescriptor,
+            bindingContext: BindingContext,
+            files: List<JetFile>) : this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
+                                         false, false, null, null, DiagnosticSink.DO_NOTHING, null) {
     }
 
-    public GenerationState(
-            @NotNull Project project,
-            @NotNull ClassBuilderFactory builderFactory,
-            @NotNull Progress progress,
-            @NotNull ModuleDescriptor module,
-            @NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files,
-            boolean disableCallAssertions,
-            boolean disableParamAssertions,
-            GenerateClassFilter generateClassFilter,
-            boolean disableInline,
-            boolean disableOptimization,
-            @Nullable Collection<FqName> packagesWithObsoleteParts,
-            @Nullable String moduleId,
-            @NotNull DiagnosticSink diagnostics,
-            @Nullable File outDirectory
-    ) {
-        this.project = project;
-        this.progress = progress;
-        this.module = module;
-        this.files = files;
-        this.moduleId = moduleId;
-        this.packagesWithObsoleteParts = packagesWithObsoleteParts == null ? Collections.<FqName>emptySet() : packagesWithObsoleteParts;
-        this.classBuilderMode = builderFactory.getClassBuilderMode();
-        this.disableInline = disableInline;
+    init {
+        var builderFactory = builderFactory
+        this.packagesWithObsoleteParts = packagesWithObsoleteParts ?: emptySet<FqName>()
+        this.classBuilderMode = builderFactory.getClassBuilderMode()
 
-        this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
-        this.bindingContext = bindingTrace.getBindingContext();
+        this.bindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
+        this.bindingContext = bindingTrace.getBindingContext()
+        this.typeMapper = JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory)
 
-        this.outDirectory = outDirectory;
-        this.typeMapper = new JetTypeMapperWithOutDirectory(this.bindingContext, classBuilderMode, outDirectory);
+        this.intrinsics = IntrinsicMethods()
 
-        this.intrinsics = new IntrinsicMethods();
+        builderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
 
-        builderFactory = new OptimizationClassBuilderFactory(builderFactory, disableOptimization);
+        var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
+                builderFactory, this.bindingContext, diagnostics)
 
-        ClassBuilderFactory interceptedBuilderFactory = new BuilderFactoryForDuplicateSignatureDiagnostics(
-                builderFactory, this.bindingContext, diagnostics);
+        val interceptExtensions = ClassBuilderInterceptorExtension.getInstances(project)
 
-        Collection<ClassBuilderInterceptorExtension> interceptExtensions =
-                ClassBuilderInterceptorExtension.Companion.getInstances(project);
-
-        for (ClassBuilderInterceptorExtension extension : interceptExtensions) {
-            interceptedBuilderFactory = extension.interceptClassBuilderFactory(interceptedBuilderFactory, bindingContext, diagnostics);
+        for (extension in interceptExtensions) {
+            interceptedBuilderFactory = extension.interceptClassBuilderFactory(interceptedBuilderFactory, bindingContext, diagnostics)
         }
 
-        this.interceptedBuilderFactory = interceptedBuilderFactory;
+        this.interceptedBuilderFactory = interceptedBuilderFactory
+        this.factory = ClassFileFactory(this, interceptedBuilderFactory)
 
-        this.diagnostics = diagnostics;
-        this.classFileFactory = new ClassFileFactory(this, interceptedBuilderFactory);
+        this.reflectionTypes = ReflectionTypes(module)
+        this.jvmRuntimeTypes = JvmRuntimeTypes()
 
-        this.disableCallAssertions = disableCallAssertions;
-        this.disableParamAssertions = disableParamAssertions;
-        this.generateClassFilter = generateClassFilter;
-
-        this.reflectionTypes = new ReflectionTypes(module);
-        this.runtimeTypes = new JvmRuntimeTypes();
-
-        this.inlineCycleReporter = new InlineCycleReporter(diagnostics);
+        this.inlineCycleReporter = InlineCycleReporter(diagnostics)
     }
 
-    @NotNull
-    public ClassFileFactory getFactory() {
-        return classFileFactory;
+    public fun isCallAssertionsEnabled(): Boolean {
+        return !disableCallAssertions
     }
 
-    @NotNull
-    public Progress getProgress() {
-        return progress;
+    public fun isParamAssertionsEnabled(): Boolean {
+        return !disableParamAssertions
     }
 
-    @NotNull
-    public BindingContext getBindingContext() {
-        return bindingContext;
+    public fun isInlineEnabled(): Boolean {
+        return !disableInline
     }
 
-    @NotNull
-    public ClassBuilderMode getClassBuilderMode() {
-        return classBuilderMode;
+    public fun beforeCompile() {
+        markUsed()
+
+        CodegenBinding.initTrace(this)
     }
 
-    @NotNull
-    public List<JetFile> getFiles() {
-        return files;
-    }
-
-    @NotNull
-    public BindingTrace getBindingTrace() {
-        return bindingTrace;
-    }
-
-    @NotNull
-    public JetTypeMapper getTypeMapper() {
-        return typeMapper;
-    }
-
-    @NotNull
-    public Project getProject() {
-        return project;
-    }
-
-    @NotNull
-    public IntrinsicMethods getIntrinsics() {
-        return intrinsics;
-    }
-
-    @NotNull
-    public SamWrapperClasses getSamWrapperClasses() {
-        return samWrapperClasses;
-    }
-
-    @NotNull
-    public InlineCycleReporter getInlineCycleReporter() {
-        return inlineCycleReporter;
-    }
-
-    @NotNull
-    public MappingsClassesForWhenByEnum getMappingsClassesForWhenByEnum() {
-        return mappingsClassesForWhenByEnum;
-    }
-
-    public boolean isCallAssertionsEnabled() {
-        return !disableCallAssertions;
-    }
-
-    public boolean isParamAssertionsEnabled() {
-        return !disableParamAssertions;
-    }
-
-    @NotNull
-    public GenerateClassFilter getGenerateDeclaredClassFilter() {
-        return generateClassFilter;
-    }
-
-    @NotNull
-    public ReflectionTypes getReflectionTypes() {
-        return reflectionTypes;
-    }
-
-    @NotNull
-    public JvmRuntimeTypes getJvmRuntimeTypes() {
-        return runtimeTypes;
-    }
-
-    @NotNull
-    public DiagnosticSink getDiagnostics() {
-        return diagnostics;
-    }
-
-    public boolean isInlineEnabled() {
-        return !disableInline;
-    }
-
-    public void beforeCompile() {
-        markUsed();
-
-        CodegenBinding.initTrace(this);
-    }
-
-    private void markUsed() {
+    private fun markUsed() {
         if (used) {
-            throw new IllegalStateException(GenerationState.class + " cannot be used more than once");
+            throw IllegalStateException(javaClass<GenerationState>() + " cannot be used more than once")
         }
-        used = true;
+        used = true
     }
 
-    public void destroy() {
-        interceptedBuilderFactory.close();
-    }
-
-    @Nullable
-    public List<ScriptDescriptor> getEarlierScriptsForReplInterpreter() {
-        return earlierScriptsForReplInterpreter;
-    }
-
-    public void setEarlierScriptsForReplInterpreter(@Nullable List<ScriptDescriptor> earlierScriptsForReplInterpreter) {
-        this.earlierScriptsForReplInterpreter = earlierScriptsForReplInterpreter;
-    }
-
-    @NotNull
-    public ModuleDescriptor getModule() {
-        return module;
-    }
-
-    @NotNull
-    public Collection<FqName> getPackagesWithObsoleteParts() {
-        return packagesWithObsoleteParts;
-    }
-
-    @Nullable
-    public String getModuleId() {
-        return moduleId;
-    }
-
-    @Nullable
-    public File getOutDirectory() {
-        return outDirectory;
+    public fun destroy() {
+        interceptedBuilderFactory.close()
     }
 }
