@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.actions.MethodSmartStepTarget
+import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
+import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinBasicStepMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodSmartStepTarget
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
@@ -96,7 +98,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         }
     }
 
-    private fun createSmartStepIntoFilters(): List<BasicStepMethodFilter> {
+    private fun createSmartStepIntoFilters(): List<NamedMethodFilter> {
         val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
         val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
 
@@ -110,13 +112,14 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
             val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
 
-            stepTargets.filterIsInstance<MethodSmartStepTarget>().map {
+            stepTargets.filterIsInstance<SmartStepTarget>().map {
                 stepTarget ->
                 when (stepTarget) {
-                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget)
-                    else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
+                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    else -> null
                 }
             }
-        }
+        }.filterNotNull()
     }
 }

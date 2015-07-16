@@ -140,7 +140,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
-                                        result.add(KotlinMethodSmartStepTarget(getter, psiMethod, null, expression, false, lines))
+                                        val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
+                                        result.add(KotlinMethodSmartStepTarget(getter, label, expression, lines))
                                     }
                                 }
                             }
@@ -151,7 +152,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                     if (function is JetNamedFunction || function is JetSecondaryConstructor) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
                                         if (psiMethod != null) {
-                                            result.add(KotlinMethodSmartStepTarget(function, psiMethod, "${propertyDescriptor.getName()}.", expression, false, lines))
+                                            val label = "${propertyDescriptor.getName()}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
+                                            result.add(KotlinMethodSmartStepTarget(function, label, expression, lines))
                                         }
                                     }
                                 }
@@ -172,7 +174,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                     if (function is JetNamedFunction || function is JetSecondaryConstructor) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
                         if (psiMethod != null) {
-                            result.add(KotlinMethodSmartStepTarget(function, psiMethod, null, expression, false, lines))
+                            val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
+                            result.add(KotlinMethodSmartStepTarget(function, label, expression, lines))
                         }
                     }
                     else if (function is PsiMethod) {
@@ -187,7 +190,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
         return when (stepTarget) {
-            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget)
+            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
             is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!! )
             else -> super.createMethodFilter(stepTarget)
         }

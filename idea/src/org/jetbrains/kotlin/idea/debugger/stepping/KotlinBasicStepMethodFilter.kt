@@ -16,29 +16,45 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
-import com.intellij.debugger.engine.BasicStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.NamedMethodFilter
+import com.intellij.util.Range
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.idea.debugger.MockSourcePosition
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.JetConstructor
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPropertyAccessor
 
 public class KotlinBasicStepMethodFilter(
-        val stepTarget: KotlinMethodSmartStepTarget
-): BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines()) {
-    override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
-        if (super.locationMatches(process, location)) return true
+        val resolvedFunction: JetElement,
+        val myCallingExpressionLines: Range<Int>
+) : NamedMethodFilter {
+    private val myTargetMethodName: String
 
-        val containingFile = runReadAction { stepTarget.resolvedElement.getContainingFile() }
-        if (containingFile !is JetFile) return false
+    init {
+        myTargetMethodName = when (resolvedFunction) {
+            is JetConstructor<*> -> "<init>"
+            is JetPropertyAccessor -> JvmAbi.getterName((resolvedFunction.getParent() as JetProperty).getName()!!)
+            else -> resolvedFunction.getName()!!
+        }
+    }
+
+    override fun getCallingExpressionLines() = myCallingExpressionLines
+
+    override fun getMethodName() = myTargetMethodName
+
+    override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
+        val method = location.method()
+        if (myTargetMethodName != method.name()) return false
 
         val positionManager = process.getPositionManager() ?: return false
 
-        val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = stepTarget.resolvedElement))
+        val containingFile = runReadAction { resolvedFunction.getContainingJetFile() }
+        val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = resolvedFunction))
 
-        val method = location.method()
-        return stepTarget.getMethod().getName() == method.name() &&
-               myTargetMethodSignature?.getName(process) == method.signature() &&
-               classes.contains(location.declaringType())
+        return classes.contains(location.declaringType())
     }
 }
