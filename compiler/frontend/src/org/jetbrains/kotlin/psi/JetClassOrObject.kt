@@ -66,15 +66,17 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
     deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor methods instead, e.g. getKind()")
-    public fun isAnnotation(): Boolean = hasAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString())
+    public fun isAnnotation(): Boolean = getBuiltInAnnotationEntry() != null
 
-    private fun hasAnnotation(name: String): Boolean {
-        for (entry in getAnnotationEntries()) {
+    public fun getBuiltInAnnotationEntry(): JetAnnotationEntry? = getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString())
+
+    private fun getAnnotation(name: String): JetAnnotationEntry? {
+        return getAnnotationEntries().firstOrNull() { entry ->
             val typeReference = entry.getTypeReference()
-            val userType = typeReference?.getStubOrPsiChild(JetStubElementTypes.USER_TYPE) ?: continue
-            if (name == userType.getReferencedName()) return true
+            val userType = typeReference?.getStubOrPsiChild(JetStubElementTypes.USER_TYPE)
+
+            name == userType?.getReferencedName()
         }
-        return false
     }
 
     public override fun delete() {

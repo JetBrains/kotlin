@@ -5133,6 +5133,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumWithAnnotationKeyword.kt")
+            public void testEnumWithAnnotationKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumWithAnnotationKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumWithEmptyName.kt")
             public void testEnumWithEmptyName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumWithEmptyName.kt");

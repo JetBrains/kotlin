@@ -254,15 +254,20 @@ public class DeclarationsChecker {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }
-        else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-            checkAnnotationClassWithBody(aClass);
-            checkValOnAnnotationParameter(aClass);
-        }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
             if (aClass.isLocal()) {
                 trace.report(LOCAL_ENUM_NOT_ALLOWED.on(aClass, classDescriptor));
             }
+            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                JetAnnotationEntry entry = aClass.getBuiltInAnnotationEntry();
+                assert entry != null : "getBuiltinAnnotationEntry() should be synchronized with isAnnotation()";
+                trace.report(WRONG_ANNOTATION_TARGET.on(entry, "enum class"));
+            }
+        }
+        else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+            checkAnnotationClassWithBody(aClass);
+            checkValOnAnnotationParameter(aClass);
         }
         else if (aClass.hasModifier(JetTokens.SEALED_KEYWORD)) {
             checkSealedModifiers(aClass);
