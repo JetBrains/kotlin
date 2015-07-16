@@ -252,7 +252,20 @@ public class FunctionCodegen {
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
                 v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
-                AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter, parameterSignature.getAsmType());
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+
+                if (functionDescriptor instanceof PropertySetterDescriptor) {
+                    PropertyDescriptor propertyDescriptor = ((PropertySetterDescriptor) functionDescriptor).getCorrespondingProperty();
+                    Annotated targetedAnnotations = new AnnotatedWithAdditionalAnnotations(null, propertyDescriptor);
+                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), SETTER_PARAMETER);
+                }
+
+                if (functionDescriptor instanceof ConstructorDescriptor) {
+                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType(), CONSTRUCTOR_PARAMETER);
+                }
+                else {
+                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType());
+                }
             }
             else if (kind == JvmMethodParameterKind.RECEIVER) {
                 Annotated annotationHolder = (functionDescriptor instanceof PropertyAccessorDescriptor)

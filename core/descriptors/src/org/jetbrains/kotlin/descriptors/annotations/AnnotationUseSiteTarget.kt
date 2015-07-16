@@ -22,7 +22,9 @@ public enum class AnnotationUseSiteTarget(renderName: String? = null) {
     PROPERTY(),
     PROPERTY_GETTER("get"),
     PROPERTY_SETTER("set"),
-    RECEIVER();
+    RECEIVER(),
+    CONSTRUCTOR_PARAMETER("param"),
+    SETTER_PARAMETER("sparam");
 
     public val renderName: String = renderName ?: name().toLowerCase()
 }
