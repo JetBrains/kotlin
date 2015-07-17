@@ -24,6 +24,7 @@ import com.intellij.execution.junit.JUnitConfiguration
 import com.intellij.execution.junit.JUnitConfigurationType
 import com.intellij.execution.junit.JUnitUtil
 import com.intellij.execution.junit.PatternConfigurationProducer
+import com.intellij.execution.testframework.TestsUIUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -38,11 +39,12 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import java.util.*
 
 public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun isConfigurationFromContext(configuration: JUnitConfiguration,
                                             context: ConfigurationContext): Boolean {
-        if (RunConfigurationProducer.getInstance(javaClass<PatternConfigurationProducer>()).isMultipleElementsSelected(context)) {
+        if (PatternConfigurationProducer.isMultipleElementsSelected(context)) {
             return false
         }
 
