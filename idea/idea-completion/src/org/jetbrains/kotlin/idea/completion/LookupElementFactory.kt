@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import javax.swing.Icon
@@ -254,7 +254,7 @@ public class LookupElementFactory(
 
         if (descriptor is CallableDescriptor) {
             when {
-                descriptor is SyntheticJavaBeansPropertyDescriptor -> {
+                descriptor is SyntheticJavaPropertyDescriptor -> {
                     var from = descriptor.getMethod.getName().asString() + "()"
                     descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
                     element = element.appendTailText(" (from $from)", true)

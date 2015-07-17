@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention())
 
@@ -87,8 +87,8 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return property
     }
 
-    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaBeansPropertyDescriptor? {
-        SyntheticJavaBeansPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
+    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
+        SyntheticJavaPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
         for (overridden in function.getOverriddenDescriptors()) {
             findSyntheticProperty(overridden, resolutionScope)?.let { return it }

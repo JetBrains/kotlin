@@ -38,12 +38,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.beans.Introspector
 import java.util.ArrayList
 
-interface SyntheticJavaBeansPropertyDescriptor : PropertyDescriptor {
+interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaBeansPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (propertyNameByGetMethodName(name) == null && propertyNameBySetMethodName(name) == null) return null // optimization
 
@@ -51,7 +51,7 @@ interface SyntheticJavaBeansPropertyDescriptor : PropertyDescriptor {
             if (owner !is JavaClassDescriptor) return null
 
             return resolutionScope.getSyntheticExtensionProperties(owner.getDefaultType())
-                    .filterIsInstance<SyntheticJavaBeansPropertyDescriptor>()
+                    .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
         }
 
@@ -73,12 +73,12 @@ interface SyntheticJavaBeansPropertyDescriptor : PropertyDescriptor {
 }
 
 class AdditionalScopesWithJavaSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes {
-    private val scope = JavaBeansExtensionsScope(storageManager)
+    private val scope = JavaSyntheticExtensionsScope(storageManager)
 
     override fun scopes(file: JetFile) = listOf(scope)
 }
 
-class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
+class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Triple<JavaClassDescriptor, JetType, Name>, PropertyDescriptor> { triple ->
         syntheticPropertyInClassNotCached(triple.first, triple.second, triple.third)
     }
@@ -158,7 +158,7 @@ class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by Jet
         if (classifier is JavaClassDescriptor) {
             for (descriptor in classifier.getMemberScope(type.getArguments()).getDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
-                    val propertyName = SyntheticJavaBeansPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
+                    val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Triple(classifier, type, propertyName)))
                 }
             }
@@ -192,7 +192,7 @@ class JavaBeansExtensionsScope(storageManager: StorageManager) : JetScope by Jet
             name: Name,
             type: JetType,
             receiverType: JetType
-    ) : SyntheticJavaBeansPropertyDescriptor, PropertyDescriptorImpl(
+    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
             DescriptorUtils.getContainingModule(javaClass)/* TODO:is it ok? */,
             null,
             Annotations.EMPTY,
