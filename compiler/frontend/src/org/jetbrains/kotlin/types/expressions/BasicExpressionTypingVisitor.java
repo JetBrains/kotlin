@@ -1306,7 +1306,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkType(type, expression, context),
+        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkType(type, expression, contextWithExpectedType),
                                                         dataFlowInfo,
                                                         loopBreakContinuePossible,
                                                         context.dataFlowInfo);
