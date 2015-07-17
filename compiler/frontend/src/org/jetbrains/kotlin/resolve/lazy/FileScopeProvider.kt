@@ -28,10 +28,8 @@ public interface FileScopeProvider {
         }
     }
 
-    public open class AdditionalScopes {
-        public open fun scopes(file: JetFile): List<JetScope> {
-            return emptyList()
-        }
+    public interface AdditionalScopes {
+        public fun scopes(file: JetFile): List<JetScope>
     }
 }
 
