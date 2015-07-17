@@ -117,7 +117,7 @@ public open class LazyClassMemberScope(
 
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
-        val functions = super.getFunctions(name)
+        val functions = super.getFunctions(name, location)
         resolveUnknownVisibilitiesForMembers(functions)
         return functions
     }
@@ -175,7 +175,7 @@ public open class LazyClassMemberScope(
 
     override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
         // TODO: this should be handled by lazy property descriptors
-        val properties = super.getProperties(name)
+        val properties = super.getProperties(name, location)
         resolveUnknownVisibilitiesForMembers(properties as Collection<CallableMemberDescriptor>)
         return properties
     }

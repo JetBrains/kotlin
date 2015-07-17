@@ -43,15 +43,15 @@ class AllUnderImportsScope : JetScope {
     }
 
     override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
-        return scopes.asSequence().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
+        return scopes.asSequence().map { it.getClassifier(name, location) }.filterNotNull().singleOrNull()
     }
 
     override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
-        return scopes.flatMap { it.getProperties(name) }
+        return scopes.flatMap { it.getProperties(name, location) }
     }
 
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
-        return scopes.flatMap { it.getFunctions(name) }
+        return scopes.flatMap { it.getFunctions(name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {

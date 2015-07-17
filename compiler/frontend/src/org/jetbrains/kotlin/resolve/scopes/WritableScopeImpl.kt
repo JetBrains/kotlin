@@ -159,7 +159,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         checkMayRead()
 
-        return concatInOrder(functionsByName(name), workerScope.getFunctions(name))
+        return concatInOrder(functionsByName(name), workerScope.getFunctions(name, location))
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
@@ -170,7 +170,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         checkMayRead()
 
         return variableOrClassDescriptorByName(name) as? ClassifierDescriptor
-               ?: workerScope.getClassifier(name)
+               ?: workerScope.getClassifier(name, location)
     }
 
     override fun getImplicitReceiversHierarchy() = implicitReceiverHierarchy
@@ -273,14 +273,14 @@ public class WritableScopeImpl @jvmOverloads constructor(
         override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
             checkMayRead()
 
-            return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name))
+            return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name, location))
         }
 
         override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
             checkMayRead()
 
             return variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
-                   ?: workerScope.getClassifier(name)
+                   ?: workerScope.getClassifier(name, location)
         }
 
         override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = addedDescriptors.truncated(descriptorLimit)

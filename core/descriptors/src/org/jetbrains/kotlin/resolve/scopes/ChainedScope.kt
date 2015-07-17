@@ -51,19 +51,19 @@ public open class ChainedScope(
     }
 
     override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor?
-            = getFirstMatch { it.getClassifier(name) }
+            = getFirstMatch { it.getClassifier(name, location) }
 
     override fun getPackage(name: Name): PackageViewDescriptor?
             = getFirstMatch { it.getPackage(name) }
 
     override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor>
-            = getFromAllScopes { it.getProperties(name) }
+            = getFromAllScopes { it.getProperties(name, location) }
 
     override fun getLocalVariable(name: Name): VariableDescriptor?
             = getFirstMatch { it.getLocalVariable(name) }
 
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor>
-            = getFromAllScopes { it.getFunctions(name) }
+            = getFromAllScopes { it.getFunctions(name, location) }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes, name) }

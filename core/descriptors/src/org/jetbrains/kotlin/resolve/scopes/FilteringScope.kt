@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: JetScope, private val predicate: (DeclarationDescriptor) -> Boolean) : JetScope {
 
-    override fun getFunctions(name: Name, location: UsageLocation) = workerScope.getFunctions(name).filter(predicate)
+    override fun getFunctions(name: Name, location: UsageLocation) = workerScope.getFunctions(name, location).filter(predicate)
 
     override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
 
@@ -33,9 +33,9 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
 
     override fun getPackage(name: Name) = filterDescriptor(workerScope.getPackage(name))
 
-    override fun getClassifier(name: Name, location: UsageLocation) = filterDescriptor(workerScope.getClassifier(name))
+    override fun getClassifier(name: Name, location: UsageLocation) = filterDescriptor(workerScope.getClassifier(name, location))
 
-    override fun getProperties(name: Name, location: UsageLocation) = workerScope.getProperties(name).filter(predicate)
+    override fun getProperties(name: Name, location: UsageLocation) = workerScope.getProperties(name, location).filter(predicate)
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverTypes, name).filter(predicate)
 

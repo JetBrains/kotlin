@@ -32,7 +32,7 @@ public abstract class AbstractScopeAdapter : JetScope {
     }
 
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
-        return workerScope.getFunctions(name)
+        return workerScope.getFunctions(name, location)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
@@ -40,11 +40,11 @@ public abstract class AbstractScopeAdapter : JetScope {
     }
 
     override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
-        return workerScope.getClassifier(name)
+        return workerScope.getClassifier(name, location)
     }
 
     override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
-        return workerScope.getProperties(name)
+        return workerScope.getProperties(name, location)
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {

@@ -72,8 +72,8 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = classes(name)
 
-    override fun getProperties(name: Name, location: UsageLocation) = deserializedPackageScope().getProperties(name)
-    override fun getFunctions(name: Name, location: UsageLocation) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
+    override fun getProperties(name: Name, location: UsageLocation) = deserializedPackageScope().getProperties(name, location)
+    override fun getFunctions(name: Name, location: UsageLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,

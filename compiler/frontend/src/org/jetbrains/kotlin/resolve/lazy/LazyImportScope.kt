@@ -236,7 +236,7 @@ class LazyImportScope(
 
     override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name ->
-            val descriptor = scope.getClassifier(name)
+            val descriptor = scope.getClassifier(name, location)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
         }
     }
@@ -248,14 +248,14 @@ class LazyImportScope(
 
     override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name) }
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name, location) }
     }
 
     override fun getLocalVariable(name: Name) = null
 
     override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
