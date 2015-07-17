@@ -14093,6 +14093,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/SetterOnly.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("SmartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/SmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastImplicitReceiver.kt")
+            public void testSmartCastImplicitReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/SmartCastImplicitReceiver.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")

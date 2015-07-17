@@ -35,9 +35,9 @@ public trait JetScope {
 
     public fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
 
     public fun getContainingDeclaration(): DeclarationDescriptor
 

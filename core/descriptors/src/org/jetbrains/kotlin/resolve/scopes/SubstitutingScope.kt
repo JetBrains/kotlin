@@ -70,9 +70,9 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     override fun getFunctions(name: Name) = substitute(workerScope.getFunctions(name))
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverType, name))
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name))
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverType))
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)
 

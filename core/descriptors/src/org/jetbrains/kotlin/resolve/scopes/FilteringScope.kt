@@ -37,9 +37,9 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
 
     override fun getProperties(name: Name) = workerScope.getProperties(name).filter(predicate)
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverType, name).filter(predicate)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverTypes, name).filter(predicate)
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverType).filter(predicate)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverTypes).filter(predicate)
 
     override fun getLocalVariable(name: Name) = filterDescriptor(workerScope.getLocalVariable(name))
 

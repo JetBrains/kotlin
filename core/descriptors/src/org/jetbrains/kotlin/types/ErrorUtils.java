@@ -94,14 +94,14 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull JetType receiverType, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
         ) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull JetType receiverType) {
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends JetType> receiverTypes) {
             return ERROR_PROPERTY_GROUP;
         }
 
@@ -210,14 +210,14 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull JetType receiverType, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
         ) {
             throw new IllegalStateException();
         }
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull JetType receiverType) {
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends JetType> receiverTypes) {
             throw new IllegalStateException();
         }
 

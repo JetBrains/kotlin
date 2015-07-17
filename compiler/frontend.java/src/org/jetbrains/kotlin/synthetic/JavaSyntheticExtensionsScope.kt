@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.beans.Introspector
-import java.util.ArrayList
+import java.util.*
 
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
@@ -52,7 +52,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val owner = getterOrSetter.getContainingDeclaration()
             if (owner !is JavaClassDescriptor) return null
 
-            return resolutionScope.getSyntheticExtensionProperties(owner.getDefaultType())
+            return resolutionScope.getSyntheticExtensionProperties(listOf(owner.getDefaultType()))
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { getterOrSetter == it.getMethod || getterOrSetter == it.setMethod }
         }
@@ -136,11 +136,22 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
                && descriptor.getVisibility() == Visibilities.PUBLIC
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> {
-        return collectSyntheticPropertiesByName(null, receiverType.makeNotNullable(), name) ?: emptyList()
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
+        var result: SmartList<PropertyDescriptor>? = null
+        val processedTypes: MutableSet<JetType>? = if (receiverTypes.size() > 1) HashSet<JetType>() else null
+        receiverTypes.forEach {
+            result = collectSyntheticPropertiesByName(result, it.makeNotNullable(), name, processedTypes)
+        }
+        return when {
+            result == null -> emptyList()
+            result!!.size() > 1 -> result!!.toSet()
+            else -> result!!
+        }
     }
 
-    private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name): SmartList<PropertyDescriptor>? {
+    private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name, processedTypes: MutableSet<JetType>?): SmartList<PropertyDescriptor>? {
+        if (processedTypes != null && !processedTypes.add(type)) return result
+
         @suppress("NAME_SHADOWING")
         var result = result
 
@@ -150,18 +161,23 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
             result = result.add(syntheticPropertyInClass(Triple(classifier, type, name)))
         }
 
-        typeConstructor.getSupertypes().forEach { result = collectSyntheticPropertiesByName(result, it, name) }
+        typeConstructor.getSupertypes().forEach { result = collectSyntheticPropertiesByName(result, it, name, processedTypes) }
 
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
-        result.collectSyntheticProperties(receiverType.makeNotNullable())
+        val processedTypes = HashSet<JetType>()
+        receiverTypes.forEach {
+            result.collectSyntheticProperties(it.makeNotNullable(), processedTypes)
+        }
         return result
     }
 
-    private fun MutableList<PropertyDescriptor>.collectSyntheticProperties(type: JetType) {
+    private fun MutableList<PropertyDescriptor>.collectSyntheticProperties(type: JetType, processedTypes: MutableSet<JetType>) {
+        if (!processedTypes.add(type)) return
+
         val typeConstructor = type.getConstructor()
         val classifier = typeConstructor.getDeclarationDescriptor()
         if (classifier is JavaClassDescriptor) {
@@ -173,7 +189,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
             }
         }
 
-        typeConstructor.getSupertypes().forEach { collectSyntheticProperties(it) }
+        typeConstructor.getSupertypes().forEach { collectSyntheticProperties(it, processedTypes) }
     }
 
     private fun SmartList<PropertyDescriptor>?.add(property: PropertyDescriptor?): SmartList<PropertyDescriptor>? {
