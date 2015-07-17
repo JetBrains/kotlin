@@ -45,19 +45,20 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 public class LocalClassifierAnalyzer(
+        val globalContext: GlobalContext,
+        val storageManager: StorageManager,
         val descriptorResolver: DescriptorResolver,
         val funcionDescriptorResolver: FunctionDescriptorResolver,
         val typeResolver: TypeResolver,
-        val annotationResolver: AnnotationResolver
+        val annotationResolver: AnnotationResolver,
+        val additionalCheckerProvider: AdditionalCheckerProvider,
+        val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
-            globalContext: GlobalContext,
             scope: WritableScope?,
             context: ExpressionTypingContext,
             containingDeclaration: DeclarationDescriptor,
-            classOrObject: JetClassOrObject,
-            additionalCheckerProvider: AdditionalCheckerProvider,
-            dynamicTypesSettings: DynamicTypesSettings
+            classOrObject: JetClassOrObject
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
@@ -70,7 +71,7 @@ public class LocalClassifierAnalyzer(
                         scope,
                         classOrObject,
                         containingDeclaration,
-                        globalContext.storageManager,
+                        storageManager,
                         context,
                         module,
                         descriptorResolver,
