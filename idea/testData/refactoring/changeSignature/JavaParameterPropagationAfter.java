@@ -19,7 +19,7 @@ class B extends A {
     }
 
     public void bar(boolean b, int n, String s) {
-        foo(1, "abc");
+        foo(n, s);
     }
 
     public void baz() {
