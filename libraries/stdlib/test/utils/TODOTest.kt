@@ -27,12 +27,12 @@ private class PartiallyImplementedClass {
 
 class TODOTest {
     private fun assertNotImplemented(block: () -> Unit) {
-        assertTrue(fails(block) is UnsupportedOperationException)
+        assertTrue(fails(block) is NotImplementedError)
     }
 
     private fun assertNotImplementedWithMessage(message: String, block: () -> Unit) {
         val e = fails(block)
-        assertTrue(e is UnsupportedOperationException)
+        assertTrue(e is NotImplementedError)
         assertTrue(message in e!!.getMessage()!!)
     }
 

@@ -1,17 +1,21 @@
 package kotlin
 
-
 /**
- * Always throws an [UnsupportedOperationException] stating that operation is not implemented.
+ * An exception is thrown to indicate that a method body remains to be implemented.
  */
-public fun TODO(): Nothing = throw UnsupportedOperationException("An operation is not implemented.")
+public class NotImplementedError(message: String = "An operation is not implemented.") : Error(message)
 
 /**
- * Always throws an [UnsupportedOperationException] stating that operation is not implemented.
+ * Always throws [NotImplementedError] stating that operation is not implemented.
+ */
+public fun TODO(): Nothing = throw NotImplementedError()
+
+/**
+ * Always throws [NotImplementedError] stating that operation is not implemented.
  *
  * @param reason a string explaining why the implementation is missing.
  */
-public fun TODO(reason: String): Nothing = throw UnsupportedOperationException("An operation is not implemented: $reason")
+public fun TODO(reason: String): Nothing = throw NotImplementedError("An operation is not implemented: $reason")
 
 
 /**
