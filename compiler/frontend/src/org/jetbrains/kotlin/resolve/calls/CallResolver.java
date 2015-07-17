@@ -459,7 +459,9 @@ public class CallResolver {
             deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
         }
         completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
-        cacheResults(context, results, traceToResolveCall, tracing);
+        if (context.contextDependency == ContextDependency.DEPENDENT) {
+            cacheResults(context, results, traceToResolveCall, tracing);
+        }
         traceToResolveCall.commit();
 
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
