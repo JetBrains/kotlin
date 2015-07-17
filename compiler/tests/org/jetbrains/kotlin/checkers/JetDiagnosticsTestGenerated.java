@@ -1193,6 +1193,57 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     }
                 }
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class WithUseSiteTarget extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("FieldAnnotations.kt")
+                public void testFieldAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/FieldAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("GetterAnnotations.kt")
+                public void testGetterAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/GetterAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ParamAnnotations.kt")
+                public void testParamAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ParamAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("PropertyAnnotations.kt")
+                public void testPropertyAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/PropertyAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ReceiverAnnotations.kt")
+                public void testReceiverAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ReceiverAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SetterAnnotations.kt")
+                public void testSetterAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SetterAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SparamAnnotations.kt")
+                public void testSparamAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SparamAnnotations.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/backingField")

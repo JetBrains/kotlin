@@ -1,0 +1,30 @@
+package
+
+kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class CustomDelegate {
+    public constructor CustomDelegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@get:Ann() internal final class SomeClass {
+    @get:Ann() public constructor SomeClass()
+    @get:Ann() protected final val delegatedProperty: kotlin.String
+    @get:Ann() protected final var mutableProperty: kotlin.String
+    @get:Ann() internal final val propertyWithCustomGetter: kotlin.Int
+    @get:Ann() protected final val simpleProperty: kotlin.String = "text"
+    @get:Ann() protected final val simplePropertyWithAnnotationList: kotlin.String = "text"
+    @get:Ann() internal final fun annotationOnFunction(/*0*/ a: kotlin.Int): kotlin.Int
+    internal final fun anotherFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

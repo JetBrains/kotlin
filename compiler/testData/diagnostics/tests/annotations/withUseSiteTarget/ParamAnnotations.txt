@@ -1,0 +1,31 @@
+package
+
+kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class PrimaryConstructorClass {
+    public constructor PrimaryConstructorClass(/*0*/ @param:Ann() a: kotlin.String, /*1*/ @param:Ann() @param:Second() b: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation() internal final class Second : kotlin.Annotation {
+    public constructor Second()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@param:Ann() internal final class SomeClass {
+    @param:Ann() public constructor SomeClass(/*0*/ @param:Ann() a: kotlin.String)
+    @param:Ann() protected final val simpleProperty: kotlin.String = "text"
+    @param:Ann() internal final fun anotherFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

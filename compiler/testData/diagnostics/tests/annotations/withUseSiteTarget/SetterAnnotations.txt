@@ -1,0 +1,31 @@
+package
+
+kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class CustomDelegate {
+    public constructor CustomDelegate()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@set:Ann() internal final class SomeClass {
+    public constructor SomeClass()
+    @set:Ann() protected final var delegatedProperty: kotlin.String
+    @set:Ann() protected final var mutableProperty: kotlin.String
+    @set:Ann() protected final var mutablePropertyWithAnnotationList: kotlin.String
+    @set:Ann() internal final var propertyWithCustomSetter: kotlin.Int
+    @set:Ann() protected final val simpleProperty: kotlin.String = "text"
+    @set:Ann() internal final fun annotationOnFunction(/*0*/ a: kotlin.Int): kotlin.Int
+    internal final fun anotherFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
