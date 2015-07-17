@@ -937,6 +937,7 @@
         <zip destfile="${output}/kotlin-test-data.zip">
             <zipfileset dir="compiler/testData" prefix="compiler"/>
             <zipfileset dir="idea/testData" prefix="ide"/>
+            <zipfileset dir="idea/idea-completion/testData" prefix="ide/completion"/>
         </zip>
     </target>
 
