@@ -33,16 +33,17 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
-        if (descriptors.none { it is SyntheticJavaPropertyDescriptor }) return emptyList()
+        if (descriptors.none { it.original is SyntheticJavaPropertyDescriptor }) return emptyList()
 
         val result = SmartList<FunctionDescriptor>()
         for (descriptor in descriptors) {
-            if (descriptor is SyntheticJavaPropertyDescriptor) {
+            val original = descriptor.original
+            if (original is SyntheticJavaPropertyDescriptor) {
                 if (getter) {
-                    result.add(descriptor.getMethod)
+                    result.add(original.getMethod)
                 }
                 else {
-                    result.addIfNotNull(descriptor.setMethod)
+                    result.addIfNotNull(original.setMethod)
                 }
             }
         }
@@ -62,7 +63,7 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
         }
         else {
             val propertyDescriptor = super.getTargetDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
-                    .singleOrNull { it is SyntheticJavaPropertyDescriptor } ?: return expression
+                    .singleOrNull { it.original is SyntheticJavaPropertyDescriptor } ?: return expression
             SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName, withIsPrefix = propertyDescriptor.getName().asString().startsWith("is"))
         }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method

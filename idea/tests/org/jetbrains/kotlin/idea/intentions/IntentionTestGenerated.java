@@ -7415,6 +7415,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericClassMethod.kt")
+        public void testGenericClassMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/genericClassMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("get.kt")
         public void testGet() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/get.kt");

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -33,7 +34,7 @@ public class DescriptorSubstitutor {
 
     @NotNull
     public static TypeSubstitutor substituteTypeParameters(
-            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @ReadOnly @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull final TypeSubstitutor originalSubstitutor,
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result

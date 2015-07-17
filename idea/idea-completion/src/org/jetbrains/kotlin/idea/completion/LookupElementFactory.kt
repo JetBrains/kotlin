@@ -253,10 +253,11 @@ public class LookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
+            val original = descriptor.original
             when {
-                descriptor is SyntheticJavaPropertyDescriptor -> {
-                    var from = descriptor.getMethod.getName().asString() + "()"
-                    descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
+                original is SyntheticJavaPropertyDescriptor -> {
+                    var from = original.getMethod.getName().asString() + "()"
+                    original.setMethod?.let { from += "/" + it.getName().asString() + "()" }
                     element = element.appendTailText(" (from $from)", true)
                 }
 

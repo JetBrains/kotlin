@@ -1233,6 +1233,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("StarTypeArg.kt")
+            public void testStarTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/StarTypeArg.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SyntheticExtensions1.kt")
             public void testSyntheticExtensions1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions1.kt");
@@ -1242,6 +1248,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("SyntheticExtensions2.kt")
             public void testSyntheticExtensions2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensionsInGenericClass.kt")
+            public void testSyntheticExtensionsInGenericClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensionsInGenericClass.kt");
                 doTest(fileName);
             }
 
