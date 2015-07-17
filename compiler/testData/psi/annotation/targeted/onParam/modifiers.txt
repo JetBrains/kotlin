@@ -1,0 +1,56 @@
+JetFile: modifiers.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(public)('public')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              ANNOTATION_TARGET
+                PsiElement(param)('param')
+              PsiElement(COLON)(':')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+            PsiWhiteSpace(' ')
+            PsiElement(private)('private')
+            PsiWhiteSpace(' ')
+            ANNOTATION
+              PsiElement(AT)('@')
+              ANNOTATION_TARGET
+                PsiElement(param)('param')
+              PsiElement(COLON)(':')
+              PsiElement(LBRACKET)('[')
+              ANNOTATION_ENTRY
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Ann')
+              PsiElement(RBRACKET)(']')
+          PsiWhiteSpace(' ')
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('value')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')

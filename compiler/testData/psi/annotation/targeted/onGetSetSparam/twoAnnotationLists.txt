@@ -1,0 +1,126 @@
+JetFile: twoAnnotationLists.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(get)('get')
+            PsiElement(COLON)(':')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(set)('set')
+            PsiElement(COLON)(':')
+            PsiElement(LBRACKET)('[')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('b')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('c')
+            PsiElement(RBRACKET)(']')
+          PsiWhiteSpace('\n    ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            ANNOTATION_TARGET
+              PsiElement(sparam)('sparam')
+            PsiElement(COLON)(':')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('d')
+        PsiWhiteSpace('\n    ')
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('e')
+          PsiWhiteSpace(' ')
+          PsiElement(get)('get')
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('5')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('f')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('g')
+          PsiWhiteSpace(' ')
+          PsiElement(set)('set')
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              MODIFIER_LIST
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('h')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('v')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')
