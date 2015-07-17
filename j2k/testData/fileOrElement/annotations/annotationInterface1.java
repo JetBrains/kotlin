@@ -14,3 +14,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.CONSTRUCTOR, ElementType.FIELD})
 @interface I {
 }
+
+@Target(ElementType.METHOD)
+@interface J {
+}
+
+@Target({})
+@interface K {
+}
