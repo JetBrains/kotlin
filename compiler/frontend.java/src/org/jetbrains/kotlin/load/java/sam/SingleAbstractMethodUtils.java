@@ -197,7 +197,7 @@ public class SingleAbstractMethodUtils {
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
                     @NotNull List<ValueParameterDescriptor> valueParameters,
-                    @Nullable JetType returnType
+                    @NotNull JetType returnType
             ) {
                 result.initialize(
                         null,
@@ -220,7 +220,7 @@ public class SingleAbstractMethodUtils {
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
                     @NotNull List<ValueParameterDescriptor> valueParameters,
-                    @Nullable JetType returnType
+                    @NotNull JetType returnType
             ) {
                 result.initialize(typeParameters, valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
@@ -237,15 +237,12 @@ public class SingleAbstractMethodUtils {
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
 
         JetType returnTypeUnsubstituted = original.getReturnType();
-        JetType returnType;
-        if (returnTypeUnsubstituted == null) { // return type may be null for not yet initialized constructors
-            returnType = null;
-        }
-        else {
-            returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
-            assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
+        assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
+
+        JetType returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+        assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
                                         ", substitutor = " + typeParameters.substitutor;
-        }
+
 
         List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
@@ -330,7 +327,7 @@ public class SingleAbstractMethodUtils {
         public abstract void initialize(
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
-                @Nullable JetType returnType
+                @NotNull JetType returnType
         );
     }
 
