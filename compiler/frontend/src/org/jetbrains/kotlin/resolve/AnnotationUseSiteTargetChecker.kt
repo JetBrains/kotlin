@@ -17,27 +17,34 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.psi.*
 
 public object AnnotationUseSiteTargetChecker {
 
-    public fun BindingTrace.check(modifierListOwner: JetDeclaration, descriptor: DeclarationDescriptor) {
-        for (annotationWithTarget in descriptor.getAnnotations().getUseSiteTargetedAnnotations()) {
+    public fun check(annotated: JetAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
+        trace.checkDeclaration(annotated, descriptor)
+
+        if (annotated is JetFunction) {
+            for (parameter in annotated.valueParameters) {
+                val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
+                trace.checkDeclaration(parameter, parameterDescriptor)
+            }
+        }
+
+    }
+
+    private fun BindingTrace.checkDeclaration(annotated: JetAnnotated, descriptor: DeclarationDescriptor) {
+        for (annotationWithTarget in descriptor.annotations.getUseSiteTargetedAnnotations()) {
             val annotation = annotationWithTarget.annotation
             val target = annotationWithTarget.target ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(modifierListOwner, descriptor, annotation)
+                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, descriptor, annotation)
                 AnnotationUseSiteTarget.PROPERTY -> checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_PROPERTY_TARGET)
                 AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_GET_TARGET)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkMutableProperty(descriptor, annotation, INAPPLICABLE_SET_TARGET)
@@ -45,8 +52,19 @@ public object AnnotationUseSiteTargetChecker {
                     if (descriptor !is FunctionDescriptor && descriptor !is PropertyDescriptor) {
                         report(annotation, INAPPLICABLE_RECEIVER_TARGET)
                     }
-                    else if ((descriptor as CallableMemberDescriptor).getExtensionReceiverParameter() == null) {
+                    else if ((descriptor as CallableMemberDescriptor).extensionReceiverParameter == null) {
                         report(annotation, INAPPLICABLE_RECEIVER_TARGET)
+                    }
+                }
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
+                    if (annotated !is JetParameter) {
+                        report(annotation, INAPPLICABLE_PARAM_TARGET)
+                    }
+                    else {
+                        val containingDeclaration = bindingContext[BindingContext.VALUE_PARAMETER, annotated]?.containingDeclaration
+                        if (containingDeclaration !is ConstructorDescriptor || !containingDeclaration.isPrimary) {
+                            report(annotation, INAPPLICABLE_PARAM_TARGET)
+                        }
                     }
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotation, INAPPLICABLE_SPARAM_TARGET)
@@ -56,7 +74,7 @@ public object AnnotationUseSiteTargetChecker {
     }
 
     private fun BindingTrace.checkFieldTargetApplicability(
-            modifierListOwner: JetDeclaration,
+            modifierListOwner: JetAnnotated,
             descriptor: DeclarationDescriptor,
             annotation: AnnotationDescriptor) {
         if (checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_FIELD_TARGET)) return
@@ -76,7 +94,7 @@ public object AnnotationUseSiteTargetChecker {
         checkIfPropertyDescriptor(descriptor, annotation, diagnosticFactory)
 
         if (descriptor is PropertyDescriptor) {
-            if (!descriptor.isVar()) {
+            if (!descriptor.isVar) {
                 report(annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
             }
         }
@@ -94,7 +112,7 @@ public object AnnotationUseSiteTargetChecker {
     }
 
     private fun BindingTrace.report(annotation: AnnotationDescriptor, diagnosticFactory: DiagnosticFactory0<PsiElement>) {
-        val annotationEntry = get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation) ?: return
+        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
         report(diagnosticFactory.on(annotationEntry))
     }
 

@@ -132,6 +132,7 @@ public class DefaultErrorMessages {
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "Property must be mutable");
         MAP.put(INAPPLICABLE_RECEIVER_TARGET, "''@receiver:'' annotations could be applied only to extension function or extension property declarations");
         MAP.put(INAPPLICABLE_SPARAM_TARGET, "''@sparam:'' annotations could be applied only to property declarations");
+        MAP.put(INAPPLICABLE_PARAM_TARGET, "''@param:'' annotations could be applied only to primary constructor parameters");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
