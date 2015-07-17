@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
-import com.google.common.collect.Lists
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.context.SimpleResolutionContext
@@ -49,6 +47,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.math.BigInteger
+import java.util.ArrayList
 import java.util.HashMap
 import kotlin.platform.platformStatic
 
@@ -141,9 +140,7 @@ public class ConstantExpressionEvaluator(
             return null
         }
 
-        assert(resolvedCall.getValueArguments().size() == 1, "Array function should have only one vararg parameter")
-
-        val argumentEntry = resolvedCall.getValueArguments().entrySet().iterator().next()
+        val argumentEntry = resolvedCall.getValueArguments().entrySet().single()
 
         val elementType = argumentEntry.getKey().getVarargElementType() ?: return null
 
@@ -167,7 +164,7 @@ public class ConstantExpressionEvaluator(
             resolvedValueArgument: ResolvedValueArgument,
             expectedType: JetType,
             trace: BindingTrace): List<CompileTimeConstant<*>> {
-        val constants = Lists.newArrayList<CompileTimeConstant<*>>()
+        val constants = ArrayList<CompileTimeConstant<*>>()
         for (argument in resolvedValueArgument.getArguments()) {
             val argumentExpression = argument.getArgumentExpression() ?: continue
             val constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType)
@@ -175,9 +172,9 @@ public class ConstantExpressionEvaluator(
                 val defaultType = constant.getType(expectedType)
                 val context = SimpleResolutionContext(trace, JetScope.Empty, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
                                                       ContextDependency.INDEPENDENT,
-                                                      CompositeChecker(Lists.newArrayList<CallChecker>()),
+                                                      CompositeChecker(emptyList()),
                                                       SymbolUsageValidator.Empty,
-                                                      AdditionalTypeChecker.Composite(Lists.newArrayList<AdditionalTypeChecker>()),
+                                                      AdditionalTypeChecker.Composite(emptyList()),
                                                       StatementFilter.NONE)
                 ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context)
             }
