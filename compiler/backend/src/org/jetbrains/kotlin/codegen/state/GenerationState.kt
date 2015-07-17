@@ -36,24 +36,24 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import java.io.File
 
-public class GenerationState(
+public class GenerationState jvmOverloads constructor(
         public val project: Project,
         builderFactory: ClassBuilderFactory,
-        public val progress: Progress,
+        public val progress: Progress = Progress.DEAF,
         public val module: ModuleDescriptor,
         bindingContext: BindingContext,
         public val files: List<JetFile>,
-        disableCallAssertions: Boolean,
-        disableParamAssertions: Boolean,
-        public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter,
-        disableInline: Boolean,
-        disableOptimization: Boolean,
+        disableCallAssertions: Boolean = true,
+        disableParamAssertions: Boolean = true,
+        public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
+        disableInline: Boolean = false,
+        disableOptimization: Boolean = false,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
-        public val moduleId: String?,
-        public val diagnostics: DiagnosticSink,
+        public val moduleId: String? = null,
+        public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
-        public val outDirectory: File?
+        public val outDirectory: File? = null
 ) {
     public interface GenerateClassFilter {
         public fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean
@@ -97,15 +97,6 @@ public class GenerationState(
 
     public val isInlineEnabled: Boolean = !disableInline
         @jvmName("isInlineEnabled") get
-
-    public constructor(
-            project: Project,
-            builderFactory: ClassBuilderFactory,
-            module: ModuleDescriptor,
-            bindingContext: BindingContext,
-            files: List<JetFile>) : this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, true, GenerateClassFilter.GENERATE_ALL,
-                                         false, false, emptySet(), null, DiagnosticSink.DO_NOTHING, null) {
-    }
 
     init {
         var builderFactory = builderFactory
