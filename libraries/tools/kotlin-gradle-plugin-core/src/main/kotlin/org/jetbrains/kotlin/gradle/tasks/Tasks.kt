@@ -5,9 +5,7 @@ import java.io.File
 import org.gradle.api.GradleException
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.gradle.api.tasks.SourceTask
-import org.jetbrains.kotlin.doc.KDocArguments
 import java.util.HashSet
-import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
