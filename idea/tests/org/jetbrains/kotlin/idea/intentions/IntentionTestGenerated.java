@@ -7463,6 +7463,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("smartCast.kt")
+        public void testSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/smartCast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("superCall.kt")
         public void testSuperCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/superCall.kt");
