@@ -21,11 +21,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -56,10 +57,14 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
         if (!Name.isValidIdentifier(newElementName!!)) return expression
 
         val newNameAsName = Name.identifier(newElementName)
-        val newName = if (getter)
+        val newName = if (getter) {
             SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
-        else
-            SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
+        }
+        else {
+            val propertyDescriptor = super.getTargetDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
+                    .singleOrNull { it is SyntheticJavaPropertyDescriptor } ?: return expression
+            SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName, withIsPrefix = propertyDescriptor.getName().asString().startsWith("is"))
+        }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
         val nameIdentifier = JetPsiFactory(expression).createNameIdentifier(newName.getIdentifier())

@@ -45,7 +45,9 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     companion object {
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
-            if (propertyNameByGetMethodName(name) == null && propertyNameBySetMethodName(name) == null) return null // optimization
+            if (name.isSpecial()) return null
+            val identifier = name.getIdentifier()
+            if (!identifier.startsWith("get") && !identifier.startsWith("is") && !identifier.startsWith("set")) return null // optimization
 
             val owner = getterOrSetter.getContainingDeclaration()
             if (owner !is JavaClassDescriptor) return null
@@ -56,15 +58,22 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
         }
 
         fun propertyNameByGetMethodName(methodName: Name): Name?
-                = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is")
+                = propertyNameFromAccessorMethodName(methodName, "get") ?: propertyNameFromAccessorMethodName(methodName, "is", removePrefix = false)
 
-        fun propertyNameBySetMethodName(methodName: Name): Name?
-                = propertyNameFromAccessorMethodName(methodName, "set")
+        fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name?
+                = propertyNameFromAccessorMethodName(methodName, "set", addPrefix = if (withIsPrefix) "is" else null)
 
-        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String): Name? {
+        private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String, removePrefix: Boolean = true, addPrefix: String? = null): Name? {
             if (methodName.isSpecial()) return null
             val identifier = methodName.getIdentifier()
             if (!identifier.startsWith(prefix)) return null
+
+            if (addPrefix != null) {
+                assert(removePrefix)
+                return Name.identifier(addPrefix + identifier.removePrefix(prefix))
+            }
+
+            if (!removePrefix) return methodName
             val name = Introspector.decapitalize(identifier.removePrefix(prefix))
             if (!Name.isValidIdentifier(name)) return null
             return Name.identifier(name)
@@ -103,7 +112,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
                                 .singleOrNull { isGoodGetMethod(it) } ?: return null
 
         val propertyType = getMethod.getReturnType() ?: return null
-        val setMethod = memberScope.getFunctions(possibleSetMethodName(name)).singleOrNull { isGoodSetMethod(it, propertyType) }
+        val setMethod = memberScope.getFunctions(setMethodName(getMethod.getName())).singleOrNull { isGoodSetMethod(it, propertyType) }
 
         return MyPropertyDescriptor(javaClass, getMethod, setMethod, name, propertyType, type)
     }
@@ -177,12 +186,24 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
     //TODO: reuse code with generation?
 
     private fun possibleGetMethodNames(propertyName: Name): Collection<Name> {
-        val capitalized = propertyName.getIdentifier().capitalize()
-        return listOf(Name.identifier("get" + capitalized), Name.identifier("is" + capitalized))
+        val identifier = propertyName.getIdentifier()
+        val getPrefixName = Name.identifier("get" + identifier.capitalize())
+        if (identifier.startsWith("is")) {
+            return listOf(propertyName, getPrefixName)
+        }
+        else {
+            return listOf(getPrefixName)
+        }
     }
 
-    private fun possibleSetMethodName(propertyName: Name): Name {
-        return Name.identifier("set" + propertyName.getIdentifier().capitalize())
+    private fun setMethodName(getMethodName: Name): Name {
+        val identifier = getMethodName.getIdentifier()
+        val prefix = when {
+            identifier.startsWith("get") -> "get"
+            identifier.startsWith("is") -> "is"
+            else -> throw IllegalArgumentException()
+        }
+        return Name.identifier("set" + identifier.removePrefix(prefix).capitalize())
     }
 
     private class MyPropertyDescriptor(

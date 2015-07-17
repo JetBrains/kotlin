@@ -7433,6 +7433,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("isGet.kt")
+        public void testIsGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/isGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("isSet.kt")
+        public void testIsSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/isSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/set.kt");
