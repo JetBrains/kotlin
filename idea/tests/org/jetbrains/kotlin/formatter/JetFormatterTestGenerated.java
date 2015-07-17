@@ -97,6 +97,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ClassInBody.after.kt")
+        public void testClassInBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ClassInBody.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ClassLineBreak.after.kt")
         public void testClassLineBreak() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ClassLineBreak.after.kt");
@@ -352,6 +358,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("NewLineForRBrace.after.kt")
         public void testNewLineForRBrace() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/NewLineForRBrace.after.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ObjectInBody.after.kt")
+        public void testObjectInBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/ObjectInBody.after.kt");
             doTest(fileName);
         }
 
