@@ -102,5 +102,16 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
                 }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
+
+        public val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.FIELD to FIELD,
+                AnnotationUseSiteTarget.PROPERTY to PROPERTY,
+                AnnotationUseSiteTarget.FILE to FILE,
+                AnnotationUseSiteTarget.PROPERTY_GETTER to PROPERTY_GETTER,
+                AnnotationUseSiteTarget.PROPERTY_SETTER to PROPERTY_SETTER,
+                AnnotationUseSiteTarget.RECEIVER to VALUE_PARAMETER,
+                AnnotationUseSiteTarget.SETTER_PARAMETER to VALUE_PARAMETER)
+
     }
 }

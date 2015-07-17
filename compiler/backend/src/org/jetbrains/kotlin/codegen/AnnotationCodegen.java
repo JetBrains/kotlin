@@ -198,7 +198,7 @@ public abstract class AnnotationCodegen {
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
-        Set<KotlinTarget> targets = AnnotationChecker.Companion.possibleTargetSet(classDescriptor);
+        Set<KotlinTarget> targets = AnnotationChecker.Companion.applicableTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
             javaTargets = getJavaTargetList(classDescriptor);
