@@ -10059,6 +10059,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("samAdapterInConstructor.kt")
+            public void testSamAdapterInConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/samAdapterInConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("samConstructor.kt")
             public void testSamConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/samConstructor.kt");
