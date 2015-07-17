@@ -6,7 +6,7 @@ fun Thread.foo(urlConnection: java.net.URLConnection) {
 
 // EXIST_JAVA_ONLY: { lookupString: "priority", itemText: "priority", tailText: " (from getPriority()/setPriority())", typeText: "Int" }
 // EXIST_JAVA_ONLY: { lookupString: "isDaemon", itemText: "isDaemon", tailText: " (from isDaemon()/setDaemon())", typeText: "Boolean" }
-// EXIST_JAVA_ONLY: { lookupString: "URL", itemText: "URL", tailText: " (from getURL())", typeText: "URL!" }
+// EXIST_JAVA_ONLY: { lookupString: "url", itemText: "url", tailText: " (from getURL())", typeText: "URL!" }
 // ABSENT: getPriority
 // ABSENT: setPriority
 // ABSENT: { itemText: "isDaemon", tailText: "()" }

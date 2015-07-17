@@ -1617,6 +1617,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("URLConnection.kt")
+            public void testURLConnection() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/URLConnection.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("UserPrefix1.kt")
             public void testUserPrefix1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/UserPrefix1.kt");

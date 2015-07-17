@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.beans.Introspector
 import java.util.*
@@ -74,7 +76,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             }
 
             if (!removePrefix) return methodName
-            val name = Introspector.decapitalize(identifier.removePrefix(prefix))
+            val name = identifier.removePrefix(prefix).decapitalizeSmart()
             if (!Name.isValidIdentifier(name)) return null
             return Name.identifier(name)
         }
@@ -94,22 +96,19 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
 
     private fun syntheticPropertyInClassNotCached(javaClass: JavaClassDescriptor, type: JetType, name: Name): PropertyDescriptor? {
         if (name.isSpecial()) return null
-        val identifier = name.getIdentifier()
+        val identifier = name.identifier
         if (identifier.isEmpty()) return null
         val firstChar = identifier[0]
-        if (!firstChar.isJavaIdentifierStart()) return null
-        if (identifier.length() > 1) {
-            if (firstChar.isUpperCase() != identifier[1].isUpperCase()) return null
-        }
-        else {
-            if (firstChar.isUpperCase()) return null
-        }
+        if (!firstChar.isJavaIdentifierStart() || firstChar.isUpperCase()) return null
 
         val memberScope = javaClass.getMemberScope(type.getArguments())
         val getMethod = possibleGetMethodNames(name)
                                 .asSequence()
                                 .flatMap { memberScope.getFunctions(it).asSequence() }
                                 .singleOrNull { isGoodGetMethod(it) } ?: return null
+
+        // don't accept "uRL" for "getURL" etc
+        if (SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(getMethod.name) != name) return null
 
         val propertyType = getMethod.getReturnType() ?: return null
         val setMethod = memberScope.getFunctions(setMethodName(getMethod.getName())).singleOrNull { isGoodSetMethod(it, propertyType) }
@@ -139,13 +138,13 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
         var result: SmartList<PropertyDescriptor>? = null
         val processedTypes: MutableSet<JetType>? = if (receiverTypes.size() > 1) HashSet<JetType>() else null
-        receiverTypes.forEach {
-            result = collectSyntheticPropertiesByName(result, it.makeNotNullable(), name, processedTypes)
+        for (type in receiverTypes) {
+            result = collectSyntheticPropertiesByName(result, type.makeNotNullable(), name, processedTypes)
         }
         return when {
             result == null -> emptyList()
-            result!!.size() > 1 -> result!!.toSet()
-            else -> result!!
+            result.size() > 1 -> result.toSet()
+            else -> result
         }
     }
 
@@ -202,24 +201,30 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
     //TODO: reuse code with generation?
 
     private fun possibleGetMethodNames(propertyName: Name): Collection<Name> {
-        val identifier = propertyName.getIdentifier()
-        val getPrefixName = Name.identifier("get" + identifier.capitalize())
+        val result = ArrayList<Name>(3)
+        val identifier = propertyName.identifier
+
         if (identifier.startsWith("is")) {
-            return listOf(propertyName, getPrefixName)
+            result.add(propertyName)
         }
-        else {
-            return listOf(getPrefixName)
+
+        val capitalize1 = identifier.capitalize()
+        val capitalize2 = identifier.capitalizeFirstWord()
+        result.add(Name.identifier("get" + capitalize1))
+        if (capitalize2 != capitalize1) {
+            result.add(Name.identifier("get" + capitalize2))
         }
+        return result
     }
 
     private fun setMethodName(getMethodName: Name): Name {
-        val identifier = getMethodName.getIdentifier()
+        val identifier = getMethodName.identifier
         val prefix = when {
             identifier.startsWith("get") -> "get"
             identifier.startsWith("is") -> "is"
             else -> throw IllegalArgumentException()
         }
-        return Name.identifier("set" + identifier.removePrefix(prefix).capitalize())
+        return Name.identifier("set" + identifier.removePrefix(prefix))
     }
 
     private class MyPropertyDescriptor(
