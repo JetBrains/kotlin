@@ -24,7 +24,7 @@ internal abstract class Mine : java.util.List<kotlin.String> {
     public abstract /*fake_override*/ fun size(): kotlin.Int
     public abstract /*fake_override*/ fun subList(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.(Mutable)List<kotlin.String!>!
     public abstract /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public abstract /*fake_override*/ fun </*0*/ T> toArray(/*0*/ kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public abstract /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
 }
 
 public/*package*/ open class PlainExtendsListString {

@@ -15,8 +15,8 @@ public open class Rendering {
         public/*package*/ constructor C_Sub()
     }
 
-    public/*package*/ open inner class D_SuperG</*0*/ T> {
-        public/*package*/ constructor D_SuperG</*0*/ T>()
+    public/*package*/ open inner class D_SuperG</*0*/ T : kotlin.Any!> {
+        public/*package*/ constructor D_SuperG</*0*/ T : kotlin.Any!>()
     }
 
     public/*package*/ open inner class E_SubG : test.Rendering.D_SuperG<kotlin.String!> {

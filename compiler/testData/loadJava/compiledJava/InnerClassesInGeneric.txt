@@ -1,7 +1,7 @@
 package test
 
-public open class InnerClassesInGeneric</*0*/ P, /*1*/ Q> {
-    public constructor InnerClassesInGeneric</*0*/ P, /*1*/ Q>()
+public open class InnerClassesInGeneric</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!> {
+    public constructor InnerClassesInGeneric</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!>()
 
     public open inner class Inner {
         public constructor Inner()

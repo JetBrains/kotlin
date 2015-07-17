@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.*;
 
@@ -254,7 +255,8 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             List<JetTypeReference> altUpperBounds = getUpperBounds(altFunDeclaration, altTypeParameter);
             if (altUpperBounds.size() != originalUpperBounds.size()) {
                 if (altUpperBounds.isEmpty()
-                    && originalUpperBounds.equals(Collections.singleton(KotlinBuiltIns.getInstance().getDefaultBound()))) {
+                    && originalUpperBounds.size() == 1
+                    && TypeUtilPackage.isDefaultBound(originalUpperBounds.iterator().next())) {
                     // Only default bound => no error
                 }
                 else {

@@ -8,12 +8,12 @@ public final class InheritMethodsDifferentReturnTypesGeneric {
         public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String!
     }
 
-    public interface Super1</*0*/ F, /*1*/ B> {
+    public interface Super1</*0*/ F : kotlin.Any!, /*1*/ B : kotlin.Any!> {
         public abstract fun bar(): B!
         public abstract fun foo(): F!
     }
 
-    public interface Super2</*0*/ FF, /*1*/ BB> {
+    public interface Super2</*0*/ FF : kotlin.Any!, /*1*/ BB : kotlin.Any!> {
         public abstract fun bar(): BB!
         public abstract fun foo(): FF!
     }

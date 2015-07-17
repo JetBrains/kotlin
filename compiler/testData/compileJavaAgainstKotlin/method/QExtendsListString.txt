@@ -6,5 +6,5 @@ public/*package*/ open class Question {
     public/*package*/ constructor Question()
 
     // Static members
-    public/*package*/ open fun </*0*/ T> id2(/*0*/ T!): T!
+    public/*package*/ open fun </*0*/ T : kotlin.Any!> id2(/*0*/ T!): T!
 }

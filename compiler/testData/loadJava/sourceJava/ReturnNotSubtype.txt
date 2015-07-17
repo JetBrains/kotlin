@@ -11,7 +11,7 @@ public interface ReturnNotSubtype {
         public abstract override /*1*/ fun t(): java.lang.Void!
     }
 
-    public interface Super</*0*/ T> {
+    public interface Super</*0*/ T : kotlin.Any!> {
         public abstract fun _void(): kotlin.Unit
         public abstract fun array(): kotlin.Array<(out) T!>!
         public abstract fun klass(): java.lang.Class<out kotlin.CharSequence!>!

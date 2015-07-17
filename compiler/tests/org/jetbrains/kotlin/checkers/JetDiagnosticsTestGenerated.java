@@ -10035,6 +10035,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("methodTypeParameterDefaultBound.kt")
+            public void testMethodTypeParameterDefaultBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullableTypeArgument.kt")
             public void testNullableTypeArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullableTypeArgument.kt");

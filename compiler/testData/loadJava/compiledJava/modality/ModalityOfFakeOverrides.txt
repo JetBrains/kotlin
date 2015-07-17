@@ -28,5 +28,5 @@ public open class ModalityOfFakeOverrides : java.util.AbstractList<kotlin.String
     public open override /*1*/ fun size(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
 }

@@ -2,8 +2,8 @@ package test
 
 public interface ReturnInnerSubclassOfSupersInner {
 
-    public open class Sub</*0*/ B> : test.ReturnInnerSubclassOfSupersInner.Super<B!> {
-        public constructor Sub</*0*/ B>()
+    public open class Sub</*0*/ B : kotlin.Any!> : test.ReturnInnerSubclassOfSupersInner.Super<B!> {
+        public constructor Sub</*0*/ B : kotlin.Any!>()
 
         public/*package*/ open inner class Inner : test.ReturnInnerSubclassOfSupersInner.Super.Inner {
             public/*package*/ constructor Inner()
@@ -11,8 +11,8 @@ public interface ReturnInnerSubclassOfSupersInner {
         }
     }
 
-    public open class Super</*0*/ A> {
-        public constructor Super</*0*/ A>()
+    public open class Super</*0*/ A : kotlin.Any!> {
+        public constructor Super</*0*/ A : kotlin.Any!>()
 
         public/*package*/ open inner class Inner {
             public/*package*/ constructor Inner()
