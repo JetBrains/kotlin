@@ -121,6 +121,8 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");
 
         standardClasses.declare().forFQ("kotlin.Comparable").kotlinClass("Comparable");
+
+        standardClasses.declare().forFQ("koltin.Throwable").kotlinClass("Throwable");
     }
 
 

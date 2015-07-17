@@ -1,6 +1,9 @@
 package java.lang
 
 library
+open public class Error(message: String? = null): Throwable(message) {}
+
+library
 open public class Exception(message: String? = null): Throwable(message) {}
 
 library
