@@ -175,13 +175,21 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     }
 }
 
-public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, String>, onAccept: () -> Unit) {
+public fun Project.checkConflictsInteractively(
+        conflicts: MultiMap<PsiElement, String>,
+        onShowConflicts: () -> Unit = {},
+        onAccept: () -> Unit) {
     if (!conflicts.isEmpty()) {
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) throw ConflictsInTestsException(conflicts.values())
 
-        val dialog = ConflictsDialog(this, conflicts, onAccept)
+        val dialog = ConflictsDialog(this, conflicts) { onAccept() }
         dialog.show()
-        if (!dialog.isOK()) return
+        if (!dialog.isOK()) {
+            if (dialog.isShowConflicts()) {
+                onShowConflicts()
+            }
+            return
+        }
     }
 
     onAccept()
