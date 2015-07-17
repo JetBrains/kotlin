@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.MultiMap
 import java.io.Closeable
+import java.io.PrintStream
 import java.lang.reflect.Modifier
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -64,6 +65,29 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
+    public fun dump(printer: PrintStream): Unit = with (printer) {
+        val heading = "Container: $myId"
+        println(heading)
+        println("=".repeat(heading.length()))
+        println()
+        getDescriptorsInDisposeOrder().forEach { descriptor ->
+            println(descriptor)
+            dependencies[descriptor].forEach {
+                print("   -> ")
+                val typeName = it.toString()
+                print(typeName.substringBefore(" ")) // interface, class
+                print(" ")
+                print(typeName.substringAfterLast(".")) // name
+                val resolve = registry.tryGetEntry(it)
+                print(" as ")
+                print(resolve)
+                println()
+            }
+            println()
+        }
+    }
+
+
     public fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
         registerDependency(request, context)
         return registry.tryGetEntry(request)
@@ -103,7 +127,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
     private fun injectProperties(context: ComponentResolveContext, components: Collection<ComponentDescriptor>) {
         for (component in components) {
             if (component.shouldInjectProperties) {
-                injectProperties(component.getValue(), context)
+                injectProperties(component.getValue(), context.container.createResolveContext(component))
             }
         }
     }
@@ -119,7 +143,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
     }
 
     private fun collectAdhocComponents(context: ComponentResolveContext, descriptor: ComponentDescriptor,
-            visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
+                                       visitedTypes: HashSet<Type>, adhocDescriptors: LinkedHashSet<ComponentDescriptor>
     ) {
         val dependencies = descriptor.getDependencies(context)
         for (type in dependencies) {
@@ -128,11 +152,11 @@ public class ComponentStorage(val myId: String) : ValueResolver {
 
             val entry = registry.tryGetEntry(type)
             if (entry.isEmpty()) {
-                val rawType : Class<*>? = when(type){
-                                              is Class<*> -> type
-                                              is ParameterizedType -> type.getRawType() as? Class<*>
-                                              else -> null
-                                          }
+                val rawType: Class<*>? = when (type) {
+                    is Class<*> -> type
+                    is ParameterizedType -> type.getRawType() as? Class<*>
+                    else -> null
+                }
                 if (rawType == null)
                     continue
 

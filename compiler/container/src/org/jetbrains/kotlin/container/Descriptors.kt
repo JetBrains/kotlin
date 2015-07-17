@@ -33,4 +33,6 @@ public class IterableDescriptor(val descriptors: Iterable<ValueDescriptor>) : Va
     override fun getValue(): Any {
         return descriptors.map { it.getValue() }
     }
+
+    override fun toString(): String = "Iterable: $descriptors"
 }

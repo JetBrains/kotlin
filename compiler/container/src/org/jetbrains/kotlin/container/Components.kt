@@ -24,5 +24,9 @@ public class InstanceComponentDescriptor(val instance: Any) : ComponentDescripto
     override fun getRegistrations(): Iterable<Type> = instance.javaClass.getInfo().registrations
 
     override fun getDependencies(context: ValueResolveContext): Collection<Class<*>> = emptyList()
+
+    override fun toString(): String {
+        return "Instance: ${instance.javaClass.getSimpleName()}"
+    }
 }
 

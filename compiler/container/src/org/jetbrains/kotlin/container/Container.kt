@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.container
 
 import java.io.Closeable
+import java.io.PrintStream
+import java.io.Writer
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
@@ -28,10 +30,9 @@ public interface ComponentContainer {
     fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext
 }
 
-object DynamicComponentDescriptor : ComponentDescriptor {
-    override fun getDependencies(context: ValueResolveContext): Collection<Class<*>> = throw UnsupportedOperationException()
-    override fun getRegistrations(): Iterable<Class<*>> = throw UnsupportedOperationException()
+object DynamicComponentDescriptor : ValueDescriptor {
     override fun getValue(): Any = throw UnsupportedOperationException()
+    override fun toString(): String = "Dynamic"
 }
 
 public class StorageComponentContainer(id: String) : ComponentContainer, Closeable {
@@ -47,6 +48,10 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Closeab
     fun compose(): StorageComponentContainer {
         componentStorage.compose(unknownContext)
         return this
+    }
+
+    fun dump(printer: PrintStream) {
+        componentStorage.dump(printer)
     }
 
     override fun close() = componentStorage.dispose()
