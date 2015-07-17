@@ -16,20 +16,14 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.AnnotationSerializer
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializerExtension
-import org.jetbrains.kotlin.serialization.StringTable
+import org.jetbrains.kotlin.serialization.*
 
-public class BuiltInsSerializerExtension(module: ModuleDescriptor) : SerializerExtension() {
+public class BuiltInsSerializerExtension() : SerializerExtension() {
 
-    private val annotationSerializer = AnnotationSerializer(module.builtIns)
+    private val annotationSerializer = AnnotationSerializer()
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
         for (annotation in descriptor.getAnnotations()) {

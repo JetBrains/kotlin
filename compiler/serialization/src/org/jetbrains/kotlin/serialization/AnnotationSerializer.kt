@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Typ
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
+public class AnnotationSerializer() {
 
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
@@ -59,7 +58,7 @@ public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
             override fun visitArrayValue(value: ArrayValue, data: Unit) {
                 setType(Type.ARRAY)
                 for (element in value.value) {
-                    addArrayElement(valueProto(element, KotlinBuiltIns.getInstance().getArrayElementType(type), nameTable).build())
+                    addArrayElement(valueProto(element, value.elementType, nameTable).build())
                 }
             }
 

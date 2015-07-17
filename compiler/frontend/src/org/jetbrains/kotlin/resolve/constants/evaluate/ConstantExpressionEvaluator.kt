@@ -52,7 +52,10 @@ import java.math.BigInteger
 import java.util.HashMap
 import kotlin.platform.platformStatic
 
-public class ConstantExpressionEvaluator(private val builtIns: KotlinBuiltIns) {
+public class ConstantExpressionEvaluator(
+        internal val constantValueFactory: ConstantValueFactory,
+        internal val builtIns: KotlinBuiltIns
+) {
 
     internal fun resolveAnnotationArguments(
             resolvedCall: ResolvedCall<*>,
@@ -82,7 +85,7 @@ public class ConstantExpressionEvaluator(private val builtIns: KotlinBuiltIns) {
         if (argumentsAsVararg) {
             if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null
 
-            return ArrayValue(constants, parameterDescriptor.getType())
+            return constantValueFactory.createArrayValue(constants, parameterDescriptor.getType())
         }
         else {
             // we should actually get only one element, but just in case of getting many, we take the last one
@@ -191,14 +194,15 @@ public class ConstantExpressionEvaluator(private val builtIns: KotlinBuiltIns) {
             trace: BindingTrace,
             expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE
     ): CompileTimeConstant<*>? {
-        val visitor = ConstantExpressionEvaluatorVisitor(this, trace, builtIns)
+        val visitor = ConstantExpressionEvaluatorVisitor(this, trace)
         val constant = visitor.evaluate(expression, expectedType) ?: return null
         return if (!constant.isError) constant else null
     }
 
     companion object {
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
-            return ConstantExpressionEvaluator(KotlinBuiltIns.getInstance()).evaluateExpression(expression, trace, expectedType)
+            val builtIns = KotlinBuiltIns.getInstance()
+            return ConstantExpressionEvaluator(ConstantValueFactory(builtIns), builtIns).evaluateExpression(expression, trace, expectedType)
         }
 
         platformStatic public fun evaluateToConstantValue(
@@ -222,10 +226,10 @@ public class ConstantExpressionEvaluator(private val builtIns: KotlinBuiltIns) {
 
 private class ConstantExpressionEvaluatorVisitor(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-        private val trace: BindingTrace,
-        private val builtIns: KotlinBuiltIns
+        private val trace: BindingTrace
 ) : JetVisitor<CompileTimeConstant<*>?, JetType>() {
-    private val factory = ConstantValueFactory(builtIns)
+
+    private val factory = constantExpressionEvaluator.constantValueFactory
 
     fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val recordedCompileTimeConstant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, trace.getBindingContext())
@@ -258,7 +262,7 @@ private class ConstantExpressionEvaluatorVisitor(
         override fun visitStringTemplateEntryWithExpression(entry: JetStringTemplateEntryWithExpression, data: Nothing?): TypedCompileTimeConstant<String>? {
             val expression = entry.getExpression() ?: return null
 
-            return evaluate(expression, builtIns.getStringType())?.let {
+            return evaluate(expression, constantExpressionEvaluator.builtIns.getStringType())?.let {
                 createStringConstant(it)
             }
         }
@@ -340,7 +344,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val operationToken = expression.getOperationToken()
         if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
-            val booleanType = builtIns.getBooleanType()
+            val booleanType = constantExpressionEvaluator.builtIns.getBooleanType()
             val leftConstant = evaluate(leftExpression, booleanType)
             if (leftConstant == null) return null
 
@@ -572,7 +576,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
 
-            return ArrayValue(arguments.map { it.toConstantValue(varargType) }, resultingDescriptor.getReturnType()!!).
+            return factory.createArrayValue(arguments.map { it.toConstantValue(varargType) }, resultingDescriptor.getReturnType()!!).
                     wrap(
                             usesVariableAsConstant = arguments.any { it.usesVariableAsConstant }
                     )
