@@ -1,10 +1,10 @@
 // FILE: KotlinFile.kt
 open class KotlinClass1 : JavaClass1() {
-    fun getSomethingKotlin1(): Int = 1
+    public fun getSomethingKotlin1(): Int = 1
 }
 
 class KotlinClass2 : JavaClass2() {
-    fun getSomethingKotlin2(): Int = 1
+    public fun getSomethingKotlin2(): Int = 1
 }
 
 fun foo(k: KotlinClass2) {

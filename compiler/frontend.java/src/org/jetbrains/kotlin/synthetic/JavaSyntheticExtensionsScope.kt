@@ -109,13 +109,14 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
         val getMethod = possibleGetMethodNames(name)
                                 .asSequence()
                                 .flatMap { memberScope.getFunctions(it).asSequence() }
-                                .singleOrNull { isGoodGetMethod(it) } ?: return null
+                                .singleOrNull { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && isGoodGetMethod(it) } ?: return null
 
         // don't accept "uRL" for "getURL" etc
         if (SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(getMethod.name) != name) return null
 
         val propertyType = getMethod.getReturnType() ?: return null
-        val setMethod = memberScope.getFunctions(setMethodName(getMethod.getName())).singleOrNull { isGoodSetMethod(it, propertyType) }
+        val setMethod = memberScope.getFunctions(setMethodName(getMethod.getName()))
+                .singleOrNull { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && isGoodSetMethod(it, propertyType) }
 
         return MyPropertyDescriptor(javaClass, getMethod.original, setMethod?.original, name, propertyType)
     }

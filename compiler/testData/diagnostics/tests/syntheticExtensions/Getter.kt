@@ -1,6 +1,6 @@
 // FILE: KotlinFile.kt
 class KotlinClass {
-    fun getSomething(): Int = 1
+    public fun getSomething(): Int = 1
 }
 
 fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
