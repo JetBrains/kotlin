@@ -122,7 +122,7 @@ public final class FunctionCallableReferenceTest extends AbstractCallableReferen
         checkFooBoxIsOk();
     }
 
-    public void testClassMemberAndExtensionCompatibility() throws Exception {
+    public void testClassMemberAndNonExtensionCompatibility() throws Exception {
         checkFooBoxIsOk();
     }
 

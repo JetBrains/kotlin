@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: JetScope, private val predicate: (DeclarationDescriptor) -> Boolean) : JetScope {
@@ -34,6 +36,10 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
     override fun getClassifier(name: Name) = filterDescriptor(workerScope.getClassifier(name))
 
     override fun getProperties(name: Name) = workerScope.getProperties(name).filter(predicate)
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverType, name).filter(predicate)
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverType).filter(predicate)
 
     override fun getLocalVariable(name: Name) = filterDescriptor(workerScope.getLocalVariable(name))
 

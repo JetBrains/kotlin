@@ -1,6 +1,4 @@
-// FILE: p/J.java
-
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 import java.util.*;
@@ -11,8 +9,6 @@ public class J {
 }
 
 // FILE: k.kt
-
-import p.*
 
 fun list(j: J): Any {
     val a = j.n()!!

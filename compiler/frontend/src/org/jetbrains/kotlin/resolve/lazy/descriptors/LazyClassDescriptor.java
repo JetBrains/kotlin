@@ -87,14 +87,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final MemoizedFunctionToNotNull<JetObjectDeclaration, ClassDescriptor> extraCompanionObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
-    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
-    private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
-    private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
     private final boolean isCompanionObject;
+
+    private final ClassResolutionScopesSupport resolutionScopesSupport;
 
     public LazyClassDescriptor(
             @NotNull LazyClassContext c,
@@ -193,18 +192,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return computeCompanionObjectDescriptor(companionObject);
             }
         });
-        this.scopeForClassHeaderResolution = storageManager.createLazyValue(new Function0<JetScope>() {
-            @Override
-            public JetScope invoke() {
-                return computeScopeForClassHeaderResolution();
-            }
-        });
-        this.scopeForMemberDeclarationResolution = storageManager.createLazyValue(new Function0<JetScope>() {
-            @Override
-            public JetScope invoke() {
-                return computeScopeForMemberDeclarationResolution();
-            }
-        });
         this.scopeForPropertyInitializerResolution = storageManager.createLazyValue(new Function0<JetScope>() {
             @Override
             public JetScope invoke() {
@@ -218,6 +205,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return null;
             }
         }, null);
+
+        this.resolutionScopesSupport = new ClassResolutionScopesSupport(this, storageManager, new Function0<JetScope>() {
+            @Override
+            public JetScope invoke() {
+                return getOuterScope();
+            }
+        });
     }
 
     // NOTE: Called from constructor!
@@ -231,25 +225,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
-    public JetScope getScopeForMemberLookup() {
+    public JetScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }
 
     @Override
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
-        return scopeForClassHeaderResolution.invoke();
-    }
-
-    @NotNull
-    private JetScope computeScopeForClassHeaderResolution() {
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + getName());
-        for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
-            scope.addClassifierDescriptor(typeParameterDescriptor);
-        }
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        return new ChainedScope(this, "ScopeForClassHeaderResolution: " + getName(), scope, getOuterScope());
+        return resolutionScopesSupport.getScopeForClassHeaderResolution();
     }
 
     @NotNull
@@ -260,29 +243,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     @NotNull
     public JetScope getScopeForMemberDeclarationResolution() {
-        return scopeForMemberDeclarationResolution.invoke();
-    }
-
-    @NotNull
-    private JetScope computeScopeForMemberDeclarationResolution() {
-        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING,
-                                                            "Scope with 'this' for " + getName(), this.getThisAsReceiverParameter(), this);
-        thisScope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        return new ChainedScope(
-                this,
-                "ScopeForMemberDeclarationResolution: " + getName(),
-                thisScope,
-                getScopeForMemberLookup(),
-                getScopeForClassHeaderResolution(),
-                getCompanionObjectScope(),
-                getStaticScope()
-        );
-    }
-
-    private JetScope getCompanionObjectScope() {
-        ClassDescriptor companionObjectDescriptor = getCompanionObjectDescriptor();
-        return (companionObjectDescriptor != null) ? new CompanionObjectMixinScope(companionObjectDescriptor) : JetScope.Empty.INSTANCE$;
+        return resolutionScopesSupport.getScopeForMemberDeclarationResolution();
     }
 
     @Override
@@ -331,7 +292,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public JetScope getStaticScope() {
-        return staticScope;
+        return resolutionScopesSupport.getStaticScope();
     }
 
     @NotNull
@@ -388,7 +349,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getScopeForMemberLookup().getClassifier(name);
+        getUnsubstitutedMemberScope().getClassifier(name);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof LazyClassDescriptor) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;
@@ -481,7 +442,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         ForceResolveUtil.forceResolveAllContents(getConstructors());
         ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraCompanionObjects());
-        ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
+        ForceResolveUtil.forceResolveAllContents(getUnsubstitutedMemberScope());
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
     }
 
@@ -503,7 +464,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getOriginal();
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
-        getScopeForMemberLookup().getAllDescriptors();
+        getUnsubstitutedMemberScope().getAllDescriptors();
         getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
         getTypeConstructor().getSupertypes();

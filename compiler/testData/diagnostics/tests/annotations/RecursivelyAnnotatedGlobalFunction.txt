@@ -2,7 +2,7 @@ package
 
 ann() internal fun foo(): kotlin.Int
 
-internal final annotation class ann : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class ann : kotlin.Annotation {
     public constructor ann(/*0*/ x: kotlin.Int)
     internal final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

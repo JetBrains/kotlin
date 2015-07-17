@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.util.*;
@@ -84,13 +84,13 @@ public class ExpectedLoadErrorsUtil {
                 if (annotation == null) return null;
 
                 // we expect exactly one annotation argument
-                CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();
+                ConstantValue<?> argument = annotation.getAllValueArguments().values().iterator().next();
 
                 String error = (String) argument.getValue();
                 //noinspection ConstantConditions
                 List<String> errors = Arrays.asList(error.split("\\|"));
 
-                map.put(descriptor, errors);
+                map.put(descriptor.getOriginal(), errors);
 
                 return null;
             }
@@ -113,7 +113,7 @@ public class ExpectedLoadErrorsUtil {
         Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {
             List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
-            result.put(descriptor, errors);
+            result.put(descriptor.getOriginal(), errors);
         }
 
         return result;

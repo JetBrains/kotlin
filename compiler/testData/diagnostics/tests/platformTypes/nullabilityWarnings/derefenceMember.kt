@@ -1,7 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -17,8 +16,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -28,14 +25,14 @@ fun test() {
     val platformJ = J.staticJ
 
     platformNN.foo()
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>.foo()
+    platformN<!UNSAFE_CALL!>.<!>foo()
     platformJ.foo()
 
     with(platformNN) {
         foo()
     }
     with(platformN) {
-        <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>foo<!>()
+        <!UNSAFE_CALL!>foo<!>()
     }
     with(platformJ) {
         foo()

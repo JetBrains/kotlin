@@ -1,0 +1,4 @@
+package
+
+internal fun test(/*0*/ list: kotlin.List<kotlin.List<kotlin.Int>>): kotlin.Unit
+internal fun </*0*/ T, /*1*/ R> kotlin.Collection<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>

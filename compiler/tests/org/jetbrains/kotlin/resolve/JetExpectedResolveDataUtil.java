@@ -21,6 +21,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -126,8 +127,10 @@ public class JetExpectedResolveDataUtil {
             Project project,
             JetType... parameterTypes
     ) {
-        ModuleDescriptor emptyModule = JetTestUtils.createEmptyModule();
+        ModuleDescriptorImpl emptyModule = JetTestUtils.createEmptyModule();
         ContainerForTests container = DiPackage.createContainerForTests(project, emptyModule);
+        emptyModule.setDependencies(emptyModule);
+        emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 container.getAdditionalCheckerProvider(), new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),

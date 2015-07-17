@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
@@ -35,6 +36,7 @@ import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Retention;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.test.JetTestUtils.*;
@@ -53,6 +55,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                             options.setWithDefinedIn(false);
                             options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
                             options.setVerbose(true);
+                            options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
                             return Unit.INSTANCE$;
                         }
                     }

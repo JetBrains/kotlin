@@ -187,30 +187,31 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
 
                 override fun visitJetElement(element: JetElement) {
-                    val reference = element.getReference()
-                    if (reference is JetReference) {
-                        val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+                    for (reference in element.getReferences()) {
+                        if (reference is JetReference) {
+                            val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
 
-                        val bindingContext = element.analyze()
-                        //class qualifiers that refer to companion objects should be considered (containing) class references
-                        val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
-                                      ?: reference.resolveToDescriptors(bindingContext)
-                        for (target in targets) {
-                            if (!target.canBeReferencedViaImport()) continue
-                            if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
+                            val bindingContext = element.analyze()
+                            //class qualifiers that refer to companion objects should be considered (containing) class references
+                            val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
+                                          ?: reference.resolveToDescriptors(bindingContext)
+                            for (target in targets) {
+                                if (!target.canBeReferencedViaImport()) continue
+                                if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
 
-                            if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
-                                if (element !is JetNameReferenceExpression) continue
-                                if (element.getIdentifier() == null) continue // skip 'this' etc
-                                if (element.getReceiverExpression() != null) continue
+                                if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
+                                    if (element !is JetNameReferenceExpression) continue
+                                    if (element.getIdentifier() == null) continue // skip 'this' etc
+                                    if (element.getReceiverExpression() != null) continue
+                                }
+
+                                val importableDescriptor = target.getImportableDescriptor()
+                                if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
+
+                                if (isAccessibleAsMember(importableDescriptor, element)) continue
+
+                                usedDescriptors.add(importableDescriptor)
                             }
-
-                            val importableDescriptor = target.getImportableDescriptor()
-                            if (referencedName != null && importableDescriptor.getName() != referencedName) continue // resolved via alias
-
-                            if (isAccessibleAsMember(importableDescriptor, element)) continue
-
-                            usedDescriptors.add(importableDescriptor)
                         }
                     }
 

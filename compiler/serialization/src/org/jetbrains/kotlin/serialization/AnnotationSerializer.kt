@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Typ
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 
-public object AnnotationSerializer {
+public class AnnotationSerializer(builtIns: KotlinBuiltIns) {
+
     public fun serializeAnnotation(annotation: AnnotationDescriptor, stringTable: StringTable): ProtoBuf.Annotation {
         return with(ProtoBuf.Annotation.newBuilder()) {
             val annotationClass = annotation.getType().getConstructor().getDeclarationDescriptor() as? ClassDescriptor
@@ -48,43 +49,43 @@ public object AnnotationSerializer {
         }
     }
 
-    fun valueProto(constant: CompileTimeConstant<*>, type: JetType, nameTable: StringTable): Value.Builder = with(Value.newBuilder()) {
+    fun valueProto(constant: ConstantValue<*>, type: JetType, nameTable: StringTable): Value.Builder = with(Value.newBuilder()) {
         constant.accept(object : AnnotationArgumentVisitor<Unit, Unit> {
             override fun visitAnnotationValue(value: AnnotationValue, data: Unit) {
                 setType(Type.ANNOTATION)
-                setAnnotation(serializeAnnotation(value.getValue(), nameTable))
+                setAnnotation(serializeAnnotation(value.value, nameTable))
             }
 
             override fun visitArrayValue(value: ArrayValue, data: Unit) {
                 setType(Type.ARRAY)
-                for (element in value.getValue()) {
+                for (element in value.value) {
                     addArrayElement(valueProto(element, KotlinBuiltIns.getInstance().getArrayElementType(type), nameTable).build())
                 }
             }
 
             override fun visitBooleanValue(value: BooleanValue, data: Unit) {
                 setType(Type.BOOLEAN)
-                setIntValue(if (value.getValue()) 1 else 0)
+                setIntValue(if (value.value) 1 else 0)
             }
 
             override fun visitByteValue(value: ByteValue, data: Unit) {
                 setType(Type.BYTE)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.value.toLong())
             }
 
             override fun visitCharValue(value: CharValue, data: Unit) {
                 setType(Type.CHAR)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.value.toLong())
             }
 
             override fun visitDoubleValue(value: DoubleValue, data: Unit) {
                 setType(Type.DOUBLE)
-                setDoubleValue(value.getValue())
+                setDoubleValue(value.value)
             }
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 setType(Type.ENUM)
-                val enumEntry = value.getValue()
+                val enumEntry = value.value
                 setClassId(nameTable.getFqNameIndex(enumEntry.getContainingDeclaration() as ClassDescriptor))
                 setEnumValueId(nameTable.getSimpleNameIndex(enumEntry.getName()))
             }
@@ -95,12 +96,12 @@ public object AnnotationSerializer {
 
             override fun visitFloatValue(value: FloatValue, data: Unit) {
                 setType(Type.FLOAT)
-                setFloatValue(value.getValue())
+                setFloatValue(value.value)
             }
 
             override fun visitIntValue(value: IntValue, data: Unit) {
                 setType(Type.INT)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.value.toLong())
             }
 
             override fun visitKClassValue(value: KClassValue?, data: Unit?) {
@@ -110,37 +111,21 @@ public object AnnotationSerializer {
 
             override fun visitLongValue(value: LongValue, data: Unit) {
                 setType(Type.LONG)
-                setIntValue(value.getValue())
+                setIntValue(value.value)
             }
 
             override fun visitNullValue(value: NullValue, data: Unit) {
                 throw UnsupportedOperationException("Null should not appear in annotation arguments")
             }
 
-            override fun visitNumberTypeValue(constant: IntegerValueTypeConstant, data: Unit) {
-                // TODO: IntegerValueTypeConstant should not occur in annotation arguments
-                val number = constant.getValue(type)
-                val specificConstant = with(KotlinBuiltIns.getInstance()) {
-                    when (type) {
-                        getLongType() -> LongValue(number.toLong(), true, true, true)
-                        getIntType() -> IntValue(number.toInt(), true, true, true)
-                        getShortType() -> ShortValue(number.toShort(), true, true, true)
-                        getByteType() -> ByteValue(number.toByte(), true, true, true)
-                        else -> throw IllegalStateException("Integer constant $constant has non-integer type $type")
-                    }
-                }
-
-                specificConstant.accept(this, data)
-            }
-
             override fun visitShortValue(value: ShortValue, data: Unit) {
                 setType(Type.SHORT)
-                setIntValue(value.getValue().toLong())
+                setIntValue(value.value.toLong())
             }
 
             override fun visitStringValue(value: StringValue, data: Unit) {
                 setType(Type.STRING)
-                setStringValue(nameTable.getStringIndex(value.getValue()))
+                setStringValue(nameTable.getStringIndex(value.value))
             }
         }, Unit)
 

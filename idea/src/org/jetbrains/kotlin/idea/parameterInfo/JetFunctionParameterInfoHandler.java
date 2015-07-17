@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.JetVisibilityChecker;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -373,7 +373,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
+        final JetSimpleNameExpression callNameExpression = getCallSimpleNameExpression(argumentList);
         if (callNameExpression == null) {
             return null;
         }
@@ -384,7 +384,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         }
 
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(callNameExpression.getContainingJetFile());
-        BindingContext bindingContext = resolutionFacade.analyze(callNameExpression, BodyResolveMode.FULL);
+        final BindingContext bindingContext = resolutionFacade.analyze(callNameExpression, BodyResolveMode.FULL);
         ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
@@ -398,7 +398,9 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         Function1<DeclarationDescriptor, Boolean> visibilityFilter = new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
-                return placeDescriptor == null || JetVisibilityChecker.isVisible(placeDescriptor, descriptor);
+                if (placeDescriptor == null) return true;
+                if (!(descriptor instanceof DeclarationDescriptorWithVisibility)) return true;
+                return CorePackage.isVisible((DeclarationDescriptorWithVisibility) descriptor, placeDescriptor, bindingContext, callNameExpression);
             }
         };
 
@@ -412,7 +414,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         };
         Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, moduleDescriptor, file.getProject(), visibilityFilter).getReferenceVariants(
                 callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
-                                                             Collections.<DescriptorKindExclude>emptyList()), false, nameFilter);
+                                                             Collections.<DescriptorKindExclude>emptyList()), nameFilter, false, false);
 
         Collection<Pair<? extends DeclarationDescriptor, ResolutionFacade>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolutionFacade>>();
         for (DeclarationDescriptor variant : variants) {

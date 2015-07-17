@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(DataClassAnnotationChecker())
 private val DEFAULT_CALL_CHECKERS = listOf(CapturingInClosureChecker(), InlineCheckerWrapper(), ReifiedTypeParameterSubstitutionChecker())
-private val DEFAULT_TYPE_CHECKERS = listOf(TypeApproximator())
+private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator())
 
 public abstract class AdditionalCheckerProvider(

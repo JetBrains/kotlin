@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -32,7 +33,7 @@ public abstract class JetImplicitReceiverUsage(callElement: JetElement): JetUsag
 
     }
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetElement): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: JetElement, allUsages: Array<out UsageInfo>): Boolean {
         val newQualifiedCall = JetPsiFactory(element.getProject()).createExpression(
                 "${getNewReceiverText()}.${element.getText()}"
         ) as JetQualifiedExpression
@@ -53,7 +54,7 @@ public class JetImplicitThisToParameterUsage(
     }
 }
 
-public class JetImplicitOuterThisToQualifiedThisUsage(
+public class JetImplicitThisUsage(
         callElement: JetElement,
         val targetDescriptor: DeclarationDescriptor
 ): JetImplicitReceiverUsage(callElement) {

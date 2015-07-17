@@ -1,0 +1,15 @@
+package
+
+sourceann() internal final class AnnotatedAtSource {
+    public constructor AnnotatedAtSource()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation(retention = AnnotationRetention.SOURCE) internal final class sourceann : kotlin.Annotation {
+    public constructor sourceann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

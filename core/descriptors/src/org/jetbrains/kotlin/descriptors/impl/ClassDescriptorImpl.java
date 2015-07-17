@@ -37,7 +37,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
-    private JetScope scopeForMemberLookup;
+    private JetScope unsubstitutedMemberScope;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
 
@@ -56,11 +56,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     public final void initialize(
-            @NotNull JetScope scopeForMemberLookup,
+            @NotNull JetScope unsubstitutedMemberScope,
             @NotNull Set<ConstructorDescriptor> constructors,
             @Nullable ConstructorDescriptor primaryConstructor
     ) {
-        this.scopeForMemberLookup = scopeForMemberLookup;
+        this.unsubstitutedMemberScope = unsubstitutedMemberScope;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
     }
@@ -89,8 +89,8 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    protected JetScope getScopeForMemberLookup() {
-        return scopeForMemberLookup;
+    public JetScope getUnsubstitutedMemberScope() {
+        return unsubstitutedMemberScope;
     }
 
     @NotNull

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -42,9 +41,9 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.ArrayList
 
 enum class ItemPriority {
@@ -139,42 +138,6 @@ enum class CallableWeight {
 }
 
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")
-
-fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
-    if (descriptor1 == descriptor2) return true
-    if (descriptor1 == null || descriptor2 == null) return false
-    if (descriptor1.getOriginal() != descriptor2.getOriginal()) return false
-    if (descriptor1 !is CallableDescriptor) return true
-    descriptor2 as CallableDescriptor
-
-    // optimization:
-    if (descriptor1 == descriptor1.getOriginal() && descriptor2 == descriptor2.getOriginal()) return true
-
-    val typeChecker = JetTypeChecker.withAxioms(object: JetTypeChecker.TypeConstructorEquality {
-        override fun equals(a: TypeConstructor, b: TypeConstructor): Boolean {
-            val typeParam1 = a.getDeclarationDescriptor() as? TypeParameterDescriptor
-            val typeParam2 = b.getDeclarationDescriptor() as? TypeParameterDescriptor
-            if (typeParam1 != null
-                && typeParam2 != null
-                && typeParam1.getContainingDeclaration() == descriptor1
-                && typeParam2.getContainingDeclaration() == descriptor2) {
-                return typeParam1.getIndex() == typeParam2.getIndex()
-            }
-
-            return a == b
-        }
-    })
-
-    if (!typeChecker.equalTypesOrNulls(descriptor1.getReturnType(), descriptor2.getReturnType())) return false
-
-    val parameters1 = descriptor1.getValueParameters()
-    val parameters2 = descriptor2.getValueParameters()
-    if (parameters1.size() != parameters2.size()) return false
-    for ((param1, param2) in parameters1.zip(parameters2)) {
-        if (!typeChecker.equalTypes(param1.getType(), param2.getType())) return false
-    }
-    return true
-}
 
 fun InsertionContext.isAfterDot(): Boolean {
     var offset = getStartOffset()
@@ -325,7 +288,7 @@ fun LookupElementFactory.createBackingFieldLookupElement(
     if (accessors.all { it.getBodyExpression() == null }) return null // makes no sense to access backing field - it's the same as accessing property directly
 
     val bindingContext = resolutionFacade.analyze(declaration)
-    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]) return null
+    if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
 
     val lookupElement = createLookupElement(property, true)
     return object : LookupElementDecorator<LookupElement>(lookupElement) {

@@ -18,48 +18,114 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.reflect.*
+import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper {
-    // TODO: this logic must be shared with JetTypeMapper
-    fun mapTypeToJvmDesc(type: JetType): String {
-        val classifier = type.getConstructor().getDeclarationDescriptor()
-        if (classifier is TypeParameterDescriptor) {
-            return mapTypeToJvmDesc(classifier.getUpperBounds().first())
+    fun mapSignature(function: FunctionDescriptor): String {
+        if (function is DeserializedSimpleFunctionDescriptor) {
+            val proto = function.getProto()
+            if (!proto.hasExtension(JvmProtoBuf.methodSignature)) {
+                throw KotlinReflectionInternalError("No metadata found for $function")
+            }
+            val signature = proto.getExtension(JvmProtoBuf.methodSignature)
+            return SignatureDeserializer(function.getNameResolver()).methodSignatureString(signature)
         }
+        else if (function is JavaMethodDescriptor) {
+            val method = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaMethod ?:
+                         throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
 
-        if (KotlinBuiltIns.isArray(type)) {
-            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
-            // makeNullable is called here to map primitive types to the corresponding wrappers,
-            // because the given type is Array<Something>, not SomethingArray
-            return "[" + mapTypeToJvmDesc(TypeUtils.makeNullable(elementType))
+            return StringBuilder {
+                append(method.getName().asString())
+
+                append("(")
+                for (parameter in method.getValueParameters()) {
+                    appendJavaType(parameter.getType())
+                }
+                append(")")
+
+                appendJavaType(method.getReturnType())
+            }.toString()
         }
+        else throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
+    }
 
-        val classDescriptor = classifier as ClassDescriptor
-        val fqName = DescriptorUtils.getFqName(classDescriptor)
-
-        KotlinBuiltIns.getPrimitiveTypeByFqName(fqName)?.let { primitiveType ->
-            val jvmType = JvmPrimitiveType.get(primitiveType)
-            return if (TypeUtils.isNullableType(type)) ClassId.topLevel(jvmType.getWrapperFqName()).desc else jvmType.getDesc()
+    // TODO: verify edge cases when it's possible to reference generic functions
+    private tailRecursive fun StringBuilder.appendJavaType(type: JavaType) {
+        when (type) {
+            is JavaPrimitiveType -> {
+                append(type.getType()?.let { JvmPrimitiveType.get(it).getDesc() } ?: "V")
+            }
+            is JavaArrayType -> {
+                append("[")
+                appendJavaType(type.getComponentType())
+            }
+            is JavaWildcardType -> {
+                val bound = type.getBound()
+                if (bound != null && type.isExtends()) appendJavaType(bound)
+                else append("Ljava/lang/Object;")
+            }
+            is JavaClassifierType -> {
+                val classifier = type.getClassifier()
+                when (classifier) {
+                    is ReflectJavaClass ->
+                        append(classifier.element.desc)
+                    is ReflectJavaTypeParameter ->
+                        appendJavaType(ReflectJavaType.create(classifier.typeVariable.getBounds().first()))
+                }
+            }
         }
+    }
 
-        KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(fqName)?.let { primitiveType ->
-            return "[" + JvmPrimitiveType.get(primitiveType).getDesc()
+    fun mapPropertySignature(property: PropertyDescriptor): String {
+        if (property is DeserializedPropertyDescriptor) {
+            val proto = property.proto
+            val nameResolver = property.nameResolver
+            if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
+                throw KotlinReflectionInternalError("No metadata found for $property")
+            }
+            val signature = proto.getExtension(JvmProtoBuf.propertySignature)
+            val deserializer = SignatureDeserializer(nameResolver)
+
+            if (signature.hasGetter()) {
+                return deserializer.methodSignatureString(signature.getGetter())
+            }
+
+            // In case the property doesn't have a getter, construct the signature of its imaginary default getter.
+            // See PropertyReference#getSignature
+            val field = signature.getField()
+
+            // TODO: some kind of test on the Java Bean convention?
+            return JvmAbi.getterName(nameResolver.getString(field.getName())) +
+                   "()" +
+                   deserializer.typeDescriptor(field.getType())
         }
+        else if (property is JavaPropertyDescriptor) {
+            val method = (property.getSource() as? JavaSourceElement)?.javaElement as? JavaField ?:
+                         throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property")
 
-        JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)?.let { return it.desc }
-
-        return classDescriptor.classId.desc
+            return StringBuilder {
+                append(JvmAbi.getterName(method.getName().asString()))
+                append("()")
+                appendJavaType(method.getType())
+            }.toString()
+        }
+        else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
@@ -84,7 +150,4 @@ object RuntimeTypeMapper {
 
     private val Class<*>.primitiveType: PrimitiveType?
         get() = if (isPrimitive()) JvmPrimitiveType.get(getSimpleName()).getPrimitiveType() else null
-
-    private val ClassId.desc: String
-        get() = "L${JvmClassName.byClassId(this).getInternalName()};"
 }

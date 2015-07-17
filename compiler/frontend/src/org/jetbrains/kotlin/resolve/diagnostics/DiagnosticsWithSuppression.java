@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.util.ExtensionProvider;
 
@@ -214,9 +214,9 @@ public class DiagnosticsWithSuppression implements Diagnostics {
             if (!KotlinBuiltIns.isSuppressAnnotation(annotationDescriptor)) continue;
 
             // We only add strings and skip other values to facilitate recovery in presence of erroneous code
-            for (CompileTimeConstant<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {
+            for (ConstantValue<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {
                 if ((arrayValue instanceof ArrayValue)) {
-                    for (CompileTimeConstant<?> value : ((ArrayValue) arrayValue).getValue()) {
+                    for (ConstantValue<?> value : ((ArrayValue) arrayValue).getValue()) {
                         if (value instanceof StringValue) {
                             builder.add(String.valueOf(((StringValue) value).getValue()).toLowerCase());
                         }

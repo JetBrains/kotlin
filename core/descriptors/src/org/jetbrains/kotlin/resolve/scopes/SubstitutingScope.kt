@@ -16,11 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.*
-import java.util.*
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
+import java.util.HashMap
 import kotlin.properties.Delegates
 
 public class SubstitutingScope(private val workerScope: JetScope, private val substitutor: TypeSubstitutor) : JetScope {
@@ -34,7 +38,7 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         if (substitutor.isEmpty()) return descriptor
 
         if (substitutedDescriptors == null) {
-            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor>()
+            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor?>()
         }
 
         val substituted = substitutedDescriptors!!.getOrPut(descriptor, { descriptor.substitute(substitutor) })
@@ -65,6 +69,10 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
     override fun getClassifier(name: Name) = substitute(workerScope.getClassifier(name))
 
     override fun getFunctions(name: Name) = substitute(workerScope.getFunctions(name))
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverType, name))
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverType))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)
 

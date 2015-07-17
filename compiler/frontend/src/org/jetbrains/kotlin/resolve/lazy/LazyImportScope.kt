@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.LinkedHashSet
@@ -252,6 +253,22 @@ class LazyImportScope(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
+    }
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType, name: Name): Collection<PropertyDescriptor> {
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionProperties(receiverType, name) }
+    }
+
+    override fun getSyntheticExtensionProperties(receiverType: JetType): Collection<PropertyDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
+        return importResolver.resolveSession.getStorageManager().compute {
+            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<PropertyDescriptor>()) { import ->
+                importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionProperties(receiverType)
+            }
+        }
     }
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()

@@ -58,7 +58,7 @@ public class KDocReference(element: KDocName): JetMultiReference<KDocName>(eleme
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
         val textRange = getElement().getNameTextRange()
-        val newText = textRange.replace(getElement().getText(), newElementName)
+        val newText = textRange.replace(getElement().getText(), newElementName!!)
         val newLink = KDocElementFactory(getElement().getProject()).createNameFromText(newText)
         return getElement().replace(newLink)
     }
@@ -181,5 +181,5 @@ private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutio
             return resolutionFacade.getFileTopLevelScope(containingFile)
         }
     }
-    return getResolutionScope(resolutionFacade, parent)
+    return getResolutionScope(resolutionFacade, parent!!)
 }

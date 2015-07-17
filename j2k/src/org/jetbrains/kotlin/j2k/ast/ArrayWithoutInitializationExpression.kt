@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.j2k.append
 
 class ArrayWithoutInitializationExpression(val type: ArrayType, val expressions: List<Expression>) : Expression() {
     override fun generateCode(builder: CodeBuilder) {

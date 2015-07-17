@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.j2k.append
 
 class LocalVariable(
         private val identifier: Identifier,

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -27,7 +28,7 @@ public class JetConstructorDelegationCallUsage(
 ) : JetUsageInfo<JetConstructorDelegationCall>(call) {
     val delegate = JetFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryCallable)
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall, allUsages: Array<out UsageInfo>): Boolean {
         val isThisCall = element.isCallToThis()
 
         var elementToWorkWith = element
@@ -36,7 +37,7 @@ public class JetConstructorDelegationCallUsage(
             elementToWorkWith = constructor.replaceImplicitDelegationCallWithExplicit(isThisCall)
         }
 
-        val result = delegate.processUsage(changeInfo, elementToWorkWith)
+        val result = delegate.processUsage(changeInfo, elementToWorkWith, allUsages)
 
         if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isImplicit()) {
             (elementToWorkWith.getParent() as? JetSecondaryConstructor)?.getColon()?.delete()

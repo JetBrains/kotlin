@@ -47,7 +47,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
         val annotationEntry = JetStubbedPsiUtil.getPsiOrStubParent(element, javaClass<JetAnnotationEntry>(), true)
-        if (annotationEntry != null && annotationEntry.getCalleeExpression().getConstructorReferenceExpression() == element)
+        if (annotationEntry != null && annotationEntry.getCalleeExpression()!!.getConstructorReferenceExpression() == element)
             return
 
         // Do not check types in calls to super constructor in extends list, rely on call message

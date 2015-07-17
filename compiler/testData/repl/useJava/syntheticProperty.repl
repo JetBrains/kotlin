@@ -1,0 +1,2 @@
+>>> java.util.Date(0).time
+0

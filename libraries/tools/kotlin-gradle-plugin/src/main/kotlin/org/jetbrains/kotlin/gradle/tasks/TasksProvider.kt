@@ -19,9 +19,6 @@ public open class KotlinTasksProvider(val tasksLoader: ClassLoader) {
     val kotlinJSCompileTaskClass: Class<AbstractCompile> =
             tasksLoader.loadClass("org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile") as Class<AbstractCompile>
 
-    val kDocTaskClass: Class<SourceTask> =
-            tasksLoader.loadClass("org.jetbrains.kotlin.gradle.tasks.KDoc") as Class<SourceTask>
-
     val kotlinJVMOptionsClass: Class<Any> =
             tasksLoader.loadClass("org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments") as Class<Any>
 
@@ -32,9 +29,5 @@ public open class KotlinTasksProvider(val tasksLoader: ClassLoader) {
 
     public fun createKotlinJSTask(project: Project, name: String): AbstractCompile {
         return project.getTasks().create(name, kotlinJSCompileTaskClass)
-    }
-
-    public fun createKDocTask(project: Project, name: String): SourceTask {
-        return project.getTasks().create(name, kDocTaskClass)
     }
 }

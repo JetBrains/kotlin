@@ -88,6 +88,20 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+            return ERROR_VARIABLE_GROUP;
+        }
+
+        @NotNull
+        @Override
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
+                @NotNull JetType receiverType, @NotNull Name name
+        ) {
+            return ERROR_PROPERTY_GROUP;
+        }
+
+        @NotNull
+        @Override
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull JetType receiverType) {
             return ERROR_PROPERTY_GROUP;
         }
 
@@ -190,6 +204,20 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
+                @NotNull JetType receiverType, @NotNull Name name
+        ) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull JetType receiverType) {
             throw new IllegalStateException();
         }
 
@@ -305,9 +333,10 @@ public class ErrorUtils {
     }
 
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
-    private static final VariableDescriptor ERROR_PROPERTY = createErrorProperty();
+    private static final PropertyDescriptor ERROR_PROPERTY = createErrorProperty();
 
-    private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
+    private static final Set<VariableDescriptor> ERROR_VARIABLE_GROUP = Collections.<VariableDescriptor>singleton(ERROR_PROPERTY);
+    private static final Set<PropertyDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     @NotNull
     private static PropertyDescriptorImpl createErrorProperty() {

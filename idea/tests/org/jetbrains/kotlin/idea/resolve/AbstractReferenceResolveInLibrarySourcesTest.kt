@@ -34,7 +34,7 @@ public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCod
 
         fixture.configureByFile(path)
 
-        val expectedResolveData = AbstractReferenceResolveTest.readResolveData(fixture.getFile()!!.getText())
+        val expectedResolveData = AbstractReferenceResolveTest.readResolveData(fixture.getFile()!!.getText(), 0)
 
         val gotoData = NavigationTestUtils.invokeGotoImplementations(fixture.getEditor(), fixture.getFile())!!
         Assert.assertEquals("Single target expected for origianl file", 1, gotoData.targets.size())

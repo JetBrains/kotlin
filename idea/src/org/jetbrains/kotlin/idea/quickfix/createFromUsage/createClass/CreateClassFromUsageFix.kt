@@ -80,7 +80,7 @@ public class CreateClassFromUsageFix(
         return true
     }
 
-    override fun invoke(project: Project, editor: Editor, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
             val directories = psiPackage.getDirectories().filter { it.canRefactor() }
             assert (directories.isNotEmpty()) { "Package '${psiPackage.getQualifiedName()}' must be refactorable" }
@@ -103,7 +103,7 @@ public class CreateClassFromUsageFix(
                 val filePath = "${targetDirectory.getVirtualFile().getPath()}/$fileName"
                 CodeInsightUtils.showErrorHint(
                         targetDirectory.getProject(),
-                        editor,
+                        editor!!,
                         "File $filePath already exists but does not correspond to Kotlin file",
                         "Create file",
                         null

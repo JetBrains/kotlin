@@ -43,7 +43,7 @@ class PrimaryConstructor(
 
         // assign prototypes later because we don't know yet whether the body is empty or not
         converter.addPostUnfoldDeferredElementsAction {
-            val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body!!.isEmpty, commentsInside = body.isEmpty)
+            val inheritance = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE, commentsAfter = body!!.isEmpty, commentsInside = body.isEmpty)
             signature.assignPrototypesFrom(this, inheritance)
         }
 
@@ -61,7 +61,7 @@ class PrimaryConstructorSignature(val annotations: Annotations, private val modi
         var needConstructorKeyword = false
 
         if (!annotations.isEmpty) {
-            builder append " " append annotations.withAt()
+            builder append " " append annotations
             needConstructorKeyword = true
         }
 

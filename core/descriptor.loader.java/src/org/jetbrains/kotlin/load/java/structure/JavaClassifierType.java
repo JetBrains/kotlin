@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ReadOnly;
 import java.util.Collection;
 import java.util.List;
 
-public interface JavaClassifierType extends JavaType {
+public interface JavaClassifierType extends JavaType, JavaAnnotationOwner {
     @Nullable
     JavaClassifier getClassifier();
 

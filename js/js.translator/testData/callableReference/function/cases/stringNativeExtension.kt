@@ -2,7 +2,7 @@ package foo
 
 fun box(): String {
     var s = "abc"
-    assertEquals("ABC", s.(String::toUpperCase)())
+    assertEquals("ABC", (String::toUpperCase)(s))
 
     return "OK"
 }

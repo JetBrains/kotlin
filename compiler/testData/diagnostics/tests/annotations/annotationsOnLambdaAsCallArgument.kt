@@ -1,4 +1,5 @@
-annotation class Ann(val x: Int = 1)
+target(AnnotationTarget.EXPRESSION)
+annotation(repeatable = true) class Ann(val x: Int = 1)
 
 inline fun bar(block: () -> Int): Int = block()
 

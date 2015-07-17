@@ -37,10 +37,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -133,7 +131,7 @@ public class DescriptorResolver {
         }
 
         if (supertypes.isEmpty()) {
-            JetType defaultSupertype = getDefaultSupertype(jetClass, trace);
+            JetType defaultSupertype = getDefaultSupertype(jetClass, trace, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
             addValidSupertype(supertypes, defaultSupertype);
         }
 
@@ -156,7 +154,7 @@ public class DescriptorResolver {
         return false;
     }
 
-    private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
+    private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace, boolean isAnnotation) {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
             JetClassOrObject parent = JetStubbedPsiUtil.getContainingDeclaration(jetClass, JetClassOrObject.class);
@@ -169,7 +167,7 @@ public class DescriptorResolver {
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
         }
-        else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
+        else if (isAnnotation) {
             return builtIns.getAnnotationType();
         }
         return builtIns.getAnyType();
@@ -345,18 +343,7 @@ public class DescriptorResolver {
 
     @NotNull
     public ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            JetScope scope, DeclarationDescriptor declarationDescriptor,
-            JetParameter valueParameter, int index, JetType type, BindingTrace trace
-    ) {
-        return resolveValueParameterDescriptor(declarationDescriptor, valueParameter, index, type, trace,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace));
-    }
-
-    @NotNull
-    private ValueParameterDescriptorImpl resolveValueParameterDescriptor(
-            DeclarationDescriptor declarationDescriptor,
-            JetParameter valueParameter, int index, JetType type, BindingTrace trace,
-            Annotations annotations
+            JetScope scope, FunctionDescriptor owner, JetParameter valueParameter, int index, JetType type, BindingTrace trace
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
@@ -365,10 +352,10 @@ public class DescriptorResolver {
             variableType = getVarargParameterType(type);
         }
         ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                declarationDescriptor,
+                owner,
                 null,
                 index,
-                annotations,
+                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
                 valueParameter.hasDefaultValue(),
@@ -879,17 +866,13 @@ public class DescriptorResolver {
         if (!variable.hasInitializer()) return;
 
         variableDescriptor.setCompileTimeInitializer(
-            storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+            storageManager.createRecursionTolerantNullableLazyValue(new Function0<ConstantValue<?>>() {
                 @Nullable
                 @Override
-                public CompileTimeConstant<?> invoke() {
+                public ConstantValue<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    CompileTimeConstant<?> constant = ConstantExpressionEvaluator.evaluate(initializer, trace, initializerType);
-                    if (constant instanceof IntegerValueTypeConstant) {
-                        return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
-                    }
-                    return constant;
+                    return ConstantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
                 }
             }, null)
         );

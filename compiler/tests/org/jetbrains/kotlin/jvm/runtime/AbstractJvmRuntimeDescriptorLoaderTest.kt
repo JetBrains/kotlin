@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuratio
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
+import java.lang.annotation.Retention
 import java.net.URLClassLoader
 import java.util.regex.Pattern
 
@@ -52,21 +53,19 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         private val renderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
             excludedAnnotationClasses = (listOf(
-                    ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME,
-                    // TODO: add these annotations when they are retained at runtime
-                    "kotlin.deprecated",
-                    "kotlin.data",
-                    "kotlin.inline"
-            ).map { FqName(it) } + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES).toSet()
+                    FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
+            ) + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES).toSet()
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             includePropertyConstant = false
             verbose = true
+            renderDefaultAnnotationArguments = true
         }
     }
 
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
-    // Specifically each "annotation class" in Kotlin sources is replaced by "Retention(RUNTIME) annotation class", and the same in Java
+    // Specifically each @interface in Java sources is extended by @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+    // Also type related annotations are removed from Java because they are invisible at runtime
     protected fun doTest(fileName: String) {
         val file = File(fileName)
         val text = FileUtil.loadFile(file, true)
@@ -112,7 +111,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 val sources = JetTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): File {
                         val targetFile = File(tmpdir, fileName)
-                        targetFile.writeText(addRuntimeRetentionToJavaSource(text))
+                        targetFile.writeText(adaptJavaSource(text))
                         return targetFile
                     }
                 })
@@ -122,7 +121,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 val environment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
-                val jetFile = JetTestUtils.createFile(file.getPath(), addRuntimeRetentionToKotlinSource(text), environment.project)
+                val jetFile = JetTestUtils.createFile(file.getPath(), text, environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
             }
         }
@@ -165,15 +164,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         return SyntheticPackageViewForTest(module, packageScopes, classes)
     }
 
-    private fun addRuntimeRetentionToKotlinSource(text: String): String {
-        return text.replace(
-                "annotation class",
-                "@[java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)] annotation class"
-        )
-    }
-
-    private fun addRuntimeRetentionToJavaSource(text: String): String {
-        return text.replace(
+    private fun adaptJavaSource(text: String): String {
+        val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
+        return typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }.replace(
                 "@interface",
                 "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
         )

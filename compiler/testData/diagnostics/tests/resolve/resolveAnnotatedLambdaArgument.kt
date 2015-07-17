@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-annotation class Ann
+target(AnnotationTarget.EXPRESSION)
+annotation(repeatable = true) class Ann
 
 fun <T> bar(block: (T) -> Int) {}
 

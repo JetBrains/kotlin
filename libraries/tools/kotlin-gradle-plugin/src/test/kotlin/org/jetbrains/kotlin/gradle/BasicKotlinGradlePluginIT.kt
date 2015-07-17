@@ -66,14 +66,6 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         }
     }
 
-    Test fun testSimpleKDoc() {
-        Project("kdocProject", "1.6").build("kdoc") {
-            assertSuccessful()
-            assertReportExists("build/docs/kdoc/demo/MyClass.html")
-            assertContains(":kdoc", "Generating kdoc to")
-        }
-    }
-
     Test fun testKotlinExtraJavaSrc() {
         Project("additionalJavaSrc", "1.6").build("build") {
             assertSuccessful()

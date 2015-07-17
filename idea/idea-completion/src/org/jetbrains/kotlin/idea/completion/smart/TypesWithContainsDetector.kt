@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.idea.util.nullability
-import org.jetbrains.kotlin.idea.util.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.completion.HeuristicSignatures
+import org.jetbrains.kotlin.idea.util.nullability
 
 class TypesWithContainsDetector(
         private val scope: JetScope,
@@ -56,7 +57,7 @@ class TypesWithContainsDetector(
     }
 
     private fun isGoodContainsFunction(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
-        if (!TypeUtils.equalTypes(function.getReturnType(), booleanType)) return false
+        if (!TypeUtils.equalTypes(function.getReturnType()!!, booleanType)) return false
         val parameter = function.getValueParameters().singleOrNull() ?: return false
         val parameterType = HeuristicSignatures.correctedParameterType(function, parameter, moduleDescriptor, project) ?: parameter.getType()
         val fuzzyParameterType = FuzzyType(parameterType, function.getTypeParameters() + freeTypeParams)

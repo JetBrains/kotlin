@@ -1,10 +1,9 @@
-import java.lang.annotation.*
 import java.lang.reflect.Method
 import kotlin.reflect.jvm.java
 import kotlin.test.assertEquals
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(val x: String)
+target(AnnotationTarget.EXPRESSION)
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(val x: String)
 
 fun testMethod(method: Method, name: String) {
     assertEquals("OK", method.getAnnotation(javaClass<Ann>()).x, "On method of test named `$name`")

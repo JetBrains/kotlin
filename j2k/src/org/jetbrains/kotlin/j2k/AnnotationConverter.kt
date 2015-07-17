@@ -48,7 +48,7 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.map { convertAnnotation(it, owner is PsiLocalVariable, newLines) }.filterNotNull() //TODO: brackets are also needed for local classes
+            annotations.map { convertAnnotation(it, withAt = owner is PsiLocalVariable, newLineAfter = newLines) }.filterNotNull() //TODO: '@' is also needed for local classes
         }
         else {
             listOf()
@@ -70,14 +70,14 @@ class AnnotationConverter(private val converter: Converter) {
             LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
         }
         return Annotation(Identifier("deprecated").assignPrototype(deprecatedTag.getNameElement()),
-                          listOf(null to deferredExpression), false, true)
+                          listOf(null to deferredExpression), withAt = false, newLineAfter = true)
                 .assignPrototype(deprecatedTag)
     }
 
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), false, false).assignNoPrototype() }
+                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype() }
         return Annotations(list).assignNoPrototype()
     }
 
@@ -120,47 +120,54 @@ class AnnotationConverter(private val converter: Converter) {
     }
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<(CodeConverter) -> Expression> {
-        when (value) {
-            is PsiExpression -> {
-                return listOf({ codeConverter ->
-                                  val expression = if (value is PsiClassObjectAccessExpression) {
-                                      val typeElement = converter.convertTypeElement(value.getOperand())
-                                      ClassLiteralExpression(typeElement.type.toNotNullType())
-                                  }
-                                  else {
-                                      codeConverter.convertExpression(value, expectedType)
-                                  }
-                                  expression.assignPrototype(value)
-                              })
-            }
+        return when (value) {
+            is PsiExpression -> listOf({ codeConverter -> convertExpressionValue(codeConverter, value, expectedType) })
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.getComponentType()
-                val componentsConverted = value.getInitializers().map { convertAttributeValue(it, componentType, false, true).single() }
+                val componentGenerators = value.getInitializers().map { convertAttributeValue(it, componentType, false, true).single() }
                 if (isVararg && isUnnamed) {
-                    return componentsConverted
+                    componentGenerators
                 }
                 else {
-                    val expressionGenerator = { codeConverter: CodeConverter ->
-                        val expectedTypeConverted = converter.typeConverter.convertType(expectedType)
-                        if (expectedTypeConverted is ArrayType) {
-                            val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted.map { it(codeConverter) }, needExplicitType = false)
-                            if (isVararg) {
-                                StarExpression(array.assignNoPrototype()).assignPrototype(value)
-                            }
-                            else {
-                                array.assignPrototype(value)
-                            }
-                        }
-                        else {
-                            DummyStringExpression(value.getText()!!).assignPrototype(value)
-                        }
-                    }
-                    return listOf(expressionGenerator)
+                    listOf({ codeConverter -> convertArrayInitializerValue(codeConverter, value, componentGenerators, expectedType, isVararg) })
                 }
             }
 
-            else -> return listOf({ codeConverter -> DummyStringExpression(value?.getText() ?: "").assignPrototype(value) })
+            else -> listOf({ codeConverter -> DummyStringExpression(value?.getText() ?: "").assignPrototype(value) })
+        }
+    }
+
+    private fun convertExpressionValue(codeConverter: CodeConverter, value: PsiExpression, expectedType: PsiType?): Expression {
+        val expression = if (value is PsiClassObjectAccessExpression) {
+            val typeElement = converter.convertTypeElement(value.getOperand())
+            ClassLiteralExpression(typeElement.type.toNotNullType())
+        }
+        else {
+            codeConverter.convertExpression(value, expectedType)
+        }
+        return expression.assignPrototype(value)
+    }
+
+    private fun convertArrayInitializerValue(
+            codeConverter: CodeConverter,
+            value: PsiArrayInitializerMemberValue,
+            componentGenerators: List<(CodeConverter) -> Expression>,
+            expectedType: PsiType?,
+            isVararg: Boolean
+    ): Expression {
+        val expectedTypeConverted = converter.typeConverter.convertType(expectedType)
+        return if (expectedTypeConverted is ArrayType) {
+            val array = createArrayInitializerExpression(expectedTypeConverted, componentGenerators.map { it(codeConverter) }, needExplicitType = false)
+            if (isVararg) {
+                StarExpression(array.assignNoPrototype()).assignPrototype(value)
+            }
+            else {
+                array.assignPrototype(value)
+            }
+        }
+        else {
+            DummyStringExpression(value.getText()!!).assignPrototype(value)
         }
     }
 }

@@ -2,6 +2,6 @@
 
 package g
 
-import kotlin.concurrent.FunctionalList
+import kotlin.properties.ObservableProperty
 
-<selection>fun f(l: FunctionalList<Int>) {}</selection>
+<selection>fun f(l: ObservableProperty<Int>) {}</selection>

@@ -31,7 +31,7 @@ object RenderFirstLineOfElementText : Renderer<PsiElement> {
 abstract class JsCallDataRenderer : Renderer<JsCallData> {
     protected abstract fun format(data: JsCallDataWithCode): String
 
-    override fun render(data: JsCallData?): String =
+    override fun render(data: JsCallData): String =
             when (data) {
                 is JsCallDataWithCode -> format(data)
                 is JsCallData -> data.message

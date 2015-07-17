@@ -140,7 +140,7 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
                 ClassKind.INTERFACE -> "interface"
                 ClassKind.ENUM_CLASS -> "enum class"
                 ClassKind.OBJECT -> "object"
-                ClassKind.ANNOTATION_CLASS -> "annotation class"
+                ClassKind.ANNOTATION_CLASS -> "class"
                 ClassKind.ENUM_ENTRY -> "enum entry"
             }
         }
@@ -176,6 +176,7 @@ public interface DescriptorRendererOptions {
     public var flexibleTypesForCode: Boolean
     public var secondaryConstructorsAsPrimary: Boolean
     public var renderAccessors: Boolean
+    public var renderDefaultAnnotationArguments: Boolean
 }
 
 public enum class RenderingFormat {

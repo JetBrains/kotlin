@@ -36,7 +36,7 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
         this.deepTraversal = deepTraversal;
     }
 
-    protected abstract void processDeclaration(JetReferenceExpression reference, PsiElement declaration);
+    protected abstract void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration);
 
     @Override
     public void visitJetElement(@NotNull JetElement element) {

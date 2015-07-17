@@ -6,28 +6,41 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
-        exclude(Strings)
-        doc { "Returns a list containing all elements of original collection and then the given [element]." }
+        only(Iterables, Collections, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then the given [element]." }
         returns("List<T>")
         body {
             """
-            val answer = ArrayList<T>(collectionSizeOrNull()?.let { it + 1 } ?: 10)
-            for (thisElement in this) answer.add(thisElement)
-            answer.add(element)
-            return answer
+            if (this is Collection) return this.plus(element)
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.add(element)
+            return result
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(Collections) {
             """
-            val answer = ArrayList<T>(size()+1)
-            for (thisElement in this) answer.add(thisElement)
-            answer.add(element)
-            return answer
+            val result = ArrayList<T>(size() + 1)
+            result.addAll(this)
+            result.add(element)
+            return result
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then the given [element]." }
-        returns(Sequences) { "Sequence<T>" }
+        // TODO: use build scope function when available
+        // TODO: use immutable sets when available
+        returns("SELF", Sets, Sequences)
+        doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(size() + 1))
+            result.addAll(this)
+            result.add(element)
+            return result
+            """
+        }
+
+        doc(Sequences) { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
         body(Sequences) {
             """
             return sequenceOf(this, sequenceOf(element)).flatten()
@@ -36,68 +49,329 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
-        exclude(Strings, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given [collection]." }
+        only(Iterables, Collections, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [collection]." }
         returns("List<T>")
+        returns("SELF", Sets, Sequences)
         body {
             """
-            val answer = ArrayList<T>(collectionSizeOrDefault(10) + collection.collectionSizeOrDefault(10))
-            for (thisElement in this) answer.add(thisElement)
-            answer.addAll(collection)
-            return answer
+            if (this is Collection) return this.plus(collection)
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(collection)
+            return result
+            """
+        }
+        body(Collections) {
+            """
+            if (collection is Collection) {
+                val result = ArrayList<T>(this.size() + collection.size())
+                result.addAll(this)
+                result.addAll(collection)
+                return result
+            } else {
+                val result = ArrayList<T>(this)
+                result.addAll(collection)
+                return result
+            }
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        // TODO: use immutable set builder when available
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [collection]." }
+        body(Sets) {
             """
-            val answer = ArrayList<T>(size() + collection.collectionSizeOrDefault(10))
-            for (thisElement in this) answer.add(thisElement)
-            answer.addAll(collection)
-            return answer
+            val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
+            result.addAll(this)
+            result.addAll(collection)
+            return result
             """
         }
-    }
 
-    templates add f("plus(array: Array<out T>)") {
-        exclude(Strings, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given [array]." }
-        returns("List<T>")
-        body {
+        doc(Sequences) {
             """
-            val answer = ArrayList<T>(collectionSizeOrDefault(10) + array.size())
-            for (thisElement in this) answer.add(thisElement)
-            answer.addAll(array)
-            return answer
-            """
-        }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            val answer = ArrayList<T>(size() + array.size())
-            for (thisElement in this) answer.add(thisElement)
-            answer.addAll(array)
-            return answer
-            """
-        }
-    }
+            Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
 
-    templates add f("plus(collection: Iterable<T>)") {
-        only(Sequences)
-        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]." }
-        returns("Sequence<T>")
-        body {
+            Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
             """
             return sequenceOf(this, collection.asSequence()).flatten()
             """
         }
     }
 
-    templates add f("plus(sequence: Sequence<T>)") {
-        only(Sequences)
-        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]." }
-        returns("Sequence<T>")
+    templates add f("plus(array: Array<out T>)") {
+        only(Iterables, Collections, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [array]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
         body {
             """
+            if (this is Collection) return this.plus(array)
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(array)
+            return result
+            """
+        }
+        body(Collections) {
+            """
+            val result = ArrayList<T>(this.size() + array.size())
+            result.addAll(this)
+            result.addAll(array)
+            return result
+            """
+        }
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [array]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
+            result.addAll(this)
+            result.addAll(array)
+            return result
+            """
+        }
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence and then all elements of the given [array].
+
+            Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
+            """
+            return this.plus(array.asList())
+            """
+        }
+    }
+
+
+    templates add f("plus(sequence: Sequence<T>)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection and then all elements of the given [sequence]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            val result = ArrayList<T>()
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+        body(Collections) {
+            """
+            val result = ArrayList<T>(this.size() + 10)
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+
+        // TODO: use immutable set builder when available
+        doc(Sets) { "Returns a set containing all elements both of the original set and the given [sequence]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+            result.addAll(this)
+            result.addAll(sequence)
+            return result
+            """
+        }
+
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
+
+            Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
+            """
             return sequenceOf(this, sequence).flatten()
+            """
+        }
+    }
+
+    templates add f("minus(element: T)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection without the first occurrence of the given [element]." }
+        returns("List<T>")
+        body {
+            """
+            val result = ArrayList<T>(collectionSizeOrDefault(10))
+            var removed = false
+            return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+            """
+        }
+
+        returns("SELF", Sets, Sequences)
+        doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(mapCapacity(size()))
+            var removed = false
+            return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+            """
+        }
+
+
+        doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    var removed = false
+                    return this@minus.filter { if (!removed && it == element) { removed = true; false } else true }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+
+    templates add f("minus(collection: Iterable<T>)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [collection]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            val other = collection.convertToSetForSetOperationWith(this)
+            if (other.isEmpty())
+                return this.toList()
+
+            return this.filterNot { it in other }
+            """
+        }
+
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [collection]." }
+        body(Sets) {
+            """
+            val other = collection.convertToSetForSetOperationWith(this)
+            if (other.isEmpty())
+                return this.toSet()
+            if (other is Set)
+                return this.filterNotTo(LinkedHashSet<T>()) { it in other }
+
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(other)
+            return result
+            """
+        }
+
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
+
+            Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = collection.convertToSetForSetOperation()
+                    if (other.isEmpty())
+                        return this@minus.iterator()
+                    else
+                        return this@minus.filterNot { it in other }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("minus(array: Array<out T>)") {
+        only(Iterables, Sets, Sequences)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [array]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            if (array.isEmpty()) return this.toList()
+            val other = array.toHashSet()
+            return this.filterNot { it in other }
+            """
+        }
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [array]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(array)
+            return result
+            """
+        }
+
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
+
+            Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
+            """
+            if (array.isEmpty()) return this
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = array.toHashSet()
+                    return this@minus.filterNot { it in other }.iterator()
+                }
+            }
+            """
+        }
+    }
+
+    templates add f("minus(sequence: Sequence<T>)") {
+        only(Iterables, Sets)
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [sequence]." }
+        returns("List<T>")
+        returns("SELF", Sets, Sequences)
+        body {
+            """
+            val other = sequence.toHashSet()
+            if (other.isEmpty())
+                return this.toList()
+
+            return this.filterNot { it in other }
+            """
+        }
+        doc(Sets) { "Returns a set containing all elements of the original set except the elements contained in the given [sequence]." }
+        body(Sets) {
+            """
+            val result = LinkedHashSet<T>(this)
+            result.removeAll(sequence)
+            return result
+            """
+        }
+
+        doc(Sequences) {
+            """
+            Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+
+            Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
+            the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+            """
+        }
+        body(Sequences) {
+            """
+            return object: Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    val other = sequence.toHashSet()
+                    if (other.isEmpty())
+                        return this@minus.iterator()
+                    else
+                        return this@minus.filterNot { it in other }.iterator()
+                }
+            }
             """
         }
     }
@@ -107,7 +381,7 @@ fun generators(): List<GenericFunction> {
 
         doc {
             """
-            Splits original collection into pair of collections,
+            Splits the original collection into pair of collections,
             where *first* collection contains elements for which [predicate] yielded `true`,
             while *second* collection contains elements for which [predicate] yielded `false`.
             """
@@ -129,6 +403,13 @@ fun generators(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) {
+            """
+            Splits the original string into pair of strings,
+            where *first* string contains characters for which [predicate] yielded `true`,
+            while *second* string contains characters for which [predicate] yielded `false`.
+            """
+        }
         returns(Strings) { "Pair<String, String>" }
         body(Strings) {
             """
@@ -161,7 +442,7 @@ fun generators(): List<GenericFunction> {
             """
             val first = iterator()
             val second = other.iterator()
-            val list = ArrayList<V>(collectionSizeOrDefault(10))
+            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
             while (first.hasNext() && second.hasNext()) {
                 list.add(transform(first.next(), second.next()))
             }
@@ -170,11 +451,12 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val first = iterator()
-            val second = other.iterator()
-            val list = ArrayList<V>(size())
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val arraySize = size()
+            val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+            var i = 0
+            for (element in other) {
+                if (i >= arraySize) break
+                list.add(transform(this[i++], element))
             }
             return list
             """
@@ -194,22 +476,22 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(collectionSizeOrDefault(10))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val arraySize = array.size()
+            val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+            var i = 0
+            for (element in this) {
+                if (i >= arraySize) break
+                list.add(transform(element, array[i++]))
             }
             return list
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(Math.min(size(), array.size()))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val size = Math.min(size(), array.size())
+            val list = ArrayList<V>(size)
+            for (i in 0..size-1) {
+                list.add(transform(this[i], array[i]))
             }
             return list
             """
@@ -230,11 +512,10 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val first = iterator()
-            val second = array.iterator()
-            val list = ArrayList<V>(Math.min(size(), array.size()))
-            while (first.hasNext() && second.hasNext()) {
-                list.add(transform(first.next(), second.next()))
+            val size = Math.min(size(), array.size())
+            val list = ArrayList<V>(size)
+            for (i in 0..size-1) {
+                list.add(transform(this[i], array[i]))
             }
             return list
             """

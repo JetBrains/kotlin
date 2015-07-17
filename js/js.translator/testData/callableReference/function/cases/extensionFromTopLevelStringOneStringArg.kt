@@ -11,7 +11,7 @@ fun A.foo(result: String) = result
 
 fun box(): String {
     val x = A::foo
-    var r = A().x("OK")
+    var r = x(A(), "OK")
     if (r != "OK") return r
 
     r = run(A(), "OK", A::foo)

@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.types.Flexibility;
@@ -34,8 +36,10 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
@@ -119,6 +123,13 @@ public abstract class AnnotationCodegen {
                 generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
             }
         }
+        if (annotated instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
+            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
+                generateTargetAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
+            }
+        }
     }
 
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
@@ -160,6 +171,56 @@ public abstract class AnnotationCodegen {
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
     }
 
+    private static final Map<AnnotationTarget, ElementType> annotationTargetMap =
+            new EnumMap<AnnotationTarget, ElementType>(AnnotationTarget.class);
+
+    static {
+        annotationTargetMap.put(AnnotationTarget.PACKAGE, ElementType.PACKAGE);
+        annotationTargetMap.put(AnnotationTarget.CLASSIFIER, ElementType.TYPE);
+        annotationTargetMap.put(AnnotationTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
+        annotationTargetMap.put(AnnotationTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
+        annotationTargetMap.put(AnnotationTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
+        annotationTargetMap.put(AnnotationTarget.FUNCTION, ElementType.METHOD);
+        annotationTargetMap.put(AnnotationTarget.PROPERTY_GETTER, ElementType.METHOD);
+        annotationTargetMap.put(AnnotationTarget.PROPERTY_SETTER, ElementType.METHOD);
+        annotationTargetMap.put(AnnotationTarget.FIELD, ElementType.FIELD);
+        annotationTargetMap.put(AnnotationTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+    }
+
+    private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+        String descriptor = Type.getType(Target.class).getDescriptor();
+        if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+        Set<AnnotationTarget> targets = AnnotationTargetChecker.INSTANCE$.possibleTargetSet(classDescriptor);
+        Set<ElementType> javaTargets;
+        if (targets == null) {
+            javaTargets = getJavaTargetList(classDescriptor);
+            if (javaTargets == null) return;
+        }
+        else {
+            javaTargets = EnumSet.noneOf(ElementType.class);
+            for (AnnotationTarget target : targets) {
+                if (annotationTargetMap.get(target) == null) continue;
+                javaTargets.add(annotationTargetMap.get(target));
+            }
+        }
+        AnnotationVisitor visitor = visitAnnotation(descriptor, true);
+        AnnotationVisitor arrayVisitor = visitor.visitArray("value");
+        for (ElementType javaTarget : javaTargets) {
+            arrayVisitor.visitEnum(null, Type.getType(ElementType.class).getDescriptor(), javaTarget.name());
+        }
+        arrayVisitor.visitEnd();
+        visitor.visitEnd();
+    }
+
+    private void generateRetentionAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+        RetentionPolicy policy = getRetentionPolicy(classDescriptor);
+        String descriptor = Type.getType(Retention.class).getDescriptor();
+        if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+        AnnotationVisitor visitor = visitAnnotation(descriptor, true);
+        visitor.visitEnum("value", Type.getType(RetentionPolicy.class).getDescriptor(), policy.name());
+        visitor.visitEnd();
+    }
+
     private void generateAnnotationIfNotPresent(Set<String> annotationDescriptorsAlreadyPresent, Class<?> annotationClass) {
         String descriptor = Type.getType(annotationClass).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
@@ -172,9 +233,9 @@ public abstract class AnnotationCodegen {
         return !type.isMarkedNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
     }
 
-    public void generateAnnotationDefaultValue(@NotNull CompileTimeConstant value, @NotNull JetType expectedType) {
+    public void generateAnnotationDefaultValue(@NotNull ConstantValue<?> value, @NotNull JetType expectedType) {
         AnnotationVisitor visitor = visitAnnotation(null, false);  // Parameters are unimportant
-        genCompileTimeValue(null, value, expectedType, visitor);
+        genCompileTimeValue(null, value, visitor);
         visitor.visitEnd();
     }
 
@@ -197,17 +258,16 @@ public abstract class AnnotationCodegen {
     }
 
     private void genAnnotationArguments(AnnotationDescriptor annotationDescriptor, AnnotationVisitor annotationVisitor) {
-        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
+        for (Map.Entry<ValueParameterDescriptor, ConstantValue<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
             ValueParameterDescriptor descriptor = entry.getKey();
             String name = descriptor.getName().asString();
-            genCompileTimeValue(name, entry.getValue(), descriptor.getType(), annotationVisitor);
+            genCompileTimeValue(name, entry.getValue(), annotationVisitor);
         }
     }
 
     private void genCompileTimeValue(
             @Nullable final String name,
-            @NotNull CompileTimeConstant<?> value,
-            @NotNull final JetType expectedType,
+            @NotNull ConstantValue<?> value,
             @NotNull final AnnotationVisitor annotationVisitor
     ) {
         AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
@@ -259,15 +319,15 @@ public abstract class AnnotationCodegen {
             @Override
             public Void visitEnumValue(EnumValue value, Void data) {
                 String propertyName = value.getValue().getName().asString();
-                annotationVisitor.visitEnum(name, typeMapper.mapType(value.getType(KotlinBuiltIns.getInstance())).getDescriptor(), propertyName);
+                annotationVisitor.visitEnum(name, typeMapper.mapType(value.getType()).getDescriptor(), propertyName);
                 return null;
             }
 
             @Override
             public Void visitArrayValue(ArrayValue value, Void data) {
                 AnnotationVisitor visitor = annotationVisitor.visitArray(name);
-                for (CompileTimeConstant<?> argument : value.getValue()) {
-                    genCompileTimeValue(null, argument, value.getType(KotlinBuiltIns.getInstance()), visitor);
+                for (ConstantValue<?> argument : value.getValue()) {
+                    genCompileTimeValue(null, argument, visitor);
                 }
                 visitor.visitEnd();
                 return null;
@@ -288,14 +348,7 @@ public abstract class AnnotationCodegen {
                 return null;
             }
 
-            @Override
-            public Void visitNumberTypeValue(IntegerValueTypeConstant value, Void data) {
-                Object numberType = value.getValue(expectedType);
-                annotationVisitor.visit(name, numberType);
-                return null;
-            }
-
-            private Void visitSimpleValue(CompileTimeConstant value) {
+            private Void visitSimpleValue(ConstantValue<?> value) {
                 annotationVisitor.visit(name, value.getValue());
                 return null;
             }
@@ -310,7 +363,7 @@ public abstract class AnnotationCodegen {
                 return visitUnsupportedValue(value);
             }
 
-            private Void visitUnsupportedValue(CompileTimeConstant value) {
+            private Void visitUnsupportedValue(ConstantValue<?> value) {
                 throw new IllegalStateException("Don't know how to compile annotation value " + value);
             }
         };
@@ -318,13 +371,70 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
+    private enum KotlinRetention {
+        SOURCE(RetentionPolicy.SOURCE),
+        BINARY(RetentionPolicy.CLASS),
+        RUNTIME(RetentionPolicy.RUNTIME);
+
+        final RetentionPolicy mapped;
+
+        KotlinRetention(RetentionPolicy mapped) {
+            this.mapped = mapped;
+        }
+    }
+
+    @Nullable
+    private Set<ElementType> getJavaTargetList(ClassDescriptor descriptor) {
+        AnnotationDescriptor targetAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Target.class.getName()));
+        if (targetAnnotation != null) {
+            Collection<ConstantValue<?>> valueArguments = targetAnnotation.getAllValueArguments().values();
+            if (!valueArguments.isEmpty()) {
+                ConstantValue<?> compileTimeConstant = valueArguments.iterator().next();
+                if (compileTimeConstant instanceof ArrayValue) {
+                    List<? extends ConstantValue<?>> values = ((ArrayValue) compileTimeConstant).getValue();
+                    Set<ElementType> result = EnumSet.noneOf(ElementType.class);
+                    for (ConstantValue<?> value : values) {
+                        if (value instanceof EnumValue) {
+                            ClassDescriptor enumEntry = ((EnumValue) value).getValue();
+                            JetType classObjectType = getClassObjectType(enumEntry);
+                            if (classObjectType != null) {
+                                if ("java/lang/annotation/ElementType".equals(typeMapper.mapType(classObjectType).getInternalName())) {
+                                    result.add(ElementType.valueOf(enumEntry.getName().asString()));
+                                }
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
+        AnnotationDescriptor kotlinAnnotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
+        if (kotlinAnnotation != null) {
+            for (Map.Entry<ValueParameterDescriptor, ConstantValue<?>> argument : kotlinAnnotation.getAllValueArguments().entrySet()) {
+                if ("retention".equals(argument.getKey().getName().asString()) && argument.getValue() instanceof EnumValue) {
+                    ClassDescriptor enumEntry = ((EnumValue) argument.getValue()).getValue();
+                    JetType classObjectType = getClassObjectType(enumEntry);
+                    if (classObjectType != null) {
+                        if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
+                            String entryName = enumEntry.getName().asString();
+                            for (KotlinRetention retention : KotlinRetention.values()) {
+                                if (retention.name().equals(entryName)) return retention.mapped;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {
-            Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
+            Collection<ConstantValue<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
             if (!valueArguments.isEmpty()) {
-                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+                ConstantValue<?> compileTimeConstant = valueArguments.iterator().next();
                 if (compileTimeConstant instanceof EnumValue) {
                     ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
                     JetType classObjectType = getClassObjectType(enumEntry);
@@ -337,7 +447,7 @@ public abstract class AnnotationCodegen {
             }
         }
 
-        return RetentionPolicy.CLASS;
+        return RetentionPolicy.RUNTIME;
     }
 
     @NotNull

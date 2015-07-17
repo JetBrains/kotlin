@@ -199,12 +199,12 @@ public class KotlinCacheService(val project: Project) {
 
     private fun findSyntheticFiles(files: Collection<JetFile>) = files.map {
         if (it is JetCodeFragment) it.getContextFile() else it
-    }.filter {
+    }.filterNotNull().filter {
         !ProjectRootsUtil.isInProjectSource(it)
     }.toSet()
 
-    private fun JetCodeFragment.getContextFile(): JetFile {
-        val contextElement = getContext() ?: throw AssertionError("Analyzing code fragment of type $javaClass with no context")
+    private fun JetCodeFragment.getContextFile(): JetFile? {
+        val contextElement = getContext() ?: return null
         val contextFile = (contextElement as? JetElement)?.getContainingJetFile()
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
         return if (contextFile is JetCodeFragment) contextFile.getContextFile() else contextFile

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -57,8 +58,8 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
     private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): JetFunctionLiteral? {
         val expression = element.getParentOfType<JetSimpleNameExpression>(true)
         if (expression != null) {
-            val reference = expression.getReference() as JetReference?
-            val target = reference?.resolveToDescriptors(expression.analyze())?.firstOrNull() as? ParameterDescriptor ?: return null
+            val target = expression.mainReference.resolveToDescriptors(expression.analyze())
+                                 .singleOrNull() as? ParameterDescriptor ?: return null
             val functionDescriptor = target.getContainingDeclaration() as? AnonymousFunctionDescriptor ?: return null
             return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunctionLiteral
         }

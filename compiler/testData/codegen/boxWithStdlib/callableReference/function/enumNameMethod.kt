@@ -3,7 +3,7 @@ enum class E {
 }
 
 fun box(): String {
-    val i = E.I.(E::name)()
+    val i = (E::name)(E.I)
     if (i != "I") return "Fail $i"
     return "OK"
 }

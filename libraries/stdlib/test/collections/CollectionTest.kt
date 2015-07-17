@@ -197,36 +197,89 @@ class CollectionTest {
         assertEquals(listOf(2, 4, 6), range)
     }
 
-    test fun plus() {
+    fun testPlus(doPlus: (List<String>) -> List<String>) {
         val list = listOf("foo", "bar")
-        val list2 = list + "cheese"
+        val list2: List<String> = doPlus(list)
         assertEquals(listOf("foo", "bar"), list)
-        assertEquals(listOf("foo", "bar", "cheese"), list2)
-
-        // lets use a mutable variable
-        var list3 = listOf("a", "b")
-        list3 += "c"
-        assertEquals(listOf("a", "b", "c"), list3)
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), list2)
     }
+
+    test fun plusElement() = testPlus { it + "cheese" + "wine" }
+    test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
+    test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
+    test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
 
     test fun plusCollectionBug() {
         val list = listOf("foo", "bar") + listOf("cheese", "wine")
         assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
     }
 
-    test fun plusCollection() {
-        val a = listOf("foo", "bar")
-        val b = listOf("cheese", "wine")
-        val list = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), list)
 
-        // lets use a mutable variable
-        var ml: List<String> = a
-        ml += "beer"
-        ml += b
-        ml += "z"
-        assertEquals(listOf("foo", "bar", "beer", "cheese", "wine", "z"), ml)
+    test fun plusAssign() {
+        // lets use a mutable variable of readonly list
+        var l: List<String> = listOf("cheese")
+        val lOriginal = l
+        l += "foo"
+        l += listOf("beer")
+        l += arrayOf("cheese", "wine")
+        l += sequenceOf("bar", "foo")
+        assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine", "bar", "foo"), l)
+        assertTrue(l !== lOriginal)
+
+        val ml = arrayListOf("cheese")
+        ml += "foo"
+        ml += listOf("beer")
+        ml += arrayOf("cheese", "wine")
+        ml += sequenceOf("bar", "foo")
+        assertEquals(l, ml)
     }
+
+
+    private fun testMinus(expected: List<String>? = null, doMinus: (List<String>) -> List<String>) {
+        val a = listOf("foo", "bar", "bar")
+        val b: List<String> = doMinus(a)
+        val expected_ = expected ?: listOf("foo")
+        assertEquals(expected_, b.toList())
+    }
+
+    test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
+    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+
+    test fun minusIsEager() {
+        val source = listOf("foo", "bar")
+        val list = arrayListOf<String>()
+        val result = source - list
+
+        list += "foo"
+        assertEquals(source, result)
+        list += "bar"
+        assertEquals(source, result)
+    }
+
+    test fun minusAssign() {
+        // lets use a mutable variable of readonly list
+        val data: List<String> = listOf("cheese", "foo", "beer", "cheese", "wine")
+        var l = data
+        l -= "cheese"
+        assertEquals(listOf("foo", "beer", "cheese", "wine"), l)
+        l = data
+        l -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), l)
+        l -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), l)
+
+        val ml = arrayListOf("cheese", "cheese", "foo", "beer", "cheese", "wine")
+        ml -= "cheese"
+        assertEquals(listOf("cheese", "foo", "beer", "cheese", "wine"), ml)
+        ml -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), ml)
+        ml -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), ml)
+    }
+
+
 
     test fun requireNoNulls() {
         val data = arrayListOf<String?>("foo", "bar")

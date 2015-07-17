@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.when;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -58,7 +58,7 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     }
 
     @Override
-    protected void processConstant(@NotNull CompileTimeConstant constant, @NotNull Label entryLabel) {
+    protected void processConstant(@NotNull ConstantValue<?> constant, @NotNull Label entryLabel) {
         assert constant instanceof EnumValue : "guaranteed by usage contract";
         putTransitionOnce(mapping.getIndexByEntry((EnumValue) constant), entryLabel);
     }

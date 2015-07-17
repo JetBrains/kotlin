@@ -146,18 +146,6 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
         return JavaElementUtil.getVisibility(this);
     }
 
-    @NotNull
-    @Override
-    public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
-    }
-
-    @Nullable
-    @Override
-    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
-    }
-
     @Override
     @NotNull
     public JavaClassifierType getDefaultType() {

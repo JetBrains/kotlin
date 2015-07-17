@@ -1,19 +1,21 @@
 VARIABLES T
 
-SUBTYPE T Int
-SUPERTYPE T Int
+T <: Int
+T >: Int
 
 type parameter bounds:
-T <: kotlin.Int(SPECIAL), >: kotlin.Int(SPECIAL)
+T <: Int, >: Int
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

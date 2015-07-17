@@ -69,7 +69,7 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
     if (offset < 0) return emptySet()
 
     val elem = file.findElementAt(offset)
-    val containingElement = getContainingElement(elem) ?: elem
+    val containingElement = getContainingElement(elem!!) ?: elem
 
     if (containingElement == null) return emptySet()
 
@@ -129,7 +129,7 @@ private fun shouldSkipLine(file: PsiFile, doc: Document, line: Int): Boolean {
     }
 
     val elemAtOffset = file.findElementAt(start)
-    val topmostElementAtOffset = CodeInsightUtils.getTopmostElementAtOffset(elemAtOffset, start)
+    val topmostElementAtOffset = CodeInsightUtils.getTopmostElementAtOffset(elemAtOffset!!, start)
     return topmostElementAtOffset !is JetDeclaration
 }
 

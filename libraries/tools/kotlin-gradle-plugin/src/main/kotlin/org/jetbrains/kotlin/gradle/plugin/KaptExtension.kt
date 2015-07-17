@@ -23,6 +23,8 @@ public open class KaptExtension {
 
     public open var generateStubs: Boolean = false
 
+    public open var inheritedAnnotations: Boolean = true
+
     private var closure: Closure<*>? = null
 
     public open fun arguments(closure: Closure<*>) {

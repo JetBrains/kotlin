@@ -55,7 +55,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
         File(path).readLines().forEach {
             when {
-                it.startsWith("// STEP_INTO") -> repeat("// STEP_INTO: ") { stepInto() }
+                it.startsWith("// STEP_INTO") -> repeat("// STEP_INTO: ") { stepInto(this) }
                 it.startsWith("// STEP_OUT") -> repeat("// STEP_OUT: ") { stepOut() }
                 it.startsWith("// SMART_STEP_INTO") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
                 it.startsWith("// RESUME") -> repeat("// RESUME: ") { resume(this) }
@@ -75,7 +75,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         for (i in 1..(getPrefixedInt(fileText, "// $command: ") ?: 1)) {
             doOnBreakpoint {
                 when(command) {
-                    "STEP_INTO" -> stepInto()
+                    "STEP_INTO" -> stepInto(this)
                     "STEP_OUT" -> stepOut()
                     "SMART_STEP_INTO" -> smartStepInto()
                 }

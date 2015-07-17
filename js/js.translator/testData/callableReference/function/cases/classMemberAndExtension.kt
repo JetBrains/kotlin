@@ -12,13 +12,13 @@ fun box():String {
 
     val a = A()
 
-    var r = a.(A::memBar)("!!")
+    var r = (A::memBar)(a, "!!")
     if (r != "sA:memBar:!!") return r
 
-    r = a.(A::extBar)("!!")
+    r = (A::extBar)(a, "!!")
     if (r != "sA:extBar:!!") return r
 
-    r = a.(A::locExtBar)("!!")
+    r = (A::locExtBar)(a, "!!")
     if (r != "sA:locExtBar:!!") return r
 
     return "OK"

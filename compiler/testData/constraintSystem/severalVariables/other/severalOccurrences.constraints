@@ -1,0 +1,4 @@
+VARIABLES T P
+
+T <: Int
+P <: Fun<Consumer<T>,Producer<T>>

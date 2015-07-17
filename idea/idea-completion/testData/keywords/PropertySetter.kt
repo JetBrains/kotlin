@@ -5,7 +5,6 @@ class Some {
 }
 
 // EXIST:  abstract
-// EXIST:  annotation
 // EXIST:  as
 // EXIST:  class
 // EXIST:  enum

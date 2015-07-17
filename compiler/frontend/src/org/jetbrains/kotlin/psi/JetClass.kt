@@ -89,7 +89,7 @@ public open class JetClass : JetClassOrObject {
         val parts = ArrayList<String>()
         var current: JetClassOrObject? = this
         while (current != null) {
-            parts.add(current.getName())
+            parts.add(current.getName()!!)
             current = PsiTreeUtil.getParentOfType<JetClassOrObject>(current, javaClass<JetClassOrObject>())
         }
         val file = getContainingFile()

@@ -87,7 +87,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
                             try {
                                 val factory = JetPsiFactory(myElement.getProject())
 
-                                val fqName = DescriptorUtils.getFqName(type.getConstructor().getDeclarationDescriptor())
+                                val fqName = DescriptorUtils.getFqName(type.getConstructor().getDeclarationDescriptor()!!)
                                 val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as JetParenthesizedExpression
                                 val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS
                                 cast.getLeft().replace(myElement)

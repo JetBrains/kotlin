@@ -1,4 +1,4 @@
-fun foo(c: kotlin.support.AbstractIterator<kotlin.concurrent.FunctionalList<Int>>) {
+fun foo(c: kotlin.support.AbstractIterator<kotlin.properties.ObservableProperty<Int>>) {
     ba<caret>r(c)
 }
 

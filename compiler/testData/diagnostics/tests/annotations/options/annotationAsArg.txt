@@ -1,0 +1,13 @@
+package
+
+internal fun foo(/*0*/ annotation: Annotation): kotlin.Int
+
+internal final class Annotation {
+    public constructor Annotation(/*0*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    internal final fun bar(): kotlin.Int
+    internal final fun baz(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

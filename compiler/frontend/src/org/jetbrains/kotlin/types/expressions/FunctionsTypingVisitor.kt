@@ -214,7 +214,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
         context.trace.record(EXPECTED_RETURN_TYPE, functionLiteral, expectedType)
         val typeOfBodyExpression = // Type-check the body
-                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression(), COERCION_TO_UNIT, newContext).type
+                components.expressionTypingServices.getBlockReturnedType(functionLiteral.getBodyExpression()!!, COERCION_TO_UNIT, newContext).type
 
         return declaredReturnType ?: computeReturnTypeBasedOnReturnExpressions(functionLiteral, context, typeOfBodyExpression)
     }

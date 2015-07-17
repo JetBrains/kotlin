@@ -212,7 +212,7 @@ object KotlinOutputParserHelper {
                                else
                                     Class.forName("$packagePrefix.GradleMessage\$Kind")
 
-        val messageKindConstants = messageKindClass.getEnumConstants()
+        val messageKindConstants = messageKindClass.getEnumConstants() as Array<Any>
         for (kind in messageKindConstants) {
             when(kind.toString()) {
                 "ERROR" -> severityObjectMap.put("e", kind)

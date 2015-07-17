@@ -234,7 +234,7 @@ public class InlineCodegenUtil {
             return type.getInternalName();
         } else if (currentDescriptor instanceof FunctionDescriptor) {
             ClassDescriptor descriptor =
-                    typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_FUNCTION, (FunctionDescriptor) currentDescriptor);
+                    typeMapper.getBindingContext().get(CodegenBinding.CLASS_FOR_CALLABLE, (FunctionDescriptor) currentDescriptor);
             if (descriptor != null) {
                 Type type = typeMapper.mapType(descriptor);
                 return type.getInternalName();
@@ -469,6 +469,32 @@ public class InlineCodegenUtil {
         v.visitMethodInsn(Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
                           (isStartNotEnd ? INLINE_MARKER_BEFORE_METHOD_NAME : INLINE_MARKER_AFTER_METHOD_NAME),
                           "()V", false);
+    }
+
+    public static boolean isInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, null);
+    }
+
+    public static boolean isInlineMarker(AbstractInsnNode insn, String name) {
+        if (insn instanceof MethodInsnNode) {
+            MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
+            return insn.getOpcode() == Opcodes.INVOKESTATIC &&
+                   methodInsnNode.owner.equals(INLINE_MARKER_CLASS_NAME) &&
+                   (name != null ? methodInsnNode.name.equals(name)
+                                 : methodInsnNode.name.equals(INLINE_MARKER_BEFORE_METHOD_NAME) ||
+                                   methodInsnNode.name.equals(INLINE_MARKER_AFTER_METHOD_NAME));
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isBeforeInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME);
+    }
+
+    public static boolean isAfterInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME);
     }
 
     public static int getLoadStoreArgSize(int opcode) {

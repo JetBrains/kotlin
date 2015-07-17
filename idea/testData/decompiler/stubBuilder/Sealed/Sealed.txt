@@ -1,0 +1,33 @@
+PsiJetFileStubImpl[package=test]
+  PACKAGE_DIRECTIVE:
+    REFERENCE_EXPRESSION:[referencedName=test]
+  IMPORT_LIST:
+  CLASS:[fqName=test.Sealed, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Sealed, superNames=[]]
+    MODIFIER_LIST:[internal sealed]
+    PRIMARY_CONSTRUCTOR:
+      MODIFIER_LIST:[private]
+      VALUE_PARAMETER_LIST:
+    CLASS_BODY:
+      CLASS:[fqName=test.Sealed.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[Sealed]]
+        MODIFIER_LIST:[internal final]
+        PRIMARY_CONSTRUCTOR:
+          MODIFIER_LIST:[public]
+          VALUE_PARAMETER_LIST:
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=test]
+                REFERENCE_EXPRESSION:[referencedName=Sealed]
+        CLASS_BODY:
+      OBJECT_DECLARATION:[fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+        MODIFIER_LIST:[internal]
+        DELEGATION_SPECIFIER_LIST:
+          DELEGATOR_SUPER_CLASS:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=test]
+                REFERENCE_EXPRESSION:[referencedName=Sealed]
+        CLASS_BODY:

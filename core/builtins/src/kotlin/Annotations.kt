@@ -16,20 +16,26 @@
 
 package kotlin
 
+import kotlin.annotation.*
+import kotlin.annotation.AnnotationTarget.*
+
 /**
  * Marks the annotated class as a data class. The compiler automatically generates
  * equals()/hashCode(), toString(), componentN() and copy() functions for data classes.
  * See [the Kotlin language documentation](http://kotlinlang.org/docs/reference/data-classes.html)
  * for more information.
  */
+target(CLASSIFIER)
 public annotation class data
 
 /**
- * Marks the annotated class, function or property as deprecated.
+ * Marks the annotated class, function, property, variable or parameter as deprecated.
  * @property value the message explaining the deprecation and recommending an alternative API to use.
  * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
  *     the deprecated API usage.
  */
+target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
+       LOCAL_VARIABLE, FIELD, VALUE_PARAMETER)
 public annotation class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
@@ -50,12 +56,15 @@ public annotation class ReplaceWith(val expression: String, vararg val imports: 
 /**
  * Signifies that the annotated functional type represents an extension function.
  */
+target(TYPE)
 public annotation class extension
 
 /**
  * Suppresses the given compilation warnings in the annotated element.
  * @property names names of the compiler diagnostics to suppress.
  */
+target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
+       CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
 public annotation class suppress(vararg val names: String)
 
 /**
@@ -64,4 +73,5 @@ public annotation class suppress(vararg val names: String)
  * growing the stack depth. Tail call optimization is currently only supported by the JVM
  * backend.
  */
+target(FUNCTION)
 public annotation class tailRecursive

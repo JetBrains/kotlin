@@ -19,4 +19,4 @@ package kotlin.reflect
 /**
  * Represents a package and provides introspection capabilities.
  */
-public interface KPackage
+public interface KPackage : KDeclarationContainer

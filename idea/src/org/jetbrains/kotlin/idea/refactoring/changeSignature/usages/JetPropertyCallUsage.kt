@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -29,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 public class JetPropertyCallUsage(element: JetSimpleNameExpression): JetUsageInfo<JetSimpleNameExpression>(element) {
     private val resolvedCall = element.getResolvedCall(element.analyze())
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetSimpleNameExpression): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: JetSimpleNameExpression, allUsages: Array<out UsageInfo>): Boolean {
         updateName(changeInfo, element)
         updateReceiver(changeInfo, element)
         return true
@@ -37,7 +39,7 @@ public class JetPropertyCallUsage(element: JetSimpleNameExpression): JetUsageInf
 
     private fun updateName(changeInfo: JetChangeInfo, element: JetSimpleNameExpression) {
         if (changeInfo.isNameChanged()) {
-            element.getReference()?.handleElementRename(changeInfo.getNewName())
+            element.mainReference.handleElementRename(changeInfo.getNewName())
         }
     }
 

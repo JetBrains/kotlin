@@ -40,17 +40,7 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedureCallbacks typeCheckingProcedureCallbacks) {
-        TypeConstructor constructor = subtype.getConstructor();
-        if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
-            return subtype;
-        }
-        for (JetType immediateSupertype : constructor.getSupertypes()) {
-            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typeCheckingProcedureCallbacks);
-            if (correspondingSupertype != null) {
-                return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
-            }
-        }
-        return null;
+        return CheckerPackage.findCorrespondingSupertype(subtype, supertype, typeCheckingProcedureCallbacks);
     }
 
     public static JetType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {

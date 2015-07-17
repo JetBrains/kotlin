@@ -4,5 +4,5 @@ fun box(): String {
     }
 
     val ref = Local::foo
-    return Local().ref()
+    return ref(Local())
 }

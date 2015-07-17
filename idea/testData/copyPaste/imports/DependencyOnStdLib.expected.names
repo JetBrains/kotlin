@@ -1,2 +1,2 @@
 kotlin.Int
-kotlin.concurrent.FunctionalList
+kotlin.properties.ObservableProperty

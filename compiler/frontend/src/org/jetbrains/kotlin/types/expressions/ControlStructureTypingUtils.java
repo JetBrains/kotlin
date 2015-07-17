@@ -375,7 +375,7 @@ public class ControlStructureTypingUtils {
                     return;
                 }
                 JetExpression expression = (JetExpression) call.getCallElement();
-                if (status.hasOnlyErrorsFromPosition(EXPECTED_TYPE_POSITION.position()) || status.hasConflictingConstraints()) {
+                if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }

@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace overloaded operator with function call") {
@@ -126,7 +127,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
                 return element
             }
 
-            val context = element.analyze()
+            val context = element.analyze(BodyResolveMode.PARTIAL)
             val functionCandidate = element.getResolvedCall(context)
             val functionName = functionCandidate?.getCandidateDescriptor()?.getName().toString()
             val elemType = context.getType(left)
@@ -195,14 +196,31 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             return callee.getParent()!!.replace(transformed) as JetExpression
         }
 
-        public fun convert(element: JetExpression): JetExpression {
-            return when (element) {
+        public fun convert(element: JetExpression): Pair<JetExpression, JetSimpleNameExpression> {
+            val result = when (element) {
                 is JetPrefixExpression -> convertPrefix(element)
                 is JetPostfixExpression -> convertPostFix(element)
                 is JetBinaryExpression -> convertBinary(element)
                 is JetArrayAccessExpression -> convertArrayAccess(element)
                 is JetCallExpression -> convertCall(element)
-                else -> element
+                else -> throw IllegalArgumentException(element.toString())
+            }
+
+            return result to findCallName(result)
+        }
+
+        private fun findCallName(result: JetExpression): JetSimpleNameExpression {
+            return when (result) {
+                is JetBinaryExpression -> {
+                    if (JetPsiUtil.isAssignment(result))
+                        findCallName(result.getRight()!!)
+                    else
+                        findCallName(result.getLeft()!!)
+                }
+
+                is JetUnaryExpression -> findCallName(result.getBaseExpression()!!)
+
+                else -> result.getQualifiedElementSelector() as JetSimpleNameExpression
             }
         }
     }

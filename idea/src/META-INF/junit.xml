@@ -1,5 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <configurationProducer implementation="org.jetbrains.kotlin.idea.run.JetJUnitConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer"/>
   </extensions>
 </idea-plugin>

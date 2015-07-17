@@ -51,7 +51,7 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         val name = x.getName()!!
         val statementContext = getLastStatementLevelContext()
         val currentStatement = statementContext.getCurrentNode()
-        tracker.addCandidateForRemoval(name, currentStatement)
+        tracker.addCandidateForRemoval(name, currentStatement!!)
 
         val references = collectReferencesInside(x)
         references.filterNotNull()
@@ -60,8 +60,8 @@ private class UnusedInstanceCollector : JsVisitorWithContextImpl() {
         return false
     }
 
-    override fun visit(x: JsNameRef?, ctx: JsContext<*>?): Boolean {
-        val name = x?.getName()
+    override fun visit(x: JsNameRef, ctx: JsContext<*>): Boolean {
+        val name = x.getName()
 
         if (name != null) {
             tracker.markReachable(name)

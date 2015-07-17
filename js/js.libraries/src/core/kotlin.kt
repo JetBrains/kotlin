@@ -61,3 +61,22 @@ public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
  *
  * The [mode] parameter is ignored. */
 public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+
+
+private fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
+    val result = source.slice(0, newSize)
+    var index: Int = source.length
+    if (newSize > index) {
+        result.length = newSize
+        while (index < newSize) result[index++] = defaultValue
+    }
+    return result
+}
+
+private fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
+    val result = array.slice(0)
+    result.length += collection.size()
+    var index: Int = array.length
+    for (element in collection) result[index++] = element
+    return result
+}

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.isUnit
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -94,7 +94,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         }.toString()
 
         var argument = psiFactory.createArgument(psiFactory.createExpression(argumentText))
-        argument = annotationEntry.getValueArgumentList().addArgument(argument)
+        argument = annotationEntry.getValueArgumentList()!!.addArgument(argument)
         argument = ShortenReferences.DEFAULT.process(argument) as JetValueArgument
 
         PsiDocumentManager.getInstance(argument.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())

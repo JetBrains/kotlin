@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class JvmRuntimeTypes {
     private final ClassDescriptor lambda;
     private final ClassDescriptor functionReference;
+    private final List<ClassDescriptor> propertyReferences;
+    private final List<ClassDescriptor> mutablePropertyReferences;
 
     public JvmRuntimeTypes() {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(
@@ -49,6 +49,13 @@ public class JvmRuntimeTypes {
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");
         this.functionReference = createClass(kotlinJvmInternal, "FunctionReference");
+        this.propertyReferences = new ArrayList<ClassDescriptor>(3);
+        this.mutablePropertyReferences = new ArrayList<ClassDescriptor>(3);
+
+        for (int i = 0; i <= 2; i++) {
+            propertyReferences.add(createClass(kotlinJvmInternal, "PropertyReference" + i));
+            mutablePropertyReferences.add(createClass(kotlinJvmInternal, "MutablePropertyReference" + i));
+        }
     }
 
     @NotNull
@@ -97,5 +104,12 @@ public class JvmRuntimeTypes {
         );
 
         return Arrays.asList(functionReference.getDefaultType(), functionType);
+    }
+
+    @NotNull
+    public JetType getSupertypeForPropertyReference(@NotNull PropertyDescriptor descriptor) {
+        int arity = (descriptor.getExtensionReceiverParameter() != null ? 1 : 0) +
+                    (descriptor.getDispatchReceiverParameter() != null ? 1 : 0);
+        return (descriptor.isVar() ? mutablePropertyReferences : propertyReferences).get(arity).getDefaultType();
     }
 }

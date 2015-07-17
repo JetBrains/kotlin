@@ -17,28 +17,15 @@
 package org.jetbrains.kotlin.idea.project;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 
-public class TargetPlatformImpl implements TargetPlatform {
-    @NotNull private final String platformName;
-    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
-    @NotNull private final DynamicTypesSettings dynamicTypesSettings;
+public abstract class TargetPlatformImpl implements TargetPlatform {
+    private final String platformName;
+    private final DynamicTypesSettings dynamicTypesSettings;
 
-    public TargetPlatformImpl(
-            @NotNull String platformName,
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
-            @NotNull DynamicTypesSettings dynamicTypesSettings
-    ) {
+    public TargetPlatformImpl(@NotNull String platformName, @NotNull DynamicTypesSettings dynamicTypesSettings) {
         this.platformName = platformName;
-        this.additionalCheckerProvider = additionalCheckerProvider;
         this.dynamicTypesSettings = dynamicTypesSettings;
-    }
-
-    @NotNull
-    @Override
-    public AdditionalCheckerProvider getAdditionalCheckerProvider() {
-        return additionalCheckerProvider;
     }
 
     @NotNull

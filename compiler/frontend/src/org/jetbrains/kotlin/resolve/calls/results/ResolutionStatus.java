@@ -57,6 +57,10 @@ public enum ResolutionStatus {
         return success;
     }
 
+    public boolean possibleTransformToSuccess() {
+        return this == UNKNOWN_STATUS || this == INCOMPLETE_TYPE_INFERENCE || this == SUCCESS;
+    }
+
     @NotNull
     public ResolutionStatus combine(ResolutionStatus other) {
         if (this == UNKNOWN_STATUS) return other;

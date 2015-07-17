@@ -77,4 +77,9 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST:[internal]
             VALUE_PARAMETER_LIST:
   CLASS:[fqName=test.anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=anno, superNames=[]]
-    MODIFIER_LIST:[annotation]
+    MODIFIER_LIST:[]
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=annotation]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=annotation]

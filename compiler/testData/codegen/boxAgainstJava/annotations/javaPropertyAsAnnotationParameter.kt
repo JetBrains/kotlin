@@ -1,7 +1,4 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
-Ann(Foo.i, Foo.s, Foo.f, Foo.d, Foo.l, Foo.b, Foo.bool, Foo.c, Foo.str) class MyClass
+Ann(Foo.i, Foo.s, Foo.f, Foo.d, Foo.l, Foo.b, Foo.bool, Foo.c, Foo.str, Foo.charAsInt, Foo.intAsChar) class MyClass
 
 fun box(): String {
     val ann = javaClass<MyClass>().getAnnotation(javaClass<Ann>())
@@ -15,11 +12,12 @@ fun box(): String {
     if (!ann.bool) return "fail: annotation parameter i should be true, but was ${ann.i}"
     if (ann.c != 'c') return "fail: annotation parameter i should be c, but was ${ann.i}"
     if (ann.str != "str") return "fail: annotation parameter i should be str, but was ${ann.i}"
+    if (ann.i2 != '3'.toInt()) return "fail: annotation parameter i2 should be ${'3'.toInt()}, but was ${ann.i}"
+    if (ann.c2 != 3.toChar()) return "fail: annotation parameter c2 should be 3, but was ${ann.i}"
     return "OK"
 }
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(
         val i: Int,
         val s: Short,
         val f: Float,
@@ -28,5 +26,7 @@ annotation class Ann(
         val b: Byte,
         val bool: Boolean,
         val c: Char,
-        val str: String
+        val str: String,
+        val i2: Int,
+        val c2: Char
 )

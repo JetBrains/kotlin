@@ -18,20 +18,19 @@ package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
-import kotlin.properties.Delegates
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: JetScope by Delegates.lazy {
+    private val kotlinReflectScope: JetScope by lazy {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 
@@ -48,16 +47,13 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
-    public fun getKExtensionFunction(n: Int): ClassDescriptor = find("KExtensionFunction$n")
-    public fun getKMemberFunction(n: Int): ClassDescriptor = find("KMemberFunction$n")
 
     public val kClass: ClassDescriptor by ClassLookup
-    public val kTopLevelVariable: ClassDescriptor by ClassLookup
-    public val kMutableTopLevelVariable: ClassDescriptor by ClassLookup
-    public val kMemberProperty: ClassDescriptor by ClassLookup
-    public val kMutableMemberProperty: ClassDescriptor by ClassLookup
-    public val kTopLevelExtensionProperty: ClassDescriptor by ClassLookup
-    public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
+    public val kProperty0: ClassDescriptor by ClassLookup
+    public val kProperty1: ClassDescriptor by ClassLookup
+    public val kProperty2: ClassDescriptor by ClassLookup
+    public val kMutableProperty0: ClassDescriptor by ClassLookup
+    public val kMutableProperty1: ClassDescriptor by ClassLookup
 
     public fun getKClassType(annotations: Annotations, type: JetType): JetType {
         val descriptor = kClass
@@ -73,40 +69,31 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             annotations: Annotations,
             receiverType: JetType?,
             parameterTypes: List<JetType>,
-            returnType: JetType,
-            extensionFunction: Boolean
+            returnType: JetType
     ): JetType {
-        val arity = parameterTypes.size()
-        val classDescriptor =
-                if (extensionFunction) getKExtensionFunction(arity)
-                else if (receiverType != null) getKMemberFunction(arity)
-                else getKFunction(arity)
+        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+
+        val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
 
         if (ErrorUtils.isError(classDescriptor)) {
             return classDescriptor.getDefaultType()
         }
 
-        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
         return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 
-    public fun getKPropertyType(
-            annotations: Annotations,
-            receiverType: JetType?,
-            returnType: JetType,
-            extensionProperty: Boolean,
-            mutable: Boolean
-    ): JetType {
-        val classDescriptor = if (mutable) when {
-            extensionProperty -> kMutableTopLevelExtensionProperty
-            receiverType != null -> kMutableMemberProperty
-            else -> kMutableTopLevelVariable
-        }
-        else when {
-            extensionProperty -> kTopLevelExtensionProperty
-            receiverType != null -> kMemberProperty
-            else -> kTopLevelVariable
-        }
+    public fun getKPropertyType(annotations: Annotations, receiverType: JetType?, returnType: JetType, mutable: Boolean): JetType {
+        val classDescriptor =
+                when {
+                    receiverType != null -> when {
+                        mutable -> kMutableProperty1
+                        else -> kProperty1
+                    }
+                    else -> when {
+                        mutable -> kMutableProperty0
+                        else -> kProperty0
+                    }
+                }
 
         if (ErrorUtils.isError(classDescriptor)) {
             return classDescriptor.getDefaultType()
@@ -121,10 +108,9 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     companion object {
-        public fun isReflectionType(type: JetType): Boolean {
-            val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return false
-            val fqName = DescriptorUtils.getFqName(descriptor)
-            return fqName.isSafe() && fqName.toSafe().isSubpackageOf(KOTLIN_REFLECT_FQ_NAME)
+        public fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
+            val containingPackage = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>())
+            return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
     }
 }

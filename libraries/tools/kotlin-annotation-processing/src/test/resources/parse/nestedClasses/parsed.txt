@@ -1,4 +1,3 @@
-java.lang.Deprecated org.test.SomeClass OBJECT$
 javax.inject.Named org.test.SomeClass.Companion
 javax.inject.Named org.test.SomeClass.InnerClass
 javax.inject.Named org.test.SomeClass.NestedClass

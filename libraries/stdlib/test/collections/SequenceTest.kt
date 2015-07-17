@@ -132,37 +132,72 @@ public class SequenceTest {
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
     }
 
-    test fun plus() {
-        val sequence = sequenceOf("foo", "bar")
-        val sequenceCheese = sequence + "cheese"
-        assertEquals(listOf("foo", "bar", "cheese"), sequenceCheese.toList())
 
-        // lets use a mutable variable
-        var mi = sequenceOf("a", "b")
-        mi += "c"
-        assertEquals(listOf("a", "b", "c"), mi.toList())
+    fun testPlus(doPlus: (Sequence<String>) -> Sequence<String>) {
+        val seq = sequenceOf("foo", "bar")
+        val seq2: Sequence<String> = doPlus(seq)
+        assertEquals(listOf("foo", "bar"), seq.toList())
+        assertEquals(listOf("foo", "bar", "cheese", "wine"), seq2.toList())
     }
 
-    test fun plusCollection() {
-        val a = sequenceOf("foo", "bar")
-        val b = listOf("cheese", "wine")
-        val sequence = a + b
-        assertEquals(listOf("foo", "bar", "cheese", "wine"), sequence.toList())
 
+    test fun plusElement() = testPlus { it + "cheese" + "wine" }
+    test fun plusCollection() = testPlus { it + listOf("cheese", "wine") }
+    test fun plusArray() = testPlus { it + arrayOf("cheese", "wine") }
+    test fun plusSequence() = testPlus { it + sequenceOf("cheese", "wine") }
+
+    test fun plusAssign() {
         // lets use a mutable variable
-        var ml = sequenceOf("a")
-        ml += a
-        ml += "beer"
-        ml += b
-        ml += "z"
-        assertEquals(listOf("a", "foo", "bar", "beer", "cheese", "wine", "z"), ml.toList())
+        var seq = sequenceOf("a")
+        seq += "foo"
+        seq += listOf("beer")
+        seq += arrayOf("cheese", "wine")
+        seq += sequenceOf("bar", "foo")
+        assertEquals(listOf("a", "foo", "beer", "cheese", "wine", "bar", "foo"), seq.toList())
     }
+
+    private fun testMinus(expected: List<String>? = null, doMinus: (Sequence<String>) -> Sequence<String>) {
+        val a = sequenceOf("foo", "bar", "bar")
+        val b: Sequence<String> = doMinus(a)
+        val expected_ = expected ?: listOf("foo")
+        assertEquals(expected_, b.toList())
+    }
+
+    test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
+    test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
+    test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }
+    test fun minusSequence() = testMinus { it - sequenceOf("bar", "zoo") }
+
+    test fun minusIsLazyIterated() {
+        val seq = sequenceOf("foo", "bar")
+        val list = arrayListOf<String>()
+        val result = seq - list
+
+        list += "foo"
+        assertEquals(listOf("bar"), result.toList())
+        list += "bar"
+        assertEquals(emptyList<String>(), result.toList())
+    }
+
+    test fun minusAssign() {
+        // lets use a mutable variable of readonly list
+        val data = sequenceOf("cheese", "foo", "beer", "cheese", "wine")
+        var l = data
+        l -= "cheese"
+        assertEquals(listOf("foo", "beer", "cheese", "wine"), l.toList())
+        l = data
+        l -= listOf("cheese", "beer")
+        assertEquals(listOf("foo", "wine"), l.toList())
+        l -= arrayOf("wine", "bar")
+        assertEquals(listOf("foo"), l.toList())
+    }
+
 
 
     test fun iterationOverSequence() {
         var s = ""
         for (i in sequenceOf(0, 1, 2, 3, 4, 5)) {
-            s = s + i.toString()
+            s += i.toString()
         }
         assertEquals("012345", s)
     }

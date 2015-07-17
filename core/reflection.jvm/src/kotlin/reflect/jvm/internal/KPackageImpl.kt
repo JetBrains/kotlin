@@ -31,18 +31,6 @@ class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KP
 
     override val scope: JetScope get() = descriptor.memberScope
 
-    fun topLevelVariable(name: String): KTopLevelVariable<*> =
-            KTopLevelVariableImpl<Any?>(this, name)
-
-    fun mutableTopLevelVariable(name: String): KMutableTopLevelVariable<*> =
-            KMutableTopLevelVariableImpl<Any?>(this, name)
-
-    fun <T> topLevelExtensionProperty(name: String, receiver: Class<T>): KTopLevelExtensionProperty<T, *> =
-            KTopLevelExtensionPropertyImpl<T, Any?>(this, name, receiver)
-
-    fun <T> mutableTopLevelExtensionProperty(name: String, receiver: Class<T>): KMutableTopLevelExtensionProperty<T, *> =
-            KMutableTopLevelExtensionPropertyImpl<T, Any?>(this, name, receiver)
-
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass
 

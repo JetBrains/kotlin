@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.BOTH_RECEIVERS
@@ -164,7 +164,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver,
-                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, c.context.trace),
+                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.getType(), c.context.trace),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -237,7 +237,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.getType().getMemberScope(), c.name, c.context.trace)
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.getType().getMemberScope(), c.name, receiverParameter.getType(), c.context.trace)
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter, receiverKind, c.context.call)
         }
     }

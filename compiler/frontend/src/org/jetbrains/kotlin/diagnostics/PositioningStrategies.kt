@@ -289,7 +289,7 @@ public object PositioningStrategies {
 
     public val VARIANCE_IN_PROJECTION: PositioningStrategy<JetTypeProjection> = object : PositioningStrategy<JetTypeProjection>() {
         override fun mark(element: JetTypeProjection): List<TextRange> {
-            return markNode(element.getProjectionNode())
+            return markNode(element.getProjectionNode()!!)
         }
     }
 

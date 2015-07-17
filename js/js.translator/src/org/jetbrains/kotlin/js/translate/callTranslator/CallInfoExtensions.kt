@@ -56,7 +56,7 @@ fun VariableAccessInfo.getAccessFunctionName(): String {
     val descriptor = variableDescriptor
     if (descriptor is PropertyDescriptor && descriptor.isExtension) {
         val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getGetter() else descriptor.getSetter()
-        return context.getNameForDescriptor(propertyAccessorDescriptor).getIdent()
+        return context.getNameForDescriptor(propertyAccessorDescriptor!!).getIdent()
     }
     else {
         return Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)

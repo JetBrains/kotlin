@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 
 // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
@@ -66,3 +68,10 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     return dispatchReceiverDescriptor == getResultingDescriptor().getOwnerForEffectiveDispatchReceiverParameter()
 }
 
+public fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue {
+    return when (getExplicitReceiverKind()) {
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> getDispatchReceiver()
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> getExtensionReceiver()
+        else -> ReceiverValue.NO_RECEIVER
+    }
+}

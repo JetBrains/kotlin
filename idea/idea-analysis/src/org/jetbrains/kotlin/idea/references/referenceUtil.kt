@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
+import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.HashSet
 
@@ -110,7 +113,25 @@ private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
 fun AbstractJetReference<out JetExpression>.renameImplicitConventionalCall(newName: String?): JetExpression {
     if (newName == null) return expression
 
-    val expr = OperatorToFunctionIntention.convert(expression) as JetQualifiedExpression
-    val newCallee = (expr.getSelectorExpression() as JetCallExpression).getCalleeExpression()!!.getReference()!!.handleElementRename(newName)
-    return newCallee.getStrictParentOfType<JetQualifiedExpression>() as JetExpression
+    val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(expression)
+    newNameElement.mainReference.handleElementRename(newName)
+    return newExpression
 }
+
+val JetSimpleNameExpression.mainReference: JetSimpleNameReference
+    get() = getReferences().firstIsInstance()
+
+val JetReferenceExpression.mainReference: JetReference
+    get() = if (this is JetSimpleNameExpression) mainReference else getReferences().firstIsInstance<JetReference>()
+
+val KDocName.mainReference: KDocReference
+    get() = getReferences().firstIsInstance()
+
+val JetElement.mainReference: JetReference?
+    get() {
+        return when {
+            this is JetReferenceExpression -> mainReference
+            this is KDocName -> mainReference
+            else -> getReferences().firstIsInstanceOrNull<JetReference>()
+        }
+    }

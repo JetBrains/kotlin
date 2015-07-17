@@ -83,7 +83,7 @@ internal interface D {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal open annotation class E : kotlin.Annotation {
+kotlin.annotation.annotation() internal open class E : kotlin.Annotation {
     public constructor E()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

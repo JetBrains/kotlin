@@ -54,8 +54,8 @@ public class LazyScriptClassDescriptor extends LazyClassDescriptor {
 
     @NotNull
     @Override
-    public LazyScriptClassMemberScope getScopeForMemberLookup() {
-        return (LazyScriptClassMemberScope) super.getScopeForMemberLookup();
+    public LazyScriptClassMemberScope getUnsubstitutedMemberScope() {
+        return (LazyScriptClassMemberScope) super.getUnsubstitutedMemberScope();
     }
 
     @NotNull

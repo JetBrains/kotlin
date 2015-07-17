@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.js.PredefinedAnnotation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 
 import java.util.List;
 import java.util.Set;
@@ -53,7 +53,7 @@ public final class AnnotationsUtils {
         if (annotationDescriptor.getAllValueArguments().isEmpty()) {
             return null;
         }
-        CompileTimeConstant<?> constant = annotationDescriptor.getAllValueArguments().values().iterator().next();
+        ConstantValue<?> constant = annotationDescriptor.getAllValueArguments().values().iterator().next();
         //TODO: this is a quick fix for unsupported default args problem
         if (constant == null) {
             return null;

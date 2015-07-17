@@ -44,7 +44,7 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
 
     public fun deleteDirectory(path: File): Boolean {
         if (path.exists() && path.isDirectory()) {
-            val files = path.listFiles()!!
+            val files = path.listFiles()
             for (i in files.indices) {
                 if (files[i].isDirectory()) {
                     deleteDirectory(files[i])
@@ -62,9 +62,8 @@ public abstract class AbstractAndroidJpsTestCase : JpsBuildTestCase() {
         addJdk(jdkName)
         val properties = JpsAndroidSdkProperties("android-21", jdkName)
         val sdkPath = getHomePath() + "/../dependencies/androidSDK"
-        val library = myModel!!.getGlobal().addSdk<JpsSimpleElement<JpsAndroidSdkProperties>>(SDK_NAME, sdkPath, "",
-                JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
-        library!!.addRoot(File(sdkPath + "/platforms/android-21/android.jar"), JpsOrderRootType.COMPILED)
+        val library = myModel.getGlobal().addSdk(SDK_NAME, sdkPath, "", JpsAndroidSdkType.INSTANCE, JpsSimpleElementImpl(properties))
+        library.addRoot(File(sdkPath + "/platforms/android-21/android.jar"), JpsOrderRootType.COMPILED)
         return library.getProperties()
     }
 }

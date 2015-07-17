@@ -32,13 +32,20 @@ import kotlin.properties.Delegates
 public class ModuleDescriptorImpl(
         moduleName: Name,
         private val storageManager: StorageManager,
-        private val moduleParameters: ModuleParameters
+        private val moduleParameters: ModuleParameters,
+        override val builtIns: KotlinBuiltIns
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, ModuleParameters by moduleParameters {
     init {
         if (!moduleName.isSpecial()) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
     }
+
+    public constructor(
+            moduleName: Name,
+            storageManager: StorageManager,
+            moduleParameters: ModuleParameters
+    ) : this(moduleName, storageManager, moduleParameters, KotlinBuiltIns.getInstance())
 
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
@@ -102,9 +109,6 @@ public class ModuleDescriptorImpl(
         assert(friend != this) { "Attempt to make module $id a friend to itself" }
         friendModules.add(friend)
     }
-
-    override val builtIns: KotlinBuiltIns
-        get() = KotlinBuiltIns.getInstance()
 }
 
 public interface ModuleDependencies {

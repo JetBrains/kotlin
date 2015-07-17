@@ -1,0 +1,6 @@
+VARIABLES T P E
+FIX_VARIABLES
+
+P <: My<T>
+Successor<E> <: P
+Int <: T

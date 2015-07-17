@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.project;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
@@ -25,11 +26,24 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings;
 
 public interface TargetPlatform {
     @NotNull
-    AdditionalCheckerProvider getAdditionalCheckerProvider();
+    AdditionalCheckerProvider createAdditionalCheckerProvider(@NotNull ModuleDescriptor module);
 
     @NotNull
     DynamicTypesSettings getDynamicTypesSettings();
 
-    TargetPlatform JVM = new TargetPlatformImpl("JVM", KotlinJvmCheckerProvider.INSTANCE$, new DynamicTypesSettings());
-    TargetPlatform JS = new TargetPlatformImpl("JS", KotlinJsCheckerProvider.INSTANCE$, new DynamicTypesAllowed());
+    TargetPlatform JVM = new TargetPlatformImpl("JVM", new DynamicTypesSettings()) {
+        @NotNull
+        @Override
+        public AdditionalCheckerProvider createAdditionalCheckerProvider(@NotNull ModuleDescriptor module) {
+            return new KotlinJvmCheckerProvider(module);
+        }
+    };
+
+    TargetPlatform JS = new TargetPlatformImpl("JS", new DynamicTypesAllowed()) {
+        @NotNull
+        @Override
+        public AdditionalCheckerProvider createAdditionalCheckerProvider(@NotNull ModuleDescriptor module) {
+            return KotlinJsCheckerProvider.INSTANCE$;
+        }
+    };
 }

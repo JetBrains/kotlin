@@ -24,7 +24,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.idea.util.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset

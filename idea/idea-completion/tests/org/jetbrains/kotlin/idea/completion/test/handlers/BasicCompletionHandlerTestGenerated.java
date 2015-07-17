@@ -119,6 +119,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticExtension.kt")
+    public void testSyntheticExtension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SyntheticExtension.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/exclChar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -217,6 +223,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("InsertFunctionWithSingleParameterWithBrace.kt")
         public void testInsertFunctionWithSingleParameterWithBrace() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/InsertFunctionWithSingleParameterWithBrace.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ParameterTypeIsDerivedFromFunction.kt")
+        public void testParameterTypeIsDerivedFromFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ParameterTypeIsDerivedFromFunction.kt");
             doTest(fileName);
         }
 

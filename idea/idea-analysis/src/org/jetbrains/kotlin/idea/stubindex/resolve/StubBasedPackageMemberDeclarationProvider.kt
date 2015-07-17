@@ -77,8 +77,8 @@ public class StubBasedPackageMemberDeclarationProvider(
         return JetTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
-    override fun getAllDeclaredSubPackages(): Collection<FqName> {
-        return PackageIndexUtil.getSubPackageFqNames(fqName, searchScope, project)
+    override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return PackageIndexUtil.getSubPackageFqNames(fqName, searchScope, project, nameFilter)
     }
 
     override fun getPackageFiles(): Collection<JetFile> {

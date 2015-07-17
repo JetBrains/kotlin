@@ -173,7 +173,7 @@ class ClassUsagesSearchHelper(
                         val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return
                         if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
                             || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
-                            element.getReference()?.let { processor.process(it) }
+                            element.getReferences().forEach { processor.process(it) }
                         }
                     }
                 })

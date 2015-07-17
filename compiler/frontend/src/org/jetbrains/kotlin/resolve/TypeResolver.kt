@@ -226,7 +226,7 @@ public class TypeResolver(
                 val receiverTypeRef = type.getReceiverTypeReference()
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
 
-                val parameterTypes = type.getParameters().map { resolveType(c.noBareTypes(), it.getTypeReference()) }
+                val parameterTypes = type.getParameters().map { resolveType(c.noBareTypes(), it.getTypeReference()!!) }
 
                 val returnTypeRef = type.getReturnTypeReference()
                 val returnType = if (returnTypeRef != null)

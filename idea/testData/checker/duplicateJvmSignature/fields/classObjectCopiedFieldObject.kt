@@ -11,11 +11,3 @@ class C {
     }
 
 }
-
-class D {
-    companion <error>object A</error> {
-        <error>val `OBJECT$`</error> = this
-    }
-
-    val `OBJECT$` = D
-}

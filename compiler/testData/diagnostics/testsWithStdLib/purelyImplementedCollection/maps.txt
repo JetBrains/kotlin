@@ -1,0 +1,7 @@
+package
+
+internal val nullableInt: kotlin.Int? = null
+internal fun bar(): kotlin.String?
+internal fun concurrentHashMapTest(): kotlin.Unit
+internal fun hashMapTest(): kotlin.Unit
+internal fun treeMapTest(): kotlin.Unit

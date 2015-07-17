@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -63,7 +64,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
-import static org.jetbrains.kotlin.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {
@@ -211,16 +211,16 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public static Map<ValueParameterDescriptor, CompileTimeConstant<?>> resolveAnnotationArguments(
+    public static Map<ValueParameterDescriptor, ConstantValue<?>> resolveAnnotationArguments(
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull BindingTrace trace
     ) {
-        Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = new HashMap<ValueParameterDescriptor, CompileTimeConstant<?>>();
+        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = new HashMap<ValueParameterDescriptor, ConstantValue<?>>();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             ResolvedValueArgument resolvedArgument = descriptorToArgument.getValue();
 
-            CompileTimeConstant<?> value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument);
+            ConstantValue<?> value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument);
             if (value != null) {
                 arguments.put(parameterDescriptor, value);
             }
@@ -229,32 +229,30 @@ public class AnnotationResolver {
     }
 
     @Nullable
-    public static CompileTimeConstant<?> getAnnotationArgumentValue(
+    public static ConstantValue<?> getAnnotationArgumentValue(
             BindingTrace trace,
             ValueParameterDescriptor parameterDescriptor,
             ResolvedValueArgument resolvedArgument
     ) {
         JetType varargElementType = parameterDescriptor.getVarargElementType();
         boolean argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument);
-        List<CompileTimeConstant<?>> constants = resolveValueArguments(
-                resolvedArgument, argumentsAsVararg ? varargElementType : parameterDescriptor.getType(), trace);
+        final JetType constantType = argumentsAsVararg ? varargElementType : parameterDescriptor.getType();
+        List<CompileTimeConstant<?>> compileTimeConstants = resolveValueArguments(resolvedArgument, constantType, trace);
+        List<ConstantValue<?>> constants = KotlinPackage.map(compileTimeConstants, new Function1<CompileTimeConstant<?>, ConstantValue<?>>() {
+            @Override
+            public ConstantValue<?> invoke(CompileTimeConstant<?> constant) {
+                return constant.toConstantValue(constantType);
+            }
+        });
 
         if (argumentsAsVararg) {
+            if (parameterDescriptor.declaresDefaultValue() && compileTimeConstants.isEmpty()) return null;
 
-            boolean usesVariableAsConstant = KotlinPackage.any(constants, new Function1<CompileTimeConstant<?>, Boolean>() {
-                @Override
-                public Boolean invoke(CompileTimeConstant<?> constant) {
-                    return constant.usesVariableAsConstant();
-                }
-            });
-
-            if (parameterDescriptor.declaresDefaultValue() && constants.isEmpty()) return null;
-
-            return new ArrayValue(constants, parameterDescriptor.getType(), true, usesVariableAsConstant);
+            return new ArrayValue(constants, parameterDescriptor.getType());
         }
         else {
             // we should actually get only one element, but just in case of getting many, we take the last one
-            return !constants.isEmpty() ? KotlinPackage.last(constants) : null;
+            return KotlinPackage.lastOrNull(constants);
         }
     }
 
@@ -281,7 +279,7 @@ public class AnnotationResolver {
         }
 
         CompileTimeConstant<?> constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.getBindingContext());
-        if (constant != null && constant.canBeUsedInAnnotations()) {
+        if (constant != null && constant.getCanBeUsedInAnnotations()) {
             return;
         }
 

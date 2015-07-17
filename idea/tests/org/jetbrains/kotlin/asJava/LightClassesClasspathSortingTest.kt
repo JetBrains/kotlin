@@ -57,6 +57,7 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
         val psiClass = JavaPsiFacade.getInstance(getProject()).findClass(fqName, ResolveScopeManager.getElementResolveScope(getFile()))
 
         assertNotNull(psiClass, "Can't find class for $fqName")
+        psiClass!!
         assert(psiClass is KotlinLightClassForExplicitDeclaration || psiClass is KotlinLightClassForPackage,
                "Should be an explicit light class, but was $fqName ${psiClass.javaClass}")
         assert(psiClass !is KotlinLightClassForDecompiledDeclaration,

@@ -30,6 +30,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
@@ -99,6 +100,13 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
 
         if (position.getLine() < 0) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression at $position")
+        }
+
+        val document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file)
+        if (document == null || document.getLineCount() < position.getLine()) {
+            throw EvaluateExceptionUtil.createEvaluateException(
+                    "Couldn't evaluate kotlin expression: breakpoint is placed outside the file. " +
+                    "It may happen when you've changed source file after starting a debug process.")
         }
 
         if (codeFragment.getContext() !is JetElement) {
@@ -299,7 +307,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         override fun visitProperty(property: JetProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
-                                valuesForLabels.put(property.getName(), value.asValue())
+                                valuesForLabels.put(property.getName()!!, value.asValue())
                             }
                         }
                     })

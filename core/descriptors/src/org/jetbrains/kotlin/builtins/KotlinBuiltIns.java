@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -48,6 +48,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 public class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
+    public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,12 +111,12 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule,
-                setOf(BUILT_INS_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
+                setOf(BUILT_INS_PACKAGE_FQ_NAME, ANNOTATION_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
                 new Function1<String, InputStream>() {
                     @Override
@@ -175,6 +176,8 @@ public class KotlinBuiltIns {
         public final FqName noinline = fqName("noinline");
         public final FqName inlineOptions = fqName("inlineOptions");
         public final FqName extension = fqName("extension");
+        public final FqName target = annotationName("target");
+        public final FqName annotation = annotationName("annotation");
 
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
@@ -197,6 +200,11 @@ public class KotlinBuiltIns {
         @NotNull
         private static FqName fqName(@NotNull String simpleName) {
             return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
+        }
+
+        @NotNull
+        private static FqName annotationName(@NotNull String simpleName) {
+            return ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
         }
     }
 
@@ -225,8 +233,16 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
+        ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName);
+        assert classDescriptor != null : "Must be a class descriptor " + simpleName + ", but was null";
+        return classDescriptor;
+    }
+
+    @Nullable
+    public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
         ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
-        assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
+        assert classifier == null ||
+               classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
     }
 
@@ -643,7 +659,7 @@ public class KotlinBuiltIns {
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
         return new AnnotationDescriptorImpl(getBuiltInClassByName("extension").getDefaultType(),
-                                            Collections.<ValueParameterDescriptor, CompileTimeConstant<?>>emptyMap());
+                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap());
     }
 
     private static boolean isTypeAnnotatedWithExtension(@NotNull JetType type) {

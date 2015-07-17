@@ -66,10 +66,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTe
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
-import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageJsTest
-import org.jetbrains.kotlin.idea.highlighter.AbstractDiagnosticMessageTest
-import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightExitPointsTest
-import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
+import org.jetbrains.kotlin.idea.highlighter.*
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
 import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
@@ -161,7 +158,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractConstraintSystemTest>()) {
-            model("constraintSystem", extension = "bounds")
+            model("constraintSystem", extension = "constraints")
         }
 
         testClass(javaClass<AbstractJetParsingTest>()) {
@@ -393,6 +390,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractHighlightingTest>()) {
             model("highlighter")
+        }
+
+        testClass(javaClass<AbstractUsageHighlightingTest>()) {
+            model("usageHighlighter")
         }
 
         testClass(javaClass<AbstractKotlinFoldingTest>()) {

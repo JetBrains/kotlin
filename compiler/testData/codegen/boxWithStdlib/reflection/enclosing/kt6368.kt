@@ -15,7 +15,7 @@ val a by Delegates.lazy {
 }
 
 fun box(): String {
-    val r = a["result"]
+    val r = a["result"]!!
 
     // Check that reflection won't fail
     r.javaClass.getEnclosingMethod().toString()

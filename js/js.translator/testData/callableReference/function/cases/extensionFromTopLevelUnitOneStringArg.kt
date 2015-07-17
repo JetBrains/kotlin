@@ -16,7 +16,7 @@ fun A.foo(newResult: String) {
 fun box(): String {
     val a = A()
     val x = A::foo
-    a.x("OK")
+    x(a, "OK")
 
     if (a.result != "OK") return a.result
 

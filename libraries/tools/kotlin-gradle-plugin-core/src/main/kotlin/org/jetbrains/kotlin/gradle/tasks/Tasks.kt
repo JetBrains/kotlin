@@ -5,9 +5,7 @@ import java.io.File
 import org.gradle.api.GradleException
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.gradle.api.tasks.SourceTask
-import org.jetbrains.kotlin.doc.KDocArguments
 import java.util.HashSet
-import org.jetbrains.kotlin.doc.KDocCompiler
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -131,17 +129,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
-
-        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
-        if (kaptAnnotationsFile != null) {
-            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
-        }
-
-        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("stubsDir")
-        if (kaptClassFileStubsDir != null) {
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
-        }
+        handleKaptProperties(extraProperties, pluginOptions)
 
         args.pluginOptions = pluginOptions.toTypedArray()
         getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
@@ -160,6 +148,24 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noOptimize = kotlinOptions.noOptimize
         args.noCallAssertions = kotlinOptions.noCallAssertions
         args.noParamAssertions = kotlinOptions.noParamAssertions
+    }
+
+    private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
+        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
+        if (kaptAnnotationsFile != null) {
+            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
+        }
+
+        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
+        if (kaptClassFileStubsDir != null) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+        }
+
+        val supportInheritedAnnotations = extraProperties.getOrNull<Boolean>("kaptInheritedAnnotations")
+        if (supportInheritedAnnotations != null && supportInheritedAnnotations) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:inherited=true")
+        }
     }
 
     private fun getJavaSourceRoots(): Set<File> =
@@ -222,7 +228,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     public fun addLibraryFiles(vararg fs: String) {
-        kotlinOptions.libraryFiles = (kotlinOptions.libraryFiles + (fs as Array<String>)).copyToArray()
+        kotlinOptions.libraryFiles += fs
     }
 
     public fun addLibraryFiles(vararg fs: File) {
@@ -255,7 +261,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
                         .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
                         .map { it.getAbsolutePath() }
 
-        args.libraryFiles = (kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies).copyToArray()
+        args.libraryFiles = kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies
         args.target = kotlinOptions.target
         args.sourceMap = kotlinOptions.sourceMap
 
@@ -272,69 +278,6 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
 
         getLogger().debug("${getName()} set libraryFiles to ${args.libraryFiles.join(",")}")
         getLogger().debug("${getName()} set outputFile to ${args.outputFile}")
-
-    }
-}
-
-public open class KDoc() : SourceTask() {
-
-    private val logger = Logging.getLogger(this.javaClass)
-    override fun getLogger() = logger
-
-    public var kdocArgs: KDocArguments = KDocArguments()
-
-    public var destinationDir: File? = null
-
-    init {
-        // by default, output dir is not defined in options
-        kdocArgs.docConfig.docOutputDir = ""
-    }
-
-    TaskAction fun generateDocs() {
-        val args = KDocArguments()
-        val cfg = args.docConfig
-
-        val kdocOptions = kdocArgs.docConfig
-
-        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length() == 0) && (destinationDir != null)) {
-            destinationDir!!.path
-        } else {
-            kdocOptions.docOutputDir
-        }
-        cfg.title = kdocOptions.title
-        cfg.sourceRootHref = kdocOptions.sourceRootHref
-        cfg.projectRootDir = kdocOptions.projectRootDir
-        cfg.warnNoComments = kdocOptions.warnNoComments
-
-        cfg.packagePrefixToUrls.putAll(kdocOptions.packagePrefixToUrls)
-        cfg.ignorePackages.addAll(kdocOptions.ignorePackages)
-        cfg.packageDescriptionFiles.putAll(kdocOptions.packageDescriptionFiles)
-        cfg.packageSummaryText.putAll(kdocOptions.packageSummaryText)
-
-        // KDoc compiler does not accept list of files as input. Try to pass directories instead.
-        args.freeArgs = getSource().map { it.getParentFile()!!.getAbsolutePath() }
-        // Drop compiled sources to temp. Why KDoc compiles anything after all?!
-        args.destination = getTemporaryDir()?.getAbsolutePath()
-
-        getLogger().warn(args.freeArgs.toString())
-        val embeddedAnnotations = getAnnotations(getProject(), getLogger())
-        val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
-        val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
-        args.annotations = allAnnotations.joinToString(File.pathSeparator)
-
-        args.noStdlib = true
-        args.noJdkAnnotations = true
-
-
-        val compiler = KDocCompiler()
-
-        val messageCollector = GradleMessageCollector(getLogger())
-        val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
-
-        when (exitCode) {
-            ExitCode.COMPILATION_ERROR -> throw GradleException("Failed to generate kdoc. See log for more details")
-            ExitCode.INTERNAL_ERROR -> throw GradleException("Internal generation error. See log for more details")
-        }
 
     }
 }

@@ -35,7 +35,7 @@ public class MigrateAnnotationMethodCallFix(
     override fun getText() = "Replace method call with property access"
     override fun getFamilyName() = getText()
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) = replaceWithSimpleCall(element)
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) = replaceWithSimpleCall(element)
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::MigrateAnnotationMethodCallFix)

@@ -275,7 +275,7 @@ private fun makeCall(
     val inlinableCall = controlFlow.outputValues.size() <= 1
     val unboxingExpressions =
             if (inlinableCall) {
-                controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
+                controlFlow.outputValueBoxer.getUnboxingExpressions(callText!!)
             }
             else {
                 val varNameValidator = NewDeclarationNameValidator(block, anchorInBlock, NewDeclarationNameValidator.Target.VARIABLES)
@@ -293,7 +293,7 @@ private fun makeCall(
     }
 
     if (controlFlow.outputValues.isEmpty()) {
-        anchor.replace(psiFactory.createExpression(callText))
+        anchor.replace(psiFactory.createExpression(callText!!))
         return
     }
 

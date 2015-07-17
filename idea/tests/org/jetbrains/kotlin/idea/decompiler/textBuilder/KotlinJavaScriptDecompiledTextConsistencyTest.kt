@@ -30,19 +30,17 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.sure
+import java.util.*
 import kotlin.properties.Delegates
 
 public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() {
-
-    override val packages: List<FqName> = listOf(
+    override fun getPackages(): List<FqName> = listOf(
             "java.util", "jquery", "jquery.ui", "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
     ).map { FqName(it) }
 
-    override val topLevelMembers: Map<String, String> = mapOf("kotlin" to "intArrayOf")
+    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin" to "intArrayOf")
 
-    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
-        JsVirtualFileFinder.SERVICE.getInstance(getProject())
-    }
+    override fun getVirtualFileFinder(): VirtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(getProject())
 
     override fun setUp() {
         super.setUp()

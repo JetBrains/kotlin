@@ -8,5 +8,5 @@ class A {
 
 fun A?.foo() {}
 
-val f: KMemberFunction0<A, Unit> = A::foo
-val g: KExtensionFunction0<A, Unit> = A?::foo
+val f: KFunction1<A, Unit> = A::foo
+val g: KFunction1<A, Unit> = A?::foo

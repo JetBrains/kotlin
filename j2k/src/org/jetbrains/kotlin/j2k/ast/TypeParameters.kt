@@ -44,7 +44,10 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
 
     fun appendWhere(builder: CodeBuilder): CodeBuilder {
         if (hasWhere()) {
-            builder.append( parameters.map { { it.whereToKotlin(builder) } }, ", ", " where ", "")
+            builder.buildList(generators = parameters.map { { it.whereToKotlin(builder) } },
+                              separator = ", ",
+                              prefix = " where ",
+                              suffix = "")
         }
         return builder
     }

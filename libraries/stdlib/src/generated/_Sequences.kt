@@ -14,6 +14,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a sequence from the given collection.
  */
 public fun <T> Array<out T>.asSequence(): Sequence<T> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<T> {
         override fun iterator(): Iterator<T> {
             return this@asSequence.iterator()
@@ -25,6 +26,7 @@ public fun <T> Array<out T>.asSequence(): Sequence<T> {
  * Returns a sequence from the given collection.
  */
 public fun BooleanArray.asSequence(): Sequence<Boolean> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Boolean> {
         override fun iterator(): Iterator<Boolean> {
             return this@asSequence.iterator()
@@ -36,6 +38,7 @@ public fun BooleanArray.asSequence(): Sequence<Boolean> {
  * Returns a sequence from the given collection.
  */
 public fun ByteArray.asSequence(): Sequence<Byte> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Byte> {
         override fun iterator(): Iterator<Byte> {
             return this@asSequence.iterator()
@@ -47,6 +50,7 @@ public fun ByteArray.asSequence(): Sequence<Byte> {
  * Returns a sequence from the given collection.
  */
 public fun CharArray.asSequence(): Sequence<Char> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Char> {
         override fun iterator(): Iterator<Char> {
             return this@asSequence.iterator()
@@ -58,6 +62,7 @@ public fun CharArray.asSequence(): Sequence<Char> {
  * Returns a sequence from the given collection.
  */
 public fun DoubleArray.asSequence(): Sequence<Double> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Double> {
         override fun iterator(): Iterator<Double> {
             return this@asSequence.iterator()
@@ -69,6 +74,7 @@ public fun DoubleArray.asSequence(): Sequence<Double> {
  * Returns a sequence from the given collection.
  */
 public fun FloatArray.asSequence(): Sequence<Float> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Float> {
         override fun iterator(): Iterator<Float> {
             return this@asSequence.iterator()
@@ -80,6 +86,7 @@ public fun FloatArray.asSequence(): Sequence<Float> {
  * Returns a sequence from the given collection.
  */
 public fun IntArray.asSequence(): Sequence<Int> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Int> {
         override fun iterator(): Iterator<Int> {
             return this@asSequence.iterator()
@@ -91,6 +98,7 @@ public fun IntArray.asSequence(): Sequence<Int> {
  * Returns a sequence from the given collection.
  */
 public fun LongArray.asSequence(): Sequence<Long> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Long> {
         override fun iterator(): Iterator<Long> {
             return this@asSequence.iterator()
@@ -102,6 +110,7 @@ public fun LongArray.asSequence(): Sequence<Long> {
  * Returns a sequence from the given collection.
  */
 public fun ShortArray.asSequence(): Sequence<Short> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Short> {
         override fun iterator(): Iterator<Short> {
             return this@asSequence.iterator()
@@ -142,6 +151,7 @@ public fun <T> Sequence<T>.asSequence(): Sequence<T> {
  * Returns a sequence from the given collection.
  */
 public fun String.asSequence(): Sequence<Char> {
+    if (isEmpty()) return emptySequence()
     return object : Sequence<Char> {
         override fun iterator(): Iterator<Char> {
             return this@asSequence.iterator()

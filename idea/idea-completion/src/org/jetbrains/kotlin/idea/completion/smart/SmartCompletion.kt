@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.OffsetKey
 import com.intellij.codeInsight.completion.PrefixMatcher
@@ -32,7 +31,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -40,7 +42,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -391,7 +396,7 @@ class SmartCompletion(
             null
         }
 
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
         val iterableDetector = IterableTypesDetector(project, moduleDescriptor, scope)
 
         return buildResultByTypeFilter(expressionWithType, receiver, Tail.RPARENTH) { iterableDetector.isIterable(it, loopVarType) }
@@ -403,7 +408,7 @@ class SmartCompletion(
         if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.getRight()) return null
 
         val leftOperandType = binaryExpression.getLeft()?.let { bindingContext.getType(it) } ?: return null
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
         val detector = TypesWithContainsDetector(scope, leftOperandType, project, moduleDescriptor)
 
         return buildResultByTypeFilter(expressionWithType, receiver, null) { detector.hasContains(it) }

@@ -16,14 +16,22 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
-import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.*
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.FUN
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
+import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
 public class MemberDeserializer(private val c: DeserializationContext) {
     public fun loadCallable(proto: Callable): CallableMemberDescriptor {
@@ -170,11 +178,12 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun valueParameters(callable: Callable, kind: AnnotatedCallableKind): List<ValueParameterDescriptor> {
-        val containerOfCallable = c.containingDeclaration.getContainingDeclaration().asProtoContainer()
+        val callableDescriptor = c.containingDeclaration as CallableDescriptor
+        val containerOfCallable = callableDescriptor.getContainingDeclaration().asProtoContainer()
 
         return callable.getValueParameterList().mapIndexed { i, proto ->
             ValueParameterDescriptorImpl(
-                    c.containingDeclaration, null, i,
+                    callableDescriptor, null, i,
                     getParameterAnnotations(containerOfCallable, callable, kind, proto),
                     c.nameResolver.getName(proto.getName()),
                     c.typeDeserializer.type(proto.getType()),

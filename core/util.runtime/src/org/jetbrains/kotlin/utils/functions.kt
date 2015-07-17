@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.utils
 
-private val IDENTITY: Function1<Any?, Any?> = { it }
+private val IDENTITY: (Any?) -> Any? = { it }
 
 suppress("UNCHECKED_CAST")
-public fun <T> identity(): Function1<T, T> = IDENTITY as Function1<T, T>
+public fun <T> identity(): (T) -> T = IDENTITY as (T) -> T
 
 
-private val ALWAYS_TRUE: Function1<Any?, Boolean> = { true }
+private val ALWAYS_TRUE: (Any?) -> Boolean = { true }
 
-public fun <T> alwaysTrue(): Function1<T, Boolean> = ALWAYS_TRUE
+public fun <T> alwaysTrue(): (T) -> Boolean = ALWAYS_TRUE
+
+
+public val DO_NOTHING: (Any?) -> Unit = { }
+
+public fun <T> doNothing(): (T) -> Unit = DO_NOTHING

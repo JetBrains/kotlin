@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
@@ -32,34 +31,28 @@ import com.intellij.refactoring.util.CanonicalTypes
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.VisibilityUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.refactoring.createJavaClass
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.JetChangeSignatureDialog
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public trait JetChangeSignatureConfiguration {
-    fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor
+public interface JetChangeSignatureConfiguration {
+    fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor = originalDescriptor
+    fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
+    fun forcePerformForSelectedFunctionOnly(): Boolean = false
 
-    fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
-        return false
-    }
-
-    fun forcePerformForSelectedFunctionOnly(): Boolean {
-        return false
-    }
+    object Empty: JetChangeSignatureConfiguration
 }
 
 fun JetMethodDescriptor.modify(action: (JetMutableMethodDescriptor) -> Unit): JetMethodDescriptor {
@@ -171,7 +164,7 @@ public class JetChangeSignature(project: Project,
         val params = (preview.getParameterList().getParameters() zip ktChangeInfo.getNewParameters()).map {
             val (param, paramInfo) = it
             // Keep original default value for proper update of Kotlin usages
-            KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName(), param.getType(), paramInfo.defaultValueForCall)
+            KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName()!!, param.getType(), paramInfo.defaultValueForCall)
         }.toTypedArray()
 
         return preview to JavaChangeInfoImpl(visibility,

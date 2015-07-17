@@ -6,7 +6,12 @@ fun <D, E : D> List<ResolutionTask<D, E>>.bar(t: ResolutionTask<D, E>) = t
 
 public class ResolutionTaskHolder<F, G : F> {
     fun test(candidate: ResolutionCandidate<F>, tasks: MutableList<ResolutionTask<F, G>>) {
-        tasks.bar(ResolutionTask(candidate))
+        tasks.bar(ResolutionTask<F, G>(candidate))
+        tasks.add(ResolutionTask<F, G>(candidate))
+
+        //todo the problem is the type of ResolutionTask is inferred as ResolutionTask<F, F> too early
+        tasks.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>bar<!>(ResolutionTask(candidate))
+        tasks.<!NONE_APPLICABLE!>add<!>(ResolutionTask(candidate))
     }
 }
 

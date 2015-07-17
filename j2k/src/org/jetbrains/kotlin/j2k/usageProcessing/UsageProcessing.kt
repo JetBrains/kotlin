@@ -36,7 +36,7 @@ trait ConvertedCodeProcessor {
 }
 
 trait ExternalCodeProcessor {
-    fun processUsage(reference: PsiReference): Collection<PsiReference>?
+    fun processUsage(reference: PsiReference): Array<PsiReference>?
 }
 
 class UsageProcessingExpressionConverter(val processings: Map<PsiElement, Collection<UsageProcessing>>) : SpecialExpressionConverter {

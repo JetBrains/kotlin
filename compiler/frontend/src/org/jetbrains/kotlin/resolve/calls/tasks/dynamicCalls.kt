@@ -148,8 +148,7 @@ object DynamicCallableDescriptors {
         )
     }
 
-    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
-
+    private fun createValueParameters(owner: FunctionDescriptor, call: Call): List<ValueParameterDescriptor> {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
         fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
@@ -224,8 +223,8 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return delegate.getExtensionsByName(scope, name, bindingTrace).filter {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, receiver, bindingTrace).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }
     }

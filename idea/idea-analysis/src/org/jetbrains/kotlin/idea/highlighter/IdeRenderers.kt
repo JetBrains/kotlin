@@ -53,8 +53,8 @@ public object IdeRenderers {
         Renderers.renderConflictingSubstitutionsInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
-    public val HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER: Renderer<InferenceErrorData> = Renderer {
-        Renderers.renderTypeConstructorMismatchError(it, HtmlTabledDescriptorRenderer.create()).toString()
+    public val HTML_TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        Renderers.renderParameterConstraintError(it, HtmlTabledDescriptorRenderer.create()).toString()
     }
 
     public val HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {

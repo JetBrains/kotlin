@@ -39,7 +39,7 @@ public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
     public fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<D>
 
-    public fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
+    public fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<D>
 }
 
 private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultFilter() = filtered { !LibrarySourceHacks.shouldSkip(it) }
@@ -97,7 +97,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         return getConstructors(receiver.getMemberScope(), name, { isStaticNestedClass(it) })
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         val functions = scope.getFunctions(name)
         val (extensions, nonExtensions) = functions.partition { it.getExtensionReceiverParameter() != null }
 
@@ -151,9 +151,9 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         return listOf()
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
-        return (listOf(scope.getLocalVariable(name)) + scope.getProperties(name)).filterNotNull()
+        return (listOf(scope.getLocalVariable(name)) + scope.getProperties(name) + scope.getSyntheticExtensionProperties(receiver, name)).filterNotNull()
     }
 
     override fun toString() = "VARIABLES"
@@ -175,8 +175,8 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
         return filterProperties(VARIABLES_COLLECTOR.getStaticMembersByName(receiver, name, bindingTrace))
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
-        return filterProperties(VARIABLES_COLLECTOR.getExtensionsByName(scope, name, bindingTrace))
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
+        return filterProperties(VARIABLES_COLLECTOR.getExtensionsByName(scope, name, receiver, bindingTrace))
     }
 
     override fun toString() = "PROPERTIES"
@@ -197,8 +197,8 @@ private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(fil
             return delegate.getStaticMembersByName(receiver, name, bindingTrace).filter(filter)
         }
 
-        override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-            return delegate.getExtensionsByName(scope, name, bindingTrace).filter(filter)
+        override fun getExtensionsByName(scope: JetScope, name: Name, receiver: JetType, bindingTrace: BindingTrace): Collection<D> {
+            return delegate.getExtensionsByName(scope, name, receiver, bindingTrace).filter(filter)
         }
 
         override fun toString(): String {

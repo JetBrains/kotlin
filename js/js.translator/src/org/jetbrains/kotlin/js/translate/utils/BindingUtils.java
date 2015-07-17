@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -159,14 +158,8 @@ public final class BindingUtils {
 
     @Nullable
     public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression, @NotNull CompileTimeConstant<?> constant) {
-        if (constant != null) {
-            if (constant instanceof IntegerValueTypeConstant) {
-                JetType expectedType = context.getType(expression);
-                return ((IntegerValueTypeConstant) constant).getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
-            }
-            return constant.getValue();
-        }
-        return null;
+        JetType expectedType = context.getType(expression);
+        return constant.getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
     }
 
     @NotNull

@@ -249,6 +249,22 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
 
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithJava/publicField")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PublicField extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPublicField() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/publicField"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("simple")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/publicField/simple/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -269,9 +285,21 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("javaStaticField")
+        public void testJavaStaticField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/javaStaticField/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("kotlinPropertyInheritedInJava")
         public void testKotlinPropertyInheritedInJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/kotlinPropertyInheritedInJava/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("noConflictOnKotlinGetterAndJavaField")
+        public void testNoConflictOnKotlinGetterAndJavaField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/noConflictOnKotlinGetterAndJavaField/");
             doTestWithJava(fileName);
         }
 

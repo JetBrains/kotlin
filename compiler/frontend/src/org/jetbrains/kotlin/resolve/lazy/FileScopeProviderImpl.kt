@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.storage.get
 
 public class FileScopeProviderImpl(
         private val resolveSession: ResolveSession,
-        private val additionalScopes: FileScopeProvider.AdditionalScopes
+        private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
 ) : FileScopeProvider {
 
     private val defaultImports by resolveSession.getStorageManager().createLazyValue {
@@ -37,7 +37,7 @@ public class FileScopeProviderImpl(
     private fun createFileScope(file: JetFile): LazyFileScope {
         val tempTrace = TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve")
         return LazyFileScope.create(
-                resolveSession, file, defaultImports, additionalScopes.scopes(file),
+                resolveSession, file, defaultImports, additionalScopes.flatMap { it.scopes(file) },
                 resolveSession.getTrace(), tempTrace, "LazyFileScope for file " + file.getName()
         )
     }

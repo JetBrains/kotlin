@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.FrameMap;
 import org.jetbrains.kotlin.psi.JetWhenEntry;
 import org.jetbrains.kotlin.psi.JetWhenExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -96,7 +96,7 @@ abstract public class SwitchCodegen {
         for (JetWhenEntry entry : expression.getEntries()) {
             Label entryLabel = new Label();
 
-            for (CompileTimeConstant constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
                 if (constant instanceof NullValue) continue;
                 processConstant(constant, entryLabel);
             }
@@ -110,7 +110,7 @@ abstract public class SwitchCodegen {
     }
 
     abstract protected void processConstant(
-            @NotNull CompileTimeConstant constant,
+            @NotNull ConstantValue<?> constant,
             @NotNull Label entryLabel
     );
 
@@ -154,7 +154,7 @@ abstract public class SwitchCodegen {
     private int findNullEntryIndex(@NotNull JetWhenExpression expression) {
         int entryIndex = 0;
         for (JetWhenEntry entry : expression.getEntries()) {
-            for (CompileTimeConstant constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
+            for (ConstantValue<?> constant : SwitchCodegenUtil.getConstantsFromEntry(entry, bindingContext)) {
                 if (constant instanceof NullValue) {
                     return entryIndex;
                 }

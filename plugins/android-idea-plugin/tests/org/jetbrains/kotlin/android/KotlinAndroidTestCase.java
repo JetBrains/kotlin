@@ -22,6 +22,7 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
 import com.intellij.codeInspection.ex.InspectionManagerEx;
+import com.android.tools.idea.rendering.PsiProjectListener;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
@@ -53,8 +54,10 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -90,6 +93,8 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         // sdk path workaround, set real android sdk path and platform for android plugin to work
         System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/../dependencies/androidSDK");
         System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-21");
+
+        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         super.setUp();
 
@@ -153,7 +158,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         }
 
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.Instance.getEnabled();
         KotlinInternalMode.Instance.setEnabled(true);
@@ -188,7 +192,8 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     }
 
     protected void createManifest() throws IOException {
-        myFixture.copyFileToProject("plugins/android-idea-plugin/testData/android/AndroidManifest.xml", SdkConstants.FN_ANDROID_MANIFEST_XML);
+        myFixture.copyFileToProject("plugins/android-idea-plugin/testData/android/AndroidManifest.xml",
+                                    SdkConstants.FN_ANDROID_MANIFEST_XML);
     }
 
     protected void deleteManifest() throws IOException {
@@ -218,16 +223,23 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     @Override
     public void tearDown() throws Exception {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+
+        Field listenersField = PsiProjectListener.class.getDeclaredField("ourListeners");
+        listenersField.setAccessible(true);
+        Map listeners = (Map)listenersField.get(null);
+        listeners.clear();
+
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
         myModule = null;
         myAdditionalModules = null;
         myFixture.tearDown();
         myFixture = null;
         myFacet = null;
+
         if (RenderSecurityManager.RESTRICT_READS) {
             RenderSecurityManager.sEnabled = true;
         }

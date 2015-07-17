@@ -85,6 +85,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var receiverAfterName by property(false)
     override var renderCompanionObjectName by property(false)
     override var renderAccessors by property(false)
+    override var renderDefaultAnnotationArguments by property(false)
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 

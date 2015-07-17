@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="builtins" />
+    <orderEntry type="module" module-name="runtime.jvm" />
     <orderEntry type="module" module-name="descriptors.runtime" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
   </component>

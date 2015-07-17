@@ -1250,6 +1250,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/JKMethodUsages.0.java");
                 doTest(fileName);
             }
+
+            @TestMetadata("SyntheticProperties.0.java")
+            public void testSyntheticProperties() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");
+                doTest(fileName);
+            }
         }
     }
 }

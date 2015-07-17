@@ -19,4 +19,4 @@ package kotlin.reflect
 /**
  * Represents a function with introspection capabilities.
  */
-public interface KFunction<out R> : Function<R>
+public interface KFunction<out R> : KCallable<R>, Function<R>

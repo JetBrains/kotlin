@@ -251,7 +251,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createFunctionLiteralParameterList(text: String): JetParameterList {
-        return (createExpression("{ $text -> 0}") as JetFunctionLiteralExpression).getFunctionLiteral().getValueParameterList()
+        return (createExpression("{ $text -> 0}") as JetFunctionLiteralExpression).getFunctionLiteral().getValueParameterList()!!
     }
 
     public fun createEnumEntry(text: String): JetEnumEntry {
@@ -284,7 +284,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createPackageDirective(fqName: FqName): JetPackageDirective {
-        return createFile("package ${fqName.asString()}").getPackageDirective()
+        return createFile("package ${fqName.asString()}").getPackageDirective()!!
     }
 
     public fun createPackageDirectiveIfNeeded(fqName: FqName): JetPackageDirective? {

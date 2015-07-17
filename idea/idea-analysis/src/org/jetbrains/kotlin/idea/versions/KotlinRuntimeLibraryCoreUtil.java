@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class KotlinRuntimeLibraryCoreUtil {
     private static final ImmutableList<String> CANDIDATE_CLASSES = ImmutableList.of(
-            "kotlin.jvm.internal.Intrinsics",
+            "kotlin.Unit",
 
             // For older versions
             "jet.runtime.Intrinsics"

@@ -75,7 +75,7 @@ public class RangeIterationJVMTest {
         doTest((MaxS - 2).toShort()..MaxS, (MaxS - 2).toShort(), MaxS, 1, listOf((MaxS - 2).toShort(), (MaxS - 1).toShort(), MaxS))
         doTest((MaxL - 2).toLong()..MaxL, (MaxL - 2).toLong(), MaxL, 1.toLong(), listOf((MaxL - 2).toLong(), (MaxL - 1).toLong(), MaxL))
 
-        doTest((MaxC - 2).toChar()..MaxC, (MaxC - 2).toChar(), MaxC, 1, listOf((MaxC - 2).toChar(), (MaxC - 1).toChar(), MaxC))
+        doTest((MaxC - 2)..MaxC, (MaxC - 2), MaxC, 1, listOf((MaxC - 2), (MaxC - 1), MaxC))
     }
 
     test fun maxValueToMinValue() {
@@ -102,7 +102,7 @@ public class RangeIterationJVMTest {
         doTest((MaxS - 2).toShort()..MaxS step 2, (MaxS - 2).toShort(), MaxS, 2, listOf((MaxS - 2).toShort(), MaxS))
         doTest((MaxL - 2).toLong()..MaxL step 2, (MaxL - 2).toLong(), MaxL, 2.toLong(), listOf((MaxL - 2).toLong(), MaxL))
 
-        doTest((MaxC - 2).toChar()..MaxC step 2, (MaxC - 2).toChar(), MaxC, 2, listOf((MaxC - 2).toChar(), MaxC))
+        doTest((MaxC - 2)..MaxC step 2, (MaxC - 2), MaxC, 2, listOf((MaxC - 2), MaxC))
     }
 
     test fun progressionMaxValueToMinValue() {
@@ -129,7 +129,7 @@ public class RangeIterationJVMTest {
         doTest((MaxS - 5).toShort()..MaxS step 3, (MaxS - 5).toShort(), MaxS, 3, listOf((MaxS - 5).toShort(), (MaxS - 2).toShort()))
         doTest((MaxL - 5).toLong()..MaxL step 3, (MaxL - 5).toLong(), MaxL, 3.toLong(), listOf((MaxL - 5).toLong(), (MaxL - 2).toLong()))
 
-        doTest((MaxC - 5).toChar()..MaxC step 3, (MaxC - 5).toChar(), MaxC, 3, listOf((MaxC - 5).toChar(), (MaxC - 2).toChar()))
+        doTest((MaxC - 5)..MaxC step 3, (MaxC - 5), MaxC, 3, listOf((MaxC - 5), (MaxC - 2)))
     }
 
     test fun progressionDownToMinValue() {
@@ -138,7 +138,7 @@ public class RangeIterationJVMTest {
         doTest((MinS + 2).toShort() downTo MinS step 1, (MinS + 2).toShort(), MinS, -1, listOf((MinS + 2).toShort(), (MinS + 1).toShort(), MinS))
         doTest((MinL + 2).toLong() downTo MinL step 1, (MinL + 2).toLong(), MinL, -1.toLong(), listOf((MinL + 2).toLong(), (MinL + 1).toLong(), MinL))
 
-        doTest((MinC + 2).toChar() downTo MinC step 1, (MinC + 2).toChar(), MinC, -1, listOf((MinC + 2).toChar(), (MinC + 1).toChar(), MinC))
+        doTest((MinC + 2) downTo MinC step 1, (MinC + 2), MinC, -1, listOf((MinC + 2), (MinC + 1), MinC))
     }
 
     test fun inexactDownToMinValue() {
@@ -147,6 +147,6 @@ public class RangeIterationJVMTest {
         doTest((MinS + 5).toShort() downTo MinS step 3, (MinS + 5).toShort(), MinS, -3, listOf((MinS + 5).toShort(), (MinS + 2).toShort()))
         doTest((MinL + 5).toLong() downTo MinL step 3, (MinL + 5).toLong(), MinL, -3.toLong(), listOf((MinL + 5).toLong(), (MinL + 2).toLong()))
 
-        doTest((MinC + 5).toChar() downTo MinC step 3, (MinC + 5).toChar(), MinC, -3, listOf((MinC + 5).toChar(), (MinC + 2).toChar()))
+        doTest((MinC + 5) downTo MinC step 3, (MinC + 5), MinC, -3, listOf((MinC + 5), (MinC + 2)))
     }
 }

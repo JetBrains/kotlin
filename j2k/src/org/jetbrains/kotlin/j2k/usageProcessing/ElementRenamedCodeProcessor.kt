@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.j2k.ResolverForConverter
 
 class ElementRenamedCodeProcessor(private val newName: String) : ExternalCodeProcessor {
-    override fun processUsage(reference: PsiReference): Collection<PsiReference>? {
-        val newReference = reference.handleElementRename(newName).getReference()!!
-        return listOf(newReference)
+    override fun processUsage(reference: PsiReference): Array<PsiReference>? {
+        return reference.handleElementRename(newName).getReferences()
     }
 }

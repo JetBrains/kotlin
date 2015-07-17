@@ -130,7 +130,7 @@ public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpressio
     return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
 }
 
-public fun JetElement.getQualifiedExpressionForSelectorOrThis(): JetElement {
+public fun JetExpression.getQualifiedExpressionForSelectorOrThis(): JetExpression {
     return getQualifiedExpressionForSelector() ?: this
 }
 
@@ -144,9 +144,9 @@ public fun JetElement.getCalleeHighlightingRange(): TextRange {
             ) ?: return getTextRange()
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
-                      ?: annotationEntry.getCalleeExpression().startOffset
+                      ?: annotationEntry.getCalleeExpression()!!.startOffset
 
-    return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
+    return TextRange(startOffset, annotationEntry.getCalleeExpression()!!.endOffset)
 }
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------

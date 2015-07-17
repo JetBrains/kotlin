@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -45,6 +46,7 @@ import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final JetTypeMapper typeMapper;
+    private final AnnotationSerializer annotationSerializer = new AnnotationSerializer(KotlinBuiltIns.getInstance());
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
         this.bindings = bindings;
@@ -77,7 +79,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     public void serializeType(@NotNull JetType type, @NotNull ProtoBuf.Type.Builder proto, @NotNull StringTable stringTable) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
         for (AnnotationDescriptor annotation : type.getAnnotations()) {
-            proto.addExtension(JvmProtoBuf.typeAnnotation, AnnotationSerializer.INSTANCE$.serializeAnnotation(annotation, stringTable));
+            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable));
         }
     }
 

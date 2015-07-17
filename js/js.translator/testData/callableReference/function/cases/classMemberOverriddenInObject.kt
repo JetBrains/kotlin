@@ -10,6 +10,6 @@ object B : A() {
 
 fun box(): String {
     var ref = B::foo
-    val result = B.(ref)("1", "2")
+    val result = ref(B, "1", "2")
     return (if (result == "fooB:12") "OK" else result)
 }

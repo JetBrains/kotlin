@@ -1,0 +1,5 @@
+VARIABLES T P E
+
+Int <: T
+P <: String
+E <: Fun<T, P>

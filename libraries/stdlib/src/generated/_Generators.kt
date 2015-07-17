@@ -14,11 +14,10 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -27,11 +26,10 @@ public inline fun <T, R, V> Array<out T>.merge(array: Array<out R>, transform: (
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -40,11 +38,10 @@ public inline fun <R, V> BooleanArray.merge(array: Array<out R>, transform: (Boo
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -53,11 +50,10 @@ public inline fun <R, V> ByteArray.merge(array: Array<out R>, transform: (Byte, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -66,11 +62,10 @@ public inline fun <R, V> CharArray.merge(array: Array<out R>, transform: (Char, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -79,11 +74,10 @@ public inline fun <R, V> DoubleArray.merge(array: Array<out R>, transform: (Doub
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -92,11 +86,10 @@ public inline fun <R, V> FloatArray.merge(array: Array<out R>, transform: (Float
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -105,11 +98,10 @@ public inline fun <R, V> IntArray.merge(array: Array<out R>, transform: (Int, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -118,11 +110,10 @@ public inline fun <R, V> LongArray.merge(array: Array<out R>, transform: (Long, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -131,11 +122,12 @@ public inline fun <R, V> ShortArray.merge(array: Array<out R>, transform: (Short
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(collectionSizeOrDefault(10))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = array.size()
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in this) {
+        if (i >= arraySize) break
+        list.add(transform(element, array[i++]))
     }
     return list
 }
@@ -144,11 +136,10 @@ public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> BooleanArray.merge(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -157,11 +148,10 @@ public inline fun <V> BooleanArray.merge(array: BooleanArray, transform: (Boolea
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ByteArray.merge(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -170,11 +160,10 @@ public inline fun <V> ByteArray.merge(array: ByteArray, transform: (Byte, Byte) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> CharArray.merge(array: CharArray, transform: (Char, Char) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -183,11 +172,10 @@ public inline fun <V> CharArray.merge(array: CharArray, transform: (Char, Char) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> DoubleArray.merge(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -196,11 +184,10 @@ public inline fun <V> DoubleArray.merge(array: DoubleArray, transform: (Double, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> FloatArray.merge(array: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -209,11 +196,10 @@ public inline fun <V> FloatArray.merge(array: FloatArray, transform: (Float, Flo
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> IntArray.merge(array: IntArray, transform: (Int, Int) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -222,11 +208,10 @@ public inline fun <V> IntArray.merge(array: IntArray, transform: (Int, Int) -> V
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> LongArray.merge(array: LongArray, transform: (Long, Long) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -235,11 +220,10 @@ public inline fun <V> LongArray.merge(array: LongArray, transform: (Long, Long) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ShortArray.merge(array: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val first = iterator()
-    val second = array.iterator()
-    val list = ArrayList<V>(Math.min(size(), array.size()))
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val size = Math.min(size(), array.size())
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], array[i]))
     }
     return list
 }
@@ -248,11 +232,12 @@ public inline fun <V> ShortArray.merge(array: ShortArray, transform: (Short, Sho
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -261,11 +246,12 @@ public inline fun <T, R, V> Array<out T>.merge(other: Iterable<R>, transform: (T
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -274,11 +260,12 @@ public inline fun <R, V> BooleanArray.merge(other: Iterable<R>, transform: (Bool
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -287,11 +274,12 @@ public inline fun <R, V> ByteArray.merge(other: Iterable<R>, transform: (Byte, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -300,11 +288,12 @@ public inline fun <R, V> CharArray.merge(other: Iterable<R>, transform: (Char, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -313,11 +302,12 @@ public inline fun <R, V> DoubleArray.merge(other: Iterable<R>, transform: (Doubl
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -326,11 +316,12 @@ public inline fun <R, V> FloatArray.merge(other: Iterable<R>, transform: (Float,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -339,11 +330,12 @@ public inline fun <R, V> IntArray.merge(other: Iterable<R>, transform: (Int, R) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -352,11 +344,12 @@ public inline fun <R, V> LongArray.merge(other: Iterable<R>, transform: (Long, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
-    val first = iterator()
-    val second = other.iterator()
-    val list = ArrayList<V>(size())
-    while (first.hasNext() && second.hasNext()) {
-        list.add(transform(first.next(), second.next()))
+    val arraySize = size()
+    val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
+    var i = 0
+    for (element in other) {
+        if (i >= arraySize) break
+        list.add(transform(this[i++], element))
     }
     return list
 }
@@ -367,7 +360,7 @@ public inline fun <R, V> ShortArray.merge(other: Iterable<R>, transform: (Short,
 public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
-    val list = ArrayList<V>(collectionSizeOrDefault(10))
+    val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
     while (first.hasNext() && second.hasNext()) {
         list.add(transform(first.next(), second.next()))
     }
@@ -382,7 +375,147 @@ public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) 
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Returns a list containing all elements of the original collection except the elements contained in the given [array].
+ */
+public fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
+    if (array.isEmpty()) return this.toList()
+    val other = array.toHashSet()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
+ * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
+    if (array.isEmpty()) return this
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = array.toHashSet()
+            return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a set containing all elements of the original set except the elements contained in the given [array].
+ */
+public fun <T> Set<T>.minus(array: Array<out T>): Set<T> {
+    val result = LinkedHashSet<T>(this)
+    result.removeAll(array)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [collection].
+ */
+public fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
+    val other = collection.convertToSetForSetOperationWith(this)
+    if (other.isEmpty())
+        return this.toList()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
+ * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = collection.convertToSetForSetOperation()
+            if (other.isEmpty())
+                return this@minus.iterator()
+            else
+                return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a set containing all elements of the original set except the elements contained in the given [collection].
+ */
+public fun <T> Set<T>.minus(collection: Iterable<T>): Set<T> {
+    val other = collection.convertToSetForSetOperationWith(this)
+    if (other.isEmpty())
+        return this.toSet()
+    if (other is Set)
+        return this.filterNotTo(LinkedHashSet<T>()) { it in other }
+    val result = LinkedHashSet<T>(this)
+    result.removeAll(other)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
+ */
+public fun <T> Iterable<T>.minus(element: T): List<T> {
+    val result = ArrayList<T>(collectionSizeOrDefault(10))
+    var removed = false
+    return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+}
+
+/**
+ * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
+ */
+public fun <T> Sequence<T>.minus(element: T): Sequence<T> {
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            var removed = false
+            return this@minus.filter { if (!removed && it == element) { removed = true; false } else true }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a set containing all elements of the original set except the given [element].
+ */
+public fun <T> Set<T>.minus(element: T): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(size()))
+    var removed = false
+    return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [sequence].
+ */
+public fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
+    val other = sequence.toHashSet()
+    if (other.isEmpty())
+        return this.toList()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+ * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = sequence.toHashSet()
+            if (other.isEmpty())
+                return this@minus.iterator()
+            else
+                return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a set containing all elements of the original set except the elements contained in the given [sequence].
+ */
+public fun <T> Set<T>.minus(sequence: Sequence<T>): Set<T> {
+    val result = LinkedHashSet<T>(this)
+    result.removeAll(sequence)
+    return result
+}
+
+/**
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -400,7 +533,7 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -418,7 +551,7 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -436,7 +569,7 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -454,7 +587,7 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -472,7 +605,7 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -490,7 +623,7 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -508,7 +641,7 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -526,7 +659,7 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -544,7 +677,7 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -562,7 +695,7 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Splits original collection into pair of collections,
+ * Splits the original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
@@ -580,9 +713,9 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()
@@ -598,324 +731,166 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
+ * Returns a list containing all elements of the original collection and then all elements of the given [array].
  */
-public fun <T> Array<out T>.plus(array: Array<out T>): List<T> {
-    val answer = ArrayList<T>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
+public fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
+    val result = ArrayList<T>(this.size() + array.size())
+    result.addAll(this)
+    result.addAll(array)
+    return result
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun BooleanArray.plus(array: Array<out Boolean>): List<Boolean> {
-    val answer = ArrayList<Boolean>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun ByteArray.plus(array: Array<out Byte>): List<Byte> {
-    val answer = ArrayList<Byte>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun CharArray.plus(array: Array<out Char>): List<Char> {
-    val answer = ArrayList<Char>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun DoubleArray.plus(array: Array<out Double>): List<Double> {
-    val answer = ArrayList<Double>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun FloatArray.plus(array: Array<out Float>): List<Float> {
-    val answer = ArrayList<Float>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun IntArray.plus(array: Array<out Int>): List<Int> {
-    val answer = ArrayList<Int>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun LongArray.plus(array: Array<out Long>): List<Long> {
-    val answer = ArrayList<Long>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
- */
-public fun ShortArray.plus(array: Array<out Short>): List<Short> {
-    val answer = ArrayList<Short>(size() + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [array].
+ * Returns a list containing all elements of the original collection and then all elements of the given [array].
  */
 public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrDefault(10) + array.size())
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(array)
-    return answer
+    if (this is Collection) return this.plus(array)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(array)
+    return result
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [array].
+ * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public fun <T> Array<out T>.plus(collection: Iterable<T>): List<T> {
-    val answer = ArrayList<T>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
+public fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
+    return this.plus(array.asList())
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a set containing all elements both of the original set and the given [array].
  */
-public fun BooleanArray.plus(collection: Iterable<Boolean>): List<Boolean> {
-    val answer = ArrayList<Boolean>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
+public fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
+    result.addAll(this)
+    result.addAll(array)
+    return result
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
-public fun ByteArray.plus(collection: Iterable<Byte>): List<Byte> {
-    val answer = ArrayList<Byte>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
+public fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
+    if (collection is Collection) {
+        val result = ArrayList<T>(this.size() + collection.size())
+        result.addAll(this)
+        result.addAll(collection)
+        return result
+    } else {
+        val result = ArrayList<T>(this)
+        result.addAll(collection)
+        return result
+    }
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun CharArray.plus(collection: Iterable<Char>): List<Char> {
-    val answer = ArrayList<Char>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun DoubleArray.plus(collection: Iterable<Double>): List<Double> {
-    val answer = ArrayList<Double>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun FloatArray.plus(collection: Iterable<Float>): List<Float> {
-    val answer = ArrayList<Float>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun IntArray.plus(collection: Iterable<Int>): List<Int> {
-    val answer = ArrayList<Int>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun LongArray.plus(collection: Iterable<Long>): List<Long> {
-    val answer = ArrayList<Long>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
- */
-public fun ShortArray.plus(collection: Iterable<Short>): List<Short> {
-    val answer = ArrayList<Short>(size() + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of the original collection and then all elements of the given [collection].
  */
 public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrDefault(10) + collection.collectionSizeOrDefault(10))
-    for (thisElement in this) answer.add(thisElement)
-    answer.addAll(collection)
-    return answer
+    if (this is Collection) return this.plus(collection)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(collection)
+    return result
 }
 
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
+ * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
     return sequenceOf(this, collection.asSequence()).flatten()
 }
 
 /**
- * Returns a list containing all elements of original collection and then the given [element].
+ * Returns a set containing all elements both of the original set and the given [collection].
  */
-public fun <T> Array<out T>.plus(element: T): List<T> {
-    val answer = ArrayList<T>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
+public fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
+    result.addAll(this)
+    result.addAll(collection)
+    return result
 }
 
 /**
- * Returns a list containing all elements of original collection and then the given [element].
+ * Returns a list containing all elements of the original collection and then the given [element].
  */
-public fun BooleanArray.plus(element: Boolean): List<Boolean> {
-    val answer = ArrayList<Boolean>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
+public fun <T> Collection<T>.plus(element: T): List<T> {
+    val result = ArrayList<T>(size() + 1)
+    result.addAll(this)
+    result.add(element)
+    return result
 }
 
 /**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun ByteArray.plus(element: Byte): List<Byte> {
-    val answer = ArrayList<Byte>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun CharArray.plus(element: Char): List<Char> {
-    val answer = ArrayList<Char>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun DoubleArray.plus(element: Double): List<Double> {
-    val answer = ArrayList<Double>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun FloatArray.plus(element: Float): List<Float> {
-    val answer = ArrayList<Float>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun IntArray.plus(element: Int): List<Int> {
-    val answer = ArrayList<Int>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun LongArray.plus(element: Long): List<Long> {
-    val answer = ArrayList<Long>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
- */
-public fun ShortArray.plus(element: Short): List<Short> {
-    val answer = ArrayList<Short>(size()+1)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Returns a list containing all elements of original collection and then the given [element].
+ * Returns a list containing all elements of the original collection and then the given [element].
  */
 public fun <T> Iterable<T>.plus(element: T): List<T> {
-    val answer = ArrayList<T>(collectionSizeOrNull()?.let { it + 1 } ?: 10)
-    for (thisElement in this) answer.add(thisElement)
-    answer.add(element)
-    return answer
+    if (this is Collection) return this.plus(element)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.add(element)
+    return result
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then the given [element].
+ * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
 public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
     return sequenceOf(this, sequenceOf(element)).flatten()
 }
 
 /**
+ * Returns a set containing all elements of the original set and then the given [element].
+ */
+public fun <T> Set<T>.plus(element: T): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(size() + 1))
+    result.addAll(this)
+    result.add(element)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ */
+public fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
+    val result = ArrayList<T>(this.size() + 10)
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ */
+public fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
+}
+
+/**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
+ * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
 public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
     return sequenceOf(this, sequence).flatten()
+}
+
+/**
+ * Returns a set containing all elements both of the original set and the given [sequence].
+ */
+public fun <T> Set<T>.plus(sequence: Sequence<T>): Set<T> {
+    val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+    result.addAll(this)
+    result.addAll(sequence)
+    return result
 }
 
 /**

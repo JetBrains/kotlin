@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberDeclarationProvider) : PackageMemberDeclarationProvider {
     // Can't use Kotlin delegate feature because of inability to change delegate object in runtime (KT-5870)
 
-    override fun getAllDeclaredSubPackages() = delegate.getAllDeclaredSubPackages()
+    override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean) = delegate.getAllDeclaredSubPackages(nameFilter)
 
     override fun getPackageFiles() = delegate.getPackageFiles()
 

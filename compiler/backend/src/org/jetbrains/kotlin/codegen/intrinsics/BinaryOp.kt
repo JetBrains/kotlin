@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Opcodes.ISHL
 import org.jetbrains.org.objectweb.asm.Opcodes.ISHR
 import org.jetbrains.org.objectweb.asm.Opcodes.IUSHR
@@ -34,8 +35,11 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         val operandType = numberFunctionOperandType(returnType)
         val paramType = if (shift()) Type.INT_TYPE else operandType
 
-        return createBinaryIntrinsicCallable(operandType, paramType, operandType) {
-            v -> v.visitInsn(returnType.getOpcode(opcode))
+        return createBinaryIntrinsicCallable(returnType, paramType, operandType) {
+            v ->
+                v.visitInsn(returnType.getOpcode(opcode));
+                if (operandType != returnType)
+                    StackValue.coerce(operandType, returnType, v)
         }
     }
 }

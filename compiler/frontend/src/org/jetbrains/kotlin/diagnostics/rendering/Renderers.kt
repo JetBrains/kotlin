@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -122,8 +123,8 @@ public object Renderers {
         renderConflictingSubstitutionsInferenceError(it, TabledDescriptorRenderer.create()).toString()
     }
 
-    public val TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER: Renderer<InferenceErrorData> = Renderer {
-        renderTypeConstructorMismatchError(it, TabledDescriptorRenderer.create()).toString()
+    public val TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        renderParameterConstraintError(it, TabledDescriptorRenderer.create()).toString()
     }
 
     public val TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {
@@ -194,11 +195,11 @@ public object Renderers {
     }
 
     platformStatic
-    public fun renderTypeConstructorMismatchError(
+    public fun renderParameterConstraintError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
         val constraintErrors = (inferenceErrorData.constraintSystem as ConstraintSystemImpl).constraintErrors
-        val errorPositions = constraintErrors.filter { it is TypeConstructorMismatch }.map { it.constraintPosition }
+        val errorPositions = constraintErrors.filter { it is ParameterConstraintError }.map { it.constraintPosition }
         return renderer.table(
                 TabledDescriptorRenderer
                         .newTable()
@@ -216,7 +217,7 @@ public object Renderers {
     ): TabledDescriptorRenderer {
         var firstUnknownParameter: TypeParameterDescriptor? = null
         for (typeParameter in inferenceErrorData.constraintSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
+            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).values.isEmpty()) {
                 firstUnknownParameter = typeParameter
                 break
             }
@@ -228,7 +229,7 @@ public object Renderers {
 
         return result
                 .text(newText().normal("Not enough information to infer parameter ")
-                              .strong(firstUnknownParameter!!.getName())
+                              .strong(firstUnknownParameter.getName())
                               .normal(" in "))
                 .table(newTable()
                                .descriptor(inferenceErrorData.descriptor)
@@ -244,9 +245,9 @@ public object Renderers {
         LOG.assertTrue(status.hasViolatedUpperBound(),
                        renderDebugMessage("Upper bound violated renderer is applied for incorrect status", inferenceErrorData))
 
-        val systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints()
+        val systemWithoutWeakConstraints = constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
         val typeParameterDescriptor = inferenceErrorData.descriptor.getTypeParameters().firstOrNull { 
-            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true) 
+            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true)
         }
         if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
             return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
@@ -256,7 +257,7 @@ public object Renderers {
             return result
         }
 
-        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).getValue()
+        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).value
         if (inferredValueForTypeParameter == null) {
             LOG.error(renderDebugMessage("System without weak constraints is not successful, there is no value for type parameter " + 
                                          typeParameterDescriptor.getName() + "\n: " + systemWithoutWeakConstraints, inferenceErrorData))
@@ -351,33 +352,37 @@ public object Renderers {
 
     public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<JetType>> = Renderer { renderTypes(it) }
 
-    private fun renderConstraintSystem(constraintSystem: ConstraintSystem): String {
+    private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
         val typeVariables = constraintSystem.getTypeVariables()
         val typeBounds = Sets.newLinkedHashSet<TypeBounds>()
         for (variable in typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
         return "type parameter bounds:\n" +
-               StringUtil.join(typeBounds, { RENDER_TYPE_BOUNDS.render(it) }, "\n") + "\n" + "status:\n" +
+               StringUtil.join(typeBounds, { renderTypeBounds.render(it) }, "\n") + "\n\n" + "status:\n" +
                ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
     }
 
-    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it) }
+    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS) }
+    public val RENDER_CONSTRAINT_SYSTEM_SHORT: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS_SHORT) }
 
-    private fun renderTypeBounds(typeBounds: TypeBounds): String {
+    private fun renderTypeBounds(typeBounds: TypeBounds, short: Boolean): String {
         val renderBound = { bound: Bound ->
             val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
-            arrow + RENDER_TYPE.render(bound.constrainingType) + '(' + bound.position + ')'
+            val renderer = if (short) DescriptorRenderer.SHORT_NAMES_IN_TYPES else DescriptorRenderer.FQ_NAMES_IN_TYPES
+            val renderedBound = arrow + renderer.renderType(bound.constrainingType) +  if (!bound.isProper) "*" else ""
+            if (short) renderedBound else renderedBound + '(' + bound.position + ')'
         }
         val typeVariableName = typeBounds.typeVariable.getName()
-        return if (typeBounds.isEmpty()) {
+        return if (typeBounds.bounds.isEmpty()) {
             typeVariableName.asString()
         }
         else
             "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
     }
 
-    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it) }
+    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, short = false) }
+    public val RENDER_TYPE_BOUNDS_SHORT: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, short = true) }
 
     private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = StringBuilder {
         append(message)

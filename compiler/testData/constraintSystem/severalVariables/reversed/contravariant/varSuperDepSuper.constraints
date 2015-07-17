@@ -1,0 +1,4 @@
+VARIABLES T P
+
+P >: Consumer<T>
+T >: Int

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 public fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests") {
-        configureModule(ModuleContext(module, project), KotlinJvmCheckerProvider)
+        configureModule(ModuleContext(module, project), KotlinJvmCheckerProvider(module))
         useImpl<ExpressionTypingServices>()
     })
 }

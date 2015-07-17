@@ -4,7 +4,10 @@ fun Int.bar(c: C) {
 }
 ---------------------
                <v0>: {<: [ERROR : C]}   NEW: magic[FAKE_INITIALIZER](c: C) -> <v0>
-c              <v1>: *                  NEW: r(c) -> <v1>
-this = c       <v2>: *                  NEW: magic[UNSUPPORTED_ELEMENT](this = c|<v1>) -> <v2>
-{ this = c }   <v2>: *                  COPY
+               <v2>: *                  NEW: magic[VALUE_CONSUMER](this|<v1>) -> <v2>
+this           <v1>: *                  COPY
+this           <v1>: *                  NEW: r(this, <this>) -> <v1>
+c              <v3>: *                  NEW: r(c) -> <v3>
+this = c       !<v4>: *
+{ this = c }   !<v4>: *                 COPY
 =====================

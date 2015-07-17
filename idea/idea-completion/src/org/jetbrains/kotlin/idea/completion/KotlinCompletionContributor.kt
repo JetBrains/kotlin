@@ -22,10 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns.elementType
 import com.intellij.patterns.PsiJavaPatterns.psiElement
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.TokenType
+import com.intellij.psi.*
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
@@ -73,11 +70,10 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
             PackageDirectiveCompletion.ACTIVATION_PATTERN.accepts(tokenBefore) -> PackageDirectiveCompletion.DUMMY_IDENTIFIER
 
-            isInFunctionLiteralParameterList(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
-
             isInClassHeader(tokenBefore) -> CompletionUtilCore.DUMMY_IDENTIFIER // do not add '$' to not interrupt class declaration parsing
 
-            else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
+            else -> specialLambdaSignatureDummyIdentifier(tokenBefore)
+                    ?: specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
                     ?: specialInParameterListDummyIdentifier(tokenBefore)
                     ?: specialInArgumentListDummyIdentifier(tokenBefore)
@@ -137,18 +133,37 @@ public class KotlinCompletionContributor : CompletionContributor() {
         return expression.getTextRange()!!.getEndOffset()
     }
 
-    private fun isInFunctionLiteralParameterList(tokenBefore: PsiElement?): Boolean {
-        val parameterList = tokenBefore?.parents?.firstOrNull { it is JetParameterList } ?: return false
-        val parent = parameterList.getParent()
-        return parent is JetFunctionLiteral && parent.getValueParameterList() == parameterList
-    }
-
     private fun isInClassHeader(tokenBefore: PsiElement?): Boolean {
         val classOrObject = tokenBefore?.parents?.firstIsInstanceOrNull<JetClassOrObject>() ?: return false
         val name = classOrObject.getNameIdentifier() ?: return false
         val body = classOrObject.getBody() ?: return false
         val offset = tokenBefore!!.startOffset
         return name.endOffset <= offset && offset <= body.startOffset
+    }
+
+    private fun specialLambdaSignatureDummyIdentifier(tokenBefore: PsiElement?): String? {
+        var leaf = tokenBefore
+        while (leaf is PsiWhiteSpace || leaf is PsiComment) {
+            leaf = leaf.prevLeaf(true)
+        }
+
+        val lambda = leaf?.parents?.firstOrNull { it is JetFunctionLiteral } ?: return null
+
+        val lambdaChild = leaf!!.parents.takeWhile { it != lambda }.lastOrNull() ?: return null
+        if (lambdaChild is JetParameterList) return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED
+
+        if (lambdaChild !is JetBlockExpression) return null
+        val blockChild = leaf.parents.takeWhile { it != lambdaChild }.lastOrNull()
+        if (blockChild !is PsiErrorElement) return null
+        val inIncompleteSignature = blockChild.siblings(forward = false, withItself = false).all {
+            when (it) {
+                is PsiWhiteSpace, is PsiComment -> true
+                is JetBinaryExpressionWithTypeRHS -> it.getOperationReference().getReferencedNameElementType() == JetTokens.COLON
+                else -> false
+            }
+        }
+        return if (inIncompleteSignature) CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "->" else null
+
     }
 
     private val declarationKeywords = TokenSet.create(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)
@@ -234,7 +249,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(completeNonImportedDeclarations = true,
-                                                                          completeNonAccessibleDeclarations = false)
+                                                                          completeNonAccessibleDeclarations = false,
+                                                                          filterOutJavaGettersAndSetters = false)
                     BasicCompletionSession(newConfiguration, parameters, result).complete()
                 }
             }

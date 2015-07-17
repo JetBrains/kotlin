@@ -1,5 +1,5 @@
 class A {
-    fun result() = this.(::foo)("OK")
+    fun result() = (::foo)(this, "OK")
 }
 
 fun A.foo(x: String) = x

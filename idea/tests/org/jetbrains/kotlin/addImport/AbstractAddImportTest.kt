@@ -50,7 +50,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
             else -> {
                 val success = ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptors.single()) != ImportInsertHelper.ImportDescriptorResult.FAIL
                 if (!success) {
-                    val document = PsiDocumentManager.getInstance(getProject()).getDocument(file)
+                    val document = PsiDocumentManager.getInstance(getProject()).getDocument(file)!!
                     document.replaceString(0, document.getTextLength(), "Failed to add import")
                     PsiDocumentManager.getInstance(getProject()).commitAllDocuments()
                 }

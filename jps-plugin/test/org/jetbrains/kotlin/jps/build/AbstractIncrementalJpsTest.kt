@@ -292,7 +292,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
             val mapping = project.dataManager.getSourceToOutputMap(target)
             mapping.getSources().forEach {
-                val outputs = mapping.getOutputs(it).sort()
+                val outputs = mapping.getOutputs(it)!!.sort()
                 if (outputs.isNotEmpty()) {
                     result.println("source $it -> " + outputs)
                 }

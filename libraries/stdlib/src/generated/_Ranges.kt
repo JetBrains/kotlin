@@ -98,7 +98,7 @@ public fun IntRange.reversed(): IntProgression {
  * Returns a progression that goes over this range in reverse direction.
  */
 public fun LongRange.reversed(): LongProgression {
-    return LongProgression(end, start, -1.toLong())
+    return LongProgression(end, start, -1L)
 }
 
 /**

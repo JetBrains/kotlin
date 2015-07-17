@@ -356,7 +356,7 @@ public class OverridingUtil {
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
             bindOverride(fakeOverride, descriptor);
         }
-        sink.addToScope(fakeOverride);
+        sink.addFakeOverride(fakeOverride);
     }
 
     @NotNull
@@ -569,7 +569,7 @@ public class OverridingUtil {
     }
 
     public interface DescriptorSink {
-        void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
+        void addFakeOverride(@NotNull CallableMemberDescriptor fakeOverride);
 
         void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
     }

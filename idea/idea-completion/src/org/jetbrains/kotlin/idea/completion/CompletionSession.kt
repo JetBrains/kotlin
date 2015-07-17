@@ -37,14 +37,12 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
-import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.*
@@ -64,11 +62,15 @@ import kotlin.properties.Delegates
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
-        val completeNonAccessibleDeclarations: Boolean)
+        val completeNonAccessibleDeclarations: Boolean,
+        val filterOutJavaGettersAndSetters: Boolean
+)
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
         completeNonImportedDeclarations = parameters.getInvocationCount() >= 2,
-        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2)
+        completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2,
+        filterOutJavaGettersAndSetters = parameters.getInvocationCount() < 2
+)
 
 abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
@@ -79,23 +81,23 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
     protected val project: Project = position.getProject()
 
-    protected val reference: JetSimpleNameReference?
+    protected val nameExpression: JetSimpleNameExpression?
     protected val expression: JetExpression?
 
     init {
-        val reference = position.getParent()?.getReferences()?.firstIsInstanceOrNull<JetSimpleNameReference>()
+        val reference = (position.getParent() as? JetSimpleNameExpression)?.mainReference
         if (reference != null) {
             if (reference.expression is JetLabelReferenceExpression) {
+                this.nameExpression = null
                 this.expression = reference.expression.getParent().getParent() as? JetExpressionWithLabel
-                this.reference = null
             }
             else {
-                this.expression = reference.expression
-                this.reference = reference
+                this.nameExpression = reference.expression
+                this.expression = nameExpression
             }
         }
         else {
-            this.reference = null
+            this.nameExpression = null
             this.expression = null
         }
     }
@@ -130,7 +132,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project, isVisibleFilter)
 
-    protected val receiversData: ReferenceVariantsHelper.ReceiversData? = reference?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it.expression) }
+    protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
 
     protected val lookupElementFactory: LookupElementFactory = run {
         if (receiversData != null) {
@@ -168,13 +170,13 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter)
+        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter, true)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
-            val visible = descriptor.isVisible(inDescriptor, bindingContext, reference?.expression)
+            val visible = descriptor.isVisible(inDescriptor, bindingContext, nameExpression)
             if (visible) return true
             if (!configuration.completeNonAccessibleDeclarations) return false
             return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) !is PsiCompiledElement
@@ -208,12 +210,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val descriptorKindFilter: DescriptorKindFilter?
 
-    // set is used only for completion in code fragments
     protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
         if (descriptorKindFilter != null) {
-            val expression = reference!!.expression
-            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, false, prefixMatcher.asNameFilter())
-                    .excludeNonInitializedVariable(expression)
+            referenceVariantsHelper.getReferenceVariants(
+                    nameExpression!!,
+                    descriptorKindFilter!!,
+                    prefixMatcher.asNameFilter(),
+                    filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters
+            ).excludeNonInitializedVariable(nameExpression)
         }
         else {
             emptyList()
@@ -234,7 +238,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, true, prefixMatcher.asNameFilter())
+        val restrictedKindFilter = descriptorKindFilter!!.restrictedToKinds(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK) // optimization
+        val descriptors = referenceVariantsHelper.getReferenceVariants(nameExpression!!, restrictedKindFilter, prefixMatcher.asNameFilter(), useRuntimeReceiverType = true)
         return descriptors.filter { descriptor ->
             referenceVariants.none { comparePossiblyOverridingDescriptors(project, it, descriptor) }
         }
@@ -249,17 +254,17 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
-        val descriptors = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
-        return filterShadowedNonImported(descriptors, reference!!)
+        return indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
+                .filterShadowedNonImported()
     }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
-        val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression, bindingContext)
-        return filterShadowedNonImported(descriptors, reference)
+        return indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, nameExpression!!, bindingContext)
+                .filterShadowedNonImported()
     }
 
-    private fun filterShadowedNonImported(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(descriptors, referenceVariants, reference.expression)
+    private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(this, referenceVariants, nameExpression!!)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {

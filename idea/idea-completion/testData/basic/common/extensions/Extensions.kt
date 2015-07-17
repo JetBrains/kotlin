@@ -3,6 +3,8 @@ package a.b
 class Some {
     inner class Inner {
         fun foo() {
+            fun String.localExtension() = 1
+
             "".<caret>
         }
 
@@ -19,3 +21,4 @@ val String.extProp: Int get() = 1
 // EXIST: { lookupString: "extProp", itemText: "extProp", tailText: " for String in a.b", typeText: "Int" }
 // EXIST: { lookupString: "memberExtFun", itemText: "memberExtFun", tailText: "() for String in Some.Inner", typeText: "Unit" }
 // EXIST: { lookupString: "memberExtProp", itemText: "memberExtProp", tailText: " for String in Some", typeText: "Int" }
+// EXIST: { lookupString: "localExtension", itemText: "localExtension", tailText: "() for String", typeText: "Int" }

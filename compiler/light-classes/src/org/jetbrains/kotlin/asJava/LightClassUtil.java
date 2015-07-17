@@ -154,9 +154,8 @@ public class LightClassUtil {
         PsiClass outerPsiClass = getWrappingClass(companionObject);
         if (outerPsiClass != null) {
             for (PsiField fieldOfParent : outerPsiClass.getFields()) {
-                if (!(fieldOfParent instanceof KotlinLightElement)) continue;
-                if (((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == companionObject &&
-                    fieldOfParent.getName().equals(companionObject.getName())) { // TODO this check is relevant while light class has deprecated OBJECT$ field
+                if ((fieldOfParent instanceof KotlinLightElement) &&
+                    ((KotlinLightElement<?, ?>) fieldOfParent).getOrigin() == companionObject) {
                     return fieldOfParent;
                 }
             }
@@ -291,7 +290,8 @@ public class LightClassUtil {
                     new Function1<PsiMethod, Boolean>() {
                         @Override
                         public Boolean invoke(PsiMethod method) {
-                            return JvmAbi.isAccessorName(method.getName());
+                            String name = method.getName();
+                            return name.startsWith(JvmAbi.GETTER_PREFIX) || name.startsWith(JvmAbi.SETTER_PREFIX);
                         }
                     }
             );

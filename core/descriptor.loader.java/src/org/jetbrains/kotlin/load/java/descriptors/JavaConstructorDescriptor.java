@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.types.JetType;
+
+import java.util.List;
 
 public class JavaConstructorDescriptor extends ConstructorDescriptorImpl implements JavaCallableMemberDescriptor {
     private Boolean hasStableParameterNames = null;
@@ -92,4 +92,27 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
     }
+
+    @Override
+    @NotNull
+    public JavaConstructorDescriptor enhance(
+            @Nullable JetType enhancedReceiverType,
+            @NotNull List<JetType> enhancedValueParametersTypes,
+            @NotNull JetType enhancedReturnType
+    ) {
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
+        // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
+        enhanced.initialize(
+                enhancedReceiverType,
+                getDispatchReceiverParameter(),
+                getTypeParameters(),
+                DescriptorsPackage.createEnhancedValueParameters(enhancedValueParametersTypes, getValueParameters(), enhanced),
+                enhancedReturnType,
+                getModality(),
+                getVisibility()
+        );
+
+        return enhanced;
+    }
+
 }

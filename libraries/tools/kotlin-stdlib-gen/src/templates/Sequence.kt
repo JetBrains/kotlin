@@ -26,11 +26,21 @@ fun sequences(): List<GenericFunction> {
     }
     templates add f("asSequence()") {
         include(Maps)
-        exclude(Sequences)
         doc { "Returns a sequence from the given collection." }
         returns("Sequence<T>")
         body {
             """
+            return object : Sequence<T> {
+                override fun iterator(): Iterator<T> {
+                    return this@asSequence.iterator()
+                }
+            }
+            """
+        }
+
+        body(ArraysOfObjects, ArraysOfPrimitives, Strings) {
+            """
+            if (isEmpty()) return emptySequence()
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
                     return this@asSequence.iterator()

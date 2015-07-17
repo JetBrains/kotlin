@@ -23,15 +23,15 @@ import java.lang.reflect.Type
 import java.util.ArrayList
 
 public interface ValueResolver {
-    fun resolve(request: Class<*>, context: ValueResolveContext): ValueDescriptor?
+    fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor?
 }
 
 public interface ValueResolveContext {
-    fun resolve(registration: Class<*>): ValueDescriptor?
+    fun resolve(registration: Type): ValueDescriptor?
 }
 
 internal class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
-    override fun resolve(registration: Class<*>): ValueDescriptor? = container.resolve(registration, this)
+    override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this)
 
     override fun toString(): String = "for $requestingDescriptor in $container"
 }
@@ -54,10 +54,10 @@ fun Class<*>.bindToConstructor(context: ValueResolveContext): ConstructorBinding
 }
 
 fun Method.bindToMethod(context: ValueResolveContext): MethodBinding {
-    return MethodBinding(this, bindArguments(getParameterTypes().toList(), context))
+    return MethodBinding(this, bindArguments(getGenericParameterTypes().toList(), context))
 }
 
-private fun Member.bindArguments(parameters: List<Class<*>>, context: ValueResolveContext): List<ValueDescriptor> {
+private fun Member.bindArguments(parameters: List<Type>, context: ValueResolveContext): List<ValueDescriptor> {
     val bound = ArrayList<ValueDescriptor>(parameters.size())
     var unsatisfied: MutableList<Type>? = null
 
