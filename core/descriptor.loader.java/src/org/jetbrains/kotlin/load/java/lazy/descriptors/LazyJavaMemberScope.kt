@@ -76,7 +76,7 @@ public abstract class LazyJavaMemberScope(
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
-    private val functions = c.storageManager.createMemoizedFunction<Name, List<FunctionDescriptor>> {
+    private val functions = c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> {
         name ->
         val result = LinkedHashSet<SimpleFunctionDescriptor>()
 
