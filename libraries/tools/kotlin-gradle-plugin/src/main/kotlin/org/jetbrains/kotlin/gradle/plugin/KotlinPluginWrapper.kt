@@ -13,9 +13,14 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import java.lang.reflect.Method
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import java.net.URLClassLoader
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
     val log = Logging.getLogger(this.javaClass)
+
+    companion object {
+        var pluginClassLoader: ClassLoader? = null
+    }
 
     public override fun apply(project: Project) {
 
@@ -29,16 +34,34 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        val pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
-        val plugin = getPlugin(pluginClassLoader, sourceBuildScript)
+        if (pluginClassLoader == null)
+            pluginClassLoader = createPluginClassLoader(kotlinPluginVersion, sourceBuildScript)
+        val plugin = getPlugin(pluginClassLoader!!, sourceBuildScript)
         plugin.apply(project)
 
-        project.getGradle().addBuildListener(FinishBuildListener(pluginClassLoader))
+//        project.getGradle().addBuildListener(FinishBuildListener(pluginClassLoader))
     }
 
-    protected abstract fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
+    protected abstract fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
+
+    private fun createPluginClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): URLClassLoader {
+        val kotlinPluginDependencies: List<URL> = getPluginDependencies(projectVersion, sourceBuildScript)
+        log.kotlinDebug("Load plugin in regular URL classloader")
+        val kotlinPluginClassloader = URLClassLoader(kotlinPluginDependencies.toTypedArray(), this.javaClass.getClassLoader())
+
+        return kotlinPluginClassloader
+    }
 
     private fun createPluginIsolatedClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): ParentLastURLClassLoader {
+        val kotlinPluginDependencies: List<URL> = getPluginDependencies(projectVersion, sourceBuildScript)
+        log.kotlinDebug("Load plugin in parent-last URL classloader")
+        val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
+        log.kotlinDebug("Class loader created")
+
+        return kotlinPluginClassloader
+    }
+
+    private fun getPluginDependencies(projectVersion: String, sourceBuildScript: ScriptHandler): List<URL> {
         val dependencyHandler: DependencyHandler = sourceBuildScript.getDependencies()
         val configurationsContainer: ConfigurationContainer = sourceBuildScript.getConfigurations()
 
@@ -50,11 +73,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         log.kotlinDebug("Resolving [" + kotlinPluginCoreCoordinates + "]")
         val kotlinPluginDependencies: List<URL> = configuration.getResolvedConfiguration().getFiles({ true })!!.map { it.toURI().toURL() }
         log.kotlinDebug("Resolved files: [" + kotlinPluginDependencies.toString() + "]")
-        log.kotlinDebug("Load plugin in parent-last URL classloader")
-        val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
-        log.kotlinDebug("Class loader created")
-
-        return kotlinPluginClassloader
+        return kotlinPluginDependencies
     }
 
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
@@ -76,15 +95,15 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
 }
 
 open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = KotlinPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
 open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = KotlinAndroidPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
 open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+    override fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
 }
 
 fun Logger.kotlinDebug(message: String) {
