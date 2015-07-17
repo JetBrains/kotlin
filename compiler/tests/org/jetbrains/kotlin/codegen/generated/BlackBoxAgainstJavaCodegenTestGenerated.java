@@ -847,6 +847,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             doTestAgainstJava(fileName);
         }
 
+        @TestMetadata("overrideOnlyGetter.kt")
+        public void testOverrideOnlyGetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/overrideOnlyGetter.kt");
+            doTestAgainstJava(fileName);
+        }
+
         @TestMetadata("plusPlus.kt")
         public void testPlusPlus() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/plusPlus.kt");

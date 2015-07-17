@@ -14082,9 +14082,51 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("JavaOverridesKotlin.kt")
+            public void testJavaOverridesKotlin() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/JavaOverridesKotlin.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KotlinOverridesJava.kt")
+            public void testKotlinOverridesJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/KotlinOverridesJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KotlinOverridesJava2.kt")
+            public void testKotlinOverridesJava2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/KotlinOverridesJava2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KotlinOverridesJava3.kt")
+            public void testKotlinOverridesJava3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/KotlinOverridesJava3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KotlinOverridesJava4.kt")
+            public void testKotlinOverridesJava4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/KotlinOverridesJava4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("KotlinOverridesJava5.kt")
+            public void testKotlinOverridesJava5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/KotlinOverridesJava5.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OnlyPublic.kt")
             public void testOnlyPublic() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/OnlyPublic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OverrideGetterOnly.kt")
+            public void testOverrideGetterOnly() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/OverrideGetterOnly.kt");
                 doTest(fileName);
             }
 
