@@ -8,6 +8,7 @@ public open class JavaClass {
     public open fun getSomething1(/*0*/ p: kotlin.Int): kotlin.Int
     public open fun </*0*/ T> getSomething2(): T!
     public open fun getSomethingVoid(): kotlin.Unit
+    public open fun getter(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
