@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +36,9 @@ import java.util.Set;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
-    private BindingTrace trace;
+    @NotNull private final BindingTrace trace;
 
-    @Inject
-    public void setTrace(BindingTrace trace) {
+    public OverloadResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

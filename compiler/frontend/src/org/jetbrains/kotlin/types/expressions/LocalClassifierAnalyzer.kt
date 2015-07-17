@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -45,14 +46,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 public class LocalClassifierAnalyzer(
-        val globalContext: GlobalContext,
-        val storageManager: StorageManager,
-        val descriptorResolver: DescriptorResolver,
-        val funcionDescriptorResolver: FunctionDescriptorResolver,
-        val typeResolver: TypeResolver,
-        val annotationResolver: AnnotationResolver,
-        val additionalCheckerProvider: AdditionalCheckerProvider,
-        val dynamicTypesSettings: DynamicTypesSettings
+        private val globalContext: GlobalContext,
+        private val storageManager: StorageManager,
+        private val descriptorResolver: DescriptorResolver,
+        private val funcionDescriptorResolver: FunctionDescriptorResolver,
+        private val typeResolver: TypeResolver,
+        private val annotationResolver: AnnotationResolver,
+        private val additionalCheckerProvider: AdditionalCheckerProvider,
+        private val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
             scope: WritableScope?,
@@ -151,8 +152,9 @@ class LocalClassDescriptorHolder(
 class LocalLazyDeclarationResolver(
         globalContext: GlobalContext,
         trace: BindingTrace,
-        val localClassDescriptorManager: LocalClassDescriptorHolder
-) : LazyDeclarationResolver(globalContext, trace) {
+        private val localClassDescriptorManager: LocalClassDescriptorHolder,
+        topLevelDescriptorProvider : TopLevelDescriptorProvider
+) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider) {
 
     override fun getClassDescriptor(classOrObject: JetClassOrObject): ClassDescriptor {
         if (localClassDescriptorManager.isMyClass(classOrObject)) {
@@ -166,7 +168,7 @@ class LocalLazyDeclarationResolver(
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
         lazyDeclarationResolver: LazyDeclarationResolver,
         fileScopeProvider: FileScopeProvider,
-        val localClassDescriptorManager: LocalClassDescriptorHolder
+        private val localClassDescriptorManager: LocalClassDescriptorHolder
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {

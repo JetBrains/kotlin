@@ -32,78 +32,22 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import java.util.ArrayList
-import javax.inject.Inject
 
-public class LazyTopDownAnalyzer {
-    private var trace: BindingTrace? = null
-    private var declarationResolver: DeclarationResolver? = null
-    private var overrideResolver: OverrideResolver? = null
-    private var overloadResolver: OverloadResolver? = null
-    private var varianceChecker: VarianceChecker? = null
-    private var moduleDescriptor: ModuleDescriptor? = null
-    private var lazyDeclarationResolver: LazyDeclarationResolver? = null
-    private var bodyResolver: BodyResolver? = null
-    private var topLevelDescriptorProvider: TopLevelDescriptorProvider? = null
-    private var fileScopeProvider: FileScopeProvider? = null
-    private var declarationScopeProvider: DeclarationScopeProvider? = null
-
-    Inject
-    public fun setLazyDeclarationResolver(lazyDeclarationResolver: LazyDeclarationResolver) {
-        this.lazyDeclarationResolver = lazyDeclarationResolver
-    }
-
-    Inject
-    public fun setTopLevelDescriptorProvider(topLevelDescriptorProvider: TopLevelDescriptorProvider) {
-        this.topLevelDescriptorProvider = topLevelDescriptorProvider
-    }
-
-    Inject
-    public fun setFileScopeProvider(fileScopeProvider: FileScopeProvider) {
-        this.fileScopeProvider = fileScopeProvider
-    }
-
-    Inject
-    public fun setDeclarationScopeProvider(declarationScopeProvider: DeclarationScopeProviderImpl) {
-        this.declarationScopeProvider = declarationScopeProvider
-    }
-
-    Inject
-    public fun setTrace(trace: BindingTrace) {
-        this.trace = trace
-    }
-
-    Inject
-    public fun setDeclarationResolver(declarationResolver: DeclarationResolver) {
-        this.declarationResolver = declarationResolver
-    }
-
-    Inject
-    public fun setOverrideResolver(overrideResolver: OverrideResolver) {
-        this.overrideResolver = overrideResolver
-    }
-
-    Inject
-    public fun setVarianceChecker(varianceChecker: VarianceChecker) {
-        this.varianceChecker = varianceChecker
-    }
-
-    Inject
-    public fun setOverloadResolver(overloadResolver: OverloadResolver) {
-        this.overloadResolver = overloadResolver
-    }
-
-    Inject
-    public fun setModuleDescriptor(moduleDescriptor: ModuleDescriptor) {
-        this.moduleDescriptor = moduleDescriptor
-    }
-
-    Inject
-    public fun setBodyResolver(bodyResolver: BodyResolver) {
-        this.bodyResolver = bodyResolver
-    }
-
+public class LazyTopDownAnalyzer(
+        private val trace: BindingTrace,
+        private val declarationResolver: DeclarationResolver,
+        private val overrideResolver: OverrideResolver,
+        private val overloadResolver: OverloadResolver,
+        private val varianceChecker: VarianceChecker,
+        private val moduleDescriptor: ModuleDescriptor,
+        private val lazyDeclarationResolver: LazyDeclarationResolver,
+        private val bodyResolver: BodyResolver,
+        private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
+        private val fileScopeProvider: FileScopeProvider,
+        private val declarationScopeProvider: DeclarationScopeProvider
+) {
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
-        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider!!)
+        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
 
         val topLevelFqNames = HashMultimap.create<FqName, JetElement>()
 
@@ -127,8 +71,8 @@ public class LazyTopDownAnalyzer {
                     if (file.isScript()) {
                         val script = file.getScript() ?: throw AssertionError("getScript() is null for file: $file")
 
-                        DescriptorResolver.registerFileInPackage(trace!!, file)
-                        c.getScripts().put(script, topLevelDescriptorProvider!!.getScriptDescriptor(script))
+                        DescriptorResolver.registerFileInPackage(trace, file)
+                        c.getScripts().put(script, topLevelDescriptorProvider.getScriptDescriptor(script))
                     }
                     else {
                         val packageDirective = file.getPackageDirective()
@@ -137,7 +81,7 @@ public class LazyTopDownAnalyzer {
                         c.addFile(file)
 
                         packageDirective!!.accept(this)
-                        DescriptorResolver.registerFileInPackage(trace!!, file)
+                        DescriptorResolver.registerFileInPackage(trace, file)
 
                         registerDeclarations(file.getDeclarations())
 
@@ -146,16 +90,16 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitPackageDirective(directive: JetPackageDirective) {
-                    DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor!!, trace!!)
+                    DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 
                 override fun visitImportDirective(importDirective: JetImportDirective) {
-                    val fileScope = fileScopeProvider!!.getFileScope(importDirective.getContainingJetFile()) as LazyFileScope
+                    val fileScope = fileScopeProvider.getFileScope(importDirective.getContainingJetFile())
                     fileScope.forceResolveImport(importDirective)
                 }
 
                 override fun visitClassOrObject(classOrObject: JetClassOrObject) {
-                    val descriptor = lazyDeclarationResolver!!.getClassDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes
+                    val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes
 
                     c.getDeclaredClasses().put(classOrObject, descriptor)
                     registerDeclarations(classOrObject.getDeclarations())
@@ -169,16 +113,16 @@ public class LazyTopDownAnalyzer {
                     for (jetDeclaration in classOrObject.getDeclarations()) {
                         if (jetDeclaration is JetObjectDeclaration && jetDeclaration.isCompanion()) {
                             if (companionObjectAlreadyFound) {
-                                trace!!.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
+                                trace.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
                             }
                             companionObjectAlreadyFound = true
                         }
                         else if (jetDeclaration is JetSecondaryConstructor) {
                             if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
-                                trace!!.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
+                                trace.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
                             else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                                trace!!.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration))
+                                trace.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration))
                             }
                         }
                     }
@@ -192,13 +136,13 @@ public class LazyTopDownAnalyzer {
                 private fun registerPrimaryConstructorParameters(klass: JetClass) {
                     for (jetParameter in klass.getPrimaryConstructorParameters()) {
                         if (jetParameter.hasValOrVar()) {
-                            c.getPrimaryConstructorParameterProperties().put(jetParameter, lazyDeclarationResolver!!.resolveToDescriptor(jetParameter) as PropertyDescriptor)
+                            c.getPrimaryConstructorParameterProperties().put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
                         }
                     }
                 }
 
                 override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
-                    c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver!!.resolveToDescriptor(constructor) as ConstructorDescriptor)
+                    c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver.resolveToDescriptor(constructor) as ConstructorDescriptor)
                 }
 
                 override fun visitEnumEntry(enumEntry: JetEnumEntry) {
@@ -211,11 +155,11 @@ public class LazyTopDownAnalyzer {
 
                 override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
                     val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())!!
-                    c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver!!.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
+                    c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
                 }
 
                 override fun visitTypedef(typedef: JetTypedef) {
-                    trace!!.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
+                    trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
                 }
 
                 override fun visitMultiDeclaration(multiDeclaration: JetMultiDeclaration) {
@@ -238,18 +182,18 @@ public class LazyTopDownAnalyzer {
 
         resolveAllHeadersInClasses(c)
 
-        declarationResolver!!.checkRedeclarationsInPackages(topLevelDescriptorProvider!!, topLevelFqNames)
-        declarationResolver!!.checkRedeclarations(c)
+        declarationResolver.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames)
+        declarationResolver.checkRedeclarations(c)
 
-        overrideResolver!!.check(c)
+        overrideResolver.check(c)
 
-        varianceChecker!!.check(c)
+        varianceChecker.check(c)
 
-        declarationResolver!!.resolveAnnotationsOnFiles(c, fileScopeProvider!!)
+        declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider)
 
-        overloadResolver!!.process(c)
+        overloadResolver.process(c)
 
-        bodyResolver!!.resolveBodies(c)
+        bodyResolver.resolveBodies(c)
 
         return c
     }
@@ -262,7 +206,7 @@ public class LazyTopDownAnalyzer {
 
     private fun createPropertyDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, JetElement>, properties: List<JetProperty>) {
         for (property in properties) {
-            val descriptor = lazyDeclarationResolver!!.resolveToDescriptor(property) as PropertyDescriptor
+            val descriptor = lazyDeclarationResolver.resolveToDescriptor(property) as PropertyDescriptor
 
             c.getProperties().put(property, descriptor)
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
@@ -272,7 +216,7 @@ public class LazyTopDownAnalyzer {
 
     private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<JetNamedFunction>) {
         for (function in functions) {
-            val simpleFunctionDescriptor = lazyDeclarationResolver!!.resolveToDescriptor(function) as SimpleFunctionDescriptor
+            val simpleFunctionDescriptor = lazyDeclarationResolver.resolveToDescriptor(function) as SimpleFunctionDescriptor
             c.getFunctions().put(function, simpleFunctionDescriptor)
             ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.getAnnotations())
             for (parameterDescriptor in simpleFunctionDescriptor.getValueParameters()) {

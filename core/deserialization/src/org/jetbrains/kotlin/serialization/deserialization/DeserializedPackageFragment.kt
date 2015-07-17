@@ -44,6 +44,7 @@ public abstract class DeserializedPackageFragment(
 
     protected var components: DeserializationComponents by Delegates.notNull()
 
+    // component dependency cycle
     Inject
     public fun setDeserializationComponents(components: DeserializationComponents) {
         this.components = components

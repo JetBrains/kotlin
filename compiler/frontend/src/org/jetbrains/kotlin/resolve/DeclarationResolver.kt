@@ -30,31 +30,19 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
 import org.jetbrains.kotlin.utils.*
 
-import javax.inject.Inject
 import java.util.HashSet
 
 import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
 import kotlin.properties.Delegates
 
-public class DeclarationResolver {
-    private var _annotationResolver: AnnotationResolver by Delegates.notNull()
-    private var _trace: BindingTrace by Delegates.notNull()
-
-    Inject
-    public fun setAnnotationResolver(annotationResolver: AnnotationResolver) {
-        this._annotationResolver = annotationResolver
-    }
-
-    Inject
-    public fun setTrace(trace: BindingTrace) {
-        this._trace = trace
-    }
+public class DeclarationResolver(private val annotationResolver: AnnotationResolver,
+                                 private val trace: BindingTrace) {
 
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
         val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScope(it) }
         for ((file, fileScope) in filesToScope) {
-            _annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), _trace)
-            _annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), _trace)
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace)
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace)
         }
     }
 
@@ -95,7 +83,7 @@ public class DeclarationResolver {
             }
         }
         for ((first, second) in redeclarations) {
-            _trace.report(REDECLARATION.on(first, second.asString()))
+            trace.report(REDECLARATION.on(first, second.asString()))
         }
     }
 
@@ -110,7 +98,7 @@ public class DeclarationResolver {
                     val reportAt =
                             if (declarationOrPackageDirective is JetPackageDirective) declarationOrPackageDirective.getNameIdentifier()
                             else declarationOrPackageDirective
-                    _trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()))
+                    trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()))
                 }
             }
         }

@@ -26,16 +26,14 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ControlFlowAnalyzer {
-    private BindingTrace trace;
+    @NotNull private final BindingTrace trace;
 
-    @Inject
-    public void setTrace(BindingTrace trace) {
+    public ControlFlowAnalyzer(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

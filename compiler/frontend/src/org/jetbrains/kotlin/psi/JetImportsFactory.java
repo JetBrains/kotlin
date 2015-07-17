@@ -24,20 +24,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetImportsFactory {
-    private Project project;
+    @NotNull private final Project project;
 
     private final Map<ImportPath, JetImportDirective> importsCache = Maps.newHashMap();
 
-    @Inject
-    public void setProject(@NotNull Project project) {
-        importsCache.clear();
+    public JetImportsFactory(@NotNull Project project) {
         this.project = project;
     }
 

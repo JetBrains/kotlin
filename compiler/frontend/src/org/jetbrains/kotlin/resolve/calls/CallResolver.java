@@ -23,10 +23,10 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
@@ -78,50 +78,54 @@ public class CallResolver {
     private ArgumentTypeResolver argumentTypeResolver;
     private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
-    private TaskPrioritizer taskPrioritizer;
-    private AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull private final TaskPrioritizer taskPrioritizer;
+    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
     
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
+    public CallResolver(
+            @NotNull TaskPrioritizer taskPrioritizer,
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider
+    ) {
+        this.taskPrioritizer = taskPrioritizer;
+        this.additionalCheckerProvider = additionalCheckerProvider;
+    }
+
+    // component dependency cycle
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
     }
 
+    // component dependency cycle
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
     }
 
+    // component dependency cycle
     @Inject
     public void setCandidateResolver(@NotNull CandidateResolver candidateResolver) {
         this.candidateResolver = candidateResolver;
     }
 
+    // component dependency cycle
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
         this.argumentTypeResolver = argumentTypeResolver;
     }
 
+    // component dependency cycle
     @Inject
     public void setGenericCandidateResolver(GenericCandidateResolver genericCandidateResolver) {
         this.genericCandidateResolver = genericCandidateResolver;
     }
 
+    // component dependency cycle
     @Inject
     public void setCallCompleter(@NotNull CallCompleter callCompleter) {
         this.callCompleter = callCompleter;
-    }
-
-    @Inject
-    public void setTaskPrioritizer(@NotNull TaskPrioritizer taskPrioritizer) {
-        this.taskPrioritizer = taskPrioritizer;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @NotNull

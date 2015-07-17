@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -36,17 +35,15 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 // SCRIPT: resolve symbols in scripts
 public class ScriptBodyResolver {
 
-    private ExpressionTypingServices expressionTypingServices;
-    private AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
 
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+    public ScriptBodyResolver(
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+            @NotNull ExpressionTypingServices expressionTypingServices
+    ) {
         this.additionalCheckerProvider = additionalCheckerProvider;
+        this.expressionTypingServices = expressionTypingServices;
     }
 
     public void resolveScriptBodies(@NotNull BodiesResolveContext c) {

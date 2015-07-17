@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -41,18 +40,10 @@ import java.util.Set;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
-    private SymbolUsageValidator symbolUsageValidator;
-    private final ImportDirectiveProcessor importDirectiveProcessor = new ImportDirectiveProcessor(this);
+    @NotNull private final SymbolUsageValidator symbolUsageValidator;
+    @NotNull private final ImportDirectiveProcessor importDirectiveProcessor = new ImportDirectiveProcessor(this);
 
-    /**
-     * @deprecated Instance of this class should be obtained from the Injector
-     */
-    @Deprecated
-    public QualifiedExpressionResolver() {
-    }
-
-    @Inject
-    public void setSymbolUsageValidator(@NotNull SymbolUsageValidator symbolUsageValidator) {
+    public QualifiedExpressionResolver(@NotNull SymbolUsageValidator symbolUsageValidator) {
         this.symbolUsageValidator = symbolUsageValidator;
     }
 

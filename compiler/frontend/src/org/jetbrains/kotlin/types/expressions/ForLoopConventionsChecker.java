@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
-import javax.inject.Inject;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -41,22 +40,17 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
 public class ForLoopConventionsChecker {
 
-    private KotlinBuiltIns builtIns;
-    private SymbolUsageValidator symbolUsageValidator;
-    private FakeCallResolver fakeCallResolver;
+    @NotNull private final KotlinBuiltIns builtIns;
+    @NotNull private final SymbolUsageValidator symbolUsageValidator;
+    @NotNull private final FakeCallResolver fakeCallResolver;
 
-    @Inject
-    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+    public ForLoopConventionsChecker(
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull FakeCallResolver fakeCallResolver,
+            @NotNull SymbolUsageValidator symbolUsageValidator
+    ) {
         this.builtIns = builtIns;
-    }
-
-    @Inject
-    public void setFakeCallResolver(@NotNull FakeCallResolver fakeCallResolver) {
         this.fakeCallResolver = fakeCallResolver;
-    }
-
-    @Inject
-    public void setSymbolUsageValidator(SymbolUsageValidator symbolUsageValidator) {
         this.symbolUsageValidator = symbolUsageValidator;
     }
 

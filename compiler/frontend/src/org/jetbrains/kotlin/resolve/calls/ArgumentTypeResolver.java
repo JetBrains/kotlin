@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,24 +59,18 @@ import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
+    @NotNull private final TypeResolver typeResolver;
+    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final KotlinBuiltIns builtIns;
 
-    private TypeResolver typeResolver;
-    private ExpressionTypingServices expressionTypingServices;
-    private KotlinBuiltIns builtIns;
-
-    @Inject
-    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+    public ArgumentTypeResolver(
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull TypeResolver typeResolver
+    ) {
         this.builtIns = builtIns;
+        this.expressionTypingServices = expressionTypingServices;
+        this.typeResolver = typeResolver;
     }
 
     public static boolean isSubtypeOfForArgumentType(
