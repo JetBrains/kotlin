@@ -39,7 +39,6 @@ import java.io.File
 public class GenerationState jvmOverloads constructor(
         public val project: Project,
         builderFactory: ClassBuilderFactory,
-        public val progress: Progress = Progress.DEAF,
         public val module: ModuleDescriptor,
         bindingContext: BindingContext,
         public val files: List<JetFile>,
@@ -53,7 +52,8 @@ public class GenerationState jvmOverloads constructor(
         public val moduleId: String? = null,
         public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
-        public val outDirectory: File? = null
+        public val outDirectory: File? = null,
+        public val progress: Progress = Progress.DEAF
 ) {
     public interface GenerateClassFilter {
         public fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean

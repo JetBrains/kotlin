@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.PackageCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
@@ -332,7 +331,6 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
             GenerationState state = new GenerationState(
                     project,
                     new KotlinLightClassBuilderFactory(stubStack),
-                    Progress.DEAF,
                     context.getModule(),
                     context.getBindingContext(),
                     Lists.newArrayList(files),

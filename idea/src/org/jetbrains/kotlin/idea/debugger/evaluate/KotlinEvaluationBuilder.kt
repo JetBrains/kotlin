@@ -364,7 +364,6 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 val state = GenerationState(
                         jetFile.project,
                         ClassBuilderFactories.BINARIES,
-                        Progress.DEAF,
                         moduleDescriptor,
                         bindingContext,
                         files,

@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -60,7 +59,7 @@ public class GenerationUtils {
     ) {
         analysisResult.throwIfError();
         GenerationState state = new GenerationState(
-                project, ClassBuilderFactories.TEST, Progress.DEAF,
+                project, ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(),
                 files, false, false, GenerationState.GenerateClassFilter.GENERATE_ALL,
                 false, false, Collections.<FqName>emptySet(), null, DiagnosticSink.DO_NOTHING, null

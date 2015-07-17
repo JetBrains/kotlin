@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
@@ -233,7 +232,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
             };
 
-            state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+            state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST,
                                         resolutionFacade.getModuleDescriptor(), bindingContext,
                                         toProcess, !enableAssertions, !enableAssertions,
                                         generateClassFilter,

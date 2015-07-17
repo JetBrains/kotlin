@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
@@ -60,7 +59,7 @@ public class CodegenTestUtil {
         CompilerConfiguration configuration = environment.getConfiguration();
         BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
         GenerationState state = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+                environment.getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, false),
