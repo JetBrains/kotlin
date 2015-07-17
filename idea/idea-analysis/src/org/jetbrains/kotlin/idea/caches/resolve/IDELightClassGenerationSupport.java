@@ -238,8 +238,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull JetClassOrObject decompiledClassOrObject,
             @NotNull PsiClass rootLightClassForDecompiledFile
     ) {
-        List<Name> relativeClassNameSegments = getClassRelativeName(decompiledClassOrObject).pathSegments();
-        Iterator<Name> iterator = relativeClassNameSegments.iterator();
+        FqName relativeFqName = getClassRelativeName(decompiledClassOrObject);
+        Iterator<Name> iterator = relativeFqName.pathSegments().iterator();
         Name base = iterator.next();
         assert rootLightClassForDecompiledFile.getName().equals(base.asString())
                 : "Light class for file:\n" + decompiledClassOrObject.getContainingJetFile().getVirtualFile().getCanonicalPath()
@@ -248,7 +248,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         while (iterator.hasNext()) {
             Name name = iterator.next();
             PsiClass innerClass = current.findInnerClassByName(name.asString(), false);
-            assert innerClass != null : "Inner class should be found";
+            assert innerClass != null : "Could not find corresponding inner/nested class " + relativeFqName + "in class " + decompiledClassOrObject.getName() + "\n" +
+                                        "File: " + decompiledClassOrObject.getContainingJetFile().getVirtualFile().getName();
             current = innerClass;
         }
         return current;
