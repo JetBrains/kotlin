@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.DescriptorSubstitutor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -167,9 +164,9 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
         var result: SmartList<PropertyDescriptor>? = null
-        val processedTypes: MutableSet<JetType>? = if (receiverTypes.size() > 1) HashSet<JetType>() else null
+        val processedTypes: MutableSet<TypeConstructor>? = if (receiverTypes.size() > 1) HashSet<TypeConstructor>() else null
         for (type in receiverTypes) {
-            result = collectSyntheticPropertiesByName(result, type.makeNotNullable(), name, processedTypes)
+            result = collectSyntheticPropertiesByName(result, type.constructor, name, processedTypes)
         }
         return when {
             result == null -> emptyList()
@@ -178,37 +175,34 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
         }
     }
 
-    private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: JetType, name: Name, processedTypes: MutableSet<JetType>?): SmartList<PropertyDescriptor>? {
+    private fun collectSyntheticPropertiesByName(result: SmartList<PropertyDescriptor>?, type: TypeConstructor, name: Name, processedTypes: MutableSet<TypeConstructor>?): SmartList<PropertyDescriptor>? {
         if (processedTypes != null && !processedTypes.add(type)) return result
 
         @suppress("NAME_SHADOWING")
         var result = result
 
-        val typeConstructor = type.getConstructor()
-        val classifier = typeConstructor.getDeclarationDescriptor()
+        val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
             result = result.add(syntheticPropertyInClass(Pair(classifier, name)))
         }
-
-        typeConstructor.getSupertypes().forEach { result = collectSyntheticPropertiesByName(result, it, name, processedTypes) }
+        else {
+            type.supertypes.forEach { result = collectSyntheticPropertiesByName(result, it.constructor, name, processedTypes) }
+        }
 
         return result
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
-        val processedTypes = HashSet<JetType>()
-        receiverTypes.forEach {
-            result.collectSyntheticProperties(it.makeNotNullable(), processedTypes)
-        }
+        val processedTypes = HashSet<TypeConstructor>()
+        receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }
         return result
     }
 
-    private fun MutableList<PropertyDescriptor>.collectSyntheticProperties(type: JetType, processedTypes: MutableSet<JetType>) {
+    private fun MutableList<PropertyDescriptor>.collectSyntheticProperties(type: TypeConstructor, processedTypes: MutableSet<TypeConstructor>) {
         if (!processedTypes.add(type)) return
 
-        val typeConstructor = type.getConstructor()
-        val classifier = typeConstructor.getDeclarationDescriptor()
+        val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
             for (descriptor in classifier.getUnsubstitutedMemberScope().getDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
@@ -217,8 +211,9 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
                 }
             }
         }
-
-        typeConstructor.getSupertypes().forEach { collectSyntheticProperties(it, processedTypes) }
+        else {
+            type.supertypes.forEach { collectSyntheticProperties(it.constructor, processedTypes) }
+        }
     }
 
     private fun SmartList<PropertyDescriptor>?.add(property: PropertyDescriptor?): SmartList<PropertyDescriptor>? {

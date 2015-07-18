@@ -14153,6 +14153,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/SmartCastImplicitReceiver.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("TypeParameterReceiver.kt")
+            public void testTypeParameterReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/TypeParameterReceiver.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
