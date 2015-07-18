@@ -835,6 +835,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("fromTwoBases.kt")
+        public void testFromTwoBases() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/fromTwoBases.kt");
+            doTestAgainstJava(fileName);
+        }
+
         @TestMetadata("getter.kt")
         public void testGetter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/getter.kt");

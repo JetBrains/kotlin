@@ -14052,6 +14052,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("FromTwoBases.kt")
+            public void testFromTwoBases() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/FromTwoBases.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("GenericClass.kt")
             public void testGenericClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/GenericClass.kt");

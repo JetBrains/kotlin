@@ -110,7 +110,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
                                 .asSequence()
                                 .flatMap { memberScope.getFunctions(it).asSequence() }
                                 .singleOrNull {
-                                    it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
+                                    isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return null
 
         // don't accept "uRL" for "getURL" etc
@@ -144,7 +144,6 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
         val propertyType = getMethod.returnType ?: return false
         val parameter = descriptor.valueParameters.singleOrNull() ?: return false
         if (parameter.type != propertyType) {
-            if (descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) return false // real setter must exactly match getter's type
             if (!propertyType.isSubtypeOf(parameter.type)) return false
             if (descriptor.findOverridden {
                 val baseProperty = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(it, this)
