@@ -323,7 +323,7 @@ public class KotlinIntroduceParameterDialog private constructor(
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName() = commandName
+                    override fun getCommandName(): String = commandName
                 }
         )
     }
