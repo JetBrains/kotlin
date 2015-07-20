@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
@@ -49,6 +50,7 @@ public class ExpressionTypingComponents {
     /*package*/ AnnotationResolver annotationResolver;
     /*package*/ ValueParameterResolver valueParameterResolver;
     /*package*/ MultiDeclarationResolver multiDeclarationResolver;
+    /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -153,5 +155,10 @@ public class ExpressionTypingComponents {
     @NotNull
     public AdditionalCheckerProvider getAdditionalCheckerProvider() {
         return additionalCheckerProvider;
+    }
+
+    @Inject
+    public void setConstantExpressionEvaluator(@NotNull ConstantExpressionEvaluator constantExpressionEvaluator) {
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 }

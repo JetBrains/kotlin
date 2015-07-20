@@ -111,7 +111,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
-        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
+        CompileTimeConstant<?> compileTimeConstant = components.constantExpressionEvaluator.evaluateExpression(
+                expression, context.trace, context.expectedType
+        );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
@@ -776,8 +778,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = returnType;
         }
 
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, contextWithExpectedType.trace,
-                                                                                    contextWithExpectedType.expectedType);
+        CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
+                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
+        );
         if (value != null) {
             return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
@@ -971,7 +974,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             result = TypeInfoFactoryPackage.noTypeInfo(context);
         }
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(
+        CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
@@ -1342,7 +1345,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(visitor);
         }
-        ConstantExpressionEvaluator.evaluate(expression, context.trace, contextWithExpectedType.expectedType);
+        components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, contextWithExpectedType.expectedType);
         return DataFlowUtils.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
                                        expression,
                                        contextWithExpectedType);
