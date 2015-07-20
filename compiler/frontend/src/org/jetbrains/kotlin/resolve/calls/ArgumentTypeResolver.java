@@ -151,7 +151,7 @@ public class ArgumentTypeResolver {
     private static JetFunction getFunctionLiteralArgumentIfAny(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context);
+        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
             return ((JetFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
         }
@@ -164,7 +164,7 @@ public class ArgumentTypeResolver {
     @Nullable
     public static JetExpression getLastElementDeparenthesized(
             @Nullable JetExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull StatementFilter statementFilter
     ) {
         JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
         if (deparenthesizedExpression instanceof JetBlockExpression) {
@@ -173,9 +173,9 @@ public class ArgumentTypeResolver {
             // This case is a temporary hack for 'if' branches.
             // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
-            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(context.statementFilter, blockExpression);
+            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(statementFilter, blockExpression);
             if (lastStatementInABlock != null) {
-                return getLastElementDeparenthesized(lastStatementInABlock, context);
+                return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
             }
         }
         return deparenthesizedExpression;
@@ -303,7 +303,7 @@ public class ArgumentTypeResolver {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
                 JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                updateNumberType(primitiveType, expression, context);
+                updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
                 return primitiveType;
             }
         }
@@ -313,19 +313,20 @@ public class ArgumentTypeResolver {
     public static void updateNumberType(
             @NotNull JetType numberType,
             @Nullable JetExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull StatementFilter statementFilter,
+            @NotNull BindingTrace trace
     ) {
         if (expression == null) return;
-        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+        BindingContextUtils.updateRecordedType(numberType, expression, trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = getLastElementDeparenthesized(expression, context);
+            JetExpression deparenthesized = getLastElementDeparenthesized(expression, statementFilter);
             if (deparenthesized != expression) {
-                updateNumberType(numberType, deparenthesized, context);
+                updateNumberType(numberType, deparenthesized, statementFilter, trace);
             }
             return;
         }
 
-        ConstantExpressionEvaluator.evaluate(expression, context.trace, numberType);
+        ConstantExpressionEvaluator.evaluate(expression, trace, numberType);
     }
 }

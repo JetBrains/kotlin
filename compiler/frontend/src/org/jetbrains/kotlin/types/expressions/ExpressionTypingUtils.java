@@ -253,7 +253,7 @@ public class ExpressionTypingUtils {
             IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
             if (context.contextDependency == INDEPENDENT) {
                 expressionType = integerValueTypeConstant.getType(context.expectedType);
-                ArgumentTypeResolver.updateNumberType(expressionType, expression, context);
+                ArgumentTypeResolver.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
             }
             else {
                 expressionType = integerValueTypeConstant.getUnknownIntegerType();
