@@ -26,7 +26,7 @@ import gnu.trove.THashMap
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.common.collect.ImmutableSet
 
-public trait BinaryOperationIntrinsic {
+public interface BinaryOperationIntrinsic {
 
     fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression
 
@@ -71,7 +71,7 @@ public class BinaryOperationIntrinsics {
     }
 }
 
-trait BinaryOperationIntrinsicFactory {
+interface BinaryOperationIntrinsicFactory {
 
     public fun getSupportTokens(): ImmutableSet<out JetToken>
 

@@ -38,26 +38,24 @@ import java.util.List;
 
 public class LazyDeclarationResolver {
 
-    private final BindingTrace trace;
+    @NotNull private final TopLevelDescriptorProvider topLevelDescriptorProvider;
+    @NotNull private final BindingTrace trace;
 
     protected DeclarationScopeProvider scopeProvider;
-    private TopLevelDescriptorProvider topLevelDescriptorProvider;
 
+    // component dependency cycle
     @Inject
     public void setDeclarationScopeProvider(@NotNull DeclarationScopeProviderImpl scopeProvider) {
         this.scopeProvider = scopeProvider;
     }
 
-    @Inject
-    public void setTopLevelDescriptorProvider(@NotNull TopLevelDescriptorProvider topLevelDescriptorProvider) {
-        this.topLevelDescriptorProvider = topLevelDescriptorProvider;
-    }
-
     @Deprecated
     public LazyDeclarationResolver(
             @NotNull GlobalContext globalContext,
-            @NotNull BindingTrace delegationTrace
+            @NotNull BindingTrace delegationTrace,
+            @NotNull TopLevelDescriptorProvider topLevelDescriptorProvider
     ) {
+        this.topLevelDescriptorProvider = topLevelDescriptorProvider;
         LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager =
                 new LockBasedLazyResolveStorageManager(globalContext.getStorageManager());
 

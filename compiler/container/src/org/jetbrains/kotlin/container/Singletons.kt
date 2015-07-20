@@ -117,6 +117,8 @@ public abstract class SingletonDescriptor(val container: ComponentContainer) : C
 }
 
 public abstract class SingletonComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
+    override fun toString(): String = "Singleton: ${klass.getSimpleName()}"
+
     public override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 }
 

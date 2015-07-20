@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.utils.HashSetUtil;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
@@ -53,14 +52,11 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 
 public class OverrideResolver {
 
-    private BindingTrace trace;
+    @NotNull private final BindingTrace trace;
 
-    @Inject
-    public void setTrace(BindingTrace trace) {
+    public OverrideResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
-
-
 
     public void check(@NotNull TopDownAnalysisContext c) {
         checkVisibility(c);

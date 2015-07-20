@@ -642,13 +642,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        components.localClassifierAnalyzer.processClassOrObject(components.globalContext,
-                                                                null, // don't need to add classifier of object literal to any scope
+        components.localClassifierAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
                                                                 context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                                                 context.scope.getContainingDeclaration(),
-                                                                expression.getObjectDeclaration(),
-                                                                components.additionalCheckerProvider,
-                                                                components.dynamicTypesSettings);
+                                                                expression.getObjectDeclaration());
         temporaryTrace.commit();
         DataFlowInfo resultFlowInfo = context.dataFlowInfo;
         for (JetDelegationSpecifier specifier: expression.getObjectDeclaration().getDelegationSpecifiers()) {

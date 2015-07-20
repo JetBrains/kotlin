@@ -46,7 +46,7 @@ public class ObjectIntrinsics {
     }
 }
 
-public trait ObjectIntrinsic {
+public interface ObjectIntrinsic {
     fun apply(context: TranslationContext): JsExpression
     fun exists(): Boolean = true
 }

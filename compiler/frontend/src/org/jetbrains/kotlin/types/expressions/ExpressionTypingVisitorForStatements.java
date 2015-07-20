@@ -96,10 +96,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         components.localClassifierAnalyzer.processClassOrObject(
-                components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration,
-                components.additionalCheckerProvider,
-                components.dynamicTypesSettings);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
+                scope.getContainingDeclaration(),
+                declaration);
         return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(declaration, context), context);
     }
 
@@ -195,10 +194,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         components.localClassifierAnalyzer.processClassOrObject(
-                components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass,
-                components.additionalCheckerProvider,
-                components.dynamicTypesSettings);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
+                scope.getContainingDeclaration(),
+                klass);
         return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(klass, context), context);
     }
 

@@ -185,7 +185,7 @@ class GenericCandidateResolver(
             argumentExpression: JetExpression?,
             context: ResolutionContext<*>
     ): JetType? {
-        val deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context)
+        val deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context.statementFilter)
         if (deparenthesizedArgument == null || type == null) return type
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)

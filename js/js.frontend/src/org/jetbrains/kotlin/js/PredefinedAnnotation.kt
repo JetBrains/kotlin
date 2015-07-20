@@ -30,6 +30,6 @@ public enum class PredefinedAnnotation(fqName: String) {
 
     companion object {
         // TODO: replace with straight assignment when KT-5761 will be fixed
-        val WITH_CUSTOM_NAME by Delegates.lazy { setOf(LIBRARY, NATIVE) }
+        val WITH_CUSTOM_NAME by lazy { setOf(LIBRARY, NATIVE) }
     }
 }

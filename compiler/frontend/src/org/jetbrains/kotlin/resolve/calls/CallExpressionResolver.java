@@ -69,6 +69,7 @@ public class CallExpressionResolver {
 
     private ExpressionTypingServices expressionTypingServices;
 
+    // component dependency cycle
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;

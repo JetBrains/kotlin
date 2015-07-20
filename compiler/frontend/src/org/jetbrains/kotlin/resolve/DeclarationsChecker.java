@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -45,23 +44,18 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractM
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers;
 
 public class DeclarationsChecker {
-    private BindingTrace trace;
-    private ModifiersChecker modifiersChecker;
-    private DescriptorResolver descriptorResolver;
+    @NotNull private final BindingTrace trace;
+    @NotNull private final ModifiersChecker modifiersChecker;
+    @NotNull private final DescriptorResolver descriptorResolver;
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
+    public DeclarationsChecker(
+            @NotNull DescriptorResolver descriptorResolver,
+            @NotNull ModifiersChecker modifiersChecker,
+            @NotNull BindingTrace trace
+    ) {
         this.descriptorResolver = descriptorResolver;
-    }
-
-    @Inject
-    public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
         this.modifiersChecker = modifiersChecker;
+        this.trace = trace;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {

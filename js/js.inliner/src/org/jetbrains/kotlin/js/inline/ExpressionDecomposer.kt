@@ -17,15 +17,10 @@
 package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.google.dart.compiler.backend.js.ast.metadata.*
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
-
 import kotlin.platform.platformStatic
-import kotlin.properties.Delegates
-
-import com.intellij.util.SmartList
-import org.jetbrains.kotlin.js.translate.context.Namer
 
 /**
  * If inline function consists of multiple statements,
@@ -324,7 +319,7 @@ class ExpressionDecomposer private constructor(
     private inner class Temporary(val value: JsExpression? = null) {
         val name: JsName = scope.declareTemporary()
 
-        val variable: JsVars by Delegates.lazy {
+        val variable: JsVars by lazy {
             newVar(name, value)
         }
 

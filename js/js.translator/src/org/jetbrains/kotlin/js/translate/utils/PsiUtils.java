@@ -119,7 +119,7 @@ public final class PsiUtils {
     @NotNull
     public static List<JetParameter> getPrimaryConstructorParameters(@NotNull JetClassOrObject classDeclaration) {
         if (classDeclaration instanceof JetClass) {
-            return ((JetClass) classDeclaration).getPrimaryConstructorParameters();
+            return classDeclaration.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }

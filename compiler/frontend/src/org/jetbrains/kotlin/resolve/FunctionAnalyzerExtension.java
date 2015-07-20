@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +33,9 @@ public class FunctionAnalyzerExtension {
         void process(@NotNull FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull BindingTrace trace);
     }
 
-    private BindingTrace trace;
+    @NotNull private final BindingTrace trace;
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
+    public FunctionAnalyzerExtension(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 

@@ -226,7 +226,7 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression() ?: return
-        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context) ?: return
+        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = expression.let { context.trace.getType(it) }
         var updatedType: JetType? = recordedType

@@ -51,30 +51,25 @@ import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {
+    @NotNull private final CallResolver callResolver;
+    @NotNull private final StorageManager storageManager;
+    @NotNull private TypeResolver typeResolver;
+    @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
-    private CallResolver callResolver;
-    private StorageManager storageManager;
-    private TypeResolver typeResolver;
-    private ConstantExpressionEvaluator constantExpressionEvaluator;
-
-    @Inject
-    public void setCallResolver(CallResolver callResolver) {
+    public AnnotationResolver(
+            @NotNull CallResolver callResolver,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull StorageManager storageManager
+    ) {
         this.callResolver = callResolver;
-    }
-
-    @Inject
-    public void setStorageManager(StorageManager storageManager) {
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.storageManager = storageManager;
     }
 
+    // component dependency cycle
     @Inject
-    public void setTypeResolver(TypeResolver typeResolver) {
+    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setConstantExpressionEvaluator(ConstantExpressionEvaluator constantExpressionEvaluator) {
-        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     @NotNull

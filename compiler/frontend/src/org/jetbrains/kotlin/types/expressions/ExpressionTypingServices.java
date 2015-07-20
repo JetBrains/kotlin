@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
-import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,19 +49,15 @@ public class ExpressionTypingServices {
     private final ExpressionTypingFacade expressionTypingFacade;
     private final ExpressionTypingComponents expressionTypingComponents;
 
-    private StatementFilter statementFilter;
+    @NotNull private final StatementFilter statementFilter;
 
-    @Inject
-    public void setStatementFilter(@NotNull StatementFilter statementFilter) {
-        this.statementFilter = statementFilter;
-    }
-
-    public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
+    public ExpressionTypingServices(@NotNull ExpressionTypingComponents components, @NotNull StatementFilter statementFilter) {
         this.expressionTypingComponents = components;
+        this.statementFilter = statementFilter;
         this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(components);
     }
 
-    public StatementFilter getStatementFilter() {
+    @NotNull public StatementFilter getStatementFilter() {
         return statementFilter;
     }
 

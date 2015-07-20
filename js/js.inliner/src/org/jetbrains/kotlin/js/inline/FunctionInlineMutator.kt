@@ -74,13 +74,13 @@ private constructor(
         var thisReplacement = getThisReplacement(call)
         if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
 
-        if (thisReplacement!!.needToAlias()) {
+        if (thisReplacement.needToAlias()) {
             val thisName = namingContext.getFreshName(getThisAlias())
             namingContext.newVar(thisName, thisReplacement)
             thisReplacement = thisName.makeRef()
         }
 
-        replaceThisReference(body, thisReplacement!!)
+        replaceThisReference(body, thisReplacement)
     }
 
     private fun removeStatementsAfterTopReturn() {

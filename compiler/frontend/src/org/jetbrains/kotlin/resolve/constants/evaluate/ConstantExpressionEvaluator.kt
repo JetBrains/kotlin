@@ -170,13 +170,7 @@ public class ConstantExpressionEvaluator(
             val constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType)
             if (constant is IntegerValueTypeConstant) {
                 val defaultType = constant.getType(expectedType)
-                val context = SimpleResolutionContext(trace, JetScope.Empty, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY,
-                                                      ContextDependency.INDEPENDENT,
-                                                      CompositeChecker(emptyList()),
-                                                      SymbolUsageValidator.Empty,
-                                                      AdditionalTypeChecker.Composite(emptyList()),
-                                                      StatementFilter.NONE)
-                ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, context)
+                ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, StatementFilter.NONE, trace)
             }
             if (constant != null) {
                 constants.add(constant)

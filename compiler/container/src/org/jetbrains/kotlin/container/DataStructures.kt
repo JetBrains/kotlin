@@ -29,7 +29,7 @@ public fun topologicalSort<T>(items: Iterable<T>, dependencies: (T) -> Iterable<
             return
 
         if (item in itemsInProgress)
-            throw CycleInTopoSortException()
+            return //throw CycleInTopoSortException()
 
         itemsInProgress.add(item)
 

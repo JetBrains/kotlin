@@ -32,6 +32,7 @@ public class SingleModuleClassResolver() : ModuleClassResolver {
         return resolver!!.resolveClass(javaClass)
     }
 
+    // component dependency cycle
     var resolver: JavaDescriptorResolver? = null
         @Inject set
 }

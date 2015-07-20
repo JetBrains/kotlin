@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
-import javax.inject.Inject
-
-public class TraceBasedErrorReporter : ErrorReporter {
+public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorReporter {
 
     companion object {
         private val LOG = Logger.getInstance(javaClass<TraceBasedErrorReporter>())
@@ -43,24 +41,17 @@ public class TraceBasedErrorReporter : ErrorReporter {
             public val classId: ClassId
     )
 
-    private var trace: BindingTrace? = null
-
-    Inject
-    public fun setTrace(trace: BindingTrace) {
-        this.trace = trace
-    }
-
     override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: Int) {
-        trace!!.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, classId))
+        trace.record(ABI_VERSION_ERRORS, filePath, AbiVersionErrorData(actualVersion, classId))
     }
 
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: List<String>) {
         // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
-        trace!!.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses as MutableList)
+        trace.record(INCOMPLETE_HIERARCHY, descriptor, unresolvedSuperClasses as MutableList)
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
-        OverrideResolver.createCannotInferVisibilityReporter(trace!!).invoke(descriptor)
+        OverrideResolver.createCannotInferVisibilityReporter(trace).invoke(descriptor)
     }
 
     override fun reportLoadingError(message: String, exception: Exception?) {

@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -72,41 +71,27 @@ public class DescriptorResolver {
         MODIFIERS_ILLEGAL_ON_PARAMETERS.remove(JetTokens.VARARG_KEYWORD);
     }
 
-    private TypeResolver typeResolver;
-    private AnnotationResolver annotationResolver;
-    private ExpressionTypingServices expressionTypingServices;
-    private DelegatedPropertyResolver delegatedPropertyResolver;
-    private StorageManager storageManager;
-    private KotlinBuiltIns builtIns;
+    @NotNull private final TypeResolver typeResolver;
+    @NotNull private final AnnotationResolver annotationResolver;
+    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final DelegatedPropertyResolver delegatedPropertyResolver;
+    @NotNull private final StorageManager storageManager;
+    @NotNull private final KotlinBuiltIns builtIns;
 
-    @Inject
-    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
+    public DescriptorResolver(
+            @NotNull AnnotationResolver annotationResolver,
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull DelegatedPropertyResolver delegatedPropertyResolver,
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull StorageManager storageManager,
+            @NotNull TypeResolver typeResolver
+    ) {
         this.annotationResolver = annotationResolver;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setDelegatedPropertyResolver(@NotNull DelegatedPropertyResolver delegatedPropertyResolver) {
-        this.delegatedPropertyResolver = delegatedPropertyResolver;
-    }
-
-    @Inject
-    public void setStorageManager(@NotNull StorageManager storageManager) {
-        this.storageManager = storageManager;
-    }
-
-    @Inject
-    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
         this.builtIns = builtIns;
+        this.delegatedPropertyResolver = delegatedPropertyResolver;
+        this.expressionTypingServices = expressionTypingServices;
+        this.storageManager = storageManager;
+        this.typeResolver = typeResolver;
     }
 
     public List<JetType> resolveSupertypes(

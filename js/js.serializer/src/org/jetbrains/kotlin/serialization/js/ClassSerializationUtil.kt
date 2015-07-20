@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
 public object ClassSerializationUtil {
-    public trait Sink {
+    public interface Sink {
         fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class)
     }
 
