@@ -55,10 +55,14 @@ public class ExpressionTypingServices {
 
     @NotNull private final StatementFilter statementFilter;
 
-    public ExpressionTypingServices(@NotNull ExpressionTypingComponents components, @NotNull StatementFilter statementFilter) {
+    public ExpressionTypingServices(
+            @NotNull ExpressionTypingComponents components,
+            @NotNull StatementFilter statementFilter,
+            @NotNull ExpressionTypingVisitorDispatcher.ForDeclarations facade
+    ) {
         this.expressionTypingComponents = components;
         this.statementFilter = statementFilter;
-        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(components);
+        this.expressionTypingFacade = facade;
     }
 
     @NotNull public StatementFilter getStatementFilter() {
@@ -226,7 +230,7 @@ public class ExpressionTypingServices {
             return TypeInfoFactoryPackage.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
+        ExpressionTypingInternals blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
@@ -259,7 +263,7 @@ public class ExpressionTypingServices {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
                 // We take current data flow info if jump there is not possible
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
+            blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
         }
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
