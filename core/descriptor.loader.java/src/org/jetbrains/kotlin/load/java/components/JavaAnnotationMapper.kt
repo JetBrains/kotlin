@@ -37,47 +37,79 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationRetention
 import org.jetbrains.kotlin.storage.StorageManager
+import java.lang.annotation.Retention
 import java.lang.annotation.Target
 import java.util.*
-import kotlin.annotation
 
 public object JavaAnnotationMapper {
 
-    private val targetClassId = ClassId.topLevel(FqName(javaClass<Target>().getCanonicalName()))
+    private val javaTargetFqName = FqName(javaClass<Target>().canonicalName)
+    private val javaRetentionFqName = FqName(javaClass<Retention>().canonicalName)
 
     public fun mapJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
-                targetClassId -> JavaTargetAnnotationDescriptor(annotation, c, c.module.builtIns)
+                ClassId.topLevel(javaTargetFqName) -> JavaTargetAnnotationDescriptor(annotation, c)
+                ClassId.topLevel(javaRetentionFqName) -> JavaRetentionAnnotationDescriptor(annotation, c)
                 else -> null
             }
 
     public val kotlinToJavaNameMap: Map<FqName, FqName> =
-            mapOf(KotlinBuiltIns.FQ_NAMES.target to FqName(javaClass<Target>().getCanonicalName()))
+            mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName,
+                  KotlinBuiltIns.FQ_NAMES.annotation to javaRetentionFqName)
 
-    public val javaToKotlinNameMap: Map<FqName, FqName> = kotlinToJavaNameMap.map { it.value to it.key }.toMap()
+    public val javaToKotlinNameMap: Map<FqName, FqName> =
+            mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
+                  javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation)
 }
 
-class JavaTargetAnnotationDescriptor(
+abstract class AbstractJavaAnnotationDescriptor(
         annotation: JavaAnnotation,
-        c: LazyJavaResolverContext,
-        val builtIns: KotlinBuiltIns
+        private val kotlinAnnotationClassDescriptor: ClassDescriptor
 ): AnnotationDescriptor {
+    override fun getType() = kotlinAnnotationClassDescriptor.defaultType
+
+    protected val valueParameters: List<ValueParameterDescriptor>
+            get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters
+
+    protected val firstArgument: JavaAnnotationArgument? = annotation.arguments.firstOrNull()
+}
+
+class JavaRetentionAnnotationDescriptor(
+        annotation: JavaAnnotation,
+        c: LazyJavaResolverContext
+): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.annotationAnnotation) {
 
     private val valueArguments = c.storageManager.createLazyValue {
-        val firstArgument = annotation.arguments.firstOrNull()
         val targetArgument = when (firstArgument) {
-            is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements(), builtIns)
-            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(listOf(firstArgument), builtIns)
+            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument, c.module.builtIns)
             else -> return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
         }
-        val parameterDescriptor = builtIns.targetAnnotation.constructors.firstOrNull()?.valueParameters?.firstOrNull()
+        val parameterDescriptor = valueParameters.firstOrNull {
+            it.name == JvmAnnotationNames.RETENTION_ANNOTATION_PARAMETER_NAME
+        }
         parameterDescriptor?.let { mapOf(it to targetArgument) } ?: emptyMap()
     }
 
     override fun getAllValueArguments() = valueArguments()
+}
 
-    override fun getType() = builtIns.targetAnnotation.defaultType
+class JavaTargetAnnotationDescriptor(
+        annotation: JavaAnnotation,
+        c: LazyJavaResolverContext
+): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.targetAnnotation) {
+
+    private val valueArguments = c.storageManager.createLazyValue {
+        val targetArgument = when (firstArgument) {
+            is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements(), c.module.builtIns)
+            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(listOf(firstArgument), c.module.builtIns)
+            else -> return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
+        }
+        mapOf(valueParameters.single() to targetArgument)
+    }
+
+    override fun getAllValueArguments() = valueArguments()
 }
 
 public object JavaAnnotationTargetMapper {
@@ -101,11 +133,25 @@ public object JavaAnnotationTargetMapper {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.target
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
                 .flatMap { mapJavaTargetArgumentByName(it.resolve()?.name?.asString()) }
-                .map { builtIns.getAnnotationTargetEnumEntry(Name.identifier(it.name())) }
+                .map { builtIns.getAnnotationTargetEnumEntry(it) }
                 .filterNotNull()
                 .map { EnumValue(it) }
         val parameterDescriptor = DescriptorResolverUtils.getAnnotationParameterByName(JvmAnnotationNames.TARGET_ANNOTATION_MEMBER_NAME,
                                                                                        builtIns.targetAnnotation)
         return ArrayValue(kotlinTargets, parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]"), builtIns)
+    }
+
+    private val retentionNameList = mapOf("RUNTIME" to AnnotationRetention.RUNTIME,
+                                          "CLASS"   to AnnotationRetention.BINARY,
+                                          "SOURCE"  to AnnotationRetention.SOURCE
+    )
+
+    public fun mapJavaRetentionArgument(element: JavaAnnotationArgument, builtIns: KotlinBuiltIns): ConstantValue<*>? {
+        // Map argument: java.lang.annotation.Retention -> kotlin.annotation.annotation
+        return (element as? JavaEnumValueAnnotationArgument)?.let {
+            retentionNameList[it.resolve()?.name?.asString()]?.let {
+                (builtIns.getAnnotationRetentionEnumEntry(it) as? ClassDescriptor)?.let { EnumValue(it) }
+            }
+        }
     }
 }

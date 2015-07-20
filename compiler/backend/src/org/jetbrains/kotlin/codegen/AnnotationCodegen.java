@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
@@ -371,16 +368,13 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
-    private enum KotlinRetention {
-        SOURCE(RetentionPolicy.SOURCE),
-        BINARY(RetentionPolicy.CLASS),
-        RUNTIME(RetentionPolicy.RUNTIME);
+    private static final Map<AnnotationRetention, RetentionPolicy> annotationRetentionMap =
+            new EnumMap<AnnotationRetention, RetentionPolicy>(AnnotationRetention.class);
 
-        final RetentionPolicy mapped;
-
-        KotlinRetention(RetentionPolicy mapped) {
-            this.mapped = mapped;
-        }
+    static {
+        annotationRetentionMap.put(AnnotationRetention.SOURCE, RetentionPolicy.SOURCE);
+        annotationRetentionMap.put(AnnotationRetention.BINARY, RetentionPolicy.CLASS);
+        annotationRetentionMap.put(AnnotationRetention.RUNTIME, RetentionPolicy.RUNTIME);
     }
 
     @Nullable
@@ -421,10 +415,8 @@ public abstract class AnnotationCodegen {
                     JetType classObjectType = getClassObjectType(enumEntry);
                     if (classObjectType != null) {
                         if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                            String entryName = enumEntry.getName().asString();
-                            for (KotlinRetention retention : KotlinRetention.values()) {
-                                if (retention.name().equals(entryName)) return retention.mapped;
-                            }
+                            AnnotationRetention retention = AnnotationRetention.valueOf(enumEntry.getName().asString());
+                            return annotationRetentionMap.get(retention);
                         }
                     }
                 }

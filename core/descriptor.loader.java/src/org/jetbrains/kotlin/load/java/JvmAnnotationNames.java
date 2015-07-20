@@ -39,6 +39,7 @@ public final class JvmAnnotationNames {
     public static final String DATA_FIELD_NAME = "data";
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
+    public static final Name RETENTION_ANNOTATION_PARAMETER_NAME = Name.identifier("retention");
 
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
