@@ -44,16 +44,20 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
     public static boolean equals(@NotNull TypeConstructor me, Object other) {
         if (!(other instanceof TypeConstructor)) return false;
 
+        // performance optimization: getFqName is slow method
+        if (other.hashCode() != me.hashCode()) return false;
+
         ClassifierDescriptor myDescriptor = me.getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
+
+        // descriptor for type is created once per module
+        if (myDescriptor == otherDescriptor) return true;
 
         // All error types have the same descriptor
         if (myDescriptor != null && !hasMeaningfulFqName(myDescriptor) ||
             otherDescriptor != null && !hasMeaningfulFqName(otherDescriptor)) {
             return me == other;
         }
-
-        if (myDescriptor == otherDescriptor) return true;
 
         if (myDescriptor instanceof ClassDescriptor && otherDescriptor instanceof ClassDescriptor) {
             FqNameUnsafe otherFqName = DescriptorUtils.getFqName(otherDescriptor);
