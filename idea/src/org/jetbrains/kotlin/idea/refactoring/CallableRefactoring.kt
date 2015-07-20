@@ -84,7 +84,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
                                         callableFromEditor.getContainingDeclaration().getName().asString(), superString,
                                         "refactor")
         val title = IdeBundle.message("title.warning")!!
-        val icon = Messages.getQuestionIcon()!!
+        val icon = Messages.getQuestionIcon()
         return Messages.showDialog(message, title, options.toTypedArray(), 0, icon)
     }
 

@@ -120,7 +120,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
             packageName == packageNameInfo.oldPackageName,
             packageName == packageNameInfo.newPackageName,
             isImported(descriptor) -> {
-                refExpr.mainReference?.let { createMoveUsageInfoIfPossible(it, declaration, false) }
+                createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
             }
 
             else -> null

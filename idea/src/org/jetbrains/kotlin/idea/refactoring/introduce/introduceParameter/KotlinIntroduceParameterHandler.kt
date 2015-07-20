@@ -202,7 +202,7 @@ fun selectNewParameterContext(
     )
 }
 
-public trait KotlinIntroduceParameterHelper {
+public interface KotlinIntroduceParameterHelper {
     object Default: KotlinIntroduceParameterHelper
 
     fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
@@ -390,7 +390,7 @@ private fun findInternalUsagesOfParametersAndReceiver(
     return usages
 }
 
-trait KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
+interface KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
     object Default: KotlinIntroduceLambdaParameterHelper
 
     fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor

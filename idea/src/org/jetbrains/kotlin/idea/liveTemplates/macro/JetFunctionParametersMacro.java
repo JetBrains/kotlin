@@ -30,14 +30,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JetFunctionParametersMacro extends Macro {
+    @Override
     public String getName() {
         return "functionParameters";
     }
 
+    @Override
     public String getPresentableName() {
         return JetBundle.message("macro.fun.parameters");
     }
 
+    @Override
     public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
         Project project = context.getProject();
         int templateStartOffset = context.getTemplateStartOffset();

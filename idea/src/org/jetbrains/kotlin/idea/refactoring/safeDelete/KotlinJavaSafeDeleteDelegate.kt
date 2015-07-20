@@ -38,7 +38,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     ) {
         if (reference !is JetReference) return
 
-        val element = reference.getElement() as JetElement
+        val element = reference.getElement()
 
         val callExpression = element.getNonStrictParentOfType<JetCallExpression>()
         if (callExpression == null) return

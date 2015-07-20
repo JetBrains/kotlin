@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import java.awt.datatransfer.DataFlavor
 import java.io.Serializable
-import kotlin.properties.Delegates
 
 public class KotlinReferenceTransferableData(
         val data: Array<KotlinReferenceData>
@@ -99,7 +98,7 @@ public class KotlinReferenceData(
     }
 
     companion object {
-        public val dataFlavor: DataFlavor? by Delegates.lazy {
+        public val dataFlavor: DataFlavor? by lazy {
             try {
                 val dataClass = javaClass<KotlinReferenceData>()
                 DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),

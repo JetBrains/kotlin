@@ -21,8 +21,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetTypeReference
@@ -30,8 +28,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.Collections
-import kotlin.properties.Delegates
 
 /**
  * Represents a concrete type or a set of types yet to be inferred from an expression.
@@ -42,7 +41,7 @@ abstract class TypeInfo(val variance: Variance) {
     }
 
     class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
-        override val possibleNamesFromExpression: Array<String> by Delegates.lazy {
+        override val possibleNamesFromExpression: Array<String> by lazy {
             KotlinNameSuggester.suggestNamesByExpressionOnly(expression, { true }).toTypedArray()
         }
 

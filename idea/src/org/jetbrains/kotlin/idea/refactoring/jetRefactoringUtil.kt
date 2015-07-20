@@ -137,7 +137,7 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<J
             is JetBlockExpression, is JetClassBody, is JetFile -> containers.add(element as JetElement)
         }
 
-        element = element!!.getParent()
+        element = element.getParent()
     }
 
     return containers

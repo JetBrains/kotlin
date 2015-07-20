@@ -84,7 +84,7 @@ public abstract class KotlinRuntimeTypeEvaluator(
             val myValue = value.asValue()
             var psiClass = myValue.asmType.getClassDescriptor(project)
             if (psiClass != null) {
-                return psiClass!!.getDefaultType()
+                return psiClass.getDefaultType()
             }
 
             val type = value.type()
@@ -93,14 +93,14 @@ public abstract class KotlinRuntimeTypeEvaluator(
                 if (superclass != null && CommonClassNames.JAVA_LANG_OBJECT != superclass.name()) {
                     psiClass = AsmType.getType(superclass.signature()).getClassDescriptor(project)
                     if (psiClass != null) {
-                        return psiClass!!.getDefaultType()
+                        return psiClass.getDefaultType()
                     }
                 }
 
                 for (interfaceType in type.interfaces()) {
                     psiClass = AsmType.getType(interfaceType.signature()).getClassDescriptor(project)
                     if (psiClass != null) {
-                        return psiClass!!.getDefaultType()
+                        return psiClass.getDefaultType()
                     }
                 }
             }

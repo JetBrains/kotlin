@@ -64,7 +64,7 @@ private enum class RenameType {
     KOTLIN_CLASS,
     KOTLIN_FUNCTION,
     KOTLIN_PROPERTY,
-    KOTLIN_PACKAGE
+    KOTLIN_PACKAGE,
     MARKED_ELEMENT
 }
 

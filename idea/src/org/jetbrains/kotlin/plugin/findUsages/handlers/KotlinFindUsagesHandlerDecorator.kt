@@ -20,7 +20,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.find.findUsages.FindUsagesHandler
 
-public trait KotlinFindUsagesHandlerDecorator {
+public interface KotlinFindUsagesHandlerDecorator {
     companion object {
         public val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")!!
     }

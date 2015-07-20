@@ -25,15 +25,14 @@ import org.jetbrains.kotlin.psi.JetWhenExpression
 public class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is JetWhenExpression) return
-        val whenExpression = element as JetWhenExpression
 
         val doc = editor.getDocument()
 
-        val openBrace = whenExpression.getOpenBrace()
-        val closeBrace = whenExpression.getCloseBrace()
+        val openBrace = element.getOpenBrace()
+        val closeBrace = element.getCloseBrace()
 
-        if (openBrace == null && closeBrace == null && whenExpression.getEntries().isEmpty()) {
-            val openBraceAfter = whenExpression.insertOpenBraceAfter()
+        if (openBrace == null && closeBrace == null && element.getEntries().isEmpty()) {
+            val openBraceAfter = element.insertOpenBraceAfter()
             if (openBraceAfter != null) {
                 doc.insertString(openBraceAfter.range.end, "{}")
             }

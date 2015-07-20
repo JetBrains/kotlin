@@ -35,6 +35,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
         this.message = message;
     }
 
+    @Override
     public String getText() {
         return message;
     }

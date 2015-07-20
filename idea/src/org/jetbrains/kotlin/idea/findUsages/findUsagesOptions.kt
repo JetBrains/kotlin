@@ -42,7 +42,7 @@ public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsage
     }
 }
 
-public trait KotlinCallableFindUsagesOptions {
+public interface KotlinCallableFindUsagesOptions {
     public var searchOverrides: Boolean
 }
 
@@ -112,5 +112,5 @@ fun <T : PsiNamedElement> FindUsagesOptions.toSearchTarget(element: T, restrictB
     else
         UsagesSearchLocation.DEFAULT
 
-    return UsagesSearchTarget(element, searchScope ?: element.getUseScope(), location, restrictByTarget)
+    return UsagesSearchTarget(element, searchScope, location, restrictByTarget)
 }

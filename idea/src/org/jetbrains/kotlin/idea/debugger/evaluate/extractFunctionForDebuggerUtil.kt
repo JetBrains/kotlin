@@ -131,7 +131,7 @@ private fun JetFile.getElementInCopy(e: PsiElement): PsiElement? {
         return null
     }
     var elementAt = this.findElementAt(offset)
-    while (elementAt == null || elementAt!!.getTextRange()?.getEndOffset() != e.getTextRange()?.getEndOffset()) {
+    while (elementAt == null || elementAt.getTextRange()?.getEndOffset() != e.getTextRange()?.getEndOffset()) {
         elementAt = elementAt?.getParent()
     }
     return elementAt
@@ -169,7 +169,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
             break
         }
 
-        parent = parent?.getParent()
+        parent = parent.getParent()
         parentOfParent = parent?.getParent()
     }
 

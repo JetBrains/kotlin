@@ -24,7 +24,6 @@ import com.intellij.openapi.projectRoots.JdkVersionUtil
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
-import kotlin.properties.Delegates
 
 public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
     val process = evaluationContext.getDebugProcess()
@@ -75,7 +74,7 @@ private val LAMBDA_SUPERCLASSES = listOf(
 )
 
 private class ClassBytes(val name: String) {
-    val bytes: ByteArray by Delegates.lazy {
+    val bytes: ByteArray by lazy {
         val inputStream = this.javaClass.getClassLoader().getResourceAsStream(name.replace('.', '/') + ".class")
                           ?: throw EvaluateException("Couldn't find $name class in current class loader")
 

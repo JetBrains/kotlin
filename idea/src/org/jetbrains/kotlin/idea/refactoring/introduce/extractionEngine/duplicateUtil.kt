@@ -81,7 +81,7 @@ public fun processDuplicates(
                 project,
                 JetRefactoringBundle.message(
                         "0.has.detected.1.code.fragments.in.this.file.that.can.be.replaced.with.a.call.to.extracted.declaration",
-                        ApplicationNamesInfo.getInstance()!!.getProductName(),
+                        ApplicationNamesInfo.getInstance().getProductName(),
                         duplicateReplacers.size()
                 ),
                 "Process Duplicates",

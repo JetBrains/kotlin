@@ -42,10 +42,10 @@ import java.util.Map;
 class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
     private JetReferenceExpression classRef;
     private ClassDescriptor classDescriptor;
-    private Editor editor;
+    private final Editor editor;
     private final PsiFile psiFile;
     
-    private static Map<Editor, AnonymousTemplateEditingListener> ourAddedListeners =
+    private static final Map<Editor, AnonymousTemplateEditingListener> ourAddedListeners =
             new HashMap<Editor, AnonymousTemplateEditingListener>();
 
     public AnonymousTemplateEditingListener(PsiFile psiFile, Editor editor) {

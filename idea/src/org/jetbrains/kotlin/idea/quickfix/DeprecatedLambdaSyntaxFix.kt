@@ -64,7 +64,7 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
     }
 }
 
-private trait DeprecatedSyntaxFix {
+private interface DeprecatedSyntaxFix {
     // you must run it under write action
     fun runFix()
 

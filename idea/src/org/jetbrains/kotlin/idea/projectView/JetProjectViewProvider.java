@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class JetProjectViewProvider implements SelectableTreeStructureProvider, DumbAware {
-    private Project myProject;
+    private final Project myProject;
 
     public JetProjectViewProvider(Project project) {
         myProject = project;

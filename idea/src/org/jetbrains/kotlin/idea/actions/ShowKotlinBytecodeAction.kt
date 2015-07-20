@@ -42,7 +42,7 @@ public class ShowKotlinBytecodeAction(): AnAction() {
             val contentFactory = ContentFactory.SERVICE.getInstance()
             contentManager.addContent(contentFactory.createContent(KotlinBytecodeToolWindow(project, toolWindow), "", false))
         }
-        toolWindow?.activate(null)
+        toolWindow.activate(null)
     }
 
     override fun update(e: AnActionEvent) {

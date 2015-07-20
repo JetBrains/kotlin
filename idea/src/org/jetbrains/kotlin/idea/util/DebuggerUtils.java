@@ -175,7 +175,7 @@ public class DebuggerUtils {
             toProcess.add(containingFile);
         }
 
-        return new kotlin.Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
+        return new Pair<BindingContext, List<JetFile>>(context, new ArrayList<JetFile>(toProcess));
     }
 
     @NotNull

@@ -16,39 +16,35 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
-import kotlin.properties.Delegates
-import java.util.HashMap
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import java.util.Collections
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
-import java.util.ArrayList
-import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.JetType
+import java.util.ArrayList
+import java.util.Collections
+import java.util.HashMap
 
 data class ExtractionOptions(
         val inferUnitTypeForUnusedValues: Boolean = true,
@@ -106,7 +102,7 @@ data class ExtractionData(
         }
     }
 
-    val codeFragmentText: String by Delegates.lazy {
+    val codeFragmentText: String by lazy {
         getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
     }
 
@@ -115,12 +111,12 @@ data class ExtractionData(
 
     val commonParent = PsiTreeUtil.findCommonParent(originalElements) as JetElement
 
-    val bindingContext: BindingContext? by Delegates.lazy { commonParent.getContextForContainingDeclarationBody() }
+    val bindingContext: BindingContext? by lazy { commonParent.getContextForContainingDeclarationBody() }
 
-    private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
-    private val synthesizedInvokeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createFunction("fun invoke() {}") }
+    private val itFakeDeclaration by lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
+    private val synthesizedInvokeDeclaration by lazy { JetPsiFactory(originalFile).createFunction("fun invoke() {}") }
 
-    val refOffsetToDeclaration by Delegates.lazy {
+    val refOffsetToDeclaration by lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
             if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
             val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? JetFunctionLiteral

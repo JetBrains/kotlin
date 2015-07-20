@@ -60,17 +60,17 @@ public class SyntheticKotlinBlock(
         loop@
         while (treeNode == null) when (child) {
             is AbstractBlock -> {
-                treeNode = (child as AbstractBlock).getNode()
+                treeNode = child.getNode()
             }
             is SyntheticKotlinBlock -> {
-                child = (child as SyntheticKotlinBlock).getSubBlocks().first()
+                child = child.getSubBlocks().first()
             }
             else -> break@loop
         }
 
         val textRange = getTextRange()
         if (treeNode != null) {
-            val psi = treeNode!!.getPsi()
+            val psi = treeNode.getPsi()
             if (psi != null) {
                 val file = psi.getContainingFile()
                 if (file != null) {

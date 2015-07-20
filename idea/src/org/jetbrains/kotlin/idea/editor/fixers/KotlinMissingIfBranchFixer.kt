@@ -26,11 +26,10 @@ import org.jetbrains.kotlin.psi.JetBlockExpression
 public class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is JetIfExpression) return
-        val ifExpression = element as JetIfExpression
 
         val document = editor.getDocument()
-        val elseBranch = ifExpression.getElse()
-        val elseKeyword = ifExpression.getElseKeyword()
+        val elseBranch = element.getElse()
+        val elseKeyword = element.getElseKeyword()
 
         if (elseKeyword != null) {
             if (elseBranch == null || elseBranch !is JetBlockExpression && elseBranch.startLine(editor.getDocument()) > elseKeyword.startLine(editor.getDocument())) {
@@ -39,15 +38,15 @@ public class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<Ko
             }
         }
 
-        val thenBranch = ifExpression.getThen()
+        val thenBranch = element.getThen()
         if (thenBranch is JetBlockExpression) return
 
-        val rParen = ifExpression.getRightParenthesis()
+        val rParen = element.getRightParenthesis()
         if (rParen == null) return
 
         var transformingOneLiner = false
-        if (thenBranch != null && thenBranch.startLine(editor.getDocument()) == ifExpression.startLine(editor.getDocument())) {
-            if (ifExpression.getCondition() != null) return
+        if (thenBranch != null && thenBranch.startLine(editor.getDocument()) == element.startLine(editor.getDocument())) {
+            if (element.getCondition() != null) return
             transformingOneLiner = true
         }
 

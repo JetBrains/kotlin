@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match
 
 private val SIGNIFICANT_FILTER = { e: PsiElement -> e !is PsiWhiteSpace && e !is PsiComment && e.getTextLength() > 0 }
 
-public trait JetPsiRange {
+public interface JetPsiRange {
     public object Empty : JetPsiRange {
         override val elements: List<PsiElement> get() = Collections.emptyList<PsiElement>()
 

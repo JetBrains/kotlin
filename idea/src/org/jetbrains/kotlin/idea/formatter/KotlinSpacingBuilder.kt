@@ -38,7 +38,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
     private val builders = ArrayList<Builder>()
 
-    private trait Builder {
+    private interface Builder {
         fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing?
     }
 
