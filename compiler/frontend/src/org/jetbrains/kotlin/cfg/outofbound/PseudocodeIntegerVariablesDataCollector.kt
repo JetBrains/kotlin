@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg
+package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.cfg
+import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfo
+import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfoImpl
+import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
+import org.jetbrains.kotlin.cfg.outofbound.IntegerVariableValues
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
