@@ -85,6 +85,12 @@ public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(Hash
 /** Returns a new [LinkedHashSet] with the given elements. */
 public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
 
+/** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
+public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
+
+/** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
+public fun <T : Any> listOfNotNull(vararg values: T?): List<T> = values.filterNotNull()
+
 /**
  * Returns an [IntRange] of the valid indices for this collection.
  */
