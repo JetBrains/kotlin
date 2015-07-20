@@ -113,6 +113,36 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         doTest(fileName);
     }
 
+    @TestMetadata("moveAllSuperInterfaces.kt")
+    public void testMoveAllSuperInterfaces() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveAllSuperInterfaces.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveAllSuperInterfacesWithGenerics.kt")
+    public void testMoveAllSuperInterfacesWithGenerics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveAllSuperInterfacesWithGenerics.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveSuperInterfaces.kt")
+    public void testMoveSuperInterfaces() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfaces.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveSuperInterfacesToEmptySpecifierList.kt")
+    public void testMoveSuperInterfacesToEmptySpecifierList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfacesToEmptySpecifierList.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveSuperInterfaceToItSelf.kt")
+    public void testMoveSuperInterfaceToItSelf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfaceToItSelf.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multipleInitializersInConstructorsEq.kt")
     public void testMultipleInitializersInConstructorsEq() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/multipleInitializersInConstructorsEq.kt");

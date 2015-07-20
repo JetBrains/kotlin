@@ -69,6 +69,7 @@ public class KotlinPullUpDialog(
         override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {
             val superClass = getSuperClass() ?: return false
             if (memberInfo in memberInfoStorage.getDuplicatedMemberInfos(superClass)) return false
+            if (memberInfo.getMember() in memberInfoStorage.getExtending(superClass)) return false
             return true
         }
     }

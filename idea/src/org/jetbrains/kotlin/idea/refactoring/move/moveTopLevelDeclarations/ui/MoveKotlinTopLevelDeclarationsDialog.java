@@ -160,7 +160,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 new Function1<JetNamedDeclaration, KotlinMemberInfo>() {
                     @Override
                     public KotlinMemberInfo invoke(JetNamedDeclaration declaration) {
-                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration);
+                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration, false);
                         memberInfo.setChecked(elementsToMove.contains(declaration));
                         return memberInfo;
                     }

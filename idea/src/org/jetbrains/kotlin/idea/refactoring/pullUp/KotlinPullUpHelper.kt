@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
-import com.intellij.lang.Language
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightField
@@ -26,8 +25,9 @@ import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.util.RefactoringUtil
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetLanguage
@@ -52,9 +52,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.keysToMap
-import java.util.*
+import java.util.ArrayList
+import java.util.Comparator
+import java.util.LinkedHashMap
+import java.util.LinkedHashSet
 
 class KotlinPullUpHelper(
         private val javaData: PullUpData,
@@ -510,6 +511,35 @@ class KotlinPullUpHelper(
 
     override fun move(info: MemberInfoBase<PsiMember>, substitutor: PsiSubstitutor) {
         val member = info.getMember().namedUnwrappedElement as? JetNamedDeclaration ?: return
+
+        if (member is JetClass && info.getOverrides() != null)  {
+            val psiFactory = JetPsiFactory(member)
+
+            val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
+
+            val currentSpecifier =
+                    data.sourceClass.getDelegationSpecifiers()
+                            .filterIsInstance<JetDelegatorToSuperClass>()
+                            .firstOrNull {
+                                val referencedType = data.sourceClassContext[BindingContext.TYPE, it.getTypeReference()]
+                                referencedType?.getConstructor()?.getDeclarationDescriptor() == classDescriptor
+                            } ?: return
+
+            data.sourceClass.removeDelegationSpecifier(currentSpecifier)
+
+            if (!DescriptorUtils.isSubclass(data.targetClassDescriptor, classDescriptor)) {
+                val referencedType = data.sourceClassContext[BindingContext.TYPE, currentSpecifier.getTypeReference()]!!
+                val typeInTargetClass = data.sourceToTargetClassSubstitutor.substitute(referencedType, Variance.INVARIANT)
+                if (typeInTargetClass != null && !typeInTargetClass.isError) {
+                    val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
+                    data.targetClass.addDelegationSpecifier(psiFactory.createDelegatorToSuperClass(renderedType)).addToShorteningWaitSet()
+                }
+            }
+
+
+            return
+        }
+
         val markedElements = markElements(member)
         val memberCopy = member.copy() as JetNamedDeclaration
 

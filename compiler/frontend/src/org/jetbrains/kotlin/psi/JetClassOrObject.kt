@@ -39,6 +39,29 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     public fun getDelegationSpecifierList(): JetDelegationSpecifierList? = getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
     open public fun getDelegationSpecifiers(): List<JetDelegationSpecifier> = getDelegationSpecifierList()?.getDelegationSpecifiers().orEmpty()
 
+    public fun addDelegationSpecifier(delegationSpecifier: JetDelegationSpecifier): JetDelegationSpecifier {
+        getDelegationSpecifierList()?.let {
+            return EditCommaSeparatedListHelper.addItem(it, getDelegationSpecifiers(), delegationSpecifier)
+        }
+
+        val psiFactory = JetPsiFactory(this)
+        val specifierListToAdd = psiFactory.createDelegatorToSuperCall("A()").replace(delegationSpecifier).getParent()
+        val colon = addBefore(psiFactory.createColon(), getBody())
+        return (addAfter(specifierListToAdd, colon) as JetDelegationSpecifierList).getDelegationSpecifiers().first()
+    }
+
+    public fun removeDelegationSpecifier(delegationSpecifier: JetDelegationSpecifier) {
+        val specifierList = getDelegationSpecifierList() ?: return
+        assert(delegationSpecifier.getParent() === specifierList)
+
+        if (specifierList.getDelegationSpecifiers().size() > 1) {
+            EditCommaSeparatedListHelper.removeItem<JetElement>(delegationSpecifier)
+        }
+        else {
+            deleteChildRange(findChildByType<PsiElement>(JetTokens.COLON) ?: specifierList, specifierList)
+        }
+    }
+
     public fun getAnonymousInitializers(): List<JetClassInitializer> = getBody()?.getAnonymousInitializers().orEmpty()
 
     public fun getNameAsDeclaration(): JetObjectDeclarationName? =

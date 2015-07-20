@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.refactoring.classMembers.AbstractMemberInfoStorage
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetConstructor
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverloadUtil
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -69,11 +69,21 @@ public class KotlinMemberInfoStorage(
     }
 
     override fun extractClassMembers(aClass: JetClassOrObject, temp: ArrayList<KotlinMemberInfo>) {
+        val context = aClass.analyze()
         aClass.getDeclarations()
                 .filter { it is JetNamedDeclaration
                           && it !is JetConstructor<*>
                           && !(it is JetObjectDeclaration && it.isCompanion())
                           && myFilter.includeMember(it) }
                 .mapTo(temp) { KotlinMemberInfo(it as JetNamedDeclaration) }
+        aClass.getDelegationSpecifiers()
+                .filterIsInstance<JetDelegatorToSuperClass>()
+                .map {
+                    val type = context[BindingContext.TYPE, it.getTypeReference()]
+                    val classDescriptor = type?.getConstructor()?.getDeclarationDescriptor() as? ClassDescriptor
+                    classDescriptor?.getSource()?.getPsi() as? JetClass
+                }
+                .filter { it != null && it.isInterface() }
+                .mapTo(temp) { KotlinMemberInfo(it!!, true) }
     }
 }
