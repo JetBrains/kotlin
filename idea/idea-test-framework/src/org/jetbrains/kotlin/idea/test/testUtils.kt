@@ -86,10 +86,9 @@ public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithExceptio
 
     // Base tearDown() invalidates builtins. Restore them with brute force.
     for (source in builtInsSources) {
-        val psiFileImpl = source as PsiFileImpl
         val field = javaClass<PsiFileImpl>().getDeclaredField("myInvalidated")!!
         field.setAccessible(true)
-        field.set(psiFileImpl, false)
+        field.set(source, false)
     }
 }
 

@@ -27,10 +27,10 @@ public class FirstChildInParentFilter(val level: Int = 1) : PositionElementFilte
         var parent: PsiElement? = element
         for (i in 1..level) {
             if (parent == null) break
-            parent = parent?.getContext()
+            parent = parent.getContext()
         }
 
-        return (parent != null) && PsiTreeUtil.isAncestor(parent?.getFirstChild(), element, true)
+        return (parent != null) && PsiTreeUtil.isAncestor(parent.getFirstChild(), element, true)
     }
 
 

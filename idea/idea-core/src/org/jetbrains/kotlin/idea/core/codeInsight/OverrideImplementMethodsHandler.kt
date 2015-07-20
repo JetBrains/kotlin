@@ -152,7 +152,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
 
                 val elementsToCompact = ArrayList<JetElement>()
                 for (element in generateOverridingMembers(selectedElements, classOrObject)) {
-                    val added = body!!.addAfter(element, afterAnchor)
+                    val added = body.addAfter(element, afterAnchor)
 
                     if (firstGenerated == null) {
                         firstGenerated = added

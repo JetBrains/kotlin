@@ -16,49 +16,41 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionUtil
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
+import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import kotlin.properties.Delegates
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -210,7 +202,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val descriptorKindFilter: DescriptorKindFilter?
 
-    protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
+    protected val referenceVariants: Collection<DeclarationDescriptor> by lazy {
         if (descriptorKindFilter != null) {
             referenceVariantsHelper.getReferenceVariants(
                     nameExpression!!,
