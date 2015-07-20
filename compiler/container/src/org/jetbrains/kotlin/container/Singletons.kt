@@ -115,14 +115,9 @@ public abstract class SingletonDescriptor(val container: ComponentContainer) : C
         get() = true
 }
 
-public abstract class SingletonComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
-    override fun toString(): String = "Singleton: ${klass.getSimpleName()}"
-
-    public override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
-}
-
-public class SingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonComponentDescriptor(container, klass) {
+public open class SingletonTypeComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
     override fun createInstance(context: ValueResolveContext): Any = createInstanceOf(klass, context)
+    public override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 
     private fun createInstanceOf(klass: Class<*>, context: ValueResolveContext): Any {
         val binding = klass.bindToConstructor(context)
@@ -144,5 +139,13 @@ public class SingletonTypeComponentDescriptor(container: ComponentContainer, kla
     override fun getDependencies(context: ValueResolveContext): Collection<Type> {
         val classInfo = klass.getInfo()
         return classInfo.constructorInfo?.parameters.orEmpty() + classInfo.setterInfos.flatMap { it.parameters }
+    }
+
+    override fun toString(): String = "Singleton: ${klass.getSimpleName()}"
+}
+
+class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
+    override fun toString(): String {
+        return "Implicit: ${klass.getSimpleName()}"
     }
 }
