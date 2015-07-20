@@ -19,7 +19,7 @@ package org.jetbrains.eval4j
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
-public trait Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
+public interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
     public val asmType: Type
     public val valid: Boolean
     override fun getSize(): Int = asmType.getSize()

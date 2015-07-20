@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.codeInspection.SuppressableProblemGroup
 import com.intellij.psi.PsiElement
-import com.intellij.codeInspection.SuppressIntentionAction
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
-import java.util.Collections
+import org.jetbrains.kotlin.idea.quickfix.AnnotationHostKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.quickfix.AnnotationHostKind
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import java.util.Collections
 
 class KotlinSuppressableWarningProblemGroup(
         private val diagnosticFactory: DiagnosticFactory<*>
@@ -55,7 +55,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     var suppressAtStatementAllowed = true
     while (current != null) {
         if (current is JetDeclaration) {
-            val declaration = current as JetDeclaration
+            val declaration = current
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
                 actions.add(KotlinSuppressIntentionAction(declaration, diagnosticFactory, kind))
@@ -64,15 +64,14 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
         }
         else if (current is JetExpression && suppressAtStatementAllowed) {
             // Add suppress action at first statement
-            if ((current as PsiElement).getParent() is JetBlockExpression) {
-                val expression = current as JetExpression
-                actions.add(KotlinSuppressIntentionAction(expression, diagnosticFactory,
+            if (current.getParent() is JetBlockExpression) {
+                actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
                                                           AnnotationHostKind("statement", "", true)))
                 suppressAtStatementAllowed = false
             }
         }
 
-        current = current?.getParent()
+        current = current.getParent()
     }
     return actions
 }

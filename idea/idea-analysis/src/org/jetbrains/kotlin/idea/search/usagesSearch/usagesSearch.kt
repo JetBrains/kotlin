@@ -88,7 +88,7 @@ public data class UsagesSearchTarget<out T : PsiElement>(
         get() = if (restrictByTargetScope) scope and element.effectiveScope else scope
 }
 
-public trait UsagesSearchFilter {
+public interface UsagesSearchFilter {
     object False: UsagesSearchFilter {
         override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = false
     }

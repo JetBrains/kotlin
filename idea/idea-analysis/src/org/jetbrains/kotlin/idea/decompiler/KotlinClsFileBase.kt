@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.FileViewProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -39,7 +37,7 @@ public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvide
         val original = descriptor.getOriginal()
 
         if (original is ValueParameterDescriptor) {
-            val callable = original.getContainingDeclaration() as? CallableDescriptor ?: return null
+            val callable = original.getContainingDeclaration()
             val callableDeclaration = getDeclarationForDescriptor(callable) as? JetCallableDeclaration ?: return null
             return callableDeclaration.getValueParameters()[original.getIndex()]
         }

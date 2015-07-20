@@ -173,7 +173,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
         @Override
         public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder builder) {
-            boolean last = ((FunctionDescriptor) parameter.getContainingDeclaration()).getValueParameters().size() - 1 == parameter.getIndex();
+            boolean last = parameter.getContainingDeclaration().getValueParameters().size() - 1 == parameter.getIndex();
             if (!last) {
                 builder.append(",");
             }

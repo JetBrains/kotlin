@@ -59,7 +59,7 @@ private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest
         elementsToShorten = elements
     }
 
-    return elements!!
+    return elements
 }
 
 public fun JetElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {

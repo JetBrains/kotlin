@@ -16,23 +16,16 @@
 
 package org.jetbrains.eval4j
 
-import org.jetbrains.org.objectweb.asm.tree.analysis.*
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
-import org.jetbrains.org.objectweb.asm.tree.IntInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MultiANewArrayInsnNode
-import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.IincInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
+import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 class UnsupportedByteCodeException(message: String) : RuntimeException(message)
 
-public trait Eval {
+public interface Eval {
     public fun loadClass(classType: Type): Value
     public fun loadString(str: String): Value
     public fun newInstance(classType: Type): Value
@@ -97,7 +90,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     is Double -> double(cst)
                     is String -> eval.loadString(cst)
                     is Type -> {
-                        val sort = (cst as Type).getSort()
+                        val sort = cst.getSort()
                         when (sort) {
                             Type.OBJECT, Type.ARRAY -> eval.loadClass(cst)
                             Type.METHOD -> throw UnsupportedByteCodeException("Mothod handles are not supported")

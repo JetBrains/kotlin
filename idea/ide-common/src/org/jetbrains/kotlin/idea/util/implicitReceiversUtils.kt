@@ -53,7 +53,7 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
         val classDescriptor = current as? ClassDescriptor
         if (classDescriptor != null && !classDescriptor.isInner() && !DescriptorUtils.isLocal(classDescriptor)) break
 
-        current = current!!.getContainingDeclaration()
+        current = current.getContainingDeclaration()
     }
 
     val result = LinkedHashMap<ReceiverParameterDescriptor, ReceiverExpressionFactory?>()

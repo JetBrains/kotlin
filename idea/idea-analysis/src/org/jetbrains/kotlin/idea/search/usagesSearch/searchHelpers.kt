@@ -16,29 +16,29 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
-import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.*
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.*
-import java.util.Collections
-import java.util.ArrayList
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiReference
 import com.intellij.util.Processor
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.references.*
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.references.matchesTarget
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.False
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.True
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.ArrayList
+import java.util.Collections
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 
@@ -130,7 +130,7 @@ public abstract class UsagesSearchHelper<T : PsiNamedElement> {
 
 val isNotImportUsage = !((PsiReference::isImportUsage).searchFilter)
 
-trait ImportAwareSearchHelper {
+interface ImportAwareSearchHelper {
     public val skipImports: Boolean
 
     protected val isFilteredImport: UsagesSearchFilter
@@ -206,7 +206,7 @@ class ClassDeclarationsUsagesSearchHelper(
 
 val isOverrideUsage = (PsiReference::isCallableOverrideUsage).searchFilter
 
-trait OverrideSearchHelper {
+interface OverrideSearchHelper {
     public val selfUsages: Boolean
     public val overrideUsages: Boolean
 
