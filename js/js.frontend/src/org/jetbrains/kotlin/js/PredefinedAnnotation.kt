@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js
 
-import kotlin.properties.Delegates
 import org.jetbrains.kotlin.name.FqName
 
 public enum class PredefinedAnnotation(fqName: String) {
@@ -29,7 +28,6 @@ public enum class PredefinedAnnotation(fqName: String) {
     public val fqName: FqName = FqName(fqName)
 
     companion object {
-        // TODO: replace with straight assignment when KT-5761 will be fixed
-        val WITH_CUSTOM_NAME by lazy { setOf(LIBRARY, NATIVE) }
+        val WITH_CUSTOM_NAME = setOf(LIBRARY, NATIVE)
     }
 }
