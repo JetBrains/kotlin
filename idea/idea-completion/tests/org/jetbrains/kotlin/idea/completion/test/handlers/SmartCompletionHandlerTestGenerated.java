@@ -485,6 +485,18 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("LambdaValue1.kt")
+    public void testLambdaValue1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LambdaValue1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaValue2.kt")
+    public void testLambdaValue2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LambdaValue2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("LastNonOptionalParamIsFunction.kt")
     public void testLastNonOptionalParamIsFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LastNonOptionalParamIsFunction.kt");

@@ -80,6 +80,12 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
                 WithTailInsertHandler.elseTail().handleInsert(context, getDelegate())
             }
         }
+
+        Tail.RBRACE -> object: LookupElementDecorator<LookupElement>(this) {
+            override fun handleInsert(context: InsertionContext) {
+                WithTailInsertHandler.rbraceTail().handleInsert(context, getDelegate())
+            }
+        }
     }
 }
 

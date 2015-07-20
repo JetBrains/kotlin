@@ -52,26 +52,29 @@ class WithTailInsertHandler(val tailText: String,
 
         val moveCaret = context.getEditor().getCaretModel().getOffset() == tailOffset
 
+        //TODO: analyze parenthesis balance to decide whether to replace or not
+        var insert = true
         if (overwriteText) {
             fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
             fun isTextAt(offset: Int, text: String) = offset + text.length() <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length())) == text
 
-            if (spaceBefore && isCharAt(tailOffset, ' ')) {
-                document.deleteString(tailOffset, tailOffset + 1)
-            }
+            var offset = document.charsSequence.skipSpacesAndLineBreaks(tailOffset)
+            if (isTextAt(offset, tailText)) {
+                insert = false
+                offset += tailText.length()
+                tailOffset = offset
 
-            if (isTextAt(tailOffset, tailText)) {
-                document.deleteString(tailOffset, tailOffset + tailText.length())
-
-                if (spaceAfter && isCharAt(tailOffset, ' ')) {
-                    document.deleteString(tailOffset, tailOffset + 1)
+                if (spaceAfter && isCharAt(offset, ' ')) {
+                    document.deleteString(offset, offset + 1)
                 }
             }
         }
 
-
-        var textToInsert = tailText
-        if (spaceBefore) textToInsert = " " + textToInsert
+        var textToInsert = ""
+        if (insert) {
+            textToInsert = tailText
+            if (spaceBefore) textToInsert = " " + textToInsert
+        }
         if (spaceAfter) textToInsert += " "
 
         document.insertString(tailOffset, textToInsert)
@@ -88,6 +91,7 @@ class WithTailInsertHandler(val tailText: String,
     companion object {
         fun commaTail() = WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/)
         fun rparenthTail() = WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false)
+        fun rbraceTail() = WithTailInsertHandler("}", spaceBefore = true, spaceAfter = false)
         fun elseTail() = WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true)
         fun eqTail() = WithTailInsertHandler("=", spaceBefore = true, spaceAfter = true) /*TODO: use code style options*/
         fun spaceTail() = WithTailInsertHandler(" ", spaceBefore = false, spaceAfter = false, overwriteText = false)

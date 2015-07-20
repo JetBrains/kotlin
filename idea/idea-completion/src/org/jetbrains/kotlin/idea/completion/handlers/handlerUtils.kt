@@ -28,3 +28,6 @@ fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
 fun CharSequence.skipSpaces(index: Int): Int
         = (index..length() - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' } ?: this.length()
 
+fun CharSequence.skipSpacesAndLineBreaks(index: Int): Int
+        = (index..length() - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' && c != '\n' && c != '\r' } ?: this.length()
+

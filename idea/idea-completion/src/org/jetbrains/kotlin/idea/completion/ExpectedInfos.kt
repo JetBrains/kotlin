@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -47,12 +47,14 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.HashSet
 
 enum class Tail {
     COMMA,
     RPARENTH,
-    ELSE
+    ELSE,
+    RBRACE
 }
 
 data class ItemOptions(val starPrefix: Boolean) {
@@ -130,6 +132,15 @@ class ExpectedInfos(
     }
 
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
+        val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis()
+        var expectedTypes = callExpression?.let { calculate(it) }?.map { it.type }
+        if (expectedTypes == null || expectedTypes.isEmpty()) {
+            expectedTypes = listOf(TypeUtils.NO_EXPECTED_TYPE)
+        }
+        return expectedTypes.flatMap { calculateForArgument(call, it, argument) ?: emptyList() }.toSet()
+    }
+
+    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo>? {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
@@ -138,8 +149,8 @@ class ExpectedInfos(
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
         val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
 
-        val callElement = call.getCallElement()
-        val calleeExpression = call.getCalleeExpression()
+        val project = call.callElement.getProject()
+        val moduleDescriptor = resolutionFacade.findModuleDescriptor(call.callElement)
 
         // leave only arguments before the current one
         val truncatedCall = object : DelegatingCall(call) {
@@ -149,19 +160,15 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
+        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, call.calleeExpression] ?: return null //TODO: discuss it
 
-        val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
-        val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, expectedType, dataFlowInfo,
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = createContainerForMacros(
-                callElement.getProject(),
-                resolutionFacade.findModuleDescriptor(callElement)
-        ).callResolver
+        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()
@@ -226,7 +233,7 @@ class ExpectedInfos(
                 if (alreadyHasStar) continue
 
                 val parameterType = if (useHeuristicSignatures)
-                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
+                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, project) ?: parameter.getType()
                 else
                     parameter.getType()
 
@@ -315,9 +322,21 @@ class ExpectedInfos(
     }
 
     private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
-        if (expressionWithType != block.getStatements().last()) return null
-        return calculate(block)?.map { ExpectedInfo(it.type, it.expectedName, null) }
+        val block = expressionWithType.parent as? JetBlockExpression ?: return null
+        if (expressionWithType != block.statements.last()) return null
+
+        val functionLiteral = block.parent as? JetFunctionLiteral
+        if (functionLiteral != null) {
+            val literalExpression = functionLiteral.parent as JetFunctionLiteralExpression
+            return calculate(literalExpression)
+                    ?.map { it.type }
+                    ?.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
+                    ?.map { KotlinBuiltIns.getReturnTypeFromFunctionType(it) }
+                    ?.map { ExpectedInfo(it, null, Tail.RBRACE) }
+        }
+        else {
+            return calculate(block)?.map { ExpectedInfo(it.type, it.expectedName, null) }
+        }
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
