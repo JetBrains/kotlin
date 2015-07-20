@@ -409,73 +409,64 @@ public fun <T> Array<T>.copyOfRange(from: Int, to: Int): Array<T> {
 /**
  * Fills original array with the provided value.
  */
-public fun BooleanArray.fill(element: Boolean): BooleanArray {
+public fun BooleanArray.fill(element: Boolean): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ByteArray.fill(element: Byte): ByteArray {
+public fun ByteArray.fill(element: Byte): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun CharArray.fill(element: Char): CharArray {
+public fun CharArray.fill(element: Char): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun DoubleArray.fill(element: Double): DoubleArray {
+public fun DoubleArray.fill(element: Double): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun FloatArray.fill(element: Float): FloatArray {
+public fun FloatArray.fill(element: Float): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun IntArray.fill(element: Int): IntArray {
+public fun IntArray.fill(element: Int): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun LongArray.fill(element: Long): LongArray {
+public fun LongArray.fill(element: Long): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ShortArray.fill(element: Short): ShortArray {
+public fun ShortArray.fill(element: Short): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun <T> Array<T>.fill(element: T): Array<T> {
+public fun <T> Array<T>.fill(element: T): Unit {
     Arrays.fill(this, element)
-    return this
 }
 
 /**

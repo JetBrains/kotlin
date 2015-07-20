@@ -86,11 +86,10 @@ fun specialJVM(): List<GenericFunction> {
     templates add f("fill(element: T)") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
-        returns { "SELF" }
+        returns { "Unit" }
         body {
             """
             Arrays.fill(this, element)
-            return this
             """
         }
     }
