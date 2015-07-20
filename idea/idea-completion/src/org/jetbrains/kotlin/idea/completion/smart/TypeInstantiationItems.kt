@@ -64,7 +64,7 @@ class TypeInstantiationItems(
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
     ) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType.type.makeNotNullable() }
         for ((type, infos) in expectedInfosGrouped) {
             val tail = mergeTails(infos.map { it.tail })
             addTo(items, inheritanceSearchers, type, tail)

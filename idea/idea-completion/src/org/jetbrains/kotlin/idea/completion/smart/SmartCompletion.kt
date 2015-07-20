@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -129,21 +126,21 @@ class SmartCompletion(
         if (inOperatorArgumentResult != null) return inOperatorArgumentResult
 
         val allExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
-        val filteredExpectedInfos = allExpectedInfos.filter { !it.type.isError() }
+        val filteredExpectedInfos = allExpectedInfos.filter { !it.fuzzyType.type.isError() }
         if (filteredExpectedInfos.isEmpty()) return null
 
         // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
         val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in COMPARISON_TOKENS)
-            filteredExpectedInfos.map { ExpectedInfo(it.type.makeNullable(), it.expectedName, it.tail) }
+            filteredExpectedInfos.map { ExpectedInfo(it.fuzzyType.makeNullable(), it.expectedName, it.tail) }
         else
             filteredExpectedInfos
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType> = SmartCastCalculator(
-                bindingContext, moduleDescriptor).calculate(expressionWithType, receiver)
+        val smartCastTypes: (VariableDescriptor) -> Collection<JetType>
+                = SmartCastCalculator(bindingContext, moduleDescriptor).calculate(expressionWithType, receiver)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
-        val functionExpectedInfos = expectedInfos.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
+        val functionExpectedInfos = expectedInfos.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType.type) }
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             if (descriptor in itemsToSkip) return listOf()
@@ -324,7 +321,7 @@ class SmartCompletion(
         fun toLookupElement(descriptor: FunctionDescriptor): LookupElement? {
             val functionType = functionType(descriptor) ?: return null
 
-            val matchedExpectedInfos = functionExpectedInfos.filter { functionType.isSubtypeOf(it.type) }
+            val matchedExpectedInfos = functionExpectedInfos.filter { it.fuzzyType.checkIsSuperTypeOf(functionType) != null }
             if (matchedExpectedInfos.isEmpty()) return null
 
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, bindingContext, true)
@@ -372,7 +369,7 @@ class SmartCompletion(
         if (elementType != JetTokens.AS_KEYWORD && elementType != JetTokens.AS_SAFE) return null
         val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
 
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType.type.makeNotNullable() }
 
         val items = ArrayList<LookupElement>()
         for ((type, infos) in expectedInfosGrouped) {

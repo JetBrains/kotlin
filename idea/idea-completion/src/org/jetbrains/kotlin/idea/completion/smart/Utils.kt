@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.debugger.ui.tree.LocalVariableDescriptor
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.*
@@ -132,13 +133,13 @@ private constructor(
 
 fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
     val sequence = asSequence()
-    val substitutor = sequence.map { it.checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
+    val substitutor = sequence.map { it.checkIsSubtypeOf(expectedInfo.fuzzyType) }.firstOrNull()
     if (substitutor != null) {
         return ExpectedInfoClassification.matches(substitutor)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
-        val substitutor2 = sequence.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
+        val substitutor2 = sequence.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.fuzzyType) }.firstOrNull()
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
         }
@@ -170,7 +171,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         val classification = infoClassifier(info)
         if (classification.substitutor != null) {
             @suppress("UNCHECKED_CAST")
-            val substitutedDescriptor = descriptor?.substitute(classification.substitutor) as TDescriptor
+            val substitutedDescriptor = descriptor.substituteFixed(classification.substitutor)
             val map = if (classification.makeNotNullable) makeNullableInfos else matchedInfos
             map.getOrPut(ItemData(substitutedDescriptor, info.itemOptions)) { ArrayList() }.add(info)
         }
@@ -194,6 +195,13 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
             addLookupElementsForNullable({ itemData.createLookupElement() }, infos)
         }
     }
+}
+
+private fun <T : DeclarationDescriptor?> T.substituteFixed(substitutor: TypeSubstitutor): T {
+    if (this is LocalVariableDescriptor || this is ValueParameterDescriptor || this is TypeParameterDescriptor) { // TODO: it's not implemented for them
+        return this
+    }
+    return this?.substitute(substitutor) as T
 }
 
 private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {

@@ -34,7 +34,7 @@ object LambdaItems {
     }
 
     public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
-        val distinctTypes = functionExpectedInfos.map { it.type }.toSet()
+        val distinctTypes = functionExpectedInfos.map { it.fuzzyType.type }.toSet()
 
         val singleType = if (distinctTypes.size() == 1) distinctTypes.single() else null
         val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() }
@@ -60,7 +60,7 @@ object LambdaItems {
                                            })
                         .suppressAutoInsertion()
                         .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
-                        .addTailAndNameSimilarity(functionExpectedInfos.filter { it.type == functionType })
+                        .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType.type == functionType })
                 collection.add(lookupElement)
             }
         }
