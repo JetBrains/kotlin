@@ -280,6 +280,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
                 { className ->
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
+                    || className.startsWith("org.jetbrains.kotlin.incremental.components.")
                     || className == "org.jetbrains.kotlin.config.Services"
                     || className.startsWith("org.apache.log4j.") // For logging from compiler
                     || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
