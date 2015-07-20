@@ -409,64 +409,64 @@ public fun <T> Array<T>.copyOfRange(from: Int, to: Int): Array<T> {
 /**
  * Fills original array with the provided value.
  */
-public fun BooleanArray.fill(element: Boolean): Unit {
-    Arrays.fill(this, element)
+public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ByteArray.fill(element: Byte): Unit {
-    Arrays.fill(this, element)
+public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun CharArray.fill(element: Char): Unit {
-    Arrays.fill(this, element)
+public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun DoubleArray.fill(element: Double): Unit {
-    Arrays.fill(this, element)
+public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun FloatArray.fill(element: Float): Unit {
-    Arrays.fill(this, element)
+public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun IntArray.fill(element: Int): Unit {
-    Arrays.fill(this, element)
+public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun LongArray.fill(element: Long): Unit {
-    Arrays.fill(this, element)
+public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ShortArray.fill(element: Short): Unit {
-    Arrays.fill(this, element)
+public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun <T> Array<T>.fill(element: T): Unit {
-    Arrays.fill(this, element)
+public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**

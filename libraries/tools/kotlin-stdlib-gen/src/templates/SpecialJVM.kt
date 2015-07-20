@@ -83,13 +83,13 @@ fun specialJVM(): List<GenericFunction> {
         annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
     }
 
-    templates add f("fill(element: T)") {
+    templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size())") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
         returns { "Unit" }
         body {
             """
-            Arrays.fill(this, element)
+            Arrays.fill(this, fromIndex, toIndex, element)
             """
         }
     }
