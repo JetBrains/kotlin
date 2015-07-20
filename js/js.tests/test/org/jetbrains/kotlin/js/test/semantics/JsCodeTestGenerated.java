@@ -47,6 +47,12 @@ public class JsCodeTestGenerated extends AbstractJsCodeTest {
         doTest(fileName);
     }
 
+    @TestMetadata("codeFromVariable.kt")
+    public void testCodeFromVariable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/codeFromVariable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("continue.kt")
     public void testContinue() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/continue.kt");
