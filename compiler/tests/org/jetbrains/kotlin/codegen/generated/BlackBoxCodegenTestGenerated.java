@@ -7717,6 +7717,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exhaustiveBoolean.kt")
+        public void testExhaustiveBoolean() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveBoolean.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/when/is.kt");

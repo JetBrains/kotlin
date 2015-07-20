@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.JetPsiUtil;
 import org.jetbrains.kotlin.psi.JetTypeReference;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.BooleanValue;
@@ -131,9 +132,11 @@ public class CompileTimeConstantUtils {
             @NotNull BindingTrace trace,
             @Nullable Boolean expectedValue
     ) {
-        if (expression == null) return false;
-        CompileTimeConstant<?> compileTimeConstant =
-                ConstantExpressionEvaluator.evaluate(expression, trace, KotlinBuiltIns.getInstance().getBooleanType());
+        JetExpression effectiveExpression = JetPsiUtil.deparenthesize(expression);
+
+        if (effectiveExpression == null) return false;
+
+        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.getConstant(effectiveExpression, trace.getBindingContext());
         if (!(compileTimeConstant instanceof TypedCompileTimeConstant) || compileTimeConstant.getUsesVariableAsConstant()) return false;
 
         ConstantValue constantValue = ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue();
