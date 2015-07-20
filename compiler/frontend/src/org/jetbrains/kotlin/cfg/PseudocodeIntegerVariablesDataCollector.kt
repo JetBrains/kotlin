@@ -30,18 +30,28 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.keysToMapExceptNulls
+import java.lang.Boolean
 import java.util.*
 import kotlin.properties.Delegates
 
 // This file contains functionality similar to org.jetbrains.kotlin.cfg.PseudocodeVariablesData,
 // but collects information about integer variables' values. Semantically it would be better to
 // merge functionality in this two files
+
+public data class ValuesData(
+        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
+        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
+        val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
+        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
+)
 
 public class PseudocodeIntegerVariablesDataCollector(
         val pseudocode: Pseudocode,
@@ -51,11 +61,6 @@ public class PseudocodeIntegerVariablesDataCollector(
 
     public var integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
         private set
-
-    public data class ValuesData(
-            val variablesToValues: MutableMap<VariableDescriptor, IntegerVariableValues>,
-            val fakeVariablesToValues: MutableMap<PseudoValue, IntegerVariableValues>
-    )
 
     public fun recollectIntegerVariablesValues() {
         integerVariablesValues = collectVariableValuesData()
@@ -91,8 +96,66 @@ public class PseudocodeIntegerVariablesDataCollector(
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
                 { previous, current, edgeData -> removeOutOfScopeVariables(previous, current, edgeData) },
-                ValuesData(HashMap(), HashMap())
+                ValuesData(HashMap(), HashMap(), HashMap(), HashMap())
         )
+    }
+
+    private fun removeOutOfScopeVariables(
+            previousInstruction: Instruction,
+            currentInstruction: Instruction,
+            edgeData: ValuesData
+    ): ValuesData {
+        val filteredIntVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intVarsToValues)
+        val filteredIntFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intFakeVarsToValues)
+        val filteredBoolVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolVarsToValues)
+        val filteredBoolFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolFakeVarsToValues)
+        return ValuesData(
+                HashMap(filteredIntVars),
+                HashMap(filteredIntFakeVars),
+                HashMap(filteredBoolVars),
+                HashMap(filteredBoolFakeVars)
+        )
+    }
+
+    // this function is fully copied from PseudocodeVariableDataCollector
+    private fun <D> filterOutVariablesOutOfScope(
+            from: Instruction,
+            to: Instruction,
+            data: Map<VariableDescriptor, D>
+    ): Map<VariableDescriptor, D> {
+        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
+        val toDepth = to.lexicalScope.depth
+        if (toDepth >= from.lexicalScope.depth) return data
+
+        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
+        // Thus they can be filtered out upon leaving the inner scope.
+        return data.filterKeys { variable ->
+            val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
+            // '-1' for variables declared outside this pseudocode
+            val depth = lexicalScope?.depth ?: -1
+            depth <= toDepth
+        }
+    }
+
+    // This method is much like the previous one. The generalization
+    // must be done after merge with PseudocodeVariableDataCollector
+    private fun <D> filterOutFakeVariablesOutOfScope(
+            from: Instruction,
+            to: Instruction,
+            data: Map<PseudoValue, D>
+    ): Map<PseudoValue, D> {
+        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
+        val toDepth = to.lexicalScope.depth
+        if (toDepth >= from.lexicalScope.depth) return data
+
+        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
+        // Thus they can be filtered out upon leaving the inner scope.
+        return data.filterKeys { variable ->
+            val lexicalScope = variable.createdAt?.lexicalScope
+            // '-1' for variables declared outside this pseudocode
+            val depth = lexicalScope?.depth ?: -1
+            depth <= toDepth
+        }
     }
 
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
@@ -102,13 +165,17 @@ public class PseudocodeIntegerVariablesDataCollector(
     }
 
     private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData {
-        val unitedVariables: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
-        val unitedFakeVariables: MutableMap<PseudoValue, IntegerVariableValues> = HashMap()
-        for(data in incomingEdgesData) {
-            mergeCorrespondingVariables(unitedVariables, data.variablesToValues)
-            mergeCorrespondingVariables(unitedFakeVariables, data.fakeVariablesToValues)
+        val unitedIntVariables: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
+        val unitedIntFakeVariables: MutableMap<PseudoValue, IntegerVariableValues> = HashMap()
+        val unitedBoolVariables: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap()
+        val unitedBoolFakeVariables: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
+        for (data in incomingEdgesData) {
+            mergeCorrespondingVariables(unitedIntVariables, data.intVarsToValues)
+            unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
+            unitedBoolVariables.putAll(data.boolVarsToValues) // TODO: this is stub, makes no sense
+            unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
         }
-        return ValuesData(unitedVariables, unitedFakeVariables)
+        return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables)
     }
 
     private fun mergeCorrespondingVariables<K>(
@@ -132,176 +199,164 @@ public class PseudocodeIntegerVariablesDataCollector(
     }
 
     private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData {
-        val updatedData = ValuesData(HashMap(mergedEdgesData.variablesToValues), HashMap(mergedEdgesData.fakeVariablesToValues))
+        val updatedData = ValuesData(
+                HashMap(mergedEdgesData.intVarsToValues),
+                HashMap(mergedEdgesData.intFakeVarsToValues),
+                HashMap(mergedEdgesData.boolVarsToValues),
+                HashMap(mergedEdgesData.boolFakeVarsToValues)
+        )
         when(instruction) {
-            is VariableDeclarationInstruction -> {
-                // process variable declaration
-                val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                               ?: throw Exception("Variable descriptor is null")
-                // todo: there should be easier way to define type, for example JetType constants (or consider JetTypeMapper)
-                val typeName: String = variableDescriptor.getType().getConstructor().getDeclarationDescriptor()?.getName()?.asString()
-                               ?: throw Exception("Variable declaration type name is null")
-                if(typeName == "Int") {
-                    updatedData.variablesToValues.put(variableDescriptor, IntegerVariableValues.empty())
-                }
-            }
+            is VariableDeclarationInstruction -> processVariableDeclaration(instruction, updatedData)
             is ReadValueInstruction -> {
                 val element = instruction.outputValue.element
                 when (element) {
-                    is JetConstantExpression -> {
-                        // process literal occurrence (all integer literals are stored to fake variables by read instruction)
-                        val node = element.getNode()
-                        val nodeType = node.getElementType() as? JetNodeType
-                                       ?: throw Exception("Node's elementType has wrong type for JetConstantExpression")
-                        if (nodeType == JetNodeTypes.INTEGER_CONSTANT) {
-                            val literalValue = Integer.parseInt(node.getText())
-                            val fakeVariable = instruction.outputValue
-                            updatedData.fakeVariablesToValues.put(fakeVariable, IntegerVariableValues.singleton(literalValue))
-                        }
-                    }
-                    is JetNameReferenceExpression -> {
-                        // process variable reference
-                        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                                                 ?: throw Exception("Variable descriptor is null")
-                        val referencedVariableValues = updatedData.variablesToValues.getOrElse(variableDescriptor, { null })
-                        if(referencedVariableValues != null) {
-                            // we have the information about value, so it is definitely of integer type
-                            // (assuming there are no undeclared variables)
-                            val newFakeVariable = instruction.outputValue
-                            updatedData.fakeVariablesToValues.put(newFakeVariable, referencedVariableValues)
-                        }
-                    }
+                    is JetConstantExpression -> processLiteral(element, instruction, updatedData)
+                    is JetNameReferenceExpression -> processVariableReference(instruction, updatedData)
                 }
             }
-            is WriteValueInstruction -> {
-                // process assignment to variable
-                val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                                         ?: throw Exception("Variable descriptor is null")
-                val fakeVariable = instruction.rValue
-                val valuesToAssign = updatedData.fakeVariablesToValues.get(fakeVariable)
-                if(valuesToAssign != null) {
-                    updatedData.variablesToValues.put(variableDescriptor, valuesToAssign)
-                } else {
-                    updatedData.variablesToValues.put(variableDescriptor, IntegerVariableValues.cantBeDefined())
-                }
-            }
+            is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
                 if(instruction.element is JetBinaryExpression) {
-                    processBinaryArithmeticOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                    processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
-                when(instruction.kind) {
-                    MagicKind.LOOP_RANGE_ITERATION -> {
-                        // process range operator result storing in fake variable
-                        assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
-                        val rangeValuesFakeVariable = instruction.inputValues.get(0)
-                        val rangeValues = updatedData.fakeVariablesToValues.get(rangeValuesFakeVariable)
-                                          ?: throw Exception("Range values are not computed")
-                        val target = instruction.outputValue
-                        updatedData.fakeVariablesToValues.put(target, rangeValues)
-                    }
+                if(instruction.kind == MagicKind.LOOP_RANGE_ITERATION) {
+                    // process range operator result storing in fake variable
+                    assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
+                    val rangeValuesFakeVariable = instruction.inputValues.get(0)
+                    val rangeValues = updatedData.intFakeVarsToValues.get(rangeValuesFakeVariable)
+                                      ?: throw Exception("Range values are not computed")
+                    val target = instruction.outputValue
+                    updatedData.intFakeVarsToValues.put(target, rangeValues)
                 }
             }
         }
         return updatedData
     }
 
-    private fun processBinaryArithmeticOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
-        assert(instruction.inputValues.size().equals(2),
-               "Binary expression instruction is supposed to have two input values")
-        val leftOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(0))
-        val rightOperandValues = updatedData.fakeVariablesToValues.get(instruction.inputValues.get(1))
-        if (leftOperandValues == null || rightOperandValues == null) {
-            return
+    private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData) {
+        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                                 ?: throw Exception("Variable descriptor is null")
+        val typeName = tryGetVariableType(variableDescriptor)
+                       ?: throw Exception("Variable type name is null")
+        when(typeName) {
+            "Int" -> updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.empty())
+            "Boolean" -> updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
         }
-        val resultVariable = instruction.outputValue ?: return
-        val putResultValue: (IntegerVariableValues) -> Unit = { value -> updatedData.fakeVariablesToValues.put(resultVariable, value) }
-        if(!leftOperandValues.areDefined || !rightOperandValues.areDefined) {
-            putResultValue(IntegerVariableValues.cantBeDefined())
-        } else {
-            when (token) {
-                JetTokens.PLUS -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l + r })
-                JetTokens.MINUS -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l - r })
-                JetTokens.MUL -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r -> l * r })
-                JetTokens.DIV -> putResultValue(applyEachToEach(leftOperandValues, rightOperandValues) { l, r ->
-                    if (rightOperandValues.equals(0)) {
-                        throw Exception("OutOfBoundChecker: Division by zero detected")
-                    } else {
-                        l / r
-                    }
-                })
-                JetTokens.RANGE -> {
-                    // we can safely use casts below because of areDefined checks above
-                    val minOfLeft = leftOperandValues.getValues().min() as Int
-                    val maxOfRight = rightOperandValues.getValues().max() as Int
-                    val rangeValues = IntegerVariableValues.empty()
-                    for(value in minOfLeft..maxOfRight) {
-                        rangeValues.add(value)
-                    }
-                    putResultValue(rangeValues)
+    }
+
+    private fun processLiteral(element: JetConstantExpression, instruction: ReadValueInstruction, updatedData: ValuesData) {
+        // process literal occurrence (all literals are stored to fake variables by read instruction)
+        val node = element.getNode()
+        val nodeType = node.getElementType() as? JetNodeType
+                       ?: throw Exception("Node's elementType has wrong type for JetConstantExpression")
+        val fakeVariable = instruction.outputValue
+        val valuesAsText = node.getText()
+        when (nodeType) {
+            JetNodeTypes.INTEGER_CONSTANT -> {
+                val literalValue = Integer.parseInt(valuesAsText)
+                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues.singleton(literalValue))
+            }
+            JetNodeTypes.BOOLEAN_CONSTANT -> {
+                val booleanValue = Boolean.parseBoolean(valuesAsText)
+                updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.trueOrFalse(booleanValue))
+            }
+        }
+    }
+
+    private fun processVariableReference(instruction: ReadValueInstruction, updatedData: ValuesData) {
+        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                                 ?: throw Exception("Variable descriptor is null")
+        val newFakeVariable = instruction.outputValue
+        val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
+                variableDescriptor, { updatedData.boolVarsToValues.get(variableDescriptor) })
+        when (referencedVariableValue) {
+            is IntegerVariableValues ->
+                // we have the information about value, so it is definitely of integer type
+                // (assuming there are no undeclared variables)
+                updatedData.intFakeVarsToValues.put(newFakeVariable, referencedVariableValue)
+            is BooleanVariableValue ->
+                // we have the information about value, so it is definitely of boolean type
+                // (assuming there are no undeclared variables)
+                updatedData.boolFakeVarsToValues.put(newFakeVariable, referencedVariableValue)
+        }
+    }
+
+    private fun processAssignmentToVariable(instruction: WriteValueInstruction, updatedData: ValuesData) {
+        // process assignment to variable
+        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                                 ?: throw Exception("Variable descriptor is null")
+        val fakeVariable = instruction.rValue
+        val targetTypeName = tryGetTargetType(instruction.target)
+                             ?: throw Exception("Cannot define target type in assignment")
+        when (targetTypeName) {
+            "Int" -> {
+                val valuesToAssign = updatedData.intFakeVarsToValues.get(fakeVariable)
+                if (valuesToAssign != null) {
+                    updatedData.intVarsToValues.put(variableDescriptor, valuesToAssign)
+                } else {
+                    updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.cantBeDefined())
+                }
+            }
+            "Boolean" -> {
+                val valueToAssign = updatedData.boolFakeVarsToValues.get(fakeVariable)
+                if (valueToAssign != null) {
+                    updatedData.boolVarsToValues.put(variableDescriptor, valueToAssign)
+                } else {
+                    updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
                 }
             }
         }
     }
 
-    private fun applyEachToEach(left: IntegerVariableValues, right: IntegerVariableValues, operation: (Int, Int) -> Int)
-            : IntegerVariableValues {
-        val resultSet = HashSet<Int>()
-        for(l in left.getValues()) {
-            for(r in right.getValues()) {
-                resultSet.add(operation(l, r))
+    private fun processBinaryOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
+        assert(instruction.inputValues.size().equals(2),
+               "Binary expression instruction is supposed to have two input values")
+        val leftOperandVariable = instruction.inputValues.get(0)
+        val rightOperandVariable = instruction.inputValues.get(1)
+        val resultVariable = instruction.outputValue
+                             ?: return
+        fun performOperation<Op, R>(
+                operandsContainer: MutableMap<PseudoValue, Op>,
+                resultContainer: MutableMap<PseudoValue, R>,
+                operation: (Op, Op) -> R
+        ) {
+            val leftOperandValues = operandsContainer[leftOperandVariable]
+            val rightOperandValues = operandsContainer[rightOperandVariable]
+            if (leftOperandValues != null && rightOperandValues != null) {
+                resultContainer.put(resultVariable, operation(leftOperandValues, rightOperandValues))
             }
         }
-        return IntegerVariableValues.ofCollection(resultSet)
-    }
-
-    private fun removeOutOfScopeVariables(
-            previousInstruction: Instruction,
-            currentInstruction: Instruction,
-            edgeData: ValuesData
-    ): ValuesData {
-        val filteredVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.variablesToValues)
-        val filteredFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.fakeVariablesToValues)
-        return ValuesData(HashMap(filteredVars), HashMap(filteredFakeVars))
-    }
-
-    // this function is fully copied from PseudocodeVariableDataCollector
-    private fun <D> filterOutVariablesOutOfScope(
-            from: Instruction,
-            to: Instruction,
-            data: Map<VariableDescriptor, D>
-    ): Map<VariableDescriptor, D> {
-        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
-        val toDepth = to.lexicalScope.depth
-        if (toDepth >= from.lexicalScope.depth) return data
-
-        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
-        // Thus they can be filtered out upon leaving the inner scope.
-        return data.filterKeys { variable ->
-            val lexicalScope = lexicalScopeVariableInfo.declaredIn[variable]
-            // '-1' for variables declared outside this pseudocode
-            val depth = lexicalScope?.depth ?: -1
-            depth <= toDepth
+        val leftOperandDescriptor =
+                leftOperandVariable.createdAt?.let { PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) }
+        when (token) {
+            JetTokens.PLUS ->
+                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x + y }
+            JetTokens.MINUS ->
+                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x - y }
+            JetTokens.MUL ->
+                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x * y }
+            JetTokens.DIV ->
+                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x / y }
+            JetTokens.RANGE ->
+                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x .. y }
+            JetTokens.LT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
+                x.less(y, leftOperandDescriptor, updatedData)
+            }
         }
     }
 
-    private fun <D> filterOutFakeVariablesOutOfScope(
-            from: Instruction,
-            to: Instruction,
-            data: Map<PseudoValue, D>
-    ): Map<PseudoValue, D> {
-        // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
-        val toDepth = to.lexicalScope.depth
-        if (toDepth >= from.lexicalScope.depth) return data
+    private fun tryGetVariableType(descriptor: CallableDescriptor): String? =
+        // todo: there should be easier way to define type, for example JetType constants (or consider JetTypeMapper)
+        descriptor.getReturnType()?.getConstructor()?.getDeclarationDescriptor()?.getName()?.asString()
 
-        // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
-        // Thus they can be filtered out upon leaving the inner scope.
-        return data.filterKeys { variable ->
-            val lexicalScope = variable.createdAt?.lexicalScope
-            // '-1' for variables declared outside this pseudocode
-            val depth = lexicalScope?.depth ?: -1
-            depth <= toDepth
+
+    private fun tryGetTargetType(target: AccessTarget): String? {
+        return when(target) {
+            is AccessTarget.Declaration -> tryGetVariableType(target.descriptor)
+            is AccessTarget.Call -> tryGetVariableType(target.resolvedCall.getResultingDescriptor())
+            else -> null
         }
     }
 }
