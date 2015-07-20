@@ -26,9 +26,6 @@ import kotlin.platform.platformStatic
 import java.util.*
 
 public abstract class ImportInsertHelper {
-
-    public abstract fun optimizeImportsOnTheFly(file: JetFile): Boolean
-
     /*TODO: implementation is not quite correct*/
     public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: JetFile): Boolean
 

@@ -55,16 +55,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     private val codeStyleSettings: JetCodeStyleSettings
         get() = JetCodeStyleSettings.getInstance(project)
 
-    override fun optimizeImportsOnTheFly(file: JetFile): Boolean {
-        if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            OptimizeImportsProcessor(project, file).runWithoutProgress()
-            return true
-        }
-        else {
-            return false
-        }
-    }
-
     override val importSortComparator: Comparator<ImportPath>
         get() = ImportPathComparator
 

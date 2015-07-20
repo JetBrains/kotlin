@@ -141,7 +141,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         //TODO: that's not correct since we have options!
         val elementsToUse = dropNestedElements(elements)
 
-        val importInserter = ImportInserter(file)
+        val helper = ImportInsertHelper.getInstance(file.getProject())
 
         val failedToImportDescriptors = LinkedHashSet<DeclarationDescriptor>()
 
@@ -161,11 +161,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             for (descriptor in descriptorsToImport) {
                 assert(descriptor !in failedToImportDescriptors)
 
-                if (importInserter.optimizeImports()) {
-                    anyChange = true
-                }
-
-                val result = importInserter.addImport(descriptor)
+                val result = helper.importDescriptor(file, descriptor)
                 if (result != ImportInsertHelper.ImportDescriptorResult.ALREADY_IMPORTED) {
                     anyChange = true
                 }
@@ -455,22 +451,6 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
 
         override fun shortenElement(element: JetDotQualifiedExpression): JetElement {
             return element.replace(element.getReceiverExpression()) as JetElement
-        }
-    }
-
-    // this class is needed to optimize imports only when we actually insert any import (optimization)
-    private class ImportInserter(val file: JetFile) {
-        private var optimizeImports = true
-        private val helper = ImportInsertHelper.getInstance(file.getProject())
-
-        fun addImport(target: DeclarationDescriptor): ImportInsertHelper.ImportDescriptorResult {
-            return helper.importDescriptor(file, target)
-        }
-
-        fun optimizeImports(): Boolean {
-            if (!optimizeImports) return false
-            optimizeImports = false
-            return helper.optimizeImportsOnTheFly(file)
         }
     }
 }
