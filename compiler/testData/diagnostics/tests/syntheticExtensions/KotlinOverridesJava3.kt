@@ -9,7 +9,7 @@ fun foo(k: KotlinClass) {
     if (<!SENSELESS_COMPARISON!>k.something == null<!>) return
 
     k.setSomething("")
-    <!VAL_REASSIGNMENT!>k.something<!> = ""
+    k.something = ""
 }
 
 fun useString(<!UNUSED_PARAMETER!>i<!>: String) {}

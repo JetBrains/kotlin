@@ -62,9 +62,9 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
             SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
         }
         else {
-            val propertyDescriptor = super.getTargetDescriptors(expression.analyze(BodyResolveMode.PARTIAL))
-                    .singleOrNull { it.original is SyntheticJavaPropertyDescriptor } ?: return expression
-            SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName, withIsPrefix = propertyDescriptor.getName().asString().startsWith("is"))
+            //TODO: it's not correct
+            //TODO: setIsY -> setIsIsY bug
+            SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName, withIsPrefix = expression.getReferencedNameAsName().asString().startsWith("is"))
         }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 

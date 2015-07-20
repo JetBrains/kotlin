@@ -104,14 +104,11 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
 
         val memberScope = ownerClass.unsubstitutedMemberScope
         val getMethod = possibleGetMethodNames(name)
-                                .asSequence()
                                 .flatMap { memberScope.getFunctions(it).asSequence() }
                                 .singleOrNull {
                                     isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return null
 
-        // don't accept "uRL" for "getURL" etc
-        if (SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(getMethod.name) != name) return null
 
         val setMethod = memberScope.getFunctions(setMethodName(getMethod.name))
                 .singleOrNull { isGoodSetMethod(it, getMethod) }
@@ -140,7 +137,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, getMethod: FunctionDescriptor): Boolean {
         val propertyType = getMethod.returnType ?: return false
         val parameter = descriptor.valueParameters.singleOrNull() ?: return false
-        if (parameter.type != propertyType) {
+        if (!TypeUtils.equalTypes(parameter.type, propertyType)) {
             if (!propertyType.isSubtypeOf(parameter.type)) return false
             if (descriptor.findOverridden {
                 val baseProperty = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(it, this)
@@ -225,7 +222,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
 
     //TODO: reuse code with generation?
 
-    private fun possibleGetMethodNames(propertyName: Name): Collection<Name> {
+    private fun possibleGetMethodNames(propertyName: Name): Sequence<Name> {
         val result = ArrayList<Name>(3)
         val identifier = propertyName.identifier
 
@@ -239,7 +236,9 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
         if (capitalize2 != capitalize1) {
             result.add(Name.identifier("get" + capitalize2))
         }
-        return result
+
+        return result.asSequence()
+                .filter { SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(it) == propertyName } // don't accept "uRL" for "getURL" etc
     }
 
     private fun setMethodName(getMethodName: Name): Name {
