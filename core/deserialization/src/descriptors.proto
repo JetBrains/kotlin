@@ -138,6 +138,13 @@ message Type {
   // to represent flexible types is too many wasted bytes.
   optional Type flexible_upper_bound = 5;
 
+  // Only one of the following values should be present. Consider using `oneof` instead when we upgrade to protobuf 2.6.0+
+
+  optional int32 constructor_class_name = 6; // fqName id
+
+  optional int32 constructor_type_parameter = 7; // type parameter id
+
+
   extensions 100 to 199;
 }
 

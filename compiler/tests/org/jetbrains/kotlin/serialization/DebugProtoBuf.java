@@ -5477,6 +5477,42 @@ public final class DebugProtoBuf {
      * </pre>
      */
     org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getFlexibleUpperBoundOrBuilder();
+
+    // optional int32 constructor_class_name = 6;
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    boolean hasConstructorClassName();
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    int getConstructorClassName();
+
+    // optional int32 constructor_type_parameter = 7;
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    boolean hasConstructorTypeParameter();
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    int getConstructorTypeParameter();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -5571,6 +5607,16 @@ public final class DebugProtoBuf {
                 flexibleUpperBound_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000008;
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000010;
+              constructorClassName_ = input.readInt32();
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000020;
+              constructorTypeParameter_ = input.readInt32();
               break;
             }
           }
@@ -7135,12 +7181,62 @@ public final class DebugProtoBuf {
       return flexibleUpperBound_;
     }
 
+    // optional int32 constructor_class_name = 6;
+    public static final int CONSTRUCTOR_CLASS_NAME_FIELD_NUMBER = 6;
+    private int constructorClassName_;
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    public boolean hasConstructorClassName() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    public int getConstructorClassName() {
+      return constructorClassName_;
+    }
+
+    // optional int32 constructor_type_parameter = 7;
+    public static final int CONSTRUCTOR_TYPE_PARAMETER_FIELD_NUMBER = 7;
+    private int constructorTypeParameter_;
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    public boolean hasConstructorTypeParameter() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    public int getConstructorTypeParameter() {
+      return constructorTypeParameter_;
+    }
+
     private void initFields() {
       constructor_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.Constructor.getDefaultInstance();
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
       flexibleTypeCapabilitiesId_ = 0;
       flexibleUpperBound_ = org.jetbrains.kotlin.serialization.DebugProtoBuf.Type.getDefaultInstance();
+      constructorClassName_ = 0;
+      constructorTypeParameter_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -7196,6 +7292,12 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(5, flexibleUpperBound_);
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(6, constructorClassName_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt32(7, constructorTypeParameter_);
+      }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
     }
@@ -7225,6 +7327,14 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, flexibleUpperBound_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, constructorClassName_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, constructorTypeParameter_);
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -7368,6 +7478,10 @@ public final class DebugProtoBuf {
           flexibleUpperBoundBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000010);
+        constructorClassName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000020);
+        constructorTypeParameter_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -7429,6 +7543,14 @@ public final class DebugProtoBuf {
         } else {
           result.flexibleUpperBound_ = flexibleUpperBoundBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.constructorClassName_ = constructorClassName_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.constructorTypeParameter_ = constructorTypeParameter_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -7482,6 +7604,12 @@ public final class DebugProtoBuf {
         }
         if (other.hasFlexibleUpperBound()) {
           mergeFlexibleUpperBound(other.getFlexibleUpperBound());
+        }
+        if (other.hasConstructorClassName()) {
+          setConstructorClassName(other.getConstructorClassName());
+        }
+        if (other.hasConstructorTypeParameter()) {
+          setConstructorTypeParameter(other.getConstructorTypeParameter());
         }
         this.mergeExtensionFields(other);
         this.mergeUnknownFields(other.getUnknownFields());
@@ -8151,6 +8279,104 @@ public final class DebugProtoBuf {
           flexibleUpperBound_ = null;
         }
         return flexibleUpperBoundBuilder_;
+      }
+
+      // optional int32 constructor_class_name = 6;
+      private int constructorClassName_ ;
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public boolean hasConstructorClassName() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public int getConstructorClassName() {
+        return constructorClassName_;
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public Builder setConstructorClassName(int value) {
+        bitField0_ |= 0x00000020;
+        constructorClassName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public Builder clearConstructorClassName() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        constructorClassName_ = 0;
+        onChanged();
+        return this;
+      }
+
+      // optional int32 constructor_type_parameter = 7;
+      private int constructorTypeParameter_ ;
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public boolean hasConstructorTypeParameter() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public int getConstructorTypeParameter() {
+        return constructorTypeParameter_;
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public Builder setConstructorTypeParameter(int value) {
+        bitField0_ |= 0x00000040;
+        constructorTypeParameter_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public Builder clearConstructorTypeParameter() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        constructorTypeParameter_ = 0;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.Type)
@@ -17061,71 +17287,73 @@ public final class DebugProtoBuf {
       "\n\004BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010" +
       "\n\004LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLE" +
       "AN\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n" +
-      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\206\005\n\004Type\022I\n\013con",
+      "\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\312\005\n\004Type\022I\n\013con",
       "structor\030\001 \002(\01324.org.jetbrains.kotlin.se" +
       "rialization.Type.Constructor\022C\n\010argument" +
       "\030\002 \003(\01321.org.jetbrains.kotlin.serializat" +
       "ion.Type.Argument\022\027\n\010nullable\030\003 \001(\010:\005fal" +
       "se\022%\n\035flexible_type_capabilities_id\030\004 \001(" +
       "\005\022F\n\024flexible_upper_bound\030\005 \001(\0132(.org.je" +
-      "tbrains.kotlin.serialization.Type\032\220\001\n\013Co" +
-      "nstructor\022N\n\004kind\030\001 \001(\01629.org.jetbrains." +
-      "kotlin.serialization.Type.Constructor.Ki" +
-      "nd:\005CLASS\022\n\n\002id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000",
-      "\022\022\n\016TYPE_PARAMETER\020\001\032\313\001\n\010Argument\022U\n\npro" +
-      "jection\030\001 \001(\0162<.org.jetbrains.kotlin.ser" +
-      "ialization.Type.Argument.Projection:\003INV" +
-      "\0226\n\004type\030\002 \001(\0132(.org.jetbrains.kotlin.se" +
-      "rialization.Type\"0\n\nProjection\022\006\n\002IN\020\000\022\007" +
-      "\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\371\001\n\rTy" +
-      "peParameter\022\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n" +
-      "\007reified\030\003 \001(\010:\005false\022Q\n\010variance\030\004 \001(\0162" +
-      ":.org.jetbrains.kotlin.serialization.Typ" +
-      "eParameter.Variance:\003INV\022=\n\013upper_bound\030",
-      "\005 \003(\0132(.org.jetbrains.kotlin.serializati" +
-      "on.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003" +
-      "INV\020\002\"\271\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_" +
-      "name\030\003 \002(\005\022\035\n\025companion_object_name\030\004 \001(" +
-      "\005\022I\n\016type_parameter\030\005 \003(\01321.org.jetbrain" +
-      "s.kotlin.serialization.TypeParameter\022;\n\t" +
-      "supertype\030\006 \003(\0132(.org.jetbrains.kotlin.s" +
-      "erialization.Type\022\035\n\021nested_class_name\030\007" +
-      " \003(\005B\002\020\001\022<\n\006member\030\013 \003(\0132,.org.jetbrains" +
-      ".kotlin.serialization.Callable\022\026\n\nenum_e",
-      "ntry\030\014 \003(\005B\002\020\001\022Y\n\023primary_constructor\030\r " +
-      "\001(\0132<.org.jetbrains.kotlin.serialization" +
-      ".Class.PrimaryConstructor\022K\n\025secondary_c" +
-      "onstructor\030\016 \003(\0132,.org.jetbrains.kotlin." +
-      "serialization.Callable\032P\n\022PrimaryConstru" +
-      "ctor\022:\n\004data\030\001 \001(\0132,.org.jetbrains.kotli" +
-      "n.serialization.Callable\"p\n\004Kind\022\t\n\005CLAS" +
-      "S\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_E" +
-      "NTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005" +
-      "\022\020\n\014CLASS_OBJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006",
-      "member\030\001 \003(\0132,.org.jetbrains.kotlin.seri" +
-      "alization.Callable*\005\010d\020\310\001\"\300\005\n\010Callable\022\r" +
-      "\n\005flags\030\001 \001(\005\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014s" +
-      "etter_flags\030\n \001(\005\022I\n\016type_parameter\030\004 \003(" +
-      "\01321.org.jetbrains.kotlin.serialization.T" +
-      "ypeParameter\022?\n\rreceiver_type\030\005 \001(\0132(.or" +
-      "g.jetbrains.kotlin.serialization.Type\022\014\n" +
-      "\004name\030\006 \002(\005\022T\n\017value_parameter\030\007 \003(\0132;.o" +
-      "rg.jetbrains.kotlin.serialization.Callab" +
-      "le.ValueParameter\022=\n\013return_type\030\010 \002(\0132(",
-      ".org.jetbrains.kotlin.serialization.Type" +
-      "\032\263\001\n\016ValueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004na" +
-      "me\030\002 \002(\005\0226\n\004type\030\003 \002(\0132(.org.jetbrains.k" +
-      "otlin.serialization.Type\022E\n\023vararg_eleme" +
-      "nt_type\030\004 \001(\0132(.org.jetbrains.kotlin.ser" +
-      "ialization.Type*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013" +
-      "DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELE" +
-      "GATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014CallableKin" +
-      "d\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUC" +
-      "TOR\020\003*\005\010d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004O",
-      "PEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisib" +
-      "ility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROT" +
-      "ECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004" +
-      "\022\t\n\005LOCAL\020\005B\022B\rDebugProtoBuf\210\001\000"
+      "tbrains.kotlin.serialization.Type\022\036\n\026con" +
+      "structor_class_name\030\006 \001(\005\022\"\n\032constructor" +
+      "_type_parameter\030\007 \001(\005\032\220\001\n\013Constructor\022N\n" +
+      "\004kind\030\001 \001(\01629.org.jetbrains.kotlin.seria",
+      "lization.Type.Constructor.Kind:\005CLASS\022\n\n" +
+      "\002id\030\002 \002(\005\"%\n\004Kind\022\t\n\005CLASS\020\000\022\022\n\016TYPE_PAR" +
+      "AMETER\020\001\032\313\001\n\010Argument\022U\n\nprojection\030\001 \001(" +
+      "\0162<.org.jetbrains.kotlin.serialization.T" +
+      "ype.Argument.Projection:\003INV\0226\n\004type\030\002 \001" +
+      "(\0132(.org.jetbrains.kotlin.serialization." +
+      "Type\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003I" +
+      "NV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\371\001\n\rTypeParameter\022" +
+      "\n\n\002id\030\001 \002(\005\022\014\n\004name\030\002 \002(\005\022\026\n\007reified\030\003 \001" +
+      "(\010:\005false\022Q\n\010variance\030\004 \001(\0162:.org.jetbra",
+      "ins.kotlin.serialization.TypeParameter.V" +
+      "ariance:\003INV\022=\n\013upper_bound\030\005 \003(\0132(.org." +
+      "jetbrains.kotlin.serialization.Type\"$\n\010V" +
+      "ariance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\"\271\005\n\005Cl" +
+      "ass\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_name\030\003 \002(\005\022\035" +
+      "\n\025companion_object_name\030\004 \001(\005\022I\n\016type_pa" +
+      "rameter\030\005 \003(\01321.org.jetbrains.kotlin.ser" +
+      "ialization.TypeParameter\022;\n\tsupertype\030\006 " +
+      "\003(\0132(.org.jetbrains.kotlin.serialization" +
+      ".Type\022\035\n\021nested_class_name\030\007 \003(\005B\002\020\001\022<\n\006",
+      "member\030\013 \003(\0132,.org.jetbrains.kotlin.seri" +
+      "alization.Callable\022\026\n\nenum_entry\030\014 \003(\005B\002" +
+      "\020\001\022Y\n\023primary_constructor\030\r \001(\0132<.org.je" +
+      "tbrains.kotlin.serialization.Class.Prima" +
+      "ryConstructor\022K\n\025secondary_constructor\030\016" +
+      " \003(\0132,.org.jetbrains.kotlin.serializatio" +
+      "n.Callable\032P\n\022PrimaryConstructor\022:\n\004data" +
+      "\030\001 \001(\0132,.org.jetbrains.kotlin.serializat" +
+      "ion.Callable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005TRAIT" +
+      "\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020AN",
+      "NOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLASS_OB" +
+      "JECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001 \003(\013" +
+      "2,.org.jetbrains.kotlin.serialization.Ca" +
+      "llable*\005\010d\020\310\001\"\300\005\n\010Callable\022\r\n\005flags\030\001 \001(" +
+      "\005\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014setter_flags\030" +
+      "\n \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org.jetb" +
+      "rains.kotlin.serialization.TypeParameter" +
+      "\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbrains." +
+      "kotlin.serialization.Type\022\014\n\004name\030\006 \002(\005\022" +
+      "T\n\017value_parameter\030\007 \003(\0132;.org.jetbrains",
+      ".kotlin.serialization.Callable.ValuePara" +
+      "meter\022=\n\013return_type\030\010 \002(\0132(.org.jetbrai" +
+      "ns.kotlin.serialization.Type\032\263\001\n\016ValuePa" +
+      "rameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005\0226\n\004" +
+      "type\030\003 \002(\0132(.org.jetbrains.kotlin.serial" +
+      "ization.Type\022E\n\023vararg_element_type\030\004 \001(" +
+      "\0132(.org.jetbrains.kotlin.serialization.T" +
+      "ype*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARATION\020" +
+      "\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013" +
+      "SYNTHESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN\020\000\022\007",
+      "\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010d\020\310\001" +
+      "*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABS" +
+      "TRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INT" +
+      "ERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006P" +
+      "UBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005B" +
+      "\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -17173,7 +17401,7 @@ public final class DebugProtoBuf {
           internal_static_org_jetbrains_kotlin_serialization_Type_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_jetbrains_kotlin_serialization_Type_descriptor,
-              new java.lang.String[] { "Constructor", "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", });
+              new java.lang.String[] { "Constructor", "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "ConstructorClassName", "ConstructorTypeParameter", });
           internal_static_org_jetbrains_kotlin_serialization_Type_Constructor_descriptor =
             internal_static_org_jetbrains_kotlin_serialization_Type_descriptor.getNestedTypes().get(0);
           internal_static_org_jetbrains_kotlin_serialization_Type_Constructor_fieldAccessorTable = new

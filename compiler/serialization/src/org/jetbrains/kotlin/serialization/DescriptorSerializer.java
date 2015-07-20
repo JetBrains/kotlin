@@ -313,6 +313,7 @@ public class DescriptorSerializer {
         ProtoBuf.Type.Builder builder = ProtoBuf.Type.newBuilder();
 
         builder.setConstructor(typeConstructor(type.getConstructor()));
+        setTypeConstructorFields(builder, type.getConstructor());
 
         for (TypeProjection projection : type.getArguments()) {
             builder.addArgument(typeArgument(projection));
@@ -326,6 +327,21 @@ public class DescriptorSerializer {
         extension.serializeType(type, builder, stringTable);
 
         return builder;
+    }
+
+    private void setTypeConstructorFields(@NotNull ProtoBuf.Type.Builder builder, @NotNull TypeConstructor typeConstructor) {
+        ClassifierDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
+
+        assert declarationDescriptor instanceof TypeParameterDescriptor || declarationDescriptor instanceof ClassDescriptor
+                : "Unknown declaration descriptor: " + typeConstructor;
+        if (declarationDescriptor instanceof TypeParameterDescriptor) {
+            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
+            builder.setConstructorTypeParameter(getTypeParameterId(typeParameterDescriptor));
+        }
+        else {
+            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+            builder.setConstructorClassName(getClassId(classDescriptor));
+        }
     }
 
     private ProtoBuf.Type.Builder flexibleType(@NotNull JetType type) {
