@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.BOTH_RECEIVERS
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -113,41 +114,46 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
+        val receiverWithTypes = ReceiverWithTypes(receiver, c.context)
+
         val resolveInvoke = c.context.call.getDispatchReceiver().exists()
         if (resolveInvoke) {
-            addCandidatesForInvoke(receiver, c)
+            addCandidatesForInvoke(receiverWithTypes, c)
             return
         }
         val implicitReceivers = Sets.newLinkedHashSet<ReceiverValue>(JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope))
         if (receiver.exists()) {
-            val receiverTypes = SmartCastUtils.getSmartCastVariants(receiver, c.context)
-            addCandidatesForExplicitReceiver(receiver, receiverTypes, implicitReceivers, c, isExplicit = true)
-            addMembers(receiver, receiverTypes, c, staticMembers = true, isExplicit = true)
+            addCandidatesForExplicitReceiver(receiverWithTypes, implicitReceivers, c, isExplicit = true)
+            addMembers(receiverWithTypes, c, staticMembers = true, isExplicit = true)
             return
         }
         addCandidatesForNoReceiver(implicitReceivers, c)
     }
 
+    private class ReceiverWithTypes(
+            val value: ReceiverValue,
+            private val context: ResolutionContext<*>) {
+        val types: Collection<JetType> by lazy { SmartCastUtils.getSmartCastVariants(value, context) }
+    }
+
     private fun <D : CallableDescriptor, F : D> addCandidatesForExplicitReceiver(
-            explicitReceiver: ReceiverValue,
-            explicitReceiverTypes: Collection<JetType>,
+            explicitReceiver: ReceiverWithTypes,
             implicitReceivers: Collection<ReceiverValue>,
             c: TaskPrioritizerContext<D, F>,
             isExplicit: Boolean
     ) {
-        addMembers(explicitReceiver, explicitReceiverTypes, c, staticMembers = false, isExplicit = isExplicit)
+        addMembers(explicitReceiver, c, staticMembers = false, isExplicit = isExplicit)
 
-        if (explicitReceiver.getType().isDynamic()) {
-            addCandidatesForDynamicReceiver(explicitReceiver, explicitReceiverTypes, implicitReceivers, c, isExplicit)
+        if (explicitReceiver.value.type.isDynamic()) {
+            addCandidatesForDynamicReceiver(explicitReceiver, implicitReceivers, c, isExplicit)
         }
         else {
-            addExtensionCandidates(explicitReceiver, explicitReceiverTypes, implicitReceivers, c, isExplicit)
+            addExtensionCandidates(explicitReceiver, implicitReceivers, c, isExplicit)
         }
     }
 
     private fun <D : CallableDescriptor, F : D> addExtensionCandidates(
-            explicitReceiver: ReceiverValue,
-            explicitReceiverTypes: Collection<JetType>,
+            explicitReceiver: ReceiverWithTypes,
             implicitReceivers: Collection<ReceiverValue>,
             c: TaskPrioritizerContext<D, F>,
             isExplicit: Boolean
@@ -158,7 +164,6 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                 addMemberExtensionCandidates(
                         implicitReceiver,
                         explicitReceiver,
-                        explicitReceiverTypes,
                         callableDescriptorCollector,
                         c,
                         createKind(EXTENSION_RECEIVER, isExplicit)
@@ -168,8 +173,8 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
             c.result.addCandidates {
                 convertWithImpliedThis(
                         c.scope,
-                        explicitReceiver,
-                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiverTypes, c.context.trace),
+                        explicitReceiver.value,
+                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.types, c.context.trace),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -178,8 +183,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     }
 
     private fun <D : CallableDescriptor, F : D> addMembers(
-            explicitReceiver: ReceiverValue,
-            explicitReceiverTypes: Collection<JetType>,
+            explicitReceiver: ReceiverWithTypes,
             c: TaskPrioritizerContext<D, F>,
             staticMembers: Boolean,
             isExplicit: Boolean
@@ -187,7 +191,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         for (callableDescriptorCollector in c.callableDescriptorCollectors) {
             c.result.addCandidates {
                 val members = Lists.newArrayList<ResolutionCandidate<D>>()
-                for (type in explicitReceiverTypes) {
+                for (type in explicitReceiver.types) {
                     val membersForThisVariant = if (staticMembers) {
                         callableDescriptorCollector.getStaticMembersByName(type, c.name, c.context.trace)
                     }
@@ -196,7 +200,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                     }
                     convertWithReceivers(
                             membersForThisVariant,
-                            explicitReceiver,
+                            explicitReceiver.value,
                             NO_RECEIVER,
                             members,
                             createKind(DISPATCH_RECEIVER, isExplicit),
@@ -209,14 +213,13 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForDynamicReceiver(
-            explicitReceiver: ReceiverValue,
-            explicitReceiverTypes: Collection<JetType>,
+            explicitReceiver: ReceiverWithTypes,
             implicitReceivers: Collection<ReceiverValue>,
             c: TaskPrioritizerContext<D, F>,
             isExplicit: Boolean
     ) {
         val onlyDynamicReceivers = c.replaceCollectors(c.callableDescriptorCollectors.onlyDynamicReceivers<D>())
-        addExtensionCandidates(explicitReceiver, explicitReceiverTypes, implicitReceivers, onlyDynamicReceivers, isExplicit)
+        addExtensionCandidates(explicitReceiver, implicitReceivers, onlyDynamicReceivers, isExplicit)
 
         c.result.addCandidates {
             val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.getContainingDeclaration())
@@ -225,7 +228,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                 it.getNonExtensionsByName(dynamicScope, c.name, c.context.trace)
             }
 
-            convertWithReceivers(dynamicDescriptors, explicitReceiver, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
+            convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
         }
     }
 
@@ -236,16 +239,15 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
 
     private fun <D : CallableDescriptor, F : D> addMemberExtensionCandidates(
             dispatchReceiver: ReceiverValue,
-            receiverParameter: ReceiverValue,
-            receiverParameterTypes: Collection<JetType>,
+            receiverParameter: ReceiverWithTypes,
             callableDescriptorCollector: CallableDescriptorCollector<D>,
             c: TaskPrioritizerContext<D, F>,
             receiverKind: ExplicitReceiverKind
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.getType().getMemberScope(), c.name, receiverParameterTypes, c.context.trace)
-            convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter, receiverKind, c.context.call)
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, c.context.trace)
+            convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }
 
@@ -276,23 +278,23 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         //locals
         c.result.addCandidates(localsList)
 
-        val implicitReceiversWithTypes = implicitReceivers.map { it to SmartCastUtils.getSmartCastVariants(it, c.context) }
+        val implicitReceiversWithTypes = implicitReceivers.map { ReceiverWithTypes(it, c.context) }
 
         //try all implicit receivers as explicit
-        for ((implicitReceiver, implicitReceiverTypes) in implicitReceiversWithTypes) {
-            addCandidatesForExplicitReceiver(implicitReceiver, implicitReceiverTypes, implicitReceivers, c, isExplicit = false)
+        for (implicitReceiver in implicitReceiversWithTypes) {
+            addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, isExplicit = false)
         }
 
         //nonlocals
         c.result.addCandidates(nonlocalsList)
 
         //static (only for better error reporting)
-        for ((implicitReceiver, implicitReceiverTypes) in implicitReceiversWithTypes) {
-            addMembers(implicitReceiver, implicitReceiverTypes, c, staticMembers = true, isExplicit = false)
+        for (implicitReceiver in implicitReceiversWithTypes) {
+            addMembers(implicitReceiver, c, staticMembers = true, isExplicit = false)
         }
     }
 
-    private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
+    private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverWithTypes, c: TaskPrioritizerContext<D, F>) {
         val implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope)
 
         // For 'a.foo()' where foo has function type,
@@ -305,9 +307,8 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         // or for 'invoke' function.
 
         // (1) a.foo + foo.invoke()
-        if (!explicitReceiver.exists()) {
-            val variableReceiverTypes = SmartCastUtils.getSmartCastVariants(variableReceiver, c.context)
-            addCandidatesForExplicitReceiver(variableReceiver, variableReceiverTypes, implicitReceivers, c, isExplicit = true)
+        if (!explicitReceiver.value.exists()) {
+            addCandidatesForExplicitReceiver(ReceiverWithTypes(variableReceiver, c.context), implicitReceivers, c, isExplicit = true)
         }
 
         // (2) foo + a.invoke()
@@ -316,26 +317,25 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         //trait A
         //trait Foo { fun A.invoke() }
 
-        if (explicitReceiver.exists()) {
+        if (explicitReceiver.value.exists()) {
             //a.foo()
             addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c, BOTH_RECEIVERS)
             return
         }
         // with (a) { foo() }
         for (implicitReceiver in implicitReceivers) {
-            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c, DISPATCH_RECEIVER)
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, ReceiverWithTypes(implicitReceiver, c.context), c, DISPATCH_RECEIVER)
         }
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(
             dispatchReceiver: ReceiverValue,
-            receiverParameter: ReceiverValue,
+            receiverParameter: ReceiverWithTypes,
             c: TaskPrioritizerContext<D, F>,
             receiverKind: ExplicitReceiverKind
     ) {
-        val receiverParameterTypes = SmartCastUtils.getSmartCastVariants(receiverParameter, c.context)
         for (callableDescriptorCollector in c.callableDescriptorCollectors) {
-            addMemberExtensionCandidates(dispatchReceiver, receiverParameter, receiverParameterTypes, callableDescriptorCollector, c, receiverKind)
+            addMemberExtensionCandidates(dispatchReceiver, receiverParameter, callableDescriptorCollector, c, receiverKind)
         }
     }
 
