@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.UsageCollector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
@@ -109,6 +110,7 @@ private fun createContainerForLazyResolve(
 
     useInstance(dynamicTypesSettings)
     useInstance(declarationProviderFactory)
+    useInstance(UsageCollector.DO_NOTHING)
 
     useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()

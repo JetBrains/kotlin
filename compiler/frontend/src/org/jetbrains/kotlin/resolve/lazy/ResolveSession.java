@@ -27,6 +27,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.incremental.components.UsageCollector;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -75,6 +76,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LazyDeclarationResolver lazyDeclarationResolver;
     private FileScopeProvider fileScopeProvider;
     private DeclarationScopeProvider declarationScopeProvider;
+    private UsageCollector usageCollector;
 
     @Inject
     public void setJetImportFactory(JetImportsFactory jetImportFactory) {
@@ -124,6 +126,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setDeclarationScopeProvider(@NotNull DeclarationScopeProviderImpl declarationScopeProvider) {
         this.declarationScopeProvider = declarationScopeProvider;
+    }
+
+    @Inject
+    public void setUsageCollector(@NotNull UsageCollector usageCollector) {
+        this.usageCollector = usageCollector;
     }
 
     // Only calls from injectors expected
@@ -400,5 +407,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public FileScopeProvider getFileScopeProvider() {
         return fileScopeProvider;
+    }
+
+    @NotNull
+    @Override
+    public UsageCollector getUsageCollector() {
+        return usageCollector;
     }
 }

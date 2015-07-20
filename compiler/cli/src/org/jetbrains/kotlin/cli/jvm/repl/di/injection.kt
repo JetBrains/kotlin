@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
+import org.jetbrains.kotlin.incremental.components.UsageCollector
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
@@ -39,7 +40,7 @@ public fun createContainerForReplWithJava(
         moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
     configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, UsageCollector.DO_NOTHING)
 
     useInstance(additionalFileScopeProvider)
     useInstance(declarationProviderFactory)

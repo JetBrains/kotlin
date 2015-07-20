@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.components
+package org.jetbrains.kotlin.incremental.components
 
-import org.jetbrains.kotlin.incremental.components.UsageCollector
-
-public interface IncrementalCompilationComponents {
-    public fun getIncrementalCache(moduleId: String): IncrementalCache
-    public fun getUsageCollector(): UsageCollector
+public interface UsageCollector {
+    companion object {
+        val DO_NOTHING = object : UsageCollector {}
+    }
 }
