@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg
+package org.jetbrains.kotlin.cfg.outofbound
 
+import org.jetbrains.kotlin.cfg.outofbound.ValuesData
+import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
@@ -82,13 +84,13 @@ public class IntegerVariableValues private constructor() {
             // we can safely use casts below because of areDefined checks above
             val minOfLeftOperand = values.min() as Int
             val maxOfRightOperand = others.values.max() as Int
-            val rangeValues = IntegerVariableValues.empty()
+            val rangeValues = empty()
             for (value in minOfLeftOperand .. maxOfRightOperand) {
                 rangeValues.add(value)
             }
             return rangeValues
         }
-        return IntegerVariableValues.cantBeDefined()
+        return cantBeDefined()
     }
 
     private fun applyEachToEach(others: IntegerVariableValues, operation: (Int, Int) -> Int): IntegerVariableValues {
@@ -99,9 +101,9 @@ public class IntegerVariableValues private constructor() {
                     resultSet.add(operation(leftOp, rightOp))
                 }
             }
-            return IntegerVariableValues.ofCollection(resultSet)
+            return ofCollection(resultSet)
         }
-        return IntegerVariableValues.cantBeDefined()
+        return cantBeDefined()
     }
 
     // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
@@ -137,8 +139,8 @@ public class IntegerVariableValues private constructor() {
                         undefinedWithFullRestrictions(valuesData)
                     } else {
                         val withoutLast = thisArray.copyOf(thisArray.size() - 1).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.ofCollection(withoutLast))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.singleton(thisArray.last()))
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(withoutLast))
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to singleton(thisArray.last()))
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -149,8 +151,8 @@ public class IntegerVariableValues private constructor() {
                         val bound = thisArray.indexOfFirst { it >= otherValue }
                         val lessValuesInThis = thisArray.copyOfRange(0, bound).toArrayList()
                         val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.ofCollection(lessValuesInThis))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.ofCollection(greaterOrEqValuesInThis))
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(lessValuesInThis))
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to ofCollection(greaterOrEqValuesInThis))
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -159,8 +161,8 @@ public class IntegerVariableValues private constructor() {
                         undefinedWithFullRestrictions(valuesData)
                     } else {
                         val withoutFirst = thisArray.copyOfRange(1, thisArray.size()).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.ofCollection(withoutFirst))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to IntegerVariableValues.singleton(thisArray.first()))
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(withoutFirst))
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to singleton(thisArray.first()))
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -171,7 +173,7 @@ public class IntegerVariableValues private constructor() {
 
     private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {
         val restrictions = valuesData.intVarsToValues.keySet()
-                .map { Pair(it, IntegerVariableValues.empty()) }
+                .map { Pair(it, empty()) }
                 .toMap()
         return BooleanVariableValue.Undefined(restrictions, restrictions)
     }

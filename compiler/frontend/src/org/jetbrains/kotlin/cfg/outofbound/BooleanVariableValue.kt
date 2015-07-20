@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg
+package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.util.containers.HashMap
+import org.jetbrains.kotlin.cfg.outofbound.IntegerVariableValues
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
