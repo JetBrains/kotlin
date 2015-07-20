@@ -52,7 +52,7 @@ public class ConstantValueFactory(
     fun createArrayValue(
             value: List<ConstantValue<*>>,
             type: JetType
-    ) = ArrayValue(value, type)
+    ) = ArrayValue(value, type, builtins)
 
     fun createAnnotationValue(value: AnnotationDescriptor) = AnnotationValue(value)
 

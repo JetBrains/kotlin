@@ -28,6 +28,7 @@ object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<Confi
     }
 }
 
+@deprecated("Deprecated after moving to platform types")
 object AbsentSdkAnnotationsNotificationManager: KotlinSingleNotificationManager<AbsentSdkAnnotationsNotification> {
     fun notify(project: Project, sdks: Collection<Sdk>) {
         notify(project, AbsentSdkAnnotationsNotification(sdks, getNotificationTitle(sdks), getNotificationString(sdks)))

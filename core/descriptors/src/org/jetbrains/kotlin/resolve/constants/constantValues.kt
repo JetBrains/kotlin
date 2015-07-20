@@ -46,7 +46,8 @@ public class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<Annota
 
 public class ArrayValue(
         value: List<ConstantValue<*>>,
-        override val type: JetType
+        override val type: JetType,
+        private val builtIns: KotlinBuiltIns
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
 
     init {
@@ -54,6 +55,9 @@ public class ArrayValue(
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
+
+    public val elementType: JetType
+        get() = builtIns.getArrayElementType(type)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

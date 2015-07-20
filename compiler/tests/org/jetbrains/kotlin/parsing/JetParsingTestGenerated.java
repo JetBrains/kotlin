@@ -259,6 +259,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumWithAnnotationKeyword.kt")
+        public void testEnumWithAnnotationKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumWithAnnotationKeyword.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Enums.kt")
         public void testEnums() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Enums.kt");
@@ -412,6 +418,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Interface.kt")
         public void testInterface() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Interface.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("InterfaceWithEnumKeyword.kt")
+        public void testInterfaceWithEnumKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/InterfaceWithEnumKeyword.kt");
             doParsingTest(fileName);
         }
 

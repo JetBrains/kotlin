@@ -151,7 +151,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.getUpperBounds()) {
-                if (KotlinBuiltIns.getInstance().getNullableAnyType() == declaredUpperBound) continue //todo remove this line (?)
+                if (KotlinBuiltIns.isNullableAny(declaredUpperBound)) continue //todo remove this line (?)
                 val position = TYPE_BOUND_POSITION.position(typeVariable.getIndex())
                 addBound(typeVariable, declaredUpperBound, UPPER_BOUND, position)
             }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.types.JetType
 
 public object KotlinJavascriptSerializerExtension : SerializerExtension() {
 
-    private val annotationSerializer = AnnotationSerializer(KotlinBuiltIns.getInstance())
+    private val annotationSerializer = AnnotationSerializer()
 
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
         for (annotation in descriptor.getAnnotations()) {

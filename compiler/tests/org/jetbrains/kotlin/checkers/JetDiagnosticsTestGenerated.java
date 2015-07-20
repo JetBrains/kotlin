@@ -5133,6 +5133,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumWithAnnotationKeyword.kt")
+            public void testEnumWithAnnotationKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumWithAnnotationKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumWithEmptyName.kt")
             public void testEnumWithEmptyName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumWithEmptyName.kt");
@@ -5184,6 +5190,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("InsideSecondaryConstructorCall.kt")
             public void testInsideSecondaryConstructorCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/InsideSecondaryConstructorCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("interfaceWithEnumKeyword.kt")
+            public void testInterfaceWithEnumKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/interfaceWithEnumKeyword.kt");
                 doTest(fileName);
             }
 
