@@ -95,7 +95,6 @@
         <module>tools/kotlin-js-tests</module>
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kdoc</module>
-        <module>tools/kdoc-maven-plugin</module>
 
         <module>kunit</module>
         <module>kotlin-jdbc</module>
