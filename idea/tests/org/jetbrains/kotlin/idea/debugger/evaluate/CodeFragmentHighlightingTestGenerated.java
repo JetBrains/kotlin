@@ -132,6 +132,18 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/smartCasts.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withoutBodyFunction.kt")
+        public void testWithoutBodyFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/withoutBodyFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withoutBodyProperty.kt")
+        public void testWithoutBodyProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/withoutBodyProperty.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/checker/codeFragments/imports")
