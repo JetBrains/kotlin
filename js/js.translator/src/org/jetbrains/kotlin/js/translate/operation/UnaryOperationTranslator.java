@@ -82,7 +82,7 @@ public final class UnaryOperationTranslator {
         }
 
         ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, context.bindingContext());
-        return CallTranslator.INSTANCE$.translate(context, resolvedCall, baseExpression);
+        return CallTranslator.translate(context, resolvedCall, baseExpression);
     }
 
     private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {

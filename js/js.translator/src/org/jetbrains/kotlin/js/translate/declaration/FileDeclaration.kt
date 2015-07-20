@@ -39,7 +39,7 @@ class FileDeclarationVisitor(
 
     private val initializer = JsAstUtils.createFunctionWithEmptyBody(context.scope())
     private val initializerContext = context.contextWithScope(initializer)
-    private val initializerStatements = initializer.getBody()!!.getStatements()!!
+    private val initializerStatements = initializer.getBody().getStatements()
     private val initializerVisitor = InitializerVisitor(initializerStatements)
 
     fun computeInitializer(): JsFunction? {

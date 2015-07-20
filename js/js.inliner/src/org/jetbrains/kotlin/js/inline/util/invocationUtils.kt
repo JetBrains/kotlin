@@ -47,14 +47,14 @@ public fun getSimpleIdent(call: JsInvocation): String? {
     qualifiers@ while (qualifier != null) {
         when (qualifier) {
             is JsInvocation -> {
-                val callableQualifier = qualifier as JsInvocation
+                val callableQualifier = qualifier
                 qualifier = callableQualifier.getQualifier()
 
                 if (isCallInvocation(callableQualifier)) {
                     qualifier = (qualifier as? JsNameRef)?.getQualifier()
                 }
             }
-            is HasName -> return (qualifier as HasName).getName()?.getIdent()
+            is HasName -> return qualifier.getName()?.getIdent()
             else -> break@qualifiers
         }
     }

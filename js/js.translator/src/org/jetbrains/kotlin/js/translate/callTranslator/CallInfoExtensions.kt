@@ -59,7 +59,7 @@ fun VariableAccessInfo.getAccessFunctionName(): String {
         return context.getNameForDescriptor(propertyAccessorDescriptor!!).getIdent()
     }
     else {
-        return Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
+        return Namer.getNameForAccessor(variableName.getIdent(), isGetAccess(), false)
     }
 }
 

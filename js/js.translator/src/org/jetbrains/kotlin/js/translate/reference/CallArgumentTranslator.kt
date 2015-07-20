@@ -150,14 +150,14 @@ public class CallArgumentTranslator private constructor(
             concatArguments!!.addAll(result)
 
             if (!argsBeforeVararg!!.isEmpty()) {
-                concatArguments!!.add(0, JsArrayLiteral(argsBeforeVararg))
+                concatArguments.add(0, JsArrayLiteral(argsBeforeVararg))
             }
 
-            result = SmartList(concatArgumentsIfNeeded(concatArguments!!))
+            result = SmartList(concatArgumentsIfNeeded(concatArguments))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
-                result.add(0, cachedReceiver!!.reference())
+                result.add(0, cachedReceiver.reference())
             }
             else {
                 result.add(0, JsLiteral.NULL)

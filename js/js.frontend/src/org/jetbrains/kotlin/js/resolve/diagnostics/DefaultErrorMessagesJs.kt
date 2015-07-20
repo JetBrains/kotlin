@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import kotlin.properties.Delegates
 
-private val DIAGNOSTIC_FACTORY_TO_RENDERER by Delegates.lazy {
+private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     with(DiagnosticFactoryToRendererMap()) {
 
         put(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,

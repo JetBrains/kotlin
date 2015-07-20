@@ -82,7 +82,7 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
         for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
-            JsExpression entryInitializer = CallTranslator.INSTANCE$.translate(context(), entryInitCall, multiObjNameRef);
+            JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);
             FunctionDescriptor candidateDescriptor = entryInitCall.getCandidateDescriptor();
             if (CallExpressionTranslator.shouldBeInlined(candidateDescriptor)) {
                 setInlineCallMetadata(entryInitializer, entry, entryInitCall, context());

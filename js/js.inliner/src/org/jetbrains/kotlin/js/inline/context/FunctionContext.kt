@@ -121,7 +121,7 @@ abstract class FunctionContext(
 
         /** in case 4, 5 get ref (reduce 4, 5 to 2, 3 accordingly) */
         if (callQualifier is JsNameRef) {
-            val staticRef = (callQualifier as JsNameRef).getName()?.staticRef
+            val staticRef = callQualifier.getName()?.staticRef
 
             callQualifier = when (staticRef) {
                 is JsNameRef -> staticRef
