@@ -26,6 +26,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 import java.util.ArrayList
@@ -89,15 +90,10 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
 
     companion object {
 
-        protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference?): Boolean {
-            if (ref == null) return true
-            val usageInfo = runReadAction {
-                val rangeInElement = ref.getRangeInElement()
-                UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false)
-            }
-            return processor.process(usageInfo)
-        }
+        protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean
+                = processor.process(KotlinReferenceUsageInfo(ref))
 
-        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean = processor.process(UsageInfo(element))
+        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean
+                = processor.process(UsageInfo(element))
     }
 }
