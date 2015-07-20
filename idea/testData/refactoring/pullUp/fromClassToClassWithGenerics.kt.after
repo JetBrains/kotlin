@@ -3,7 +3,7 @@ interface I
 
 interface Z<T>
 
-abstract class A<T: I, U: I, V> {
+abstract class A<T: I, U: I, V>(x: X, y: Y) {
     // INFO: {"checked": "true"}
     val foo1: T
     // INFO: {"checked": "true"}
@@ -33,7 +33,7 @@ abstract class A<T: I, U: I, V> {
 }
 
 class C<W: I> {
-    inner class B<X: I, Y>(x: X, y: Y): A<X, I, Z<Y>>() {
+    inner class B<X: I, Y>(x: X, y: Y): A<X, I, Z<Y>>(x, y) {
 
         // INFO: {"checked": "true", "toAbstract": "true"}
         override val foo5 = x

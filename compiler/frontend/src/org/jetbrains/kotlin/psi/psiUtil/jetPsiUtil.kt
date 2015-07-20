@@ -392,4 +392,6 @@ public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingCont
     return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
 }
 
+public fun JetExpression.asAssignment(): JetBinaryExpression? =
+        if (JetPsiUtil.isAssignment(this)) this as JetBinaryExpression else null
 

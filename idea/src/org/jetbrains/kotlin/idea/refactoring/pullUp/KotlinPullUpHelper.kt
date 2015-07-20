@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
+import com.intellij.lang.Language
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
-import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.asJava.toLightClass
+import com.intellij.refactoring.util.RefactoringUtil
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -39,23 +38,23 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiverOrThis
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.util.findCallableMemberBySignature
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.keysToMap
+import java.util.*
 
 class KotlinPullUpHelper(
         private val javaData: PullUpData,
@@ -65,6 +64,212 @@ class KotlinPullUpHelper(
         private var JetElement.newFqName: FqName? by CopyableUserDataProperty(Key.create("NEW_FQ_NAME"))
         private var JetElement.replaceWithTargetThis: Boolean? by CopyableUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
         private var JetElement.newTypeText: String? by CopyableUserDataProperty(Key.create("NEW_TYPE_TEXT"))
+    }
+
+    private fun JetExpression.isMovable(): Boolean {
+        return accept(
+                object: JetVisitor<Boolean, Nothing?>() {
+                    override fun visitJetElement(element: JetElement, arg: Nothing?): Boolean {
+                        return element.allChildren.all { (it as? JetElement)?.accept(this, arg) ?: true }
+                    }
+
+                    override fun visitJetFile(file: JetFile, data: Nothing?) = false
+
+                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression, arg: Nothing?): Boolean {
+                        val resolvedCall = expression.getResolvedCall(data.resolutionFacade.analyze(expression)) ?: return true
+                        val receiver = (resolvedCall.getExplicitReceiverValue() as? ExpressionReceiver)?.getExpression()
+                        if (receiver != null && receiver !is JetThisExpression && receiver !is JetSuperExpression) return true
+
+                        var descriptor: DeclarationDescriptor = resolvedCall.getResultingDescriptor()
+                        if (descriptor is ConstructorDescriptor) {
+                            descriptor = descriptor.getContainingDeclaration()
+                        }
+                        // todo: local functions
+                        if (descriptor is ValueParameterDescriptor) return true
+                        if (descriptor is ClassDescriptor && !descriptor.isInner()) return true
+                        if (descriptor is MemberDescriptor) {
+                            if (descriptor.getSource().getPsi() in propertiesToMoveInitializers) return true
+                            descriptor = descriptor.getContainingDeclaration()
+                        }
+                        return descriptor is PackageFragmentDescriptor
+                               || (descriptor is ClassDescriptor && DescriptorUtils.isSubclass(data.targetClassDescriptor, descriptor))
+                    }
+                },
+                null
+        )
+    }
+
+    private fun getCommonInitializer(
+            currentInitializer: JetExpression?,
+            scope: JetBlockExpression?,
+            propertyDescriptor: PropertyDescriptor,
+            elementsToRemove: MutableSet<JetElement>): JetExpression? {
+        if (scope == null) return currentInitializer
+
+        var initializerCandidate: JetExpression? = null
+
+        for (statement in scope.getStatements()) {
+            statement.asAssignment()?.let body@ {
+                val lhs = JetPsiUtil.safeDeparenthesize(it.getLeft() ?: return@body)
+                val receiver = (lhs as? JetQualifiedExpression)?.getReceiverExpression()
+                if (receiver != null && receiver !is JetThisExpression) return@body
+
+                val resolvedCall = lhs.getResolvedCall(data.resolutionFacade.analyze(it)) ?: return@body
+                if (resolvedCall.getResultingDescriptor() != propertyDescriptor) return@body
+
+                if (initializerCandidate == null) {
+                    if (currentInitializer == null) {
+                        if (!statement.isMovable()) return null
+
+                        initializerCandidate = statement
+                        elementsToRemove.add(statement)
+                    }
+                    else {
+                        if (!JetPsiUnifier.DEFAULT.unify(statement, currentInitializer).matched) return null
+
+                        initializerCandidate = currentInitializer
+                        elementsToRemove.add(statement)
+                    }
+                }
+                else if (!JetPsiUnifier.DEFAULT.unify(statement, initializerCandidate).matched) return null
+            }
+        }
+
+        return initializerCandidate
+    }
+
+    private data class InitializerInfo(
+            val initializer: JetExpression?,
+            val usedProperties: Set<JetProperty>,
+            val usedParameters: Set<JetParameter>,
+            val elementsToRemove: Set<JetElement>
+    )
+
+    private fun getInitializerInfo(property: JetProperty,
+                                   propertyDescriptor: PropertyDescriptor,
+                                   targetConstructor: JetElement): InitializerInfo? {
+        val sourceConstructors = targetToSourceConstructors[targetConstructor] ?: return null
+        val elementsToRemove = LinkedHashSet<JetElement>()
+        val commonInitializer = sourceConstructors.fold(null as JetExpression?) { commonInitializer, constructor ->
+            val body = (constructor as? JetSecondaryConstructor)?.getBodyExpression()
+            getCommonInitializer(commonInitializer, body, propertyDescriptor, elementsToRemove)
+        }
+        if (commonInitializer == null) {
+            elementsToRemove.clear()
+        }
+
+        val usedProperties = LinkedHashSet<JetProperty>()
+        val usedParameters = LinkedHashSet<JetParameter>()
+        val visitor = object : JetTreeVisitorVoid() {
+            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                val context = data.resolutionFacade.analyze(expression)
+                val resolvedCall = expression.getResolvedCall(context) ?: return
+                val receiver = (resolvedCall.getExplicitReceiverValue() as? ExpressionReceiver)?.getExpression()
+                if (receiver != null && receiver !is JetThisExpression) return
+                val target = (resolvedCall.getResultingDescriptor() as? DeclarationDescriptorWithSource)?.getSource()?.getPsi()
+                when (target) {
+                    is JetParameter -> usedParameters.add(target)
+                    is JetProperty -> usedProperties.add(target)
+                }
+            }
+        }
+        commonInitializer?.accept(visitor)
+        if (targetConstructor == data.targetClass.getPrimaryConstructor() ?: data.targetClass) {
+            property.getInitializer()?.accept(visitor)
+        }
+
+        return InitializerInfo(commonInitializer, usedProperties, usedParameters, elementsToRemove)
+    }
+
+    private val propertiesToMoveInitializers = with(data) {
+        membersToMove
+                .filterIsInstance<JetProperty>()
+                .filter {
+                    val descriptor = memberDescriptors[it] as? PropertyDescriptor
+                    descriptor != null && data.sourceClassContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor] ?: false
+                }
+    }
+
+    private val targetToSourceConstructors = LinkedHashMap<JetElement, MutableList<JetElement>>().let { result ->
+        if (!data.targetClass.isInterface()) {
+            result[data.targetClass.getPrimaryConstructor() ?: data.targetClass] = ArrayList<JetElement>()
+            data.sourceClass.accept(
+                    object : JetTreeVisitorVoid() {
+                        private fun processConstructorReference(expression: JetReferenceExpression, callingConstructorElement: JetElement) {
+                            val descriptor = data.resolutionFacade.analyze(expression)[BindingContext.REFERENCE_TARGET, expression]
+                            val constructorElement = (descriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi() ?: return
+                            if (constructorElement == data.targetClass
+                                || (constructorElement as? JetConstructor<*>)?.getContainingClassOrObject() == data.targetClass) {
+                                result.getOrPut(constructorElement as JetElement, { ArrayList() }).add(callingConstructorElement)
+                            }
+                        }
+
+                        override fun visitDelegationToSuperCallSpecifier(specifier: JetDelegatorToSuperCall) {
+                            val constructorRef = specifier.getCalleeExpression().getConstructorReferenceExpression() ?: return
+                            val containingClass = specifier.getStrictParentOfType<JetClassOrObject>() ?: return
+                            val callingConstructorElement = containingClass.getPrimaryConstructor() ?: containingClass
+                            processConstructorReference(constructorRef, callingConstructorElement)
+                        }
+
+                        override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
+                            val constructorRef = constructor.getDelegationCall().getCalleeExpression() ?: return
+                            processConstructorReference(constructorRef, constructor)
+                        }
+                    }
+            )
+        }
+        result
+    }
+
+    private val targetConstructorToPropertyInitializerInfoMap = LinkedHashMap<JetElement, Map<JetProperty, InitializerInfo>>().let { result ->
+        for (targetConstructor in targetToSourceConstructors.keySet()) {
+            val propertyToInitializerInfo = LinkedHashMap<JetProperty, InitializerInfo>()
+            for (property in propertiesToMoveInitializers) {
+                val propertyDescriptor = data.memberDescriptors[property] as? PropertyDescriptor ?: continue
+                propertyToInitializerInfo[property] = getInitializerInfo(property, propertyDescriptor, targetConstructor) ?: continue
+            }
+            val unmovableProperties = RefactoringUtil.transitiveClosure(
+                    object : RefactoringUtil.Graph<JetProperty> {
+                        override fun getVertices() = propertyToInitializerInfo.keySet()
+
+                        override fun getTargets(source: JetProperty) = propertyToInitializerInfo[source]?.usedProperties
+                    },
+                    { !propertyToInitializerInfo.containsKey(it) }
+            )
+
+            propertyToInitializerInfo.keySet().removeAll(unmovableProperties)
+            result[targetConstructor] = propertyToInitializerInfo
+        }
+        result
+    }
+
+    private var dummyField: PsiField? = null
+
+    private fun addMovedMember(newMember: JetNamedDeclaration) {
+        if (newMember is JetProperty) {
+            // Add dummy light field since PullUpProcessor won't invoke moveFieldInitializations() if no PsiFields are present
+            if (dummyField == null) {
+                val factory = JavaPsiFacade.getElementFactory(newMember.getProject())
+                val dummyField = object: LightField(
+                        newMember.getManager(),
+                        factory.createField("dummy", PsiType.BOOLEAN),
+                        factory.createClass("Dummy")
+                ) {
+                    // Prevent processing by JavaPullUpHelper
+                    override fun getLanguage() = JetLanguage.INSTANCE
+                }
+                javaData.getMovedMembers().add(dummyField)
+            }
+        }
+
+        when (newMember) {
+            is JetProperty, is JetNamedFunction -> {
+                newMember.getRepresentativeLightMethod()?.let { javaData.getMovedMembers().add(it) }
+            }
+            is JetClassOrObject -> {
+                newMember.toLightClass()?.let { javaData.getMovedMembers().add(it) }
+            }
+        }
     }
 
     private fun willBeUsedInSourceClass(member: PsiElement): Boolean {
@@ -351,8 +556,6 @@ class KotlinPullUpHelper(
                         && (movedMember.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
                         data.targetClass.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
                     }
-
-                    movedMember.getRepresentativeLightMethod()?.let { javaData.getMovedMembers().add(it) }
                 }
 
                 is JetClassOrObject -> {
@@ -361,13 +564,14 @@ class KotlinPullUpHelper(
                     }
                     movedMember = addMemberToTarget(memberCopy) as JetClassOrObject
                     member.delete()
-                    movedMember.toLightClass()?.let { javaData.getMovedMembers().add(it) }
                 }
 
                 else -> return
             }
 
             processMarkedElements(movedMember)
+
+            addMovedMember(movedMember)
         }
         finally {
             clearMarking(markedElements)
@@ -379,7 +583,92 @@ class KotlinPullUpHelper(
     }
 
     override fun moveFieldInitializations(movedFields: LinkedHashSet<PsiField>) {
+        val psiFactory = JetPsiFactory(data.sourceClass)
 
+        fun JetClassOrObject.getOrCreateClassInitializer(): JetClassInitializer {
+            getOrCreateBody().getDeclarations().lastOrNull { it is JetClassInitializer }?.let { return it as JetClassInitializer }
+            return addDeclaration(psiFactory.createAnonymousInitializer()) as JetClassInitializer
+        }
+
+        fun JetElement.getConstructorBodyBlock(): JetBlockExpression? {
+            return when (this) {
+                is JetClassOrObject -> {
+                    getOrCreateClassInitializer().getBody()
+                }
+                is JetPrimaryConstructor -> {
+                    getContainingClassOrObject().getOrCreateClassInitializer().getBody()
+                }
+                is JetSecondaryConstructor -> {
+                    getBodyExpression() ?: add(psiFactory.createEmptyBody())
+                }
+                else -> null
+            } as? JetBlockExpression
+        }
+
+        fun JetClassOrObject.getDelegatorToSuperCall(): JetDelegatorToSuperCall? {
+            return getDelegationSpecifiers().singleOrNull { it is JetDelegatorToSuperCall } as? JetDelegatorToSuperCall
+        }
+
+        fun addUsedParameters(constructorElement: JetElement, info: InitializerInfo) {
+            if (!info.usedParameters.isNotEmpty()) return
+            val constructor: JetConstructor<*> = when (constructorElement) {
+                is JetConstructor<*> -> constructorElement
+                is JetClass -> constructorElement.createPrimaryConstructorIfAbsent()
+                else -> return
+            }
+
+            with(constructor.getValueParameterList()!!) {
+                info.usedParameters.forEach { addParameter(it) }
+            }
+            targetToSourceConstructors[constructorElement]!!.forEach {
+                val superCall: JetCallElement? = when (it) {
+                    is JetClassOrObject -> it.getDelegatorToSuperCall()
+                    is JetPrimaryConstructor -> it.getContainingClassOrObject().getDelegatorToSuperCall()
+                    is JetSecondaryConstructor -> {
+                        if (it.hasImplicitDelegationCall()) {
+                            it.replaceImplicitDelegationCallWithExplicit(false)
+                        }
+                        else {
+                            it.getDelegationCall()
+                        }
+                    }
+                    else -> null
+                }
+                superCall?.getValueArgumentList()?.let { args ->
+                    info.usedParameters.forEach {
+                        args.addArgument(psiFactory.createArgument(psiFactory.createExpression(it.getName() ?: "_")))
+                    }
+                }
+            }
+        }
+
+        for ((constructorElement, propertyToInitializerInfo) in targetConstructorToPropertyInitializerInfoMap.entrySet()) {
+            val properties = propertyToInitializerInfo.keySet().toArrayList().sortBy(
+                    object : Comparator<JetProperty> {
+                        override fun compare(property1: JetProperty, property2: JetProperty): Int {
+                            val info1 = propertyToInitializerInfo[property1]!!
+                            val info2 = propertyToInitializerInfo[property2]!!
+                            return when {
+                                property2 in info1.usedProperties -> -1
+                                property1 in info2.usedProperties -> 1
+                                else -> 0
+                            }
+                        }
+                    }
+            )
+
+            for (oldProperty in properties) {
+                val info = propertyToInitializerInfo[oldProperty]!!
+
+                addUsedParameters(constructorElement, info)
+
+                info.initializer?.let {
+                    val body = constructorElement.getConstructorBodyBlock()
+                    body?.addAfter(it, body.getStatements().lastOrNull() ?: body.getLBrace()!!)
+                }
+                info.elementsToRemove.forEach { it.delete() }
+            }
+        }
     }
 
     override fun updateUsage(element: PsiElement) {

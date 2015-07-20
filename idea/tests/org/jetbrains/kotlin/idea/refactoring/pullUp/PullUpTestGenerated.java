@@ -89,9 +89,33 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         doTest(fileName);
     }
 
+    @TestMetadata("initializerInConstructor.kt")
+    public void testInitializerInConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("initializerInMultipleConstructorsEq.kt")
+    public void testInitializerInMultipleConstructorsEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInMultipleConstructorsEq.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("initializerInMultipleConstructorsNonEq.kt")
+    public void testInitializerInMultipleConstructorsNonEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInMultipleConstructorsNonEq.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("innerClassToInterface.kt")
     public void testInnerClassToInterface() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/innerClassToInterface.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multipleInitializersInConstructorsEq.kt")
+    public void testMultipleInitializersInConstructorsEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/multipleInitializersInConstructorsEq.kt");
         doTest(fileName);
     }
 
@@ -107,6 +131,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noInitializationInInterface.kt")
+    public void testNoInitializationInInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noInitializationInInterface.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noSuperClass.kt")
     public void testNoSuperClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noSuperClass.kt");
@@ -116,6 +146,24 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     @TestMetadata("outsideOfClass.kt")
     public void testOutsideOfClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/outsideOfClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("parametersInPrimaryInitializer.kt")
+    public void testParametersInPrimaryInitializer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/parametersInPrimaryInitializer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyDependenceSatisfied.kt")
+    public void testPropertyDependenceSatisfied() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/propertyDependenceSatisfied.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyDependenceUnsatisfied.kt")
+    public void testPropertyDependenceUnsatisfied() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/propertyDependenceUnsatisfied.kt");
         doTest(fileName);
     }
 
