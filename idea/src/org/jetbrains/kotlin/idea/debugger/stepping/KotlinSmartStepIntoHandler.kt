@@ -62,7 +62,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val doc = PsiDocumentManager.getInstance(file.getProject()).getDocument(file) ?: return emptyList()
 
         val lines = Range(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
-        val bindingContext = element.analyze()
+        val bindingContext = element.analyzeFully()
         val result = OrderedSet<SmartStepTarget>()
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties

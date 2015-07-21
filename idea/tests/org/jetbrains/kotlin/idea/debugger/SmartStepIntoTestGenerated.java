@@ -101,6 +101,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("funWithExpressionBody.kt")
+    public void testFunWithExpressionBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/funWithExpressionBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/if.kt");
