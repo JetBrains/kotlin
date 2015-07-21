@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.util.*;
@@ -1084,7 +1085,9 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
-    public void testJavaParameterPropagation() throws Exception {
+    @SuppressWarnings("unused")
+    @Ignore
+    public void _testJavaParameterPropagation() throws Exception {
         doJavaTest(
                 new JavaRefactoringProvider() {
                     @NotNull
@@ -1255,7 +1258,9 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
-    public void testJavaMethodOverridesOmitUnitType() throws Exception {
+    @SuppressWarnings("unused")
+    @Ignore
+    public void _testJavaMethodOverridesOmitUnitType() throws Exception {
         doJavaTest(new JavaRefactoringProvider());
     }
 
