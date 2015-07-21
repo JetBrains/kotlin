@@ -18,11 +18,9 @@ package org.jetbrains.kotlin.container
 
 import java.io.Closeable
 import java.io.PrintStream
-import java.io.Writer
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
-import kotlin.properties.Delegates
 
 class ContainerConsistencyException(message: String) : Exception(message)
 
@@ -36,7 +34,7 @@ object DynamicComponentDescriptor : ValueDescriptor {
 }
 
 public class StorageComponentContainer(id: String) : ComponentContainer, Closeable {
-    public val unknownContext: ComponentResolveContext by Delegates.lazy { ComponentResolveContext(this, DynamicComponentDescriptor) }
+    public val unknownContext: ComponentResolveContext by lazy { ComponentResolveContext(this, DynamicComponentDescriptor) }
     val componentStorage = ComponentStorage(id)
 
     override fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext {
