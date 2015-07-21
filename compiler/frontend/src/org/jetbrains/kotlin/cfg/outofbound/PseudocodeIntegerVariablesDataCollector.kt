@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.psi.tree.IElementType
+import com.sun.org.apache.xml.internal.security.keys.content.KeyValue
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.cfg
@@ -29,6 +30,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -50,25 +54,9 @@ import kotlin.properties.Delegates
 // but collects information about integer variables' values. Semantically it would be better to
 // merge functionality in this two files
 
-public data class ValuesData(
-        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
-        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
-        val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
-        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
-)
-
-public class PseudocodeIntegerVariablesDataCollector(
-        val pseudocode: Pseudocode,
-        val bindingContext: BindingContext
-) {
-    val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
-
-    public var integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
-        private set
-
-    public fun recollectIntegerVariablesValues() {
-        integerVariablesValues = collectVariableValuesData()
-    }
+public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
+    private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
+    public val integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -99,9 +87,17 @@ public class PseudocodeIntegerVariablesDataCollector(
                 TraversalOrder.FORWARD,
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
-                { previous, current, edgeData -> removeOutOfScopeVariables(previous, current, edgeData) },
-                ValuesData(HashMap(), HashMap(), HashMap(), HashMap())
+                { previous, current, edgeData -> updateEdge(previous, current, edgeData) },
+                ValuesData.createEmpty()
         )
+    }
+
+    private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
+        val updatedEdgeData = edgeData.copy()
+        val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
+        makeVariablesUnavailableIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+        makeVariablesAvailableIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+        return filteredEdgeData
     }
 
     private fun removeOutOfScopeVariables(
@@ -113,12 +109,7 @@ public class PseudocodeIntegerVariablesDataCollector(
         val filteredIntFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intFakeVarsToValues)
         val filteredBoolVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolVarsToValues)
         val filteredBoolFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolFakeVarsToValues)
-        return ValuesData(
-                HashMap(filteredIntVars),
-                HashMap(filteredIntFakeVars),
-                HashMap(filteredBoolVars),
-                HashMap(filteredBoolFakeVars)
-        )
+        return ValuesData(HashMap(filteredIntVars), HashMap(filteredIntFakeVars), HashMap(filteredBoolVars), HashMap(filteredBoolFakeVars))
     }
 
     // this function is fully copied from PseudocodeVariableDataCollector
@@ -162,18 +153,88 @@ public class PseudocodeIntegerVariablesDataCollector(
         }
     }
 
+    private fun makeVariablesUnavailableIfNeeded(
+            previousInstruction: Instruction,
+            currentInstruction: Instruction,
+            edgeData: ValuesData
+    ) {
+        if(previousInstruction is MarkInstruction && previousInstruction.previousInstructions.size() == 1) {
+            val beforePreviousInstruction = previousInstruction.previousInstructions.first()
+            if (beforePreviousInstruction is ConditionalJumpInstruction && beforePreviousInstruction.element is JetIfExpression) {
+                val conditionFakeVariable = beforePreviousInstruction.conditionValue
+                val conditionBoolValue = edgeData.boolFakeVarsToValues[conditionFakeVariable]
+                if (conditionBoolValue != null) {
+                    when (conditionBoolValue) {
+                        is BooleanVariableValue.True -> {
+                            if (beforePreviousInstruction.nextOnFalse == previousInstruction) {
+                                // We are in "else" block and condition evaluated to "true"
+                                // so this block will not be processed. For now to indicate this
+                                // we will make all variables completely unavailable
+                                edgeData.intVarsToValues.forEach { it.value.makeAllValuesUnavailable(currentInstruction.lexicalScope) }
+                            }
+                        }
+                        is BooleanVariableValue.False -> {
+                            if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
+                                // We are in "then" block and condition evaluated to "false"
+                                // so this block will not be processed. For now to indicate this
+                                // we will make all variables completely unavailable
+                                edgeData.intVarsToValues.forEach { it.value.makeAllValuesUnavailable(currentInstruction.lexicalScope) }
+                            }
+                        }
+                        is BooleanVariableValue.Undefined -> {
+                            if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
+                                // We are in "then" block and need to apply onTrue restrictions
+                                for ((variable, unrestrictedValues) in conditionBoolValue.onTrueRestrictions) {
+                                    edgeData.intVarsToValues.get(variable)
+                                            ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
+                                }
+                            }
+                            else {
+                                // We are in "else" block and need to apply onFalse restrictions
+                                for ((variable, unrestrictedValues) in conditionBoolValue.onFalseRestrictions) {
+                                    edgeData.intVarsToValues.get(variable)
+                                            ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun makeVariablesAvailableIfNeeded(
+            previousInstruction: Instruction,
+            currentInstruction: Instruction,
+            edgeData: ValuesData
+    ) {
+        if(previousInstruction.lexicalScope.depth > currentInstruction.lexicalScope.depth) {
+            edgeData.intVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
+            edgeData.intFakeVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
+        }
+    }
+
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
+        if(instruction is SubroutineSinkInstruction) {
+            // this instruction is assumed to be the last one in function so it is not processed
+            return Edges(ValuesData.createEmpty(), ValuesData.createEmpty())
+        }
         val enterInstructionData = unionIncomingVariablesValues(incomingEdgesData)
         val exitInstructionData = updateValues(instruction, enterInstructionData)
         return Edges(enterInstructionData, exitInstructionData)
     }
 
     private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData {
-        val unitedIntVariables: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
-        val unitedIntFakeVariables: MutableMap<PseudoValue, IntegerVariableValues> = HashMap()
-        val unitedBoolVariables: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap()
-        val unitedBoolFakeVariables: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
-        for (data in incomingEdgesData) {
+        if(incomingEdgesData.isEmpty()) {
+            return ValuesData.createEmpty()
+        }
+        val headData = incomingEdgesData.first()
+        val tailData = incomingEdgesData.drop(1)
+        val unitedIntVariables = headData.intVarsToValues
+        val unitedIntFakeVariables = headData.intFakeVarsToValues
+        val unitedBoolVariables = headData.boolVarsToValues
+        val unitedBoolFakeVariables = headData.boolFakeVarsToValues
+        for (data in tailData) {
             mergeCorrespondingVariables(unitedIntVariables, data.intVarsToValues)
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
             unitedBoolVariables.putAll(data.boolVarsToValues) // TODO: this is stub, makes no sense
@@ -186,29 +247,20 @@ public class PseudocodeIntegerVariablesDataCollector(
             targetVariablesMap: MutableMap<K, IntegerVariableValues>,
             variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
-        val unionByKey: (K) -> Unit = { key ->
-            val values1 = targetVariablesMap.getOrElse(key, { IntegerVariableValues.empty() })
-            val values2 = variablesToConsume.getOrElse(key, { IntegerVariableValues.empty() })
+        val targetMapKeys = HashSet(targetVariablesMap.keySet())
+        for(key in targetMapKeys) {
+            val values1 = targetVariablesMap.get(key) ?: throw Exception("No corresponding element in map")
+            val values2 = variablesToConsume.get(key) ?: throw Exception("No corresponding element in map")
             if(values1.cantBeDefined || values2.cantBeDefined) {
-                values1.setUndefined()
+                values1.setCantBeDefined()
             } else {
                 values1.addAll(values2)
-                targetVariablesMap.put(key, values1)
             }
         }
-        val targetMapKeys = HashSet(targetVariablesMap.keySet())
-        val mapToConsumeKeys = HashSet(variablesToConsume.keySet())
-        for(key in targetMapKeys) unionByKey(key)
-        for(key in mapToConsumeKeys) unionByKey(key)
     }
 
     private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData {
-        val updatedData = ValuesData(
-                HashMap(mergedEdgesData.intVarsToValues),
-                HashMap(mergedEdgesData.intFakeVarsToValues),
-                HashMap(mergedEdgesData.boolVarsToValues),
-                HashMap(mergedEdgesData.boolFakeVarsToValues)
-        )
+        val updatedData = mergedEdgesData.copy()
         when(instruction) {
             is VariableDeclarationInstruction -> processVariableDeclaration(instruction, updatedData)
             is ReadValueInstruction -> {
@@ -245,7 +297,7 @@ public class PseudocodeIntegerVariablesDataCollector(
         val typeName = tryGetVariableType(variableDescriptor)
                        ?: throw Exception("Variable type name is null")
         when(typeName) {
-            "Int" -> updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.empty())
+            "Int" -> updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createEmpty())
             "Boolean" -> updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
         }
     }
@@ -256,15 +308,15 @@ public class PseudocodeIntegerVariablesDataCollector(
         val nodeType = node.getElementType() as? JetNodeType
                        ?: throw Exception("Node's elementType has wrong type for JetConstantExpression")
         val fakeVariable = instruction.outputValue
-        val valuesAsText = node.getText()
+        val valueAsText = node.getText()
         when (nodeType) {
             JetNodeTypes.INTEGER_CONSTANT -> {
-                val literalValue = Integer.parseInt(valuesAsText)
-                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues.singleton(literalValue))
+                val literalValue = Integer.parseInt(valueAsText)
+                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues.createSingleton(literalValue))
             }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
-                val booleanValue = Boolean.parseBoolean(valuesAsText)
-                updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.trueOrFalse(booleanValue))
+                val booleanValue = Boolean.parseBoolean(valueAsText)
+                updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.createTrueOrFalse(booleanValue))
             }
         }
     }
@@ -279,11 +331,11 @@ public class PseudocodeIntegerVariablesDataCollector(
             is IntegerVariableValues ->
                 // we have the information about value, so it is definitely of integer type
                 // (assuming there are no undeclared variables)
-                updatedData.intFakeVarsToValues.put(newFakeVariable, referencedVariableValue)
+                updatedData.intFakeVarsToValues.put(newFakeVariable, referencedVariableValue.copy())
             is BooleanVariableValue ->
                 // we have the information about value, so it is definitely of boolean type
                 // (assuming there are no undeclared variables)
-                updatedData.boolFakeVarsToValues.put(newFakeVariable, referencedVariableValue)
+                updatedData.boolFakeVarsToValues.put(newFakeVariable, referencedVariableValue.copy())
         }
     }
 
@@ -298,15 +350,15 @@ public class PseudocodeIntegerVariablesDataCollector(
             "Int" -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues.get(fakeVariable)
                 if (valuesToAssign != null) {
-                    updatedData.intVarsToValues.put(variableDescriptor, valuesToAssign)
+                    updatedData.intVarsToValues.put(variableDescriptor, valuesToAssign.copy())
                 } else {
-                    updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.cantBeDefined())
+                    updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createCantBeDefined())
                 }
             }
             "Boolean" -> {
                 val valueToAssign = updatedData.boolFakeVarsToValues.get(fakeVariable)
                 if (valueToAssign != null) {
-                    updatedData.boolVarsToValues.put(variableDescriptor, valueToAssign)
+                    updatedData.boolVarsToValues.put(variableDescriptor, valueToAssign.copy())
                 } else {
                     updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
                 }
@@ -322,14 +374,14 @@ public class PseudocodeIntegerVariablesDataCollector(
         val resultVariable = instruction.outputValue
                              ?: return
         fun performOperation<Op, R>(
-                operandsContainer: MutableMap<PseudoValue, Op>,
-                resultContainer: MutableMap<PseudoValue, R>,
+                operandsMap: MutableMap<PseudoValue, Op>,
+                resultMap: MutableMap<PseudoValue, R>,
                 operation: (Op, Op) -> R
         ) {
-            val leftOperandValues = operandsContainer[leftOperandVariable]
-            val rightOperandValues = operandsContainer[rightOperandVariable]
+            val leftOperandValues = operandsMap[leftOperandVariable]
+            val rightOperandValues = operandsMap[rightOperandVariable]
             if (leftOperandValues != null && rightOperandValues != null) {
-                resultContainer.put(resultVariable, operation(leftOperandValues, rightOperandValues))
+                resultMap.put(resultVariable, operation(leftOperandValues, rightOperandValues))
             }
         }
         val leftOperandDescriptor =
