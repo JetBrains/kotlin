@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
+import com.google.common.collect.UnmodifiableListIterator
 import org.jetbrains.kotlin.cfg.outofbound.ValuesData
 import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
@@ -30,39 +32,88 @@ public class IntegerVariableValues private constructor() {
     // if true - analysis can't define variable values
     public var cantBeDefined: Boolean = false
         private set
+    private val availableValues: MutableSet<Int> = HashSet()
+    private val unavailableValues: MutableSet<UnavailableValue> = HashSet()
+
     public val areDefined: Boolean
-        get() = !(areEmpty || cantBeDefined)
-
-    private val values: MutableSet<Int> = HashSet()
+        get() = !(areEmpty || cantBeDefined || availableValues.isEmpty())
+    private val allValuesNumber: Int
+        get() = availableValues.size() + unavailableValues.size()
     // this constant is chosen randomly
-    private val undefinedThreshold = 20
+    private val cantBeDefinedThreshold = 20
 
-    public fun setUndefined() {
+    public fun setCantBeDefined() {
         areEmpty = false
         cantBeDefined = true
-        values.clear()
+        availableValues.clear()
+        unavailableValues.clear()
     }
-    public fun add(value: Int) {
+
+    public fun addAll(values: IntegerVariableValues) {
+        values.availableValues.forEach { addAvailable(it) }
+        values.unavailableValues.forEach { addUnavailable(it) }
+    }
+
+    private fun addAvailable(value: Int) {
         if(cantBeDefined) {
             return
         }
-        values.add(value)
+        availableValues.add(value)
         areEmpty = false
-        if(values.size().equals(undefinedThreshold)) {
-            setUndefined()
+        if(allValuesNumber == cantBeDefinedThreshold) {
+            setCantBeDefined()
         }
     }
-    public fun addAll(values: Collection<Int>) {
-        for(value in values) {
-            add(value)
+
+    private fun addUnavailable(value: UnavailableValue) {
+        if(cantBeDefined) {
+            return
+        }
+        unavailableValues.add(value)
+        areEmpty = false
+        if(allValuesNumber == cantBeDefinedThreshold) {
+            setCantBeDefined()
         }
     }
-    public fun addAll(values: IntegerVariableValues) {
-        for(value in values.values) {
-            add(value)
+
+    public fun copy(): IntegerVariableValues {
+        val copy = IntegerVariableValues()
+        copy.areEmpty = areEmpty
+        copy.cantBeDefined = cantBeDefined
+        copy.availableValues.addAll(availableValues)
+        copy.unavailableValues.addAll(unavailableValues)
+        return copy
+    }
+
+    public fun getAvailableValues(): List<Int> =
+            Collections.unmodifiableList(availableValues.toList())
+
+    public fun makeAllValuesUnavailable(sinceLexicalScope: LexicalScope) {
+        availableValues.forEach { unavailableValues.add(UnavailableValue(it, sinceLexicalScope)) }
+        availableValues.clear()
+    }
+
+    public fun leaveOnlyPassedValuesAvailable(valuesToLeaveAvailable: Set<Int>, sinceLexicalScope: LexicalScope) {
+        val currentAvailableValues = LinkedList<Int>()
+        currentAvailableValues.addAll(availableValues)
+        currentAvailableValues.forEach {
+            if(!valuesToLeaveAvailable.contains(it)) {
+                availableValues.remove(it)
+                unavailableValues.add(UnavailableValue(it, sinceLexicalScope))
+            }
         }
     }
-    public fun getValues(): Set<Int> = Collections.unmodifiableSet(values)
+
+    public fun tryMakeValuesAvailable(lexicalScope: LexicalScope) {
+        val currentUnavailableValues = LinkedList<UnavailableValue>()
+        currentUnavailableValues.addAll(unavailableValues)
+        currentUnavailableValues.forEach {
+            if(it.sinceLexicalScope.depth > lexicalScope.depth) {
+                unavailableValues.remove(it)
+                availableValues.add(it.value)
+            }
+        }
+    }
 
     // operators overloading
     public fun plus(others: IntegerVariableValues): IntegerVariableValues =
@@ -81,29 +132,25 @@ public class IntegerVariableValues private constructor() {
         }
     public fun rangeTo(others: IntegerVariableValues): IntegerVariableValues {
         if(this.areDefined && others.areDefined) {
-            // we can safely use casts below because of areDefined checks above
-            val minOfLeftOperand = values.min() as Int
-            val maxOfRightOperand = others.values.max() as Int
-            val rangeValues = empty()
-            for (value in minOfLeftOperand .. maxOfRightOperand) {
-                rangeValues.add(value)
+            val minOfLeftOperand = availableValues.min() as Int
+            val maxOfRightOperand = others.availableValues.max() as Int
+            val rangeValues = createEmpty()
+            for (value in minOfLeftOperand..maxOfRightOperand) {
+                rangeValues.addAvailable(value)
             }
             return rangeValues
         }
-        return cantBeDefined()
+        return createCantBeDefined()
     }
 
     private fun applyEachToEach(others: IntegerVariableValues, operation: (Int, Int) -> Int): IntegerVariableValues {
         if(this.areDefined && others.areDefined) {
-            val resultSet = HashSet<Int>()
-            for (leftOp in this.values) {
-                for (rightOp in others.values) {
-                    resultSet.add(operation(leftOp, rightOp))
-                }
-            }
-            return ofCollection(resultSet)
+            val results = availableValues.map { leftOp ->
+                others.availableValues.map { rightOp -> operation(leftOp, rightOp) }
+            }.flatten()
+            return createFromCollection(results)
         }
-        return cantBeDefined()
+        return createCantBeDefined()
     }
 
     // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
@@ -118,19 +165,19 @@ public class IntegerVariableValues private constructor() {
         if(!others.areDefined) {
             return undefinedWithFullRestrictions(valuesData)
         }
-        if(others.values.size() > 1) {
+        if(others.availableValues.size() > 1) {
             // this check means that in expression "x < y" only one element set is supported for "y"
             return undefinedWithFullRestrictions(valuesData)
         }
-        val otherValue = others.values.single()
-        return if(values.size() == 1) {
-            val thisValue = values.toIntArray().first()
+        val otherValue = others.availableValues.single()
+        return if(availableValues.size() == 1) {
+            val thisValue = availableValues.first()
             when {
                 thisValue < otherValue -> BooleanVariableValue.True
                 else -> BooleanVariableValue.False
             }
         } else {
-            val thisArray = values.toIntArray()
+            val thisArray = availableValues.toIntArray()
             thisArray.sort()
             when {
                 thisArray.last() < otherValue -> BooleanVariableValue.True
@@ -138,9 +185,9 @@ public class IntegerVariableValues private constructor() {
                     if(thisVarDescriptor == null) {
                         undefinedWithFullRestrictions(valuesData)
                     } else {
-                        val withoutLast = thisArray.copyOf(thisArray.size() - 1).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(withoutLast))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to singleton(thisArray.last()))
+                        val withoutLast = thisArray.copyOf(thisArray.size() - 1).toSet()
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to withoutLast)
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to setOf(thisArray.last()))
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -149,10 +196,10 @@ public class IntegerVariableValues private constructor() {
                         undefinedWithFullRestrictions(valuesData)
                     } else {
                         val bound = thisArray.indexOfFirst { it >= otherValue }
-                        val lessValuesInThis = thisArray.copyOfRange(0, bound).toArrayList()
-                        val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(lessValuesInThis))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to ofCollection(greaterOrEqValuesInThis))
+                        val lessValuesInThis = thisArray.copyOfRange(0, bound).toSet()
+                        val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toSet()
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to lessValuesInThis)
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to greaterOrEqValuesInThis)
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -160,9 +207,9 @@ public class IntegerVariableValues private constructor() {
                     if(thisVarDescriptor == null) {
                         undefinedWithFullRestrictions(valuesData)
                     } else {
-                        val withoutFirst = thisArray.copyOfRange(1, thisArray.size()).toArrayList()
-                        val onTrueRestrictions = mapOf(thisVarDescriptor to ofCollection(withoutFirst))
-                        val onFalseRestrictions = mapOf(thisVarDescriptor to singleton(thisArray.first()))
+                        val withoutFirst = thisArray.copyOfRange(1, thisArray.size()).toSet()
+                        val onTrueRestrictions = mapOf(thisVarDescriptor to withoutFirst)
+                        val onFalseRestrictions = mapOf(thisVarDescriptor to setOf(thisArray.first()))
                         BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
                     }
                 }
@@ -173,7 +220,7 @@ public class IntegerVariableValues private constructor() {
 
     private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {
         val restrictions = valuesData.intVarsToValues.keySet()
-                .map { Pair(it, empty()) }
+                .map { Pair(it, setOf<Int>()) }
                 .toMap()
         return BooleanVariableValue.Undefined(restrictions, restrictions)
     }
@@ -184,33 +231,70 @@ public class IntegerVariableValues private constructor() {
         }
         return areEmpty.equals(other.areEmpty)
                && cantBeDefined.equals(other.cantBeDefined)
-               && values.equals(other.values)
+               && availableValues.equals(other.availableValues)
+               && unavailableValues.equals(other.unavailableValues)
     }
+
     override fun hashCode(): Int {
         var code = 7
         code = 31 * code + areEmpty.hashCode()
         code = 31 * code + cantBeDefined.hashCode()
-        code = 31 * code + values.hashCode()
+        code = 31 * code + availableValues.hashCode()
+        code = 31 * code + unavailableValues.hashCode()
         return code
     }
-    override fun toString(): String = values.toString()
+
+    override fun toString(): String {
+        return when {
+            areEmpty -> "-"
+            cantBeDefined -> "?"
+            else -> "${availableValues.toString()}${unavailableValues.toString()}"
+        }
+    }
 
     companion object {
-        public fun empty(): IntegerVariableValues = IntegerVariableValues()
-        public fun singleton(value: Int): IntegerVariableValues {
-            val values = empty()
-            values.add(value)
+        public fun createEmpty(): IntegerVariableValues = IntegerVariableValues()
+        public fun createSingleton(value: Int): IntegerVariableValues {
+            val values = IntegerVariableValues()
+            values.addAvailable(value)
             return values
         }
-        public fun cantBeDefined(): IntegerVariableValues {
-            val values = empty()
-            values.setUndefined()
+        public fun createCantBeDefined(): IntegerVariableValues {
+            val values = createEmpty()
+            values.setCantBeDefined()
             return values
         }
-        public fun ofCollection(collection: Collection<Int>): IntegerVariableValues {
-            val values = empty()
-            values.addAll(collection)
+        public fun createFromCollection(collection: Collection<Int>): IntegerVariableValues {
+            val values = createEmpty()
+            collection.forEach { values.addAvailable(it) }
             return values
         }
+    }
+
+    //    private interface AvailabilityStatus
+    //    private object ValueAvailable : AvailabilityStatus
+    //    private class ValueUnavailable (val sinceLexicalScope: LexicalScope): AvailabilityStatus
+    //
+    //    private data class IntegerValue(val value: Int, var availabilityStatus: AvailabilityStatus) {
+    //        override fun equals(other: Any?): Boolean {
+    //            if(other !is IntegerValue) {
+    //                return false
+    //            }
+    //            return value == other.value
+    //        }
+    //
+    //        override fun hashCode(): Int = value
+    //
+    //        override fun toString(): String {
+    //            val availability =
+    //                    if(availabilityStatus is ValueUnavailable) {
+    //                        val depth = (availabilityStatus as ValueUnavailable).sinceLexicalScope.depth
+    //                        "($depth)"
+    //                    } else ""
+    //            return value.toString() + availability
+    //        }
+    //    }
+    private data class UnavailableValue(val value: Int, val sinceLexicalScope: LexicalScope) {
+        override fun toString(): String = "$value(${sinceLexicalScope.depth})"
     }
 }

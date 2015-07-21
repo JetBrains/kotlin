@@ -24,17 +24,32 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public interface BooleanVariableValue {
-    public object True : BooleanVariableValue
+    public object True : BooleanVariableValue {
+        override fun toString(): String = "True"
+    }
 
-    public object False : BooleanVariableValue
+    public object False : BooleanVariableValue {
+        override fun toString(): String = "False"
+    }
 
     public data class Undefined (
-            val onTrueRestrictions: Map<VariableDescriptor, IntegerVariableValues>,
-            val onFalseRestrictions: Map<VariableDescriptor, IntegerVariableValues>
-    ): BooleanVariableValue
+            val onTrueRestrictions: Map<VariableDescriptor, Set<Int>>,
+            val onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
+    ): BooleanVariableValue {
+        override fun toString(): String {
+            val ontTrue = "onTrue:${MapUtils.mapToString(onTrueRestrictions, { it.getName().asString() })}"
+            val ontFalse = "onFalse:${MapUtils.mapToString(onFalseRestrictions, { it.getName().asString() })}"
+            return "Undef:[$ontTrue, $ontFalse]"
+        }
+    }
+
+    // For now derived classes of BooleanVariableValue are immutable,
+    // so copy returns this. In the future, if some class become mutable
+    // the implementation of this method may change
+    public fun copy(): BooleanVariableValue = this
 
     companion object {
         public val undefinedWithNoRestrictions: Undefined = Undefined(mapOf(), mapOf())
-        public fun trueOrFalse(value: Boolean): BooleanVariableValue = if(value) True else False
+        public fun createTrueOrFalse(value: Boolean): BooleanVariableValue = if(value) True else False
     }
 }
