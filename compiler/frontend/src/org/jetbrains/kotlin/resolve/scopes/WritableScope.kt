@@ -20,7 +20,7 @@ import com.google.common.collect.Multimap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
-public trait WritableScope : JetScope {
+public interface WritableScope : JetScope {
     public enum class LockLevel {
         WRITING,
         BOTH,

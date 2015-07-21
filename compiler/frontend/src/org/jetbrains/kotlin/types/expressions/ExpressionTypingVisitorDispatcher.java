@@ -307,6 +307,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+    @Override
     public JetTypeInfo visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, ExpressionTypingContext data) {
         return basic.visitSimpleNameExpression(expression, data);
     }

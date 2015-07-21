@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 
-public trait ClassMemberDeclarationProvider : DeclarationProvider {
+public interface ClassMemberDeclarationProvider : DeclarationProvider {
     public fun getOwnerInfo(): JetClassLikeInfo
 }

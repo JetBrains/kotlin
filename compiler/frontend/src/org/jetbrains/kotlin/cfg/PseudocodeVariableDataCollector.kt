@@ -97,10 +97,10 @@ public class PseudocodeVariableDataCollector(
 }
 
 //todo may be a type alias
-trait InstructionDataMergeStrategy<D> :
+interface InstructionDataMergeStrategy<D> :
   (Instruction, Collection<MutableMap<VariableDescriptor, D>>) -> Edges<MutableMap<VariableDescriptor, D>>
 
-public trait LexicalScopeVariableInfo {
+public interface LexicalScopeVariableInfo {
     val declaredIn : Map<VariableDescriptor, LexicalScope>
     val scopeVariables : Map<LexicalScope, Collection<VariableDescriptor>>
 }

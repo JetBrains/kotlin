@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.name.Name
 
-public trait ValueArgument {
+public interface ValueArgument {
     IfNotParsed
     public fun getArgumentExpression(): JetExpression?
 
@@ -36,7 +36,7 @@ public trait ValueArgument {
     public fun isExternal(): Boolean
 }
 
-public trait FunctionLiteralArgument : ValueArgument {
+public interface FunctionLiteralArgument : ValueArgument {
     public fun getFunctionLiteral(): JetFunctionLiteralExpression
 
     override fun getArgumentExpression(): JetExpression

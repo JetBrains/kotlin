@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache.CachedData
 
-public trait ResolutionResultsCache {
+public interface ResolutionResultsCache {
     public data class CachedData(
             val resolutionResults: OverloadResolutionResultsImpl<*>,
             val deferredComputation: BasicCallResolutionContext,

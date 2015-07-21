@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 
-public trait AdditionalTypeChecker {
+public interface AdditionalTypeChecker {
 
     public class Composite(val checkers: List<AdditionalTypeChecker>): AdditionalTypeChecker {
         override fun checkType(expression: JetExpression, expressionType: JetType, c: ResolutionContext<*>) {

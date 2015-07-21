@@ -50,7 +50,7 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
         when (this) {
             is PropertyAccessorDescriptor -> {
                 val propertyDescriptor = getCorrespondingProperty()
-                predicate(propertyDescriptor.getContainingDeclaration()!!) &&
+                predicate(propertyDescriptor.getContainingDeclaration()) &&
                 (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
             }
             else -> predicate(getContainingDeclaration()) && hasPlatformStaticAnnotation()

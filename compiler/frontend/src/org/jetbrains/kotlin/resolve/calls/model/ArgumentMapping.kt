@@ -38,7 +38,7 @@ public enum class ArgumentMatchStatus(val isError: Boolean = true) {
     UNKNOWN()
 }
 
-public trait ArgumentMatch : ArgumentMapping {
+public interface ArgumentMatch : ArgumentMapping {
     public val valueParameter: ValueParameterDescriptor
     public val status: ArgumentMatchStatus
 

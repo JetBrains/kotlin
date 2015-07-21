@@ -35,9 +35,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.LinkedHashSet
-import kotlin.properties.Delegates
 
-trait IndexedImports {
+interface IndexedImports {
     val imports: List<JetImportDirective>
     fun importsForName(name: Name): Collection<JetImportDirective>
 }
@@ -50,7 +49,7 @@ class AllUnderImportsIndexed(allImports: Collection<JetImportDirective>) : Index
 class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedImports {
     override val imports = allImports.filter { !it.isAllUnder() }
 
-    private val nameToDirectives: ListMultimap<Name, JetImportDirective> by Delegates.lazy {
+    private val nameToDirectives: ListMultimap<Name, JetImportDirective> by lazy {
         val builder = ImmutableListMultimap.builder<Name, JetImportDirective>()
 
         for (directive in imports) {

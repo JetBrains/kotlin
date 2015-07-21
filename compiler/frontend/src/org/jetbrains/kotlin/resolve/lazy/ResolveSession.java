@@ -144,6 +144,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         this.packages =
                 storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, LazyPackageDescriptor>() {
+                    @Override
                     @Nullable
                     public LazyPackageDescriptor invoke(FqName fqName) {
                         return createPackage(fqName);

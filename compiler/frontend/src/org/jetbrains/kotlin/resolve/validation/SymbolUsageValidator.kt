@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import kotlin.platform.platformStatic
 
-public trait SymbolUsageValidator {
+public interface SymbolUsageValidator {
 
     public fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) { }
 

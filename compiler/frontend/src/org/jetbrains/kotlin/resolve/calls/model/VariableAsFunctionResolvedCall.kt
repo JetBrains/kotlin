@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
-public trait VariableAsFunctionResolvedCall {
+public interface VariableAsFunctionResolvedCall {
     public val functionCall: ResolvedCall<FunctionDescriptor>
     public val variableCall: ResolvedCall<VariableDescriptor>
 }

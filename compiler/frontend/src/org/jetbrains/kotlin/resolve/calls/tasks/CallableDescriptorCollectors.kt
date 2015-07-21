@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public trait CallableDescriptorCollector<D : CallableDescriptor> {
+public interface CallableDescriptorCollector<D : CallableDescriptor> {
 
     public fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D>
 

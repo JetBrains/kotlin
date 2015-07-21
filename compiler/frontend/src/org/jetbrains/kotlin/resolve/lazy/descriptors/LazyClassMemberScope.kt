@@ -83,7 +83,7 @@ public open class LazyClassMemberScope(
         return result
     }
 
-    private trait MemberExtractor<T : CallableMemberDescriptor> {
+    private interface MemberExtractor<T : CallableMemberDescriptor> {
         public fun extract(extractFrom: JetType, name: Name): Collection<T>
     }
 

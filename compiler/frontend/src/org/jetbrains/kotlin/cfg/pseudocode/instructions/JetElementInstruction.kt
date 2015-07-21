@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import org.jetbrains.kotlin.psi.JetElement
 
-public trait JetElementInstruction : Instruction {
+public interface JetElementInstruction : Instruction {
     public val element: JetElement
 }

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.openapi.util.ModificationTracker
 
-public trait Diagnostics : Iterable<Diagnostic> {
+public interface Diagnostics : Iterable<Diagnostic> {
     //should not be called on readonly views
     //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property
     public val modificationTracker: ModificationTracker
