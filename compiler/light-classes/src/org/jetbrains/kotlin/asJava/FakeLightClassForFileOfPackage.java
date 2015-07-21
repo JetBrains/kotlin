@@ -95,4 +95,17 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     public Language getLanguage() {
         return JetLanguage.INSTANCE;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FakeLightClassForFileOfPackage)) return false;
+
+        FakeLightClassForFileOfPackage other = (FakeLightClassForFileOfPackage) obj;
+        return file == other.file && delegate.equals(other.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return file.hashCode() * 31 + delegate.hashCode();
+    }
 }
