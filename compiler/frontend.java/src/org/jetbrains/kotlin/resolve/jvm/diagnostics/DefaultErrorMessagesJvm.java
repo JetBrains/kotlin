@@ -59,8 +59,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");
 
-        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. " +
-                                                       "Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
+        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
+                                                       "Make sure you have kotlin-reflect.jar in the classpath");
 
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
@@ -68,6 +68,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
 
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
+
+        MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
     }
 
     @NotNull

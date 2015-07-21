@@ -35,4 +35,6 @@ public class SamConstructorDescriptor(
 
 public object SamConstructorDescriptorKindExclude : DescriptorKindExclude {
     override fun matches(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
+
+    override val fullyExcludedDescriptorKinds: Int get() = 0
 }

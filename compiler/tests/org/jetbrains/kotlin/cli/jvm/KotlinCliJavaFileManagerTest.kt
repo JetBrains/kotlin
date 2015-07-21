@@ -143,6 +143,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         val pkg = root.createChildDirectory(this, "foo")
         val dir = myPsiManager.findDirectory(pkg)
         TestCase.assertNotNull(dir)
+        dir!!
         dir.add(PsiFileFactory.getInstance(getProject()).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
         val coreJavaFileManagerExt = KotlinCliJavaFileManagerImpl(myPsiManager)
         coreJavaFileManagerExt.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))

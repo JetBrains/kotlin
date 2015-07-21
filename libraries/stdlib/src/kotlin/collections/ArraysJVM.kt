@@ -52,12 +52,18 @@ import kotlin.jvm.internal.Intrinsic
  */
 @Intrinsic("kotlin.arrays.array") public fun booleanArrayOf(vararg content : Boolean) : BooleanArray = content
 
+// TODO: Move inputStream to kotlin.io
+/**
+ * Creates an input stream for reading data from this byte array.
+ */
+deprecated("Use inputStream() method instead.", ReplaceWith("this.inputStream()"))
+public val ByteArray.inputStream : ByteArrayInputStream
+    get() = inputStream()
 
 /**
  * Creates an input stream for reading data from this byte array.
  */
-public val ByteArray.inputStream : ByteArrayInputStream
-    get() = ByteArrayInputStream(this)
+public fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInputStream(this)
 
 /**
  * Creates an input stream for reading data from the specified portion of this byte array.

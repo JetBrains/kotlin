@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import java.util.*
 
 public enum class ConstraintPositionKind {
     RECEIVER_POSITION,
@@ -43,7 +44,7 @@ public trait ConstraintPosition {
 
     fun isStrong(): Boolean = kind != TYPE_BOUND_POSITION
 
-    fun isCaptureAllowed(): Boolean = kind in setOf(VALUE_PARAMETER_POSITION, RECEIVER_POSITION)
+    fun isParameter(): Boolean = kind in setOf(VALUE_PARAMETER_POSITION, RECEIVER_POSITION)
 }
 
 private open data class ConstraintPositionImpl(override val kind: ConstraintPositionKind) : ConstraintPosition {
@@ -56,9 +57,14 @@ private data class ConstraintPositionWithIndex(override val kind: ConstraintPosi
 class CompoundConstraintPosition(
         vararg positions: ConstraintPosition
 ) : ConstraintPositionImpl(ConstraintPositionKind.COMPOUND_CONSTRAINT_POSITION) {
-    val positions: Collection<ConstraintPosition> = positions.toList()
+    val positions: Collection<ConstraintPosition> =
+            positions.flatMap { if (it is CompoundConstraintPosition) it.positions else listOf(it) }.toSet()
 
     override fun isStrong() = positions.any { it.isStrong() }
 
-    override fun toString() = "$kind(${positions.joinToString()}"
+    override fun toString() = "$kind(${positions.joinToString()})"
+}
+
+fun ConstraintPosition.derivedFrom(kind: ConstraintPositionKind): Boolean {
+    return if (this !is CompoundConstraintPosition) this.kind == kind else positions.any { it.kind == kind }
 }

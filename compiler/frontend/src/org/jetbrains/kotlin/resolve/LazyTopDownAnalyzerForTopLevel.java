@@ -28,24 +28,21 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class LazyTopDownAnalyzerForTopLevel {
 
-    private KotlinCodeAnalyzer resolveSession;
-    private LazyTopDownAnalyzer lazyTopDownAnalyzer;
+    @NotNull private final KotlinCodeAnalyzer codeAnalyzer;
+    @NotNull private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
 
-    @Inject
-    public void setKotlinCodeAnalyzer(@NotNull KotlinCodeAnalyzer kotlinCodeAnalyzer) {
-        this.resolveSession = kotlinCodeAnalyzer;
-    }
-
-    @Inject
-    public void setLazyTopDownAnalyzer(@NotNull LazyTopDownAnalyzer lazyTopDownAnalyzer) {
+    public LazyTopDownAnalyzerForTopLevel(
+            @NotNull LazyTopDownAnalyzer lazyTopDownAnalyzer,
+            @NotNull KotlinCodeAnalyzer codeAnalyzer
+    ) {
         this.lazyTopDownAnalyzer = lazyTopDownAnalyzer;
+        this.codeAnalyzer = codeAnalyzer;
     }
 
     @NotNull
@@ -56,15 +53,15 @@ public class LazyTopDownAnalyzerForTopLevel {
     ) {
         PackageFragmentProvider provider;
         if (additionalProviders.isEmpty()) {
-            provider = resolveSession.getPackageFragmentProvider();
+            provider = codeAnalyzer.getPackageFragmentProvider();
         }
         else {
             provider = new CompositePackageFragmentProvider(KotlinPackage.plus(
-                    Arrays.asList(resolveSession.getPackageFragmentProvider()),
+                    Arrays.asList(codeAnalyzer.getPackageFragmentProvider()),
                     additionalProviders));
         }
 
-        ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
+        ((ModuleDescriptorImpl) codeAnalyzer.getModuleDescriptor()).initialize(provider);
 
         return analyzeDeclarations(topDownAnalysisMode, files);
     }
@@ -76,7 +73,7 @@ public class LazyTopDownAnalyzerForTopLevel {
     ) {
         TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisMode, elements, DataFlowInfo.EMPTY);
 
-        resolveImportsInAllFiles(c, resolveSession);
+        resolveImportsInAllFiles(c, codeAnalyzer);
 
         return c;
     }

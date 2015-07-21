@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.LazyType;
@@ -32,7 +32,7 @@ import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
-    private NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer;
+    protected NullableLazyValue<ConstantValue<?>> compileTimeInitializer;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -59,7 +59,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Nullable
     @Override
-    public CompileTimeConstant<?> getCompileTimeInitializer() {
+    public ConstantValue<?> getCompileTimeInitializer() {
         // Force computation and setting of compileTimeInitializer, if needed
         if (compileTimeInitializer == null && outType instanceof LazyType) {
             outType.getConstructor();
@@ -71,7 +71,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         return null;
     }
 
-    public void setCompileTimeInitializer(@NotNull NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer) {
+    public void setCompileTimeInitializer(@NotNull NullableLazyValue<ConstantValue<?>> compileTimeInitializer) {
         assert !isVar() : "Compile-time value for property initializer should be recorded only for final variables " + getName();
         this.compileTimeInitializer = compileTimeInitializer;
     }

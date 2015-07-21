@@ -1,5 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-annotation class Ann(val x: Int = 6)
+target(AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER,
+       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION,
+       AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY)
+annotation(repeatable = true) class Ann(val x: Int = 6)
 
 @Ann(1) @Ann(2) @Ann(3) @private class A @Ann constructor() {
     @Ann(x = 5) fun foo() {

@@ -91,7 +91,7 @@ public class DeserializedClassDescriptor(
 
     override fun getAnnotations() = annotations
 
-    override fun getScopeForMemberLookup() = memberScope
+    override fun getUnsubstitutedMemberScope() = memberScope
 
     override fun getStaticScope() = staticScope
 
@@ -137,6 +137,10 @@ public class DeserializedClassDescriptor(
             supertypes.add(c.typeDeserializer.type(supertype))
         }
         return supertypes
+    }
+
+    internal fun hasNestedClass(name: Name): Boolean {
+        return name in nestedClasses.nestedClassNames
     }
 
     override fun toString() = "deserialized class ${getName().toString()}" // not using descriptor render to preserve laziness
@@ -199,7 +203,7 @@ public class DeserializedClassDescriptor(
         private fun <D : CallableMemberDescriptor> generateFakeOverrides(name: Name, fromSupertypes: Collection<D>, result: MutableCollection<D>) {
             val fromCurrent = ArrayList<CallableMemberDescriptor>(result)
             OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, fromCurrent, classDescriptor, object : OverridingUtil.DescriptorSink {
-                override fun addToScope(fakeOverride: CallableMemberDescriptor) {
+                override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                     // TODO: report "cannot infer visibility"
                     OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                     @suppress("UNCHECKED_CAST")
@@ -241,9 +245,9 @@ public class DeserializedClassDescriptor(
     }
 
     private inner class NestedClassDescriptors {
-        private val nestedClassNames = nestedClassNames()
+        internal val nestedClassNames = nestedClassNames()
 
-        val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        internal val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
             if (name in nestedClassNames) {
                 c.components.deserializeClass(classId.createNestedClassId(name))

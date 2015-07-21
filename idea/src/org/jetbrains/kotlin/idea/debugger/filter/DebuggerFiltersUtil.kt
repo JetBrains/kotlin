@@ -25,7 +25,7 @@ private val KOTLIN_STDLIB_FILTER = "kotlin.*"
 public fun addKotlinStdlibDebugFilterIfNeeded() {
     if (!KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED) {
         val settings = DebuggerSettings.getInstance()!!
-        val newFilters = (settings.getSteppingFilters() + ClassFilter(KOTLIN_STDLIB_FILTER)).toTypedArray()
+        val newFilters = (settings.getSteppingFilters() + ClassFilter(KOTLIN_STDLIB_FILTER))
 
         settings.setSteppingFilters(newFilters)
 

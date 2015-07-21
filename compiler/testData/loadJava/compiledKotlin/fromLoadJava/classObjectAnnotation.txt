@@ -6,7 +6,7 @@ internal final class Some {
     test.Some.Companion.TestAnnotation() public companion object Companion {
         /*primary*/ private constructor Companion()
 
-        internal final annotation class TestAnnotation : kotlin.Annotation {
+        kotlin.annotation.annotation() internal final class TestAnnotation : kotlin.Annotation {
             /*primary*/ public constructor TestAnnotation()
         }
     }

@@ -1,15 +1,17 @@
 VARIABLES T
 
-SUBTYPE Producer<A> Producer<T>
+Producer<A> <: Producer<T>
 
 type parameter bounds:
-T >: A(SPECIAL)
+T >: A
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true

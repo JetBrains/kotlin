@@ -1,3 +1,4 @@
+target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class test
 
 fun foo(test <!UNUSED_PARAMETER!>f<!> : Int) {}

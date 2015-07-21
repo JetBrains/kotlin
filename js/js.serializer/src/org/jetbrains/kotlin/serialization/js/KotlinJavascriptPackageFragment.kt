@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
@@ -31,9 +31,9 @@ public class KotlinJavascriptPackageFragment(
         loadResource: (path: String) -> InputStream?
 ) : DeserializedPackageFragment(fqName, storageManager, module, KotlinJavascriptSerializedResourcePaths, loadResource) {
 
-    protected override fun loadClassNames(fqName: FqName, packageProto: ProtoBuf.Package): Collection<Name> {
+    protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
-        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.EXTENSION_REGISTRY)
+        val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.extensionRegistry)
         return classesProto.getClassNameList()?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 }

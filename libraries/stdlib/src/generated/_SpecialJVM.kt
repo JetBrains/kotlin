@@ -25,7 +25,7 @@ public fun BooleanArray.asList(): List<Boolean> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Boolean)
-        override fun iterator(): Iterator<Boolean> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Boolean> = this@asList.iterator() as MutableIterator<Boolean>
         override fun get(index: Int): Boolean = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Boolean)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Boolean)
@@ -40,7 +40,7 @@ public fun ByteArray.asList(): List<Byte> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Byte)
-        override fun iterator(): Iterator<Byte> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Byte> = this@asList.iterator() as MutableIterator<Byte>
         override fun get(index: Int): Byte = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Byte)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Byte)
@@ -55,7 +55,7 @@ public fun CharArray.asList(): List<Char> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Char)
-        override fun iterator(): Iterator<Char> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Char> = this@asList.iterator() as MutableIterator<Char>
         override fun get(index: Int): Char = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Char)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Char)
@@ -70,7 +70,7 @@ public fun DoubleArray.asList(): List<Double> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Double)
-        override fun iterator(): Iterator<Double> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Double> = this@asList.iterator() as MutableIterator<Double>
         override fun get(index: Int): Double = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Double)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Double)
@@ -85,7 +85,7 @@ public fun FloatArray.asList(): List<Float> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Float)
-        override fun iterator(): Iterator<Float> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Float> = this@asList.iterator() as MutableIterator<Float>
         override fun get(index: Int): Float = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Float)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Float)
@@ -100,7 +100,7 @@ public fun IntArray.asList(): List<Int> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Int)
-        override fun iterator(): Iterator<Int> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Int> = this@asList.iterator() as MutableIterator<Int>
         override fun get(index: Int): Int = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Int)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Int)
@@ -115,7 +115,7 @@ public fun LongArray.asList(): List<Long> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Long)
-        override fun iterator(): Iterator<Long> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Long> = this@asList.iterator() as MutableIterator<Long>
         override fun get(index: Int): Long = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Long)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Long)
@@ -130,7 +130,7 @@ public fun ShortArray.asList(): List<Short> {
         override fun size(): Int = this@asList.size()
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Any?): Boolean = this@asList.contains(o as Short)
-        override fun iterator(): Iterator<Short> = this@asList.iterator()
+        override fun iterator(): MutableIterator<Short> = this@asList.iterator() as MutableIterator<Short>
         override fun get(index: Int): Short = this@asList[index]
         override fun indexOf(o: Any?): Int = this@asList.indexOf(o as Short)
         override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as Short)
@@ -196,8 +196,8 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
 /**
  * Returns new array which is a copy of the original array.
  */
-public fun <T> Array<out T>.copyOf(): Array<T> {
-    return Arrays.copyOf(this, size()) as Array<T>
+public fun <T> Array<out T>.copyOf(): Array<out T> {
+    return Arrays.copyOf(this, size())
 }
 
 /**
@@ -259,8 +259,16 @@ public fun ShortArray.copyOf(): ShortArray {
 /**
  * Returns new array which is a copy of the original array.
  */
-public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
-    return Arrays.copyOf(this, newSize) as Array<T?>
+platformName("mutableCopyOf")
+public fun <T> Array<T>.copyOf(): Array<T> {
+    return Arrays.copyOf(this, size())
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+public fun <T> Array<out T>.copyOf(newSize: Int): Array<out T?> {
+    return Arrays.copyOf(this, newSize)
 }
 
 /**
@@ -320,9 +328,17 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
 }
 
 /**
+ * Returns new array which is a copy of the original array.
+ */
+platformName("mutableCopyOf")
+public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    return Arrays.copyOf(this, newSize)
+}
+
+/**
  * Returns new array which is a copy of range of original array.
  */
-public fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<T> {
+public fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<out T> {
     return Arrays.copyOfRange(this, from, to)
 }
 
@@ -383,11 +399,11 @@ public fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
 }
 
 /**
- * Fills original array with the provided value.
+ * Returns new array which is a copy of range of original array.
  */
-public fun <T> Array<out T>.fill(element: T): Array<out T> {
-    Arrays.fill(this, element)
-    return this
+platformName("mutableCopyOfRange")
+public fun <T> Array<T>.copyOfRange(from: Int, to: Int): Array<T> {
+    return Arrays.copyOfRange(this, from, to)
 }
 
 /**
@@ -450,6 +466,14 @@ public fun LongArray.fill(element: Long): LongArray {
  * Fills original array with the provided value.
  */
 public fun ShortArray.fill(element: Short): ShortArray {
+    Arrays.fill(this, element)
+    return this
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun <T> Array<T>.fill(element: T): Array<T> {
     Arrays.fill(this, element)
     return this
 }
@@ -542,6 +566,285 @@ public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(desti
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun BooleanArray.plus(array: BooleanArray): BooleanArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun ByteArray.plus(array: ByteArray): ByteArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun CharArray.plus(array: CharArray): CharArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun DoubleArray.plus(array: DoubleArray): DoubleArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun FloatArray.plus(array: FloatArray): FloatArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun IntArray.plus(array: IntArray): IntArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun LongArray.plus(array: LongArray): LongArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun ShortArray.plus(array: ShortArray): ShortArray {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [array].
+ */
+public fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
+    val thisSize = size()
+    val arraySize = array.size()
+    val result = Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(array, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun CharArray.plus(collection: Collection<Char>): CharArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun FloatArray.plus(collection: Collection<Float>): FloatArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun IntArray.plus(collection: Collection<Int>): IntArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun LongArray.plus(collection: Collection<Long>): LongArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun ShortArray.plus(collection: Collection<Short>): ShortArray {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [collection].
+ */
+public fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
+    var index = size()
+    val result = Arrays.copyOf(this, index + collection.size())
+    for (element in collection) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun BooleanArray.plus(element: Boolean): BooleanArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ByteArray.plus(element: Byte): ByteArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun CharArray.plus(element: Char): CharArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun DoubleArray.plus(element: Double): DoubleArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun FloatArray.plus(element: Float): FloatArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun IntArray.plus(element: Int): IntArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun LongArray.plus(element: Long): LongArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun ShortArray.plus(element: Short): ShortArray {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public fun <T> Array<T>.plus(element: T): Array<T> {
+    val index = size()
+    val result = Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
 }
 
 /**

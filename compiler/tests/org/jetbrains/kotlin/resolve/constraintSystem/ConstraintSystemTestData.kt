@@ -52,7 +52,7 @@ public class ConstraintSystemTestData(
 
     fun getParameterDescriptor(name: String): TypeParameterDescriptor {
         return functionFoo.getTypeParameters().firstOrNull { it.getName().asString() == name } ?:
-               throw AssertionError("Unsupported type parameter name: " + name + ".")
+               throw AssertionError("Unsupported type parameter name: $name. You may add it to constraintSystem/declarations.kt")
     }
 
     fun getType(name: String): JetType {

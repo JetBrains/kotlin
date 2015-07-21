@@ -1,19 +1,21 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUBTYPE T Any
+T >: IntegerValueType(1)
+T <: Any
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), <: kotlin.Any(SPECIAL)
+T >: IntegerValueType(1), <: Any
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

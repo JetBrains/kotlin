@@ -125,6 +125,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Sealed")
+    public void testSealed() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Sealed/");
+        doTest(fileName);
+    }
+
     @TestMetadata("SecondaryConstructors")
     public void testSecondaryConstructors() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/SecondaryConstructors/");

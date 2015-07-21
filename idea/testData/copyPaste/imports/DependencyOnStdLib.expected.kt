@@ -1,5 +1,5 @@
 package to
 
-import kotlin.concurrent.FunctionalList
+import kotlin.properties.ObservableProperty
 
-fun f(l: FunctionalList<Int>) {}
+fun f(l: ObservableProperty<Int>) {}

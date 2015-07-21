@@ -3,11 +3,6 @@ public final class ClassObjectField {
     public static final java.lang.String x = "";
     private static final java.lang.String y = "";
     public static final ClassObjectField.Companion Companion;
-    /**
-     * @deprecated
-     */
-    @java.lang.Deprecated
-    public static final ClassObjectField.Companion OBJECT$;
 
     public ClassObjectField() { /* compiled code */ }
 

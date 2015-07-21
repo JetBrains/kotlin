@@ -314,7 +314,7 @@ public class KotlinToJVMBytecodeCompiler {
         MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         assert collector != null;
 
-        long analysisStart = PerformanceCounter.Companion.currentThreadCpuTime();
+        long analysisStart = PerformanceCounter.Companion.currentTime();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(collector);
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), new Function0<AnalysisResult>() {
@@ -334,7 +334,7 @@ public class KotlinToJVMBytecodeCompiler {
                     }
                 }
         );
-        long analysisNanos = PerformanceCounter.Companion.currentThreadCpuTime() - analysisStart;
+        long analysisNanos = PerformanceCounter.Companion.currentTime() - analysisStart;
         String message = "ANALYZE: " + environment.getSourceFiles().size() + " files (" +
                          environment.getSourceLinesOfCode() + " lines) " +
                          (targetDescription != null ? targetDescription : "") +
@@ -395,11 +395,11 @@ public class KotlinToJVMBytecodeCompiler {
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        long generationStart = PerformanceCounter.Companion.currentThreadCpuTime();
+        long generationStart = PerformanceCounter.Companion.currentTime();
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
-        long generationNanos = PerformanceCounter.Companion.currentThreadCpuTime() - generationStart;
+        long generationNanos = PerformanceCounter.Companion.currentTime() - generationStart;
         String desc = moduleId != null ? "module " + moduleId + " " : "";
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";

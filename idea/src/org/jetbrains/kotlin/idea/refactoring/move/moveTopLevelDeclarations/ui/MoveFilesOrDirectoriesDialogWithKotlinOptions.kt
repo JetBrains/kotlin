@@ -53,7 +53,7 @@ public class MoveFilesOrDirectoriesDialogWithKotlinOptions(
         gbc.fill = GridBagConstraints.NONE
         gbc.anchor = GridBagConstraints.WEST
         gbc.insets = Insets(UIUtil.LARGE_VGAP, 0, 0, UIUtil.DEFAULT_HGAP)
-        panel.add(JLabel(), gbc)
+        panel!!.add(JLabel(), gbc)
 
         cbUpdatePackageDirective = NonFocusableCheckBox()
         gbc.gridx = 1

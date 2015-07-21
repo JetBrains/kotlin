@@ -94,7 +94,6 @@ private class ClassClsStubBuilder(
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(JetTokens.ENUM_KEYWORD)
-            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(JetTokens.ANNOTATION_KEYWORD)
             ProtoBuf.Class.Kind.CLASS_OBJECT -> listOf(JetTokens.COMPANION_KEYWORD)
             else -> listOf<JetModifierKeywordToken>()
         }
@@ -108,7 +107,7 @@ private class ClassClsStubBuilder(
         val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
             KotlinBuiltIns.isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
-        }.map { it.getShortClassName().ref() }.toTypedArray()
+        }.map { it.getShortClassName().ref()!! }.toTypedArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(

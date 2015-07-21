@@ -20,10 +20,12 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.JetDynamicType;
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetTypeParameter;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
@@ -34,8 +36,6 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
-        PsiReference ref = expression.getReference();
-        if (ref == null) return;
         if (JetPsiChecker.Companion.getNamesHighlightingEnabled()) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {

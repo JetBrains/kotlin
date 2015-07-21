@@ -3,7 +3,7 @@ package pack
 
 import pack.A.Nested
 
-class A @jvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)) {
+class A jvmOverloads constructor(nested: Nested = Nested(Nested.FIELD)) {
 
     class Nested(p: Int) {
         companion object {

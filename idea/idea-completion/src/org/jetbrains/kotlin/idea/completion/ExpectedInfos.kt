@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -188,7 +188,7 @@ class ExpectedInfos(
                 if (parameter.hasDefaultValue()) return false // parameter is optional
                 if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
                 // last parameter of functional type can be placed outside parenthesis:
-                if (parameter == parameters.last() && KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameter.getType())) return false
+                if (parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
                 return true
             }
 

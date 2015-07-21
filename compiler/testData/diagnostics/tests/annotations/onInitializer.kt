@@ -1,15 +1,15 @@
 class A {
-    ann init {}
-    @ann init {}
-    <!UNRESOLVED_REFERENCE!>aaa<!> init {}
-    <!UNRESOLVED_REFERENCE!>@aaa<!> init {}
+    <!WRONG_ANNOTATION_TARGET!>ann<!> init {}
+    <!WRONG_ANNOTATION_TARGET!>@ann<!> init {}
+    <!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>aaa<!> init {}
+    <!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>@aaa<!> init {}
 }
 
 interface T {
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>ann init {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!>@ann init {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE!>aaa<!> init {}<!>
-    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE!>@aaa<!> init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!WRONG_ANNOTATION_TARGET!>ann<!> init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!WRONG_ANNOTATION_TARGET!>@ann<!> init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>aaa<!> init {}<!>
+    <!ANONYMOUS_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE, WRONG_ANNOTATION_TARGET!>@aaa<!> init {}<!>
 }
 
 annotation class ann

@@ -185,6 +185,30 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("noImportsForClassInExcludedPackage.before.Main.kt")
+        public void testNoImportsForClassInExcludedPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForClassInExcludedPackage.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportsForExcludedClass.before.Main.kt")
+        public void testNoImportsForExcludedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForExcludedClass.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("noImportsForFunctionInExcludedPackage.before.Main.kt")
+        public void testNoImportsForFunctionInExcludedPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/noImportsForFunctionInExcludedPackage.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("notExcludedClass.before.Main.kt")
+        public void testNotExcludedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notExcludedClass.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("objectImport.before.Main.kt")
         public void testObjectImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/objectImport.before.Main.kt");
@@ -250,6 +274,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeSignature extends AbstractQuickFixMultiFileTest {
+        @TestMetadata("addJavaMethodParameter.before.Main.kt")
+        public void testAddJavaMethodParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/addJavaMethodParameter.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("addParameterWithImport.before.Main.kt")
         public void testAddParameterWithImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/addParameterWithImport.before.Main.kt");
@@ -263,6 +293,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("matchFunctionLiteralWithSAMType.before.Main.kt")
         public void testMatchFunctionLiteralWithSAMType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/matchFunctionLiteralWithSAMType.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("removeJavaMethodParameter.before.Main.kt")
+        public void testRemoveJavaMethodParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeJavaMethodParameter.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
     }

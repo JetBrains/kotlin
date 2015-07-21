@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class Ann : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
     /*primary*/ public constructor Ann(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Double)
     internal final val x: kotlin.String
         internal final fun <get-x>(): kotlin.String

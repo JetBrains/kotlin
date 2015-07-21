@@ -71,7 +71,7 @@ internal final class D {
         public final /*synthesized*/ fun values(): kotlin.Array<D.R>
     }
 
-    internal final annotation class S : kotlin.Annotation {
+    kotlin.annotation.annotation() internal final class S : kotlin.Annotation {
         public constructor S()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

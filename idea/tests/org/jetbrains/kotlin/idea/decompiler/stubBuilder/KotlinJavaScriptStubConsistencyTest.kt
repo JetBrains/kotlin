@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
@@ -26,19 +27,17 @@ import org.jetbrains.kotlin.name.FqName
 import kotlin.properties.Delegates
 
 public class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
-
-    override val packages: List<FqName> = listOf(
-            "java.util", "jquery", "jquery.ui", "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
-    ).map { FqName(it) }
-
     override fun setUp() {
         super.setUp()
         KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary()
     }
 
-    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
+    override fun getPackages(): List<FqName> = listOf(
+            "java.util", "jquery", "jquery.ui",
+            "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js").map { FqName(it) }
+
+    override fun getVirtualFileFinder(): VirtualFileFinder =
         JsVirtualFileFinder.SERVICE.getInstance(getProject())
-    }
 
     override fun createStubBuilder() = KotlinJavaScriptStubBuilder()
 

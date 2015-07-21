@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -68,7 +69,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
-        val targetPsiElement = element.getReference()?.resolve()
+        val targetPsiElement = element.mainReference.resolve()
         return targetPsiElement is JetNamedFunction || targetPsiElement is JetProperty
     }
 
@@ -79,7 +80,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
             project: Project,
             editor: Editor?
     ) {
-        val psiElement = element.getReference()!!.resolve()!!
+        val psiElement = element.mainReference.resolve()!!
 
         ProgressManager.getInstance().run(
                 object : Task.Modal(project, "Applying '$text'", true) {

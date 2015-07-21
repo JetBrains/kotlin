@@ -1,5 +1,6 @@
 package foo
 
+target(AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class fancy
 
 @fancy

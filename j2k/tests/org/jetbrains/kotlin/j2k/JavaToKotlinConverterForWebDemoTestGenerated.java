@@ -102,6 +102,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNullable.java");
             doTest(fileName);
         }
+
+        @TestMetadata("primaryConstructorAnnotation.java")
+        public void testPrimaryConstructorAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/primaryConstructorAnnotation.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/anonymousBlock")
@@ -1162,6 +1168,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("lineBreaksBetweenParameters.java")
+        public void testLineBreaksBetweenParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/lineBreaksBetweenParameters.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodCallInFactoryFun.java")
         public void testMethodCallInFactoryFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/methodCallInFactoryFun.java");
@@ -2149,6 +2161,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/formatting"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("lineBreaksBetweenArguments.java")
+        public void testLineBreaksBetweenArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/lineBreaksBetweenArguments.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonStaticMembers.java")
         public void testNonStaticMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembers.java");
@@ -2221,6 +2239,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/internal.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lineBreaksBetweenParameters.java")
+        public void testLineBreaksBetweenParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
             doTest(fileName);
         }
 
@@ -3211,6 +3235,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("lineBreaks.java")
+        public void testLineBreaks() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("newAnonymousClass.java")
         public void testNewAnonymousClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass.java");
@@ -3487,6 +3517,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("Override.java")
         public void testOverride() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Override.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Private.java")
+        public void testPrivate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Private.java");
             doTest(fileName);
         }
 

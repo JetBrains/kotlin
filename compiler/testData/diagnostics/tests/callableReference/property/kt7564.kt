@@ -6,7 +6,7 @@ class A(var g: A) {
     val f: Int = 0
 
     fun test() {
-        checkSubtype<KMemberProperty<A, Int>>(::f)
-        checkSubtype<KMutableMemberProperty<A, A>>(::g)
+        checkSubtype<KProperty1<A, Int>>(::f)
+        checkSubtype<KMutableProperty1<A, A>>(::g)
     }
 }

@@ -82,7 +82,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
         if (!isGetter) {
             context = contextWithValueParameterAliasInArrayGetAccess(toSetTo);
         }
-        return CallTranslator.INSTANCE$.translate(context, resolvedCall, arrayExpression);
+        return CallTranslator.translate(context, resolvedCall, arrayExpression);
     }
 
     @NotNull

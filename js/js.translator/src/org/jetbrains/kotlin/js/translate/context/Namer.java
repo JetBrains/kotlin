@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
+import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -71,6 +71,7 @@ public final class Namer {
     private static final String OBJECT_OBJECT_NAME = "createObject";
     private static final String CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME = "getCallableRefForMemberFunction";
     private static final String CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME = "getCallableRefForExtensionFunction";
+    private static final String CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME = "getCallableRefForLocalExtensionFunction";
     private static final String CALLABLE_REF_FOR_CONSTRUCTOR_NAME = "getCallableRefForConstructor";
     private static final String CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY = "getCallableRefForTopLevelProperty";
     private static final String CALLABLE_REF_FOR_MEMBER_PROPERTY = "getCallableRefForMemberProperty";
@@ -261,6 +262,8 @@ public final class Namer {
     @NotNull
     private final JsName callableRefForExtensionFunctionName;
     @NotNull
+    private final JsName callableRefForLocalExtensionFunctionName;
+    @NotNull
     private final JsName callableRefForConstructorName;
     @NotNull
     private final JsName callableRefForTopLevelProperty;
@@ -295,6 +298,7 @@ public final class Namer {
         objectName = kotlinScope.declareName(OBJECT_OBJECT_NAME);
         callableRefForMemberFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_FUNCTION_NAME);
         callableRefForExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_EXTENSION_FUNCTION_NAME);
+        callableRefForLocalExtensionFunctionName = kotlinScope.declareName(CALLABLE_REF_FOR_LOCAL_EXTENSION_FUNCTION_NAME);
         callableRefForConstructorName = kotlinScope.declareName(CALLABLE_REF_FOR_CONSTRUCTOR_NAME);
         callableRefForTopLevelProperty = kotlinScope.declareName(CALLABLE_REF_FOR_TOP_LEVEL_PROPERTY);
         callableRefForMemberProperty = kotlinScope.declareName(CALLABLE_REF_FOR_MEMBER_PROPERTY);
@@ -342,6 +346,11 @@ public final class Namer {
     @NotNull
     public JsExpression callableRefForExtensionFunctionReference() {
         return kotlin(callableRefForExtensionFunctionName);
+    }
+
+    @NotNull
+    public JsExpression callableRefForLocalExtensionFunctionReference() {
+        return kotlin(callableRefForLocalExtensionFunctionName);
     }
 
     @NotNull

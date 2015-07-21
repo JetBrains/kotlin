@@ -66,6 +66,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 import kotlin.properties.Delegates
@@ -297,7 +299,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .subtract(substitutionMap.keySet())
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size())
                 collectSubstitutionsForCallableTypeParameters(fakeFunction, typeArgumentsForFakeFunction, substitutionMap)
-                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it], scope) }
+                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it]!!, scope) }
             }
             else {
                 fakeFunction = null
@@ -314,7 +316,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 CallableKind.FUNCTION ->
                     returnTypeCandidate?.theType?.isUnit() ?: false
                 CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR ->
-                    callableInfo.returnTypeInfo == TypeInfo.Empty || returnTypeCandidate?.theType?.isAny() ?: false
+                    callableInfo.returnTypeInfo == TypeInfo.Empty || returnTypeCandidate?.theType?.isAnyOrNullableAny() ?: false
                 CallableKind.SECONDARY_CONSTRUCTOR -> true
                 CallableKind.PROPERTY -> containingElement is JetBlockExpression
             }
@@ -724,7 +726,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
             else {
                 oldTypeArgumentList.replace(JetPsiFactory(callElement).createTypeArguments(renderedTypeArgs.joinToString(", ", "<", ">")))
-                elementsToShorten.add(callElement.getTypeArgumentList())
+                elementsToShorten.add(callElement.getTypeArgumentList()!!)
             }
         }
 
@@ -949,7 +951,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 is JetProperty -> {
                     if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
-                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo].firstOrNull()?.theType
+                        val defaultValueType = typeCandidates[callableInfo.returnTypeInfo]!!.firstOrNull()?.theType
                                                ?: KotlinBuiltIns.getInstance().getAnyType()
                         val defaultValue = CodeInsightUtils.defaultInitializer(defaultValueType) ?: "null"
                         val initializer = declaration.setInitializer(JetPsiFactory(declaration).createExpression(defaultValue))!!
@@ -975,7 +977,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val caretModel = containingFileEditor.getCaretModel()
             caretModel.moveToOffset(jetFileToEdit.getNode().getStartOffset())
 
-            val declaration = declarationPointer.getElement()
+            val declaration = declarationPointer.getElement()!!
 
             val builder = TemplateBuilderImpl(jetFileToEdit)
             if (declaration is JetProperty) {

@@ -33,14 +33,16 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
-import org.jetbrains.kotlin.idea.util.isUnit
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -82,7 +84,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
     override fun invoke(e: JetElement): JetElement {
-        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).getQualifiedExpressionForSelectorOrThis()
+        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = JetPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
                 if (e.getText().startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
@@ -117,7 +119,7 @@ class FqNameReplacement(val fqName: FqName): Replacement {
             return thisExpr.replaced(JetPsiFactory(e).createExpression(fqName.asString())).getQualifiedElementSelector()!!
         }
 
-        val newExpr = (e.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
+        val newExpr = (e as? JetSimpleNameExpression)?.mainReference?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
         return if (newExpr is JetQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
     }
 }
@@ -309,7 +311,7 @@ val ControlFlow.possibleReturnTypes: List<JetType>
             returnType.isAnnotatedNotNull(), returnType.isAnnotatedNullable() ->
                 listOf(approximateFlexibleTypes(returnType))
             else ->
-                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it.upperBound, it.lowerBound) }
+                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it!!.upperBound, it.lowerBound) }
         }
     }
 

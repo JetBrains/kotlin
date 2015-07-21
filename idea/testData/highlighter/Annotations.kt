@@ -1,3 +1,4 @@
+<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">target</info>(<info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">CLASSIFIER</info>, <info descr="null" textAttributesKey="KOTLIN_CLASS">AnnotationTarget</info>.<info descr="null" textAttributesKey="KOTLIN_ENUM_ENTRY">EXPRESSION</info>)
 <info descr="null">annotation</info> class <info descr="null">Ann</info>
 
 <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">Ann</info> class <info descr="null">A1</info>

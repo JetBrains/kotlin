@@ -23,5 +23,7 @@
         <extensionPoint name="classBuilderInterceptorExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="quickFixContributor"
+                        interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"/>
     </extensionPoints>
 </idea-plugin>

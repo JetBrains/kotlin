@@ -45,6 +45,7 @@ public final class DeserializedDescriptorResolver {
         this.errorReporter = errorReporter;
     }
 
+    // component dependency cycle
     @Inject
     public void setComponents(@NotNull DeserializationComponentsForJava context) {
         this.components = context.getComponents();

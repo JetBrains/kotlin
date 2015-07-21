@@ -73,6 +73,18 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest(fileName);
         }
 
+        @TestMetadata("elementAtIfWithoutBraces.kt")
+        public void testElementAtIfWithoutBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/elementAtIfWithoutBraces.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("elementAtWhenBranch.kt")
+        public void testElementAtWhenBranch() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/elementAtWhenBranch.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localVariables.kt")
         public void testLocalVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/codeFragments/localVariables.kt");

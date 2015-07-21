@@ -193,7 +193,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
         for (res in resources) {
             if (resourceMap.contains(res.id)) {
-                val existing = resourceMap[res.id]
+                val existing = resourceMap[res.id]!!
 
                 if (!res.sameClass(existing)) {
                     resourcesToExclude.add(res.id)

@@ -179,22 +179,22 @@ public class ResolutionResultsHandler {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
         }
 
-        MutableResolvedCall<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(candidates, false);
+        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
+        if (noOverrides.size() == 1) {
+            return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
+        }
+
+        MutableResolvedCall<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(noOverrides, false);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
             MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(
-                    candidates, true);
+                    noOverrides, true);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }
-        }
-
-        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
-        if (noOverrides.size() == 1) {
-                return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
 
         return OverloadResolutionResultsImpl.ambiguity(noOverrides);

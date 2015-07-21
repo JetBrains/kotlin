@@ -347,6 +347,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("SyntheticProperty.kt")
+    public void testSyntheticProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/SyntheticProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParameterInAnonymousObject.kt")
     public void testTypeParameterInAnonymousObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeParameterInAnonymousObject.kt");

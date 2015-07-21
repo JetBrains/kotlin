@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 
 public class KDocUnresolvedReferenceInspection(): AbstractKotlinInspection() {
@@ -29,8 +30,8 @@ public class KDocUnresolvedReferenceInspection(): AbstractKotlinInspection() {
     private class KDocUnresolvedReferenceVisitor(private val holder: ProblemsHolder): PsiElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (element is KDocName) {
-                val ref = element.getReference()
-                if (ref != null && ref.resolve() == null) {
+                val ref = element.mainReference
+                if (ref.resolve() == null) {
                     holder.registerProblem(ref)
                 }
             }

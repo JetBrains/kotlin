@@ -19,12 +19,17 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -70,7 +75,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val completionKind = calcCompletionKind()
 
-    override val descriptorKindFilter = completionKind.descriptorKindFilter
+    override val descriptorKindFilter = if (isNoQualifierContext())
+        completionKind.descriptorKindFilter?.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
+    else
+        completionKind.descriptorKindFilter
 
     private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
@@ -82,7 +90,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
-        if (reference == null) {
+        if (nameExpression == null) {
             val parameter = position.getParent() as? JetParameter
             return if (parameter != null && position == parameter.getNameIdentifier())
                 CompletionKind.PARAMETER_NAME
@@ -107,7 +115,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         val typeReference = position.getStrictParentOfType<JetTypeReference>()
         if (typeReference != null) {
             val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
-            if (firstPartReference == reference.expression) {
+            if (firstPartReference == nameExpression) {
                 return CompletionKind.TYPES
             }
         }
@@ -193,6 +201,24 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 }
             }
 
+            // getting root packages from scope is very slow so we do this in alternative way
+            if (isNoQualifierContext() && (completionKind.descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+                //TODO: move this code somewhere else
+                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
+                        .toMutableSet()
+
+                if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
+                    JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
+                        val name = psiPackage.getName()
+                        if (Name.isValidIdentifier(name!!)) {
+                            packageNames.add(FqName(name))
+                        }
+                    }
+                }
+
+                packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
+            }
+
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 flushToResultSet()
 
@@ -233,11 +259,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private companion object {
         object NonAnnotationClassifierExclude : DescriptorKindExclude {
             override fun matches(descriptor: DeclarationDescriptor): Boolean {
-                return if (descriptor is ClassDescriptor)
-                    descriptor.getKind() != ClassKind.ANNOTATION_CLASS
-                else
-                    descriptor !is ClassifierDescriptor
+                if (descriptor !is ClassifierDescriptor) return false
+                return descriptor !is ClassDescriptor || descriptor.getKind() != ClassKind.ANNOTATION_CLASS
             }
+
+            override val fullyExcludedDescriptorKinds: Int get() = 0
         }
 
         val ANNOTATION_TYPES_FILTER = DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude

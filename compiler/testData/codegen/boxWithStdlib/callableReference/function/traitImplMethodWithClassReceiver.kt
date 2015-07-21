@@ -4,7 +4,7 @@ interface T {
 
 class B : T {
     inner class C {
-        fun bar() = this@B.(::foo)()
+        fun bar() = (::foo)(this@B)
     }
 }
 

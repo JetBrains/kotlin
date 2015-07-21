@@ -10,26 +10,26 @@ fun foo(s: String, a: Any) = s + a
 fun foo(a: Any, s: String) = s + a
 fun foo(i: Int, j: Int) = i + j
 fun foo(a: Any, i: Int) = "$a$i"
-fun foo(f: (Int)->Int, i: Int) = f(i)
-fun foo(f: (String)->Int, s: String) = f(s)
-fun foo(f: (Any)->Int, a: Any) = f(a)
-fun foo(s: String, f: (String)->Int) = f(s)
-fun foo(a: Any, f: (Any)->Int) = f(a)
+fun foo(f: (Int) -> Int, i: Int) = f(i)
+fun foo(f: (String) -> Int, s: String) = f(s)
+fun foo(f: (Any) -> Int, a: Any) = f(a)
+fun foo(s: String, f: (String) -> Int) = f(s)
+fun foo(a: Any, f: (Any) -> Int) = f(a)
 //appropriate function
-fun foo(i: Int, f: (Int)->Int) = f(i)
+fun foo(i: Int, f: (Int) -> Int) = f(i)
 
 fun id<T>(t: T) = t
 
 fun test() {
-    foo(1, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x1: Int):Int<!> ->
-        foo(2, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x2: Int): Int<!> ->
-            foo(3, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x3: Int): Int<!> ->
-                foo(4, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x4: Int): Int<!> ->
-                    foo(5, id { <!DEPRECATED_LAMBDA_SYNTAX!>(x5: Int): Int<!> ->
-                        x1 + x2 + x3 + x4 + x5 + A.iii
-                    })
-                })
-            })
-        })
-    })
+    foo(1, id(fun(x1: Int) =
+          foo(2, id(fun(x2: Int) =
+                foo(3, id(fun(x3: Int) =
+                      foo(4, id(fun(x4: Int) =
+                            foo(5, id(fun(x5: Int) =
+                                  x1 + x2 + x3 + x4 + x5 + A.iii
+                            ))
+                      ))
+                ))
+          ))
+    ))
 }

@@ -7,5 +7,5 @@ enum class E : Named {
 }
 
 fun box(): String {
-    return E.OK.(Named::name)()
+    return (Named::name)(E.OK)
 }

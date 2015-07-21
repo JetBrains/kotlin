@@ -19,27 +19,14 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
 
 public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDescriptor {
     private final DeclarationDescriptor containingDeclaration;
-    private final JetType type;
     private final ReceiverValue value;
 
-    public ReceiverParameterDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetType type,
-            @NotNull ReceiverValue value
-    ) {
+    public ReceiverParameterDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, @NotNull ReceiverValue value) {
         this.containingDeclaration = containingDeclaration;
-        this.type = type;
         this.value = value;
-    }
-
-    @NotNull
-    @Override
-    public JetType getType() {
-        return type;
     }
 
     @NotNull

@@ -16,14 +16,23 @@
 
 package org.jetbrains.kotlin.container
 
+import java.lang.reflect.*
 
 public interface ValueDescriptor {
     public fun getValue(): Any
 }
 
 internal interface ComponentDescriptor : ValueDescriptor {
-    fun getRegistrations(): Iterable<Class<*>>
-    fun getDependencies(context: ValueResolveContext): Collection<Class<*>>
+    fun getRegistrations(): Iterable<Type>
+    fun getDependencies(context: ValueResolveContext): Collection<Type>
     val shouldInjectProperties: Boolean
         get() = false
+}
+
+public class IterableDescriptor(val descriptors: Iterable<ValueDescriptor>) : ValueDescriptor {
+    override fun getValue(): Any {
+        return descriptors.map { it.getValue() }
+    }
+
+    override fun toString(): String = "Iterable: $descriptors"
 }

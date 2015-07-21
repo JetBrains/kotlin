@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.*;
@@ -37,8 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -377,26 +378,28 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         JetExpression initializer = property.getInitializer();
 
-        CompileTimeConstant<?> initializerValue;
-        if (property.isVar() && initializer != null) {
-            BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
-            initializerValue = ConstantExpressionEvaluator.evaluate(initializer, tempTrace, propertyDescriptor.getType());
-        }
-        else {
-            initializerValue = propertyDescriptor.getCompileTimeInitializer();
-        }
+        ConstantValue<?> initializerValue = computeInitializerValue(property, propertyDescriptor, initializer);
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
         if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
-
-        Object value = initializerValue instanceof IntegerValueTypeConstant
-            ? ((IntegerValueTypeConstant) initializerValue).getValue(propertyDescriptor.getType())
-            : initializerValue.getValue();
         JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
         Type type = typeMapper.mapType(jetType);
-        return !skipDefaultValue(propertyDescriptor, value, type);
+        return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
+    }
+
+    @Nullable
+    private ConstantValue<?> computeInitializerValue(
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @Nullable JetExpression initializer
+    ) {
+        if (property.isVar() && initializer != null) {
+            BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
+            return ConstantExpressionEvaluator.evaluateToConstantValue(initializer, tempTrace, propertyDescriptor.getType());
+        }
+        return propertyDescriptor.getCompileTimeInitializer();
     }
 
     @NotNull
@@ -531,5 +534,23 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             sourceMapper = new DefaultSourceMapper(SourceInfo.Companion.createInfo(element, getClassName()), null);
         }
         return sourceMapper;
+    }
+
+    protected void generateConstInstance(
+            @NotNull Type thisAsmType,
+            @NotNull Type fieldAsmType,
+            @NotNull Function1<InstructionAdapter, Unit> initialization
+    ) {
+        v.newField(OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor(),
+                   null, null);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            InstructionAdapter iv = createOrGetClInitCodegen().v;
+            iv.anew(thisAsmType);
+            iv.dup();
+            iv.invokespecial(thisAsmType.getInternalName(), "<init>", "()V", false);
+            initialization.invoke(iv);
+            iv.putstatic(thisAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor());
+        }
     }
 }

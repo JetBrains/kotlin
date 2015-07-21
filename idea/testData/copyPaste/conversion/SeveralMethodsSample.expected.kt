@@ -11,7 +11,10 @@ class A {
             if (declarationDescriptor is CallableMemberDescriptor) {
                 val containingDescriptor = declarationDescriptor.getContainingDeclaration()
                 if (containingDescriptor is ClassDescriptor) {
-                    return JetBundle.message("x.in.y", DescriptorRenderer.COMPACT.render(declarationDescriptor), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor))
+                    return JetBundle.message(
+                            "x.in.y",
+                            DescriptorRenderer.COMPACT.render(declarationDescriptor),
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor))
                 }
             }
         }

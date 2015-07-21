@@ -268,120 +268,108 @@ class MapTest {
         assertEquals(3, filteredByValue["b"])
     }
 
-    test fun plusAssign() {
-        val extended = hashMapOf(Pair("b", 3))
-        extended += ("c" to 2)
-        assertEquals(2, extended.size())
-        assertEquals(2, extended["c"])
-        assertEquals(3, extended["b"])
+    fun testPlusAssign(doPlusAssign: (MutableMap<String, Int>) -> Unit) {
+        val map = hashMapOf("a" to 1, "b" to 2)
+        doPlusAssign(map)
+        assertEquals(3, map.size())
+        assertEquals(1, map["a"])
+        assertEquals(4, map["b"])
+        assertEquals(3, map["c"])
     }
 
-    test fun plusAssignList() {
-        val extended = hashMapOf(Pair("b", 3))
-        extended += listOf("C" to 3, "D" to 4)
+    test fun plusAssign() = testPlusAssign {
+        it += "b" to 4
+        it += "c" to 3
+    }
+
+    test fun plusAssignList() = testPlusAssign { it += listOf("c" to 3, "b" to 4) }
+
+    test fun plusAssignArray() = testPlusAssign { it += arrayOf("c" to 3, "b" to 4) }
+
+    test fun plusAssignSequence() = testPlusAssign { it += sequenceOf("c" to 3, "b" to 4) }
+
+    test fun plusAssignMap() = testPlusAssign { it += mapOf("c" to 3, "b" to 4) }
+
+    fun testPlus(doPlus: (Map<String, Int>) -> Map<String, Int>) {
+        val original = mapOf("A" to 1, "B" to 2)
+        val extended = doPlus(original)
         assertEquals(3, extended.size())
+        assertEquals(1, extended["A"])
+        assertEquals(4, extended["B"])
         assertEquals(3, extended["C"])
-        assertEquals(4, extended["D"])
     }
 
-    test fun plusAssignMap() {
-        val extended = hashMapOf(Pair("b", 3))
-        extended += mapOf("C" to 3, "D" to 4)
-        assertEquals(3, extended.size())
-        assertEquals(3, extended["C"])
-        assertEquals(4, extended["D"])
-    }
+    test fun plus() = testPlus { it + ("C" to 3) + ("B" to 4) }
 
-    test fun plus() {
+    test fun plusList() = testPlus { it + listOf("C" to 3, "B" to 4) }
+
+    test fun plusArray() = testPlus { it + arrayOf("C" to 3, "B" to 4) }
+
+    test fun plusSequence() = testPlus { it + sequenceOf("C" to 3, "B" to 4) }
+
+    test fun plusMap() = testPlus { it + mapOf("C" to 3, "B" to 4) }
+
+
+    fun testMinus(doMinus: (Map<String, Int>) -> Map<String, Int>) {
         val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + ("C" to 3)
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 2)
-        assertEquals(extended["C"], 3)
+        val shortened = doMinus(original)
+        assertEquals("A" to 1, shortened.entrySet().single().toPair())
     }
 
-    test fun plusList() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + listOf("C" to 3, "D" to 4)
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 2)
-        assertEquals(extended["C"], 3)
-        assertEquals(extended["D"], 4)
+    test fun minus() = testMinus { it - "B" - "C" }
+
+    test fun minusList() = testMinus { it - listOf("B", "C") }
+
+    test fun minusArray() = testMinus { it - arrayOf("B", "C") }
+
+    test fun minusSequence() = testMinus { it - sequenceOf("B", "C") }
+
+    test fun minusSet() = testMinus { it - setOf("B", "C") }
+
+
+
+    fun testMinusAssign(doMinusAssign: (MutableMap<String, Int>) -> Unit) {
+        val original = hashMapOf("A" to 1, "B" to 2)
+        doMinusAssign(original)
+        assertEquals("A" to 1, original.entrySet().single().toPair())
     }
 
-    test fun plusMap() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + mapOf("C" to 3, "D" to 4)
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 2)
-        assertEquals(extended["C"], 3)
-        assertEquals(extended["D"], 4)
+    test fun minusAssign() = testMinusAssign {
+        it -= "B"
+        it -= "C"
     }
 
-    test fun plusListOverload() {
+    test fun minusAssignList() = testMinusAssign { it -= listOf("B", "C") }
+
+    test fun minusAssignArray() = testMinusAssign { it -= arrayOf("B", "C") }
+
+    test fun minusAssignSequence() = testMinusAssign { it -= sequenceOf("B", "C") }
+
+
+    fun testIdempotent(operation: (Map<String, Int>) -> Map<String, Int>) {
         val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + listOf("B" to 3, "C" to 4)
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 3)
-        assertEquals(extended["C"], 4)
+        assertEquals(original, operation(original))
     }
 
-    test fun plusEmptyList() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + listOf()
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 2)
+    fun testIdempotentAssign(operation: (MutableMap<String, Int>) -> Unit) {
+        val original = hashMapOf("A" to 1, "B" to 2)
+        val result = HashMap(original)
+        operation(result)
+        assertEquals(original, result)
     }
 
-    test fun plusEmptySet() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val extended = original + setOf()
-        assertEquals(extended["A"], 1)
-        assertEquals(extended["B"], 2)
-    }
 
-    test fun minus() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - "B"
-        assertEquals(shortened["A"], 1)
-        assertFalse(shortened.contains("B"))
-    }
+    test fun plusEmptyList() = testIdempotent { it + listOf() }
+    test fun minusEmptyList() = testIdempotent { it - listOf() }
 
-    test fun minusNotElem() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - "C"
-        assertEquals(shortened["A"], 1)
-        assertEquals(shortened["B"], 2)
-    }
+    test fun plusEmptySet() = testIdempotent { it + setOf() }
+    test fun minusEmptySet() = testIdempotent { it - setOf() }
 
-    test fun minusList() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - listOf("B", "C")
-        assertEquals(shortened["A"], 1)
-        assertFalse(shortened.contains("B"))
-        assertFalse(shortened.contains("C"))
-    }
+    test fun plusAssignEmptyList() = testIdempotentAssign { it += listOf() }
+    test fun minusAssignEmptyList() = testIdempotentAssign { it -= listOf() }
 
-    test fun minusListNotElem() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - listOf("C", "D")
-        assertEquals(shortened["A"], 1)
-        assertEquals(shortened["B"], 2)
-    }
+    test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
+    test fun minusAssignEmptySet() = testIdempotentAssign { it -= setOf() }
 
-    test fun minusSet() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - setOf("B", "C")
-        assertEquals(shortened["A"], 1)
-        assertFalse(shortened.contains("B"))
-        assertFalse(shortened.contains("C"))
-    }
-
-    test fun minusEmptySet() {
-        val original = mapOf("A" to 1, "B" to 2)
-        val shortened = original - setOf()
-        assertEquals(shortened["A"], 1)
-        assertEquals(shortened["B"], 2)
-    }
 
 }

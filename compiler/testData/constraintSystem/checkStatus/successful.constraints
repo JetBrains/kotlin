@@ -1,0 +1,4 @@
+VARIABLES T
+
+T <: Int
+T >: Int

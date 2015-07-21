@@ -202,11 +202,10 @@ fun elements(): List<GenericFunction> {
     templates add f("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
         doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
         returns("T")
-        inline(true)
         body {
             """
             if (this is List<T>)
-                return this.elementAtOrElse(index, defaultValue)
+                return this.getOrElse(index, defaultValue)
             if (index < 0)
                 return defaultValue(index)
             val iterator = iterator()
@@ -233,7 +232,20 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
+        inline(true, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            """
+        }
+    }
+
+    templates add f("getOrElse(index: Int, defaultValue: (Int) -> T)") {
+        doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
+        returns("T")
+        inline(true)
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
             """
@@ -247,7 +259,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             if (this is List<T>)
-                return this.elementAtOrNull(index)
+                return this.getOrNull(index)
             if (index < 0)
                 return null
             val iterator = iterator()
@@ -280,6 +292,18 @@ fun elements(): List<GenericFunction> {
             """
         }
     }
+
+    templates add f("getOrNull(index: Int)") {
+        doc { "Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection." }
+        returns("T?")
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body {
+            """
+            return if (index >= 0 && index <= lastIndex) get(index) else null
+            """
+        }
+    }
+
 
     templates add f("first()") {
         doc { """Returns first element.
@@ -680,40 +704,21 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("component1()") {
-        inline(true)
-        doc { "Returns 1st *element* from the collection." }
-        returns("T")
-        body { "return get(0)" }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
-    }
-    templates add f("component2()") {
-        inline(true)
-        doc { "Returns 2nd *element* from the collection." }
-        returns("T")
-        body { "return get(1)" }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
-    }
-    templates add f("component3()") {
-        inline(true)
-        doc { "Returns 3rd *element* from the collection." }
-        returns("T")
-        body { "return get(2)" }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
-    }
-    templates add f("component4()") {
-        inline(true)
-        doc { "Returns 4th *element* from the collection." }
-        returns("T")
-        body { "return get(3)" }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
-    }
-    templates add f("component5()") {
-        inline(true)
-        doc { "Returns 5th *element* from the collection." }
-        returns("T")
-        body { "return get(4)" }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+    templates addAll (1..5).map { n ->
+        f("component$n()") {
+            inline(true)
+            annotations("""suppress("NOTHING_TO_INLINE")""")
+            fun getOrdinal(n: Int) = n.toString() + when (n) {
+                1 -> "st"
+                2 -> "nd"
+                3 -> "rd"
+                else -> "th"
+            }
+            doc { "Returns ${getOrdinal(n)} *element* from the collection." }
+            returns("T")
+            body { "return get(${n-1})" }
+            only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        }
     }
 
     return templates

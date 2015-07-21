@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
+import org.jetbrains.kotlin.j2k.buildList
 
 open class Class(
         val name: Identifier,
@@ -52,7 +53,9 @@ open class Class(
         get() = "class"
 
     protected fun appendBaseTypes(builder: CodeBuilder) {
-        builder.append(baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } }, ", ", ":")
+        builder.buildList(generators = baseClassSignatureWithParams(builder) + implementsTypes.map { { builder.append(it) } },
+                          separator = ", ",
+                          prefix = ":")
     }
 
     private fun baseClassSignatureWithParams(builder: CodeBuilder): List<() -> CodeBuilder> {

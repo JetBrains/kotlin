@@ -27,16 +27,18 @@ class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Def
         else {
             builder.append(name)
                     .append("(")
-                    .append(arguments.map {
-                        {
-                            if (it.first != null) {
-                                builder append it.first!! append " = " append it.second
-                            }
-                            else {
-                                builder append it.second
-                            }
-                        }
-                    }, ", ")
+                    .buildList(
+                            generators = arguments.map {
+                                {
+                                    if (it.first != null) {
+                                        builder append it.first!! append " = " append it.second
+                                    }
+                                    else {
+                                        builder append it.second
+                                    }
+                                }
+                            },
+                            separator = ", ")
                     .append(")")
         }
     }
@@ -61,6 +63,3 @@ class Annotations(val annotations: List<Annotation>) : Element() {
         val Empty = Annotations(listOf())
     }
 }
-
-fun Annotations.withAt(): Annotations
-        = Annotations(annotations.map { Annotation(it.name, it.arguments, true, it.newLineAfter).assignPrototypesFrom(it) }).assignPrototypesFrom(this)

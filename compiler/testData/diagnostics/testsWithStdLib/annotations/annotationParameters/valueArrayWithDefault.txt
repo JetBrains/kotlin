@@ -6,7 +6,7 @@ A(value = {{"5", "6"}, "7"}) internal fun test3(): kotlin.Unit
 A() internal fun test4(): kotlin.Unit
 A() internal fun test5(): kotlin.Unit
 
-public final annotation class A : kotlin.Annotation {
+public final class A : kotlin.Annotation {
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/ = ...)
     public final val value: kotlin.Array<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

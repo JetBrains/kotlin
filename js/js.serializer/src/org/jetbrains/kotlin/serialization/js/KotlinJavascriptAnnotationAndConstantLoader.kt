@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.JetType
 
 class KotlinJavascriptAnnotationAndConstantLoader(
         module: ModuleDescriptor
-) : AnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>> {
+) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>> {
     private val deserializer = AnnotationDeserializer(module)
 
     override fun loadClassAnnotations(
@@ -67,7 +67,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             expectedType: JetType
-    ): CompileTimeConstant<*>? {
+    ): ConstantValue<*>? {
         val value = proto.getExtension(JsProtoBuf.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, nameResolver)
     }

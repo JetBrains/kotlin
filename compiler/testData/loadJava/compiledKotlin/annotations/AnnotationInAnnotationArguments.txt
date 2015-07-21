@@ -22,13 +22,13 @@ internal final enum class E : kotlin.Enum<test.E> {
     public final /*synthesized*/ fun values(): kotlin.Array<test.E>
 }
 
-internal final annotation class EnumOption : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class EnumOption : kotlin.Annotation {
     /*primary*/ public constructor EnumOption(/*0*/ option: test.E)
     internal final val option: test.E
         internal final fun <get-option>(): test.E
 }
 
-internal final annotation class OptionGroups : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class OptionGroups : kotlin.Annotation {
     /*primary*/ public constructor OptionGroups(/*0*/ o1: test.StringOptions, /*1*/ o2: test.EnumOption)
     internal final val o1: test.StringOptions
         internal final fun <get-o1>(): test.StringOptions
@@ -36,7 +36,7 @@ internal final annotation class OptionGroups : kotlin.Annotation {
         internal final fun <get-o2>(): test.EnumOption
 }
 
-internal final annotation class StringOptions : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class StringOptions : kotlin.Annotation {
     /*primary*/ public constructor StringOptions(/*0*/ vararg option: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val option: kotlin.Array<out kotlin.String>
         internal final fun <get-option>(): kotlin.Array<out kotlin.String>

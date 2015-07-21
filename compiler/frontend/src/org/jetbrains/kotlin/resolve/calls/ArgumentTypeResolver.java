@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
@@ -45,39 +46,31 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createCorrespondingFunctionTypeForFunctionPlaceholder;
+import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createTypeForFunctionPlaceholder;
 import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
+    @NotNull private final TypeResolver typeResolver;
+    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final KotlinBuiltIns builtIns;
 
-    private TypeResolver typeResolver;
-    private ExpressionTypingServices expressionTypingServices;
-    private KotlinBuiltIns builtIns;
-
-    @Inject
-    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setBuiltIns(@NotNull KotlinBuiltIns builtIns) {
+    public ArgumentTypeResolver(
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull TypeResolver typeResolver
+    ) {
         this.builtIns = builtIns;
+        this.expressionTypingServices = expressionTypingServices;
+        this.typeResolver = typeResolver;
     }
 
     public static boolean isSubtypeOfForArgumentType(
@@ -85,7 +78,7 @@ public class ArgumentTypeResolver {
             @NotNull JetType expectedType
     ) {
         if (ErrorUtils.isFunctionPlaceholder(actualType)) {
-            JetType functionType = createCorrespondingFunctionTypeForFunctionPlaceholder(actualType, expectedType);
+            JetType functionType = createTypeForFunctionPlaceholder(actualType, expectedType);
             return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
@@ -158,7 +151,7 @@ public class ArgumentTypeResolver {
     private static JetFunction getFunctionLiteralArgumentIfAny(
             @NotNull JetExpression expression, @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context);
+        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
         if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
             return ((JetFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
         }
@@ -171,7 +164,7 @@ public class ArgumentTypeResolver {
     @Nullable
     public static JetExpression getLastElementDeparenthesized(
             @Nullable JetExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull StatementFilter statementFilter
     ) {
         JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
         if (deparenthesizedExpression instanceof JetBlockExpression) {
@@ -180,9 +173,9 @@ public class ArgumentTypeResolver {
             // This case is a temporary hack for 'if' branches.
             // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
-            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(context.statementFilter, blockExpression);
+            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(statementFilter, blockExpression);
             if (lastStatementInABlock != null) {
-                return getLastElementDeparenthesized(lastStatementInABlock, context);
+                return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
             }
         }
         return deparenthesizedExpression;
@@ -310,7 +303,7 @@ public class ArgumentTypeResolver {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
                 JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                updateNumberType(primitiveType, expression, context);
+                updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
                 return primitiveType;
             }
         }
@@ -320,19 +313,20 @@ public class ArgumentTypeResolver {
     public static void updateNumberType(
             @NotNull JetType numberType,
             @Nullable JetExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull StatementFilter statementFilter,
+            @NotNull BindingTrace trace
     ) {
         if (expression == null) return;
-        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+        BindingContextUtils.updateRecordedType(numberType, expression, trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = getLastElementDeparenthesized(expression, context);
+            JetExpression deparenthesized = getLastElementDeparenthesized(expression, statementFilter);
             if (deparenthesized != expression) {
-                updateNumberType(numberType, deparenthesized, context);
+                updateNumberType(numberType, deparenthesized, statementFilter, trace);
             }
             return;
         }
 
-        ConstantExpressionEvaluator.evaluate(expression, context.trace, numberType);
+        ConstantExpressionEvaluator.evaluate(expression, trace, numberType);
     }
 }

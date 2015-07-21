@@ -12,6 +12,6 @@ import p.J.*
 
 class Foo<T>: Sub<T> {
     fun foo(): Super<T> {
-        return <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo<!>()
+        return Foo()
     }
 }

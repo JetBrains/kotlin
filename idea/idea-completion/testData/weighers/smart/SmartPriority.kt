@@ -16,6 +16,7 @@ class C {
 // ORDER: nullableFoo
 // ORDER: this
 // ORDER: local
+// ORDER: apply
 // ORDER: nonNullable
 // ORDER: nullableX
 // ORDER: nullableX

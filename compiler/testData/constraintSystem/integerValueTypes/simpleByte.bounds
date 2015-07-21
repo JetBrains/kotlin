@@ -1,19 +1,21 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUBTYPE T Byte
+T >: IntegerValueType(1)
+T <: Byte
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), <: kotlin.Byte(SPECIAL)
+T >: IntegerValueType(1), <: Byte
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
 
 result:
-T=kotlin.Byte
+T=Byte

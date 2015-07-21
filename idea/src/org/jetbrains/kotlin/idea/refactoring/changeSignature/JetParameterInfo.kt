@@ -23,8 +23,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.types.JetType
 import java.util.LinkedHashMap
 
 public class JetParameterInfo(
-        val functionDescriptor: FunctionDescriptor,
+        val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
         type: JetType? = null,
@@ -61,7 +62,7 @@ public class JetParameterInfo(
                             object : JetTreeVisitorVoid() {
                                 private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
                                     return if (parameter is ValueParameterDescriptor &&
-                                               compareDescriptors(project, parameter.getContainingDeclaration(), functionDescriptor)) {
+                                               compareDescriptors(project, parameter.getContainingDeclaration(), callableDescriptor)) {
                                         parameter
                                     } else null
                                 }
@@ -69,12 +70,12 @@ public class JetParameterInfo(
                                 private fun selfReceiverOrNull(receiverDescriptor: DeclarationDescriptor?): DeclarationDescriptor? {
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           functionDescriptor.getExtensionReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.getExtensionReceiverParameter()?.getContainingDeclaration())) {
                                         return receiverDescriptor
                                     }
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           functionDescriptor.getDispatchReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.getDispatchReceiverParameter()?.getContainingDeclaration())) {
                                         return receiverDescriptor
                                     }
                                     return null
@@ -93,7 +94,7 @@ public class JetParameterInfo(
                                     val descriptor = ref.resolveToDescriptors(context).singleOrNull()
                                     if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
 
-                                    if (descriptor is PropertyDescriptor && functionDescriptor is ConstructorDescriptor) {
+                                    if (descriptor is PropertyDescriptor && callableDescriptor is ConstructorDescriptor) {
                                         val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetParameter
                                         return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
                                     }
@@ -110,7 +111,7 @@ public class JetParameterInfo(
                                 }
 
                                 override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                                    val ref = expression.getReference() as? JetReference ?: return
+                                    val ref = expression.mainReference
                                     val descriptor = getRelevantDescriptor(expression, ref) ?: return
                                     map[ref] = descriptor
                                 }
@@ -149,20 +150,20 @@ public class JetParameterInfo(
         throw UnsupportedOperationException()
     }
 
-    public fun renderType(parameterIndex: Int, inheritedFunction: JetFunctionDefinitionUsage<*>): String {
-        val typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor() ?: return currentTypeText
-        val currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor() ?: return currentTypeText
+    public fun renderType(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<*>): String {
+        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return currentTypeText
+        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return currentTypeText
         val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
     }
 
-    public fun getInheritedName(inheritedFunction: JetFunctionDefinitionUsage<*>): String {
-        if (!inheritedFunction.isInherited()) return name
+    public fun getInheritedName(inheritedCallable: JetCallableDefinitionUsage<*>): String {
+        if (!inheritedCallable.isInherited()) return name
 
-        val baseFunction = inheritedFunction.getBaseFunction()
-        val baseFunctionDescriptor = baseFunction.getOriginalFunctionDescriptor()
+        val baseFunction = inheritedCallable.getBaseFunction()
+        val baseFunctionDescriptor = baseFunction.getOriginalCallableDescriptor()
 
-        val inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor()
+        val inheritedFunctionDescriptor = inheritedCallable.getOriginalCallableDescriptor()
         val inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters()
         if (originalIndex < 0
             || originalIndex >= baseFunctionDescriptor.getValueParameters().size()
@@ -177,18 +178,18 @@ public class JetParameterInfo(
         }
     }
 
-    public fun requiresExplicitType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): Boolean {
-        val inheritedFunctionDescriptor = inheritedFunction.getOriginalFunctionDescriptor()
+    public fun requiresExplicitType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): Boolean {
+        val inheritedFunctionDescriptor = inheritedCallable.getOriginalCallableDescriptor()
         if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
-        if (originalIndex < 0) return !inheritedFunction.hasExpectedType()
+        if (originalIndex < 0) return !inheritedCallable.hasExpectedType()
 
         val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? JetParameter ?: return false
         return parameter.getTypeReference() != null
     }
 
-    public fun getDeclarationSignature(parameterIndex: Int, inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {
@@ -199,13 +200,13 @@ public class JetParameterInfo(
             buffer.append(valOrVar).append(' ')
         }
 
-        buffer.append(getInheritedName(inheritedFunction))
+        buffer.append(getInheritedName(inheritedCallable))
 
-        if (requiresExplicitType(inheritedFunction)) {
-            buffer.append(": ").append(renderType(parameterIndex, inheritedFunction))
+        if (requiresExplicitType(inheritedCallable)) {
+            buffer.append(": ").append(renderType(parameterIndex, inheritedCallable))
         }
 
-        if (!inheritedFunction.isInherited()) {
+        if (!inheritedCallable.isInherited()) {
             defaultValueForParameter?.let { buffer.append(" = ").append(it.getText()) }
         }
 

@@ -32,7 +32,7 @@ import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsConditional
 import com.google.dart.compiler.backend.js.ast.JsBlock
 
-trait CallInfo {
+interface CallInfo {
     val context: TranslationContext
     val resolvedCall: ResolvedCall<out CallableDescriptor>
 
@@ -87,7 +87,7 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
             var receiverRef = explicitReceivers.extensionReceiver
             if (receiverRef != null) {
                 receiverRef = this.declareTemporary(null).reference()
-                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef!!, explicitReceivers.extensionReceiver!!).makeStmt())
+                this.addStatementToCurrentBlock(JsAstUtils.assignment(receiverRef, explicitReceivers.extensionReceiver!!).makeStmt())
             }
             ExplicitReceivers(receiverOrThisRef, receiverRef)
         }
@@ -138,11 +138,11 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         when (resolvedCall.getExplicitReceiverKind()) {
             BOTH_RECEIVERS, EXTENSION_RECEIVER -> {
                 notNullConditional = TranslationUtils.notNullConditional(extensionReceiver!!, JsLiteral.NULL, this)
-                extensionReceiver = notNullConditional!!.getThenExpression()
+                extensionReceiver = notNullConditional.getThenExpression()
             }
             else -> {
                 notNullConditional = TranslationUtils.notNullConditional(dispatchReceiver!!, JsLiteral.NULL, this)
-                dispatchReceiver = notNullConditional!!.getThenExpression()
+                dispatchReceiver = notNullConditional.getThenExpression()
             }
         }
     }

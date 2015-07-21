@@ -19,28 +19,36 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
+import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.changeSignature.*
+import com.intellij.refactoring.util.CanonicalTypes
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.VisibilityUtil
-import org.jetbrains.kotlin.asJava.*
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.j2k
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.JetLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.core.refactoring.j2k
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import java.util.HashMap
-import kotlin.properties.Delegates
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.kotlin.idea.project.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.LinkedHashSet
+import kotlin.properties.Delegates
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -50,7 +58,8 @@ public class JetChangeInfo(
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
         receiver: JetParameterInfo? = methodDescriptor.receiver,
-        val context: PsiElement
+        val context: PsiElement,
+        primaryPropagationTargets: Collection<PsiElement> = emptyList()
 ): ChangeInfo {
     var receiverParameterInfo: JetParameterInfo? = receiver
         set(value: JetParameterInfo?) {
@@ -61,7 +70,7 @@ public class JetChangeInfo(
         }
 
     private val newParameters = parameterInfos.toArrayList()
-    private val originalPsiMethod: PsiMethod? = getCurrentPsiMethod()
+    private val originalPsiMethods: List<PsiMethod> = getMethod().toLightMethods()
 
     private val oldNameToParameterIndex: Map<String, Int> by Delegates.lazy {
         val map = HashMap<String, Int>()
@@ -80,13 +89,7 @@ public class JetChangeInfo(
     }
 
     private var isPrimaryMethodUpdated: Boolean = false
-    private var javaChangeInfo: JavaChangeInfo? = null
-
-    private fun getCurrentPsiMethod(): PsiMethod? {
-        val psiMethods = getMethod().toLightMethods()
-        assert(psiMethods.size() <= 1) { "Multiple light methods: " + getMethod().getText() }
-        return psiMethods.firstOrNull()
-    }
+    private var javaChangeInfos: List<JavaChangeInfo>? = null
 
     public fun getOldParameterIndex(oldParameterName: String): Int? = oldNameToParameterIndex[oldParameterName]
 
@@ -103,6 +106,7 @@ public class JetChangeInfo(
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 
     fun getNonReceiverParameters(): List<JetParameterInfo> {
+        methodDescriptor.baseDeclaration.let { if (it is JetProperty || it is JetParameter) return emptyList() }
         return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
     }
 
@@ -146,7 +150,43 @@ public class JetChangeInfo(
 
     override fun getLanguage(): Language = JetLanguage.INSTANCE
 
-    public fun getNewSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+    public var propagationTargetUsageInfos: List<UsageInfo> = ArrayList()
+        private set
+
+    public var primaryPropagationTargets: Collection<PsiElement> = emptyList()
+        set(value: Collection<PsiElement>) {
+            $primaryPropagationTargets = value
+
+            val result = LinkedHashSet<UsageInfo>()
+
+            fun add(element: PsiElement) {
+                element.unwrapped?.let {
+                    val usageInfo = when (it) {
+                        is JetNamedFunction, is JetConstructor<*>, is JetClassOrObject ->
+                            KotlinCallerUsage(it as JetNamedDeclaration)
+                        is PsiMethod ->
+                            CallerUsageInfo(it, true, true)
+                        else ->
+                            return
+                    }
+
+                    result.add(usageInfo)
+                }
+            }
+
+            for (caller in value) {
+                add(caller)
+                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach { add(it) }
+            }
+
+            propagationTargetUsageInfos = result.toList()
+        }
+
+    init {
+        this.primaryPropagationTargets = primaryPropagationTargets
+    }
+
+    public fun getNewSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
         val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.INTERNAL
@@ -174,7 +214,7 @@ public class JetChangeInfo(
             buffer.append(name)
         }
 
-        buffer.append(getNewParametersSignature(inheritedFunction))
+        buffer.append(getNewParametersSignature(inheritedCallable))
 
         if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && kind == Kind.FUNCTION)
             buffer.append(": ").append(newReturnTypeText)
@@ -182,63 +222,84 @@ public class JetChangeInfo(
         return buffer.toString()
     }
 
-    public fun isRefactoringTarget(inheritedFunctionDescriptor: FunctionDescriptor?): Boolean {
-        return inheritedFunctionDescriptor != null
-               && getMethod() == DescriptorToSourceUtils.descriptorToDeclaration(inheritedFunctionDescriptor)
+    public fun isRefactoringTarget(inheritedCallableDescriptor: CallableDescriptor?): Boolean {
+        return inheritedCallableDescriptor != null
+               && getMethod() == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
     }
 
-    public fun getNewParametersSignature(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
+    public fun getNewParametersSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
         val signatureParameters = getNonReceiverParameters()
 
-        val isLambda = inheritedFunction.getDeclaration() is JetFunctionLiteral
-        if (isLambda && signatureParameters.size() == 1 && !signatureParameters.get(0).requiresExplicitType(inheritedFunction)) {
-            return signatureParameters.get(0).getDeclarationSignature(0, inheritedFunction)
+        val isLambda = inheritedCallable.getDeclaration() is JetFunctionLiteral
+        if (isLambda && signatureParameters.size() == 1 && !signatureParameters.get(0).requiresExplicitType(inheritedCallable)) {
+            return signatureParameters.get(0).getDeclarationSignature(0, inheritedCallable)
         }
 
         return signatureParameters.indices
-                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedFunction) }
+                .map { i -> signatureParameters[i].getDeclarationSignature(i, inheritedCallable) }
                 .joinToString(prefix = "(", separator = ", ", postfix = ")")
     }
 
-    public fun renderReceiverType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String? {
+    public fun renderReceiverType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String? {
         val receiverTypeText = receiverParameterInfo?.currentTypeText ?: return null
-        val typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor() ?: return receiverTypeText
-        val currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor() ?: return receiverTypeText
+        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return receiverTypeText
+        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return receiverTypeText
         return currentBaseFunction.getExtensionReceiverParameter()!!.getType().renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
-    public fun renderReturnType(inheritedFunction: JetFunctionDefinitionUsage<PsiElement>): String {
-        val typeSubstitutor = inheritedFunction.getOrCreateTypeSubstitutor() ?: return newReturnTypeText
-        val currentBaseFunction = inheritedFunction.getBaseFunction().getCurrentFunctionDescriptor() ?: return newReturnTypeText
-        return currentBaseFunction.getReturnType().renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
+    public fun renderReturnType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
+        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return newReturnTypeText
+        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return newReturnTypeText
+        return currentBaseFunction.getReturnType()!!.renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
     }
 
     public fun primaryMethodUpdated() {
         isPrimaryMethodUpdated = true
-        javaChangeInfo = null
+        javaChangeInfos = null
     }
 
-    public fun getOrCreateJavaChangeInfo(): JavaChangeInfo? {
-        if (ProjectStructureUtil.isJsKotlinModule(getMethod().getContainingFile() as JetFile)) return null
+    public fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {
+        /*
+         * When primaryMethodUpdated is false, changes to the primary Kotlin declaration are already confirmed, but not yet applied.
+         * It means that originalPsiMethod has already expired, but new one can't be created until Kotlin declaration is updated
+         * (signified by primaryMethodUpdated being true). It means we can't know actual PsiType, visibility, etc.
+         * to use in JavaChangeInfo. However they are not actually used at this point since only parameter count and order matters here
+         * So we resort to this hack and pass around "default" type (void) and visibility (package-local)
+         */
 
-        if (javaChangeInfo == null) {
-            val currentPsiMethod = getCurrentPsiMethod()
-            if (originalPsiMethod == null || currentPsiMethod == null) return null
-
-            /*
-             * When primaryMethodUpdated is false, changes to the primary Kotlin declaration are already confirmed, but not yet applied.
-             * It means that originalPsiMethod has already expired, but new one can't be created until Kotlin declaration is updated
-             * (signified by primaryMethodUpdated being true). It means we can't know actual PsiType, visibility, etc.
-             * to use in JavaChangeInfo. However they are not actually used at this point since only parameter count and order matters here
-             * So we resort to this hack and pass around "default" type (void) and visibility (package-local)
-             */
-            val javaVisibility = if (isPrimaryMethodUpdated)
+        fun createJavaChangeInfo(originalPsiMethod: PsiMethod,
+                                 currentPsiMethod: PsiMethod,
+                                 newName: String,
+                                 newReturnType: PsiType?,
+                                 newParameters: Array<ParameterInfoImpl>
+        ): JavaChangeInfo? {
+            val newVisibility = if (isPrimaryMethodUpdated)
                 VisibilityUtil.getVisibilityModifier(currentPsiMethod.getModifierList())
             else
                 PsiModifier.PACKAGE_LOCAL
+            val propagationTargets = primaryPropagationTargets.asSequence()
+                    .map { it.getRepresentativeLightMethod() }
+                    .filterNotNull()
+                    .toSet()
+            val javaChangeInfo = ChangeSignatureProcessor(
+                    getMethod().getProject(),
+                    originalPsiMethod,
+                    false,
+                    newVisibility,
+                    newName,
+                    CanonicalTypes.createTypeWrapper(newReturnType ?: PsiType.VOID),
+                    newParameters,
+                    arrayOf<ThrownExceptionInfo>(),
+                    propagationTargets,
+                    emptySet()
+            ).getChangeInfo()
+            javaChangeInfo.updateMethod(currentPsiMethod)
 
-            val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
-            val newJavaParameters = newParameterList.withIndex().map { pair ->
+            return javaChangeInfo
+        }
+
+        fun getJavaParameterInfos(currentPsiMethod: PsiMethod, newParameterList: List<JetParameterInfo>): MutableList<ParameterInfoImpl> {
+            return newParameterList.withIndex().mapTo(ArrayList()) { pair ->
                 val (i, info) = pair
 
                 val type = if (isPrimaryMethodUpdated)
@@ -255,25 +316,66 @@ public class JetChangeInfo(
                 }
 
                 ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
-            }.toTypedArray()
-
-            val returnType = if (isPrimaryMethodUpdated) currentPsiMethod.getReturnType() else PsiType.VOID
-
-            javaChangeInfo = ChangeSignatureProcessor(getMethod().getProject(),
-                                                      originalPsiMethod,
-                                                      false,
-                                                      javaVisibility,
-                                                      getNewName(),
-                                                      returnType,
-                                                      newJavaParameters).getChangeInfo()
-            javaChangeInfo!!.updateMethod(currentPsiMethod)
+            }
         }
 
-        return javaChangeInfo
+        fun createJavaChangeInfoForFunctionOrGetter(
+                originalPsiMethod: PsiMethod,
+                currentPsiMethod: PsiMethod,
+                isGetter: Boolean
+        ): JavaChangeInfo? {
+            val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
+            val newJavaParameters = getJavaParameterInfos(currentPsiMethod, newParameterList).toTypedArray()
+            val newName = if (isGetter) JvmAbi.getterName(getNewName()) else getNewName()
+            return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, currentPsiMethod.getReturnType(), newJavaParameters)
+        }
+
+        fun createJavaChangeInfoForSetter(originalPsiMethod: PsiMethod, currentPsiMethod: PsiMethod): JavaChangeInfo? {
+            val newJavaParameters = getJavaParameterInfos(currentPsiMethod, receiverParameterInfo.singletonOrEmptyList())
+            val oldIndex = if (methodDescriptor.receiver != null) 1 else 0
+            if (isPrimaryMethodUpdated) {
+                val newIndex = if (receiverParameterInfo != null) 1 else 0
+                val setterParameter = currentPsiMethod.getParameterList().getParameters()[newIndex]
+                newJavaParameters.add(ParameterInfoImpl(oldIndex, setterParameter.getName(), setterParameter.getType()))
+            }
+            else {
+                newJavaParameters.add(ParameterInfoImpl(oldIndex, "receiver", PsiType.VOID))
+            }
+
+            val newName = JvmAbi.setterName(getNewName())
+            return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, PsiType.VOID, newJavaParameters.toTypedArray())
+        }
+
+        if (ProjectStructureUtil.isJsKotlinModule(getMethod().getContainingFile() as JetFile)) return null
+
+        if (javaChangeInfos == null) {
+            val method = getMethod()
+            javaChangeInfos = (originalPsiMethods zip method.toLightMethods()).map {
+                val (originalPsiMethod, currentPsiMethod) = it
+
+                when (method) {
+                    is JetFunction, is JetClassOrObject ->
+                        createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, false)
+                    is JetProperty, is JetParameter -> {
+                        val accessorName = originalPsiMethod.getName()
+                        when {
+                            accessorName.startsWith(JvmAbi.GETTER_PREFIX) ->
+                                createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, true)
+                            accessorName.startsWith(JvmAbi.SETTER_PREFIX) ->
+                                createJavaChangeInfoForSetter(originalPsiMethod, currentPsiMethod)
+                            else -> null
+                        }
+                    }
+                    else -> null
+                }
+            }.filterNotNull()
+        }
+
+        return javaChangeInfos
     }
 }
 
-public val JetChangeInfo.originalBaseFunctionDescriptor: FunctionDescriptor
+public val JetChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
     get() = methodDescriptor.baseDescriptor
 
 public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
@@ -281,12 +383,12 @@ public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
 public val JetChangeInfo.oldName: String?
     get() = (methodDescriptor.getMethod() as? JetFunction)?.getName()
 
-public val JetChangeInfo.affectedFunctions: Collection<UsageInfo> get() = methodDescriptor.affectedFunctions
+public fun JetChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 
 public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMethodDescriptor): JetChangeInfo {
     val method = getMethod() as PsiMethod
 
-    val functionDescriptor = method.getJavaMethodDescriptor()
+    val functionDescriptor = method.getJavaMethodDescriptor()!!
     val parameterDescriptors = functionDescriptor.getValueParameters()
 
     //noinspection ConstantConditions
@@ -298,19 +400,23 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
         val currentType = parameterDescriptors[i].getType()
 
         val defaultValueText = info.getDefaultValue()
-        val defaultValueExpr = if (getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty()) {
-            PsiElementFactory.SERVICE.getInstance(method.getProject())
-                    .createExpressionFromText(defaultValueText!!, null)
-                    .j2k()
-        }
-        else null
+        val defaultValueExpr =
+                when {
+                    info is KotlinAwareJavaParameterInfoImpl -> info.kotlinDefaultValue
+                    getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty() -> {
+                        PsiElementFactory.SERVICE.getInstance(method.getProject())
+                                .createExpressionFromText(defaultValueText!!, null)
+                                .j2k()
+                    }
+                    else -> null
+                }
 
-        with(JetParameterInfo(functionDescriptor = functionDescriptor,
+        with(JetParameterInfo(callableDescriptor = functionDescriptor,
                               originalIndex = oldIndex,
                               name = info.getName(),
                               type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
                               defaultValueForCall = defaultValueExpr)) {
-            currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(currentType)
+            currentTypeText = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(currentType)
             this
         }
     }

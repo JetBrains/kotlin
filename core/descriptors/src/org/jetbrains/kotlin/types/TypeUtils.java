@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.registerTypeVariables;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 
 public class TypeUtils {
@@ -301,7 +302,7 @@ public class TypeUtils {
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
             ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            constraintSystem.registerTypeVariables(parameters);
+            registerTypeVariables(constraintSystem, parameters);
             constraintSystem.addSubtypeConstraint(withParameters, expected, SPECIAL.position());
 
             return constraintSystem.getStatus().isSuccessful();

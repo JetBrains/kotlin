@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -26,8 +25,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test(n: J?, nn: J) {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -36,8 +33,8 @@ fun test(n: J?, nn: J) {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    J.staticNN = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>
-    J.staticNN = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    J.staticNN = <!TYPE_MISMATCH!>n<!>
+    J.staticNN = <!TYPE_MISMATCH!>platformN<!>
     J.staticNN = nn
     J.staticNN = platformNN
     J.staticNN = platformJ
@@ -56,12 +53,12 @@ fun test(n: J?, nn: J) {
 
     J.staticSet(nn, nn, nn)
     J.staticSet(platformNN, platformNN, platformNN)
-    J.staticSet(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>, n, n)
-    J.staticSet(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, platformN, platformN)
+    J.staticSet(<!TYPE_MISMATCH!>n<!>, n, n)
+    J.staticSet(<!TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J.staticSet(platformJ, platformJ, platformJ)
 
-    J().nn = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>
-    J().nn = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    J().nn = <!TYPE_MISMATCH!>n<!>
+    J().nn = <!TYPE_MISMATCH!>platformN<!>
     J().nn = nn
     J().nn = platformNN
     J().nn = platformJ
@@ -80,13 +77,13 @@ fun test(n: J?, nn: J) {
 
     J().set(nn, nn, nn)
     J().set(platformNN, platformNN, platformNN)
-    J().set(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>, n, n)
-    J().set(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, platformN, platformN)
+    J().set(<!TYPE_MISMATCH!>n<!>, n, n)
+    J().set(<!TYPE_MISMATCH!>platformN<!>, platformN, platformN)
     J().set(platformJ, platformJ, platformJ)
 
     J(nn, nn, nn)
     J(platformNN, platformNN, platformNN)
-    J(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>, n, n)
-    J(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, platformN, platformN)
+    <!NONE_APPLICABLE!>J<!>(n, n, n)
+    <!NONE_APPLICABLE!>J<!>(platformN, platformN, platformN)
     J(platformJ, platformJ, platformJ)
 }

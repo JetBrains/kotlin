@@ -114,6 +114,7 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PLATFORM_NAME = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
 
     // Annotations
 
@@ -124,8 +125,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> INVALID_TYPE_OF_ANNOTATION_MEMBER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> NULLABLE_TYPE_OF_ANNOTATION_MEMBER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetModifierListOwner> ILLEGAL_ANNOTATION_KEYWORD =
-            DiagnosticFactory0.create(ERROR, modifierSetPosition(JetTokens.ANNOTATION_KEYWORD));
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
@@ -458,7 +457,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_CANNOT_CAPTURE_TYPES = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> TYPE_INFERENCE_INCORPORATION_ERROR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetExpression, JetType, JetType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
@@ -707,7 +707,8 @@ public interface Errors {
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
             UNUSED_FUNCTION_LITERAL, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
-            TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
+            TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS,
+            TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

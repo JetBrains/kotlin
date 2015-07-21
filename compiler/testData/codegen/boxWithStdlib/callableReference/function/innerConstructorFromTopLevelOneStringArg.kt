@@ -3,7 +3,7 @@ class A {
 }
 
 fun box(): String {
-    val result = (::A)().(A::Inner)(111).result + A().(A::Inner)(222).result
+    val result = (A::Inner)((::A)(), 111).result + (A::Inner)(A(), 222).result
     if (result != 333) return "Fail $result"
     return "OK"
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -33,12 +32,14 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -51,7 +52,7 @@ import java.util.LinkedHashSet
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContext,
         private val containingDeclaration: DeclarationDescriptor
-) : JetScope {
+) : JetScopeImpl() {
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
@@ -86,14 +87,16 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredFunctions(result, name)
 
+        val enhancedResult = enhanceSignatures(result)
+
         // Make sure that lazy things are computed before we release the lock
-        for (f in result) {
+        for (f in enhancedResult) {
             for (p in f.getValueParameters()) {
                 p.hasDefaultValue()
             }
         }
 
-        result.toReadOnlyList()
+        enhancedResult.toReadOnlyList()
     }
 
     protected data class MethodSignatureData(
@@ -153,9 +156,8 @@ public abstract class LazyJavaMemberScope(
                 allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )
-        val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
-        // Annotation arguments are never null in Java
-        return c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
+        return c.typeResolver.transformJavaType(method.getReturnType(), returnTypeAttrs).let {
+            // Annotation arguments are never null in Java
             if (annotationMethod) TypeUtils.makeNotNullable(it) else it
         }
     }
@@ -178,7 +180,7 @@ public abstract class LazyJavaMemberScope(
                         val paramType = javaParameter.getType() as? JavaArrayType
                                         ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")
                         val outType = c.typeResolver.transformArrayType(paramType, typeUsage, true)
-                        outType to KotlinBuiltIns.getInstance().getArrayElementType(outType)
+                        outType to c.module.builtIns.getArrayElementType(outType)
                     }
                     else {
                         c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage) to null
@@ -186,7 +188,7 @@ public abstract class LazyJavaMemberScope(
 
             val name = if (function.getName().asString() == "equals" &&
                            jValueParameters.size() == 1 &&
-                           KotlinBuiltIns.getInstance().getNullableAnyType() == outType) {
+                           c.module.builtIns.getNullableAnyType() == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
                 // "other" in Any)
@@ -235,7 +237,10 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredProperties(name, properties)
 
-        properties.toReadOnlyList()
+        if (DescriptorUtils.isAnnotationClass(containingDeclaration))
+            properties.toReadOnlyList()
+        else
+            enhanceSignatures(properties).toReadOnlyList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
@@ -271,7 +276,7 @@ public abstract class LazyJavaMemberScope(
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
-                                      c.sourceElementFactory.source(field))
+                                      c.sourceElementFactory.source(field), /* original = */ null)
     }
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): JetType {
@@ -292,9 +297,6 @@ public abstract class LazyJavaMemberScope(
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = properties(name)
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-    override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 
@@ -349,7 +351,7 @@ public abstract class LazyJavaMemberScope(
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
 
-        p.println("containigDeclaration: ${getContainingDeclaration()}")
+        p.println("containingDeclaration: ${getContainingDeclaration()}")
 
         p.popIndent()
         p.println("}")

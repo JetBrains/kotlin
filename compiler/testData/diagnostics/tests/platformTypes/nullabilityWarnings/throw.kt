@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -13,14 +12,12 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     throw J.staticNN
 }
 
 fun test1() {
-    throw <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
+    throw <!TYPE_MISMATCH!>J.staticN<!>
 }
 
 fun test2() {

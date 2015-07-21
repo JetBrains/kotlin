@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.optimization.MandatoryMethodTransformer;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
@@ -372,6 +373,8 @@ public class MethodInliner {
     @NotNull
     protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node, int finallyDeepShift) {
         node = prepareNode(node, finallyDeepShift);
+
+        MandatoryMethodTransformer.INSTANCE$.transform("fake", node);
 
         Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter()) {
             @NotNull

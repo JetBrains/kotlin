@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -50,7 +49,7 @@ open class BranchedValue(
     open fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         if (arg1 is CondJump) arg1.condJump(jumpLabel, v, jumpIfFalse) else arg1.put(operandType, v)
         arg2?.put(operandType, v)
-        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode], v), jumpLabel);
+        v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode]!!, v), jumpLabel);
     }
 
     open fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {

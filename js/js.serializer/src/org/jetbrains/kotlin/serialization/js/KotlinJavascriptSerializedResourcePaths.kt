@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 
 public object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths() {
-    public override val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+    public override val extensionRegistry: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
 
     init {
-        JsProtoBuf.registerAllExtensions(EXTENSION_REGISTRY)
+        JsProtoBuf.registerAllExtensions(extensionRegistry)
     }
 
     private val CLASSES_FILE_EXTENSION = "kotlin_classes"

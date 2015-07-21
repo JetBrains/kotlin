@@ -7417,9 +7417,9 @@ public final class ProtoBuf {
      */
     int getSupertypeCount();
 
-    // repeated int32 nested_class_name = 7;
+    // repeated int32 nested_class_name = 7 [packed = true];
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -7428,7 +7428,7 @@ public final class ProtoBuf {
      */
     java.util.List<java.lang.Integer> getNestedClassNameList();
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -7437,7 +7437,7 @@ public final class ProtoBuf {
      */
     int getNestedClassNameCount();
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -7461,17 +7461,17 @@ public final class ProtoBuf {
      */
     int getMemberCount();
 
-    // repeated int32 enum_entry = 12;
+    // repeated int32 enum_entry = 12 [packed = true];
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     java.util.List<java.lang.Integer> getEnumEntryList();
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     int getEnumEntryCount();
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     int getEnumEntry(int index);
 
@@ -8394,11 +8394,11 @@ public final class ProtoBuf {
       return supertype_.get(index);
     }
 
-    // repeated int32 nested_class_name = 7;
+    // repeated int32 nested_class_name = 7 [packed = true];
     public static final int NESTED_CLASS_NAME_FIELD_NUMBER = 7;
     private java.util.List<java.lang.Integer> nestedClassName_;
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -8410,7 +8410,7 @@ public final class ProtoBuf {
       return nestedClassName_;
     }
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -8421,7 +8421,7 @@ public final class ProtoBuf {
       return nestedClassName_.size();
     }
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -8431,6 +8431,7 @@ public final class ProtoBuf {
     public int getNestedClassName(int index) {
       return nestedClassName_.get(index);
     }
+    private int nestedClassNameMemoizedSerializedSize = -1;
 
     // repeated .org.jetbrains.kotlin.serialization.Callable member = 11;
     public static final int MEMBER_FIELD_NUMBER = 11;
@@ -8468,28 +8469,29 @@ public final class ProtoBuf {
       return member_.get(index);
     }
 
-    // repeated int32 enum_entry = 12;
+    // repeated int32 enum_entry = 12 [packed = true];
     public static final int ENUM_ENTRY_FIELD_NUMBER = 12;
     private java.util.List<java.lang.Integer> enumEntry_;
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getEnumEntryList() {
       return enumEntry_;
     }
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public int getEnumEntryCount() {
       return enumEntry_.size();
     }
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public int getEnumEntry(int index) {
       return enumEntry_.get(index);
     }
+    private int enumEntryMemoizedSerializedSize = -1;
 
     // optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;
     public static final int PRIMARY_CONSTRUCTOR_FIELD_NUMBER = 13;
@@ -8631,14 +8633,22 @@ public final class ProtoBuf {
       for (int i = 0; i < supertype_.size(); i++) {
         output.writeMessage(6, supertype_.get(i));
       }
+      if (getNestedClassNameList().size() > 0) {
+        output.writeRawVarint32(58);
+        output.writeRawVarint32(nestedClassNameMemoizedSerializedSize);
+      }
       for (int i = 0; i < nestedClassName_.size(); i++) {
-        output.writeInt32(7, nestedClassName_.get(i));
+        output.writeInt32NoTag(nestedClassName_.get(i));
       }
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(11, member_.get(i));
       }
+      if (getEnumEntryList().size() > 0) {
+        output.writeRawVarint32(98);
+        output.writeRawVarint32(enumEntryMemoizedSerializedSize);
+      }
       for (int i = 0; i < enumEntry_.size(); i++) {
-        output.writeInt32(12, enumEntry_.get(i));
+        output.writeInt32NoTag(enumEntry_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(13, primaryConstructor_);
@@ -8682,7 +8692,12 @@ public final class ProtoBuf {
             .computeInt32SizeNoTag(nestedClassName_.get(i));
         }
         size += dataSize;
-        size += 1 * getNestedClassNameList().size();
+        if (!getNestedClassNameList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        nestedClassNameMemoizedSerializedSize = dataSize;
       }
       for (int i = 0; i < member_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -8695,7 +8710,12 @@ public final class ProtoBuf {
             .computeInt32SizeNoTag(enumEntry_.get(i));
         }
         size += dataSize;
-        size += 1 * getEnumEntryList().size();
+        if (!getEnumEntryList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        enumEntryMemoizedSerializedSize = dataSize;
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
@@ -9429,7 +9449,7 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 nested_class_name = 7;
+      // repeated int32 nested_class_name = 7 [packed = true];
       private java.util.List<java.lang.Integer> nestedClassName_ = java.util.Collections.emptyList();
       private void ensureNestedClassNameIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
@@ -9438,7 +9458,7 @@ public final class ProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9450,7 +9470,7 @@ public final class ProtoBuf {
         return java.util.Collections.unmodifiableList(nestedClassName_);
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9461,7 +9481,7 @@ public final class ProtoBuf {
         return nestedClassName_.size();
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9472,7 +9492,7 @@ public final class ProtoBuf {
         return nestedClassName_.get(index);
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9487,7 +9507,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9501,7 +9521,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9516,7 +9536,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9655,7 +9675,7 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 enum_entry = 12;
+      // repeated int32 enum_entry = 12 [packed = true];
       private java.util.List<java.lang.Integer> enumEntry_ = java.util.Collections.emptyList();
       private void ensureEnumEntryIsMutable() {
         if (!((bitField0_ & 0x00000080) == 0x00000080)) {
@@ -9664,26 +9684,26 @@ public final class ProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public java.util.List<java.lang.Integer>
           getEnumEntryList() {
         return java.util.Collections.unmodifiableList(enumEntry_);
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public int getEnumEntryCount() {
         return enumEntry_.size();
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public int getEnumEntry(int index) {
         return enumEntry_.get(index);
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder setEnumEntry(
           int index, int value) {
@@ -9693,7 +9713,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder addEnumEntry(int value) {
         ensureEnumEntryIsMutable();
@@ -9702,7 +9722,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder addAllEnumEntry(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -9712,7 +9732,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder clearEnumEntry() {
         enumEntry_ = java.util.Collections.emptyList();

@@ -90,7 +90,7 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
         JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class, false);
 
         if (jetClass == null) {
-            jetClass = JetJUnitConfigurationProducer.getClassDeclarationInFile(jetFile);
+            jetClass = getClassDeclarationInFile(jetFile);
         }
 
         if (jetClass == null) {
@@ -127,5 +127,26 @@ public class JetTestNgConfigurationProducer extends TestNGConfigurationProducer 
 
     private static boolean isTestNGClass(PsiClass psiClass) {
         return psiClass != null && PsiClassUtil.isRunnableClass(psiClass, true, false) && TestNGUtil.hasTest(psiClass);
+    }
+
+    @Nullable
+    static JetClass getClassDeclarationInFile(JetFile jetFile) {
+        JetClass tempSingleDeclaration = null;
+
+        for (JetDeclaration jetDeclaration : jetFile.getDeclarations()) {
+            if (jetDeclaration instanceof JetClass) {
+                JetClass declaration = (JetClass) jetDeclaration;
+
+                if (tempSingleDeclaration == null) {
+                    tempSingleDeclaration = declaration;
+                }
+                else {
+                    // There are several class declarations in file
+                    return null;
+                }
+            }
+        }
+
+        return tempSingleDeclaration;
     }
 }

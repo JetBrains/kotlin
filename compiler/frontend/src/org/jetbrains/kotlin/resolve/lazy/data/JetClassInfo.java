@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.*;
-
-import java.util.List;
+import org.jetbrains.kotlin.psi.JetClass;
+import org.jetbrains.kotlin.psi.JetEnumEntry;
+import org.jetbrains.kotlin.psi.JetTypeParameterList;
 
 public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
     private final ClassKind kind;
@@ -34,11 +34,11 @@ public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
         else if (element.isInterface()) {
             this.kind = ClassKind.INTERFACE;
         }
-        else if (element.isAnnotation()) {
-            this.kind = ClassKind.ANNOTATION_CLASS;
-        }
         else if (element.isEnum()) {
             this.kind = ClassKind.ENUM_CLASS;
+        }
+        else if (element.isAnnotation()) {
+            this.kind = ClassKind.ANNOTATION_CLASS;
         }
         else {
             this.kind = ClassKind.CLASS;

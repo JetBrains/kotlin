@@ -26,7 +26,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.TypeVariable
 
 public class ReflectJavaTypeParameter(
-        private val typeVariable: TypeVariable<*>
+        public val typeVariable: TypeVariable<*>
 ) : ReflectJavaElement(), JavaTypeParameter {
     override fun getUpperBounds(): List<ReflectJavaClassifierType> {
         val bounds = typeVariable.getBounds().map { bound -> ReflectJavaClassifierType(bound) }

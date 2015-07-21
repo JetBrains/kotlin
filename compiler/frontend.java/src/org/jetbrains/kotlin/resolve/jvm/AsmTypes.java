@@ -36,23 +36,22 @@ public class AsmTypes {
 
     public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
     public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
+    public static final Type PROPERTY_REFERENCE0 = Type.getObjectType("kotlin/jvm/internal/PropertyReference0");
+    public static final Type PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/PropertyReference1");
+    public static final Type MUTABLE_PROPERTY_REFERENCE0 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference0");
+    public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_PACKAGE_TYPE = reflect("KPackage");
+    public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");
 
     public static final Type K_FUNCTION = reflect("KFunction");
-    public static final Type K_TOP_LEVEL_FUNCTION = reflect("KTopLevelFunction");
-    public static final Type K_MEMBER_FUNCTION = reflect("KMemberFunction");
-    public static final Type K_TOP_LEVEL_EXTENSION_FUNCTION = reflect("KTopLevelExtensionFunction");
-    public static final Type K_LOCAL_FUNCTION = reflect("KLocalFunction");
 
-    public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");
-    public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = reflect("KMutableMemberProperty");
-    public static final Type K_TOP_LEVEL_VARIABLE_TYPE = reflect("KTopLevelVariable");
-    public static final Type K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE = reflect("KMutableTopLevelVariable");
-    public static final Type K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KTopLevelExtensionProperty");
-    public static final Type K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KMutableTopLevelExtensionProperty");
+    public static final Type K_PROPERTY0_TYPE = reflect("KProperty0");
+    public static final Type K_PROPERTY1_TYPE = reflect("KProperty1");
+    public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
+    public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 

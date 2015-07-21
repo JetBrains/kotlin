@@ -21,9 +21,5 @@ fun box(): String {
     --x
     assertEquals('C', x)
 
-    assertEquals(67, +x)
-    assertEquals(-67, -x)
-
-
     return "OK"
 }

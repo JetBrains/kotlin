@@ -16,18 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.JetScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver
-import org.jetbrains.kotlin.resolve.ScriptParameterResolver
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -56,7 +57,7 @@ public class LazyScriptDescriptor(
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
 
-    private val implicitReceiver = ReceiverParameterDescriptorImpl(this, KotlinBuiltIns.getInstance().getAnyType(), ScriptReceiver(this))
+    private val implicitReceiver = ReceiverParameterDescriptorImpl(this, ScriptReceiver(this))
 
     override fun getThisAsReceiverParameter() = implicitReceiver
 
@@ -64,13 +65,22 @@ public class LazyScriptDescriptor(
 
     override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript) as LazyScriptClassDescriptor
 
-    override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getScopeForMemberLookup().getScriptResultProperty()
+    override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getUnsubstitutedMemberScope().getScriptResultProperty()
 
     private val scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
         val result = ScriptCodeDescriptor(this)
+
+        val file = jetScript.getContainingJetFile()
+        val scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file)
+
         result.initialize(
                 implicitReceiver,
-                ScriptParameterResolver.resolveScriptParameters(jetScript, this),
+                scriptDefinition.getScriptParameters().mapIndexed { index, scriptParameter ->
+                    ValueParameterDescriptorImpl(
+                            result, null, index, Annotations.EMPTY, scriptParameter.getName(), scriptParameter.getType(),
+                            false, null, SourceElement.NO_SOURCE
+                    )
+                },
                 DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace()) {
                     scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
                 }
@@ -81,7 +91,7 @@ public class LazyScriptDescriptor(
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): JetScope {
-        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of " + this, implicitReceiver)
+        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of $this", implicitReceiver)
         for (valueParameterDescriptor in getScriptCodeDescriptor().getValueParameters()) {
             parametersScope.addVariableDescriptor(valueParameterDescriptor)
         }

@@ -317,6 +317,6 @@ class ForConverter(
         val declarationStatement = this as? PsiDeclarationStatement ?: return listOf()
         return declarationStatement.getDeclaredElements()
                 .filterIsInstance<PsiVariable>()
-                .map { it.getName() }
+                .map { it.getName()!! }
     }
 }

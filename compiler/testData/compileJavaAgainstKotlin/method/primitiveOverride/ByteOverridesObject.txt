@@ -22,6 +22,6 @@ public/*package*/ open class ExtendsB : test.B {
 
 public/*package*/ open class ExtendsC : test.C {
     public/*package*/ constructor ExtendsC()
-    public open fun foo(): kotlin.Byte!
+    public open fun foo(): kotlin.Byte
     public/*package*/ open fun test(): kotlin.Unit
 }

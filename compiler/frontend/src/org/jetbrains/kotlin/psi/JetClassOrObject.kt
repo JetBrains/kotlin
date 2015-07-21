@@ -25,6 +25,7 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
@@ -64,7 +65,19 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
+    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor methods instead, e.g. getKind()")
+    public fun isAnnotation(): Boolean = getBuiltInAnnotationEntry() != null
+
+    public fun getBuiltInAnnotationEntry(): JetAnnotationEntry? = getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString())
+
+    private fun getAnnotation(name: String): JetAnnotationEntry? {
+        return getAnnotationEntries().firstOrNull() { entry ->
+            val typeReference = entry.getTypeReference()
+            val userType = typeReference?.getStubOrPsiChild(JetStubElementTypes.USER_TYPE)
+
+            name == userType?.getReferencedName()
+        }
+    }
 
     public override fun delete() {
         CheckUtil.checkWritable(this);

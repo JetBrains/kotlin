@@ -22,27 +22,32 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
 import com.intellij.refactoring.changeSignature.ThrownExceptionInfo;
+import com.intellij.refactoring.util.CanonicalTypes;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.VisibilityUtil;
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode;
+import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
+import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -544,7 +549,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testSAMChangeMethodReturnType() throws Exception {
         doJavaTest(
                 new JavaRefactoringProvider() {
-                    @Nullable
+                    @NotNull
                     @Override
                     PsiType getNewReturnType(@NotNull PsiMethod method) {
                         return PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
@@ -567,7 +572,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                         return newParameters;
                     }
 
-                    @Nullable
+                    @NotNull
                     @Override
                     PsiType getNewReturnType(@NotNull PsiMethod method) {
                         return factory.createTypeFromText("X<java.util.List<A>>", method);
@@ -975,10 +980,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
-    public void testJavaMethodOverrides() throws Exception {
+    public void testJavaMethodOverridesReplaceParam() throws Exception {
         doJavaTest(
                 new JavaRefactoringProvider() {
-                    @Nullable
+                    @NotNull
                     @Override
                     PsiType getNewReturnType(@NotNull PsiMethod method) {
                         return PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
@@ -995,15 +1000,348 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         );
     }
 
+    public void testJavaMethodOverridesChangeParam() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    PsiType getNewReturnType(@NotNull PsiMethod method) {
+                        return PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                    }
+
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters[0].setName("x");
+                        newParameters[0].setType(PsiType.INT);
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
+    public void testChangeProperty() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("s");
+        changeInfo.setNewReturnTypeText("String");
+        doTest(changeInfo);
+    }
+
+    public void testAddPropertyReceiverConflict() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTestConflict(changeInfo);
+    }
+
+    public void testAddPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testChangePropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        //noinspection ConstantConditions
+        changeInfo.getReceiverParameterInfo().setCurrentTypeText("Int");
+        doTest(changeInfo);
+    }
+
+    public void testRemovePropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testAddTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", null, null,
+                                                             new JetPsiFactory(getProject()).createExpression("A()"), JetValVar.None, null);
+        newParameter.setCurrentTypeText("test.A");
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testChangeTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        //noinspection ConstantConditions
+        changeInfo.getReceiverParameterInfo().setCurrentTypeText("String");
+        doTest(changeInfo);
+    }
+
+    public void testRemoveTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testChangeClassParameter() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("s");
+        changeInfo.setNewReturnTypeText("String");
+        doTest(changeInfo);
+    }
+
+    public void testParameterPropagation() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter1 = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", null, null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        newParameter1.setCurrentTypeText("kotlin.Int");
+        changeInfo.addParameter(newParameter1);
+
+        JetParameterInfo newParameter2 = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                              -1, "s", null, null,
+                                                              new JetPsiFactory(getProject()).createExpression("\"abc\""), JetValVar.None, null);
+        newParameter2.setCurrentTypeText("kotlin.String");
+        changeInfo.addParameter(newParameter2);
+
+        JetClassOrObject classA =
+                JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+        JetDeclaration functionBar = KotlinPackage.first(
+                classA.getDeclarations(),
+                new Function1<JetDeclaration, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetDeclaration declaration) {
+                        return declaration instanceof JetNamedFunction && "bar".equals(declaration.getName());
+                    }
+                }
+        );
+        JetNamedFunction functionTest =
+                JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+
+        changeInfo.setPrimaryPropagationTargets(Arrays.asList(functionBar, functionTest));
+
+        doTest(changeInfo);
+    }
+
+    public void testJavaParameterPropagation() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return new ParameterInfoImpl[] {
+                                new ParameterInfoImpl(-1, "n", PsiType.INT, "1"),
+                                new ParameterInfoImpl(-1,
+                                                      "s",
+                                                      PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject())),
+                                                      "\"abc\"")
+                        };
+                    }
+
+                    @NotNull
+                    @Override
+                    Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
+                        PsiClass classA = KotlinPackage.first(
+                                JavaFullClassNameIndex.getInstance()
+                                        .get("A".hashCode(), getProject(), GlobalSearchScope.allScope(getProject())),
+                                new Function1<PsiClass, Boolean>() {
+                                    @Override
+                                    public Boolean invoke(PsiClass aClass) {
+                                        return "A".equals(aClass.getName());
+                                    }
+                                }
+                        );
+                        PsiMethod methodBar = KotlinPackage.first(
+                                classA.getMethods(),
+                                new Function1<PsiMethod, Boolean>() {
+                                    @Override
+                                    public Boolean invoke(PsiMethod method) {
+                                        return "bar".equals(method.getName());
+                                    }
+                                }
+                        );
+                        JetNamedFunction functionTest =
+                                JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
+                                        .iterator().next();
+
+                        return KotlinPackage.setOf(methodBar, AsJavaPackage.getRepresentativeLightMethod(functionTest));
+                    }
+                }
+        );
+    }
+
+    public void testPropagateWithParameterDuplication() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        JetNamedFunction functionBar =
+                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+
+        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+
+        doTestConflict(changeInfo);
+    }
+
+    public void testPropagateWithVariableDuplication() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        JetNamedFunction functionBar =
+                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+
+        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+
+        doTestConflict(changeInfo);
+    }
+
+    public void testPropagateWithThisQualificationInClassMember() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        JetClassOrObject classA =
+                JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+        JetDeclaration functionBar = KotlinPackage.first(
+                classA.getDeclarations(),
+                new Function1<JetDeclaration, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetDeclaration declaration) {
+                        return declaration instanceof JetNamedFunction && "bar".equals(declaration.getName());
+                    }
+                }
+        );
+        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+
+        doTest(changeInfo);
+    }
+
+    public void testPropagateWithThisQualificationInExtension() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        JetNamedFunction functionBar =
+                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                        .iterator().next();
+
+        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+
+        doTest(changeInfo);
+    }
+
+    public void testJavaConstructorParameterPropagation() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        return new ParameterInfoImpl[] { new ParameterInfoImpl(-1, "n", PsiType.INT, "1") };
+                    }
+
+                    @NotNull
+                    @Override
+                    Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
+                        return findCallers(method);
+                    }
+                }
+        );
+    }
+
+    public void testPrimaryConstructorParameterPropagation() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        PsiMethod constructor = AsJavaPackage.getRepresentativeLightMethod(changeInfo.getMethod());
+        assert constructor != null;
+        changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
+
+        doTest(changeInfo);
+    }
+
+    public void testSecondaryConstructorParameterPropagation() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+
+        PsiMethod constructor = AsJavaPackage.getRepresentativeLightMethod(changeInfo.getMethod());
+        assert constructor != null;
+        changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
+
+        doTest(changeInfo);
+    }
+
+    public void testJavaMethodOverridesOmitUnitType() throws Exception {
+        doJavaTest(new JavaRefactoringProvider());
+    }
+
+    private List<Editor> editors = null;
+
+    private static final String[] EXTENSIONS = {".kt", ".java"};
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        editors = new ArrayList<Editor>();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        editors.clear();
+        editors = null;
+    }
+
+    @NotNull
+    private LinkedHashSet<PsiMethod> findCallers(@NotNull PsiMethod method) {
+        KotlinMethodNode rootNode =
+                new KotlinMethodNode(method,
+                                     new HashSet<PsiElement>(),
+                                     getProject(),
+                                     new Runnable() {
+                                         @Override
+                                         public void run() {
+
+                                         }
+                                     });
+        LinkedHashSet<PsiMethod> callers = new LinkedHashSet<PsiMethod>();
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            PsiElement element = ((KotlinMethodNode) rootNode.getChildAt(i)).getMethod();
+            callers.addAll(AsJavaPackage.toLightMethods(element));
+        }
+        return callers;
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
     }
-
-    private final List<Editor> editors = new ArrayList<Editor>();
-
-    private static final String[] EXTENSIONS = {".kt", ".java"};
 
     private void configureFiles() throws Exception {
         editors.clear();
@@ -1039,11 +1377,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 
-        FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
-        assertNotNull(functionDescriptor);
+        CallableDescriptor callableDescriptor = JetChangeSignatureHandler.Companion.findDescriptor(element, project, editor, bindingContext);
+        assertNotNull(callableDescriptor);
 
         return ChangeSignaturePackage.createChangeInfo(
-                project, functionDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
+                project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, bindingContext, context
+        );
     }
 
     private class JavaRefactoringProvider {
@@ -1052,9 +1391,10 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             return method.getName();
         }
 
-        @Nullable
+        @NotNull
         PsiType getNewReturnType(@NotNull PsiMethod method) {
-            return method.getReturnType();
+            PsiType type = method.getReturnType();
+            return type != null ? type : PsiType.VOID;
         }
 
         @NotNull
@@ -1069,6 +1409,11 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         }
 
         @NotNull
+        Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
+            return Collections.emptySet();
+        }
+
+        @NotNull
         final ChangeSignatureProcessor getProcessor(@NotNull PsiMethod method) {
             return new ChangeSignatureProcessor(
                     getProject(),
@@ -1076,9 +1421,11 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                     false,
                     VisibilityUtil.getVisibilityModifier(method.getModifierList()),
                     getNewName(method),
-                    getNewReturnType(method),
+                    CanonicalTypes.createTypeWrapper(getNewReturnType(method)),
                     getNewParameters(method),
-                    new ThrownExceptionInfo[0]);
+                    new ThrownExceptionInfo[0],
+                    getParameterPropagationTargets(method),
+                    Collections.<PsiMethod>emptySet());
         }
     }
 

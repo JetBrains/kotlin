@@ -64,9 +64,10 @@ public class JavaMethodImpl extends JavaMemberImpl<PsiMethod> implements JavaMet
     }
 
     @Override
-    @Nullable
+    @NotNull
     public JavaType getReturnType() {
         PsiType psiType = getPsi().getReturnType();
-        return psiType == null ? null : JavaTypeImpl.create(psiType);
+        assert psiType != null : "Method is not a constructor and has no return type: " + getName();
+        return JavaTypeImpl.create(psiType);
     }
 }

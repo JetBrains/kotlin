@@ -99,6 +99,16 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
+    public JetScope getUnsubstitutedMemberScope() {
+        JetScope memberScope = original.getUnsubstitutedMemberScope();
+        if (originalSubstitutor.isEmpty()) {
+            return memberScope;
+        }
+        return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
     public JetScope getStaticScope() {
         return original.getStaticScope();
     }
@@ -146,7 +156,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
+    public DeclarationDescriptorWithSource getOriginal() {
         return original.getOriginal();
     }
 

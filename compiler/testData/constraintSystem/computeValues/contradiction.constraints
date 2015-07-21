@@ -1,0 +1,4 @@
+VARIABLES T
+
+T <: B
+T >: A

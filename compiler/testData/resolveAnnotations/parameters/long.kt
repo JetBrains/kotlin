@@ -7,4 +7,4 @@ annotation class Ann(
 
 Ann(1, 1.toLong()) class MyClass
 
-// EXPECTED: Ann(b1 = IntegerValueType(1), b2 = 1.toLong())
+// EXPECTED: Ann(b1 = 1.toLong(), b2 = 1.toLong())

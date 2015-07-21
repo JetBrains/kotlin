@@ -1,7 +1,7 @@
 class A {
     private fun foo() = "OK"
 
-    fun bar() = this.(::foo)()
+    fun bar() = (::foo)(this)
 }
 
 fun box() = A().bar()

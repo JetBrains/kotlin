@@ -1,7 +1,7 @@
 class A {
     fun foo(k: Int) = k
 
-    fun result() = this.(::foo)(111)
+    fun result() = (::foo)(this, 111)
 }
 
 fun box(): String {

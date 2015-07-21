@@ -22,17 +22,19 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -210,7 +212,7 @@ private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
         lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        result.add(lookupElement)
+        result.add(lookupElement!!)
     }
 
     lookupElement = factory()
@@ -226,7 +228,7 @@ private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
         lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        result.add(lookupElement)
+        result.add(lookupElement!!)
     }
 
     return result
@@ -269,7 +271,7 @@ fun LookupElementFactory.createLookupElement(
         element = element.keepOldArgumentListOnTab()
     }
 
-    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]) {
+    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
         element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
     }
 

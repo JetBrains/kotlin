@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
@@ -42,15 +44,16 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         storageManager: StorageManager,
         kotlinClassFinder: KotlinClassFinder,
         errorReporter: ErrorReporter
-) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, CompileTimeConstant<*>>(
+) : AbstractBinaryClassAnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>>(
         storageManager, kotlinClassFinder, errorReporter
 ) {
     private val annotationDeserializer = AnnotationDeserializer(module)
+    private val factory = ConstantValueFactory(module.builtIns)
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
             annotationDeserializer.deserializeAnnotation(proto, nameResolver)
 
-    override fun loadConstant(desc: String, initializer: Any): CompileTimeConstant<*>? {
+    override fun loadConstant(desc: String, initializer: Any): ConstantValue<*>? {
         val normalizedValue: Any = if (desc in "ZBCS") {
             val intValue = initializer as Int
             when (desc) {
@@ -65,11 +68,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             initializer
         }
 
-        val compileTimeConstant = createCompileTimeConstant(
-                normalizedValue, canBeUsedInAnnotation = true, isPureIntConstant = true,
-                usesVariableAsConstant = true, expectedType = null
-        )
-        return compileTimeConstant
+        return factory.createConstantValue(normalizedValue)
     }
 
     override fun loadAnnotation(
@@ -79,7 +78,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
         val annotationClass = resolveClass(annotationClassId)
 
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-            private val arguments = HashMap<ValueParameterDescriptor, CompileTimeConstant<*>>()
+            private val arguments = HashMap<ValueParameterDescriptor, ConstantValue<*>>()
 
             override fun visit(name: Name?, value: Any?) {
                 if (name != null) {
@@ -93,7 +92,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 
             override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
                 return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-                    private val elements = ArrayList<CompileTimeConstant<*>>()
+                    private val elements = ArrayList<ConstantValue<*>>()
 
                     override fun visit(value: Any?) {
                         elements.add(createConstant(name, value))
@@ -107,7 +106,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             elements.trimToSize()
-                            arguments[parameter] = ArrayValue(elements, parameter.getType(), true, false)
+                            arguments[parameter] = factory.createArrayValue(elements, parameter.getType())
                         }
                     }
                 }
@@ -125,28 +124,27 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             // NOTE: see analogous code in AnnotationDeserializer
-            private fun enumEntryValue(enumClassId: ClassId, name: Name): CompileTimeConstant<*> {
+            private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
                 val enumClass = resolveClass(enumClassId)
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
                     val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name)
                     if (classifier is ClassDescriptor) {
-                        return EnumValue(classifier, false)
+                        return factory.createEnumValue(classifier)
                     }
                 }
-                return ErrorValue.create("Unresolved enum entry: $enumClassId.$name")
+                return factory.createErrorValue("Unresolved enum entry: $enumClassId.$name")
             }
 
             override fun visitEnd() {
                 result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments))
             }
 
-            private fun createConstant(name: Name?, value: Any?): CompileTimeConstant<*> {
-                return createCompileTimeConstant(value, canBeUsedInAnnotation = true, isPureIntConstant = false,
-                                                 usesVariableAsConstant = false, expectedType = null)
-                       ?: ErrorValue.create("Unsupported annotation argument: $name")
+            private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {
+                return factory.createConstantValue(value) ?:
+                       factory.createErrorValue("Unsupported annotation argument: $name")
             }
 
-            private fun setArgumentValueByName(name: Name, argumentValue: CompileTimeConstant<*>) {
+            private fun setArgumentValueByName(name: Name, argumentValue: ConstantValue<*>) {
                 val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                 if (parameter != null) {
                     arguments[parameter] = argumentValue

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 public class AccessorForConstructorDescriptor(
@@ -37,6 +38,8 @@ public class AccessorForConstructorDescriptor(
     override fun getContainingDeclaration(): ClassDescriptor = calleeDescriptor.getContainingDeclaration()
 
     override fun isPrimary(): Boolean = false
+
+    override fun getReturnType(): JetType = super<AbstractAccessorForFunctionDescriptor>.getReturnType()!!
 
     init {
         initialize(

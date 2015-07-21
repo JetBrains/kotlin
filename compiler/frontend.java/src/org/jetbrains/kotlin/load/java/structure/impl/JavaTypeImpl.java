@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.name.FqName;
 
-public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
+import java.util.Collection;
+
+public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, JavaAnnotationOwnerImpl {
     private final Psi psiType;
 
     public JavaTypeImpl(@NotNull Psi psiType) {
@@ -32,6 +36,12 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
     @NotNull
     public Psi getPsi() {
         return psiType;
+    }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi();
     }
 
     @NotNull
@@ -74,6 +84,19 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
     public JavaArrayType createArrayType() {
         return new JavaArrayTypeImpl(getPsi().createArrayType());
     }
+
+    @NotNull
+    @Override
+    public Collection<JavaAnnotation> getAnnotations() {
+        return JavaElementUtil.getAnnotations(this);
+    }
+
+    @Nullable
+    @Override
+    public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
+        return JavaElementUtil.findAnnotation(this, fqName);
+    }
+
 
     @Override
     public int hashCode() {

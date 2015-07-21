@@ -36,7 +36,7 @@ import kotlin.properties.Delegates
 public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
 
-    private val perfCounter = PerformanceCounter("Find Java class")
+    private val perfCounter = PerformanceCounter.create("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
 
     public fun initIndex(packagesCache: JvmDependenciesIndex) {

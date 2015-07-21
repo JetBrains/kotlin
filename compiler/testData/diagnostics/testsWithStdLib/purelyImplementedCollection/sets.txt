@@ -1,0 +1,6 @@
+package
+
+internal fun bar(): kotlin.String?
+internal fun fooHashSet(): kotlin.Unit
+internal fun fooLinkedHashSet(): kotlin.Unit
+internal fun fooTreeSet(): kotlin.Unit

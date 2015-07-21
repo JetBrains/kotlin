@@ -1,7 +1,6 @@
 // !CHECK_TYPE
 
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -15,8 +14,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     val platformNN = J.staticNN
@@ -26,7 +23,7 @@ fun test() {
     val platformJ = J.staticJ
 
     checkSubtype<J>(platformNN)
-    checkSubtype<J>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
+    checkSubtype<J>(<!TYPE_MISMATCH!>platformN<!>)
     checkSubtype<J>(platformJ)
 
     checkSubtype<J?>(platformNN)

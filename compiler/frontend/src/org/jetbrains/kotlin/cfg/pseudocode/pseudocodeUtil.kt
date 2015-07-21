@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import com.google.common.collect.Sets
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.SmartFMap
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
@@ -26,23 +30,28 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
-    val callableDescriptor = resolvedCall.getResultingDescriptor()
-    if (callableDescriptor == null) return null
+    val callableDescriptor = resolvedCall.getResultingDescriptor() ?: return null
 
     when (receiverValue) {
         resolvedCall.getExtensionReceiver() -> {
@@ -61,12 +70,74 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
 }
 
 public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingContext): TypePredicate {
-    val pseudocode = value.createdAt?.owner
-    if (pseudocode == null) return AllTypes
+    val pseudocode = value.createdAt?.owner ?: return AllTypes
+    val builtIns = KotlinBuiltIns.getInstance()
 
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
     fun addSubtypesOf(jetType: JetType?) = typePredicates.add(jetType?.getSubtypesPredicate())
+
+    fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
+        val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()
+        if (receiverValue.exists()) typePredicates.add(getReceiverTypePredicate(resolvedCall, receiverValue))
+    }
+
+    fun getTypePredicateForUnresolvedCallArgument(to: JetElement, inputValueIndex: Int): TypePredicate? {
+        if (inputValueIndex < 0) return null
+        val call = to.getCall(bindingContext) ?: return null
+        val callee = call.getCalleeExpression() ?: return null
+
+        val candidates = callee.getReferenceTargets(bindingContext)
+                .filterIsInstance<FunctionDescriptor>()
+                .sortBy { DescriptorRenderer.DEBUG_TEXT.render(it) }
+        if (candidates.isEmpty()) return null
+
+        val explicitReceiver = call.getExplicitReceiver()
+        val argValueOffset = if (explicitReceiver.exists()) 1 else 0
+
+        val predicates = ArrayList<TypePredicate>()
+
+        for (candidate in candidates) {
+            val resolutionCandidate = ResolutionCandidate.create(
+                    call,
+                    candidate,
+                    call.getDispatchReceiver(),
+                    explicitReceiver,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    null
+            )
+            val candidateCall = ResolvedCallImpl.create(
+                    resolutionCandidate,
+                    DelegatingBindingTrace(bindingContext, "Compute type predicates for unresolved call arguments"),
+                    TracingStrategy.EMPTY,
+                    DataFlowInfoForArgumentsImpl(call)
+            )
+            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call,
+                                                                                        TracingStrategy.EMPTY,
+                                                                                        candidateCall,
+                                                                                        LinkedHashSet())
+            if (!status.isSuccess()) continue
+
+            val candidateArgumentMap = candidateCall.getValueArguments()
+            val callArguments = call.getValueArguments()
+            val i = inputValueIndex - argValueOffset
+            if (i < 0 || i >= callArguments.size()) continue
+
+            val mapping = candidateCall.getArgumentMapping(callArguments.get(i))
+            if (mapping !is ArgumentMatch) continue
+
+            val candidateParameter = mapping.valueParameter
+            val resolvedArgument = candidateArgumentMap.get(candidateParameter)
+            val expectedType = if (resolvedArgument is VarargValueArgument)
+                candidateParameter.getVarargElementType()
+            else
+                candidateParameter.getType()
+
+            predicates.add(if (expectedType != null) AllSubtypes(expectedType) else AllTypes)
+        }
+
+        return or(predicates)
+    }
 
     fun addTypePredicates(value: PseudoValue) {
         pseudocode.getUsages(value).forEach {
@@ -75,16 +146,16 @@ public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingC
                     val returnElement = it.element
                     val functionDescriptor = when(returnElement) {
                         is JetReturnExpression -> returnElement.getTargetFunctionDescriptor(bindingContext)
-                        else -> bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
+                        else -> bindingContext[DECLARATION_TO_DESCRIPTOR, pseudocode.getCorrespondingElement()]
                     }
                     addSubtypesOf((functionDescriptor as? CallableDescriptor)?.getReturnType())
                 }
 
                 is ConditionalJumpInstruction ->
-                    addSubtypesOf(KotlinBuiltIns.getInstance().getBooleanType())
+                    addSubtypesOf(builtIns.getBooleanType())
 
                 is ThrowExceptionInstruction ->
-                    addSubtypesOf(KotlinBuiltIns.getInstance().getThrowable().getDefaultType())
+                    addSubtypesOf(builtIns.getThrowable().getDefaultType())
 
                 is MergeInstruction ->
                     addTypePredicates(it.outputValue)
@@ -126,8 +197,36 @@ public fun getExpectedTypePredicate(value: PseudoValue, bindingContext: BindingC
                     }
                 }
 
-                is MagicInstruction ->
-                    typePredicates.add(it.expectedTypes[value])
+                is MagicInstruction -> @suppress("NON_EXHAUSTIVE_WHEN") when (it.kind) {
+                    AND, OR ->
+                        addSubtypesOf(builtIns.getBooleanType())
+
+                    LOOP_RANGE_ITERATION ->
+                        addByExplicitReceiver(bindingContext[LOOP_RANGE_ITERATOR_RESOLVED_CALL, value.element as? JetExpression])
+
+                    VALUE_CONSUMER -> {
+                        val element = it.element
+                        when {
+                            element.getStrictParentOfType<JetWhileExpression>()?.getCondition() == element ->
+                                addSubtypesOf(builtIns.getBooleanType())
+
+                            element is JetProperty -> {
+                                val propertyDescriptor = bindingContext[DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
+                                propertyDescriptor?.getAccessors()?.map {
+                                    addByExplicitReceiver(bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, it])
+                                }
+                            }
+
+                            element is JetDelegatorByExpressionSpecifier ->
+                                addSubtypesOf(bindingContext[TYPE, element.getTypeReference()])
+                        }
+                    }
+
+                    UNRESOLVED_CALL -> {
+                        val typePredicate = getTypePredicateForUnresolvedCallArgument(it.element, it.inputValues.indexOf(value))
+                        typePredicates.add(typePredicate)
+                    }
+                }
             }
         }
     }

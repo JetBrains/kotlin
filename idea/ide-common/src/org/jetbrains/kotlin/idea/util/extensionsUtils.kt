@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.nullability
 
 public enum class CallType {
     NORMAL,
@@ -102,7 +105,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors.map { substitute(it) }.toList()
+        return substitutors.map { substitute(it)!! }.toList()
     }
 }
 

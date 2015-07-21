@@ -27,6 +27,7 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.references.mainReference
 
 public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
@@ -38,7 +39,7 @@ public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler 
             is JetQualifiedExpression -> receiver.getQualifiedElementSelector()
             else -> null
         } as? JetSimpleNameExpression
-        if (outerClassRef?.getReference()?.resolve() != outerClass) return
+        if (outerClassRef?.mainReference?.resolve() != outerClass) return
 
         val outerCall = outerClassRef!!.getParent() as? JetCallExpression ?: return
 

@@ -262,6 +262,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("callAny.kt")
+        public void testCallAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/callAny.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("callNullable.kt")
         public void testCallNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/callNullable.kt");
@@ -280,6 +286,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCallAny.kt")
+        public void testInfixCallAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallAny.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("infixCallNullable.kt")
         public void testInfixCallNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallNullable.kt");
@@ -289,6 +301,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/intrinsic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intrinsicAny.kt")
+        public void testIntrinsicAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/intrinsicAny.kt");
             doTest(fileName);
         }
 
@@ -304,9 +322,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("longOverflow.kt")
-        public void testLongOverflow() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/longOverflow.kt");
+        @TestMetadata("overflowChar.kt")
+        public void testOverflowChar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overflowInt.kt")
+        public void testOverflowInt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("overflowLong.kt")
+        public void testOverflowLong() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/overflowLong.kt");
             doTest(fileName);
         }
     }
@@ -829,12 +859,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("asAny.kt")
-        public void testAsAny() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asAny.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("asForConstants.kt")
         public void testAsForConstants() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/asForConstants.kt");
@@ -886,6 +910,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("notIs.kt")
         public void testNotIs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/notIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitAsAny.kt")
+        public void testUnitAsAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitAsAny.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unitAsSafeAny.kt")
+        public void testUnitAsSafeAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitAsSafeAny.kt");
             doTest(fileName);
         }
 
@@ -2265,6 +2301,129 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TryCatchInExpressions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInTryCatchInExpressions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("catch.kt")
+            public void testCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/catch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complexChain.kt")
+            public void testComplexChain() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/complexChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("differentTypes.kt")
+            public void testDifferentTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/differentTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectException.kt")
+            public void testExpectException() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/expectException.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finally.kt")
+            public void testFinally() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/finally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryCatch.kt")
+            public void testInlineTryCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryExpr.kt")
+            public void testInlineTryExpr() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryExpr.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryFinally.kt")
+            public void testInlineTryFinally() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryFinally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multipleCatchBlocks.kt")
+            public void testMultipleCatchBlocks() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/multipleCatchBlocks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTry.kt")
+            public void testSplitTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTryCorner1.kt")
+            public void testSplitTryCorner1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTryCorner2.kt")
+            public void testSplitTryCorner2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("try.kt")
+            public void testTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/try.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAfterTry.kt")
+            public void testTryAfterTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAfterTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAndBreak.kt")
+            public void testTryAndBreak() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAndBreak.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAndContinue.kt")
+            public void testTryAndContinue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAndContinue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryInsideCatch.kt")
+            public void testTryInsideCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryInsideTry.kt")
+            public void testTryInsideTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unmatchedInlineMarkers.kt")
+            public void testUnmatchedInlineMarkers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/unmatchedInlineMarkers.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
@@ -3325,6 +3484,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("ordinal.kt")
         public void testOrdinal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/ordinal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("publicConstructorWithDefault.kt")
+        public void testPublicConstructorWithDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/publicConstructorWithDefault.kt");
             doTest(fileName);
         }
 

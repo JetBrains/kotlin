@@ -43,6 +43,7 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.psiUtil.isInheritable
@@ -56,7 +57,7 @@ public class KotlinFindClassUsagesHandler(
     ): AbstractFindUsagesDialog {
         return KotlinFindClassUsagesDialog(getElement(),
                                            getProject(),
-                                           getFactory().findClassOptions,
+                                           factory.findClassOptions,
                                            toShowInNewTab,
                                            mustOpenInNewTab,
                                            isSingleFile,
@@ -98,7 +99,7 @@ public class KotlinFindClassUsagesHandler(
                 for (constructor in constructors) {
                     if (constructor !is KotlinLightMethod) continue
                     constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
-                        it.getCalleeExpression()?.getReference()?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
+                        it.getCalleeExpression()?.mainReference?.let { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }
                     }
                 }
             }
@@ -119,7 +120,7 @@ public class KotlinFindClassUsagesHandler(
         var stringsToSearch: Collection<String>
         object: JavaFindUsagesHandler(psiClass, JavaFindUsagesHandlerFactory.getInstance(element.getProject())) {
             init {
-                stringsToSearch = getStringsToSearch(psiClass)
+                stringsToSearch = getStringsToSearch(psiClass)!!
             }
         }
         return stringsToSearch
@@ -130,6 +131,6 @@ public class KotlinFindClassUsagesHandler(
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
-        return getFactory().findClassOptions
+        return factory.findClassOptions
     }
 }

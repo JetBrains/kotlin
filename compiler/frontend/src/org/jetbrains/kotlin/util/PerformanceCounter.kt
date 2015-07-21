@@ -17,34 +17,22 @@
 package org.jetbrains.kotlin.util
 
 import java.lang.management.ManagementFactory
+import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
-public class PerformanceCounter jvmOverloads constructor (val name: String, val reenterable: Boolean = false) {
+/**
+ * This counter is thread-safe for initialization and usage.
+ * But it may calculate time and number of runs not precisely.
+ */
+public abstract class PerformanceCounter protected constructor(val name: String) {
     companion object {
-        private val threadMxBean = ManagementFactory.getThreadMXBean()
         private val allCounters = arrayListOf<PerformanceCounter>()
 
-        private val enteredCounters = ThreadLocal<MutableSet<PerformanceCounter>>()
+        private var enabled = false
 
-        init {
-            threadMxBean.setThreadCpuTimeEnabled(true)
-        }
-
-        private fun enterCounter(counter: PerformanceCounter): Boolean {
-            var enteredCountersInThread = enteredCounters.get()
-            if (enteredCountersInThread == null) {
-                enteredCountersInThread = hashSetOf(counter)
-                enteredCounters.set(enteredCountersInThread)
-                return true
-            }
-            return enteredCountersInThread.add(counter)
-        }
-
-        private fun leaveCounter(counter: PerformanceCounter) {
-            enteredCounters.get()?.remove(counter)
-        }
-
-        public fun currentThreadCpuTime(): Long = threadMxBean.getCurrentThreadUserTime()
+        public fun currentTime(): Long = System.nanoTime()
 
         public fun report(consumer: (String) -> Unit) {
             val countersCopy = synchronized(allCounters) {
@@ -52,7 +40,39 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
             }
             countersCopy.forEach { it.report(consumer) }
         }
+
+        public fun setTimeCounterEnabled(enable: Boolean) {
+            enabled = enable
+        }
+
+        public fun resetAllCounters() {
+            synchronized(allCounters) {
+                allCounters.forEach {
+                    it.reset()
+                }
+            }
+        }
+
+        public jvmOverloads fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
+            return if (reenterable)
+                ReenterableCounter(name)
+            else
+                SimpleCounter(name)
+        }
+
+        public fun create(name: String, vararg excluded: PerformanceCounter): PerformanceCounter = CounterWithExclude(name, *excluded)
+
+        protected inline fun <T> getOrPut(threadLocal: ThreadLocal<T>, default: () -> T) : T {
+            var value = threadLocal.get()
+            if (value == null) {
+                value = default()
+                threadLocal.set(value)
+            }
+            return value
+        }
     }
+
+    protected val excludedFrom: MutableList<CounterWithExclude> = ArrayList()
 
     private var count: Int = 0
     private var totalTimeNanos: Long = 0
@@ -63,24 +83,33 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
         }
     }
 
-    public fun increment() {
+    public final fun increment() {
         count++
     }
 
-    public fun time<T>(block: () -> T): T {
+    public final fun time<T>(block: () -> T): T {
         count++
-        val needTime = !reenterable || enterCounter(this)
-        val startTime = currentThreadCpuTime()
+        if (!enabled) return block()
+
+        excludedFrom.forEach { it.enterExcludedMethod() }
         try {
-            return block()
+            return countTime(block)
         }
         finally {
-            if (needTime) {
-                totalTimeNanos += currentThreadCpuTime() - startTime
-                if (reenterable) leaveCounter(this)
-            }
+            excludedFrom.forEach { it.exitExcludedMethod() }
         }
     }
+
+    public fun reset() {
+        count = 0
+        totalTimeNanos = 0
+    }
+
+    protected final fun incrementTime(delta: Long) {
+        totalTimeNanos += delta
+    }
+
+    protected abstract fun countTime<T>(block: () -> T): T
 
     public fun report(consumer: (String) -> Unit) {
         if (totalTimeNanos == 0L) {
@@ -90,5 +119,113 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
             val millis = TimeUnit.NANOSECONDS.toMillis(totalTimeNanos)
             consumer("$name performed $count times, total time $millis ms")
         }
+    }
+}
+
+private class SimpleCounter(name: String): PerformanceCounter(name) {
+    override fun <T> countTime(block: () -> T): T {
+        val startTime = PerformanceCounter.currentTime()
+        try {
+            return block()
+        }
+        finally {
+            incrementTime(PerformanceCounter.currentTime() - startTime)
+        }
+    }
+}
+
+private class ReenterableCounter(name: String): PerformanceCounter(name) {
+    companion object {
+        private val enteredCounters = ThreadLocal<MutableSet<ReenterableCounter>>()
+
+        private fun enterCounter(counter: ReenterableCounter) = PerformanceCounter.getOrPut(enteredCounters) { HashSet() }.add(counter)
+
+        private fun leaveCounter(counter: ReenterableCounter) {
+            enteredCounters.get()?.remove(counter)
+        }
+    }
+
+    override fun <T> countTime(block: () -> T): T {
+        val startTime = PerformanceCounter.currentTime()
+        val needTime = enterCounter(this)
+        try {
+            return block()
+        }
+        finally {
+            if (needTime) {
+                incrementTime(PerformanceCounter.currentTime() - startTime)
+                leaveCounter(this)
+            }
+        }
+    }
+}
+
+/**
+ *  This class allows to calculate pure time for some method excluding some other methods.
+ *  For example, we can calculate total time for CallResolver excluding time for getTypeInfo().
+ *
+ *  Main and excluded methods may be reenterable.
+ */
+private class CounterWithExclude(name: String, vararg excludedCounters: PerformanceCounter): PerformanceCounter(name) {
+    companion object {
+        private val counterToCallStackMapThreadLocal = ThreadLocal<MutableMap<CounterWithExclude, CallStackWithTime>>()
+
+        private fun getCallStack(counter: CounterWithExclude)
+                = PerformanceCounter.getOrPut(counterToCallStackMapThreadLocal) { HashMap() }.getOrPut(counter) { CallStackWithTime() }
+    }
+
+    init {
+        excludedCounters.forEach { it.excludedFrom.add(this) }
+    }
+
+    private val callStack: CallStackWithTime
+        get() = getCallStack(this)
+
+    override fun <T> countTime(block: () -> T): T {
+        incrementTime(callStack.push(true))
+        try {
+            return block()
+        }
+        finally {
+            incrementTime(callStack.pop(true))
+        }
+    }
+
+    fun enterExcludedMethod() {
+        incrementTime(callStack.push(false))
+    }
+
+    fun exitExcludedMethod() {
+        incrementTime(callStack.pop(false))
+    }
+
+    private class CallStackWithTime {
+        private val callStack = Stack<Boolean>()
+        private var intervalStartTime: Long = 0
+
+        fun Stack<Boolean>.peekOrFalse() = if (isEmpty()) false else peek()
+
+        private fun intervalUsefulTime(callStackUpdate: Stack<Boolean>.() -> Unit): Long {
+            val delta = if (callStack.peekOrFalse()) PerformanceCounter.currentTime() - intervalStartTime else 0
+            callStack.callStackUpdate()
+
+            intervalStartTime = PerformanceCounter.currentTime()
+            return delta
+        }
+
+        fun push(usefulCall: Boolean): Long {
+            if (!isEnteredCounter() && !usefulCall) return 0
+
+            return intervalUsefulTime { push(usefulCall) }
+        }
+
+        fun pop(usefulCall: Boolean): Long {
+            if (!isEnteredCounter()) return 0
+
+            assert(callStack.peek() == usefulCall)
+            return intervalUsefulTime { pop() }
+        }
+
+        fun isEnteredCounter(): Boolean = !callStack.isEmpty()
     }
 }

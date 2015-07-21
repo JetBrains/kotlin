@@ -9,4 +9,4 @@ annotation class Ann(
 
 Ann(1, 1.toInt(), 2147483648.toInt(), 2147483648) class MyClass
 
-// EXPECTED: Ann(b1 = IntegerValueType(1), b2 = 1, b3 = -2147483648, b4 = IntegerValueType(2147483648))
+// EXPECTED: Ann(b1 = 1, b2 = 1, b3 = -2147483648, b4 = 2147483648.toLong())

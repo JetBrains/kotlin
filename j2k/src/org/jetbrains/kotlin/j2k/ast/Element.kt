@@ -24,8 +24,8 @@ fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inherit
     return this
 }
 
-fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritance: CommentsAndSpacesInheritance): TElement {
-    this.prototypes = prototypes.map { PrototypeInfo(it, inheritance) }
+fun <TElement: Element> TElement.assignPrototypes(vararg prototypes: PrototypeInfo): TElement {
+    this.prototypes = prototypes.asList()
     return this
 }
 
@@ -45,10 +45,21 @@ fun <TElement: Element> TElement.assignPrototypesFrom(element: Element, inherita
 
 data class PrototypeInfo(val element: PsiElement, val commentsAndSpacesInheritance: CommentsAndSpacesInheritance)
 
-data class CommentsAndSpacesInheritance(val blankLinesBefore: Boolean = true,
-                                        val commentsBefore: Boolean = true,
-                                        val commentsAfter: Boolean = true,
-                                        val commentsInside: Boolean = true)
+enum class SpacesInheritance {
+    NONE, BLANK_LINES_ONLY, LINE_BREAKS
+}
+
+data class CommentsAndSpacesInheritance(
+        val spacesBefore: SpacesInheritance = SpacesInheritance.BLANK_LINES_ONLY,
+        val commentsBefore: Boolean = true,
+        val commentsAfter: Boolean = true,
+        val commentsInside: Boolean = true
+) {
+    companion object {
+        val NO_SPACES = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE)
+        val LINE_BREAKS = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS)
+    }
+}
 
 fun Element.canonicalCode(): String {
     val builder = CodeBuilder(null)

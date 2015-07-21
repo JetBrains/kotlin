@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -66,9 +67,8 @@ fun JetContainerNode.description(): String? {
 fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
     if (expression.getReferencedName() != "it") return false
     val context = expression.analyze()
-    val reference = expression.getReference() as JetReference?
-    val target = reference?.resolveToDescriptors(context)?.singleOrNull() as? ValueParameterDescriptor? ?: return false
-    return context[BindingContext.AUTO_CREATED_IT, target]
+    val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
+    return context[BindingContext.AUTO_CREATED_IT, target]!!
 }
 
 fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {

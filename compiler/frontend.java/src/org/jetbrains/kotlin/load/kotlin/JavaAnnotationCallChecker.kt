@@ -61,7 +61,7 @@ public class JavaAnnotationCallChecker : CallChecker {
             if (it.getArgumentExpression() != null) {
                 context.trace.report(
                         diagnostic.on(
-                                it.getArgumentExpression()
+                                it.getArgumentExpression()!!
                         )
                 )
             }

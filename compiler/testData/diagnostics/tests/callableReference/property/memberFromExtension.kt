@@ -15,9 +15,9 @@ fun A.test() {
     val y = ::bar
     val z = ::self
 
-    checkSubtype<KMemberProperty<A, Unit>>(x)
-    checkSubtype<KMutableMemberProperty<A, String>>(y)
-    checkSubtype<KMutableMemberProperty<A, A>>(z)
+    checkSubtype<KProperty1<A, Unit>>(x)
+    checkSubtype<KMutableProperty1<A, String>>(y)
+    checkSubtype<KMutableProperty1<A, A>>(z)
 
     y.set(z.get(A()), x.get(A()).toString())
 }

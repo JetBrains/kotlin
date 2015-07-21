@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.resolve.AnnotationResolver
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -109,7 +106,7 @@ public class LazyAnnotationDescriptor(
 
     override fun getAllValueArguments() = valueArguments()
 
-    private fun computeValueArguments(): Map<ValueParameterDescriptor, CompileTimeConstant<*>> {
+    private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, c.scope, c.trace)
         AnnotationResolver.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
@@ -119,9 +116,9 @@ public class LazyAnnotationDescriptor(
         return resolutionResults.getResultingCall().getValueArguments()
                 .mapValues { val (valueParameter, resolvedArgument) = it;
                     if (resolvedArgument == null) null
-                    else AnnotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
+                    else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
                 }
-                .filterValues { it != null } as Map<ValueParameterDescriptor, CompileTimeConstant<*>>
+                .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>
     }
 
     override fun forceResolveAllContents() {

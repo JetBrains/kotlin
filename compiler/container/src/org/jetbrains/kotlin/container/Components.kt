@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.container
 
-import java.lang.reflect.Method
+import java.lang.reflect.*
 
 public class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
 
     override fun getValue(): Any = instance
-    override fun getRegistrations(): Iterable<Class<*>> = instance.javaClass.getInfo().registrations
+    override fun getRegistrations(): Iterable<Type> = instance.javaClass.getInfo().registrations
 
     override fun getDependencies(context: ValueResolveContext): Collection<Class<*>> = emptyList()
+
+    override fun toString(): String {
+        return "Instance: ${instance.javaClass.getSimpleName()}"
+    }
 }
 

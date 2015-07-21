@@ -97,7 +97,7 @@ private fun isNameInitialized(
     val expr = (lastThenStmt as? JsExpressionStatement)?.getExpression()
     if (expr !is JsBinaryOperation) return false
 
-    val op = expr.getOperator()!!
+    val op = expr.getOperator()
     if (!op.isAssignment()) return false
 
     val arg1 = expr.getArg1()

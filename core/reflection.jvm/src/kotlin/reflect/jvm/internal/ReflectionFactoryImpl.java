@@ -16,8 +16,8 @@
 
 package kotlin.reflect.jvm.internal;
 
-import kotlin.jvm.internal.FunctionReference;
-import kotlin.jvm.internal.ReflectionFactory;
+import kotlin.jvm.KotlinReflectionNotSupportedError;
+import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 
 /**
@@ -44,38 +44,52 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return f;
+        try {
+            return new KFunctionFromReferenceImpl(f);
+        }
+        catch (KotlinReflectionNotSupportedError e) {
+            // If this function reference is compiled with an older compiler, it doesn't have the newer methods
+            // (getName(), getOwner(), getSignature()), so the default implementation from FunctionReference will be invoked
+            // and KotlinReflectionNotSupportedError will be thrown.
+            // Instead it's much better to use the reference as a KFunction. Yes, it will throw "no kotlin-reflect.jar was found"
+            // exceptions even if it exists in the classpath. However, at least it can be used as a function (invoke() will work).
+            // Moreover, old function references were not supposed to be introspected anyway because there was no reflection API back then.
+            // TODO: drop after M13
+            return f;
+        }
     }
 
     // Properties
 
     @Override
-    public KMemberProperty memberProperty(String name, KClass owner) {
-        return ((KClassImpl) owner).memberProperty(name);
+    public KProperty0 property0(PropertyReference0 p) {
+        return new KProperty0FromReferenceImpl(p);
     }
 
     @Override
-    public KMutableMemberProperty mutableMemberProperty(String name, KClass owner) {
-        return ((KClassImpl) owner).mutableMemberProperty(name);
+    public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
+        return new KMutableProperty0FromReferenceImpl(p);
     }
 
     @Override
-    public KTopLevelVariable topLevelVariable(String name, KPackage owner) {
-        return ((KPackageImpl) owner).topLevelVariable(name);
+    public KProperty1 property1(PropertyReference1 p) {
+        return new KProperty1FromReferenceImpl(p);
     }
 
     @Override
-    public KMutableTopLevelVariable mutableTopLevelVariable(String name, KPackage owner) {
-        return ((KPackageImpl) owner).mutableTopLevelVariable(name);
+    public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
+        return new KMutableProperty1FromReferenceImpl(p);
     }
 
     @Override
-    public KTopLevelExtensionProperty topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return ((KPackageImpl) owner).topLevelExtensionProperty(name, receiver);
+    public KProperty2 property2(PropertyReference2 p) {
+        // TODO: support member extension property references
+        return p;
     }
 
     @Override
-    public KMutableTopLevelExtensionProperty mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return ((KPackageImpl) owner).mutableTopLevelExtensionProperty(name, receiver);
+    public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
+        // TODO: support member extension property references
+        return p;
     }
 }

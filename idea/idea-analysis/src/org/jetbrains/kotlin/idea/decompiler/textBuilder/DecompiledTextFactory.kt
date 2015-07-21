@@ -147,7 +147,7 @@ public fun buildDecompiledText(
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
-            if (descriptor.getReturnType().isFlexible()) {
+            if (descriptor.getReturnType()!!.isFlexible()) {
                 builder.append(" ").append(FLEXIBLE_TYPE_COMMENT)
             }
         }
@@ -191,7 +191,7 @@ public fun buildDecompiledText(
                         companionNeeded = false
                         newlineExceptFirst()
                         builder.append(subindent)
-                        appendDescriptor(companionObject, subindent)
+                        appendDescriptor(companionObject!!, subindent)
                     }
                     if (member is CallableMemberDescriptor
                         && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION

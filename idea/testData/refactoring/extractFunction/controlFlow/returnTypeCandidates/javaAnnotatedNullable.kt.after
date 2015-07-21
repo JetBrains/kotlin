@@ -3,4 +3,4 @@ fun test() {
     val s = s()
 }
 
-private fun s(): String? = J.nullable()
+private fun s() = J.nullable()

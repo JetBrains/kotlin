@@ -55,9 +55,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
@@ -121,19 +119,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
+        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
 
-        if (!(value instanceof IntegerValueTypeConstant)) {
+        if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
-            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(value, expression, context.expectedType);
+            ConstantValue constantValue = compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
+            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
                 return TypeInfoFactoryPackage.createTypeInfo(getDefaultType(elementType), context);
             }
         }
 
-        assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return createCompileTimeConstantTypeInfo(value, expression, context, components.builtIns);
+        assert compileTimeConstant != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
+        return createCompileTimeConstantTypeInfo(compileTimeConstant, expression, context);
     }
 
     @NotNull
@@ -517,7 +516,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
-            return TypeInfoFactoryPackage.createTypeInfo(components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c);
+            return TypeInfoFactoryPackage.createCheckedTypeInfo(
+                    components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
+            );
         }
 
         return TypeInfoFactoryPackage.createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c);
@@ -641,13 +642,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        components.localClassifierAnalyzer.processClassOrObject(components.globalContext,
-                                                                null, // don't need to add classifier of object literal to any scope
+        components.localClassifierAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
                                                                 context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                                                 context.scope.getContainingDeclaration(),
-                                                                expression.getObjectDeclaration(),
-                                                                components.additionalCheckerProvider,
-                                                                components.dynamicTypesSettings);
+                                                                expression.getObjectDeclaration());
         temporaryTrace.commit();
         DataFlowInfo resultFlowInfo = context.dataFlowInfo;
         for (JetDelegationSpecifier specifier: expression.getObjectDeclaration().getDelegationSpecifiers()) {
@@ -694,20 +692,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return null;
         }
 
-        JetType receiverType = null;
-        if (extensionReceiver != null) {
-            receiverType = extensionReceiver.getType();
-        }
-        else if (dispatchReceiver != null) {
-            receiverType = dispatchReceiver.getType();
-        }
-        boolean isExtension = extensionReceiver != null;
+        JetType receiverType = extensionReceiver != null ? extensionReceiver.getType() :
+                               dispatchReceiver != null ? dispatchReceiver.getType() :
+                               null;
 
         if (descriptor instanceof FunctionDescriptor) {
-            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType, isExtension);
+            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType);
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType, isExtension);
+            return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType);
         }
         else if (descriptor instanceof VariableDescriptor) {
             context.trace.report(UNSUPPORTED.on(reference, "References to variables aren't supported yet"));
@@ -722,16 +715,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetCallableReferenceExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull FunctionDescriptor descriptor,
-            @Nullable JetType receiverType,
-            boolean isExtension
+            @Nullable JetType receiverType
     ) {
         //noinspection ConstantConditions
         JetType type = components.reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
                 getValueParametersTypes(descriptor.getValueParameters()),
-                descriptor.getReturnType(),
-                isExtension
+                descriptor.getReturnType()
         );
 
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
@@ -753,11 +744,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetCallableReferenceExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull PropertyDescriptor descriptor,
-            @Nullable JetType receiverType,
-            boolean isExtension
+            @Nullable JetType receiverType
     ) {
-        JetType type = components.reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.getType(), isExtension,
-                                                                   descriptor.isVar());
+        JetType type = components.reflectionTypes.getKPropertyType(
+                Annotations.EMPTY, receiverType, descriptor.getType(), descriptor.isVar()
+        );
 
         LocalVariableDescriptor localVariable =
                 new LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),
@@ -947,7 +938,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, contextWithExpectedType.trace,
                                                                                     contextWithExpectedType.expectedType);
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
 
         return DataFlowUtils.checkType(typeInfo.replaceType(result),
@@ -1143,7 +1134,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }

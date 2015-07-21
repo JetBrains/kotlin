@@ -1,19 +1,21 @@
 VARIABLES T
 
-SUPERTYPE T IntegerValueType(1)
-SUPERTYPE T String
+T >: IntegerValueType(1)
+T >: String
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), >: kotlin.String(SPECIAL)
+T >: IntegerValueType(1), >: String
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
--hasTypeConstructorMismatch: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
 
 result:
-T=kotlin.Comparable<out kotlin.Any?>
+T=Comparable<out Any?>

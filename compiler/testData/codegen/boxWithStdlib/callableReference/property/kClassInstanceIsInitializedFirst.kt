@@ -1,8 +1,8 @@
-import kotlin.reflect.KMemberProperty
+import kotlin.reflect.KProperty1
 
 class A {
     companion object {
-        val ref: KMemberProperty<A, String> = A::foo
+        val ref: KProperty1<A, String> = A::foo
     }
 
     val foo: String = "OK"

@@ -1,0 +1,4 @@
+VARIABLES T P
+
+Int <: T
+P <: My<My<Consumer<T>>>

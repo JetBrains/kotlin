@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class A : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 

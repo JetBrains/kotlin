@@ -59,4 +59,8 @@ public final class ObjectTest extends SingleFileTranslationTest {
     public void testLambdaInObjectInsideObject() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testDontPolluteObject() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

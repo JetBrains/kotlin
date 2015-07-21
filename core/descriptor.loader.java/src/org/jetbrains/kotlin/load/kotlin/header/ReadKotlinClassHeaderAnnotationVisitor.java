@@ -68,6 +68,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
+        if (headerKind == CLASS && classKind == null) {
+            // Default class kind is Kind.CLASS
+            classKind = KotlinClass.Kind.CLASS;
+        }
+
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
             return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind);
         }

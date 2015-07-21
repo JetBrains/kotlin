@@ -16,39 +16,37 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
-import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
-import org.jetbrains.kotlin.types.expressions.DataFlowUtils
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import java.util.ArrayList
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowUtils
+import java.util.ArrayList
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
-        val candidateResolver: CandidateResolver
+        val candidateResolver: CandidateResolver,
+        val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -60,7 +58,7 @@ public class CallCompleter(
 
         // for the case 'foo(a)' where 'foo' is a variable, the call 'foo.invoke(a)' shouldn't be completed separately,
         // it's completed when the outer (variable as function call) is completed
-        if (!CallResolverUtil.isInvokeCallOnVariable(context.call)) {
+        if (!isInvokeCallOnVariable(context.call)) {
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Trace to complete a resulting call")
 
@@ -77,7 +75,7 @@ public class CallCompleter(
                 resolvedCall.variableCall.getCall().getCalleeExpression()
             else
                 resolvedCall.getCall().getCalleeExpression()
-            context.symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element)
+            context.symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
         }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
@@ -130,8 +128,8 @@ public class CallCompleter(
             expectedType: JetType,
             trace: BindingTrace
     ) {
-        fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
-            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy()
+        fun updateSystemIfSuccessful(update: (ConstraintSystemImpl) -> Boolean) {
+            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy() as ConstraintSystemImpl
             if (update(copy)) {
                 setConstraintSystem(copy)
             }
@@ -144,23 +142,26 @@ public class CallCompleter(
 
         val constraintSystemCompleter = trace[CONSTRAINT_SYSTEM_COMPLETER, getCall().getCalleeExpression()]
         if (constraintSystemCompleter != null) {
-            //todo improve error reporting with errors in constraints from completer
+            // todo improve error reporting with errors in constraints from completer
+            // todo add constraints from completer unconditionally; improve constraints from completer for generic methods
+            // add the constraints only if they don't lead to errors (except errors from upper bounds to improve diagnostics)
             updateSystemIfSuccessful {
                 system ->
                 constraintSystemCompleter.completeConstraintSystem(system, this)
-                !system.getStatus().hasOnlyErrorsFromPosition(FROM_COMPLETER.position())
+                !system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().hasOnlyErrorsDerivedFrom(FROM_COMPLETER)
             }
         }
-
-        (getConstraintSystem() as ConstraintSystemImpl).processDeclaredBoundConstraints()
 
         if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
             updateSystemIfSuccessful {
                 system ->
-                system.addSupertypeConstraint(KotlinBuiltIns.getInstance().getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
+                system.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
                 system.getStatus().isSuccessful()
             }
         }
+
+        val constraintSystem = getConstraintSystem() as ConstraintSystemImpl
+        constraintSystem.fixVariables()
 
         setResultingSubstitutor(getConstraintSystem()!!.getResultingSubstitutor())
     }
@@ -170,8 +171,7 @@ public class CallCompleter(
             tracing: TracingStrategy
     ) {
         val contextWithResolvedCall = CallCandidateResolutionContext.createForCallBeingAnalyzed(this, context, tracing)
-        val valueArgumentsCheckingResult = candidateResolver.checkAllValueArguments(
-                contextWithResolvedCall, context.trace, RESOLVE_FUNCTION_ARGUMENTS)
+        val valueArgumentsCheckingResult = candidateResolver.checkAllValueArguments(contextWithResolvedCall, RESOLVE_FUNCTION_ARGUMENTS)
 
         val status = getStatus()
         if (getConstraintSystem()!!.getStatus().isSuccessful()) {
@@ -211,7 +211,7 @@ public class CallCompleter(
         for (valueArgument in context.call.getValueArguments()) {
             val argumentMapping = getArgumentMapping(valueArgument!!)
             val expectedType = when (argumentMapping) {
-                is ArgumentMatch -> CandidateResolver.getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument)
+                is ArgumentMatch -> getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument)
                 else -> TypeUtils.NO_EXPECTED_TYPE
             }
             val newContext = context.replaceDataFlowInfo(getDataFlowInfoForArgument(valueArgument)).replaceExpectedType(expectedType)
@@ -226,8 +226,7 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression() ?: return
-        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context)
-        if (deparenthesized == null) return
+        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = expression.let { context.trace.getType(it) }
         var updatedType: JetType? = recordedType
@@ -261,15 +260,9 @@ public class CallCompleter(
             expression: JetExpression,
             context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
-        if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
+        val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
+        val (cachedResolutionResults, cachedContext, tracing) = cachedData
 
-        val argumentCall = expression.getCall(context.trace.getBindingContext())
-        if (argumentCall == null) return null
-
-        val cachedDataForCall = context.resolutionResultsCache[argumentCall]
-        if (cachedDataForCall == null) return null
-
-        val (cachedResolutionResults, cachedContext, tracing) = cachedDataForCall
         @suppress("UNCHECKED_CAST")
         val cachedResults = cachedResolutionResults as OverloadResolutionResultsImpl<CallableDescriptor>
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
@@ -284,7 +277,8 @@ public class CallCompleter(
             argumentExpression: JetExpression,
             trace: BindingTrace
     ): JetType? {
-        if (recordedType == updatedType || updatedType == null) return updatedType
+        //workaround for KT-8218
+        if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
 
         fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
             val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ false)

@@ -45,7 +45,7 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
             // if there are functions among candidates but none of them have last function parameter then not show the intention
             if (candidates.isNotEmpty() && candidates.none {
                 val lastParameter = it.getValueParameters().lastOrNull()
-                lastParameter != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(lastParameter.getType())
+                lastParameter != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.getType())
             }) {
                 return false
             }

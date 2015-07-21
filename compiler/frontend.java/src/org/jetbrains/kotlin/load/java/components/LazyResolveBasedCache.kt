@@ -22,22 +22,15 @@ import org.jetbrains.kotlin.load.java.structure.impl.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.name.FqName
-import javax.inject.Inject
 import kotlin.properties.Delegates
 import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class LazyResolveBasedCache : JavaResolverCache {
-    private var resolveSession by Delegates.notNull<ResolveSession>()
+public class LazyResolveBasedCache(private val resolveSession: ResolveSession) : JavaResolverCache {
 
     private val trace: BindingTrace get() = resolveSession.getTrace()
-
-    Inject
-    public fun setSession(resolveSession: ResolveSession) {
-        this.resolveSession = resolveSession
-    }
 
     override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
         return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe()) ?: findInPackageFragments(fqName)

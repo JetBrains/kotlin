@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.AnnotationResolver;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -99,10 +96,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         components.localClassifierAnalyzer.processClassOrObject(
-                components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration,
-                components.additionalCheckerProvider,
-                components.dynamicTypesSettings);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
+                scope.getContainingDeclaration(),
+                declaration);
         return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(declaration, context), context);
     }
 
@@ -198,10 +194,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         components.localClassifierAnalyzer.processClassOrObject(
-                components.globalContext,
-                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass,
-                components.additionalCheckerProvider,
-                components.dynamicTypesSettings);
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
+                scope.getContainingDeclaration(),
+                klass);
         return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(klass, context), context);
     }
 

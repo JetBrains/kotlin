@@ -1,4 +1,4 @@
-open class C1 protected (<caret>val x1: Int = 1, var x2: Float, x3: ((Int) -> Int)?) {
+open class C1 protected <caret>(val x1: Int = 1, var x2: Float, x3: ((Int) -> Int)?) {
     fun bar() {
         val y1 = x1;
         val y2 = x2;

@@ -107,7 +107,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         if (lineNumber >= 0) {
             val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as JetFile, lineNumber)
             if (lambdaOrFunIfInside != null) {
-                return SourcePosition.createFromElement(lambdaOrFunIfInside.getBodyExpression())
+                return SourcePosition.createFromElement(lambdaOrFunIfInside.getBodyExpression()!!)
             }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }

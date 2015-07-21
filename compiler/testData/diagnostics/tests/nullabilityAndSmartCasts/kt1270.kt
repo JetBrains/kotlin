@@ -5,7 +5,7 @@ package kt1270
 
 fun foo() {
     val sc = java.util.HashMap<String, SomeClass>()[""]
-    val value = sc.value
+    val value = sc<!UNSAFE_CALL!>.<!>value
 }
 
 private class SomeClass() {

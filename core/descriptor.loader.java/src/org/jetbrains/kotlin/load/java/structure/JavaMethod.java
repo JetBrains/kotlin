@@ -29,6 +29,6 @@ public interface JavaMethod extends JavaMember, JavaTypeParameterListOwner {
 
     boolean hasAnnotationParameterDefaultValue();
 
-    @Nullable
+    @NotNull
     JavaType getReturnType();
 }

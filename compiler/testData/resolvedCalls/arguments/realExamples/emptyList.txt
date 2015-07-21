@@ -12,7 +12,7 @@ fun bar() {
 Resolved call:
 
 Candidate descriptor: fun <T> foo(t: T): Unit defined in root package
-Resulting descriptor: fun <T> foo(t: List<???>): Unit defined in root package
+Resulting descriptor: fun <T> foo(t: ???): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = NO_RECEIVER
@@ -20,4 +20,4 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-MATCH_MODULO_UNINFERRED_TYPES  t : List<???> = someList()
+MATCH_MODULO_UNINFERRED_TYPES  t : ??? = someList()

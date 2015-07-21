@@ -64,7 +64,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
         val position = parameters.getPosition().getParentOfType<KDocName>(false) ?: return
         val declaration = position.getContainingDoc().getOwner() ?: return
         val kdocLink = position.getStrictParentOfType<KDocLink>()!!
-        val declarationDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
+        val declarationDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]!!
         if (kdocLink.getTagIfSubject()?.knownTag == KDocKnownTag.PARAM) {
             addParamCompletions(position, declarationDescriptor)
         } else {

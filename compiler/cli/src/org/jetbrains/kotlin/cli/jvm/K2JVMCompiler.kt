@@ -61,6 +61,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             PathUtil.getKotlinPathsForCompiler()
 
         messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION)
+        PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf);
 
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
@@ -93,7 +94,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return INTERNAL_ERROR
         }
         catch (e: CliOptionProcessingException) {
-            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION)
+            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.getMessage()!!, CompilerMessageLocation.NO_LOCATION)
             return INTERNAL_ERROR
         }
         catch (t: Throwable) {

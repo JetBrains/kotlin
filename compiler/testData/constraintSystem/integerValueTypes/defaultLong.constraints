@@ -1,0 +1,4 @@
+VARIABLES T
+
+T >: IntegerValueType(1)
+T >: IntegerValueType(10000000000)

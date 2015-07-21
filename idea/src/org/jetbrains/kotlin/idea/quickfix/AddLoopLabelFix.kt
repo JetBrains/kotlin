@@ -30,11 +30,11 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
     override fun getText() = "Add label to loop"
     override fun getFamilyName() = getText()
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file)
     }
 
-    override fun invoke(project: Project, editor: Editor, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         val usedLabels = collectUsedLabels(element)
         val labelName = getUniqueLabelName(usedLabels)
 
@@ -43,7 +43,7 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
 
         // TODO(yole) use createExpressionByPattern() once it's available
         val labeledLoopExpression = JetPsiFactory(project).createLabeledExpression(labelName)
-        labeledLoopExpression.getBaseExpression().replace(element)
+        labeledLoopExpression.getBaseExpression()!!.replace(element)
         element.replace(labeledLoopExpression)
 
         // TODO(yole) We should initiate in-place rename for the label here, but in-place rename for labels is not yet implemented
@@ -54,12 +54,12 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
         element.acceptChildren(object : JetTreeVisitorVoid() {
             override fun visitLabeledExpression(expression: JetLabeledExpression) {
                 super.visitLabeledExpression(expression)
-                usedLabels.add(expression.getLabelName())
+                usedLabels.add(expression.getLabelName()!!)
             }
         })
         element.parents.forEach {
             if (it is JetLabeledExpression) {
-                usedLabels.add(it.getLabelName())
+                usedLabels.add(it.getLabelName()!!)
             }
         }
         return usedLabels

@@ -16,32 +16,32 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetProperty
-import com.intellij.psi.search.SearchScope
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
-import com.intellij.refactoring.util.RefactoringUtil
-import com.intellij.refactoring.rename.RenameProcessor
-import org.jetbrains.kotlin.codegen.PropertyCodegen
-import org.jetbrains.kotlin.name.Name
-import com.intellij.usageView.UsageInfo
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import com.intellij.openapi.ui.Messages
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import com.intellij.refactoring.util.RefactoringUtil
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
@@ -102,8 +102,9 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
             return
         }
 
-        val oldGetterName = PropertyCodegen.getterName(element.getNameAsName())
-        val oldSetterName = PropertyCodegen.setterName(element.getNameAsName())
+        val name = element.getName()!!
+        val oldGetterName = JvmAbi.getterName(name)
+        val oldSetterName = JvmAbi.setterName(name)
 
         val refKindUsages = usages.toList().groupBy { usage: UsageInfo ->
             val refElement = usage.getReference()?.resolve()
@@ -119,11 +120,11 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
             }
         }
 
-        super.renameElement(element, PropertyCodegen.setterName(Name.identifier(newName!!)),
+        super.renameElement(element, JvmAbi.setterName(newName!!),
                             refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
-        super.renameElement(element, PropertyCodegen.getterName(Name.identifier(newName)),
+        super.renameElement(element, JvmAbi.getterName(newName),
                             refKindUsages[UsageKind.GETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
@@ -151,9 +152,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                 if (overriderElement is PsiMethod) {
                     if (newName != null && Name.isValidIdentifier(newName)) {
                         val isGetter = overriderElement.getParameterList().getParametersCount() == 0
-                        val name = Name.identifier(newName)
-
-                        allRenames[overriderElement] = if (isGetter) PropertyCodegen.getterName(name) else PropertyCodegen.setterName(name)
+                        allRenames[overriderElement] = if (isGetter) JvmAbi.getterName(newName) else JvmAbi.setterName(newName)
                     }
                 }
                 else {

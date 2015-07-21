@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class Anno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ s: kotlin.String)
     internal final val s: kotlin.String
         internal final fun <get-s>(): kotlin.String

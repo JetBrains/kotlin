@@ -105,38 +105,6 @@ public trait NullAwareness : TypeCapability {
     public fun computeIsNullable(): Boolean
 }
 
-public trait Approximation : TypeCapability {
-    public class Info(val from: JetType, val to: JetType, val message: String)
-    public trait DataFlowExtras {
-        object EMPTY : DataFlowExtras {
-            override val canBeNull: Boolean get() = true
-            override val possibleTypes: Set<JetType> get() = setOf()
-            override val presentableText: String = "<unknown>"
-        }
-
-        class OnlyMessage(message: String) : DataFlowExtras {
-            override val canBeNull: Boolean get() = true
-            override val possibleTypes: Set<JetType> get() = setOf()
-            override val presentableText: String = message
-        }
-
-        val canBeNull: Boolean
-        val possibleTypes: Set<JetType>
-        val presentableText: String
-    }
-
-    public fun approximateToExpectedType(expectedType: JetType, dataFlowExtras: DataFlowExtras): Info?
-}
-
-fun Approximation.Info.assertNotNull(): Boolean {
-    return from.upperIfFlexible().isMarkedNullable() && !TypeUtils.isNullableType(to)
-}
-
-public fun JetType.getApproximationTo(
-        expectedType: JetType,
-        extras: Approximation.DataFlowExtras = Approximation.DataFlowExtras.EMPTY
-): Approximation.Info? = this.getCapability(javaClass<Approximation>())?.approximateToExpectedType(expectedType, extras)
-
 trait FlexibleTypeDelegation : TypeCapability {
     public val delegateType: JetType
 }
@@ -145,14 +113,13 @@ public open class DelegatingFlexibleType protected constructor(
         override val lowerBound: JetType,
         override val upperBound: JetType,
         override val extraCapabilities: FlexibleTypeCapabilities
-) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation, Approximation {
+) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation {
     companion object {
         internal val capabilityClasses = hashSetOf(
                 javaClass<NullAwareness>(),
                 javaClass<Flexibility>(),
                 javaClass<SubtypingRepresentatives>(),
-                javaClass<FlexibleTypeDelegation>(),
-                javaClass<Approximation>()
+                javaClass<FlexibleTypeDelegation>()
         )
 
         platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
@@ -192,20 +159,6 @@ public open class DelegatingFlexibleType protected constructor(
     override fun computeIsNullable() = delegateType.isMarkedNullable()
 
     override fun isMarkedNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
-
-    override fun approximateToExpectedType(expectedType: JetType, dataFlowExtras: Approximation.DataFlowExtras): Approximation.Info? {
-        // val foo: Any? = foo() : Foo!
-        if (JetTypeChecker.DEFAULT.isSubtypeOf(upperBound, expectedType)) return null
-
-        // if (foo : Foo! != null) {
-        //     val bar: Any = foo
-        // }
-        if (!dataFlowExtras.canBeNull && JetTypeChecker.DEFAULT.isSubtypeOf(TypeUtils.makeNotNullable(upperBound), expectedType)) return null
-
-        // TODO: maybe check possibleTypes to avoid extra approximations
-
-        return Approximation.Info(this, expectedType, dataFlowExtras.presentableText)
-    }
 
     override val delegateType: JetType = lowerBound
 

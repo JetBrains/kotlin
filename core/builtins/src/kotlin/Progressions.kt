@@ -40,7 +40,7 @@ public class ByteProgression(
         start == other.start && end == other.end && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end.toInt()) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -67,7 +67,7 @@ public class CharProgression(
         start == other.start && end == other.end && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end.toInt()) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
@@ -94,7 +94,7 @@ public class ShortProgression(
         start == other.start && end == other.end && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)
+        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end.toInt()) + increment)
 
     override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }

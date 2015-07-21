@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class `$$$$$$` : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class `$$$$$$` : kotlin.Annotation {
     /*primary*/ public constructor `$$$$$$`()
 }
 
@@ -8,7 +8,7 @@ test.`$$$$$$`() internal final class A {
     /*primary*/ public constructor A()
 }
 
-internal final annotation class `Anno$tation` : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class `Anno$tation` : kotlin.Annotation {
     /*primary*/ public constructor `Anno$tation`()
 }
 

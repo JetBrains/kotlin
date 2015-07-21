@@ -21,16 +21,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
-import com.intellij.refactoring.changeSignature.JavaChangeInfo;
-import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.rename.ResolveSnapshotProvider;
+import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.MoveRenameUsageInfo;
 import com.intellij.refactoring.util.RefactoringUIUtil;
@@ -56,11 +54,14 @@ import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
+import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -78,14 +79,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
     @Override
     public UsageInfo[] findUsages(ChangeInfo info) {
+        originalJavaMethodDescriptor = null;
+
         Set<UsageInfo> result = new HashSet<UsageInfo>();
 
         if (info instanceof JetChangeInfo) {
@@ -95,18 +95,28 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             findSAMUsages(info, result);
             findConstructorDelegationUsages(info, result);
             findKotlinOverrides(info, result);
+            if (info instanceof JavaChangeInfo) {
+                findKotlinCallers((JavaChangeInfo) info, result);
+            }
         }
 
         return result.toArray(new UsageInfo[result.size()]);
     }
 
     private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        for (UsageInfo functionUsageInfo : ChangeSignaturePackage.getAffectedFunctions(changeInfo)) {
-            if (functionUsageInfo instanceof JetFunctionDefinitionUsage) {
-                findOneMethodUsages((JetFunctionDefinitionUsage) functionUsageInfo, changeInfo, result);
+        for (UsageInfo functionUsageInfo : ChangeSignaturePackage.getAffectedCallables(changeInfo)) {
+            if (functionUsageInfo instanceof JetCallableDefinitionUsage) {
+                findOneMethodUsages((JetCallableDefinitionUsage) functionUsageInfo, changeInfo, result);
+            }
+            else if (functionUsageInfo instanceof KotlinCallerUsage) {
+                findCallerUsages((KotlinCallerUsage) functionUsageInfo, changeInfo, result);
             }
             else {
                 result.add(functionUsageInfo);
+
+                boolean propagationTarget = functionUsageInfo instanceof CallerUsageInfo
+                                            || (functionUsageInfo instanceof OverriderUsageInfo
+                                                && !((OverriderUsageInfo) functionUsageInfo).isOriginalOverrider());
 
                 PsiElement callee = functionUsageInfo.getElement();
                 if (callee == null) continue;
@@ -121,15 +131,91 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     JetCallElement callElement = PsiTreeUtil.getParentOfType(element, JetCallElement.class);
                     JetExpression calleeExpression = callElement != null ? callElement.getCalleeExpression() : null;
                     if (calleeExpression != null && PsiTreeUtil.isAncestor(calleeExpression, element, false)) {
-                        result.add(new JetFunctionCallUsage(callElement, changeInfo.getMethodDescriptor().getOriginalPrimaryFunction()));
+                        result.add(propagationTarget
+                                   ? new KotlinCallerCallUsage(callElement)
+                                   : new JetFunctionCallUsage(callElement, changeInfo.getMethodDescriptor().getOriginalPrimaryCallable()));
                     }
                 }
             }
         }
     }
 
+    private static void findCallerUsages(KotlinCallerUsage callerUsage, JetChangeInfo changeInfo, final Set<UsageInfo> result) {
+        result.add(callerUsage);
+
+        JetNamedDeclaration element = callerUsage.getElement();
+        if (element == null) return;
+
+        for (PsiReference ref : ReferencesSearch.search(element, element.getUseScope())) {
+            PsiElement refElement = ref.getElement();
+            JetCallElement callElement = PsiTreeUtil.getParentOfType(refElement, JetCallElement.class);
+            if (callElement != null && PsiTreeUtil.isAncestor(callElement.getCalleeExpression(), refElement, false)) {
+                result.add(new KotlinCallerCallUsage(callElement));
+            }
+        }
+
+        JetElement body = ChangeSignaturePackage.getDeclarationBody(element);
+        final Set<String> newParameterNames = KotlinPackage.mapTo(
+                changeInfo.getNonReceiverParameters(),
+                new HashSet<String>(),
+                new Function1<JetParameterInfo, String>() {
+                    @Override
+                    public String invoke(JetParameterInfo info) {
+                        return info.getName();
+                    }
+                }
+        );
+        if (body != null) {
+            final DeclarationDescriptor callerDescriptor = ResolvePackage.resolveToDescriptor(element);
+            final BindingContext context = ResolvePackage.analyze(body);
+            body.accept(
+                    new JetTreeVisitorVoid() {
+                        @Override
+                        public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
+                            final String currentName = expression.getReferencedName();
+                            if (!newParameterNames.contains(currentName)) return;
+
+                            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
+                            if (resolvedCall == null) return;
+
+                            if (resolvedCall.getExplicitReceiverKind() != ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) return;
+
+                            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+                            if (!(resultingDescriptor instanceof VariableDescriptor)) return;
+
+                            // Do not report usages of duplicated parameter
+                            if (resultingDescriptor instanceof ValueParameterDescriptor
+                                && resultingDescriptor.getContainingDeclaration() == callerDescriptor) return;
+
+                            JetElement callElement = resolvedCall.getCall().getCallElement();
+
+                            ReceiverValue receiver = resolvedCall.getExtensionReceiver();
+                            if (!(receiver instanceof ThisReceiver)) {
+                                receiver = resolvedCall.getDispatchReceiver();
+                            }
+                            if (receiver instanceof ThisReceiver) {
+                                result.add(new JetImplicitThisUsage(callElement, ((ThisReceiver) receiver).getDeclarationDescriptor()));
+                            }
+                            else if (!receiver.exists()) {
+                                result.add(
+                                        new UnresolvableCollisionUsageInfo(callElement, null) {
+                                            @Override
+                                            public String getDescription() {
+                                                return "There is already a variable '" + currentName + "' in " +
+                                                       IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor) +
+                                                       ". It will conflict with the new parameter.";
+                                            }
+                                        }
+                                );
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
     private static void findOneMethodUsages(
-            @NotNull JetFunctionDefinitionUsage<?> functionUsageInfo,
+            @NotNull JetCallableDefinitionUsage<?> functionUsageInfo,
             final JetChangeInfo changeInfo,
             final Set<UsageInfo> result
     ) {
@@ -158,6 +244,10 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     if (parent instanceof JetConstructorCalleeExpression && parent.getParent() instanceof JetDelegatorToSuperCall)
                         result.add(new JetFunctionCallUsage((JetDelegatorToSuperCall)parent.getParent(), functionUsageInfo));
                 }
+                else if (element instanceof JetSimpleNameExpression
+                         && (functionPsi instanceof JetProperty || functionPsi instanceof JetParameter)) {
+                    result.add(new JetPropertyCallUsage((JetSimpleNameExpression) element));
+                }
             }
         }
 
@@ -166,9 +256,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (oldName != null)
             TextOccurrencesUtil.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.getNewName(), result);
 
-        List<JetParameter> oldParameters = functionPsi instanceof JetFunction
-                                        ? ((JetFunction) functionPsi).getValueParameters()
-                                        : ((JetClass) functionPsi).getPrimaryConstructorParameters();
+        List<JetParameter> oldParameters = PsiUtilPackage.getValueParameters((JetNamedDeclaration) functionPsi);
 
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
 
@@ -219,7 +307,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void processInternalReferences(
-            JetFunctionDefinitionUsage functionUsageInfo,
+            JetCallableDefinitionUsage functionUsageInfo,
             JetTreeVisitor<BindingContext> visitor
     ) {
         JetFunction jetFunction = (JetFunction) functionUsageInfo.getDeclaration();
@@ -236,12 +324,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findOriginalReceiversUsages(
-            @NotNull final JetFunctionDefinitionUsage<?> functionUsageInfo,
+            @NotNull final JetCallableDefinitionUsage<?> functionUsageInfo,
             @NotNull final Set<UsageInfo> result,
             @NotNull final JetChangeInfo changeInfo
     ) {
         final JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-        final FunctionDescriptor functionDescriptor = functionUsageInfo.getOriginalFunctionDescriptor();
+        final CallableDescriptor callableDescriptor = functionUsageInfo.getOriginalCallableDescriptor();
         processInternalReferences(
                 functionUsageInfo,
                 new JetTreeVisitor<BindingContext>() {
@@ -252,7 +340,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                         if (originalReceiverInfo != null && !changeInfo.hasParameter(originalReceiverInfo)) return;
                         if (!(expression.getParent() instanceof JetThisExpression)) return;
 
-                        if (receiverDescriptor == functionDescriptor.getExtensionReceiverParameter()) {
+                        if (receiverDescriptor == callableDescriptor.getExtensionReceiverParameter()) {
                             assert originalReceiverInfo != null : "No original receiver info provided: " + functionUsageInfo.getDeclaration().getText();
                             result.add(new JetParameterUsage(expression, originalReceiverInfo, functionUsageInfo));
                         }
@@ -268,12 +356,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                             @NotNull ThisReceiver receiverValue
                     ) {
                         DeclarationDescriptor targetDescriptor = receiverValue.getDeclarationDescriptor();
-                        if (targetDescriptor == functionDescriptor) {
+                        if (targetDescriptor == callableDescriptor) {
                             assert originalReceiverInfo != null : "No original receiver info provided: " + functionUsageInfo.getDeclaration().getText();
                             result.add(new JetImplicitThisToParameterUsage(callElement, originalReceiverInfo, functionUsageInfo));
                         }
                         else {
-                            result.add(new JetImplicitOuterThisToQualifiedThisUsage(callElement, targetDescriptor));
+                            result.add(new JetImplicitThisUsage(callElement, targetDescriptor));
                         }
                     }
 
@@ -307,6 +395,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!RefactoringPackage.isTrueJavaMethod(method)) return;
 
         FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+        assert methodDescriptor != null;
 
         DeclarationDescriptor containingDescriptor = methodDescriptor.getContainingDeclaration();
         if (!(containingDescriptor instanceof JavaClassDescriptor)) return;
@@ -374,6 +463,76 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(function);
 
             result.add(new DeferredJavaMethodOverrideOrSAMUsage(function, functionDescriptor, null));
+
+            findDeferredUsagesOfParameters(changeInfo, result, function, functionDescriptor);
+        }
+    }
+
+    private static void findKotlinCallers(JavaChangeInfo changeInfo, Set<UsageInfo> result) {
+        PsiElement method = changeInfo.getMethod();
+        if (!RefactoringPackage.isTrueJavaMethod(method)) return;
+
+        for (PsiMethod primaryCaller : changeInfo.getMethodsToPropagateParameters()) {
+            addDeferredCallerIfPossible(result, primaryCaller);
+            for (PsiMethod overridingCaller : OverridingMethodsSearch.search(primaryCaller)) {
+                addDeferredCallerIfPossible(result, overridingCaller);
+            }
+        }
+    }
+
+    private static void addDeferredCallerIfPossible(Set<UsageInfo> result, PsiMethod overridingCaller) {
+        PsiElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(overridingCaller);
+        if (unwrappedElement instanceof JetFunction || unwrappedElement instanceof JetClass) {
+            result.add(new DeferredJavaMethodKotlinCallerUsage((JetNamedDeclaration) unwrappedElement));
+        }
+    }
+
+    private static void findDeferredUsagesOfParameters(
+            ChangeInfo changeInfo,
+            Set<UsageInfo> result,
+            JetNamedFunction function,
+            FunctionDescriptor functionDescriptor
+    ) {
+        final JetCallableDefinitionUsage<?> functionInfoForParameters =
+                new JetCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null);
+        List<JetParameter> oldParameters = PsiUtilPackage.getValueParameters(function);
+        ParameterInfo[] parameters = changeInfo.getNewParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            final int paramIndex = i;
+            ParameterInfo parameterInfo = parameters[paramIndex];
+            if (parameterInfo.getOldIndex() >= 0 && parameterInfo.getOldIndex() < oldParameters.size()) {
+                JetParameter oldParam = oldParameters.get(parameterInfo.getOldIndex());
+                String oldParamName = oldParam.getName();
+
+                if (oldParamName != null && !oldParamName.equals(parameterInfo.getName())) {
+                    for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
+                        final PsiElement element = reference.getElement();
+
+                        if ((element instanceof JetSimpleNameExpression || element instanceof KDocName) &&
+                            !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
+                        {
+                            result.add(
+                                    new JavaMethodDeferredKotlinUsage<JetElement>((JetElement) element) {
+                                        @NotNull
+                                        @Override
+                                        public JavaMethodKotlinUsageWithDelegate<JetElement> resolve(@NotNull JetChangeInfo javaMethodChangeInfo) {
+                                            return new JavaMethodKotlinUsageWithDelegate<JetElement>((JetElement) element,
+                                                                                                     javaMethodChangeInfo) {
+                                                @NotNull
+                                                @Override
+                                                public JetUsageInfo<JetElement> getDelegateUsage() {
+                                                    return new JetParameterUsage((JetElement) element,
+                                                                                 getJavaMethodChangeInfo().getNewParameters()[paramIndex],
+                                                                                 functionInfoForParameters);
+                                                }
+                                            };
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -381,16 +540,30 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     public MultiMap<PsiElement, String> findConflicts(ChangeInfo info, Ref<UsageInfo[]> refUsages) {
         MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
 
-        if (!(info instanceof JetChangeInfo)) {
-            return result;
+        // Delete OverriderUsageInfo and CallerUsageInfo for Kotlin declarations since they can't be processed correctly
+        // TODO (OverriderUsageInfo only): Drop when OverriderUsageInfo.getElement() gets deleted
+        UsageInfo[] usageInfos = refUsages.get();
+        List<UsageInfo> adjustedUsages = KotlinPackage.filterNot(
+                usageInfos,
+                new Function1<UsageInfo, Boolean>() {
+                    @Override
+                    public Boolean invoke(UsageInfo info) {
+                        return getOverriderOrCaller(info) instanceof KotlinLightMethod;
+                    }
+                }
+        );
+        if (adjustedUsages.size() < usageInfos.length) {
+            refUsages.set(adjustedUsages.toArray(new UsageInfo[adjustedUsages.size()]));
         }
+
+        if (!(info instanceof JetChangeInfo)) return result;
 
         Set<String> parameterNames = new HashSet<String>();
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
         BindingContext bindingContext = ResolvePackage.analyze((JetElement) element, BodyResolveMode.FULL);
-        FunctionDescriptor oldDescriptor = ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo);
+        CallableDescriptor oldDescriptor = ChangeSignaturePackage.getOriginalBaseFunctionDescriptor(changeInfo);
         DeclarationDescriptor containingDeclaration = oldDescriptor.getContainingDeclaration();
 
         JetScope parametersScope = null;
@@ -399,17 +572,21 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         else if (function instanceof JetFunction)
             parametersScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getBodyScope((JetFunction) function, bindingContext);
 
-        JetScope functionScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
+        JetScope callableScope = org.jetbrains.kotlin.idea.refactoring.RefactoringPackage.getContainingScope(oldDescriptor, bindingContext);
 
         JetMethodDescriptor.Kind kind = ChangeSignaturePackage.getKind(changeInfo);
-        if (!kind.getIsConstructor() && functionScope != null && !info.getNewName().isEmpty()) {
-            for (FunctionDescriptor conflict : functionScope.getFunctions(Name.identifier(info.getNewName()))) {
+        if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
+            Name newName = Name.identifier(info.getNewName());
+            Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
+                                                                 ? callableScope.getFunctions(newName)
+                                                                 : callableScope.getProperties(newName);
+            for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;
 
                 PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict);
                 if (conflictElement == changeInfo.getMethod()) continue;
 
-                if (getFunctionParameterTypes(conflict).equals(getFunctionParameterTypes(oldDescriptor))) {
+                if (getCallableParameterTypes(conflict).equals(getCallableParameterTypes(oldDescriptor))) {
                     result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'");
                     break;
                 }
@@ -447,13 +624,51 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
         JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-        if (function instanceof JetNamedFunction && newReceiverInfo != originalReceiverInfo) {
+        if (function instanceof JetCallableDeclaration && newReceiverInfo != originalReceiverInfo) {
             findReceiverIntroducingConflicts(result, function, newReceiverInfo);
             findInternalExplicitReceiverConflicts(refUsages.get(), result, originalReceiverInfo);
             findThisLabelConflicts((JetChangeInfo) info, refUsages, result, changeInfo, function);
         }
 
+        for (UsageInfo usageInfo : usageInfos) {
+            if (!(usageInfo instanceof KotlinCallerUsage)) continue;
+
+            JetNamedDeclaration caller = (JetNamedDeclaration) usageInfo.getElement();
+            DeclarationDescriptor callerDescriptor = ResolvePackage.resolveToDescriptor(caller);
+
+            findParameterDuplicationInCaller(result, changeInfo, caller, callerDescriptor);
+        }
+
         return result;
+    }
+
+    private static void findParameterDuplicationInCaller(
+            MultiMap<PsiElement, String> result,
+            JetChangeInfo changeInfo,
+            JetNamedDeclaration caller,
+            DeclarationDescriptor callerDescriptor
+    ) {
+        List<JetParameter> valueParameters = PsiUtilPackage.getValueParameters(caller);
+        Map<String, JetParameter> existingParameters = KotlinPackage.toMap(
+                valueParameters,
+                new Function1<JetParameter, String>() {
+                    @Override
+                    public String invoke(JetParameter parameter) {
+                        return parameter.getName();
+                    }
+                }
+        );
+        for (JetParameterInfo parameterInfo : changeInfo.getNonReceiverParameters()) {
+            if (!(parameterInfo.getIsNewParameter())) continue;
+
+            String name = parameterInfo.getName();
+            JetParameter parameter = existingParameters.get(name);
+            if (parameter != null) {
+                result.putValue(parameter, "There is already a parameter '" + name + "' in " +
+                                           IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor) +
+                                           ". It will conflict with the new parameter.");
+            }
+        }
     }
 
     private static void findThisLabelConflicts(
@@ -508,10 +723,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     ) {
         if (originalReceiverInfo == null) {
             for (UsageInfo usageInfo : usages) {
-                if (!(usageInfo instanceof JetFunctionCallUsage)) continue;
+                if (!(usageInfo instanceof JetFunctionCallUsage || usageInfo instanceof JetPropertyCallUsage)) continue;
 
-                JetFunctionCallUsage callUsage = (JetFunctionCallUsage) usageInfo;
-                JetElement callElement = callUsage.getElement();
+                JetElement callElement = (JetElement) usageInfo.getElement();
                 if (callElement == null) continue;
 
                 PsiElement parent = callElement.getParent();
@@ -529,7 +743,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             PsiElement callable,
             JetParameterInfo newReceiverInfo
     ) {
-        if (newReceiverInfo != null && ((JetNamedFunction) callable).getBodyExpression() != null) {
+        if (newReceiverInfo != null && (callable instanceof JetNamedFunction) && ((JetNamedFunction) callable).getBodyExpression() != null) {
             Map<JetReferenceExpression, BindingContext> noReceiverRefToContext = KotlinPackage.filter(
                     JetFileReferencesResolver.INSTANCE$.resolve((JetNamedFunction) callable, true, true),
                     new Function1<Map.Entry<? extends JetReferenceExpression, ? extends BindingContext>, Boolean>() {
@@ -589,7 +803,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
     }
 
-    private static List<JetType> getFunctionParameterTypes(FunctionDescriptor descriptor) {
+    private static List<JetType> getCallableParameterTypes(CallableDescriptor descriptor) {
         return ContainerUtil.map(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, JetType>() {
             @Override
             public JetType fun(ValueParameterDescriptor descriptor) {
@@ -601,21 +815,24 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     private JetMethodDescriptor originalJavaMethodDescriptor;
 
     private static boolean isJavaMethodUsage(UsageInfo usageInfo) {
-        if (usageInfo instanceof JavaMethodDeferredKotlinUsage) return true;
-
         // MoveRenameUsageInfo corresponds to non-Java usage of Java method
-        return usageInfo instanceof MoveRenameUsageInfo
-               && RefactoringPackage.isTrueJavaMethod(((MoveRenameUsageInfo) usageInfo).getReferencedElement());
+        return usageInfo instanceof JavaMethodDeferredKotlinUsage || usageInfo instanceof MoveRenameUsageInfo;
     }
 
     @Nullable
-    private static UsageInfo createReplacementUsage(UsageInfo originalUsageInfo, JetChangeInfo javaMethodChangeInfo) {
+    private static UsageInfo createReplacementUsage(UsageInfo originalUsageInfo, JetChangeInfo javaMethodChangeInfo, UsageInfo[] allUsages) {
         if (originalUsageInfo instanceof JavaMethodDeferredKotlinUsage) {
             return ((JavaMethodDeferredKotlinUsage<?>) originalUsageInfo).resolve(javaMethodChangeInfo);
         }
 
         JetCallElement callElement = PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), JetCallElement.class);
-        return callElement != null ? new JavaMethodKotlinCallUsage(callElement, javaMethodChangeInfo) : null;
+        if (callElement == null) return null;
+
+        PsiReference ref = originalUsageInfo.getReference();
+        PsiElement refTarget = ref != null ? ref.resolve() : null;
+        return new JavaMethodKotlinCallUsage(callElement,
+                                             javaMethodChangeInfo,
+                                             refTarget != null && ChangeSignaturePackage.isCaller(refTarget, allUsages));
     }
 
     private static class NullabilityPropagator {
@@ -687,44 +904,86 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
     }
 
+    private static boolean isOverriderOrCaller(UsageInfo usage) {
+        return usage instanceof OverriderUsageInfo || usage instanceof CallerUsageInfo;
+    }
+
+    @Nullable
+    private static PsiMethod getOverriderOrCaller(UsageInfo usage) {
+        if (usage instanceof OverriderUsageInfo) return ((OverriderUsageInfo) usage).getOverridingMethod();
+        if (usage instanceof CallerUsageInfo) {
+            PsiElement element = usage.getElement();
+            return element instanceof PsiMethod ? (PsiMethod) element : null;
+        }
+        return null;
+    }
+
     @Override
     public boolean processUsage(ChangeInfo changeInfo, UsageInfo usageInfo, boolean beforeMethodChange, UsageInfo[] usages) {
         PsiElement method = changeInfo.getMethod();
         boolean isJavaMethodUsage = isJavaMethodUsage(usageInfo);
 
         if (usageInfo instanceof KotlinWrapperForJavaUsageInfos) {
-            JavaChangeInfo javaChangeInfo = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfo();
-            assert javaChangeInfo != null : "JavaChangeInfo not found: " + method.getText();
-            UsageInfo[] javaUsageInfos = ((KotlinWrapperForJavaUsageInfos) usageInfo).getJavaUsageInfos();
+            List<JavaChangeInfo> javaChangeInfos = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfos();
+            assert javaChangeInfos != null : "JavaChangeInfo not found: " + method.getText();
+
+            KotlinWrapperForJavaUsageInfos wrapperForJavaUsageInfos = (KotlinWrapperForJavaUsageInfos) usageInfo;
+            UsageInfo[] javaUsageInfos = wrapperForJavaUsageInfos.getJavaUsageInfos();
             ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
 
-            NullabilityPropagator nullabilityPropagator = new NullabilityPropagator(javaChangeInfo.getMethod());
+            for (JavaChangeInfo javaChangeInfo : javaChangeInfos) {
+                // Match names so that getter/setter usages are not confused with each other
+                if (!javaChangeInfo.getOldName().equals(wrapperForJavaUsageInfos.getJavaChangeInfo().getOldName())) continue;
 
-            for (UsageInfo usage : javaUsageInfos) {
-                if (usage instanceof OverriderUsageInfo && beforeMethodChange) continue;
-                for (ChangeSignatureUsageProcessor processor : processors) {
-                    if (processor instanceof JetChangeSignatureUsageProcessor) continue;
-                    if (usage instanceof OverriderUsageInfo) {
-                        processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
+                NullabilityPropagator nullabilityPropagator = new NullabilityPropagator(javaChangeInfo.getMethod());
+
+                for (UsageInfo usage : javaUsageInfos) {
+                    if (isOverriderOrCaller(usage) && beforeMethodChange) continue;
+                    for (ChangeSignatureUsageProcessor processor : processors) {
+                        if (processor instanceof JetChangeSignatureUsageProcessor) continue;
+                        if (isOverriderOrCaller(usage)) {
+                            processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
+                        }
+                        if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
                     }
-                    if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
-                }
-                if (usage instanceof OverriderUsageInfo) {
-                    PsiMethod overridingMethod = ((OverriderUsageInfo)usage).getOverridingMethod();
-                    if (overridingMethod != null && !(overridingMethod instanceof KotlinLightMethod)) {
-                        nullabilityPropagator.processMethod(overridingMethod);
+                    if (usage instanceof OverriderUsageInfo && ((OverriderUsageInfo) usage).isOriginalOverrider()) {
+                        PsiMethod overridingMethod = ((OverriderUsageInfo) usage).getOverridingMethod();
+                        if (overridingMethod != null && !(overridingMethod instanceof KotlinLightMethod)) {
+                            nullabilityPropagator.processMethod(overridingMethod);
+                        }
                     }
                 }
             }
         }
 
         if (beforeMethodChange) {
-            if (isJavaMethodUsage) {
+            boolean startedFromJava = method instanceof PsiMethod;
+            if (startedFromJava && originalJavaMethodDescriptor == null) {
                 FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
-                JetChangeSignatureData changeSignatureData =
-                        new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));
-                if (changeSignatureData != originalJavaMethodDescriptor) {
-                    originalJavaMethodDescriptor = changeSignatureData;
+                assert methodDescriptor != null;
+                originalJavaMethodDescriptor =
+                        new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));;
+
+                // This change info is used as a placeholder before primary method update
+                // It gets replaced with real change info afterwards
+                JetChangeInfo dummyChangeInfo =
+                        new JetChangeInfo(originalJavaMethodDescriptor,
+                                          "",
+                                          null,
+                                          "",
+                                          Visibilities.INTERNAL,
+                                          Collections.<JetParameterInfo>emptyList(),
+                                          null,
+                                          changeInfo.getMethod(),
+                                          Collections.<PsiElement>emptyList());
+                for (int i = 0; i < usages.length; i++) {
+                    UsageInfo oldUsageInfo = usages[i];
+                    if (!isJavaMethodUsage(oldUsageInfo)) continue;
+
+                    UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo, usages);
+                    if (newUsageInfo != null) {
+                        usages[i] = newUsageInfo;
+                    }
                 }
             }
 
@@ -734,31 +993,24 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement element = usageInfo.getElement();
         if (element == null) return false;
 
-        if (isJavaMethodUsage && originalJavaMethodDescriptor != null) {
+        if (originalJavaMethodDescriptor != null) {
             JetChangeInfo javaMethodChangeInfo = ChangeSignaturePackage.toJetChangeInfo(changeInfo, originalJavaMethodDescriptor);
             originalJavaMethodDescriptor = null;
 
-            for (int i = 0; i < usages.length; i++) {
-                UsageInfo oldUsageInfo = usages[i];
-                if (!isJavaMethodUsage(oldUsageInfo)) continue;
-
-                UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, javaMethodChangeInfo);
-                if (newUsageInfo != null) {
-                    usages[i] = newUsageInfo;
-                    if (oldUsageInfo == usageInfo) {
-                        usageInfo = newUsageInfo;
-                    }
+            for (UsageInfo info : usages) {
+                if (info instanceof JavaMethodKotlinUsageWithDelegate) {
+                    ((JavaMethodKotlinUsageWithDelegate) info).setJavaMethodChangeInfo(javaMethodChangeInfo);
                 }
             }
         }
 
         if (usageInfo instanceof JavaMethodKotlinUsageWithDelegate) {
-            return ((JavaMethodKotlinUsageWithDelegate) usageInfo).processUsage();
+            return ((JavaMethodKotlinUsageWithDelegate) usageInfo).processUsage(usages);
         }
 
         if (usageInfo instanceof MoveRenameUsageInfo && isJavaMethodUsage) {
             JetSimpleNameExpression callee = PsiTreeUtil.getParentOfType(usageInfo.getElement(), JetSimpleNameExpression.class, false);
-            PsiReference ref = callee != null ? callee.getReference() : null;
+            PsiReference ref = callee != null ? ReferencesPackage.getMainReference(callee) : null;
             if (ref instanceof JetSimpleNameReference) {
                 ((JetSimpleNameReference) ref).handleElementRename(((PsiMethod)method).getName());
                 return true;
@@ -767,7 +1019,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             return false;
         }
 
-        return usageInfo instanceof JetUsageInfo ? ((JetUsageInfo) usageInfo).processUsage((JetChangeInfo) changeInfo, element) : true;
+        return usageInfo instanceof JetUsageInfo ? ((JetUsageInfo) usageInfo).processUsage((JetChangeInfo) changeInfo, element, usages) : true;
     }
 
     @Override
@@ -775,8 +1027,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!(changeInfo instanceof JetChangeInfo)) return false;
 
         JetChangeInfo jetChangeInfo = (JetChangeInfo) changeInfo;
-        for (JetFunctionDefinitionUsage primaryFunction : jetChangeInfo.getMethodDescriptor().getPrimaryFunctions()) {
-            primaryFunction.processUsage(jetChangeInfo, primaryFunction.getDeclaration());
+        for (JetCallableDefinitionUsage primaryFunction : jetChangeInfo.getMethodDescriptor().getPrimaryCallables()) {
+            primaryFunction.processUsage(jetChangeInfo, primaryFunction.getDeclaration(), UsageInfo.EMPTY_ARRAY);
         }
         jetChangeInfo.primaryMethodUpdated();
         return true;

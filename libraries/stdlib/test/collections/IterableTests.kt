@@ -281,4 +281,72 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val result = data.joinToString(separator = "-") { it.toUpperCase() }
         assertEquals("FOO-BAR", result)
     }
+
+    fun testPlus(doPlus: (Iterable<String>) -> List<String>) {
+        val result: List<String> = doPlus(data)
+        assertEquals(listOf("foo", "bar", "zoo", "g"), result)
+        assertFalse(result === data)
+    }
+
+    Test
+    fun plusElement() = testPlus { it + "zoo" + "g" }
+    Test
+    fun plusCollection() = testPlus { it + listOf("zoo", "g") }
+    Test
+    fun plusArray() = testPlus { it + arrayOf("zoo", "g") }
+    Test
+    fun plusSequence() = testPlus { it + sequenceOf("zoo", "g") }
+
+    Test
+    fun plusAssign() {
+        // lets use a mutable variable
+        var result: Iterable<String> = data
+        result += "foo"
+        result += listOf("beer")
+        result += arrayOf("cheese", "wine")
+        result += sequenceOf("zoo", "g")
+        assertEquals(listOf("foo", "bar", "foo", "beer", "cheese", "wine", "zoo", "g"), result)
+    }
+
+    Test
+    fun minusElement() {
+        val result = data - "foo" - "g"
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusCollection() {
+        val result = data - listOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusArray() {
+        val result = data - arrayOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusSequence() {
+        val result = data - sequenceOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
+    Test
+    fun minusAssign() {
+        // lets use a mutable variable
+        var result: Iterable<String> = data
+        result -= "foo"
+        assertEquals(listOf("bar"), result)
+        result = data
+        result -= listOf("beer", "bar")
+        assertEquals(listOf("foo"), result)
+        result = data
+        result -= arrayOf("bar", "foo")
+        assertEquals(emptyList<String>(), result)
+        result = data
+        result -= sequenceOf("foo", "g")
+        assertEquals(listOf("bar"), result)
+    }
+
 }

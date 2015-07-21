@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
+import org.jetbrains.kotlin.j2k.ResolverForConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.*
 
@@ -53,7 +54,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
         null
     else
         object : ExternalCodeProcessor {
-            override fun processUsage(reference: PsiReference): Collection<PsiReference>? {
+            override fun processUsage(reference: PsiReference): Array<PsiReference>? {
                 val nameExpr = reference.getElement() as? JetSimpleNameExpression ?: return null
                 val callExpr = nameExpr.getParent() as? JetCallExpression ?: return null
 
@@ -64,7 +65,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                 if (accessorKind == AccessorKind.GETTER) {
                     if (arguments.size() != 0) return null // incorrect call
                     propertyNameExpr = callExpr.replace(propertyNameExpr) as JetSimpleNameExpression
-                    return listOf(propertyNameExpr.getReference())
+                    return propertyNameExpr.getReferences()
                 }
                 else {
                     val value = arguments.singleOrNull()?.getArgumentExpression() ?: return null
@@ -76,12 +77,12 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                         callExpr.replace(propertyNameExpr)
                         assignment.getLeft()!!.replace(qualifiedExpression)
                         assignment = qualifiedExpression.replace(assignment) as JetBinaryExpression
-                        return listOf((assignment.getLeft() as JetQualifiedExpression).getSelectorExpression()!!.getReference())
+                        return (assignment.getLeft() as JetQualifiedExpression).getSelectorExpression()!!.getReferences()
                     }
                     else {
                         assignment.getLeft()!!.replace(propertyNameExpr)
                         assignment = callExpr.replace(assignment) as JetBinaryExpression
-                        return listOf(assignment.getLeft()!!.getReference())
+                        return assignment.getLeft()!!.getReferences()
                     }
                 }
 

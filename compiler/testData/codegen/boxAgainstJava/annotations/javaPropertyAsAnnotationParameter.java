@@ -8,4 +8,6 @@ class Foo {
     public static final boolean bool = true;
     public static final char c = 'c';
     public static final String str = "str";
+    public static final int charAsInt = '3';
+    public static final char intAsChar = 3;
 }

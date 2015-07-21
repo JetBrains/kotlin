@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
@@ -29,9 +30,10 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import kotlin.reflect.KDeclarationContainer
 import kotlin.reflect.KotlinReflectionInternalError
 
-abstract class KCallableContainerImpl {
+abstract class KCallableContainerImpl : KDeclarationContainer {
     // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
     val moduleData by ReflectProperties.lazySoft {
         jClass.getOrCreateModule()
@@ -41,27 +43,41 @@ abstract class KCallableContainerImpl {
 
     abstract val scope: JetScope
 
-    fun findPropertyDescriptor(name: String, receiverDesc: String? = null): PropertyDescriptor {
+    fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val properties = scope
-                .getProperties(Name.identifier(name))
+                .getProperties(Name.guess(name))
                 .filter { descriptor ->
                     descriptor is PropertyDescriptor &&
-                    descriptor.getName().asString() == name &&
-                    with(descriptor.getExtensionReceiverParameter()) {
-                        (this == null && receiverDesc == null) ||
-                        (this != null && RuntimeTypeMapper.mapTypeToJvmDesc(getType()) == receiverDesc)
-                    }
+                    RuntimeTypeMapper.mapPropertySignature(descriptor) == signature
                 }
 
         if (properties.size() != 1) {
-            val debugText = if (receiverDesc == null) name else "$receiverDesc.$name"
+            val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
-                    if (properties.isEmpty()) "Property '$debugText' not resolved in $this"
-                    else "${properties.size()} properties '$debugText' resolved in $this"
+                    if (properties.isEmpty()) "Property $debugText not resolved in $this"
+                    else "${properties.size()} properties $debugText resolved in $this: $properties"
             )
         }
 
         return properties.single() as PropertyDescriptor
+    }
+
+    fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
+        val functions = scope
+                .getFunctions(Name.guess(name))
+                .filter { descriptor ->
+                    RuntimeTypeMapper.mapSignature(descriptor) == signature
+                }
+
+        if (functions.size() != 1) {
+            val debugText = "'$name' (JVM signature: $signature)"
+            throw KotlinReflectionInternalError(
+                    if (functions.isEmpty()) "Function $debugText not resolved in $this"
+                    else "${functions.size()} functions $debugText resolved in $this: $functions"
+            )
+        }
+
+        return functions.single()
     }
 
     // TODO: check resulting method's return type

@@ -41,13 +41,13 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
             public JetType invoke() {
-                return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getScopeForMemberLookup());
+                return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getUnsubstitutedMemberScope());
             }
         });
         this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<JetScope>() {
             @Override
             public JetScope invoke() {
-                return new InnerClassesScopeWrapper(getScopeForMemberLookup());
+                return new InnerClassesScopeWrapper(getUnsubstitutedMemberScope());
             }
         });
         this.thisAsReceiverParameter = storageManager.createLazyValue(new Function0<ReceiverParameterDescriptor>() {
@@ -66,12 +66,9 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public DeclarationDescriptor getOriginal() {
+    public DeclarationDescriptorWithSource getOriginal() {
         return this;
     }
-
-    @NotNull
-    protected abstract JetScope getScopeForMemberLookup();
 
     @NotNull
     @Override
@@ -91,13 +88,13 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected "
                                                                                      + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size()
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
-        if (typeArguments.isEmpty()) return getScopeForMemberLookup();
+        if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = TypeSubstitutor.buildSubstitutionContext(typeParameters, typeArguments);
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
-        return new SubstitutingScope(getScopeForMemberLookup(), substitutor);
+        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
     }
 
     @NotNull

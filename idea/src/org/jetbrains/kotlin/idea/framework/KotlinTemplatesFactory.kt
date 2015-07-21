@@ -30,7 +30,7 @@ public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     override fun getGroups() = arrayOf(KOTLIN_GROUP_NAME)
     override fun getGroupIcon(group: String) = JetIcons.SMALL_LOGO
 
-    override fun createTemplates(group: String, context: WizardContext?) =
+    override fun createTemplates(group: String?, context: WizardContext?) =
         arrayOf(
                 BuilderBasedTemplate(KotlinModuleBuilder(TargetPlatform.JVM, "Kotlin - JVM", "Kotlin module for JVM target")),
                 BuilderBasedTemplate(KotlinModuleBuilder(TargetPlatform.JS, "Kotlin - JavaScript", "Kotlin module for JavaScript target"))

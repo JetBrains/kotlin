@@ -373,8 +373,13 @@ public class JetPsiUtil {
 
     @Nullable
     @Contract("null, _ -> null")
-    public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
+    public static PsiElement getTopmostParentOfTypes(
+            @Nullable PsiElement element,
+            @NotNull Class<? extends PsiElement>... parentTypes) {
+        if (element instanceof PsiFile) return null;
+
         PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
+        if (answer instanceof PsiFile) return answer;
 
         do {
             PsiElement next = PsiTreeUtil.getParentOfType(answer, parentTypes);
@@ -775,9 +780,9 @@ public class JetPsiUtil {
         else if (declaration instanceof JetParameter) {
             PsiElement parent = declaration.getParent();
 
-            // val/var parameter of primary constructor should not be considered as local
+            // val/var parameter of primary constructor should be considered as local according to containing class
             if (((JetParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof JetPrimaryConstructor) {
-                return null;
+                return getEnclosingElementForLocalDeclaration(((JetPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
             }
 
             else if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {

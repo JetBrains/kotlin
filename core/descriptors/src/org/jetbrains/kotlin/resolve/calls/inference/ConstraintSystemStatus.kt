@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
 public trait ConstraintSystemStatus {
     /**
@@ -63,13 +63,13 @@ public trait ConstraintSystemStatus {
      * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
      * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>.
      */
-    public fun hasTypeConstructorMismatch(): Boolean
+    public fun hasParameterConstraintError(): Boolean
 
     /**
      * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */
-    public fun hasOnlyErrorsFromPosition(constraintPosition: ConstraintPosition): Boolean
+    public fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean
 
     /**
      * Returns <tt>true</tt> if there is an error in constraining types. <p/>
@@ -84,4 +84,9 @@ public trait ConstraintSystemStatus {
      * in invocation <tt>foo(array)</tt> where array has type <tt>Array&lt;Array&lt;out Int&gt;&gt;</tt>.
      */
     public fun hasCannotCaptureTypesError(): Boolean
+
+    /**
+     * Returns <tt>true</tt> if there's an error in constraint system incorporation.
+     */
+    public fun hasTypeInferenceIncorporationError(): Boolean
 }

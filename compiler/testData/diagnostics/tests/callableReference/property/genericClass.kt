@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-import kotlin.reflect.KMemberProperty
+import kotlin.reflect.KProperty1
 
 class A<T>(val t: T) {
     val foo: T = t
@@ -8,9 +8,9 @@ class A<T>(val t: T) {
 
 fun bar() {
     val x = A<String>::foo
-    checkSubtype<KMemberProperty<A<String>, String>>(x)
-    checkSubtype<KMemberProperty<A<String>, Any?>>(x)
+    checkSubtype<KProperty1<A<String>, String>>(x)
+    checkSubtype<KProperty1<A<String>, Any?>>(x)
 
     val y = A<*>::foo
-    checkSubtype<KMemberProperty<A<*>, Any?>>(y)
+    checkSubtype<KProperty1<A<*>, Any?>>(y)
 }

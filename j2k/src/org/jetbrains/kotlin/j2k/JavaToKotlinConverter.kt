@@ -59,10 +59,12 @@ public interface PostProcessor {
             }
 
             Errors.VAL_REASSIGNMENT -> { ->
-                val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
-                if (property != null && !property.isVar()) {
-                    val factory = JetPsiFactory(psiElement.getProject())
-                    property.getValOrVarKeyword().replace(factory.createVarKeyword())
+                if (psiElement is JetSimpleNameExpression) {
+                    val property = simpleNameReference(psiElement).resolve() as? JetProperty
+                    if (property != null && !property.isVar()) {
+                        val factory = JetPsiFactory(psiElement.getProject())
+                        property.getValOrVarKeyword().replace(factory.createVarKeyword())
+                    }
                 }
             }
 
@@ -71,6 +73,8 @@ public interface PostProcessor {
     }
 
     public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
+
+    public fun simpleNameReference(nameExpression: JetSimpleNameExpression): PsiReference
 }
 
 public enum class ParseContext {
@@ -233,7 +237,7 @@ public class JavaToKotlinConverter(
 
                 var references = listOf(reference)
                 for (processor in processors) {
-                    references = references.flatMap { processor.processUsage(it) ?: listOf(it) }
+                    references = references.flatMap { processor.processUsage(it)?.toList() ?: listOf(it) }
                     references.forEach { checkReferenceValid(it) }
                 }
             }

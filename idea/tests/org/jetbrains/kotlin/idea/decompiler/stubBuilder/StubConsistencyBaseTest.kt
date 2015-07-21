@@ -29,21 +29,20 @@ import org.junit.Assert
 
 public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
 
-    protected abstract val packages: List<FqName>
-
-    protected abstract val virtualFileFinder: VirtualFileFinder
+    protected abstract fun getPackages(): List<FqName>
+    protected abstract fun getVirtualFileFinder(): VirtualFileFinder
 
     protected abstract fun createStubBuilder(): ClsStubBuilder
 
     protected abstract fun getDecompiledText(packageFile: VirtualFile): String
 
     public fun testConsistency() {
-        packages.forEach { doTest(it) }
+        getPackages().forEach { doTest(it) }
     }
 
     private fun doTest(packageFqName: FqName) {
         val project = getProject()
-        val packageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
+        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(packageFqName))!!
         val decompiledText = getDecompiledText(packageFile)
         val fileWithDecompiledText = JetPsiFactory(project).createFile(decompiledText)
         val stubTreeFromDecompiledText = JetFileStubBuilder().buildStubTree(fileWithDecompiledText)

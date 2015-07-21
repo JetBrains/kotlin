@@ -77,7 +77,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
         val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }
-        changeInfo.addParameter(JetParameterInfo(functionDescriptor = psiMethodDescriptor,
+        changeInfo.addParameter(JetParameterInfo(callableDescriptor = psiMethodDescriptor,
                                                  name = data.getParameterName(),
                                                  type = KotlinBuiltIns.getInstance().getAnyType(),
                                                  defaultValueForCall = defaultValueForCall))
@@ -89,7 +89,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
 
         val changeInfo = createChangeInfo(data, element) ?: return true
         // Java method is already updated at this point
-        val addedParameterType = data.getMethodToReplaceIn().getJavaMethodDescriptor().getValueParameters().last().getType()
+        val addedParameterType = data.getMethodToReplaceIn().getJavaMethodDescriptor()!!.getValueParameters().last().getType()
         changeInfo.getNewParameters().last().currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(addedParameterType)
 
         val scope = element.getUseScope().let {
@@ -100,7 +100,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
                 .map { it.unwrapped }
                 .filterIsInstance<JetFunction>()
         return (kotlinFunctions + element).all {
-            JetFunctionDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it)
+            JetCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
         }
     }
 
@@ -114,9 +114,9 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
             (JetConstructorDelegationCallUsage(callElement, changeInfo) as JetUsageInfo<JetCallElement>)
         }
         else {
-            JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryFunction)
+            JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
         }
-        return delegateUsage.processUsage(changeInfo, callElement)
+        return delegateUsage.processUsage(changeInfo, callElement, usages)
     }
 
     override fun processAddSuperCall(data: IntroduceParameterData, usage: UsageInfo, usages: Array<out UsageInfo>): Boolean = true

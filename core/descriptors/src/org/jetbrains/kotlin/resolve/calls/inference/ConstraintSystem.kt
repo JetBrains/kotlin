@@ -17,20 +17,26 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.types.Variance
 
 public trait ConstraintSystem {
 
     /**
      * Registers variables in a constraint system.
+     * The type variables for the corresponding function are local, the type variables of inner arguments calls are non-local.
      */
-    public fun registerTypeVariables(typeVariables: Map<TypeParameterDescriptor, Variance>)
+    public fun registerTypeVariables(
+            typeVariables: Collection<TypeParameterDescriptor>,
+            variance: (TypeParameterDescriptor) -> Variance,
+            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
+            external: Boolean = false
+    )
 
     /**
-     * Returns a set of all registered type variables.
+     * Returns a set of all non-external registered type variables.
      */
     public fun getTypeVariables(): Set<TypeParameterDescriptor>
 

@@ -71,7 +71,7 @@ public class IdeErrorMessages {
 
         MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER);
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
-        MAP.put(TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER);
+        MAP.put(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, "<html>Type inference failed: {0}</html>", HTML_TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER);
         MAP.put(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, tableForTypes("Type inference failed. Expected type mismatch: ",
                                                                      "required: ", TextElementType.STRONG,
                                                                      "found: ", TextElementType.ERROR), HTML_RENDER_TYPE, HTML_RENDER_TYPE);

@@ -1,0 +1,5 @@
+package test
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION}) kotlin.annotation.annotation() java.lang.annotation.Target(value = {ElementType.TYPE, ElementType.METHOD}) internal final class multiple : kotlin.Annotation {
+    public constructor multiple()
+}

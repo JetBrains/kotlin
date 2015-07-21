@@ -21,6 +21,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.HashMap
 
@@ -195,6 +197,8 @@ private object KotlinResolveDataProvider {
     )
 
     fun findAnalyzableParent(element: JetElement): JetElement {
+        if (element is JetFile) return element
+
         val topmostElement = JetPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as JetElement?
         // parameters and supertype lists are not analyzable by themselves, but if we don't count them as topmost, we'll stop inside, say,
         // object expressions inside arguments of super constructors of classes (note that classes themselves are not topmost elements)
@@ -215,11 +219,9 @@ private object KotlinResolveDataProvider {
 
     fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalysisResult {
         try {
+            val module = resolveSession.getModuleDescriptor()
             if (analyzableElement is JetCodeFragment) {
-                return AnalysisResult.success(
-                        analyzeExpressionCodeFragment(resolveSession, analyzableElement),
-                        resolveSession.getModuleDescriptor()
-                )
+                return AnalysisResult.success(analyzeExpressionCodeFragment(resolveSession, analyzableElement), module)
             }
 
             val file = analyzableElement.getContainingJetFile()
@@ -232,12 +234,12 @@ private object KotlinResolveDataProvider {
 
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile())
             val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
-            val moduleContext = globalContext.withProject(project).withModule(resolveSession.getModuleDescriptor())
+            val moduleContext = globalContext.withProject(project).withModule(module)
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                     moduleContext,
                     resolveSession,
                     trace,
-                    targetPlatform.getAdditionalCheckerProvider(),
+                    targetPlatform.createAdditionalCheckerProvider(module),
                     targetPlatform.getDynamicTypesSettings(),
                     resolveSession.getBodyResolveCache()
             ).get<LazyTopDownAnalyzerForTopLevel>()
@@ -248,7 +250,7 @@ private object KotlinResolveDataProvider {
             )
             return AnalysisResult.success(
                     trace.getBindingContext(),
-                    resolveSession.getModuleDescriptor()
+                    module
             )
         }
         catch (e: ProcessCanceledException) {
@@ -269,44 +271,13 @@ private object KotlinResolveDataProvider {
         val codeFragmentExpression = codeFragment.getContentElement()
         if (codeFragmentExpression !is JetExpression) return BindingContext.EMPTY
 
-        val contextElement = codeFragment.getContext()
+        val (scopeForContextElement, dataFlowInfo) = codeFragment.getScopeAndDataFlowForAnalyzeFragment(resolveSession) {
+            resolveSession.resolveToElement(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
+        } ?: return BindingContext.EMPTY
 
-        val scopeForContextElement: JetScope?
-        val dataFlowInfo: DataFlowInfo
-        if (contextElement is JetClassOrObject) {
-            val descriptor = resolveSession.resolveToDescriptor(contextElement) as LazyClassDescriptor
-
-            scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
-            dataFlowInfo = DataFlowInfo.EMPTY
-        }
-        else if (contextElement is JetBlockExpression) {
-            val newContextElement = contextElement.getStatements().lastOrNull()
-            if (newContextElement !is JetExpression) return BindingContext.EMPTY
-
-            val contextForElement = newContextElement.getResolutionFacade().analyze(newContextElement, BodyResolveMode.FULL)
-
-            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, newContextElement]
-            dataFlowInfo = contextForElement.getDataFlowInfo(newContextElement)
-        }
-        else {
-            if (contextElement !is JetExpression) return BindingContext.EMPTY
-
-            val contextForElement = contextElement.getResolutionFacade().analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
-
-            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
-            dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)
-        }
-
-        if (scopeForContextElement == null) return BindingContext.EMPTY
-
-        val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
-        val chainedScope = ChainedScope(
-                                scopeForContextElement.getContainingDeclaration(),
-                                "Scope for resolve code fragment",
-                                scopeForContextElement, codeFragmentScope)
 
         return codeFragmentExpression.analyzeInContext(
-                chainedScope,
+                scopeForContextElement,
                 BindingTraceContext(),
                 dataFlowInfo,
                 TypeUtils.NO_EXPECTED_TYPE,

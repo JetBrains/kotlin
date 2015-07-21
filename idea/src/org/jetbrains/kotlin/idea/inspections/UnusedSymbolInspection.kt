@@ -110,9 +110,9 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 return object : LocalQuickFix {
                     override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.getName())
 
-                    override fun getFamilyName() = "whatever"
+                    override fun getFamilyName() = "Safe delete"
 
-                    override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
+                    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return
                         SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
                     }
@@ -188,7 +188,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     private fun isConventionalName(namedDeclaration: JetNamedDeclaration): Boolean {
         val name = namedDeclaration.getNameAsName()
-        return name.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorConventions.INVOKE
+        return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: JetNamedDeclaration): Boolean {
@@ -200,7 +200,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
                 assert(name != null) { "Name is null for " + declaration.getElementTextWithContext() }
-                when (psiSearchHelper.isCheapEnoughToSearch(name, useScope, null, null)) {
+                when (psiSearchHelper.isCheapEnoughToSearch(name!!, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
                     TOO_MANY_OCCURRENCES -> return true // searching usages is too expensive; behave like it is used

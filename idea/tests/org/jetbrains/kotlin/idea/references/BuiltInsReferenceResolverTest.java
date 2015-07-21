@@ -116,7 +116,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     }
 
     private void doTest() throws Exception {
-        JetReference reference = (JetReference) configureByFile(getTestName(true) + ".kt");
+        PsiPolyVariantReference reference = (PsiPolyVariantReference) configureByFile(getTestName(true) + ".kt");
         PsiElement resolved = reference.resolve();
         assertNotNull(resolved);
         assertEquals(1, reference.multiResolve(false).length);

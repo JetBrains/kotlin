@@ -70,7 +70,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
         assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
 
-        classDescriptor = anonymousClassForFunction(bindingContext, functionDescriptor);
+        classDescriptor = anonymousClassForCallable(bindingContext, functionDescriptor);
         closureClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
 
         closure = bindingContext.get(CLOSURE, classDescriptor);

@@ -18,5 +18,7 @@ package kotlin
 
 /**
  * Represents a value of a functional type, such as a lambda, a function expression or a function reference.
+ *
+ * @param R return type of the function.
  */
 public interface Function<out R>

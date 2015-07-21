@@ -92,7 +92,7 @@ public class FunctionReader(private val context: TranslationContext) {
     public fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getExternalModuleName(descriptor)
         val currentModuleName = context.getConfig().getModuleId()
-        return currentModuleName != moduleName && moduleName in moduleJsDefinition
+        return currentModuleName != moduleName && moduleName != null && moduleName in moduleJsDefinition
     }
 
     public fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
@@ -123,8 +123,8 @@ public class FunctionReader(private val context: TranslationContext) {
         val moduleNameLiteral = context.program().getStringLiteral(moduleName)
         val moduleReference =  context.namer().getModuleReference(moduleNameLiteral)
 
-        val replacements = hashMapOf(moduleRootVariable[moduleName] to moduleReference,
-                                     moduleKotlinVariable[moduleName] to Namer.KOTLIN_OBJECT_REF)
+        val replacements = hashMapOf(moduleRootVariable[moduleName]!! to moduleReference,
+                                     moduleKotlinVariable[moduleName]!! to Namer.KOTLIN_OBJECT_REF)
         replaceExternalNames(function, replacements)
         return function
     }

@@ -1,8 +1,6 @@
-import java.lang.annotation.*
 import kotlin.test.assertEquals
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class Ann(val x: Int)
+annotation(retention = AnnotationRetention.RUNTIME) class Ann(val x: Int)
 class A {
     Ann(1) fun foo(x: Int, y: Int = 2, z: Int) {}
 

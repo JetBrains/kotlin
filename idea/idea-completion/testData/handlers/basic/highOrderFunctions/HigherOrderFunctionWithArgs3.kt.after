@@ -6,5 +6,5 @@ fun main(args: Array<String>) {
 }
 
 // ELEMENT: foo
-// TAIL_TEXT: " { String, Char -> ... } (<root>)"
+// TAIL_TEXT: " { String, Char -> ... } (p: (String, Char) -> Boolean) (<root>)"
 

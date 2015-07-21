@@ -175,9 +175,7 @@ var Kotlin = {};
     Kotlin.createObjectNow = function (bases, constructor, functions) {
         var noNameClass = Kotlin.createClassNow(bases, constructor, functions);
         var obj = new noNameClass();
-        obj.$metadata$ = {
-            type: Kotlin.TYPE.OBJECT
-        };
+        noNameClass.$metadata$.type = Kotlin.TYPE.OBJECT;
         return  obj;
     };
 
@@ -337,7 +335,9 @@ var Kotlin = {};
     // TODO Store callable references for members in class
     Kotlin.getCallableRefForMemberFunction = function (klass, memberName) {
         return function () {
-            return this[memberName].apply(this, arguments);
+            var args = [].slice.call(arguments);
+            var instance = args.shift();
+            return instance[memberName].apply(instance, args);
         };
     };
 
@@ -345,9 +345,15 @@ var Kotlin = {};
     // extFun expected receiver as the first argument
     Kotlin.getCallableRefForExtensionFunction = function (extFun) {
         return function () {
-          var args = [this];
-          Array.prototype.push.apply(args, arguments);
-          return extFun.apply(null, args);
+            return extFun.apply(null, arguments);
+        };
+    };
+
+    Kotlin.getCallableRefForLocalExtensionFunction = function (extFun) {
+        return function () {
+            var args = [].slice.call(arguments);
+            var instance = args.shift();
+            return extFun.apply(instance, args);
         };
     };
 

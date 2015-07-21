@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeDeclarationsPackage;
-import org.jetbrains.kotlin.name.*;
+import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -51,7 +54,7 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
@@ -681,13 +684,13 @@ public class JetTypeMapper {
             }
 
             boolean isAccessor = property instanceof AccessorForPropertyDescriptor;
-            Name propertyName = isAccessor
-                                ? Name.identifier(((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix())
-                                : property.getName();
+            String propertyName = isAccessor
+                                  ? ((AccessorForPropertyDescriptor) property).getIndexedAccessorSuffix()
+                                  : property.getName().asString();
 
             String accessorName = descriptor instanceof PropertyGetterDescriptor
-                                  ? PropertyCodegen.getterName(propertyName)
-                                  : PropertyCodegen.setterName(propertyName);
+                                  ? JvmAbi.getterName(propertyName)
+                                  : JvmAbi.setterName(propertyName);
 
             return isAccessor ? "access$" + accessorName : accessorName;
         }
@@ -718,10 +721,10 @@ public class JetTypeMapper {
         AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
         if (platformNameAnnotation == null) return null;
 
-        Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = platformNameAnnotation.getAllValueArguments();
+        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = platformNameAnnotation.getAllValueArguments();
         if (arguments.isEmpty()) return null;
 
-        CompileTimeConstant<?> name = arguments.values().iterator().next();
+        ConstantValue<?> name = arguments.values().iterator().next();
         if (!(name instanceof StringValue)) return null;
 
         return ((StringValue) name).getValue();

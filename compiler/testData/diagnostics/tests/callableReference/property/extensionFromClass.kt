@@ -4,8 +4,8 @@ import kotlin.reflect.*
 
 class A {
     fun test() {
-        val fooRef: KExtensionProperty<A, String> = ::foo
-        val barRef: KMutableExtensionProperty<A, Int> = ::bar
+        val fooRef: KProperty1<A, String> = ::foo
+        val barRef: KMutableProperty1<A, Int> = ::bar
     }
 }
 

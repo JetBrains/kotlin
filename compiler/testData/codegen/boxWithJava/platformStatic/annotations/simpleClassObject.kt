@@ -1,9 +1,6 @@
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import kotlin.platform.platformStatic
 
-Retention(RetentionPolicy.RUNTIME)
-annotation class testAnnotation
+annotation(retention = AnnotationRetention.RUNTIME) class testAnnotation
 
 class A {
 

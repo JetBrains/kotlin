@@ -7,7 +7,7 @@ fun comparables(): List<GenericFunction> {
 
     templates add f("coerceAtLeast(minimumValue: SELF)") {
         only(Primitives, Generic)
-        only(*numericPrimitives)
+        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -27,7 +27,7 @@ fun comparables(): List<GenericFunction> {
 
     templates add f("coerceAtMost(maximumValue: SELF)") {
         only(Primitives, Generic)
-        only(*numericPrimitives)
+        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -46,7 +46,7 @@ fun comparables(): List<GenericFunction> {
 
     templates add f("coerceIn(range: TRange)") {
         only(Primitives, Generic)
-        only(*numericPrimitives)
+        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {
@@ -66,7 +66,7 @@ fun comparables(): List<GenericFunction> {
 
     templates add f("coerceIn(minimumValue: SELF?, maximumValue: SELF?)") {
         only(Primitives, Generic)
-        only(*numericPrimitives)
+        only(numericPrimitives)
         returns("SELF")
         typeParam("T: Comparable<T>")
         doc {

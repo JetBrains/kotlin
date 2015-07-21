@@ -2,9 +2,19 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   IMPORT_LIST:
   CLASS:[fqName=a, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[]]
-    MODIFIER_LIST:[annotation]
+    MODIFIER_LIST:[]
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=annotation]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=annotation]
   CLASS:[fqName=b, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[]]
-    MODIFIER_LIST:[annotation]
+    MODIFIER_LIST:[]
+      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=annotation]
+        CONSTRUCTOR_CALLEE:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=annotation]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=b.e, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e]

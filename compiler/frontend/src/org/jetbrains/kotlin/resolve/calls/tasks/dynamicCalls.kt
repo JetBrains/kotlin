@@ -16,46 +16,28 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.kotlin.types.DynamicType
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.types.JetType
-import kotlin.platform.platformStatic
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.ValueArgument
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.types.DynamicType
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.utils.Printer
+import java.util.ArrayList
+import kotlin.platform.platformStatic
 
 object DynamicCallableDescriptors {
 
@@ -150,11 +132,7 @@ object DynamicCallableDescriptors {
     }
 
     private fun createDynamicDispatchReceiverParameter(owner: CallableDescriptor): ReceiverParameterDescriptorImpl {
-        return ReceiverParameterDescriptorImpl(
-                owner,
-                DynamicType,
-                TransientReceiver(DynamicType)
-        )
+        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(DynamicType))
     }
 
     private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> = call.getTypeArguments().indices.map {
@@ -170,8 +148,7 @@ object DynamicCallableDescriptors {
         )
     }
 
-    private fun createValueParameters(owner: DeclarationDescriptor, call: Call): List<ValueParameterDescriptor> {
-
+    private fun createValueParameters(owner: FunctionDescriptor, call: Call): List<ValueParameterDescriptor> {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
         fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
@@ -246,8 +223,8 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<D> {
-        return delegate.getExtensionsByName(scope, name, bindingTrace).filter {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, receiverTypes, bindingTrace).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }
     }

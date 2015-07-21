@@ -24,8 +24,10 @@ import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
@@ -41,19 +43,19 @@ object PackageDirectiveCompletion {
 
         val file = position.getContainingFile() as JetFile
 
-        val ref = file.findReferenceAt(parameters.getOffset()) as? JetSimpleNameReference ?: return false
-        val name = ref.expression.getText()!!
+        val expression = file.findElementAt(parameters.getOffset())?.getParent() as? JetSimpleNameExpression ?: return false
 
         try {
-            val prefixLength = parameters.getOffset() - ref.expression.getTextOffset()
-            val prefixMatcher = PlainPrefixMatcher(name.substring(0, prefixLength))
+            val prefixLength = parameters.getOffset() - expression.getTextOffset()
+            val prefix = expression.getText()!!
+            val prefixMatcher = PlainPrefixMatcher(prefix.substring(0, prefixLength))
             val result = result.withPrefixMatcher(prefixMatcher)
 
-            val resolutionFacade = ref.expression.getResolutionFacade()
-            val bindingContext = resolutionFacade.analyze(ref.expression)
+            val resolutionFacade = expression.getResolutionFacade()
+            val bindingContext = resolutionFacade.analyze(expression)
             val moduleDescriptor = resolutionFacade.findModuleDescriptor(file)
 
-            val variants = ReferenceVariantsHelper(bindingContext, moduleDescriptor, file.getProject(), { true }).getPackageReferenceVariants(ref.expression, prefixMatcher.asNameFilter())
+            val variants = ReferenceVariantsHelper(bindingContext, moduleDescriptor, file.getProject(), { true }).getPackageReferenceVariants(expression, prefixMatcher.asNameFilter())
             for (variant in variants) {
                 val lookupElement = LookupElementFactory(resolutionFacade, listOf()).createLookupElement(variant, false)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {

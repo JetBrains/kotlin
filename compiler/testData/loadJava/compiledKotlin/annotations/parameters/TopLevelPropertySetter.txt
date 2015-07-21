@@ -4,10 +4,10 @@ internal var foo: kotlin.Int
     internal fun <get-foo>(): kotlin.Int
     internal fun <set-foo>(/*0*/ test.A() test.B() value: kotlin.Int): kotlin.Unit
 
-internal final annotation class A : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 
-internal final annotation class B : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class B : kotlin.Annotation {
     /*primary*/ public constructor B()
 }

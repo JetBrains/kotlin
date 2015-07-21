@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -13,8 +12,6 @@ public class J {
 
 // FILE: k.kt
 
-import p.*
-
 fun test() {
     // @NotNull platform type
     var platformNN = J.staticNN
@@ -24,35 +21,35 @@ fun test() {
     var platformJ = J.staticJ
 
     +platformNN
-    +<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    <!UNSAFE_CALL!>+<!>platformN
     +platformJ
 
     ++platformNN
-    ++<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    <!UNSAFE_CALL!>++<!>platformN
     ++platformJ
 
     platformNN++
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>++
+    platformN<!UNSAFE_CALL!>++<!>
     platformJ++
 
     1 + platformNN
-    1 + <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    1 <!NONE_APPLICABLE!>+<!> platformN
     1 + platformJ
 
     platformNN + 1
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> + 1
+    platformN <!UNSAFE_INFIX_CALL!>+<!> 1
     platformJ + 1
 
     1 plus platformNN
-    1 plus <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
+    1 <!NONE_APPLICABLE!>plus<!> platformN
     1 plus platformJ
 
     platformNN plus 1
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> plus 1
+    platformN <!UNSAFE_INFIX_CALL!>plus<!> 1
     platformJ plus 1
 
     platformNN += 1
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> += 1
+    platformN <!UNSAFE_INFIX_CALL!>+=<!> 1
     platformJ += 1
 }
 

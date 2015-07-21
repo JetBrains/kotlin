@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.renderer.render
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor
-        if (descriptor != null) {
-            val name = descriptor.getName()
+        val name = (item.getObject() as? DeclarationLookupObject)?.name
+        if (name != null) {
             val nameInCode = name.render()
             val document = context.getDocument()
             val needEscaping = nameInCode != name.asString()

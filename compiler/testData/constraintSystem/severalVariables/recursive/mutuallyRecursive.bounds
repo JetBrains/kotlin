@@ -1,0 +1,23 @@
+VARIABLES T P
+
+T := My<P>
+P := Two<T,P>
+
+type parameter bounds:
+T := My<P>*
+P := Two<T, P>*
+
+status:
+-hasCannotCaptureTypesError: false
+-hasConflictingConstraints: false
+-hasContradiction: true
+-hasErrorInConstrainingTypes: false
+-hasParameterConstraintError: false
+-hasTypeInferenceIncorporationError: true
+-hasUnknownParameters: true
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=???
+P=???

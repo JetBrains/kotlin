@@ -16,13 +16,13 @@ fun box(): String {
     val a = A("test")
 
     assertEquals("A.m test 4 boo", a.m(4, "boo"))
-    assertEquals("A.m test 4 boo", bar(a, A::m))
+    assertEquals("A.m test 4 boo", bar(a, fun A.(i, s) = (A::m)(this, i, s)))
 
     assertEquals("nativeExt test 4 boo", a.nativeExt(4, "boo"))
-    assertEquals("nativeExt test 4 boo", bar(a, A::nativeExt))
+    assertEquals("nativeExt test 4 boo", bar(a, fun A.(i, s) = (A::nativeExt)(this, i, s)))
 
     assertEquals("nativeExt2 test 4 boo", a.nativeExt2(4, "boo"))
-    assertEquals("nativeExt2 test 4 boo", bar(a, A::nativeExt2))
+    assertEquals("nativeExt2 test 4 boo", bar(a, fun A.(i, s) = (A::nativeExt2)(this, i, s)))
 
     return "OK"
 }

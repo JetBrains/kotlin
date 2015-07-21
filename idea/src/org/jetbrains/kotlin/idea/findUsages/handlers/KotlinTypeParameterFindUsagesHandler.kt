@@ -51,6 +51,6 @@ public class KotlinTypeParameterFindUsagesHandler(
     }
 
     public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
-        return getFactory().defaultOptions
+        return factory.defaultOptions
     }
 }

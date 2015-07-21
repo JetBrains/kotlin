@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.RequestResultProcessor
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.references.matchesTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.*
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
+import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -66,7 +67,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                                                       resultProcessor)
         }
 
-        searchLightElements(queryParameters, element)
+        if (!(unwrappedElement is JetElement && isOnlyKotlinSearch(queryParameters.getEffectiveSearchScope()))) {
+            searchLightElements(queryParameters, element)
+        }
     }
 
     companion object {
@@ -100,9 +103,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 }
                 is JetProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                    searchNamedElement(queryParameters, propertyMethods.getGetter())
-                    searchNamedElement(queryParameters, propertyMethods.getSetter())
-                }
+                            searchNamedElement(queryParameters, propertyMethods.getGetter())
+                            searchNamedElement(queryParameters, propertyMethods.getSetter())
+                        }
                 is KotlinLightMethod -> {
                     val declaration = element.getOrigin()
                     if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
@@ -114,6 +117,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 }
             }
         }
+
+        private fun isOnlyKotlinSearch(searchScope: SearchScope) =
+                searchScope is LocalSearchScope && searchScope.getScope().all { it.getContainingFile().getFileType() == JetFileType.INSTANCE }
 
         private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement?,
                                        name: String? = element?.getName()) {

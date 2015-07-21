@@ -1,20 +1,20 @@
 package
 
-internal final annotation class Annotation1 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation1 : kotlin.Annotation {
     public constructor Annotation1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation10 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation10 : kotlin.Annotation {
     public constructor Annotation10()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation2 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation2 : kotlin.Annotation {
     public constructor Annotation2()
     public final val s: kotlin.String = ""
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -22,7 +22,7 @@ internal final annotation class Annotation2 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation3 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation3 : kotlin.Annotation {
     public constructor Annotation3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit
@@ -30,7 +30,7 @@ internal final annotation class Annotation3 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation4 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation4 : kotlin.Annotation {
     public constructor Annotation4()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -44,7 +44,7 @@ internal final annotation class Annotation4 : kotlin.Annotation {
     }
 }
 
-internal final annotation class Annotation5 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation5 : kotlin.Annotation {
     public constructor Annotation5()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -58,14 +58,14 @@ internal final annotation class Annotation5 : kotlin.Annotation {
     }
 }
 
-internal final annotation class Annotation6 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation6 : kotlin.Annotation {
     public constructor Annotation6()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation7 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation7 : kotlin.Annotation {
     public constructor Annotation7(/*0*/ name: kotlin.String)
     internal final val name: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -73,7 +73,7 @@ internal final annotation class Annotation7 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation8 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation8 : kotlin.Annotation {
     public constructor Annotation8(/*0*/ name: kotlin.String = ...)
     internal final var name: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -81,7 +81,7 @@ internal final annotation class Annotation8 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Annotation9 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final class Annotation9 : kotlin.Annotation {
     public constructor Annotation9(/*0*/ name: kotlin.String)
     internal final val name: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

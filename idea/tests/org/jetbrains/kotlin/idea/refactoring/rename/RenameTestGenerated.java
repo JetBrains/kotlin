@@ -370,4 +370,22 @@ public class RenameTestGenerated extends AbstractRenameTest {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameUnaryMinus/unaryMinus.test");
         doTest(fileName);
     }
+
+    @TestMetadata("syntheticPropertyUsages1/renameGetMethod.test")
+    public void testSyntheticPropertyUsages1_RenameGetMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/syntheticPropertyUsages1/renameGetMethod.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("syntheticPropertyUsages2/renameSetMethod.test")
+    public void testSyntheticPropertyUsages2_RenameSetMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/syntheticPropertyUsages2/renameSetMethod.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("syntheticPropertyUsages3/renameSetMethod.test")
+    public void testSyntheticPropertyUsages3_RenameSetMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/syntheticPropertyUsages3/renameSetMethod.test");
+        doTest(fileName);
+    }
 }

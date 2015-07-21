@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -45,28 +44,24 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractM
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers;
 
 public class DeclarationsChecker {
-    private BindingTrace trace;
-    private ModifiersChecker modifiersChecker;
-    private DescriptorResolver descriptorResolver;
+    @NotNull private final BindingTrace trace;
+    @NotNull private final ModifiersChecker modifiersChecker;
+    @NotNull private final DescriptorResolver descriptorResolver;
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
-    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
+    public DeclarationsChecker(
+            @NotNull DescriptorResolver descriptorResolver,
+            @NotNull ModifiersChecker modifiersChecker,
+            @NotNull BindingTrace trace
+    ) {
         this.descriptorResolver = descriptorResolver;
-    }
-
-    @Inject
-    public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
         this.modifiersChecker = modifiersChecker;
+        this.trace = trace;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
         for (JetFile file : bodiesResolveContext.getFiles()) {
             checkModifiersAndAnnotationsInPackageDirective(file);
+            AnnotationTargetChecker.INSTANCE$.check(file, trace, null);
         }
 
         Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
@@ -128,9 +123,6 @@ public class DeclarationsChecker {
         if (declaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
             trace.report(ILLEGAL_ENUM_ANNOTATION.on(declaration));
         }
-        if (declaration.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
-            trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
-        }
     }
 
     private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
@@ -149,6 +141,7 @@ public class DeclarationsChecker {
                 }
             }
         }
+        AnnotationTargetChecker.INSTANCE$.check(packageDirective, trace, null);
 
         ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
     }
@@ -255,15 +248,20 @@ public class DeclarationsChecker {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }
-        else if (aClass.isAnnotation()) {
-            checkAnnotationClassWithBody(aClass);
-            checkValOnAnnotationParameter(aClass);
-        }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
             if (aClass.isLocal()) {
                 trace.report(LOCAL_ENUM_NOT_ALLOWED.on(aClass, classDescriptor));
             }
+            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                JetAnnotationEntry entry = aClass.getBuiltInAnnotationEntry();
+                assert entry != null : "getBuiltinAnnotationEntry() should be synchronized with isAnnotation()";
+                trace.report(WRONG_ANNOTATION_TARGET.on(entry, "enum class"));
+            }
+        }
+        else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+            checkAnnotationClassWithBody(aClass);
+            checkValOnAnnotationParameter(aClass);
         }
         else if (aClass.hasModifier(JetTokens.SEALED_KEYWORD)) {
             checkSealedModifiers(aClass);
@@ -305,6 +303,7 @@ public class DeclarationsChecker {
             if (typeParameter != null) {
                 DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
             }
+            AnnotationTargetChecker.INSTANCE$.check(jetTypeParameter, trace, null);
         }
     }
 
@@ -630,10 +629,6 @@ public class DeclarationsChecker {
     }
 
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
-        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
-        assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
-        ClassDescriptor enumClass = (ClassDescriptor) declaration;
-
         if (enumEntryUsesDeprecatedSuperConstructor(enumEntry)) {
             trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.on(enumEntry, classDescriptor));
         }
@@ -645,23 +640,34 @@ public class DeclarationsChecker {
             trace.report(Errors.ENUM_ENTRY_AFTER_ENUM_MEMBER.on(enumEntry, classDescriptor));
         }
 
-        List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
-        ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-        if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
-            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
-        }
+        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
+        if (DescriptorUtils.isEnumClass(declaration)) {
+            ClassDescriptor enumClass = (ClassDescriptor) declaration;
 
-        for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-            JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-            if (typeReference != null) {
-                JetType type = trace.getBindingContext().get(TYPE, typeReference);
-                if (type != null) {
-                    JetType enumType = enumClass.getDefaultType();
-                    if (!type.getConstructor().equals(enumType.getConstructor())) {
-                        trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
+            List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
+            ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
+            if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
+                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
+            }
+
+            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                if (typeReference != null) {
+                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
+                    if (type != null) {
+                        JetType enumType = enumClass.getDefaultType();
+                        if (!type.getConstructor().equals(enumType.getConstructor())) {
+                            trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
+                        }
                     }
                 }
             }
         }
+        else {
+            assert DescriptorUtils.isTrait(declaration) : "Enum entry should be declared in enum class: " +
+                                                          classDescriptor + " " +
+                                                          classDescriptor.getKind();
+        }
     }
+
 }

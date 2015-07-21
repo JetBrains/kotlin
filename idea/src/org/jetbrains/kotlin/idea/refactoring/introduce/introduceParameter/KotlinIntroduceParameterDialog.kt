@@ -32,6 +32,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.core.refactoring.validateElement
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -233,18 +234,9 @@ public class KotlinIntroduceParameterDialog private constructor(
     override fun createCenterPanel() = null
 
     override fun canRun() {
-        fun validateElement(e: PsiElement, errorMessage: String) {
-            try {
-                AnalyzingUtils.checkForSyntacticErrors(e)
-            }
-            catch(e: Exception) {
-                throw ConfigurationException(errorMessage)
-            }
-        }
-
         val psiFactory = JetPsiFactory(myProject)
-        validateElement(psiFactory.createType(nameField.getEnteredName()), "Invalid parameter name")
-        validateElement(psiFactory.createType(typeField.getEnteredName()), "Invalid parameter type")
+        psiFactory.createSimpleName(nameField.getEnteredName()).validateElement("Invalid parameter name")
+        psiFactory.createType(typeField.getEnteredName()).validateElement("Invalid parameter type")
     }
 
     override fun doAction() {
@@ -331,7 +323,7 @@ public class KotlinIntroduceParameterDialog private constructor(
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName() = commandName
+                    override fun getCommandName(): String = commandName
                 }
         )
     }

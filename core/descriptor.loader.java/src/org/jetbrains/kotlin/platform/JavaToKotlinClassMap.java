@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -78,10 +80,9 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         for (int i = 0; i < 23; i++) {
             add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), builtIns.getFunction(i));
 
-            for (FunctionClassDescriptor.Kind kind : FunctionClassDescriptor.Kinds.KFunctions) {
-                String kFun = kind.getPackageFqName() + "." + kind.getClassNamePrefix();
-                addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
-            }
+            FunctionClassDescriptor.Kind kFunction = FunctionClassDescriptor.Kind.KFunction;
+            String kFun = kFunction.getPackageFqName() + "." + kFunction.getClassNamePrefix();
+            addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
         }
 
         addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
@@ -182,12 +183,22 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return className.isSafe() ? mapPlatformClass(className.toSafe()) : Collections.<ClassDescriptor>emptySet();
     }
 
-    public boolean isMutableCollection(@NotNull ClassDescriptor mutable) {
+    public boolean isMutable(@NotNull ClassDescriptor mutable) {
         return mutableToReadOnly.containsKey(mutable);
     }
 
-    public boolean isReadOnlyCollection(@NotNull ClassDescriptor readOnly) {
+    public boolean isMutable(@NotNull JetType type) {
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        return classDescriptor != null && isMutable(classDescriptor);
+    }
+
+    public boolean isReadOnly(@NotNull ClassDescriptor readOnly) {
         return readOnlyToMutable.containsKey(readOnly);
+    }
+
+    public boolean isReadOnly(@NotNull JetType type) {
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        return classDescriptor != null && isReadOnly(classDescriptor);
     }
 
     @NotNull

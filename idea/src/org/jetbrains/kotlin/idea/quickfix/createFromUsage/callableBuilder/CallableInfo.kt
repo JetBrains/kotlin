@@ -21,8 +21,8 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetTypeReference

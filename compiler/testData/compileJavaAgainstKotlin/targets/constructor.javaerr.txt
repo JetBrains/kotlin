@@ -1,0 +1,3 @@
+constructor.java:7:5:compiler.err.annotation.type.not.applicable
+
+

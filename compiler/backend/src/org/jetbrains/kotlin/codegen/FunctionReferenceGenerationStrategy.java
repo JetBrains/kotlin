@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -133,8 +134,14 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     }
 
     private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
-        for (ValueParameterDescriptor parameter : callableDescriptor.getValueParameters()) {
-            ValueArgument fakeArgument = fakeArguments.get(parameter.getIndex());
+        int receivers = (referencedFunction.getDispatchReceiverParameter() != null ? 1 : 0) +
+                        (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0);
+
+        List<ValueParameterDescriptor> parameters = KotlinPackage.drop(callableDescriptor.getValueParameters(), receivers);
+        for (int i = 0; i < parameters.size(); i++) {
+            ValueParameterDescriptor parameter = parameters.get(i);
+            ValueArgument fakeArgument = fakeArguments.get(i);
+
             Type type = state.getTypeMapper().mapType(parameter);
             int localIndex = codegen.myFrameMap.getIndex(parameter);
             codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));

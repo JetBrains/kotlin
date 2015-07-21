@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -75,14 +76,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     private static JsNode translateConstantExpression(@NotNull JetConstantExpression expression, @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
-
         assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
-
-        if (compileTimeValue instanceof NullValue) {
+        JetType expectedType = context.bindingContext().getType(expression);
+        ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
+        if (constant instanceof NullValue) {
             return JsLiteral.NULL;
         }
-
-        Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
+        Object value = constant.getValue();
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return context.program().getNumberLiteral(((Number) value).intValue());
         }

@@ -72,15 +72,13 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     }
 
     private fun getAndroidResPath(module: JpsModule): String? {
-        val extension = AndroidJpsUtil.getExtension(module)
-        if (extension == null) return null
+        val extension = AndroidJpsUtil.getExtension(module) ?: return null
         val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
         return File(path!!.getAbsolutePath() + "/layout").getAbsolutePath()
     }
 
     private fun getAndroidManifest(module: JpsModule): String? {
-        val extension = AndroidJpsUtil.getExtension(module)
-        if (extension == null) return null
+        val extension = AndroidJpsUtil.getExtension(module) ?: return null
         return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.getAbsolutePath()
     }
 

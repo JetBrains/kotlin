@@ -68,7 +68,7 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
     private inner class UseAccessorsJavaCodeProcessor : ExternalCodeProcessor {
         private val factory = PsiElementFactory.SERVICE.getInstance(field.getProject())
 
-        override fun processUsage(reference: PsiReference): Collection<PsiReference>? {
+        override fun processUsage(reference: PsiReference): Array<PsiReference>? {
             val refExpr = reference.getElement() as? PsiReferenceExpression ?: return null
             val qualifier = refExpr.getQualifierExpression()
 
@@ -78,7 +78,7 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
                     if (refExpr == parent.getLExpression()) {
                         if (parent.getOperationTokenType() == JavaTokenType.EQ) {
                             val callExpr = parent.replace(generateSetterCall(qualifier, parent.getRExpression() ?: return null)) as PsiMethodCallExpression
-                            return listOf(callExpr.getMethodExpression())
+                            return arrayOf(callExpr.getMethodExpression())
                         }
                         else {
                             val assignmentOpText = parent.getOperationSign().getText()
@@ -107,11 +107,11 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
             }
 
             val callExpr = refExpr.replace(generateGetterCall(qualifier)) as PsiMethodCallExpression
-            return listOf(callExpr.getMethodExpression())
+            return arrayOf(callExpr.getMethodExpression())
         }
 
         //TODO: what if qualifier has side effects?
-        private fun PsiExpression.replaceWithModificationCalls(qualifier: PsiExpression?, op: String, value: PsiExpression): Collection<PsiReference> {
+        private fun PsiExpression.replaceWithModificationCalls(qualifier: PsiExpression?, op: String, value: PsiExpression): Array<PsiReference> {
             var getCall = generateGetterCall(qualifier)
 
             var binary = factory.createExpressionFromText("x $op y", null) as PsiBinaryExpression
@@ -124,7 +124,7 @@ class FieldToPropertyProcessing(val field: PsiField, val propertyName: String, v
             binary = setCall.getArgumentList().getExpressions().single() as PsiBinaryExpression
             getCall = binary.getLOperand() as PsiMethodCallExpression
 
-            return listOf(getCall.getMethodExpression().getReference(), setCall.getMethodExpression().getReference())
+            return arrayOf(getCall.getMethodExpression(), setCall.getMethodExpression())
         }
 
         private fun generateGetterCall(qualifier: PsiExpression?): PsiMethodCallExpression {

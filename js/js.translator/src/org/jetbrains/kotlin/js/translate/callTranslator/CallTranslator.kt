@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.Call.CallType
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -102,7 +102,7 @@ private fun translateCall(context: TranslationContext,
     }
 
     val call = resolvedCall.getCall()
-    if (call.getCallType() == CallType.INVOKE && !CallResolverUtil.isInvokeCallOnVariable(call)) {
+    if (call.getCallType() == CallType.INVOKE && !isInvokeCallOnVariable(call)) {
         val explicitReceiversForInvoke = computeExplicitReceiversForInvoke(context, resolvedCall, explicitReceivers)
         return translateFunctionCall(context, resolvedCall, explicitReceiversForInvoke)
     }
@@ -154,7 +154,7 @@ fun computeExplicitReceiversForInvoke(
     }
 }
 
-trait CallCase<I : CallInfo> {
+interface CallCase<I : CallInfo> {
 
     protected fun I.unsupported(message: String = "") : Nothing = throw IllegalStateException("this case unsupported. $this")
 
@@ -183,11 +183,11 @@ trait CallCase<I : CallInfo> {
     }
 }
 
-trait FunctionCallCase : CallCase<FunctionCallInfo>
+interface FunctionCallCase : CallCase<FunctionCallInfo>
 
-trait VariableAccessCase : CallCase<VariableAccessInfo>
+interface VariableAccessCase : CallCase<VariableAccessInfo>
 
-trait DelegateIntrinsic<I : CallInfo> {
+interface DelegateIntrinsic<I : CallInfo> {
     fun I.canBeApply(): Boolean = true
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>

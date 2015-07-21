@@ -46,7 +46,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 BYTE, CHAR, SHORT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start.toInt() + end)"
+                "        if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())"
                 INT -> "=\n" +
                 "        if (isEmpty()) -1 else (31 * start + end)"
                 LONG -> "=\n" +

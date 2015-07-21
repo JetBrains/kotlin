@@ -29,13 +29,12 @@ import kotlin.properties.Delegates
 
 public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
-    override val packages: List<FqName> = listOf(FqName("kotlin"))
+    override fun getPackages(): List<FqName> = listOf(FqName("kotlin"))
 
-    override val topLevelMembers: Map<String, String> = mapOf("kotlin" to "linkedListOf")
+    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin" to "linkedListOf")
 
-    override val virtualFileFinder: VirtualFileFinder by Delegates.lazy() {
+    override fun getVirtualFileFinder(): VirtualFileFinder =
         JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-    }
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledText(packageFile, it) } ?: buildDecompiledText(packageFile)).text

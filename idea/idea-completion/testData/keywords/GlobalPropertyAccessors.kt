@@ -10,7 +10,6 @@ var a : Int
   <caret>
 
 // EXIST:  abstract
-// EXIST:  annotation
 // EXIST: by
 // EXIST:  class
 // EXIST:  enum

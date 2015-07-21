@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.utils.KotlinFrontEndException;
 
@@ -37,6 +40,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_R
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
+
+    public static final PerformanceCounter typeInfoPerfCounter = PerformanceCounter.Companion.create("Type info", true);
 
     public interface StatementVisitorProvider {
         ExpressionTypingVisitorForStatements get(@NotNull ExpressionTypingContext context);
@@ -139,7 +144,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     @Override
     @NotNull
     public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
-        return getTypeInfo(expression, context, this);
+        JetTypeInfo result = getTypeInfo(expression, context, this);
+        AnnotationTargetChecker.INSTANCE$.checkExpression(expression, context.trace);
+        return result;
     }
 
     @Override
@@ -161,50 +168,55 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
 
     @NotNull
-    private static JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
-        try {
-            JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
-            if (recordedTypeInfo != null) {
-                return recordedTypeInfo;
-            }
-            JetTypeInfo result;
-            try {
-                result = expression.accept(visitor, context);
-                // Some recursive definitions (object expressions) must put their types in the cache manually:
-                //noinspection ConstantConditions
-                if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                    JetType type = context.trace.getBindingContext().getType(expression);
-                    return result.replaceType(type);
-                }
+    private static JetTypeInfo getTypeInfo(@NotNull final JetExpression expression, final ExpressionTypingContext context, final JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
+        return typeInfoPerfCounter.time(new Function0<JetTypeInfo>() {
+            @Override
+            public JetTypeInfo invoke() {
+                try {
+                    JetTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
+                    if (recordedTypeInfo != null) {
+                        return recordedTypeInfo;
+                    }
+                    JetTypeInfo result;
+                    try {
+                        result = expression.accept(visitor, context);
+                        // Some recursive definitions (object expressions) must put their types in the cache manually:
+                        //noinspection ConstantConditions
+                        if (context.trace.get(BindingContext.PROCESSED, expression)) {
+                            JetType type = context.trace.getBindingContext().getType(expression);
+                            return result.replaceType(type);
+                        }
 
-                if (result.getType() instanceof DeferredType) {
-                    result = result.replaceType(((DeferredType) result.getType()).getDelegate());
-                }
-                context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
-            }
-            catch (ReenteringLazyValueComputationException e) {
-                context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
-                result = TypeInfoFactoryPackage.noTypeInfo(context);
-            }
+                        if (result.getType() instanceof DeferredType) {
+                            result = result.replaceType(((DeferredType) result.getType()).getDelegate());
+                        }
+                        context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
+                    }
+                    catch (ReenteringLazyValueComputationException e) {
+                        context.trace.report(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(expression));
+                        result = TypeInfoFactoryPackage.noTypeInfo(context);
+                    }
 
-            context.trace.record(BindingContext.PROCESSED, expression);
-            recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
-            return result;
-        }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
-        catch (KotlinFrontEndException e) {
-            throw e;
-        }
-        catch (Throwable e) {
-            context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
-            logOrThrowException(expression, e);
-            return TypeInfoFactoryPackage.createTypeInfo(
-                    ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"), 
-                    context
-            );        
-        }
+                    context.trace.record(BindingContext.PROCESSED, expression);
+                    recordScopeAndDataFlowInfo(context.replaceDataFlowInfo(result.getDataFlowInfo()), expression);
+                    return result;
+                }
+                catch (ProcessCanceledException e) {
+                    throw e;
+                }
+                catch (KotlinFrontEndException e) {
+                    throw e;
+                }
+                catch (Throwable e) {
+                    context.trace.report(Errors.EXCEPTION_FROM_ANALYZER.on(expression, e));
+                    logOrThrowException(expression, e);
+                    return TypeInfoFactoryPackage.createTypeInfo(
+                            ErrorUtils.createErrorType(e.getClass().getSimpleName() + " from analyzer"),
+                            context
+                    );
+                }
+            }
+        });
     }
 
     private static void logOrThrowException(@NotNull JetExpression expression, Throwable e) {

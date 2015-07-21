@@ -1,7 +1,4 @@
-import java.lang.annotation.*
-
-Retention(RetentionPolicy.RUNTIME)
-annotation class First
+annotation(retention = AnnotationRetention.RUNTIME) class First
 
 class MyClass() {
     public var x: String by Delegate()

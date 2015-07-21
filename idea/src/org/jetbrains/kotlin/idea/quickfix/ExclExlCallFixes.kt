@@ -50,7 +50,7 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val postfixExpression = getExclExclPostfixExpression() ?: return
-        val expression = JetPsiFactory(project).createExpression(postfixExpression.getBaseExpression().getText())
+        val expression = JetPsiFactory(project).createExpression(postfixExpression.getBaseExpression()!!.getText())
         postfixExpression.replace(expression)
     }
 

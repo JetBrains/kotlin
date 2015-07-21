@@ -64,4 +64,9 @@ fun test() {
     val tt = A.T()
     t.bar(2)
     val fff = A.T::bar
+
+    class LocalClass(val localClassProperty: Int) {
+    }
+
+    LocalClass(localClassProperty = 1).localClassProperty
 }

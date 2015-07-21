@@ -115,6 +115,6 @@ public class DescriptorFactory {
     ) {
         return receiverParameterType == null
                ? NO_RECEIVER_PARAMETER
-               : new ReceiverParameterDescriptorImpl(owner, receiverParameterType, new ExtensionReceiver(owner, receiverParameterType));
+               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType));
     }
 }

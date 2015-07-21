@@ -17,9 +17,19 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.changeSignature.JavaChangeInfo
 import com.intellij.usageView.UsageInfo
 
 public class KotlinWrapperForJavaUsageInfos(
+        val javaChangeInfo: JavaChangeInfo,
         val javaUsageInfos: Array<UsageInfo>,
         val primaryMethod: PsiElement
-): UsageInfo(primaryMethod)
+): UsageInfo(primaryMethod) {
+    override fun hashCode(): Int {
+        return javaChangeInfo.getMethod().hashCode();
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other == this || (other is KotlinWrapperForJavaUsageInfos && javaChangeInfo.getMethod() == other.javaChangeInfo.getMethod())
+    }
+}

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.synthetic.AdditionalScopesWithJavaSyntheticExtensions
 
 public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: GlobalSearchScope, project: Project) {
     useInstance(moduleContentScope)
@@ -65,13 +66,14 @@ public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentS
     useImpl<JavaSourceElementFactoryImpl>()
     useImpl<JavaLazyAnalyzerPostConstruct>()
     useImpl<JavaFlexibleTypeCapabilitiesProvider>()
+    useImpl<AdditionalScopesWithJavaSyntheticExtensions>()
 }
 
 public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver
 ): Pair<ResolveSession, JavaDescriptorResolver> = createContainer("LazyResolveWithJava") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
+    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
 
     useInstance(moduleClassResolver)
@@ -92,8 +94,9 @@ public fun createContainerForTopDownAnalyzerForJvm(
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
+    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
+
     useInstance(declarationProviderFactory)
     useInstance(BodyResolveCache.ThrowException)
 

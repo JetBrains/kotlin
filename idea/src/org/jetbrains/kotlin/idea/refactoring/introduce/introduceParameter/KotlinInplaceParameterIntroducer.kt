@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntr
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
-import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
@@ -135,7 +135,7 @@ public class KotlinInplaceParameterIntroducer(
                     val parameterText = if (parameter == addedParameter){
                         val parameterName = currentName ?: parameter.getName()
                         val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
-                        descriptor = descriptor.copy(newParameterName = parameterName, newParameterTypeText = parameterType)
+                        descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
                         val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
                         val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
@@ -250,7 +250,7 @@ public class KotlinInplaceParameterIntroducer(
         return descriptor.copy(
                 originalRange = originalRange,
                 occurrencesToReplace = if (replaceAll) getOccurrences().map { it.toRange() } else originalRange.singletonList(),
-                newArgumentValue = getExpr()
+                newArgumentValue = getExpr()!!
         )
     }
 

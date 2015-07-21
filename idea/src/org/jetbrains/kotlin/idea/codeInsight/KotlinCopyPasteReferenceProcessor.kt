@@ -42,15 +42,15 @@ import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.references.JetMultiReference
-import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -138,37 +138,31 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.accept(object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element.javaClass in IGNORE_REFERENCES_INSIDE) return
+        element.forEachDescendantOfType<JetElement>(canGoInside = { it.javaClass !in IGNORE_REFERENCES_INSIDE }) { element ->
+            val reference = element.mainReference ?: return@forEachDescendantOfType
 
-                element.acceptChildren(this)
+            val descriptors = reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
+            //check whether this reference is unambiguous
+            if (reference !is JetMultiReference<*> && descriptors.size() > 1) return@forEachDescendantOfType
 
-                val reference = element.getReference() as? JetReference ?: return
+            for (descriptor in descriptors) {
+                val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
+                val declaration = declarations.singleOrNull()
+                if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
-                val descriptors = reference.resolveToDescriptors((element as JetElement).analyze()) //TODO: we could use partial body resolve for all references together
-                //check whether this reference is unambiguous
-                if (reference !is JetMultiReference<*> && descriptors.size() > 1) return
-
-                for (descriptor in descriptors) {
-                    val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
-                    val declaration = declarations.singleOrNull()
-                    if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
-
-                    if (!descriptor.isExtension) {
-                        if (element !is JetNameReferenceExpression) continue
-                        if (element.getIdentifier() == null) continue // skip 'this' etc
-                        if (element.getReceiverExpression() != null) continue
-                    }
-
-                    val fqName = descriptor.importableFqName ?: continue
-                    if (!descriptor.canBeReferencedViaImport()) continue
-
-                    val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
-                    add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
+                if (!descriptor.isExtension) {
+                    if (element !is JetNameReferenceExpression) continue
+                    if (element.getIdentifier() == null) continue // skip 'this' etc
+                    if (element.getReceiverExpression() != null) continue
                 }
+
+                val fqName = descriptor.importableFqName ?: continue
+                if (!descriptor.canBeReferencedViaImport()) continue
+
+                val kind = KotlinReferenceData.Kind.fromDescriptor(descriptor) ?: continue
+                add(KotlinReferenceData(element.range.start - startOffset, element.range.end - startOffset, fqName.asString(), kind))
             }
-        })
+        }
     }
 
     private data class ReferenceToRestoreData(
@@ -213,36 +207,30 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         val fileResolutionScope = file.getResolutionFacade().getFileTopLevelScope(file)
         return referenceData.map {
-            val referenceElement = findReference(it, file, blockStart)
-            if (referenceElement != null)
-                createReferenceToRestoreData(referenceElement, it, file, fileResolutionScope)
+            val reference = findReference(it, file, blockStart)
+            if (reference != null)
+                createReferenceToRestoreData(reference, it, file, fileResolutionScope)
             else
                 null
         }.filterNotNull()
     }
 
-    private fun findReference(data: KotlinReferenceData, file: JetFile, blockStart: Int): JetElement? {
+    private fun findReference(data: KotlinReferenceData, file: JetFile, blockStart: Int): JetReference? {
         val startOffset = data.startOffset + blockStart
         val endOffset = data.endOffset + blockStart
-        val element = file.findElementAt(startOffset)
+        val element = file.findElementAt(startOffset) ?: return null
         val desiredRange = TextRange(startOffset, endOffset)
-        var expression = element
-        while (expression != null) {
-            val range = expression!!.range
-            if (range == desiredRange && expression!!.getReference() != null) {
-                return expression as? JetElement
+        for (current in element.parentsWithSelf) {
+            val range = current.range
+            if (current is JetElement && range == desiredRange) {
+                current.mainReference?.let { return it }
             }
-            if (range in desiredRange) {
-                expression = expression!!.getParent()
-            }
-            else {
-                return null
-            }
+            if (range !in desiredRange) return null
         }
         return null
     }
 
-    private fun createReferenceToRestoreData(element: JetElement, refData: KotlinReferenceData, file: JetFile, fileResolutionScope: JetScope): ReferenceToRestoreData? {
+    private fun createReferenceToRestoreData(reference: JetReference, refData: KotlinReferenceData, file: JetFile, fileResolutionScope: JetScope): ReferenceToRestoreData? {
         val originalFqName = FqName(refData.fqName)
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
@@ -252,12 +240,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             if (fileResolutionScope.getProperties(originalFqName.shortName()).any { it.importableFqName == originalFqName }) return null // already imported
         }
 
-        val reference = element.getReference() as? JetReference ?: return null
         val referencedDescriptors = try {
-            reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
+            reference.resolveToDescriptors(reference.getElement().analyze()) //TODO: we could use partial body resolve for all references together
         }
         catch (e: Throwable) {
-            LOG.error("Failed to analyze reference (${element.getText()}) after copy paste", e)
+            LOG.error("Failed to analyze reference ($reference) after copy paste", e)
             return null
         }
         val referencedFqNames = referencedDescriptors
@@ -303,7 +290,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {
-            val reference = pointer.getElement().getReference() as JetSimpleNameReference
+            val reference = pointer.getElement()!!.mainReference
             reference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
         }
         performDelayedShortening(file.getProject())

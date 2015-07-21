@@ -20,6 +20,8 @@ private abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
     abstract protected fun T.getSize(): Int
 
     protected var position: Int = 0
+
+    @suppress("CAST_NEVER_SUCCEEDS")
     private val spreads: Array<T?> = arrayOfNulls<Any>(size) as Array<T?>
 
     public fun addSpread(spreadArgument: T) {
@@ -41,17 +43,17 @@ private abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
             val spreadArgument = spreads[i]
             if (spreadArgument != null) {
                 if (copyValuesFrom < i) {
-                    System.arraycopy(values, copyValuesFrom, result, dstIndex, i-copyValuesFrom)
+                    System.arraycopy(values, copyValuesFrom, result, dstIndex, i - copyValuesFrom)
                     dstIndex += i - copyValuesFrom
                 }
                 val spreadSize = spreadArgument.getSize()
                 System.arraycopy(spreadArgument, 0, result, dstIndex, spreadSize)
                 dstIndex += spreadSize
-                copyValuesFrom = i+1
+                copyValuesFrom = i + 1
             }
         }
         if (copyValuesFrom < size) {
-            System.arraycopy(values, copyValuesFrom, result, dstIndex, size-copyValuesFrom)
+            System.arraycopy(values, copyValuesFrom, result, dstIndex, size - copyValuesFrom)
         }
 
         return result

@@ -115,7 +115,7 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
         return CreateParameterFromUsageFix(
                 functionDescriptor,
                 context,
-                JetParameterInfo(functionDescriptor = functionDescriptor,
+                JetParameterInfo(callableDescriptor = functionDescriptor,
                                  name = refExpr.getReferencedName(),
                                  type = paramType,
                                  valOrVar = valOrVar),

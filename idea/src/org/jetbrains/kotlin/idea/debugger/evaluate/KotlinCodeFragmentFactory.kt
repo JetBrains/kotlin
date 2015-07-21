@@ -131,10 +131,11 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
 
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
-            if (expressionAtOffset != null) {
+            if (expressionAtOffset != null && KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(elementAt)) {
                 return expressionAtOffset
             }
-            return KotlinEditorTextProvider.findExpressionInner(elementAt, true)
+
+            return KotlinEditorTextProvider.findExpressionInner(elementAt, true) ?: elementAt.getContainingFile()
         }
 
         //internal for tests

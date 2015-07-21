@@ -26,13 +26,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.diagnostics.*;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 
 import java.util.*;
@@ -150,6 +150,8 @@ public class ModifiersChecker {
         }
         checkPlatformNameApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
+        AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace,
+                                                descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
     }
 
     private void checkVarargsModifiers(@NotNull JetDeclaration owner, @NotNull MemberDescriptor descriptor) {
@@ -163,6 +165,8 @@ public class ModifiersChecker {
         reportIllegalVisibilityModifiers(modifierListOwner);
         checkPlatformNameApplicability(descriptor);
         runDeclarationCheckers(modifierListOwner, descriptor);
+        AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace,
+                                                descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
     }
 
     public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
@@ -300,9 +304,9 @@ public class ModifiersChecker {
         }
 
         String value = null;
-        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
         if (!values.isEmpty()) {
-            CompileTimeConstant<?> name = values.iterator().next();
+            ConstantValue<?> name = values.iterator().next();
             if (name instanceof StringValue) {
                 value = ((StringValue) name).getValue();
             }
@@ -421,7 +425,7 @@ public class ModifiersChecker {
 
     private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
         for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
-            checker.check(declaration, descriptor, trace);
+            checker.check(declaration, descriptor, trace, trace.getBindingContext());
         }
     }
 

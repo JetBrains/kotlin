@@ -16,18 +16,13 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.TypeProjection
-import java.util.LinkedHashMap
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import java.util.LinkedHashMap
 
 private fun getTypeSubstitution(baseType: JetType, derivedType: JetType): LinkedHashMap<TypeConstructor, TypeProjection>? {
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
@@ -40,15 +35,15 @@ private fun getTypeSubstitution(baseType: JetType, derivedType: JetType): Linked
     return substitution
 }
 
-private fun getFunctionSubstitution(
-        baseFunction: FunctionDescriptor,
-        derivedFunction: FunctionDescriptor
+private fun getCallableSubstitution(
+        baseCallable: CallableDescriptor,
+        derivedCallable: CallableDescriptor
 ): MutableMap<TypeConstructor, TypeProjection>? {
-    val baseClass = baseFunction.getContainingDeclaration() as? ClassDescriptor ?: return null
-    val derivedClass = derivedFunction.getContainingDeclaration() as? ClassDescriptor ?: return null
+    val baseClass = baseCallable.getContainingDeclaration() as? ClassDescriptor ?: return null
+    val derivedClass = derivedCallable.getContainingDeclaration() as? ClassDescriptor ?: return null
     val substitution = getTypeSubstitution(baseClass.getDefaultType(), derivedClass.getDefaultType()) ?: return null
 
-    for ((baseParam, derivedParam) in baseFunction.getTypeParameters() zip derivedFunction.getTypeParameters()) {
+    for ((baseParam, derivedParam) in baseCallable.getTypeParameters() zip derivedCallable.getTypeParameters()) {
         substitution[baseParam.getTypeConstructor()] = TypeProjectionImpl(derivedParam.getDefaultType())
     }
 
@@ -59,15 +54,15 @@ fun getTypeSubstitutor(baseType: JetType, derivedType: JetType): TypeSubstitutor
     return getTypeSubstitution(baseType, derivedType)?.let { TypeSubstitutor.create(it) }
 }
 
-fun getFunctionSubstitutor(
-        baseFunction: JetFunctionDefinitionUsage<*>,
-        derivedFunction: JetFunctionDefinitionUsage<*>
+fun getCallableSubstitutor(
+        baseFunction: JetCallableDefinitionUsage<*>,
+        derivedCallable: JetCallableDefinitionUsage<*>
 ): TypeSubstitutor? {
-    val currentBaseFunction = baseFunction.getCurrentFunctionDescriptor()
-    val currentDerivedFunction = derivedFunction.getCurrentFunctionDescriptor()
+    val currentBaseFunction = baseFunction.getCurrentCallableDescriptor()
+    val currentDerivedFunction = derivedCallable.getCurrentCallableDescriptor()
     if (currentBaseFunction == null || currentDerivedFunction == null) return null
 
-    return getFunctionSubstitution(currentBaseFunction, currentDerivedFunction)?.let { TypeSubstitutor.create(it) }
+    return getCallableSubstitution(currentBaseFunction, currentDerivedFunction)?.let { TypeSubstitutor.create(it) }
 }
 
 fun JetType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {

@@ -35,14 +35,13 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.utils.HashSetUtil;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
@@ -53,14 +52,11 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 
 public class OverrideResolver {
 
-    private BindingTrace trace;
+    @NotNull private final BindingTrace trace;
 
-    @Inject
-    public void setTrace(BindingTrace trace) {
+    public OverrideResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
-
-
 
     public void check(@NotNull TopDownAnalysisContext c) {
         checkVisibility(c);
@@ -361,7 +357,7 @@ public class OverrideResolver {
             @NotNull List<CallableMemberDescriptor> concreteOverridden
     ) {
         for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(overridden)) {
+            if (!CallResolverUtilPackage.isOrOverridesSynthesized(overridden)) {
                 if (overridden.getModality() == Modality.ABSTRACT) {
                     abstractOverridden.add(overridden);
                 }

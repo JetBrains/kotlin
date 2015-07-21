@@ -51,7 +51,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
     private JetScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
-    private final JetScope scopeForMemberLookup;
+    private final JetScope unsubstitutedMemberScope;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     public MutableClassDescriptor(
@@ -70,7 +70,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
+        this.unsubstitutedMemberScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
                                         .changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
@@ -256,8 +256,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Override
     @NotNull
-    public JetScope getScopeForMemberLookup() {
-        return scopeForMemberLookup;
+    public JetScope getUnsubstitutedMemberScope() {
+        return unsubstitutedMemberScope;
     }
 
     @NotNull

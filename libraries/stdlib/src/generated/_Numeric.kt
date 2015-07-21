@@ -421,7 +421,7 @@ public fun IntArray.sum(): Int {
 platformName("sumOfLong")
 public fun Iterable<Long>.sum(): Long {
     val iterator = iterator()
-    var sum: Long = 0
+    var sum: Long = 0L
     while (iterator.hasNext()) {
         sum += iterator.next()
     }
@@ -434,7 +434,7 @@ public fun Iterable<Long>.sum(): Long {
 platformName("sumOfLong")
 public fun Sequence<Long>.sum(): Long {
     val iterator = iterator()
-    var sum: Long = 0
+    var sum: Long = 0L
     while (iterator.hasNext()) {
         sum += iterator.next()
     }
@@ -447,7 +447,7 @@ public fun Sequence<Long>.sum(): Long {
 platformName("sumOfLong")
 public fun Array<out Long>.sum(): Long {
     val iterator = iterator()
-    var sum: Long = 0
+    var sum: Long = 0L
     while (iterator.hasNext()) {
         sum += iterator.next()
     }
@@ -459,7 +459,7 @@ public fun Array<out Long>.sum(): Long {
  */
 public fun LongArray.sum(): Long {
     val iterator = iterator()
-    var sum: Long = 0
+    var sum: Long = 0L
     while (iterator.hasNext()) {
         sum += iterator.next()
     }

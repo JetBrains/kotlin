@@ -1,0 +1,5 @@
+VARIABLES T P E
+
+T <: Producer<P>
+P <: Producer<E>
+E <: Producer<P>

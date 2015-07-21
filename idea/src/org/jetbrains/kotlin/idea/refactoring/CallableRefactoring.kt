@@ -50,7 +50,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
         val bindingContext: BindingContext,
-        val commandName: String?) {
+        val commandName: String) {
     private val LOG = Logger.getInstance(javaClass<CallableRefactoring<*>>())
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.getKind() ?: CallableMemberDescriptor.Kind.DECLARATION
@@ -150,7 +150,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             return true
         }
 
-        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations == closestModifiableDescriptors) {
+        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations.subtract(closestModifiableDescriptors).isEmpty()) {
             performRefactoring(closestModifiableDescriptors)
             return true
         }

@@ -16,23 +16,41 @@
 
 package org.jetbrains.kotlin.types.typeUtil
 
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.Flexibility
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.utils.toReadOnlyList
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.DelegatingType
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.utils.toReadOnlyList
+import java.util.*
+
+public enum class TypeNullability {
+    NOT_NULL,
+    NULLABLE,
+    FLEXIBLE
+}
+
+public fun JetType.nullability(): TypeNullability {
+    return when {
+        isNullabilityFlexible() -> TypeNullability.FLEXIBLE
+        TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
+        else -> TypeNullability.NOT_NULL
+    }
+}
+
+fun JetType.makeNullable() = TypeUtils.makeNullable(this)
+fun JetType.makeNotNullable() = TypeUtils.makeNotNullable(this)
+
+fun JetType.supertypes(): Set<JetType> = TypeUtils.getAllSupertypes(this)
+
+fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
+fun JetType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
+fun JetType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 
 private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
@@ -63,7 +81,8 @@ fun DeclarationDescriptor.getCapturedTypeParameters(): Collection<TypeParameterD
 
 public fun JetType.getContainedAndCapturedTypeParameterConstructors(): Collection<TypeConstructor> {
     // todo type arguments (instead of type parameters) of the type of outer class must be considered; KT-6325
-    val typeParameters = getContainedTypeParameters() + getConstructor().getDeclarationDescriptor().getCapturedTypeParameters()
+    val capturedTypeParameters = getConstructor().getDeclarationDescriptor()?.getCapturedTypeParameters() ?: emptyList()
+    val typeParameters = getContainedTypeParameters() + capturedTypeParameters
     return typeParameters.map { it.getTypeConstructor() }.toReadOnlyList()
 }
 
@@ -90,4 +109,21 @@ public fun JetTypeChecker.equalTypesOrNulls(type1: JetType?, type2: JetType?): B
     if (type1 identityEquals type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
+}
+
+fun JetType.getNestedArguments(): List<TypeProjection> {
+    val result = ArrayList<TypeProjection>()
+
+    val stack = ArrayDeque<TypeProjection>()
+    stack.push(TypeProjectionImpl(this))
+
+    while (!stack.isEmpty()) {
+        val typeProjection = stack.pop()
+        if (typeProjection.isStarProjection()) continue
+
+        result.add(typeProjection)
+
+        typeProjection.getType().getArguments().forEach { stack.add(it) }
+    }
+    return result
 }

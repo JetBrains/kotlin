@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
@@ -29,21 +30,24 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.PropertyCodegen;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -75,11 +79,11 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
     private static final ShortenReferences.Options SHORTEN_ARGUMENTS_OPTIONS = new ShortenReferences.Options(true, true);
 
-    private final JetFunctionDefinitionUsage<?> callee;
+    private final JetCallableDefinitionUsage<?> callee;
     private final BindingContext context;
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
 
-    public JetFunctionCallUsage(@NotNull JetCallElement element, JetFunctionDefinitionUsage callee) {
+    public JetFunctionCallUsage(@NotNull JetCallElement element, JetCallableDefinitionUsage callee) {
         super(element);
         this.callee = callee;
         this.context = ResolvePackage.analyze(element, BodyResolveMode.FULL);
@@ -87,18 +91,14 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     @Override
-    public boolean processUsage(JetChangeInfo changeInfo, JetCallElement element) {
-        if (changeInfo.isNameChanged()) {
-            JetExpression callee = element.getCalleeExpression();
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull JetCallElement element, @NotNull UsageInfo[] allUsages) {
+        if (shouldSkipUsage(element)) return true;
 
-            if (callee instanceof JetSimpleNameExpression) {
-                callee.replace(JetPsiFactory(getProject()).createSimpleName(changeInfo.getNewName()));
-            }
-        }
+        changeNameIfNeeded(changeInfo, element);
 
         if (element.getValueArgumentList() != null) {
             if (changeInfo.isParameterSetOrOrderChanged()) {
-                updateArgumentsAndReceiver(changeInfo, element);
+                updateArgumentsAndReceiver(changeInfo, element, allUsages);
             }
             else {
                 changeArgumentNames(changeInfo, element);
@@ -116,6 +116,44 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         return true;
+    }
+
+    private boolean shouldSkipUsage(JetCallElement element) {
+        // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
+        // TODO: Investigate why resolved call is not recorded for enum constructor call
+        if (resolvedCall == null && !(element instanceof JetDelegatorToSuperCall)) return true;
+        if (resolvedCall != null && !resolvedCall.getStatus().isSuccess()) {
+            for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {
+                if (!(resolvedCall.getArgumentMapping(valueArgument) instanceof ArgumentMatch)) return true;
+            }
+            Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = resolvedCall.getValueArguments();
+            for (ValueParameterDescriptor valueParameter : resolvedCall.getResultingDescriptor().getValueParameters()) {
+                if (!arguments.containsKey(valueParameter)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPropertyJavaUsage() {
+        PsiElement calleeElement = this.callee.getElement();
+        return (calleeElement instanceof JetProperty || calleeElement instanceof JetParameter)
+               && resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof JavaMethodDescriptor;
+    }
+
+    protected void changeNameIfNeeded(JetChangeInfo changeInfo, JetCallElement element) {
+        if (!changeInfo.isNameChanged()) return;
+
+        JetExpression callee = element.getCalleeExpression();
+        if (!(callee instanceof JetSimpleNameExpression)) return;
+
+        String newName = changeInfo.getNewName();
+        if (isPropertyJavaUsage()) {
+            String currentName = ((JetSimpleNameExpression) callee).getReferencedName();
+            if (currentName.startsWith(JvmAbi.GETTER_PREFIX)) newName = JvmAbi.getterName(newName);
+            else if (currentName.startsWith(JvmAbi.SETTER_PREFIX)) newName = JvmAbi.setterName(newName);
+        }
+
+        callee.replace(JetPsiFactory(getProject()).createSimpleName(newName));
     }
 
     @Nullable
@@ -283,10 +321,15 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return newExpression;
     }
 
-    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element) {
+    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element, @NotNull UsageInfo[] allUsages) {
         JetValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
         List<? extends ValueArgument> oldArguments = element.getValueArguments();
+
+        if (isPropertyJavaUsage()) {
+            updateJavaPropertyCall(changeInfo, element);
+            return;
+        }
 
         boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).isNamed();
         StringBuilder parametersBuilder = new StringBuilder("(");
@@ -306,11 +349,18 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
 
             JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
-            String defaultValueText = defaultValueForCall != null
-                                      ? substituteReferences(defaultValueForCall,
-                                                             parameterInfo.getDefaultValueParameterReferences(),
-                                                             psiFactory).getText()
-                                      : "";
+
+            String defaultValueText;
+            if (ChangeSignaturePackage.isInsideOfCallerBody(element, allUsages)) {
+                defaultValueText = parameterInfo.getName();
+            }
+            else {
+                defaultValueText = defaultValueForCall != null
+                                   ? substituteReferences(defaultValueForCall,
+                                                          parameterInfo.getDefaultValueParameterReferences(),
+                                                          psiFactory).getText()
+                                   : "";
+            }
 
             if (isNamedCall) {
                 String newName = parameterInfo.getInheritedName(callee);
@@ -388,7 +438,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         //TODO: this is not correct!
         JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArgumentList.getArguments());
-        boolean hasTrailingLambdaInArgumentListAfter = lastArgument != null && PsiPackage.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
+        boolean hasTrailingLambdaInArgumentListAfter =
+                lastArgument != null && PsiPackage.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
 
         arguments = (JetValueArgumentList) arguments.replace(newArgumentList);
 
@@ -432,6 +483,38 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                                       ? ((JetQualifiedExpression) newElement).getSelectorExpression()
                                       : newElement);
             CorePackage.moveFunctionLiteralOutsideParentheses(newCallExpression);
+        }
+    }
+
+    private static void updateJavaPropertyCall(JetChangeInfo changeInfo, JetCallElement element) {
+        JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
+        JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
+        if (newReceiverInfo == originalReceiverInfo) return;
+
+        JetValueArgumentList arguments = element.getValueArgumentList();
+        assert arguments != null : "Argument list is expected: " + element.getText();
+        List<? extends ValueArgument> oldArguments = element.getValueArguments();
+
+        JetPsiFactory psiFactory = new JetPsiFactory(element.getProject());
+
+        JetValueArgument firstArgument = oldArguments.isEmpty() ? null : (JetValueArgument) oldArguments.get(0);
+
+        if (newReceiverInfo == null) {
+            if (firstArgument != null) arguments.removeArgument(firstArgument);
+        }
+        else {
+            JetExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
+            if (defaultValueForCall == null) {
+                defaultValueForCall = psiFactory.createExpression("_");
+            }
+            JetValueArgument newReceiverArgument = psiFactory.createArgument(defaultValueForCall, null, false);
+
+            if (originalReceiverInfo != null) {
+                if (firstArgument != null) firstArgument.replace(newReceiverArgument);
+            }
+            else {
+                arguments.addArgumentAfter(newReceiverArgument, null);
+            }
         }
     }
 

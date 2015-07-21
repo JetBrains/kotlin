@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.resolve.calls.inference.InferencePackage;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
@@ -219,6 +220,14 @@ public class TypeSubstitutor {
             else {
                 // this is a simple type T or T?: if it's T, we should just take replacement, if T? - we make replacement nullable
                 substitutedType = TypeUtils.makeNullableIfNeeded(replacement.getType(), type.isMarkedNullable());
+            }
+
+            // substitutionType.annotations = replacement.annotations ++ type.annotations
+            if (!type.getAnnotations().isEmpty()) {
+                substitutedType = TypeUtilPackage.replaceAnnotations(
+                        substitutedType,
+                        new CompositeAnnotations(substitutedType.getAnnotations(), type.getAnnotations())
+                );
             }
 
             Variance resultingProjectionKind = varianceConflict == VarianceConflictType.NO_CONFLICT

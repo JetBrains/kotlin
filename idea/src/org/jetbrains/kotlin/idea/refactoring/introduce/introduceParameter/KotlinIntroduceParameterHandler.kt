@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
@@ -65,6 +66,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 import kotlin.test.fail
 
@@ -142,7 +146,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                 .forEach { methodDescriptor.removeParameter(it) }
                     }
 
-                    val parameterInfo = JetParameterInfo(functionDescriptor = callableDescriptor,
+                    val parameterInfo = JetParameterInfo(callableDescriptor = callableDescriptor,
                                                          name = newParameterName,
                                                          defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
                                                          defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
@@ -210,7 +214,7 @@ public open class KotlinIntroduceParameterHandler(
     open fun invoke(project: Project, editor: Editor, expression: JetExpression, targetParent: JetNamedDeclaration) {
         val context = expression.analyze()
 
-        val expressionType = context.getType(expression)
+        val expressionType = context.getType(expression)!!
         if (expressionType.isUnit() || expressionType.isNothing()) {
             val message = JetRefactoringBundle.message(
                     "cannot.introduce.parameter.of.0.type",
@@ -364,7 +368,7 @@ private fun findInternalUsagesOfParametersAndReceiver(
                     override fun visitThisExpression(expression: JetThisExpression) {
                         super.visitThisExpression(expression)
 
-                        if (expression.getInstanceReference().getReference()?.resolve() == targetDescriptor) {
+                        if (expression.getInstanceReference().mainReference.resolve() == targetDescriptor) {
                             usages.putValue(receiverTypeRef, expression)
                         }
                     }

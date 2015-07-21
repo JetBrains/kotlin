@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -104,9 +105,7 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
 }
 
 fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
-    val declaration = this.getReference()?.resolve() as JetDeclaration
-
-    if (declaration !is JetProperty) return
+    val declaration = this.mainReference.resolve() as? JetProperty ?: return
 
     val enclosingElement = JetPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
     val isLocal = enclosingElement != null

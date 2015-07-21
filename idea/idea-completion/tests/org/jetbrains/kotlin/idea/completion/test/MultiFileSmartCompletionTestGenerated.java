@@ -41,6 +41,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("CallablesInExcludedPackage")
+    public void testCallablesInExcludedPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallablesInExcludedPackage/");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionFromAnotherPackage")
     public void testFunctionFromAnotherPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/FunctionFromAnotherPackage/");

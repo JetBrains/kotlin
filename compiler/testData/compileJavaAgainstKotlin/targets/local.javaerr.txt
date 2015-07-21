@@ -1,0 +1,3 @@
+local.java:5:13:compiler.err.annotation.type.not.applicable
+
+

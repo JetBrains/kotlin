@@ -1,9 +1,5 @@
 enum class Color {
-    WHITE,
-    BLACK,
-    RED,
-    YELLOW,
-    BLUE;
+    WHITE, BLACK, RED, YELLOW, BLUE;
     override fun toString(): String {
         return "COLOR"
     }

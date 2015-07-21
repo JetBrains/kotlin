@@ -26,6 +26,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -86,7 +87,7 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
 
 private fun JetExpression.getRelevantFunction(): JetFunction? {
     if (this is JetReturnExpression) {
-        (this.getTargetLabel()?.getReference()?.resolve() as? JetFunction)?.let { return it }
+        (this.getTargetLabel()?.mainReference?.resolve() as? JetFunction)?.let { return it }
     }
     for (parent in parents) {
         if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as JetFunction, parent.analyze(), false)) {

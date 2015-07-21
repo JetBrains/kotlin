@@ -16,24 +16,20 @@ JetFile: ShebangIncorrect.kts
           PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting an element
+        PsiElement(HASH)('#')
       BINARY_EXPRESSION
-        PsiErrorElement:Tuples are not supported. Use data classes instead.
-          PsiElement(HASH)('#')
-          PsiElement(EXCL)('!')
-          PsiErrorElement:Expecting an expression
-            <empty list>
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE
+            PsiElement(EXCL)('!')
+          PsiErrorElement:Expecting an element
+            PsiElement(DIV)('/')
         OPERATION_REFERENCE
-          PsiElement(DIV)('/')
-        REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('usr')
-      PsiWhiteSpace('\n\n')
-      BINARY_EXPRESSION
-        PsiErrorElement:Tuples are not supported. Use data classes instead.
+        PsiWhiteSpace('\n\n')
+        PsiErrorElement:Expecting an element
           PsiElement(HASH)('#')
-          PsiElement(EXCL)('!')
-          PsiErrorElement:Expecting an expression
-            <empty list>
-        OPERATION_REFERENCE
-          PsiElement(DIV)('/')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('hi')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(EXCL)('!')
+        PsiElement(DIV)('/')
+        PsiElement(IDENTIFIER)('hi')

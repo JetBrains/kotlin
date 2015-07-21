@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.*;
 import com.intellij.util.Alarm;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.AbsentSdkAnnotationsNotificationManager;
@@ -45,6 +46,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Deprecated after moving to platform types.
+ */
+@Deprecated
 public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     public static final String EXTERNAL_ANNOTATIONS_GROUP_ID = "Kotlin External annotations";
     private volatile Alarm notificationAlarm;
@@ -133,8 +138,19 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     }
 
     private static boolean areAnnotationsCorrect(@NotNull Sdk sdk) {
-        return NotificationsPackage.isAndroidSdk(sdk)
-               ? KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk) && !KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)
-               : KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk);
+        if (NotificationsPackage.isAndroidSdk(sdk)) {
+            return KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk) && !KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk);
+        }
+        else if (!isAndroidStudio()) {
+            return KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk);
+        }
+        else {
+            // Android studio always recreates standard sdk from scratch so any addition configuration will be lost
+            return true;
+        }
+    }
+
+    private static boolean isAndroidStudio() {
+        return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
     }
 }

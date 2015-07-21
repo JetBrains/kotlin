@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.compiled.ClsParameterImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.Visibilities;
+import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
@@ -28,9 +31,37 @@ import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collection;
 
-public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter> implements JavaValueParameter, JavaAnnotationOwnerImpl {
+public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
+        implements JavaValueParameter, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     public JavaValueParameterImpl(@NotNull PsiParameter psiParameter) {
         super(psiParameter);
+    }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi().getModifierList();
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return false;
+    }
+
+    @Override
+    public boolean isFinal() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return Visibilities.LOCAL;
     }
 
     @NotNull

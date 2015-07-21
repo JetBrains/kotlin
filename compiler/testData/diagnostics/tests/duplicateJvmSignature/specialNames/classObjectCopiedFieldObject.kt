@@ -11,11 +11,3 @@ class C {
     }
 
 }
-
-class D {
-    companion <!CONFLICTING_JVM_DECLARATIONS!>object<!> {
-        <!CONFLICTING_JVM_DECLARATIONS!>val `OBJECT$`<!> = this
-    }
-
-    val `OBJECT$` = D
-}

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 
-public trait ArgumentMapping {
+public interface ArgumentMapping {
     public fun isError(): Boolean
 }
 
@@ -33,7 +33,9 @@ public enum class ArgumentMatchStatus(val isError: Boolean = true) {
 
     // The case when there is no type mismatch, but parameter has uninferred types:
     // fun <T> foo(l: List<T>) {}; val l = foo(emptyList())
-    MATCH_MODULO_UNINFERRED_TYPES()
+    MATCH_MODULO_UNINFERRED_TYPES(),
+
+    UNKNOWN()
 }
 
 public trait ArgumentMatch : ArgumentMapping {
@@ -45,11 +47,14 @@ public trait ArgumentMatch : ArgumentMapping {
 
 class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): ArgumentMatch {
     private var _status: ArgumentMatchStatus? = null
+
     override val status: ArgumentMatchStatus
-        get() = _status!!
+        get() = _status ?: ArgumentMatchStatus.UNKNOWN
+
     fun recordMatchStatus(status: ArgumentMatchStatus) {
         _status = status
     }
+
     fun replaceValueParameter(newValueParameter: ValueParameterDescriptor): ArgumentMatchImpl {
         val newArgumentMatch = ArgumentMatchImpl(newValueParameter)
         newArgumentMatch._status = _status

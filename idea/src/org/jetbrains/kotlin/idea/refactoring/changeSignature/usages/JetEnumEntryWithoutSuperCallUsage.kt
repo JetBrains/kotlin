@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry): Boolean {
+    override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
         if (changeInfo.getNewParameters().size() > 0) {
             val psiFactory = JetPsiFactory(element)
 
@@ -35,8 +36,8 @@ public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsa
             ) as JetDelegatorToSuperCall
             element.addBefore(psiFactory.createColon(), delegatorToSuperCall)
 
-            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryFunction)
-                    .processUsage(changeInfo, delegatorToSuperCall)
+            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)
+                    .processUsage(changeInfo, delegatorToSuperCall, allUsages)
         }
 
         return true

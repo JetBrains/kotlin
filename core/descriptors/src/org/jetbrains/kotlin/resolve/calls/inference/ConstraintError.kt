@@ -16,16 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 
 open class ConstraintError(val constraintPosition: ConstraintPosition)
 
-class TypeConstructorMismatch(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
+class ParameterConstraintError(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
 class ErrorInConstrainingType(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
+class TypeInferenceError(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
+
 class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeParameterDescriptor): ConstraintError(constraintPosition)
 
-fun ConstraintError.substituteTypeVariable(substitution: (TypeParameterDescriptor) -> TypeParameterDescriptor) =
-        if (this is CannotCapture) CannotCapture(constraintPosition, substitution(typeVariable)) else this
+fun newTypeInferenceOrParameterConstraintError(constraintPosition: ConstraintPosition) =
+        if (constraintPosition.isParameter()) ParameterConstraintError(constraintPosition) else TypeInferenceError(constraintPosition)

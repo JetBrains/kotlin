@@ -40,10 +40,13 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
         //TODO: this is a temporary hack until we have built-ins in indices
         val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses()
-        val filteredBuiltIns = builtIns.filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
+        val filteredBuiltIns = builtIns
+                .filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         filteredBuiltIns.forEach { classDescriptorCollector(it) }
 
-        kotlinIndicesHelper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter).forEach { classDescriptorCollector(it) }
+        kotlinIndicesHelper
+                .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
+                .forEach { classDescriptorCollector(it) }
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
             addAdaptedJavaCompletion(javaClassCollector)
@@ -69,7 +72,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
-        if (!getName().contains('$')) return false // optimization to not analyze annotations of all classes
+        if (!getName()!!.contains('$')) return false // optimization to not analyze annotations of all classes
         return getModifierList()?.findAnnotation(javaClass<kotlin.jvm.internal.KotlinSyntheticClass>().getName()) != null
     }
 }

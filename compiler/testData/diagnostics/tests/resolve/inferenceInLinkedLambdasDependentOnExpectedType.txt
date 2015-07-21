@@ -1,0 +1,5 @@
+package
+
+internal fun </*0*/ T> emptyList(): kotlin.List<T>
+internal fun </*0*/ T> foo(/*0*/ f: () -> kotlin.Collection<T>, /*1*/ p: (T) -> kotlin.Boolean): kotlin.Collection<T>
+internal fun test(): kotlin.Collection<kotlin.Int>

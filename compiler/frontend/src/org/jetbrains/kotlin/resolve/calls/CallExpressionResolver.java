@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -61,15 +60,16 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class CallExpressionResolver {
 
     private final CallResolver callResolver;
-    private final KotlinBuiltIns builtIns;
+    private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
-    public CallExpressionResolver(@NotNull CallResolver callResolver, @NotNull KotlinBuiltIns builtIns) {
+    public CallExpressionResolver(@NotNull CallResolver callResolver, @NotNull ConstantExpressionEvaluator constantExpressionEvaluator) {
         this.callResolver = callResolver;
-        this.builtIns = builtIns;
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     private ExpressionTypingServices expressionTypingServices;
 
+    // component dependency cycle
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
@@ -269,7 +269,7 @@ public class CallExpressionResolver {
         else if (parent instanceof JetParameter) {
             JetClass jetClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
             if (jetClass != null) {
-                return jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD);
+                return jetClass.isAnnotation();
             }
         }
         return false;
@@ -370,9 +370,9 @@ public class CallExpressionResolver {
             context.trace.recordType(selectorExpression, selectorReturnType);
         }
 
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
-        if (value instanceof IntegerValueConstant && ((IntegerValueConstant) value).isPure()) {
-            return ExpressionTypingUtils.createCompileTimeConstantTypeInfo(value, expression, context, builtIns);
+        CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
+        if (value != null && value.getIsPure()) {
+            return ExpressionTypingUtils.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 
         JetTypeInfo typeInfo;

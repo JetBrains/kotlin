@@ -1,0 +1,12 @@
+package
+
+internal fun foo(/*0*/ javaClass: JavaClass<kotlin.String>): kotlin.Unit
+
+public open class JavaClass</*0*/ T> {
+    public constructor JavaClass</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getSomething(): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun setSomething(/*0*/ value: T!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

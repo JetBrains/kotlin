@@ -7,5 +7,5 @@ fun box(): String {
 
     val member = Local::foo
     val instance = Local()
-    return instance.member()
+    return member(instance)
 }

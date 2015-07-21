@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import kotlin.platform.platformStatic
 
 /**
- * Produces descriptors representing the fictitious classes for function types, such as kotlin.Function1 or kotlin.reflect.KMemberFunction0.
+ * Produces descriptors representing the fictitious classes for function types, such as kotlin.Function1 or kotlin.reflect.KFunction2.
  */
 public class BuiltInFictitiousFunctionClassFactory(
         private val storageManager: StorageManager,
@@ -37,17 +38,17 @@ public class BuiltInFictitiousFunctionClassFactory(
 
     companion object {
         platformStatic public fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
-            for (kind in FunctionClassDescriptor.Kinds.byPackage(packageFqName)) {
-                val prefix = kind.classNamePrefix
-                if (!className.startsWith(prefix)) continue
+            // There is no functions in kotlin.annotation package
+            if (packageFqName == KotlinBuiltIns.ANNOTATION_PACKAGE_FQ_NAME) return null
+            val kind = FunctionClassDescriptor.Kind.byPackage(packageFqName) ?: return null
 
-                val arity = toInt(className.substring(prefix.length())) ?: continue
+            val prefix = kind.classNamePrefix
+            if (!className.startsWith(prefix)) return null
 
-                // TODO: validate arity, should be <= 255 for functions, <= 254 for members/extensions
-                return KindWithArity(kind, arity)
-            }
+            val arity = toInt(className.substring(prefix.length())) ?: return null
 
-            return null
+            // TODO: validate arity, should be <= 255
+            return KindWithArity(kind, arity)
         }
 
         private fun toInt(s: String): Int? {
@@ -70,8 +71,7 @@ public class BuiltInFictitiousFunctionClassFactory(
         if ("Function" !in className) return null // An optimization
 
         val packageFqName = classId.getPackageFqName()
-        val kindWithArity = parseClassName(className, packageFqName) ?: return null
-        val (kind, arity) = kindWithArity // KT-5100
+        val (kind, arity) = parseClassName(className, packageFqName) ?: return null
 
         val containingPackageFragment = module.getPackage(packageFqName).fragments.single()
 

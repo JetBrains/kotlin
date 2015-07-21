@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-public class JetPackageDirective
-        extends JetModifierListOwnerStub<KotlinPlaceHolderStub<JetPackageDirective>>
-        implements JetReferenceExpression {
+public class JetPackageDirective extends JetModifierListOwnerStub<KotlinPlaceHolderStub<JetPackageDirective>> {
     private String qualifiedNameCache = null;
 
     public JetPackageDirective(@NotNull ASTNode node) {

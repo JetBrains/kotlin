@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -73,7 +75,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         builtIns = KotlinBuiltIns.getInstance();
 
-        ContainerForTests container = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule());
+        ModuleDescriptorImpl module = JetTestUtils.createEmptyModule();
+        ContainerForTests container = DiPackage.createContainerForTests(getProject(), module);
+        module.setDependencies(Collections.singletonList(module));
+        module.initialize(PackageFragmentProvider.Empty.INSTANCE$);
         typeResolver = container.getTypeResolver();
         expressionTypingServices = container.getExpressionTypingServices();
 
@@ -434,11 +439,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("1.plus(1.toLong())", "Long");
         assertType("1.plus(1)", "Int");
 
-        assertType("'1'.plus(1.toDouble())", "Double");
-        assertType("'1'.plus(1.toFloat())", "Float");
-        assertType("'1'.plus(1.toLong())", "Long");
-        assertType("'1'.plus(1)", "Int");
-        assertType("'1'.minus('1')", "Int"); // Plus is not available for char
+        assertType("'1'.plus(1)", "Char");
+        assertType("'1'.minus(1)", "Char");
+        assertType("'1'.minus('1')", "Int");
 
         assertType("(1:Short).plus(1.toDouble())", "Double");
         assertType("(1:Short).plus(1.toFloat())", "Float");
@@ -571,7 +574,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
                 return Lists.<ReceiverParameterDescriptor>newArrayList(new ReceiverParameterDescriptorImpl(
                         getContainingDeclaration(),
-                        thisType,
                         new ExpressionReceiver(JetPsiFactory(getProject()).createExpression(expression), thisType)
                 ));
             }

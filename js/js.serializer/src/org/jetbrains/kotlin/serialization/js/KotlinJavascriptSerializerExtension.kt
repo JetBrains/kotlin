@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtension
@@ -29,9 +28,12 @@ import org.jetbrains.kotlin.serialization.StringTable
 import org.jetbrains.kotlin.types.JetType
 
 public object KotlinJavascriptSerializerExtension : SerializerExtension() {
+
+    private val annotationSerializer = AnnotationSerializer()
+
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
         for (annotation in descriptor.getAnnotations()) {
-            proto.addExtension(JsProtoBuf.classAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(JsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
 
@@ -41,13 +43,13 @@ public object KotlinJavascriptSerializerExtension : SerializerExtension() {
             stringTable: StringTable
     ) {
         for (annotation in callable.getAnnotations()) {
-            proto.addExtension(JsProtoBuf.callableAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(JsProtoBuf.callableAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
         val propertyDescriptor = callable as? PropertyDescriptor ?: return
-        val compileTimeConstant = propertyDescriptor.getCompileTimeInitializer()
-        if (compileTimeConstant != null && compileTimeConstant !is NullValue) {
-            val type = compileTimeConstant.getType(propertyDescriptor.builtIns)
-            proto.setExtension(JsProtoBuf.compileTimeValue, AnnotationSerializer.valueProto(compileTimeConstant, type, stringTable).build())
+        val constantInitializer = propertyDescriptor.getCompileTimeInitializer()
+        if (constantInitializer != null && constantInitializer !is NullValue) {
+            val type = constantInitializer.type
+            proto.setExtension(JsProtoBuf.compileTimeValue, annotationSerializer.valueProto(constantInitializer, type, stringTable).build())
         }
     }
 
@@ -57,13 +59,13 @@ public object KotlinJavascriptSerializerExtension : SerializerExtension() {
             stringTable: StringTable
     ) {
         for (annotation in descriptor.getAnnotations()) {
-            proto.addExtension(JsProtoBuf.parameterAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(JsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
 
     override fun serializeType(type: JetType, proto: ProtoBuf.Type.Builder, stringTable: StringTable) {
         for (annotation in type.getAnnotations()) {
-            proto.addExtension(JsProtoBuf.typeAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+            proto.addExtension(JsProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
 }

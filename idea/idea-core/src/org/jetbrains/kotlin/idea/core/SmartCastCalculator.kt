@@ -32,7 +32,7 @@ import java.util.HashMap
 import java.util.HashSet
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 

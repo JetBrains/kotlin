@@ -206,6 +206,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
     private fun isEmptyConstructorNeeded(constructorDescriptor: ConstructorDescriptor, classOrObject: JetClassOrObject): Boolean {
         val classDescriptor = constructorDescriptor.getContainingDeclaration()
+        if (classDescriptor.getKind() != ClassKind.CLASS) return false
 
         if (classOrObject.isLocal()) return false
 

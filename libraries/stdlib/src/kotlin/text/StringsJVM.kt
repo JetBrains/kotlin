@@ -455,8 +455,8 @@ public val String.reader: StringReader
     get() = StringReader(this)
 
 /**
- * Returns a copy of this string capitalised if it is not empty or already starting with an upper case letter,
- * otherwise returns this.
+ * Returns a copy of this string having its first letter uppercased, or the original string,
+ * if it's empty or already starts with an upper case letter.
  *
  * @sample test.text.StringTest.capitalize
  */
@@ -465,8 +465,8 @@ public fun String.capitalize(): String {
 }
 
 /**
- * Returns a copy of this string with the first letter lowercased if it is not empty or already starting with
- * a lower case letter, otherwise returns this.
+ * Returns a copy of this string having its first letter lowercased, or the original string,
+ * if it's empty or already starts with a lower case letter.
  *
  * @sample test.text.StringTest.decapitalize
  */

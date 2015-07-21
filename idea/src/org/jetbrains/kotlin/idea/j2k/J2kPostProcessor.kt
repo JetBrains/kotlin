@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.j2k
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
@@ -188,4 +190,6 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
         }
     }
+
+    override fun simpleNameReference(nameExpression: JetSimpleNameExpression) = nameExpression.mainReference
 }

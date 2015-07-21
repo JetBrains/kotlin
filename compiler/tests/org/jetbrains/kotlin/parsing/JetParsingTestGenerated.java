@@ -259,6 +259,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumWithAnnotationKeyword.kt")
+        public void testEnumWithAnnotationKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumWithAnnotationKeyword.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Enums.kt")
         public void testEnums() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Enums.kt");
@@ -412,6 +418,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("Interface.kt")
         public void testInterface() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Interface.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("InterfaceWithEnumKeyword.kt")
+        public void testInterfaceWithEnumKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/InterfaceWithEnumKeyword.kt");
             doParsingTest(fileName);
         }
 
@@ -896,6 +908,57 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 @TestMetadata("withoutPackageWithSimpleAnnotation.kt")
                 public void testWithoutPackageWithSimpleAnnotation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFile/withoutPackageWithSimpleAnnotation.kt");
+                    doParsingTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/psi/annotation/options")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Options extends AbstractJetParsingTest {
+                public void testAllFilesPresentInOptions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/options"), Pattern.compile("^(.*)\\.kts?$"), true);
+                }
+
+                @TestMetadata("annotAsArgComplex.kt")
+                public void testAnnotAsArgComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotAsArgComplex.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("annotation.kt")
+                public void testAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotation.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("annotationAsArg.kt")
+                public void testAnnotationAsArg() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotationAsArg.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("annotationAsArgComplex.kt")
+                public void testAnnotationAsArgComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/annotationAsArgComplex.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("java.kt")
+                public void testJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/java.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("local.kt")
+                public void testLocal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/local.kt");
+                    doParsingTest(fileName);
+                }
+
+                @TestMetadata("options.kt")
+                public void testOptions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/options/options.kt");
                     doParsingTest(fileName);
                 }
             }

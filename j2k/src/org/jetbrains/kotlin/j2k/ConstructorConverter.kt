@@ -214,7 +214,11 @@ class ConstructorConverter(
                                   if (isVal(converter.referenceSearcher, field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                                   converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
                                   accessModifiers,
-                                  default).assignPrototypes(listOf(parameter, field), CommentsAndSpacesInheritance(blankLinesBefore = false))
+                                  default)
+                                .assignPrototypes(
+                                        PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
+                                        PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)
+                                )
                     }
                 },
                 correctCodeConverter = { correct() })
@@ -261,7 +265,7 @@ class ConstructorConverter(
             if (expression is PsiReferenceExpression && expression.getQualifier() == null) {
                 val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
                 if (replacement != null) {
-                    val target = expression.getReference()?.resolve()
+                    val target = expression.resolve()
                     if (target is PsiParameter) {
                         val scope = target.getDeclarationScope()
                         // we do not check for exactly this constructor because default values reference parameters in other constructors

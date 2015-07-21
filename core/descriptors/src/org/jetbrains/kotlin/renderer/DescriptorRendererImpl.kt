@@ -20,23 +20,20 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.DefaultAnnotationArgumentVisitor
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
-import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import org.jetbrains.kotlin.utils.*
-
-import java.util.*
-
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import java.util.ArrayList
 
 internal class DescriptorRendererImpl(
         val options: DescriptorRendererOptionsImpl
@@ -366,20 +363,29 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAndSortAnnotationArguments(descriptor: AnnotationDescriptor): List<String> {
-        return descriptor.getAllValueArguments().entrySet()
+        val allValueArguments = descriptor.getAllValueArguments()
+        val classDescriptor = if (renderDefaultAnnotationArguments) TypeUtils.getClassDescriptor(descriptor.getType()) else null
+        val parameterDescriptorsWithDefaultValue = classDescriptor?.getUnsubstitutedPrimaryConstructor()?.getValueParameters()?.filter {
+            it.declaresDefaultValue()
+        } ?: emptyList()
+        val defaultList = parameterDescriptorsWithDefaultValue.filter { !allValueArguments.containsKey(it) }.map {
+            "${it.getName().asString()} = ..."
+        }.sort()
+        val argumentList = allValueArguments.entrySet()
                 .map { entry ->
                     val name = entry.key.getName().asString()
-                    val value = renderConstant(entry.value)
+                    val value = if (!parameterDescriptorsWithDefaultValue.contains(entry.key)) renderConstant(entry.value) else "..."
                     "$name = $value"
                 }
                 .sort()
+        return (defaultList + argumentList).sort()
     }
 
-    private fun renderConstant(value: CompileTimeConstant<*>): String {
+    private fun renderConstant(value: ConstantValue<*>): String {
         return when (value) {
-            is ArrayValue -> value.getValue().map { renderConstant(it) }.joinToString(", ", "{", "}")
-            is AnnotationValue -> renderAnnotation(value.getValue())
-            is KClassValue -> renderType(value.getValue()) + "::class"
+            is ArrayValue -> value.value.map { renderConstant(it) }.joinToString(", ", "{", "}")
+            is AnnotationValue -> renderAnnotation(value.value)
+            is KClassValue -> renderType(value.value) + "::class"
             else -> value.toString()
         }
     }
@@ -700,9 +706,8 @@ internal class DescriptorRendererImpl(
 
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {
         if (includePropertyConstant) {
-            val initializer = variable.getCompileTimeInitializer()
-            if (initializer != null) {
-                builder.append(" = ").append(escape(renderConstant(initializer)))
+            variable.getCompileTimeInitializer()?.let { constant ->
+                builder.append(" = ").append(escape(renderConstant(constant)))
             }
         }
     }
@@ -870,8 +875,13 @@ internal class DescriptorRendererImpl(
     private fun replacePrefixes(lowerRendered: String, lowerPrefix: String, upperRendered: String, upperPrefix: String, foldedPrefix: String): String? {
         if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
             val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length())
-            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(upperPrefix.length()))) {
-                return foldedPrefix + lowerWithoutPrefix + "!"
+            val upperWithoutPrefix = upperRendered.substring(upperPrefix.length())
+            val flexibleCollectionName = foldedPrefix + lowerWithoutPrefix
+
+            if (lowerWithoutPrefix == upperWithoutPrefix) return flexibleCollectionName
+
+            if (differsOnlyInNullability(lowerWithoutPrefix, upperWithoutPrefix)) {
+                return flexibleCollectionName + "!"
             }
         }
         return null

@@ -59,7 +59,18 @@ public class CallInstruction private constructor(
         val resolvedCall: ResolvedCall<*>,
         override val receiverValues: Map<PseudoValue, ReceiverValue>,
         public val arguments: Map<PseudoValue, ValueParameterDescriptor>
-) : OperationInstruction(element, lexicalScope, receiverValues.keySet() + arguments.keySet()), InstructionWithReceivers {
+) : OperationInstruction(element, lexicalScope, (receiverValues.keySet() as Collection<PseudoValue>) + arguments.keySet()), InstructionWithReceivers {
+    public constructor (
+            element: JetElement,
+            lexicalScope: LexicalScope,
+            resolvedCall: ResolvedCall<*>,
+            receiverValues: Map<PseudoValue, ReceiverValue>,
+            arguments: Map<PseudoValue, ValueParameterDescriptor>,
+            factory: PseudoValueFactory?
+    ): this(element, lexicalScope, resolvedCall, receiverValues, arguments) {
+        setResult(factory)
+    }
+
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCallInstruction(this)
     }
@@ -73,18 +84,6 @@ public class CallInstruction private constructor(
 
     override fun toString() =
             renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
-
-    companion object Factory {
-        fun create (
-                element: JetElement,
-                lexicalScope: LexicalScope,
-                resolvedCall: ResolvedCall<*>,
-                receiverValues: Map<PseudoValue, ReceiverValue>,
-                arguments: Map<PseudoValue, ValueParameterDescriptor>,
-                factory: PseudoValueFactory?
-        ): CallInstruction =
-                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory, element) as CallInstruction
-    }
 }
 
 // Introduces black-box operation
@@ -96,9 +95,19 @@ public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>,
-        val expectedTypes: Map<PseudoValue, TypePredicate>,
         val kind: MagicKind
 ) : OperationInstruction(element, lexicalScope, inputValues) {
+    public constructor (
+            element: JetElement,
+            valueElement: JetElement?,
+            lexicalScope: LexicalScope,
+            inputValues: List<PseudoValue>,
+            kind: MagicKind,
+            factory: PseudoValueFactory
+    ): this(element, lexicalScope, inputValues, kind) {
+        setResult(factory, valueElement)
+    }
+
     public val synthetic: Boolean get() = outputValue.element == null
 
     override val outputValue: PseudoValue
@@ -109,23 +118,9 @@ public class MagicInstruction(
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMagic(this)
 
     override fun createCopy() =
-            MagicInstruction(element, lexicalScope, inputValues, expectedTypes, kind).setResult(resultValue)
+            MagicInstruction(element, lexicalScope, inputValues, kind).setResult(resultValue)
 
     override fun toString() = renderInstruction("magic[$kind]", render(element))
-
-    companion object Factory {
-        fun create(
-                element: JetElement,
-                valueElement: JetElement?,
-                lexicalScope: LexicalScope,
-                inputValues: List<PseudoValue>,
-                expectedTypes: Map<PseudoValue, TypePredicate>,
-                kind: MagicKind,
-                factory: PseudoValueFactory
-        ): MagicInstruction = MagicInstruction(
-                element, lexicalScope, inputValues, expectedTypes, kind
-        ).setResult(factory, valueElement) as MagicInstruction
-    }
 }
 
 public enum class MagicKind(val sideEffectFree: Boolean = false) {
@@ -155,6 +150,15 @@ class MergeInstruction private constructor(
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>
 ): OperationInstruction(element, lexicalScope, inputValues) {
+    public constructor (
+            element: JetElement,
+            lexicalScope: LexicalScope,
+            inputValues: List<PseudoValue>,
+            factory: PseudoValueFactory
+    ): this(element, lexicalScope, inputValues) {
+        setResult(factory)
+    }
+
     override val outputValue: PseudoValue
         get() = resultValue!!
 
@@ -165,13 +169,4 @@ class MergeInstruction private constructor(
     override fun createCopy() = MergeInstruction(element, lexicalScope, inputValues).setResult(resultValue)
 
     override fun toString() = renderInstruction("merge", render(element))
-
-    companion object Factory {
-        fun create(
-                element: JetElement,
-                lexicalScope: LexicalScope,
-                inputValues: List<PseudoValue>,
-                factory: PseudoValueFactory
-        ): MergeInstruction = MergeInstruction(element, lexicalScope, inputValues).setResult(factory) as MergeInstruction
-    }
 }

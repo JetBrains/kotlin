@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.types.*;
 
@@ -188,7 +188,7 @@ public class DescriptorSerializer {
                 }
             }
 
-            CompileTimeConstant<?> compileTimeConstant = propertyDescriptor.getCompileTimeInitializer();
+            ConstantValue<?> compileTimeConstant = propertyDescriptor.getCompileTimeInitializer();
             hasConstant = !(compileTimeConstant == null || compileTimeConstant instanceof NullValue);
         }
 

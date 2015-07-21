@@ -1,7 +1,6 @@
 <caret>
 
 // EXIST:  abstract
-// EXIST:  annotation
 // EXIST:  class
 // EXIST:  enum
 // EXIST:  final

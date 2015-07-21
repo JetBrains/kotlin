@@ -25,8 +25,13 @@ a public class Annotations private @a constructor(private @a val c1: Int, @a val
     fun types(param: @a @b(E.E1) DoubleRange): @a @b(E.E2) Unit {}
 }
 
+target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
+       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
+       AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER)
 annotation class a
 
-annotation class b(val e: E)
+target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASSIFIER,
+       AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
+annotation(repeatable = false) class b(val e: E)
 
 enum class E { E1 E2 }

@@ -25,10 +25,13 @@ import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.LinkedHashSet
@@ -63,12 +66,14 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
 }
 
 class LazyImportResolver(
-        val resolveSession: ResolveSession,
+        val storageManager: StorageManager,
+        val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        val fileScopeProvider: FileScopeProvider,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace
 ) {
-    private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
+    private val importedScopesProvider = storageManager.createMemoizedFunction {
         directive: JetImportDirective -> ImportDirectiveResolveCache(directive)
     }
 
@@ -86,7 +91,7 @@ class LazyImportResolver(
                 return status.scope
             }
 
-            return resolveSession.getStorageManager().compute {
+            return storageManager.compute {
                 val cachedStatus = importResolveStatus
                 if (cachedStatus != null && (cachedStatus.lookupMode == mode || cachedStatus.lookupMode == LookupMode.EVERYTHING)) {
                     cachedStatus.scope
@@ -95,8 +100,7 @@ class LazyImportResolver(
                     directiveUnderResolve = directive
 
                     try {
-                        val resolver = resolveSession.getQualifiedExpressionResolver()
-                        val directiveImportScope = resolver.processImportReference(
+                        val directiveImportScope = qualifiedExpressionResolver.processImportReference(
                                 directive, moduleDescriptor, traceForImportResolve, mode)
                         val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
 
@@ -126,7 +130,7 @@ class LazyImportResolver(
 
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
-            val fileScope = resolveSession.getFileScopeProvider().getFileScope(importDirective.getContainingJetFile())
+            val fileScope = fileScopeProvider.getFileScope(importDirective.getContainingJetFile())
             reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }
@@ -180,7 +184,7 @@ class LazyImportResolver(
             }
             return target
         }
-        return resolveSession.getStorageManager().compute(::compute)
+        return storageManager.compute(::compute)
     }
 
     public fun <D : DeclarationDescriptor> collectFromImports(
@@ -188,7 +192,7 @@ class LazyImportResolver(
             lookupMode: LookupMode,
             descriptorsSelector: (JetScope, Name) -> Collection<D>
     ): Collection<D> {
-        return resolveSession.getStorageManager().compute {
+        return storageManager.compute {
             var descriptors: Collection<D>? = null
             for (directive in indexedImports.importsForName(name)) {
                 if (directive == directiveUnderResolve) {
@@ -254,13 +258,29 @@ class LazyImportScope(
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
     }
 
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionProperties(receiverTypes, name) }
+    }
+
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
+        return importResolver.storageManager.compute {
+            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<PropertyDescriptor>()) { import ->
+                importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionProperties(receiverTypes)
+            }
+        }
+    }
+
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
-        return importResolver.resolveSession.getStorageManager().compute {
+        return importResolver.storageManager.compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
             for (directive in importResolver.indexedImports.imports) {
                 val importPath = directive.getImportPath() ?: continue

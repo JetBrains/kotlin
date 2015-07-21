@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.*
 import java.util.regex.Pattern
 
@@ -240,38 +241,17 @@ public object KotlinNameSuggester {
             val upperCaseLetter = Character.isUpperCase(c)
 
             if (i == 0) {
-                addName(if (startLowerCase) decapitalize(s) else s, validator)
+                addName(if (startLowerCase) s.decapitalizeSmart() else s, validator)
             }
             else {
                 if (upperCaseLetter && !upperCaseLetterBefore) {
                     val substring = s.substring(i)
-                    addName(if (startLowerCase) decapitalize(substring) else substring, validator)
+                    addName(if (startLowerCase) substring.decapitalizeSmart() else substring, validator)
                 }
             }
 
             upperCaseLetterBefore = upperCaseLetter
         }
-    }
-
-    private fun decapitalize(s: String): String {
-        var c = s.charAt(0)
-        if (!Character.isUpperCase(c)) return s
-
-        val builder = StringBuilder(s.length())
-        var decapitalize = true
-        for (i in 0..s.length() - 1) {
-            c = s.charAt(i)
-            if (decapitalize) {
-                if (Character.isUpperCase(c)) {
-                    c = Character.toLowerCase(c)
-                }
-                else {
-                    decapitalize = false
-                }
-            }
-            builder.append(c)
-        }
-        return builder.toString()
     }
 
     private fun deleteNonLetterFromString(s: String): String {

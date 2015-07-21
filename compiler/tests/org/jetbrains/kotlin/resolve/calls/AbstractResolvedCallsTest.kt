@@ -66,7 +66,7 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
     open protected fun buildCachedCall(
             bindingContext: BindingContext, jetFile: JetFile, text: String
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
-        val element = jetFile.findElementAt(text.indexOf("<caret>"))
+        val element = jetFile.findElementAt(text.indexOf("<caret>"))!!
         val expression = element.getStrictParentOfType<JetExpression>()
 
         val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)

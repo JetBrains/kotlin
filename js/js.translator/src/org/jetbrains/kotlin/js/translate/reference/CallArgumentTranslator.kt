@@ -150,14 +150,14 @@ public class CallArgumentTranslator private constructor(
             concatArguments!!.addAll(result)
 
             if (!argsBeforeVararg!!.isEmpty()) {
-                concatArguments!!.add(0, JsArrayLiteral(argsBeforeVararg))
+                concatArguments.add(0, JsArrayLiteral(argsBeforeVararg))
             }
 
-            result = SmartList(concatArgumentsIfNeeded(concatArguments!!))
+            result = SmartList(concatArgumentsIfNeeded(concatArguments))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
-                result.add(0, cachedReceiver!!.reference())
+                result.add(0, cachedReceiver.reference())
             }
             else {
                 result.add(0, JsLiteral.NULL)
@@ -204,6 +204,7 @@ public class CallArgumentTranslator private constructor(
 
             val argumentExpression = valueArguments.get(0).getArgumentExpression()
             assert(argumentExpression != null)
+            argumentExpression!!
 
             val jsExpression = Translation.translateAsExpression(argumentExpression, context)
             result.add(jsExpression)
@@ -250,6 +251,7 @@ public class CallArgumentTranslator private constructor(
             for (argument in arguments) {
                 val argumentExpression = argument.getArgumentExpression()
                 assert(argumentExpression != null)
+                argumentExpression!!
                 val argContext = context.innerBlock()
                 val argExpression = Translation.translateAsExpression(argumentExpression, argContext)
                 list.add(argExpression)

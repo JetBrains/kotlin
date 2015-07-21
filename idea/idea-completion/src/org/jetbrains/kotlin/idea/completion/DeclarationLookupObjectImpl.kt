@@ -18,12 +18,18 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Iconable
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import javax.swing.Icon
 
 /**
@@ -38,6 +44,17 @@ public abstract class DeclarationLookupObjectImpl(
     init {
         assert(descriptor != null || psiElement != null)
     }
+
+    override val name: Name?
+        get() = descriptor?.getName() ?: (psiElement as? PsiNamedElement)?.getName()?.let { Name.identifier(it) }
+
+    override val importableFqName: FqName?
+        get() {
+            return if (descriptor != null)
+                descriptor.importableFqName
+            else
+                (psiElement as? PsiClass)?.getQualifiedName()?.let { FqName(it) }
+        }
 
     override fun toString() = super<DeclarationLookupObject>.toString() + " " + (descriptor ?: psiElement)
 

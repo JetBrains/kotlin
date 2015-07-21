@@ -35,6 +35,48 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("compiler/testData/writeFlags/callableReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReference extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInCallableReference() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("compiler/testData/writeFlags/callableReference/visibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Visibility extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInVisibility() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("functionReference.kt")
+            public void testFunctionReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/functionReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionReferenceInInlineFunction.kt")
+            public void testFunctionReferenceInInlineFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/functionReferenceInInlineFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyReference.kt")
+            public void testPropertyReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/propertyReference.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyReferenceInInlineFunction.kt")
+            public void testPropertyReferenceInInlineFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/propertyReferenceInInlineFunction.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/class")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

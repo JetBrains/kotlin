@@ -5,4 +5,4 @@ fun test() {
 }
 
 // EXIST: { lookupString:"foo", itemText: "foo", tailText: "(p: (String, Char) -> Unit) (<root>)", typeText:"Unit" }
-// EXIST: { lookupString:"foo", itemText: "foo", tailText: " { String, Char -> ... } (<root>)", typeText:"Unit" }
+// EXIST: { lookupString:"foo", itemText: "foo", tailText: " { String, Char -> ... } (p: (String, Char) -> Unit) (<root>)", typeText:"Unit" }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java;
 
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -45,10 +46,6 @@ public final class JvmAbi {
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
-    //TODO: To be removed after kotlin M11
-    @Deprecated
-    public static final String DEPRECATED_COMPANION_OBJECT_FIELD = "OBJECT$";
-
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
@@ -59,10 +56,21 @@ public final class JvmAbi {
         return isDelegated ? propertyName.asString() + DELEGATED_PROPERTY_NAME_SUFFIX : propertyName.asString();
     }
 
-    public static boolean isAccessorName(String name) {
-        return name.startsWith(GETTER_PREFIX) || name.startsWith(SETTER_PREFIX);
+    @NotNull
+    public static String getterName(@NotNull String propertyName) {
+        return GETTER_PREFIX + capitalizeWithJavaBeanConvention(propertyName);
     }
 
-    private JvmAbi() {
+    @NotNull
+    public static String setterName(@NotNull String propertyName) {
+        return SETTER_PREFIX + capitalizeWithJavaBeanConvention(propertyName);
+    }
+
+    /**
+     * @see com.intellij.openapi.util.text.StringUtil#capitalizeWithJavaBeanConvention(String)
+     */
+    @NotNull
+    private static String capitalizeWithJavaBeanConvention(@NotNull String s) {
+        return s.length() > 1 && Character.isUpperCase(s.charAt(1)) ? s : KotlinPackage.capitalize(s);
     }
 }

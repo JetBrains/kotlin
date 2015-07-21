@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.test.JetTestUtils;
 public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        super.setUp();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
         super.tearDown();
+        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
     }
 }

@@ -1,0 +1,4 @@
+package
+
+internal fun bar(): kotlin.String?
+internal fun foo(): kotlin.Unit

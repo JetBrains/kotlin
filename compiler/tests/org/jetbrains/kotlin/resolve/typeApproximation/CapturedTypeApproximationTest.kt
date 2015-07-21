@@ -106,7 +106,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
                 val testSubstitutions = createTestSubstitutions(typeParameters)
                 for (testSubstitution in testSubstitutions) {
                     val typeSubstitutor = createTestSubstitutor(testSubstitution)
-                    val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type))!!.getType()
+                    val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type!!))!!.getType()
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
                     val substitution = approximateCapturedTypesIfNecessary(TypeProjectionImpl(INVARIANT, typeWithCapturedType))

@@ -55,13 +55,13 @@ fun box(): String {
     }
 
     val list5 = ArrayList<Char>()
-    val range5 = (MinC + 5).toChar() downTo MinC step 3
+    val range5 = (MinC + 5) downTo MinC step 3
     for (i in range5) {
         list5.add(i)
         if (list5.size() > 23) break
     }
-    if (list5 != listOf<Char>((MinC + 5).toChar(), (MinC + 2).toChar())) {
-        return "Wrong elements for (MinC + 5).toChar() downTo MinC step 3: $list5"
+    if (list5 != listOf<Char>((MinC + 5), (MinC + 2))) {
+        return "Wrong elements for (MinC + 5) downTo MinC step 3: $list5"
     }
 
     return "OK"

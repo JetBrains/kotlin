@@ -38,7 +38,7 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
 
     override fun getText(): String = "Insert lacking comma(s) / semicolon(s)"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile?) = insertLackingCommaSemicolon(element)
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) = insertLackingCommaSemicolon(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
             = super<JetIntentionAction>.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedOrNoDelimiter(element)

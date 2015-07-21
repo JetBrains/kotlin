@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -55,80 +53,46 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
-    private ScriptBodyResolver scriptBodyResolverResolver;
-    private ExpressionTypingServices expressionTypingServices;
-    private CallResolver callResolver;
-    private ObservableBindingTrace trace;
-    private ControlFlowAnalyzer controlFlowAnalyzer;
-    private DeclarationsChecker declarationsChecker;
-    private AnnotationResolver annotationResolver;
-    private DelegatedPropertyResolver delegatedPropertyResolver;
-    private FunctionAnalyzerExtension functionAnalyzerExtension;
-    private AdditionalCheckerProvider additionalCheckerProvider;
-    private ValueParameterResolver valueParameterResolver;
-    private BodyResolveCache bodyResolveCache;
+    @NotNull private final ScriptBodyResolver scriptBodyResolverResolver;
+    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    @NotNull private final CallResolver callResolver;
+    @NotNull private final ObservableBindingTrace trace;
+    @NotNull private final ControlFlowAnalyzer controlFlowAnalyzer;
+    @NotNull private final DeclarationsChecker declarationsChecker;
+    @NotNull private final AnnotationResolver annotationResolver;
+    @NotNull private final DelegatedPropertyResolver delegatedPropertyResolver;
+    @NotNull private final FunctionAnalyzerExtension functionAnalyzerExtension;
+    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull private final ValueParameterResolver valueParameterResolver;
+    @NotNull private final BodyResolveCache bodyResolveCache;
 
-    //<editor-fold desc="Injector Setters">
-    @Inject
-    public void setScriptBodyResolverResolver(@NotNull ScriptBodyResolver scriptBodyResolverResolver) {
-        this.scriptBodyResolverResolver = scriptBodyResolverResolver;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setCallResolver(@NotNull CallResolver callResolver) {
-        this.callResolver = callResolver;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = new ObservableBindingTrace(trace);
-    }
-
-    @Inject
-    public void setControlFlowAnalyzer(@NotNull ControlFlowAnalyzer controlFlowAnalyzer) {
-        this.controlFlowAnalyzer = controlFlowAnalyzer;
-    }
-
-    @Inject
-    public void setDeclarationsChecker(@NotNull DeclarationsChecker declarationsChecker) {
-        this.declarationsChecker = declarationsChecker;
-    }
-
-    @Inject
-    public void setAnnotationResolver(@NotNull AnnotationResolver annotationResolver) {
-        this.annotationResolver = annotationResolver;
-    }
-
-    @Inject
-    public void setDelegatedPropertyResolver(@NotNull DelegatedPropertyResolver delegatedPropertyResolver) {
-        this.delegatedPropertyResolver = delegatedPropertyResolver;
-    }
-
-    @Inject
-    public void setFunctionAnalyzerExtension(@NotNull FunctionAnalyzerExtension functionAnalyzerExtension) {
-        this.functionAnalyzerExtension = functionAnalyzerExtension;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
+    public BodyResolver(
+            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+            @NotNull AnnotationResolver annotationResolver,
+            @NotNull BodyResolveCache bodyResolveCache,
+            @NotNull CallResolver callResolver,
+            @NotNull ControlFlowAnalyzer controlFlowAnalyzer,
+            @NotNull DeclarationsChecker declarationsChecker,
+            @NotNull DelegatedPropertyResolver delegatedPropertyResolver,
+            @NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull FunctionAnalyzerExtension functionAnalyzerExtension,
+            @NotNull ScriptBodyResolver scriptBodyResolverResolver,
+            @NotNull BindingTrace trace,
+            @NotNull ValueParameterResolver valueParameterResolver
+    ) {
         this.additionalCheckerProvider = additionalCheckerProvider;
-    }
-
-    @Inject
-    public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
+        this.annotationResolver = annotationResolver;
+        this.bodyResolveCache = bodyResolveCache;
+        this.callResolver = callResolver;
+        this.controlFlowAnalyzer = controlFlowAnalyzer;
+        this.declarationsChecker = declarationsChecker;
+        this.delegatedPropertyResolver = delegatedPropertyResolver;
+        this.expressionTypingServices = expressionTypingServices;
+        this.functionAnalyzerExtension = functionAnalyzerExtension;
+        this.scriptBodyResolverResolver = scriptBodyResolverResolver;
+        this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
     }
-
-    @Inject
-    public void setBodyResolveCache(BodyResolveCache bodyResolveCache) {
-        this.bodyResolveCache = bodyResolveCache;
-    }
-    //</editor-fold>
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
         resolveDelegationSpecifierLists(c);
@@ -735,8 +699,7 @@ public class BodyResolver {
         JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
-        CompileTimeConstant<?> compileTimeInitializer = propertyDescriptor.getCompileTimeInitializer();
-        if (compileTimeInitializer == null) {
+        if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,
                                              outerDataFlowInfo, trace);
         }

@@ -18,16 +18,13 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.test.ModuleKind
-import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import java.util.LinkedHashMap
@@ -73,22 +70,28 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
         val referenceContainersToReferences = LinkedHashMap<PsiElement, JetReference>()
         for (offset in 0..psiFile.getTextLength() - 1) {
             val ref = psiFile.findReferenceAt(offset)
-            if (ref is JetReference && !referenceContainersToReferences.containsKey(ref.getElement())) {
-                val target = ref.resolve()
-                if (target == null) continue
-
-                val targetNavPsiFile = target.getNavigationElement().getContainingFile()
-                if (targetNavPsiFile == null) continue
-
-                val targetNavFile = targetNavPsiFile.getVirtualFile()
-                if (targetNavFile == null) continue
-
-                if (ProjectFileIndex.SERVICE.getInstance(getProject()).isInLibrarySource(targetNavFile)) {
-                    referenceContainersToReferences.put(ref.getElement(), ref)
-                }
+            val refs = when (ref) {
+                is JetReference -> listOf(ref)
+                is PsiMultiReference -> ref.getReferences().filterIsInstance<JetReference>()
+                else -> emptyList<JetReference>()
             }
+
+            refs.forEach { referenceContainersToReferences.addReference(it) }
         }
         return referenceContainersToReferences.values()
+    }
+
+    private fun MutableMap<PsiElement, JetReference>.addReference(ref: JetReference) {
+        if (containsKey(ref.getElement())) return
+        val target = ref.resolve() ?: return
+
+        val targetNavPsiFile = target.getNavigationElement().getContainingFile() ?: return
+
+        val targetNavFile = targetNavPsiFile.getVirtualFile() ?: return
+
+        if (ProjectFileIndex.SERVICE.getInstance(getProject()).isInLibrarySource(targetNavFile)) {
+            put(ref.getElement(), ref)
+        }
     }
 
     private fun collectInterestingNavigationElements() =

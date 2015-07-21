@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
@@ -41,12 +41,14 @@ public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility
         }
     }
 
-    val baseDeclaration: PsiElement
-    val baseDescriptor: FunctionDescriptor
+    val original: JetMethodDescriptor
 
-    val originalPrimaryFunction: JetFunctionDefinitionUsage<PsiElement>
-    val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>>
-    val affectedFunctions: Collection<UsageInfo>
+    val baseDeclaration: PsiElement
+    val baseDescriptor: CallableDescriptor
+
+    val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement>
+    val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>>
+    val affectedCallables: Collection<UsageInfo>
 
     val receiver: JetParameterInfo?
 }

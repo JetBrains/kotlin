@@ -1,5 +1,5 @@
 // FILE: script.kts
 
-annotation class Ann
+@annotation class Ann
 
 @Ann<!SYNTAX!><!>

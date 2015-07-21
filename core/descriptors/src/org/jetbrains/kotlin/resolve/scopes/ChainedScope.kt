@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
-import java.util.*
+import org.jetbrains.kotlin.utils.Printer
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
@@ -63,6 +65,12 @@ public open class ChainedScope(
     override fun getFunctions(name: Name): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getFunctions(name) }
 
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes, name) }
+
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes) }
+
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
             val result = ArrayList<ReceiverParameterDescriptor>()
@@ -77,12 +85,8 @@ public open class ChainedScope(
 
     override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        val result = LinkedHashSet<DeclarationDescriptor>()
-        scopeChain.flatMapTo(result) { it.getDescriptors(kindFilter, nameFilter) }
-        return result
-    }
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = getFromAllScopes { it.getDescriptors(kindFilter, nameFilter) }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
         throw UnsupportedOperationException()

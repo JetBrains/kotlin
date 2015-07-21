@@ -34,11 +34,8 @@
       <implementation-class>org.jetbrains.kotlin.idea.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
     </component>
-      <component>
-          <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
-      </component>
   </project-components>
 
  <application-components>
@@ -168,6 +165,9 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager"
                         serviceImplementation="org.jetbrains.kotlin.idea.JetModuleTypeManagerImpl"/>
 
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
+                        serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                         serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
 
@@ -290,7 +290,7 @@
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
     <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider"/>
 
-    <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.JetColorSettingsPage"/>
+    <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.KotlinColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
 
@@ -322,6 +322,7 @@
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
 
     <lookup.charFilter implementation="org.jetbrains.kotlin.idea.completion.KotlinCompletionCharFilter"/>
+    <lookup.actionProvider implementation="org.jetbrains.kotlin.idea.completion.KotlinExcludeFromCompletionLookupActionProvider"/>
 
     <psi.referenceContributor language="jet" implementation="org.jetbrains.kotlin.idea.references.JetReferenceContributor"/>
 
@@ -391,7 +392,7 @@
     <configurationType implementation="org.jetbrains.kotlin.idea.run.JetRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSRunConfigurationType"/>
     <programRunner implementation="org.jetbrains.kotlin.idea.k2jsrun.K2JSBrowserProgramRunner"/>
-    <configurationProducer implementation="org.jetbrains.kotlin.idea.run.JetRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRecursiveCallLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="JAVA"
@@ -498,7 +499,7 @@
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
-    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinPropertyAccessorsReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodReferenceSearcher"/>
 
@@ -948,6 +949,11 @@
           <category>Kotlin</category>
       </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
                      displayName="Add 'replaceWith' argument to 'deprecated' annotation"
                      groupName="Kotlin"
@@ -1032,6 +1038,13 @@
                        level="WEAK WARNING"
           />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
+                     displayName="Use property access syntax"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
         displayName="Unused Symbol"
         groupName="Kotlin"
@@ -1048,13 +1061,6 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
         displayName="Unresolved reference in KDoc"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReflectionNotFoundInspection"
-        displayName="Reflection not found"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"
@@ -1097,6 +1103,7 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
       <xi:include href="extensions/kotlin2jvm.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
       <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+    <quickFixContributor implementation="org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar"/>
   </extensions>
 
 </idea-plugin>

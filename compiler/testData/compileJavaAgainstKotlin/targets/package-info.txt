@@ -1,0 +1,8 @@
+package test
+
+test.pck() public/*package*/ interface `package-info` {
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.PACKAGE}) kotlin.annotation.annotation() java.lang.annotation.Target(value = {ElementType.PACKAGE}) internal final class pck : kotlin.Annotation {
+    public constructor pck()
+}
