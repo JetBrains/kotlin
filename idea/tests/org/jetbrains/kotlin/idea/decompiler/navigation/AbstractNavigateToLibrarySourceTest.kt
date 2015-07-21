@@ -107,6 +107,6 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
         return JetTestUtils.getLastCommentedLines(document)
     }
 
-    private fun getProjectDescriptor(): LightProjectDescriptor =
+    private fun getProjectDescriptor(): JetLightProjectDescriptor =
             JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true)
 }

@@ -39,8 +39,8 @@ private val LIBRARY_SRC_PATH = JetTestUtils.getHomeDirectory() + "/idea/idea-com
 public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 
     override fun getProjectDescriptor() = object: JdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
-        override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry?) {
-            super.configureModule(module, model, contentEntry)
+        override fun configureModule(module: Module, model: ModifiableRootModel) {
+            super.configureModule(module, model)
 
             val library = model.getModuleLibraryTable().getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
             val modifiableModel = library.getModifiableModel()
