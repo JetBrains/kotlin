@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightSettings;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 public final class OverrideImplementTest extends AbstractOverrideImplementTest {
@@ -165,17 +164,6 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
 
     public void testOverrideFromLBrace() {
         doMultiOverrideFileTest();
-    }
-
-    public void testCheckNotImportedTypesFromJava() {
-        boolean oldValue = CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY;
-        try {
-            CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = true;
-            doImplementDirectoryTest();
-        }
-        finally {
-            CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = oldValue;
-        }
     }
 
     public void testOverrideSamAdapters() {

@@ -190,12 +190,6 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("ImportsOnTheFlyBug.kt")
-        public void testImportsOnTheFlyBug() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/ImportsOnTheFlyBug.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("leaveQualifiedConstructor.kt")
         public void testLeaveQualifiedConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedConstructor.kt");
@@ -205,12 +199,6 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("leaveQualifiedType.kt")
         public void testLeaveQualifiedType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("optimizeMultipleImports.kt")
-        public void testOptimizeMultipleImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/optimizeMultipleImports.kt");
             doTest(fileName);
         }
     }
