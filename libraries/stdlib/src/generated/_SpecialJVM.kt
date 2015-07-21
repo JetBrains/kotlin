@@ -138,6 +138,13 @@ public fun ShortArray.asList(): List<Short> {
 }
 
 /**
+ * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator].
+ */
+public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
+    return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
+}
+
+/**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size()): Int {

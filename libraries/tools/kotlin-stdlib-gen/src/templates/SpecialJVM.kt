@@ -104,6 +104,15 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+    templates add f("binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size())") {
+        only(ArraysOfObjects)
+        doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator]." }
+        returns("Int")
+        body {
+            "return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)"
+        }
+    }
+
     templates add f("sort(fromIndex: Int = 0, toIndex: Int = size())") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
