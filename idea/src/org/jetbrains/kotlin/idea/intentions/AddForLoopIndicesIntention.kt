@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInsight.template.TemplateBuilderImpl
-import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
@@ -61,7 +58,6 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForE
     override fun applyTo(element: JetForExpression, editor: Editor) {
         val loopRange = element.loopRange!!
         val loopParameter = element.loopParameter!!
-        val project = element.project
         val psiFactory = JetPsiFactory(element)
 
         loopRange.replace(createWithIndexExpression(loopRange))
@@ -72,11 +68,7 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForE
 
         val indexVariable = multiParameter.entries[0]
         editor.caretModel.moveToOffset(indexVariable.startOffset)
-
-        val templateBuilder = TemplateBuilderImpl(indexVariable)
-        templateBuilder.replaceElement(indexVariable, "index")
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-        TemplateManager.getInstance(project).startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
+        editor.selectionModel.setSelection(indexVariable.startOffset, indexVariable.endOffset)
     }
 
     private fun createWithIndexExpression(originalExpression: JetExpression): JetExpression {
