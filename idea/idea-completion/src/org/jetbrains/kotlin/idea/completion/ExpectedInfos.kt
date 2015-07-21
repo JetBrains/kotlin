@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.idea.util.isAlmostAnyType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -48,9 +50,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.HashSet
+import java.util.*
 
 enum class Tail {
     COMMA,
@@ -93,12 +94,12 @@ class ReturnValueExpectedInfo(type: JetType, val callable: CallableDescriptor) :
             = callable.hashCode()
 }
 
-
 class ExpectedInfos(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
         val moduleDescriptor: ModuleDescriptor,
-        val useHeuristicSignatures: Boolean
+        val useHeuristicSignatures: Boolean = true,
+        val useOuterCallsExpectedTypeCount: Int = 0
 ) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
@@ -136,16 +137,22 @@ class ExpectedInfos(
     }
 
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
-        //TODO: it can too slow for deep nested calls (esp DSL's)
-        val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis()
-        var expectedTypes = callExpression?.let { calculate(it) }?.map { it.fuzzyType.type }
-        if (expectedTypes == null || expectedTypes.isEmpty()) {
-            expectedTypes = listOf(TypeUtils.NO_EXPECTED_TYPE)
+        val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument) ?: return null
+
+        if (useOuterCallsExpectedTypeCount > 0 && results.any { it.fuzzyType.freeParameters.isNotEmpty() && it.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false }) {
+            val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
+            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
+                    .calculate(callExpression)
+                    ?.map { it.fuzzyType } ?: return results
+            if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
+
+            return expectedFuzzyTypes.flatMap { calculateForArgument(call, it.type, argument) ?: emptyList() }.toSet()
         }
-        return expectedTypes.flatMap { calculateForArgument(call, it, argument) ?: emptyList() }.toSet()
+
+        return results
     }
 
-    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo>? {
+    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ArgumentExpectedInfo>? {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
@@ -176,7 +183,7 @@ class ExpectedInfos(
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val expectedInfos = HashSet<ExpectedInfo>()
+        val expectedInfos = LinkedHashSet<ArgumentExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val status = candidate.getStatus()
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue

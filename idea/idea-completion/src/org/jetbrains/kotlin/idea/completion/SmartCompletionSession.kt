@@ -107,7 +107,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                         override fun getValueArgumentList() = throw UnsupportedOperationException()
                     }
 
-                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, true)
+                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures = false)
                             .calculateForArgument(dummyCall, dummyArgument)
                     if (expectedInfos != null) {
                         collector.addElements(LambdaItems.collect(expectedInfos))

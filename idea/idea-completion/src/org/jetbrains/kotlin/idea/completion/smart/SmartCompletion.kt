@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -211,8 +208,9 @@ class SmartCompletion(
     private fun DeclarationDescriptor.fuzzyTypes(smartCastTypes: (VariableDescriptor) -> Collection<JetType>): Collection<FuzzyType> {
         if (this is CallableDescriptor) {
             var returnType = fuzzyReturnType() ?: return listOf()
+            // skip declarations of type Nothing or of generic parameter type which has no real bounds
             //TODO: maybe we should include them on the second press?
-            if (shouldSkipDeclarationsOfType(returnType)) return listOf()
+            if (returnType.type.isNothing() || returnType.isAlmostAnyType()) return listOf()
 
             if (this is VariableDescriptor) {
                 return smartCastTypes(this).map { FuzzyType(it, listOf()) }
@@ -229,16 +227,6 @@ class SmartCompletion(
         }
     }
 
-    // skip declarations of type Nothing or of generic parameter type which has no real bounds
-    private fun shouldSkipDeclarationsOfType(type: FuzzyType): Boolean {
-        if (KotlinBuiltIns.isNothing(type.type)) return true
-        if (type.freeParameters.isEmpty()) return false
-        val typeParameter = type.type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor ?: return false
-        if (!type.freeParameters.contains(typeParameter)) return false
-        return KotlinBuiltIns.isAnyOrNullableAny(typeParameter.getUpperBoundsAsType())
-        //TODO: check for companion object constraint when they are supported
-    }
-
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
@@ -251,7 +239,15 @@ class SmartCompletion(
             }
         }
 
-        return ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, true).calculate(expression)
+        // if expected types are too general, try to use expected type from outer calls
+        var count = 0
+        while (true) {
+            val infos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = count)
+                    .calculate(expression) ?: return null
+            if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType.isAlmostAnyType() }) return infos
+            count++
+        }
+        //TODO: we could always give higher priority to results with outer call expected type used
     }
 
     private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {

@@ -79,7 +79,8 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
 
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
-    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, resolutionFacade.findModuleDescriptor(file), false).calculate(expression) ?: return false
+    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, resolutionFacade.findModuleDescriptor(file), useHeuristicSignatures = false)
+                                .calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.fuzzyType.type }.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }.toSet()
     if (functionTypes.size() <= 1) return false
 

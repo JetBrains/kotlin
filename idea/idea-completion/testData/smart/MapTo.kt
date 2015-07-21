@@ -4,4 +4,4 @@ fun foo(list: List<String>, intList: MutableList<Int>, stringList: MutableList<S
 
 // EXIST: intList
 // EXIST: arrayListOf
-// ABSENT: stringList
+// EXIST: stringList
