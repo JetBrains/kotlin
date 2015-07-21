@@ -21,13 +21,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.idea.test.ModuleKind
-import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import java.util.LinkedHashMap
@@ -104,6 +100,6 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
         return JetTestUtils.getLastCommentedLines(document)
     }
 
-    private fun getProjectDescriptor(): LightProjectDescriptor =
+    private fun getProjectDescriptor(): JetLightProjectDescriptor =
             JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true)
 }

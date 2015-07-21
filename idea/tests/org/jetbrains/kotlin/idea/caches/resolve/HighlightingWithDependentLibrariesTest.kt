@@ -33,7 +33,7 @@ public class HighlightingWithDependentLibrariesTest : JetLightCodeInsightFixture
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/highlightingWithDependentLibraries"
 
     override fun getProjectDescriptor() = object : JetLightProjectDescriptor() {
-        override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry?) {
+        override fun configureModule(module: Module, model: ModifiableRootModel) {
             val compiledJar1 = MockLibraryUtil.compileLibraryToJar("$TEST_DATA_PATH/lib1", "lib1", false)
             val compiledJar2 = MockLibraryUtil.compileLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", false, compiledJar1.canonicalPath)
 

@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 public class JetLightProjectDescriptor implements LightProjectDescriptor {
     protected JetLightProjectDescriptor() {
@@ -41,6 +42,10 @@ public class JetLightProjectDescriptor implements LightProjectDescriptor {
     }
 
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        configureModule(module, model);
+    }
+
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
     }
 }

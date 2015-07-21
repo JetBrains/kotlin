@@ -37,7 +37,7 @@ public enum class ModuleKind {
     KOTLIN_JAVASCRIPT
 }
 
-public fun Module.configureAs(descriptor: LightProjectDescriptor) {
+public fun Module.configureAs(descriptor: JetLightProjectDescriptor) {
     val module = this
     updateModel(module, object : Consumer<ModifiableRootModel> {
         override fun consume(model: ModifiableRootModel) {
@@ -45,8 +45,12 @@ public fun Module.configureAs(descriptor: LightProjectDescriptor) {
                 model.setSdk(descriptor.getSdk())
             }
             val entries = model.getContentEntries()
-            val entry = if (entries.size() > 0) entries[0] else null
-            descriptor.configureModule(module, model, entry)
+            if (entries.isEmpty()) {
+                descriptor.configureModule(module, model)
+            }
+            else {
+                descriptor.configureModule(module, model, entries[0])
+            }
         }
     })
 }

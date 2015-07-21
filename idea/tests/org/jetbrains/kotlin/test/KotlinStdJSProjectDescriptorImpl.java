@@ -20,16 +20,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
 
-public class KotlinStdJSProjectDescriptorImpl implements KotlinStdJSProjectDescriptor {
+public class KotlinStdJSProjectDescriptorImpl extends KotlinStdJSProjectDescriptor {
     @Override
     public ModuleType getModuleType() {
         return StdModuleTypes.JAVA;
@@ -41,7 +40,7 @@ public class KotlinStdJSProjectDescriptorImpl implements KotlinStdJSProjectDescr
     }
 
     @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         NewLibraryConfiguration configuration = new JSLibraryStdDescription(module.getProject()).createNewLibraryForTests();
 
         assert configuration != null : "Configuration should exist";

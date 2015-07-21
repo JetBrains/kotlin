@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.testFramework.LightProjectDescriptor
 
-public trait KotlinStdJSProjectDescriptor : LightProjectDescriptor {
+public open class KotlinStdJSProjectDescriptor : JetLightProjectDescriptor() {
     companion object {
         public val instance: KotlinStdJSProjectDescriptor
                 = Class.forName("org.jetbrains.kotlin.test.KotlinStdJSProjectDescriptorImpl").newInstance() as KotlinStdJSProjectDescriptor
