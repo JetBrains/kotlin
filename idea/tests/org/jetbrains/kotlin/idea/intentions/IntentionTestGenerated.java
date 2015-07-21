@@ -148,15 +148,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("simpleIntList.kt")
-        public void testSimpleIntList() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/simpleIntList.kt");
+        @TestMetadata("sequence.kt")
+        public void testSequence() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/sequence.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("stream.kt")
-        public void testStream() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/stream.kt");
+        @TestMetadata("simpleIntList.kt")
+        public void testSimpleIntList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/simpleIntList.kt");
             doTest(fileName);
         }
 
