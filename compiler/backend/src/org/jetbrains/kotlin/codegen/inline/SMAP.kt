@@ -122,7 +122,7 @@ public open class InlineLambdaSourceMapper(parent: SourceMapper, smap: SMAPAndMe
     }
 }
 
-trait SourceMapper {
+interface SourceMapper {
 
     val resultMappings: List<FileMapping>
     val parent: SourceMapper?

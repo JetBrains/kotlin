@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.JarURLConnection
-import kotlin.properties.Delegates
 
 object KotlinAntTaskUtil {
     private var classLoaderRef = SoftReference<ClassLoader?>(null)
 
-    private val libPath: File by Delegates.lazy {
+    private val libPath: File by lazy {
         // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
         val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
         val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
@@ -36,11 +35,11 @@ object KotlinAntTaskUtil {
         antTaskJarPath.getParentFile()
     }
 
-    val compilerJar: File by Delegates.lazy {
+    val compilerJar: File by lazy {
         File(libPath, "kotlin-compiler.jar").assertExists()
     }
 
-    val runtimeJar: File by Delegates.lazy {
+    val runtimeJar: File by lazy {
         File(libPath, "kotlin-runtime.jar").assertExists()
     }
 
