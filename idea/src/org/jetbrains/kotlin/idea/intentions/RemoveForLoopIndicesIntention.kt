@@ -26,19 +26,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
-       javaClass(), "Remove indices in for-loop") {
-    override fun applyTo(element: JetForExpression, editor: Editor) {
-        val parameter = element.getMultiParameter()!!
-        val range = element.getLoopRange() as JetDotQualifiedExpression
-        val parameters = parameter.getEntries()
-
-        val loop = JetPsiFactory(element).createExpression("for (${parameters[1].getText()} in _) {}") as JetForExpression
-        parameter.replace(loop.getLoopParameter()!!)
-
-        range.replace(range.getReceiverExpression())
-    }
-
+public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Remove indices in for-loop") {
     override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
         val multiParameter = element.getMultiParameter() ?: return false
         if (multiParameter.getEntries().size() != 2) return false
@@ -58,5 +46,16 @@ public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExp
 
         val indexVar = multiParameter.getEntries()[0]
         return ReferencesSearch.search(indexVar).findFirst() == null
+    }
+
+    override fun applyTo(element: JetForExpression, editor: Editor) {
+        val parameter = element.getMultiParameter()!!
+        val range = element.getLoopRange() as JetDotQualifiedExpression
+        val parameters = parameter.getEntries()
+
+        val loop = JetPsiFactory(element).createExpression("for (${parameters[1].getText()} in _) {}") as JetForExpression
+        parameter.replace(loop.getLoopParameter()!!)
+
+        range.replace(range.getReceiverExpression())
     }
 }
