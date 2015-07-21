@@ -90,9 +90,18 @@ public abstract class ElementResolver protected constructor(
                 javaClass<JetTypeParameter>(),
                 javaClass<JetTypeConstraint>(),
                 javaClass<JetPackageDirective>(),
-                javaClass<JetCodeFragment>()) as JetElement? ?: return null
+                javaClass<JetCodeFragment>()) as JetElement?
 
         when (elementOfAdditionalResolve) {
+            null -> {
+                // Case of JetAnnotationEntry on top level class
+                if (element is JetAnnotationEntry) {
+                    return element
+                }
+
+                return null
+            }
+
             is JetPackageDirective -> return element
 
             is JetParameter -> {
