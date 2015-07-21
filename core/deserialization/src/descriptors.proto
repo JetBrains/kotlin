@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization;
 
+import "core/deserialization/src/ext_options.proto";
+
 option java_outer_classname = "ProtoBuf";
 option optimize_for = LITE_RUNTIME; // Smaller runtime
 option java_generic_services = false; // Less code
@@ -74,13 +76,13 @@ message Annotation {
       optional double double_value = 4;
 
       // id in StringTable
-      optional int32 string_value = 5;
+      optional int32 string_value = 5 [(name_id_in_table) = true];
 
       // If type = CLASS, FQ name id of the referenced class; if type = ENUM, FQ name id of the enum class
-      optional int32 class_id = 6;
+      optional int32 class_id = 6 [(fq_name_id_in_table) = true];
 
       // id in StringTable
-      optional int32 enum_value_id = 7;
+      optional int32 enum_value_id = 7 [(name_id_in_table) = true];
 
       optional Annotation annotation = 8;
 
@@ -88,12 +90,12 @@ message Annotation {
     }
 
     // id in StringTable
-    required int32 name_id = 1;
+    required int32 name_id = 1 [(name_id_in_table) = true];
     required Value value = 2;
   }
 
   // Class FQ name id
-  required int32 id = 1;
+  required int32 id = 1 [(fq_name_id_in_table) = true];
 
   repeated Argument argument = 2;
 }
@@ -105,9 +107,9 @@ message Type {
       TYPE_PARAMETER = 1;
     }
 
-    optional Kind kind = 1 [default = CLASS];
+    optional Kind kind = 1 [default = CLASS, (skip_in_comparison) = true];
 
-    required int32 id = 2; // CLASS - fqName id, TYPE_PARAMETER - type parameter id
+    required int32 id = 2 [(skip_in_comparison) = true]; // CLASS - fqName id, TYPE_PARAMETER - type parameter id
   }
 
   required Constructor constructor = 1;
@@ -131,7 +133,7 @@ message Type {
   // Id in the StringTable
   // If this field is set, the type is flexible.
   // All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
-  optional int32 flexible_type_capabilities_id = 4;
+  optional int32 flexible_type_capabilities_id = 4 [(name_id_in_table) = true];
 
   // While such an "indirect" encoding helps backwards compatibility with pre-flexible-types versions of this format,
   // we use it mainly to save space: having a special mandatory tag on each an every type just to have an option
@@ -140,7 +142,7 @@ message Type {
 
   // Only one of the following values should be present. Consider using `oneof` instead when we upgrade to protobuf 2.6.0+
 
-  optional int32 constructor_class_name = 6; // fqName id
+  optional int32 constructor_class_name = 6 [(fq_name_id_in_table) = true]; // fqName id
 
   optional int32 constructor_type_parameter = 7; // type parameter id
 
@@ -151,7 +153,7 @@ message Type {
 message TypeParameter {
   required int32 id = 1;
   // Id in the StringTable
-  required int32 name = 2;
+  required int32 name = 2 [(name_id_in_table) = true];
 
   optional bool reified = 3 [default = false];
 
@@ -186,21 +188,21 @@ message Class {
    */
   optional int32 flags = 1 [default = 0 /*internal final class, no annotations*/];
 
-  required int32 fq_name = 3;
+  required int32 fq_name = 3 [(fq_name_id_in_table) = true];
 
   // If this field is present, it contains the name of companion object.
-  optional int32 companion_object_name = 4;
+  optional int32 companion_object_name = 4 [(name_id_in_table) = true];
 
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;
 
   // we store only names, because the actual information must reside in the corresponding .class files,
   // to be obtainable through reflection at runtime
-  repeated int32 nested_class_name = 7 [packed = true];
+  repeated int32 nested_class_name = 7 [packed = true, (name_id_in_table) = true];
 
   repeated Callable member = 11;
 
-  repeated int32 enum_entry = 12 [packed = true];
+  repeated int32 enum_entry = 12 [packed = true, (name_id_in_table) = true];
 
   message PrimaryConstructor {
     // If this field is present, it contains serialized data for the primary constructor.
@@ -265,7 +267,7 @@ message Callable {
   optional Type receiver_type = 5;
 
   // Id in the StringTable
-  required int32 name = 6;
+  required int32 name = 6 [(name_id_in_table) = true];
 
   message ValueParameter {
     /*
@@ -275,7 +277,7 @@ message Callable {
     optional int32 flags = 1;
 
     // Id in the StringTable
-    required int32 name = 2;
+    required int32 name = 2 [(name_id_in_table) = true];
     required Type type = 3;
     optional Type vararg_element_type = 4;
 
