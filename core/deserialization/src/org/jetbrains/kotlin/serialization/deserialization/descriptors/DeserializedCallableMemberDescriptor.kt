@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
-public trait DeserializedCallableMemberDescriptor: CallableMemberDescriptor {
+public interface DeserializedCallableMemberDescriptor: CallableMemberDescriptor {
     public val proto: ProtoBuf.Callable
     public val nameResolver: NameResolver
 }

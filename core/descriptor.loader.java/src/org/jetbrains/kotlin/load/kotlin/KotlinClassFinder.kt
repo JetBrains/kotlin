@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 
-public trait KotlinClassFinder {
+public interface KotlinClassFinder {
     public fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
 
     public fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?

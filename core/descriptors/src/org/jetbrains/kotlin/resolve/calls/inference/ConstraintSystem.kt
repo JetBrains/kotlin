@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
-public trait ConstraintSystem {
+public interface ConstraintSystem {
 
     /**
      * Registers variables in a constraint system.

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
-public trait TypeCapability
+public interface TypeCapability
 
-public trait Specificity : TypeCapability {
+public interface Specificity : TypeCapability {
 
     public enum class Relation {
         LESS_SPECIFIC,
@@ -40,7 +40,7 @@ fun oneMoreSpecificThanAnother(a: JetType, b: JetType) =
 // To facilitate laziness, any JetType implementation may inherit from this trait,
 // even if it turns out that the type an instance represents is not actually a type variable
 // (i.e. it is not derived from a type parameter), see isTypeVariable
-public trait CustomTypeVariable : TypeCapability {
+public interface CustomTypeVariable : TypeCapability {
     public val isTypeVariable: Boolean
 
     // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
@@ -56,7 +56,7 @@ public fun JetType.getCustomTypeVariable(): CustomTypeVariable? =
             if (it.isTypeVariable) it else null
         }
 
-public trait SubtypingRepresentatives : TypeCapability {
+public interface SubtypingRepresentatives : TypeCapability {
     public val subTypeRepresentative: JetType
     public val superTypeRepresentative: JetType
 

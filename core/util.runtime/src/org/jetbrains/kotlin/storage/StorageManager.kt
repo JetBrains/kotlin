@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.storage
 
 import java.util.concurrent.ConcurrentMap
 
-public trait StorageManager {
+public interface StorageManager {
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
      * @param compute the function to be memoized

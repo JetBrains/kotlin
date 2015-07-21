@@ -82,7 +82,7 @@ public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
         var parent: DeclarationDescriptorWithVisibility? = this
 
         while (parent != null) {
-            if (!parent!!.getVisibility().isPublicAPI()) return false
+            if (!parent.getVisibility().isPublicAPI()) return false
 
             parent = DescriptorUtils.getParentOfType(parent, javaClass<DeclarationDescriptorWithVisibility>())
         }

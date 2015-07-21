@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
-public trait JetScope {
+public interface JetScope {
 
     public fun getClassifier(name: Name): ClassifierDescriptor?
 
@@ -201,7 +201,7 @@ public class DescriptorKindFilter(
     }
 }
 
-public trait DescriptorKindExclude {
+public interface DescriptorKindExclude {
     public fun excludes(descriptor: DeclarationDescriptor): Boolean
 
     public val fullyExcludedDescriptorKinds: Int

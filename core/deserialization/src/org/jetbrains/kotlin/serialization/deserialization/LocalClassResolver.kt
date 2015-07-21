@@ -19,6 +19,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-public trait LocalClassResolver {
+public interface LocalClassResolver {
     public fun resolveLocalClass(classId: ClassId): ClassDescriptor?
 }

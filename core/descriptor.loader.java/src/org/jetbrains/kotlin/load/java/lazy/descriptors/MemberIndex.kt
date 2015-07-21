@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.utils.valuesToMap
 import java.util.HashSet
 
-trait MemberIndex {
+interface MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
     fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
 

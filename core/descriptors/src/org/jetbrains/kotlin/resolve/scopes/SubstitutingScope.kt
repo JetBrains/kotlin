@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.HashMap
-import kotlin.properties.Delegates
 
 public class SubstitutingScope(private val workerScope: JetScope, private val substitutor: TypeSubstitutor) : JetScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getDescriptors()) }
+    private val _allDescriptors by lazy { substitute(workerScope.getDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null

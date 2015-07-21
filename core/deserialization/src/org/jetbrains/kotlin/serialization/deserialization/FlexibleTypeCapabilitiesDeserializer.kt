@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
 
-trait FlexibleTypeCapabilitiesDeserializer {
+interface FlexibleTypeCapabilitiesDeserializer {
     object ThrowException : FlexibleTypeCapabilitiesDeserializer {
         override fun capabilitiesById(id: String): FlexibleTypeCapabilities? {
             throw IllegalArgumentException("Capabilities not found by ThrowException manager: $id")

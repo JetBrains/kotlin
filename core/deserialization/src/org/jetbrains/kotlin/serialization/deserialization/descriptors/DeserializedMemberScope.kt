@@ -69,7 +69,7 @@ public abstract class DeserializedMemberScope protected constructor(
                 protos = ArrayList(1)
                 map.put(key, protos)
             }
-            protos!!.add(memberProto)
+            protos.add(memberProto)
         }
         return map
     }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.AnnotatedElement
 
-public trait ReflectJavaAnnotationOwner : JavaAnnotationOwner {
+public interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
     val element: AnnotatedElement
 
     override fun getAnnotations() = getAnnotations(element.getDeclaredAnnotations())

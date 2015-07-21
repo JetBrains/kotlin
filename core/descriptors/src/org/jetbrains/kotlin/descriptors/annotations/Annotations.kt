@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors.annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public trait Annotations : Iterable<AnnotationDescriptor> {
+public interface Annotations : Iterable<AnnotationDescriptor> {
 
     public fun isEmpty(): Boolean
 
@@ -54,7 +54,7 @@ class FilteredAnnotations(
             if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
             else null
 
-    override fun iterator() = delegate.sequence()
+    override fun iterator() = delegate.asSequence()
             .filter { annotation ->
                 val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
                 descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->

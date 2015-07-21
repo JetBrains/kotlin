@@ -18,26 +18,26 @@ package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.name.Name
 
-public trait JavaAnnotationArgument {
+public interface JavaAnnotationArgument {
     public val name: Name?
 }
 
-public trait JavaLiteralAnnotationArgument : JavaAnnotationArgument {
+public interface JavaLiteralAnnotationArgument : JavaAnnotationArgument {
     public val value: Any?
 }
 
-public trait JavaArrayAnnotationArgument : JavaAnnotationArgument {
+public interface JavaArrayAnnotationArgument : JavaAnnotationArgument {
     public fun getElements(): List<JavaAnnotationArgument>
 }
 
-public trait JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
+public interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
     public fun resolve(): JavaField?
 }
 
-public trait JavaClassObjectAnnotationArgument : JavaAnnotationArgument {
+public interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {
     public fun getReferencedType(): JavaType
 }
 
-public trait JavaAnnotationAsAnnotationArgument : JavaAnnotationArgument {
+public interface JavaAnnotationAsAnnotationArgument : JavaAnnotationArgument {
     public fun getAnnotation(): JavaAnnotation
 }
