@@ -100,9 +100,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addForLoopIndices"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("explicitParamType.kt")
+        public void testExplicitParamType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/explicitParamType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableExistingIndices.kt")
         public void testInapplicableExistingIndices() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableExistingIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOnMap.kt")
+        public void testInapplicableOnMap() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableOnMap.kt");
             doTest(fileName);
         }
 
@@ -112,15 +124,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inapplicableSyntaxError.kt")
-        public void testInapplicableSyntaxError() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableSyntaxError.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inapplicableUnorderedCollection.kt")
-        public void testInapplicableUnorderedCollection() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableUnorderedCollection.kt");
+        @TestMetadata("inapplicableUnresolved.kt")
+        public void testInapplicableUnresolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableUnresolved.kt");
             doTest(fileName);
         }
 
@@ -133,12 +139,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("iterable.kt")
         public void testIterable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/iterable.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("listWithType.kt")
-        public void testListWithType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/listWithType.kt");
             doTest(fileName);
         }
 
