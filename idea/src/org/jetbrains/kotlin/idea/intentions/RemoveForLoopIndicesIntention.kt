@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.find.FindManager
-import com.intellij.find.impl.FindManagerImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
-       javaClass(), "Remove indices in 'for' loop") {
+       javaClass(), "Remove indices in for-loop") {
     override fun applyTo(element: JetForExpression, editor: Editor) {
         val parameter = element.getMultiParameter()!!
         val range = element.getLoopRange() as JetDotQualifiedExpression

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(javaClass(), "Replace with a for loop") {
+public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(javaClass(), "Replace with a for-loop") {
     override fun isApplicableTo(element: JetSimpleNameExpression): Boolean {
         if (element.getReferencedName() != "forEach") return false
 
