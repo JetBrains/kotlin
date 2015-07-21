@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +70,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
 
                     JetAnnotationEntry annotationEntry = (JetAnnotationEntry) elt;
 
-                    BindingContext context = ResolvePackage.analyzeFully(annotationEntry);
+                    BindingContext context = ResolvePackage.analyze(annotationEntry, BodyResolveMode.PARTIAL);
                     AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                     if (annotationDescriptor == null) return;
 
