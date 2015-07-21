@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
+import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -68,7 +67,34 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForE
 
         val indexVariable = multiParameter.entries[0]
         editor.caretModel.moveToOffset(indexVariable.startOffset)
-        editor.selectionModel.setSelection(indexVariable.startOffset, indexVariable.endOffset)
+
+        runTemplate(editor, element, indexVariable)
+    }
+
+    private fun runTemplate(editor: Editor, forExpression: JetForExpression, indexVariable: JetMultiDeclarationEntry) {
+        PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
+
+        val templateBuilder = TemplateBuilderImpl(forExpression)
+        templateBuilder.replaceElement(indexVariable, ChooseStringExpression(listOf("index", "i")))
+
+        val body = forExpression.body
+        when (body) {
+            is JetBlockExpression -> {
+                val statement = body.statements.firstOrNull()
+                if (statement != null) {
+                    templateBuilder.setEndVariableBefore(statement)
+                }
+                else {
+                    templateBuilder.setEndVariableAfter(body.lBrace)
+                }
+            }
+
+            null -> forExpression.rightParenthesis.let { templateBuilder.setEndVariableAfter(it) }
+
+            else -> templateBuilder.setEndVariableBefore(body)
+        }
+
+        templateBuilder.run(editor, true)
     }
 
     private fun createWithIndexExpression(originalExpression: JetExpression): JetExpression {

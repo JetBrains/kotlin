@@ -148,6 +148,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noBody.kt")
+        public void testNoBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/noBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectArray.kt")
         public void testObjectArray() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/objectArray.kt");
