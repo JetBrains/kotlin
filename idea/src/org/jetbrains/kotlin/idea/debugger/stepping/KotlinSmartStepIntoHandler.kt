@@ -26,10 +26,13 @@ import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.*
@@ -138,11 +141,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                             if (delegatedResolvedCall == null) {
                                 val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
-                                    val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
-                                    if (psiMethod != null) {
-                                        val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
-                                        result.add(KotlinMethodSmartStepTarget(getter, label, expression, lines))
-                                    }
+                                    val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
+                                    result.add(KotlinMethodSmartStepTarget(getter, label, expression, lines))
                                 }
                             }
                             else {
@@ -150,11 +150,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
                                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
                                     if (function is JetNamedFunction || function is JetSecondaryConstructor) {
-                                        val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
-                                        if (psiMethod != null) {
-                                            val label = "${propertyDescriptor.getName()}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
-                                            result.add(KotlinMethodSmartStepTarget(function, label, expression, lines))
-                                        }
+                                        val label = "${propertyDescriptor.getName()}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
+                                        result.add(KotlinMethodSmartStepTarget(function as JetFunction, label, expression, lines))
                                     }
                                 }
                             }
@@ -168,15 +165,11 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
-                if (descriptor is CallableMemberDescriptor) {
-                    // TODO doesn't work for libraries
+                if (descriptor is CallableMemberDescriptor && !isIntrinsic(descriptor)) {
                     val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
                     if (function is JetNamedFunction || function is JetSecondaryConstructor) {
-                        val psiMethod = LightClassUtil.getLightClassMethod(function as JetFunction)
-                        if (psiMethod != null) {
-                            val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
-                            result.add(KotlinMethodSmartStepTarget(function, label, expression, lines))
-                        }
+                        val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
+                        result.add(KotlinMethodSmartStepTarget(function as JetFunction, label, expression, lines))
                     }
                     else if (function is PsiMethod) {
                         result.add(MethodSmartStepTarget(function, null, expression, false, lines))
@@ -194,5 +187,12 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!! )
             else -> super.createMethodFilter(stepTarget)
         }
+    }
+
+
+    private val methods = IntrinsicMethods()
+
+    private fun isIntrinsic(descriptor: CallableMemberDescriptor): Boolean {
+        return methods.getIntrinsic(descriptor) != null
     }
 }

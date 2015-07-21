@@ -26,6 +26,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
@@ -80,5 +81,5 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger/smartStepInto"
     }
 
-    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
+    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

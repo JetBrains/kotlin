@@ -125,6 +125,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("libraryFun.kt")
+    public void testLibraryFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/libraryFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiline.kt")
     public void testMultiline() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/multiline.kt");
