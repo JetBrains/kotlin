@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor;
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -2145,8 +2145,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull MethodKind methodKind,
             StackValue receiver
     ) {
-        if (propertyDescriptor instanceof SyntheticJavaBeansPropertyDescriptor) {
-            return intermediateValueForSyntheticExtensionProperty((SyntheticJavaBeansPropertyDescriptor) propertyDescriptor, receiver);
+        if (propertyDescriptor instanceof SyntheticJavaPropertyDescriptor) {
+            return intermediateValueForSyntheticExtensionProperty((SyntheticJavaPropertyDescriptor) propertyDescriptor, receiver);
         }
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
@@ -2242,7 +2242,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue.Property intermediateValueForSyntheticExtensionProperty(@NotNull SyntheticJavaBeansPropertyDescriptor propertyDescriptor, StackValue receiver) {
+    private StackValue.Property intermediateValueForSyntheticExtensionProperty(@NotNull SyntheticJavaPropertyDescriptor propertyDescriptor, StackValue receiver) {
         Type type = typeMapper.mapType(propertyDescriptor.getOriginal().getType());
         CallableMethod callableGetter = typeMapper.mapToCallableMethod(propertyDescriptor.getGetMethod(), false, context);
         FunctionDescriptor setMethod = propertyDescriptor.getSetMethod();

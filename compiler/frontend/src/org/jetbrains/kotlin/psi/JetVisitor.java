@@ -439,6 +439,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitPackageDirective(@NotNull JetPackageDirective directive, D data) {
-        return visitExpression(directive, data);
+        return visitJetElement(directive, data);
     }
 }

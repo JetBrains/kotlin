@@ -7415,6 +7415,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericClassMethod.kt")
+        public void testGenericClassMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/genericClassMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("get.kt")
         public void testGet() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/get.kt");
@@ -7433,6 +7439,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("isGet.kt")
+        public void testIsGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/isGet.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("isSet.kt")
+        public void testIsSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/isSet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/set.kt");
@@ -7448,6 +7466,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("setSafeCall.kt")
         public void testSetSafeCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCast.kt")
+        public void testSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/smartCast.kt");
             doTest(fileName);
         }
 

@@ -21,27 +21,29 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
-        if (descriptors.none { it is SyntheticJavaBeansPropertyDescriptor }) return emptyList()
+        if (descriptors.none { it.original is SyntheticJavaPropertyDescriptor }) return emptyList()
 
         val result = SmartList<FunctionDescriptor>()
         for (descriptor in descriptors) {
-            if (descriptor is SyntheticJavaBeansPropertyDescriptor) {
+            val original = descriptor.original
+            if (original is SyntheticJavaPropertyDescriptor) {
                 if (getter) {
-                    result.add(descriptor.getMethod)
+                    result.add(original.getMethod)
                 }
                 else {
-                    result.addIfNotNull(descriptor.setMethod)
+                    result.addIfNotNull(original.setMethod)
                 }
             }
         }
@@ -56,10 +58,14 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
         if (!Name.isValidIdentifier(newElementName!!)) return expression
 
         val newNameAsName = Name.identifier(newElementName)
-        val newName = if (getter)
-            SyntheticJavaBeansPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
-        else
-            SyntheticJavaBeansPropertyDescriptor.propertyNameBySetMethodName(newNameAsName)
+        val newName = if (getter) {
+            SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(newNameAsName)
+        }
+        else {
+            //TODO: it's not correct
+            //TODO: setIsY -> setIsIsY bug
+            SyntheticJavaPropertyDescriptor.propertyNameBySetMethodName(newNameAsName, withIsPrefix = expression.getReferencedNameAsName().asString().startsWith("is"))
+        }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
         val nameIdentifier = JetPsiFactory(expression).createNameIdentifier(newName.getIdentifier())

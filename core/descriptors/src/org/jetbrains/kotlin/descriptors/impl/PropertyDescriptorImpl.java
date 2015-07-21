@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
@@ -82,7 +83,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     public void setType(
             @NotNull JetType outType,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable JetType receiverType
     ) {
@@ -92,7 +93,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     public void setType(
             @NotNull JetType outType,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable ReceiverParameterDescriptor extensionReceiverParameter
     ) {

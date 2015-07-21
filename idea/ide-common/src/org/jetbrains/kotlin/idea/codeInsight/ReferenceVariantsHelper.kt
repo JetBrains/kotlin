@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.synthetic.SyntheticJavaBeansPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
@@ -75,13 +75,14 @@ public class ReferenceVariantsHelper(
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
             for (variant in variants) {
-                if (variant is SyntheticJavaBeansPropertyDescriptor) {
-                    accessorMethodsToRemove.add(variant.getMethod)
-                    accessorMethodsToRemove.addIfNotNull(variant.setMethod)
+                val original = variant.original
+                if (original is SyntheticJavaPropertyDescriptor) {
+                    accessorMethodsToRemove.add(original.getMethod)
+                    accessorMethodsToRemove.addIfNotNull(original.setMethod)
                 }
             }
 
-            variants = variants.filter { it !in accessorMethodsToRemove }
+            variants = variants.filter { it.original !in accessorMethodsToRemove }
         }
 
         return variants
@@ -167,7 +168,9 @@ public class ReferenceVariantsHelper(
         val memberFilter = kindFilter exclude DescriptorKindExclude.Extensions
         val containingDeclaration = resolutionScope.getContainingDeclaration()
 
-        for (receiverType in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
+        val receiverTypes = SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
+
+        for (receiverType in receiverTypes) {
             val members = receiverType.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.ALL, nameFilter) // filter by kind later because of constructors
             for (member in members) {
                 if (member is ClassDescriptor) {
@@ -179,12 +182,12 @@ public class ReferenceVariantsHelper(
                     this.add(member)
                 }
             }
+        }
 
-            if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
-                for (extension in resolutionScope.getSyntheticExtensionProperties(receiverType)) {
-                    if (nameFilter(extension.getName()) && kindFilter.accepts(extension)) {
-                        addAll(extension.substituteExtensionIfCallable(receiverValue, callType, context, dataFlowInfo, containingDeclaration))
-                    }
+        if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
+            for (extension in resolutionScope.getSyntheticExtensionProperties(receiverTypes)) {
+                if (nameFilter(extension.getName()) && kindFilter.accepts(extension)) {
+                    addAll(extension.substituteExtensionIfCallable(receiverValue, callType, context, dataFlowInfo, containingDeclaration))
                 }
             }
         }
