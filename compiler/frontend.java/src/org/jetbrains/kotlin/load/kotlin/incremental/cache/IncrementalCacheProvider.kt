@@ -16,6 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental.cache
 
-public trait IncrementalCacheProvider {
+public interface IncrementalCacheProvider {
     public fun getIncrementalCache(moduleId: String): IncrementalCache
 }

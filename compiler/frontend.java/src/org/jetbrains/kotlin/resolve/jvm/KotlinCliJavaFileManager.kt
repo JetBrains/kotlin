@@ -21,6 +21,6 @@ import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.ClassId
 
-public trait KotlinCliJavaFileManager : JavaFileManager {
+public interface KotlinCliJavaFileManager : JavaFileManager {
     public fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass?
 }

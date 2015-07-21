@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.kotlin.incremental.cache
 
 import java.io.File
 
-public trait IncrementalCache {
+public interface IncrementalCache {
     public fun getObsoletePackageParts(): Collection<String>
 
     public fun getPackageData(fqName: String): ByteArray?
