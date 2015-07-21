@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.codeInsight.daemon.impl.HighlightingSessionImpl
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
@@ -56,6 +59,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is JetFile) return null
+        if (!file.manager.isInProject(file)) return null
         if (file.importDirectives.isEmpty()) return null
 
         val descriptorsToImport = KotlinImportOptimizer.collectDescriptorsToImport(file)
@@ -87,10 +91,16 @@ class UnusedImportInspection : AbstractKotlinInspection() {
                 val nameExpression = directive.importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression
                 if (nameExpression == null || nameExpression.getReferenceTargets(nameExpression.analyze()).isEmpty()) continue // do not highlight unresolved imports as unused
 
+                val fixes = arrayListOf<LocalQuickFix>()
+                fixes.add(OptimizeImportsQuickFix(file))
+                if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
+                    fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
+                }
+
                 problems.add(manager.createProblemDescriptor(directive,
                                                              "Unused import directive",
                                                              isOnTheFly,
-                                                             arrayOf(OptimizeImportsQuickFix(file)),
+                                                             fixes.toTypedArray(),
                                                              ProblemHighlightType.LIKE_UNUSED_SYMBOL))
             }
         }
@@ -178,4 +188,14 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
+    private class EnableOptimizeImportsOnTheFlyFix(private val file: JetFile) : LocalQuickFix, LowPriorityAction {
+        override fun getName() = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
+
+        override fun getFamilyName() = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = true
+            OptimizeImportsProcessor(project, file).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
+        }
+    }
 }
