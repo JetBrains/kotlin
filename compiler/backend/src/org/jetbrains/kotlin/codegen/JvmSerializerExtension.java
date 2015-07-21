@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -50,6 +51,14 @@ public class JvmSerializerExtension extends SerializerExtension {
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper) {
         this.bindings = bindings;
         this.typeMapper = typeMapper;
+    }
+
+    @Override
+    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto, @NotNull StringTable stringTable) {
+        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
+        if (annotation != null) {
+            proto.addExtension(JvmProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation, stringTable));
+        }
     }
 
     @Override

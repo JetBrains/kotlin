@@ -12,6 +12,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.implClassName);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.index);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classAnnotation);
   }
   public interface JvmTypeOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
@@ -3785,6 +3786,17 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
+  public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.Class,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> classAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_jvm_JvmType_descriptor;
   private static
@@ -3853,8 +3865,11 @@ public final class DebugJvmProtoBuf {
       "s.kotlin.serialization.Type\030d \003(\0132..org." +
       "jetbrains.kotlin.serialization.Annotatio" +
       "n:J\n\005index\022;.org.jetbrains.kotlin.serial" +
-      "ization.Callable.ValueParameter\030d \001(\005B\022B",
-      "\020DebugJvmProtoBuf"
+      "ization.Callable.ValueParameter\030d \001(\005:s\n",
+      "\020class_annotation\022).org.jetbrains.kotlin" +
+      ".serialization.Class\030d \003(\0132..org.jetbrai" +
+      "ns.kotlin.serialization.AnnotationB\022B\020De" +
+      "bugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3890,6 +3905,7 @@ public final class DebugJvmProtoBuf {
           implClassName.internalInit(descriptor.getExtensions().get(2));
           typeAnnotation.internalInit(descriptor.getExtensions().get(3));
           index.internalInit(descriptor.getExtensions().get(4));
+          classAnnotation.internalInit(descriptor.getExtensions().get(5));
           return null;
         }
       };

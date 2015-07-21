@@ -15,17 +15,6 @@ PsiJetFileStubImpl[package=test.a]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=annotation]
               REFERENCE_EXPRESSION:[referencedName=annotation]
-      ANNOTATION_ENTRY:[hasValueArguments=false, shortName=Retention]
-        CONSTRUCTOR_CALLEE:
-          TYPE_REFERENCE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  USER_TYPE:[isAbsoluteInRootPackage=false]
-                    REFERENCE_EXPRESSION:[referencedName=java]
-                  REFERENCE_EXPRESSION:[referencedName=lang]
-                REFERENCE_EXPRESSION:[referencedName=annotation]
-              REFERENCE_EXPRESSION:[referencedName=Retention]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
