@@ -146,7 +146,15 @@ class UnusedImportInspection : AbstractKotlinInspection() {
 
         val document = editor.document
         var hasErrors = false
-        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, Processor { hasErrors = true; false })
+        DaemonCodeAnalyzerEx.processHighlights(document, project, HighlightSeverity.ERROR, 0, document.textLength, Processor { highlightInfo ->
+            if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
+                hasErrors = true
+                false
+            }
+            else {
+                true
+            }
+        })
         if (hasErrors) return false
 
         return DaemonListeners.canChangeFileSilently(file)
