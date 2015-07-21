@@ -223,6 +223,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Nullable
     private static PsiClass getLightClassForDecompiledClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
+        if (decompiledClassOrObject instanceof JetEnumEntry) {
+            return null;
+        }
         JetFile containingJetFile = decompiledClassOrObject.getContainingJetFile();
         if (!containingJetFile.isCompiled()) {
             return null;
@@ -248,7 +251,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         while (iterator.hasNext()) {
             Name name = iterator.next();
             PsiClass innerClass = current.findInnerClassByName(name.asString(), false);
-            assert innerClass != null : "Could not find corresponding inner/nested class " + relativeFqName + "in class " + decompiledClassOrObject.getName() + "\n" +
+            assert innerClass != null : "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.getFqName() + "\n" +
                                         "File: " + decompiledClassOrObject.getContainingJetFile().getVirtualFile().getName();
             current = innerClass;
         }

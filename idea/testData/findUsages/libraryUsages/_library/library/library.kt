@@ -70,3 +70,8 @@ fun test() {
 
     LocalClass(localClassProperty = 1).localClassProperty
 }
+
+enum class E {
+    ONE,
+    TWO
+}
