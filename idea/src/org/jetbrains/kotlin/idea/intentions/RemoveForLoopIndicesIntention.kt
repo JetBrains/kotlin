@@ -17,45 +17,46 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Remove indices in for-loop") {
-    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
-        val multiParameter = element.getMultiParameter() ?: return false
-        if (multiParameter.getEntries().size() != 2) return false
-        val range = element.getLoopRange() as? JetDotQualifiedExpression ?: return false
-        val selector = range.getSelectorExpression() as? JetCallExpression ?: return false
+public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Remove indices in for-loop") {
+    private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
-        if (!selector.textMatches("withIndex()")) return false
+    override fun applicabilityRange(element: JetForExpression): TextRange? {
+        val loopRange = element.loopRange as? JetDotQualifiedExpression ?: return null
+        val multiParameter = element.multiParameter ?: return null
+        if (multiParameter.entries.size() != 2) return null
 
-        val body = element.getBody()
-        if (body != null && caretOffset >= body.getTextRange().getStartOffset()) return false
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
-        val bindingContext = element.analyze()
-        val call = bindingContext[BindingContext.CALL, selector.getCalleeExpression()] ?: return false
-        val callResolution = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return false
-        val fqName = DescriptorUtils.getFqNameSafe(callResolution.getCandidateDescriptor())
-        if (fqName.toString() != "kotlin.withIndex") return false
+        val resolvedCall = loopRange.getResolvedCall(bindingContext)
+        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() != WITH_INDEX_FQ_NAME) return null
 
-        val indexVar = multiParameter.getEntries()[0]
-        return ReferencesSearch.search(indexVar).findFirst() == null
+        val indexVar = multiParameter.entries[0]
+        if (ReferencesSearch.search(indexVar).any()) return null
+
+        return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {
-        val parameter = element.getMultiParameter()!!
-        val range = element.getLoopRange() as JetDotQualifiedExpression
-        val parameters = parameter.getEntries()
+        val multiParameter = element.multiParameter!!
+        val loopRange = element.loopRange as JetDotQualifiedExpression
 
-        val loop = JetPsiFactory(element).createExpression("for (${parameters[1].getText()} in _) {}") as JetForExpression
-        parameter.replace(loop.getLoopParameter()!!)
+        val elementVar = multiParameter.entries[1]
+        val loop = JetPsiFactory(element).createExpressionByPattern("for ($0 in _) {}", elementVar.text) as JetForExpression
+        multiParameter.replace(loop.loopParameter!!)
 
-        range.replace(range.getReceiverExpression())
+        loopRange.replace(loopRange.receiverExpression)
     }
 }
