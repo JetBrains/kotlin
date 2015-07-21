@@ -112,6 +112,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inapplicableInBody.kt")
+        public void testInapplicableInBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableInBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableOnMap.kt")
         public void testInapplicableOnMap() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableOnMap.kt");
