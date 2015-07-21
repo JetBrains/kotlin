@@ -34,4 +34,58 @@
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
         <description>Unused import directive</description>
     </problem>
+    
+    <problem>
+        <file>unusedStarWhenExplicit.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unusedStarWhenExplicit.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>unusedStarWhenExplicit.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unusedStarWhenExplicit.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
 </problems>

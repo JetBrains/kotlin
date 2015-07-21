@@ -47,12 +47,12 @@ import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class UnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
@@ -64,23 +64,41 @@ class UnusedImportInspection : AbstractKotlinInspection() {
 
         val descriptorsToImport = KotlinImportOptimizer.collectDescriptorsToImport(file)
 
+        val directives = file.importDirectives
+        val explicitlyImportedFqNames = directives
+                .asSequence()
+                .map { it.importPath }
+                .filterNotNull()
+                .filter { !it.isAllUnder && !it.hasAlias() }
+                .map { it.fqnPart() }
+                .toSet()
+
         val fqNames = HashSet<FqName>()
         val parentFqNames = HashSet<FqName>()
         for (descriptor in descriptorsToImport) {
             val fqName = descriptor.importableFqNameSafe
             fqNames.add(fqName)
-            val parentFqName = fqName.parent()
-            if (!parentFqName.isRoot) {
-                parentFqNames.add(parentFqName)
+
+            if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not neeeded
+                val parentFqName = fqName.parent()
+                if (!parentFqName.isRoot) {
+                    parentFqNames.add(parentFqName)
+                }
             }
         }
 
         val problems = ArrayList<ProblemDescriptor>()
-        val directives = file.importDirectives
+
+        val importPaths = HashSet<ImportPath>(directives.size())
+
         for (directive in directives) {
             val importPath = directive.importPath ?: continue
             if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
-            val isUsed = if (importPath.isAllUnder) {
+
+            val isUsed = if (!importPaths.add(importPath)) {
+                false
+            }
+            else if (importPath.isAllUnder) {
                 importPath.fqnPart() in parentFqNames
             }
             else {
