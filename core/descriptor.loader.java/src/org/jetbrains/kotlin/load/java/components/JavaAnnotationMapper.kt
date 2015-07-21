@@ -54,6 +54,8 @@ public object JavaAnnotationMapper {
 
     public val kotlinToJavaNameMap: Map<FqName, FqName> =
             mapOf(KotlinBuiltIns.FQ_NAMES.target to FqName(javaClass<Target>().getCanonicalName()))
+
+    public val javaToKotlinNameMap: Map<FqName, FqName> = kotlinToJavaNameMap.map { it.value to it.key }.toMap()
 }
 
 class JavaTargetAnnotationDescriptor(

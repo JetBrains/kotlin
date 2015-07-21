@@ -4,5 +4,5 @@ import java.lang.annotation.*
 annotation class my
 
 Retention(RetentionPolicy.RUNTIME)
-Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)
+<!DEPRECATED_JAVA_ANNOTATION!>Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)<!>
 annotation class my1
