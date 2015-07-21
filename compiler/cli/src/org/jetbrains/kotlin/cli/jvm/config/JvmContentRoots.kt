@@ -25,7 +25,7 @@ public data class JvmClasspathRoot(public override val file: File): JvmContentRo
 
 public data class JavaSourceRoot(public override val file: File): JvmContentRoot
 
-public trait JvmContentRoot : ContentRoot {
+public interface JvmContentRoot : ContentRoot {
     public val file: File
 }
 

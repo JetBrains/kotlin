@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinSourceRoot
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.JetFileType
@@ -88,7 +87,6 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Comparator
 import kotlin.platform.platformStatic
-import kotlin.properties.Delegates
 
 public class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable, 
@@ -161,7 +159,7 @@ public class KotlinCoreEnvironment private constructor(
     public val project: Project
         get() = projectEnvironment.getProject()
 
-    public val sourceLinesOfCode: Int by Delegates.lazy { countLinesOfCode(sourceFiles) }
+    public val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
 
     public fun countLinesOfCode(sourceFiles: List<JetFile>): Int  =
             sourceFiles.sumBy {
