@@ -23,6 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 
+/**
+ * The fact that this is a Java class is used in reflection implementation classes: otherwise if it were a Kotlin class, KClassImpl()
+ * instance would have been invoked in its static initializer (to create and cache $kotlinClass field), resulting in infinite recursion.
+ */
 /* package */ class ReflectProperties {
     public static abstract class Val<T> {
         private static final Object NULL_VALUE = new Object() {};

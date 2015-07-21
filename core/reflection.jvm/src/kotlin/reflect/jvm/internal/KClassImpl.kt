@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleD
 import kotlin.reflect.*
 
 class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
-    // Don't use kotlin.properties.Delegates here because it's a Kotlin class which will invoke KClassImpl() in <clinit>,
-    // resulting in infinite recursion
-
     val descriptor by ReflectProperties.lazySoft {
         val classId = classId
 
