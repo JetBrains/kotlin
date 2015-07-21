@@ -74,6 +74,6 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
         templateBuilder.setEndVariableAfter(bodyPlaceholder)
 
-        templateBuilder.run(editor, true)
+        templateBuilder.run(editor, false)
     }
 }
