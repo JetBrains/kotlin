@@ -252,7 +252,7 @@ class ForConverter(
         if (indices == null) return null
 
         return if (reversed)
-            MethodCallExpression.build(indices!!.assignNoPrototype(), "reversed", listOf(), listOf(), false)
+            MethodCallExpression.build(indices.assignNoPrototype(), "reversed", listOf(), listOf(), false)
         else
             indices
     }

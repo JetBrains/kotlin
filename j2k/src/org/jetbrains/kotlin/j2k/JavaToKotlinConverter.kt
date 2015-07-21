@@ -36,13 +36,11 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import java.util.Comparator
 import java.util.LinkedHashMap
-import kotlin.properties.Delegates
 
 public interface PostProcessor {
     public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
@@ -178,7 +176,7 @@ public class JavaToKotlinConverter(
             val file: PsiFile,
             val processings: Collection<UsageProcessing>
     ) {
-        val depth: Int by Delegates.lazy { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
+        val depth: Int by lazy { target.parentsWithSelf.takeWhile { it !is PsiFile }.count() }
     }
 
     private fun buildExternalCodeProcessing(

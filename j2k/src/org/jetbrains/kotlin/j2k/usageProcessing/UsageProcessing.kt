@@ -22,20 +22,20 @@ import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.SpecialExpressionConverter
 import org.jetbrains.kotlin.j2k.ast.Expression
 
-trait UsageProcessing {
+interface UsageProcessing {
     val targetElement: PsiElement
     val convertedCodeProcessor: ConvertedCodeProcessor?
     val javaCodeProcessor: ExternalCodeProcessor?
     val kotlinCodeProcessor: ExternalCodeProcessor?
 }
 
-trait ConvertedCodeProcessor {
+interface ConvertedCodeProcessor {
     fun convertVariableUsage(expression: PsiReferenceExpression, codeConverter: CodeConverter): Expression? = null
 
     fun convertMethodUsage(methodCall: PsiMethodCallExpression, codeConverter: CodeConverter): Expression? = null
 }
 
-trait ExternalCodeProcessor {
+interface ExternalCodeProcessor {
     fun processUsage(reference: PsiReference): Array<PsiReference>?
 }
 
