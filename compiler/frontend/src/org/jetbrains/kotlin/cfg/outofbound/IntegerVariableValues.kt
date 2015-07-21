@@ -271,29 +271,6 @@ public class IntegerVariableValues private constructor() {
         }
     }
 
-    //    private interface AvailabilityStatus
-    //    private object ValueAvailable : AvailabilityStatus
-    //    private class ValueUnavailable (val sinceLexicalScope: LexicalScope): AvailabilityStatus
-    //
-    //    private data class IntegerValue(val value: Int, var availabilityStatus: AvailabilityStatus) {
-    //        override fun equals(other: Any?): Boolean {
-    //            if(other !is IntegerValue) {
-    //                return false
-    //            }
-    //            return value == other.value
-    //        }
-    //
-    //        override fun hashCode(): Int = value
-    //
-    //        override fun toString(): String {
-    //            val availability =
-    //                    if(availabilityStatus is ValueUnavailable) {
-    //                        val depth = (availabilityStatus as ValueUnavailable).sinceLexicalScope.depth
-    //                        "($depth)"
-    //                    } else ""
-    //            return value.toString() + availability
-    //        }
-    //    }
     private data class UnavailableValue(val value: Int, val sinceLexicalScope: LexicalScope) {
         override fun toString(): String = "$value(${sinceLexicalScope.depth})"
     }
