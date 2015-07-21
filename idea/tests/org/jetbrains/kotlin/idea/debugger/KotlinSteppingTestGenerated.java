@@ -382,6 +382,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/custom"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("funLiteral.kt")
+        public void testFunLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("fwAbstractProperty.kt")
         public void testFwAbstractProperty() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/fwAbstractProperty.kt");
@@ -397,6 +403,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("fwPropertyInInterface.kt")
         public void testFwPropertyInInterface() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/fwPropertyInInterface.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("severalFunLiterals.kt")
+        public void testSeveralFunLiterals() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/severalFunLiterals.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("severalFunLiteralsInClass.kt")
+        public void testSeveralFunLiteralsInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/severalFunLiteralsInClass.kt");
             doCustomTest(fileName);
         }
 
