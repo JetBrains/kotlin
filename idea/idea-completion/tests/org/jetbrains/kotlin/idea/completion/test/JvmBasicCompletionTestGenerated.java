@@ -685,6 +685,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NoParameterAnnotationInPresentation.kt")
+        public void testNoParameterAnnotationInPresentation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoParameterAnnotationInPresentation.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoSecondPressCompletionInAutoPopup.kt")
         public void testNoSecondPressCompletionInAutoPopup() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoSecondPressCompletionInAutoPopup.kt");

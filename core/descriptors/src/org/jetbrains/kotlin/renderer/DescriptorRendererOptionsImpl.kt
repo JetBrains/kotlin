@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.renderer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.JetType
 import java.lang.reflect.Modifier
-import java.util.EnumSet
 import kotlin.properties.Delegates
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty
@@ -61,7 +60,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var nameShortness by property(NameShortness.SOURCE_CODE_QUALIFIED)
     override var withDefinedIn by property(true)
-    override var modifiers: Set<DescriptorRendererModifier> by property(EnumSet.allOf(javaClass<DescriptorRendererModifier>()))
+    override var modifiers: Set<DescriptorRendererModifier> by property(DescriptorRendererModifier.DEFAULTS)
     override var startFromName by property(false)
     override var debugMode by property(false)
     override var classWithPrimaryConstructor by property(false)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.JetType
@@ -32,6 +33,7 @@ public object IdeDescriptorRenderers {
         showInternalKeyword = false
         overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
         unitReturnType = false
+        modifiers = DescriptorRendererModifier.ALL
     }
 
     public val SOURCE_CODE: DescriptorRenderer = BASE.withOptions {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
@@ -56,6 +57,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                             options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
                             options.setVerbose(true);
                             options.setExcludedAnnotationClasses(Collections.singleton(new FqName(Retention.class.getName())));
+                            options.setModifiers(DescriptorRendererModifier.ALL);
                             return Unit.INSTANCE$;
                         }
                     }

@@ -129,7 +129,10 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
         })
 
-        val renderer = DescriptorRenderer.withOptions { nameShortness = NameShortness.FULLY_QUALIFIED }
+        val renderer = DescriptorRenderer.withOptions {
+            nameShortness = NameShortness.FULLY_QUALIFIED
+            modifiers = DescriptorRendererModifier.ALL
+        }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(psiFile.getText())

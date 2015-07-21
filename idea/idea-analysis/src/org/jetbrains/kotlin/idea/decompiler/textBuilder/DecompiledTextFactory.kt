@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
@@ -97,15 +98,19 @@ private val descriptorRendererForDecompiler = DescriptorRenderer.withOptions {
     classWithPrimaryConstructor = true
     typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
     secondaryConstructorsAsPrimary = false
+    modifiers = DescriptorRendererModifier.ALL
 }
 
 private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRenderer.withOptions {
     withDefinedIn = false
     classWithPrimaryConstructor = true
     secondaryConstructorsAsPrimary = false
+    modifiers = DescriptorRendererModifier.ALL
 }
 
-private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS
+private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
+    modifiers = DescriptorRendererModifier.ALL
+}
 
 public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
     return descriptorRendererForKeys.render(descriptor)

@@ -111,7 +111,9 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
             startFromName = true
         }
 
-        public val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {  }
+        public val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+            modifiers = DescriptorRendererModifier.ALL
+        }
 
         public val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             nameShortness = NameShortness.SHORT
@@ -121,6 +123,7 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
         public val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
             nameShortness = NameShortness.FULLY_QUALIFIED
+            modifiers = DescriptorRendererModifier.ALL
         }
 
         public val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
@@ -129,6 +132,7 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
         public val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
+            modifiers = DescriptorRendererModifier.ALL
         }
 
         public fun getClassKindPrefix(klass: ClassDescriptor): String {
@@ -203,11 +207,18 @@ public enum class ParameterNameRenderingPolicy {
     NONE
 }
 
-public enum class DescriptorRendererModifier {
-    VISIBILITY,
-    MODALITY,
-    OVERRIDE,
-    ANNOTATIONS,
-    INNER,
-    MEMBER_KIND
+public enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
+    VISIBILITY(true),
+    MODALITY(true),
+    OVERRIDE(true),
+    ANNOTATIONS(false),
+    INNER(true),
+    MEMBER_KIND(true)
+
+    ;
+
+    companion object {
+        val DEFAULTS = DescriptorRendererModifier.values().filter { it.includeByDefault }.toSet()
+        val ALL = DescriptorRendererModifier.values().toSet()
+    }
 }
