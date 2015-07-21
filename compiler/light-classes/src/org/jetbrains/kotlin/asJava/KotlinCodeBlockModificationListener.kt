@@ -97,7 +97,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             var child = element.getFirstChild()
             while (child != null) {
                 if (containsClassesInside(child)) return true
-                child = child!!.getNextSibling()
+                child = child.getNextSibling()
             }
 
             return false

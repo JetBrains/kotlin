@@ -19,4 +19,4 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.psi.JetDeclaration
 
-public trait KotlinLightMethod: PsiMethod, KotlinLightElement<JetDeclaration, PsiMethod>
+public interface KotlinLightMethod: PsiMethod, KotlinLightElement<JetDeclaration, PsiMethod>

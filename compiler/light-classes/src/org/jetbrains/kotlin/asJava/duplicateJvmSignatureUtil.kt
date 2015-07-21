@@ -57,10 +57,10 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 
         when (parent) {
             is JetFile -> {
-                return getDiagnosticsForPackage(parent as JetFile)
+                return getDiagnosticsForPackage(parent)
             }
             is JetClassBody -> {
-                val parentsParent = parent?.getParent()
+                val parentsParent = parent.getParent()
 
                 if (parentsParent is JetClassOrObject) {
                     return getDiagnosticsForClass(parentsParent)
