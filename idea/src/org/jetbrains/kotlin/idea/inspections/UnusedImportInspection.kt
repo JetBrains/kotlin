@@ -21,7 +21,10 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.codeInsight.daemon.impl.HighlightingSessionImpl
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -31,46 +34,31 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import com.intellij.util.DocumentUtil
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
+import java.util.ArrayList
 import java.util.HashSet
 
 class UnusedImportInspection : AbstractKotlinInspection() {
-    private val visitorKey = Key<MyVisitor>("UnusedImportInspection.visitorKey")
-
     override fun runForWholeFile() = true
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        val visitor = MyVisitor(session.file as JetFile)
-        session.putUserData(visitorKey, visitor)
-        return visitor
-    }
+    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
+        if (file !is JetFile) return null
+        if (file.importDirectives.isEmpty()) return null
 
-    private class MyVisitor(file: JetFile) : KotlinImportOptimizer.CollectUsedDescriptorsVisitor(file, recursive = false) {
-        var anyImportVisited = false
-
-        override fun visitImportDirective(importDirective: JetImportDirective) {
-            anyImportVisited = true
-        }
-    }
-
-    override fun inspectionFinished(session: LocalInspectionToolSession, problemsHolder: ProblemsHolder) {
-        val visitor = session.getUserData(visitorKey)!!
-        if (!visitor.anyImportVisited) return // workaround for the problem (bug?) that IDEA does not call us for all elements when we press Enter
-        val descriptorsToImport = visitor.descriptors
+        val descriptorsToImport = KotlinImportOptimizer.collectDescriptorsToImport(file)
 
         val fqNames = HashSet<FqName>()
         val parentFqNames = HashSet<FqName>()
@@ -78,17 +66,17 @@ class UnusedImportInspection : AbstractKotlinInspection() {
             val fqName = descriptor.importableFqNameSafe
             fqNames.add(fqName)
             val parentFqName = fqName.parent()
-            if (!parentFqName.isRoot()) {
+            if (!parentFqName.isRoot) {
                 parentFqNames.add(parentFqName)
             }
         }
 
-        val file = session.file as JetFile
+        val problems = ArrayList<ProblemDescriptor>()
         val directives = file.importDirectives
         for (directive in directives) {
             val importPath = directive.importPath ?: continue
             if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
-            val isUsed = if (importPath.isAllUnder()) {
+            val isUsed = if (importPath.isAllUnder) {
                 importPath.fqnPart() in parentFqNames
             }
             else {
@@ -99,14 +87,20 @@ class UnusedImportInspection : AbstractKotlinInspection() {
                 val nameExpression = directive.importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression
                 if (nameExpression == null || nameExpression.getReferenceTargets(nameExpression.analyze()).isEmpty()) continue // do not highlight unresolved imports as unused
 
-                problemsHolder.registerProblem(
-                        directive,
-                        "Unused import directive",
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        OptimizeImportsQuickFix(file))
+                problems.add(manager.createProblemDescriptor(directive,
+                                                             "Unused import directive",
+                                                             isOnTheFly,
+                                                             arrayOf(OptimizeImportsQuickFix(file)),
+                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL))
             }
         }
 
+        scheduleOptimizeImportsOnTheFly(file, descriptorsToImport)
+
+        return problems.toTypedArray()
+    }
+
+    private fun scheduleOptimizeImportsOnTheFly(file: JetFile, descriptorsToImport: Set<DeclarationDescriptor>) {
         if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
             val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
 
@@ -134,13 +128,13 @@ class UnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private fun timeToOptimizeImportsOnTheFly(file: JetFile, editor: Editor, project: Project): Boolean {
-        if (project.isDisposed() || !file.isValid() || editor.isDisposed()) return false
+        if (project.isDisposed || !file.isValid || editor.isDisposed) return false
 
-        if (!file.isWritable()) return false
+        if (!file.isWritable) return false
 
         // do not optimize imports on the fly during undo/redo
         val undoManager = UndoManager.getInstance(editor.project)
-        if (undoManager.isUndoInProgress() || undoManager.isRedoInProgress()) return false
+        if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return false
 
         // if we stand inside import statements, do not optimize
         val importsRange = file.importList?.textRange ?: return false

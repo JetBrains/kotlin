@@ -32,11 +32,9 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -62,9 +60,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             //TODO: keep existing imports? at least aliases (comments)
 
-            val visitor = CollectUsedDescriptorsVisitor(file, recursive = true)
-            file.accept(visitor)
-            val descriptorsToImport = visitor.descriptors
+            val descriptorsToImport = collectDescriptorsToImport(file)
 
             val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return
 
@@ -72,7 +68,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         }
     }
 
-    public open class CollectUsedDescriptorsVisitor(val file: JetFile, val recursive: Boolean) : JetVisitorVoid() {
+    private class CollectUsedDescriptorsVisitor(val file: JetFile) : JetVisitorVoid() {
         private val _descriptors = HashSet<DeclarationDescriptor>()
         private val currentPackageName = file.packageFqName
 
@@ -80,10 +76,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             get() = _descriptors
 
         override fun visitElement(element: PsiElement) {
-            if (recursive) {
-                ProgressIndicatorProvider.checkCanceled()
-                element.acceptChildren(this)
-            }
+            ProgressIndicatorProvider.checkCanceled()
+            element.acceptChildren(this)
         }
 
         override fun visitImportList(importList: JetImportList) {
@@ -93,8 +87,6 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         }
 
         override fun visitJetElement(element: JetElement) {
-            if (!recursive && element.parents.any { it is JetImportDirective || it is JetPackageDirective }) return
-
             for (reference in element.references) {
                 if (reference !is JetReference) continue
 
@@ -141,6 +133,12 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     companion object {
+        public fun collectDescriptorsToImport(file: JetFile): Set<DeclarationDescriptor> {
+            val visitor = CollectUsedDescriptorsVisitor(file)
+            file.accept(visitor)
+            return visitor.descriptors
+        }
+
         public fun prepareOptimizedImports(
                 file: JetFile,
                 descriptorsToImport: Collection<DeclarationDescriptor>
