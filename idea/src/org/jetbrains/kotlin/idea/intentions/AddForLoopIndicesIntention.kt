@@ -18,67 +18,67 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateManager
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
-        javaClass(), "Add indices to 'for' loop") {
+public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Add indices to 'for' loop") {
     override fun applyTo(element: JetForExpression, editor: Editor) {
-        val loopRange = element.getLoopRange()!!
-        val newRangeText = "${loopRange.getText()}.withIndex()"
-        val project = editor.getProject()!!
-        val psiFactory = JetPsiFactory(project)
-        val newRange = psiFactory.createExpression(newRangeText)
+        val loopRange = element.loopRange!!
+        val loopParameter = element.loopParameter!!
+        val project = element.project
+        val psiFactory = JetPsiFactory(element)
 
-        //Roundabout way to create new multiparameter element so as not to incorrectly trigger syntax error highlighting
-        val loopParameter = element.getLoopParameter()!!
-        val parenthesizedParam = psiFactory.createExpression("(index)") as JetParenthesizedExpression
-        val indexElement = parenthesizedParam.getExpression()!!
-        val comma = psiFactory.createComma()
-        val newParamElement = psiFactory.createExpression(loopParameter.getText())
-        parenthesizedParam.addAfter(newParamElement, indexElement)
-        parenthesizedParam.addAfter(comma, indexElement)
+        loopRange.replace(createWithIndexExpression(loopRange))
 
-        loopParameter.replace(parenthesizedParam)
-        loopRange.replace(newRange)
+        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as JetForExpression).multiParameter!!
 
-        val multiParameter = PsiTreeUtil.findChildOfType(element, indexElement.javaClass)!!
+        multiParameter = loopParameter.replaced(multiParameter)
 
-        editor.getCaretModel().moveToOffset(multiParameter.getTextOffset())
-        val templateBuilder = TemplateBuilderImpl(multiParameter)
-        templateBuilder.replaceElement(multiParameter, "index")
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        val indexVariable = multiParameter.entries[0]
+        editor.caretModel.moveToOffset(indexVariable.startOffset)
+
+        val templateBuilder = TemplateBuilderImpl(indexVariable)
+        templateBuilder.replaceElement(indexVariable, "index")
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
         TemplateManager.getInstance(project).startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
     }
 
-    override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
-        if (element.getLoopParameter() == null) return false
-        val body = element.getBody()
-        if (body != null && caretOffset >= body.getTextRange().getStartOffset()) return false
+    private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
-        val range = element.getLoopRange() ?: return false
-        if (range is JetDotQualifiedExpression) {
-            val selector = range.getSelectorExpression() ?: return true
-            if (selector.getText() == "withIndex()") return false
-        }
+    override fun applicabilityRange(element: JetForExpression): TextRange? {
+        if (element.loopParameter == null) return null
+        val loopRange = element.loopRange ?: return null
 
-        val psiFactory = JetPsiFactory(element.getProject())
-        val potentialExpression = psiFactory.createExpression("${range.getText()}.withIndex()") as JetDotQualifiedExpression
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
-        val bindingContext = element.analyze()
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return false
-        val functionSelector = potentialExpression.getSelectorExpression() as JetCallExpression
-        val updatedContext = potentialExpression.analyzeInContext(scope)
-        val call = updatedContext[BindingContext.CALL, functionSelector.getCalleeExpression()] ?: return false
-        val callScope = updatedContext[BindingContext.RESOLVED_CALL, call] ?: return false
-        val callFqName = DescriptorUtils.getFqNameSafe(callScope.getCandidateDescriptor())
-        return callFqName.toString() == "kotlin.withIndex"
+        val resolvedCall = loopRange.getResolvedCall(bindingContext)
+        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() == WITH_INDEX_FQ_NAME) return null // already withIndex() call
+
+        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return null
+        val potentialExpression = createWithIndexExpression(loopRange)
+
+        val newBindingContext = potentialExpression.analyzeInContext(resolutionScope)
+        val newResolvedCall = potentialExpression.getResolvedCall(newBindingContext) ?: return null
+        if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() != WITH_INDEX_FQ_NAME) return null
+
+        return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
+    }
+
+    private fun createWithIndexExpression(originalExpression: JetExpression): JetExpression {
+        return JetPsiFactory(originalExpression).createExpressionByPattern("$0.withIndex()", originalExpression)
     }
 }
