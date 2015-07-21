@@ -91,10 +91,10 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     companion object {
 
         protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean =
-            processor.processIfNotNull { if (ref.element.valid) KotlinReferenceUsageInfo(ref) else null }
+            processor.processIfNotNull { if (ref.element.isValid) KotlinReferenceUsageInfo(ref) else null }
 
         protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean =
-            processor.processIfNotNull { if (element.valid) UsageInfo(element) else null }
+            processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }
 
         private fun Processor<UsageInfo>.processIfNotNull(callback: () -> UsageInfo?): Boolean {
             val usageInfo = runReadAction(callback)
