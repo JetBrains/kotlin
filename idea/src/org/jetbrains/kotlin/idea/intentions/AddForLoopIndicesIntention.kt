@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.editor.Editor
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Add indices to 'for' loop") {
+public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Add indices to 'for' loop"), LowPriorityAction {
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
     override fun applicabilityRange(element: JetForExpression): TextRange? {
