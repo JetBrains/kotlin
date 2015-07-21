@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.cache
+package org.jetbrains.kotlin.jps.incremental
 
-public interface IncrementalCacheProvider {
-    public fun getIncrementalCache(moduleId: String): IncrementalCache
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+
+public class IncrementalCompilationComponentsImpl(caches: Map<ModuleBuildTarget, IncrementalCache>): IncrementalCompilationComponents {
+    private val idToCache = caches.mapKeys { it.key.getId()!! }
+
+    override fun getIncrementalCache(moduleId: String): IncrementalCache {
+        return idToCache[moduleId]!!
+    }
 }

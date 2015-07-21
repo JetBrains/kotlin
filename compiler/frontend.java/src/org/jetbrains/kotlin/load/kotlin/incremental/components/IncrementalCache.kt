@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.cache
+package org.jetbrains.kotlin.load.kotlin.incremental.components
 
 import java.io.File
 

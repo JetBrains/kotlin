@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -67,8 +67,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
 
         if (IncrementalCompilation.ENABLED) {
-            val incrementalCacheProvider = services.get(javaClass<IncrementalCacheProvider>())
-            configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider)
+            val incrementalCompilationComponents = services.get(javaClass<IncrementalCompilationComponents>())
+            configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, incrementalCompilationComponents)
         }
 
         val locator = services.get(javaClass<CompilerJarLocator>())

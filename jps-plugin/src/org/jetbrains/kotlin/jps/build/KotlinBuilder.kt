@@ -58,8 +58,8 @@ import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDe
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -270,7 +270,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
     private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>, context: CompileContext): CompilerEnvironment {
         val compilerServices = Services.Builder()
-                .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
+                .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches))
                 .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
                     override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
                     })
@@ -279,7 +279,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return CompilerEnvironment.getEnvironmentFor(
                 PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
                 { className ->
-                    className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.cache.")
+                    className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
                     || className == "org.jetbrains.kotlin.config.Services"
                     || className.startsWith("org.apache.log4j.") // For logging from compiler
                     || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
