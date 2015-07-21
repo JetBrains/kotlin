@@ -36,27 +36,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Add indices to 'for' loop") {
-    override fun applyTo(element: JetForExpression, editor: Editor) {
-        val loopRange = element.loopRange!!
-        val loopParameter = element.loopParameter!!
-        val project = element.project
-        val psiFactory = JetPsiFactory(element)
-
-        loopRange.replace(createWithIndexExpression(loopRange))
-
-        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as JetForExpression).multiParameter!!
-
-        multiParameter = loopParameter.replaced(multiParameter)
-
-        val indexVariable = multiParameter.entries[0]
-        editor.caretModel.moveToOffset(indexVariable.startOffset)
-
-        val templateBuilder = TemplateBuilderImpl(indexVariable)
-        templateBuilder.replaceElement(indexVariable, "index")
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-        TemplateManager.getInstance(project).startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
-    }
-
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
     override fun applicabilityRange(element: JetForExpression): TextRange? {
@@ -76,6 +55,27 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForE
         if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() != WITH_INDEX_FQ_NAME) return null
 
         return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
+    }
+
+    override fun applyTo(element: JetForExpression, editor: Editor) {
+        val loopRange = element.loopRange!!
+        val loopParameter = element.loopParameter!!
+        val project = element.project
+        val psiFactory = JetPsiFactory(element)
+
+        loopRange.replace(createWithIndexExpression(loopRange))
+
+        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as JetForExpression).multiParameter!!
+
+        multiParameter = loopParameter.replaced(multiParameter)
+
+        val indexVariable = multiParameter.entries[0]
+        editor.caretModel.moveToOffset(indexVariable.startOffset)
+
+        val templateBuilder = TemplateBuilderImpl(indexVariable)
+        templateBuilder.replaceElement(indexVariable, "index")
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+        TemplateManager.getInstance(project).startTemplate(editor, templateBuilder.buildInlineTemplate()!!)
     }
 
     private fun createWithIndexExpression(originalExpression: JetExpression): JetExpression {
