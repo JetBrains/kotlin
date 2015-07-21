@@ -20,6 +20,7 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -38,19 +39,26 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.JetType
 import java.util.HashMap
 import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
+    private val LOG = Logger.getInstance(this.javaClass)
+
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
+        val contextElement = getWrappedContextElement(project, context)
+        if (contextElement == null) {
+            LOG.warn("CodeFragment with null context created:\noriginalContext = ${context?.getElementTextWithContext()}")
+        }
         val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
             JetExpressionCodeFragment(
                     project,
                     "fragment.kt",
                     item.getText(),
                     item.getImports(),
-                    getWrappedContextElement(project, context)
+                    contextElement
             )
         }
         else {
@@ -59,7 +67,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                     "fragment.kt",
                     item.getText(),
                     item.getImports(),
-                    getWrappedContextElement(project, context)
+                    contextElement
             )
         }
 
@@ -130,12 +138,15 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 return getContextElement(elementAt.getOrigin())
             }
 
-            val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
+            val containingFile = elementAt.getContainingFile()
+            if (containingFile !is JetFile) return null
+
+            val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
             if (expressionAtOffset != null && KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(elementAt)) {
                 return expressionAtOffset
             }
 
-            return KotlinEditorTextProvider.findExpressionInner(elementAt, true) ?: elementAt.getContainingFile()
+            return KotlinEditorTextProvider.findExpressionInner(elementAt, true) ?: containingFile
         }
 
         //internal for tests
