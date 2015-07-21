@@ -108,18 +108,8 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
 
                     return annotationEntries;
                 }
-                /*
-                TODO getJetAnnotationCandidates works only with global search scope
-                for (PsiElement element : ((LocalSearchScope)useScope).getScope()) {
-                    element.accept(new PsiRecursiveElementWalkingVisitor() {
-                        @Override
-                        public void visitElement(PsiElement element) {
-                            if (element instanceof JetAnnotationEntry) {
-                                result.add(element);
-                            }
-                        }
-                    });
-                }*/
+
+                // TODO getJetAnnotationCandidates works only with global search scope
                 return new ArrayList<PsiElement>();
             }
         });
