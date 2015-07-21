@@ -16,19 +16,29 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.editor.fixers.range
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+
+public class RemoveForLoopIndicesInspection : IntentionBasedInspection<JetForExpression>(
+        listOf(IntentionBasedInspection.IntentionData(RemoveForLoopIndicesIntention())),
+        "Index is not used in the loop body",
+        javaClass()
+) {
+    override val problemHighlightType: ProblemHighlightType
+        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+}
 
 public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForExpression>(javaClass(), "Remove indices in for-loop") {
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
@@ -46,7 +56,7 @@ public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetF
         val indexVar = multiParameter.entries[0]
         if (ReferencesSearch.search(indexVar).any()) return null
 
-        return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
+        return indexVar.nameIdentifier?.range
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {

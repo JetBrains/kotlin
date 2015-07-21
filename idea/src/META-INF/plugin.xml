@@ -1081,6 +1081,13 @@
         cleanupTool="true"
         level="WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
+                     displayName="Index is unused"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
+
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
