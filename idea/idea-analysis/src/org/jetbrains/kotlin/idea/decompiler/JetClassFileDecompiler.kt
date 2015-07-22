@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler;
+package org.jetbrains.kotlin.idea.decompiler
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.compiled.ClassFileDecompilers;
-import com.intellij.psi.compiled.ClsStubBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinClsStubBuilder;
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinClsStubBuilder
 
-public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
-    private final ClsStubBuilder stubBuilder = new KotlinClsStubBuilder();
+public class JetClassFileDecompiler : ClassFileDecompilers.Full() {
+    private val stubBuilder = KotlinClsStubBuilder()
 
-    @Override
-    public boolean accepts(@NotNull VirtualFile file) {
-        return DecompilerPackage.isKotlinJvmCompiledFile(file);
-    }
+    override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
 
-    @NotNull
-    @Override
-    public ClsStubBuilder getStubBuilder() {
-        return stubBuilder;
-    }
+    override fun getStubBuilder() = stubBuilder
 
-    @NotNull
-    @Override
-    public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new JetClassFileViewProvider(manager, file, physical, DecompilerPackage.isKotlinInternalCompiledFile(file));
-    }
+    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean)
+            = JetClassFileViewProvider(manager, file, physical, isKotlinInternalCompiledFile(file))
 }
