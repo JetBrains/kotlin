@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
@@ -47,12 +46,12 @@ import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportDirective
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
 
 class UnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
@@ -79,7 +78,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
             val fqName = descriptor.importableFqNameSafe
             fqNames.add(fqName)
 
-            if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not neeeded
+            if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
                 val parentFqName = fqName.parent()
                 if (!parentFqName.isRoot) {
                     parentFqNames.add(parentFqName)
@@ -129,36 +128,42 @@ class UnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private fun scheduleOptimizeImportsOnTheFly(file: JetFile, descriptorsToImport: Set<DeclarationDescriptor>) {
-        if (CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-            val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
+        if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) return
+        val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, descriptorsToImport) ?: return // return if already optimized
 
-            // unwrap progress indicator
-            val progress = sequence(ProgressManager.getInstance().progressIndicator) {
-                (it as? ProgressWrapper)?.originalProgressIndicator
-            }.last()
-            val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
+        // unwrap progress indicator
+        val progress = sequence(ProgressManager.getInstance().progressIndicator) {
+            (it as? ProgressWrapper)?.originalProgressIndicator
+        }.last()
+        val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
 
-            val project = highlightingSession.project
-            val editor = highlightingSession.editor
-            if (editor != null) {
-                Disposer.register(highlightingSession, object : Disposable {
-                    override fun dispose() {
-                        // later because should invoke when highlighting is finished
-                        ApplicationManager.getApplication().invokeLater {
-                            if (timeToOptimizeImportsOnTheFly(file, editor, project)) {
-                                optimizeImportsOnTheFly(file, optimizedImports, editor, project)
-                            }
+        val project = highlightingSession.project
+        val editor = highlightingSession.editor
+        if (editor != null) {
+            val modificationStamp = editor.document.modificationStamp
+            val invokeFixLater = object : Disposable {
+                override fun dispose() {
+                    // later because should invoke when highlighting is finished
+                    ApplicationManager.getApplication().invokeLater {
+                        if (timeToOptimizeImportsOnTheFly(file, editor, project) && editor.document.modificationStamp == modificationStamp) {
+                            optimizeImportsOnTheFly(file, optimizedImports, editor, project)
                         }
                     }
-                })
+                }
+            }
+
+            Disposer.register(highlightingSession, invokeFixLater)
+
+            if (progress.isCanceled) {
+                Disposer.dispose(invokeFixLater)
+                Disposer.dispose(highlightingSession)
+                progress.checkCanceled()
             }
         }
     }
 
     private fun timeToOptimizeImportsOnTheFly(file: JetFile, editor: Editor, project: Project): Boolean {
-        if (project.isDisposed || !file.isValid || editor.isDisposed) return false
-
-        if (!file.isWritable) return false
+        if (project.isDisposed || !file.isValid || editor.isDisposed || !file.isWritable) return false
 
         // do not optimize imports on the fly during undo/redo
         val undoManager = UndoManager.getInstance(editor.project)
