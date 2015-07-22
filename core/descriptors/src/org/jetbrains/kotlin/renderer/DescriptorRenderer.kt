@@ -156,6 +156,7 @@ public interface DescriptorRendererOptions {
     public var classWithPrimaryConstructor: Boolean
     public var verbose: Boolean
     public var unitReturnType: Boolean
+    public var withoutReturnType: Boolean
     public var normalizedVisibilities: Boolean
     public var showInternalKeyword: Boolean
     public var prettyFunctionTypes: Boolean

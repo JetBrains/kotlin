@@ -543,7 +543,7 @@ internal class DescriptorRendererImpl(
         renderReceiverAfterName(function, builder)
 
         val returnType = function.getReturnType()
-        if (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType))) {
+        if (!withoutReturnType && (unitReturnType || (returnType == null || !KotlinBuiltIns.isUnit(returnType)))) {
             builder.append(": ").append(if (returnType == null) "[NULL]" else escape(renderType(returnType)))
         }
 
