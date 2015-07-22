@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.annotation
 
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget
-public enum class AnnotationTarget(val description: String, val isDefault: Boolean = true) {
+public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
     PACKAGE("package"),
     CLASSIFIER("classifier"),
     ANNOTATION_CLASS("annotation class"),
@@ -39,19 +39,19 @@ public enum class AnnotationTarget(val description: String, val isDefault: Boole
 
     companion object {
 
-        private val map = HashMap<String, AnnotationTarget>()
+        private val map = HashMap<String, KotlinTarget>()
 
         init {
-            for (target in AnnotationTarget.values()) {
+            for (target in KotlinTarget.values()) {
                 map[target.name()] = target
             }
         }
 
-        public fun valueOrNull(name: String): AnnotationTarget? = map[name]
+        public fun valueOrNull(name: String): KotlinTarget? = map[name]
 
-        public val DEFAULT_TARGET_SET: Set<AnnotationTarget> = values().filter { it.isDefault }.toSet()
+        public val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
 
-        public val ALL_TARGET_SET: Set<AnnotationTarget> = values().toSet()
+        public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
     }
 }

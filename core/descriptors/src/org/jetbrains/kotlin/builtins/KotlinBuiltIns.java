@@ -398,7 +398,7 @@ public class KotlinBuiltIns {
     }
 
     @Nullable
-    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull AnnotationTarget target) {
+    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
         ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(
                 Name.identifier(target.name()), UsageLocation.NO_LOCATION
         );
@@ -411,7 +411,7 @@ public class KotlinBuiltIns {
     }
 
     @Nullable
-    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull AnnotationRetention retention) {
+    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
         ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getClassifier(
                 Name.identifier(retention.name()), UsageLocation.NO_LOCATION
         );

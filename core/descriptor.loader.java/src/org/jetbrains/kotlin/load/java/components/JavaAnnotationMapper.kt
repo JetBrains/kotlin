@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationRetention
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
@@ -113,21 +113,21 @@ class JavaTargetAnnotationDescriptor(
 }
 
 public object JavaAnnotationTargetMapper {
-    private val targetNameLists = mapOf("PACKAGE"         to EnumSet.of(AnnotationTarget.PACKAGE),
-                                        "TYPE"            to EnumSet.of(AnnotationTarget.CLASSIFIER),
-                                        "ANNOTATION_TYPE" to EnumSet.of(AnnotationTarget.ANNOTATION_CLASS),
-                                        "TYPE_PARAMETER"  to EnumSet.of(AnnotationTarget.TYPE_PARAMETER),
-                                        "FIELD"           to EnumSet.of(AnnotationTarget.FIELD),
-                                        "LOCAL_VARIABLE"  to EnumSet.of(AnnotationTarget.LOCAL_VARIABLE),
-                                        "PARAMETER"       to EnumSet.of(AnnotationTarget.VALUE_PARAMETER),
-                                        "CONSTRUCTOR"     to EnumSet.of(AnnotationTarget.CONSTRUCTOR),
-                                        "METHOD"          to EnumSet.of(AnnotationTarget.FUNCTION,
-                                                                        AnnotationTarget.PROPERTY_GETTER,
-                                                                        AnnotationTarget.PROPERTY_SETTER),
-                                        "TYPE_USE"        to EnumSet.of(AnnotationTarget.TYPE)
+    private val targetNameLists = mapOf("PACKAGE"         to EnumSet.of(KotlinTarget.PACKAGE),
+                                        "TYPE"            to EnumSet.of(KotlinTarget.CLASSIFIER),
+                                        "ANNOTATION_TYPE" to EnumSet.of(KotlinTarget.ANNOTATION_CLASS),
+                                        "TYPE_PARAMETER"  to EnumSet.of(KotlinTarget.TYPE_PARAMETER),
+                                        "FIELD"           to EnumSet.of(KotlinTarget.FIELD),
+                                        "LOCAL_VARIABLE"  to EnumSet.of(KotlinTarget.LOCAL_VARIABLE),
+                                        "PARAMETER"       to EnumSet.of(KotlinTarget.VALUE_PARAMETER),
+                                        "CONSTRUCTOR"     to EnumSet.of(KotlinTarget.CONSTRUCTOR),
+                                        "METHOD"          to EnumSet.of(KotlinTarget.FUNCTION,
+                                                                        KotlinTarget.PROPERTY_GETTER,
+                                                                        KotlinTarget.PROPERTY_SETTER),
+                                        "TYPE_USE"        to EnumSet.of(KotlinTarget.TYPE)
     )
 
-    public fun mapJavaTargetArgumentByName(argumentName: String?): Set<AnnotationTarget> = targetNameLists[argumentName] ?: emptySet()
+    public fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
 
     public fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>, builtIns: KotlinBuiltIns): ConstantValue<*>? {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.target
@@ -141,9 +141,9 @@ public object JavaAnnotationTargetMapper {
         return ArrayValue(kotlinTargets, parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]"), builtIns)
     }
 
-    private val retentionNameList = mapOf("RUNTIME" to AnnotationRetention.RUNTIME,
-                                          "CLASS"   to AnnotationRetention.BINARY,
-                                          "SOURCE"  to AnnotationRetention.SOURCE
+    private val retentionNameList = mapOf("RUNTIME" to KotlinRetention.RUNTIME,
+                                          "CLASS"   to KotlinRetention.BINARY,
+                                          "SOURCE"  to KotlinRetention.SOURCE
     )
 
     public fun mapJavaRetentionArgument(element: JavaAnnotationArgument, builtIns: KotlinBuiltIns): ConstantValue<*>? {

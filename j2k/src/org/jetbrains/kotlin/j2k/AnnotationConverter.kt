@@ -20,7 +20,7 @@ import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.javadoc.PsiDocTag
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.ast.Annotation
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationTargetMapper
@@ -96,7 +96,7 @@ class AnnotationConverter(private val converter: Converter) {
             PsiModifier.TRANSIENT to "transient"
     )
 
-    private fun mapTargetByName(expr: PsiReferenceExpression): Set<AnnotationTarget> {
+    private fun mapTargetByName(expr: PsiReferenceExpression): Set<KotlinTarget> {
         return expr.referenceName?.let { JavaAnnotationTargetMapper.mapJavaTargetArgumentByName(it) } ?: emptySet()
     }
 
@@ -108,9 +108,9 @@ class AnnotationConverter(private val converter: Converter) {
         }
         if (qualifiedName == CommonClassNames.JAVA_LANG_ANNOTATION_TARGET) {
             val attributes = annotation.parameterList.attributes
-            val arguments: Set<AnnotationTarget>
+            val arguments: Set<KotlinTarget>
             if (attributes.isEmpty()) {
-                arguments = setOf<AnnotationTarget>()
+                arguments = setOf<KotlinTarget>()
             }
             else {
                 val value = attributes[0].value
@@ -119,7 +119,7 @@ class AnnotationConverter(private val converter: Converter) {
                             .flatMap { mapTargetByName(it) }
                             .toSet()
                     is PsiReferenceExpression -> mapTargetByName(value)
-                    else -> setOf<AnnotationTarget>()
+                    else -> setOf<KotlinTarget>()
                 }
             }
             val deferredExpressionList = arguments.map {
