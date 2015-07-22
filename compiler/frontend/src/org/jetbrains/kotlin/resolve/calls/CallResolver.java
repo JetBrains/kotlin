@@ -264,8 +264,8 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        additionalCheckerProvider.getCallChecker(),
-                        additionalCheckerProvider.getTypeChecker(), isAnnotationContext)
+                        additionalCheckerProvider.getCallChecker(), isAnnotationContext
+                )
         );
     }
 
@@ -345,7 +345,7 @@ public class CallResolver {
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                callChecker, additionalCheckerProvider.getTypeChecker(), false);
+                callChecker, false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

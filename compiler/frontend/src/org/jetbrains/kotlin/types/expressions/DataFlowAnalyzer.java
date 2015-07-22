@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
@@ -47,6 +48,12 @@ import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEP
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public class DataFlowAnalyzer {
+
+    private final Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers;
+
+    public DataFlowAnalyzer(@NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers) {
+        this.additionalTypeCheckers = additionalTypeCheckers;
+    }
 
     @NotNull
     public DataFlowInfo extractDataFlowInfoFromCondition(
@@ -164,7 +171,9 @@ public class DataFlowAnalyzer {
 
         if (expressionType == null) return null;
 
-        c.additionalTypeChecker.checkType(expression, expressionType, c);
+        for (AdditionalTypeChecker checker : additionalTypeCheckers) {
+            checker.checkType(expression, expressionType, c);
+        }
 
         if (noExpectedType(c.expectedType) || !c.expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, c.expectedType)) {
