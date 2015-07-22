@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.idea.util.isAlmostAnyType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.*
+import java.util.LinkedHashSet
 
 enum class Tail {
     COMMA,
@@ -146,7 +145,11 @@ class ExpectedInfos(
                     ?.map { it.fuzzyType } ?: return results
             if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
 
-            return expectedFuzzyTypes.flatMap { calculateForArgument(call, it.type, argument) ?: emptyList() }.toSet()
+            return expectedFuzzyTypes
+                    .map { it.type }
+                    .toSet()
+                    .flatMap { calculateForArgument(call, it, argument) ?: emptyList() }
+                    .toSet()
         }
 
         return results
@@ -200,6 +203,7 @@ class ExpectedInfos(
             var argumentToParameter = call.mapArgumentsToParameters(descriptor)
             var parameter = argumentToParameter[argument] ?: continue
 
+            //TODO: we can loose partially inferred substitution here but what to do?
             if (parameter.type.containsError()) {
                 parameter = parameter.original
                 descriptor = descriptor.original

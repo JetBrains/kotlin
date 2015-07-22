@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
@@ -42,7 +41,7 @@ fun FuzzyType.makeNotNullable() = FuzzyType(type.makeNotNullable(), freeParamete
 fun FuzzyType.makeNullable() = FuzzyType(type.makeNullable(), freeParameters)
 fun FuzzyType.nullability() = type.nullability()
 
-fun FuzzyType.isAlmostAnyType(): Boolean {
+fun FuzzyType.isAlmostEverything(): Boolean {
     if (freeParameters.isEmpty()) return false
     val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
     if (typeParameter !in freeParameters) return false

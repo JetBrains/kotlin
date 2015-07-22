@@ -39,7 +39,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -210,7 +212,7 @@ class SmartCompletion(
             var returnType = fuzzyReturnType() ?: return listOf()
             // skip declarations of type Nothing or of generic parameter type which has no real bounds
             //TODO: maybe we should include them on the second press?
-            if (returnType.type.isNothing() || returnType.isAlmostAnyType()) return listOf()
+            if (returnType.type.isNothing() || returnType.isAlmostEverything()) return listOf()
 
             if (this is VariableDescriptor) {
                 return smartCastTypes(this).map { FuzzyType(it, listOf()) }
@@ -244,7 +246,7 @@ class SmartCompletion(
         while (true) {
             val infos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = count)
                     .calculate(expression) ?: return null
-            if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType.isAlmostAnyType() }) return infos
+            if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType.isAlmostEverything() }) return infos
             count++
         }
         //TODO: we could always give higher priority to results with outer call expected type used

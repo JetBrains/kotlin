@@ -1,4 +1,4 @@
-fun foo(list: List<String>): Collection<Int> {
+fun foo(list: List<String>) {
     bar(list.map { it.<caret> })
 }
 
