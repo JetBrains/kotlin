@@ -41,6 +41,9 @@ public final class JvmAnnotationNames {
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
     public static final Name RETENTION_ANNOTATION_PARAMETER_NAME = Name.identifier("retention");
 
+    public static final FqName TARGET_ANNOTATION = new FqName("java.lang.annotation.Target");
+    public static final FqName RETENTION_ANNOTATION = new FqName("java.lang.annotation.Retention");
+
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
@@ -118,6 +121,7 @@ public final class JvmAnnotationNames {
 
     private static final Set<JvmClassName> SPECIAL_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();
+    private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
     static {
         for (FqName fqName : Arrays.asList(KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SIGNATURE)) {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
@@ -127,13 +131,16 @@ public final class JvmAnnotationNames {
         for (FqName fqName : Arrays.asList(JETBRAINS_NOT_NULL_ANNOTATION, JETBRAINS_NULLABLE_ANNOTATION)) {
             NULLABILITY_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
+        for (FqName fqName : Arrays.asList(TARGET_ANNOTATION, RETENTION_ANNOTATION)) {
+            SPECIAL_META_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
+        }
     }
 
     public static boolean isSpecialAnnotation(@NotNull ClassId classId, boolean javaSpecificAnnotationsAreSpecial) {
         JvmClassName className = JvmClassName.byClassId(classId);
-        return (javaSpecificAnnotationsAreSpecial && NULLABILITY_ANNOTATIONS.contains(className))
-               || SPECIAL_ANNOTATIONS.contains(className)
-               || className.getInternalName().startsWith("jet/runtime/typeinfo/");
+        return (javaSpecificAnnotationsAreSpecial
+                && (NULLABILITY_ANNOTATIONS.contains(className) || SPECIAL_META_ANNOTATIONS.contains(className))
+               ) || SPECIAL_ANNOTATIONS.contains(className) || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 
     private JvmAnnotationNames() {

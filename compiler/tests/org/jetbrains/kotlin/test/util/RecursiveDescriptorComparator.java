@@ -49,19 +49,12 @@ import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisit
 
 public class RecursiveDescriptorComparator {
 
-    private static final Set<FqName> excludedAnnotations = new HashSet<FqName>();
-    static {
-        excludedAnnotations.add(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME));
-        excludedAnnotations.add(new FqName(Retention.class.getName()));
-        excludedAnnotations.add(new FqName(Target.class.getName()));
-    }
-
     private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
-                    options.setExcludedAnnotationClasses(excludedAnnotations);
+                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
                     options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                     options.setIncludePropertyConstant(true);
                     options.setNameShortness(NameShortness.FULLY_QUALIFIED);
