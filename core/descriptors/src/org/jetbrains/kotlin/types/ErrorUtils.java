@@ -314,6 +314,12 @@ public class ErrorUtils {
         public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
             return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeArguments);
         }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+            return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeSubstitution);
+        }
     }
 
     @NotNull
@@ -461,6 +467,12 @@ public class ErrorUtils {
         @Override
         public List<TypeProjection> getArguments() {
             return arguments;
+        }
+
+        @NotNull
+        @Override
+        public TypeSubstitution getSubstitution() {
+            return new IndexedParametersSubstitution(constructor, arguments);
         }
 
         @Override

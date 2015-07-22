@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
@@ -91,6 +90,15 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
 
         TypeSubstitutor substitutor = new IndexedParametersSubstitution(getTypeConstructor(), typeArguments).buildSubstitutor();
+        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+    }
+
+    @NotNull
+    @Override
+    public JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope();
+
+        TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
         return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
     }
 

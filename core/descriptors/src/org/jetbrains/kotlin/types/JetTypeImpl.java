@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
@@ -29,12 +30,14 @@ public final class JetTypeImpl extends AbstractJetType {
     private final boolean nullable;
     private final JetScope memberScope;
     private final Annotations annotations;
+    private final TypeSubstitution substitution;
 
     public JetTypeImpl(
             @NotNull Annotations annotations,
             @NotNull TypeConstructor constructor,
             boolean nullable,
             @NotNull List<? extends TypeProjection> arguments,
+            @Nullable TypeSubstitution substitution,
             @NotNull JetScope memberScope
     ) {
         this.annotations = annotations;
@@ -47,12 +50,32 @@ public final class JetTypeImpl extends AbstractJetType {
         this.nullable = nullable;
         this.arguments = arguments;
         this.memberScope = memberScope;
+        this.substitution = substitution;
+    }
+
+    public JetTypeImpl(
+            @NotNull Annotations annotations,
+            @NotNull TypeConstructor constructor,
+            boolean nullable,
+            @NotNull List<? extends TypeProjection> arguments,
+            @NotNull JetScope memberScope
+    ) {
+        this(annotations, constructor, nullable, arguments, null, memberScope);
     }
 
     @NotNull
     @Override
     public Annotations getAnnotations() {
         return annotations;
+    }
+
+    @NotNull
+    @Override
+    public TypeSubstitution getSubstitution() {
+        if (substitution == null) {
+            return new IndexedParametersSubstitution(getConstructor(), getArguments());
+        }
+        return substitution;
     }
 
     @NotNull

@@ -271,6 +271,8 @@ class LazyJavaTypeResolver(
             return (descriptor as ClassDescriptor).getMemberScope(getArguments())
         }
 
+        override fun computeCustomSubstitution(): TypeSubstitution? = null
+
         private val nullable = c.storageManager.createLazyValue l@ {
             when (attr.flexibility) {
                 FLEXIBLE_LOWER_BOUND -> return@l false

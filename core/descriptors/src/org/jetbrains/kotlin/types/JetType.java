@@ -36,6 +36,9 @@ public interface JetType extends Annotated {
     @ReadOnly
     List<TypeProjection> getArguments();
 
+    @NotNull
+    TypeSubstitution getSubstitution();
+
     boolean isMarkedNullable();
 
     @NotNull

@@ -52,7 +52,6 @@ class DeserializedType(
         c.components.annotationAndConstantLoader.loadTypeAnnotations(typeProto, c.nameResolver)
     }
 
-
     override fun isMarkedNullable(): Boolean = typeProto.getNullable()
 
     private fun getTypeMemberScope(constructor: TypeConstructor, typeArguments: List<TypeProjection>): JetScope {
