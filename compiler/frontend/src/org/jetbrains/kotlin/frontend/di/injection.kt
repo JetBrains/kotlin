@@ -43,6 +43,9 @@ public fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.platformToKotlinClassMap)
     useInstance(additionalCheckerProvider)
     useInstance(additionalCheckerProvider.symbolUsageValidator)
+    additionalCheckerProvider.declarationCheckers.forEach {
+        useInstance(it)
+    }
 }
 
 public fun StorageComponentContainer.configureModule(

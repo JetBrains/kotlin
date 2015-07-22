@@ -459,7 +459,7 @@ public class ModifiersChecker {
 
 
         private void runDeclarationCheckers(@NotNull JetDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
-            for (DeclarationChecker checker : additionalCheckerProvider.getDeclarationCheckers()) {
+            for (DeclarationChecker checker : declarationCheckers) {
                 checker.check(declaration, descriptor, trace, trace.getBindingContext());
             }
         }
@@ -482,10 +482,10 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    private final AdditionalCheckerProvider additionalCheckerProvider;
+    private final Iterable<? extends DeclarationChecker> declarationCheckers;
 
-    public ModifiersChecker(@NotNull AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
+    public ModifiersChecker(@NotNull Iterable<? extends DeclarationChecker> declarationCheckers) {
+        this.declarationCheckers = declarationCheckers;
     }
 
     @NotNull
