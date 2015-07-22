@@ -5,4 +5,4 @@ class A {
 }
 
 // EXIST: { lookupString: "kotlin", itemText: "kotlin", tailText: null, typeText: null }
-// EXIST_JAVA_ONLY: { lookupString: "util", itemText: "util", tailText: " (java.util)", typeText: null }
+// EXIST: { lookupString: "util", itemText: "util", tailText: " (java.util)", typeText: null }
