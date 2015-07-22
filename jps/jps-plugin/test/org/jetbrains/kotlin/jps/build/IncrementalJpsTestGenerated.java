@@ -401,6 +401,78 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateMethodAdded")
+        public void testPrivateMethodAdded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateMethodAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateMethodDeleted")
+        public void testPrivateMethodDeleted() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateMethodDeleted/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateMethodSignatureChanged")
+        public void testPrivateMethodSignatureChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateMethodSignatureChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateSecondaryConstructorAdded")
+        public void testPrivateSecondaryConstructorAdded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateSecondaryConstructorAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateSecondaryConstructorDeleted")
+        public void testPrivateSecondaryConstructorDeleted() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateSecondaryConstructorDeleted/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateValAccessorChanged")
+        public void testPrivateValAccessorChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateValAccessorChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateValAdded")
+        public void testPrivateValAdded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateValAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateValDeleted")
+        public void testPrivateValDeleted() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateValDeleted/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateValSignatureChanged")
+        public void testPrivateValSignatureChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateValSignatureChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateVarAdded")
+        public void testPrivateVarAdded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateVarAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateVarDeleted")
+        public void testPrivateVarDeleted() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateVarDeleted/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("privateVarSignatureChanged")
+        public void testPrivateVarSignatureChanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/privateVarSignatureChanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyRedeclaration")
         public void testPropertyRedeclaration() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/propertyRedeclaration/");
@@ -637,6 +709,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             @TestMetadata("packageFileAdded")
             public void testPackageFileAdded() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/packageFileAdded/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateChanges")
+            public void testPrivateChanges() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/privateChanges/");
                 doTest(fileName);
             }
 
