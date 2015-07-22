@@ -31,8 +31,10 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.idea.test.AstAccessControl;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 
@@ -108,7 +110,7 @@ public class ExpectedCompletionUtils {
         }
     }
 
-    private static final String UNSUPPORTED_PLATFORM_MESSAGE = String.format("Only %s and %s platforms are supported", TargetPlatform.JVM, TargetPlatform.JS);
+    private static final String UNSUPPORTED_PLATFORM_MESSAGE = String.format("Only %s and %s platforms are supported", JvmPlatform.INSTANCE$, JsPlatform.INSTANCE$);
     
     private static final String EXIST_LINE_PREFIX = "EXIST:";
 
@@ -153,10 +155,10 @@ public class ExpectedCompletionUtils {
         if (platform == null) {
             return processProposalAssertions(fileText, EXIST_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JVM) {
+        else if (platform == JvmPlatform.INSTANCE$) {
             return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JS) {
+        else if (platform == JsPlatform.INSTANCE$) {
             return processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
         }
         else {
@@ -169,10 +171,10 @@ public class ExpectedCompletionUtils {
         if (platform == null) {
             return processProposalAssertions(fileText, ABSENT_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JVM) {
+        else if (platform == JvmPlatform.INSTANCE$) {
             return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JS) {
+        else if (platform == JsPlatform.INSTANCE$) {
             return processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX);
         }
         else {
@@ -206,10 +208,10 @@ public class ExpectedCompletionUtils {
         if (platform == null) {
             return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JVM) {
+        else if (platform == JvmPlatform.INSTANCE$) {
             return getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX);
         }
-        else if (platform == TargetPlatform.JS) {
+        else if (platform == JsPlatform.INSTANCE$) {
             return getPlatformExpectedNumber(fileText, NUMBER_JS_LINE_PREFIX);
         }
         else {

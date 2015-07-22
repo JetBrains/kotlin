@@ -20,7 +20,8 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.kotlin.idea.JetIcons
-import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {
@@ -31,8 +32,8 @@ public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     override fun getGroupIcon(group: String) = JetIcons.SMALL_LOGO
 
     override fun createTemplates(group: String?, context: WizardContext?) =
-        arrayOf(
-                BuilderBasedTemplate(KotlinModuleBuilder(TargetPlatform.JVM, "Kotlin - JVM", "Kotlin module for JVM target")),
-                BuilderBasedTemplate(KotlinModuleBuilder(TargetPlatform.JS, "Kotlin - JavaScript", "Kotlin module for JavaScript target"))
-        )
+            arrayOf(
+                    BuilderBasedTemplate(KotlinModuleBuilder(JvmPlatform, "Kotlin - JVM", "Kotlin module for JVM target")),
+                    BuilderBasedTemplate(KotlinModuleBuilder(JsPlatform, "Kotlin - JavaScript", "Kotlin module for JavaScript target"))
+            )
 }

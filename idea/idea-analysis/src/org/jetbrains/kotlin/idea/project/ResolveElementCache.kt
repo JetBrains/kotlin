@@ -22,15 +22,14 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.StatementFilter
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.*
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 
 public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
     // Recreate internal cache after change of modification count
@@ -76,7 +75,8 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
-                if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
+                if (statementFilter == StatementFilter.NONE) {
+                    // partial resolve is not supported for the given declaration - full resolve performed instead
                     fullResolveMap[resolveElement] = bindingContext
                     return bindingContext
                 }
@@ -102,11 +102,7 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
         }
     }
 
-    override fun createAdditionalCheckerProvider(file: JetFile, module: ModuleDescriptor)
-            = TargetPlatformDetector.getPlatform(file).createAdditionalCheckerProvider(module)
-
-    override fun getDynamicTypesSettings(file: JetFile)
-            = TargetPlatformDetector.getPlatform(file).getDynamicTypesSettings()
+    override fun getTargetPlatform(file: JetFile): TargetPlatform = TargetPlatformDetector.getPlatform(file)
 
     override fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
         return object : ProbablyNothingCallableNames {

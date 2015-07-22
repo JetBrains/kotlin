@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
+import org.jetbrains.kotlin.js.resolve.JsPlatformConfigurator
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -57,7 +57,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
         )
 
         val resolveSession = createLazyResolveSession(
-                moduleContext, declarationProviderFactory, BindingTraceContext(), KotlinJsCheckerProvider, DynamicTypesAllowed()
+                moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatformConfigurator, DynamicTypesAllowed()
         )
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 

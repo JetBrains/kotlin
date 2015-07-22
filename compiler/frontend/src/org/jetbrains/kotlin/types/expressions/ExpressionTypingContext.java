@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;

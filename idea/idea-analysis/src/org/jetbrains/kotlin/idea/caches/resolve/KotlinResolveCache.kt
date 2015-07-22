@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -233,8 +232,8 @@ private object KotlinResolveDataProvider {
                     moduleContext,
                     resolveSession,
                     trace,
-                    targetPlatform.createAdditionalCheckerProvider(module),
-                    targetPlatform.getDynamicTypesSettings(),
+                    targetPlatform.platformConfigurator,
+                    targetPlatform.dynamicTypesSettings,
                     resolveSession.getBodyResolveCache()
             ).get<LazyTopDownAnalyzerForTopLevel>()
 

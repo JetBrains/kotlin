@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.js.resolve
 
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
+import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
-public object KotlinJsCheckerProvider : AdditionalCheckerProvider(
-        additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), ClassDeclarationChecker()),
-        additionalCallCheckers = listOf(JsCallChecker()),
-        additionalTypeCheckers = listOf(),
-        additionalSymbolUsageValidators = listOf()
-)
+public object JsPlatform : TargetPlatform("JS", DynamicTypesAllowed()) {
+    override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
+}

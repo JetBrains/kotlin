@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.junit.Assert
 

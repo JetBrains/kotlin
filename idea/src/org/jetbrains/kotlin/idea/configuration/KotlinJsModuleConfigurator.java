@@ -24,8 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -41,7 +42,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return TargetPlatform.JS;
+        return JsPlatform.INSTANCE$;
     }
 
     @NotNull

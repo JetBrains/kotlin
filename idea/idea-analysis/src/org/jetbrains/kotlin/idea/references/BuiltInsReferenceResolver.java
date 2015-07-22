@@ -44,10 +44,10 @@ import org.jetbrains.kotlin.frontend.di.DiPackage;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -111,7 +111,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         DiPackage.createLazyResolveSession(
                                 newModuleContext,
                                 declarationFactory, new BindingTraceContext(),
-                                AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
+                                TargetPlatform.Default.INSTANCE$.getPlatformConfigurator(),
                                 new DynamicTypesSettings()
                         );
 

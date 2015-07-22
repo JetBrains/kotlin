@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider
 import org.jetbrains.kotlin.container.get
@@ -26,20 +25,17 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
-import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.DynamicTypesSettings
+import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -392,9 +388,10 @@ public abstract class ElementResolver protected constructor(
     ): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
         val module = resolveSession.getModuleDescriptor()
+        val targetPlatform = getTargetPlatform(file)
         return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(module),
-                trace, createAdditionalCheckerProvider(file, module), statementFilter, getDynamicTypesSettings(file)
+                trace, targetPlatform.platformConfigurator, statementFilter, targetPlatform.dynamicTypesSettings
         ).get<BodyResolver>()
     }
 
@@ -466,9 +463,7 @@ public abstract class ElementResolver protected constructor(
         return null
     }
 
-    protected abstract fun createAdditionalCheckerProvider(file: JetFile, module: ModuleDescriptor): AdditionalCheckerProvider
-
-    protected abstract fun getDynamicTypesSettings(file: JetFile): DynamicTypesSettings
+    protected abstract fun getTargetPlatform(file: JetFile): TargetPlatform
 
     private class BodyResolveContextForLazy(
             private val topDownAnalysisMode: TopDownAnalysisMode,

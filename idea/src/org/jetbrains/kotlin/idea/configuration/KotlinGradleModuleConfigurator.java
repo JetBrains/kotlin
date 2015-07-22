@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.idea.configuration;
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
 
@@ -37,7 +38,7 @@ public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return TargetPlatform.JVM;
+        return JvmPlatform.INSTANCE$;
     }
 
     @NotNull

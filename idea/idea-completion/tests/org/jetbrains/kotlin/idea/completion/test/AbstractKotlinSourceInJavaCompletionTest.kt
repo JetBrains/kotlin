@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.ArrayUtil
 import com.intellij.util.Function
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
 
 public abstract class AbstractKotlinSourceInJavaCompletionTest : JetFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = TargetPlatform.JVM
+    override fun getPlatform() = JvmPlatform
 
     override fun doTest(testPath: String) {
         val mockLibDir = File(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib")

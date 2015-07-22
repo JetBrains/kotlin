@@ -21,8 +21,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public abstract class AbstractJSBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull
@@ -31,9 +32,10 @@ public abstract class AbstractJSBasicCompletionTest extends JetFixtureCompletion
         return KotlinStdJSProjectDescriptor.Companion.getInstance();
     }
 
+    @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return TargetPlatform.JS;
+        return JsPlatform.INSTANCE$;
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public interface KotlinProjectConfigurator {
     ExtensionPointName<KotlinProjectConfigurator> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.projectConfigurator");

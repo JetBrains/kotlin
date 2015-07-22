@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
+import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
-import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class ConfigureKotlinInProjectAction : AnAction() {
 
@@ -53,12 +54,12 @@ public abstract class ConfigureKotlinInProjectAction : AnAction() {
 
 public class ConfigureKotlinJsInProjectAction: ConfigureKotlinInProjectAction() {
     override fun getAbleToRunConfigurators(project: Project) = ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project).filter {
-        it.getTargetPlatform() == TargetPlatform.JS
+        it.getTargetPlatform() == JsPlatform
     }
 }
 
 public class ConfigureKotlinJavaInProjectAction: ConfigureKotlinInProjectAction() {
     override fun getAbleToRunConfigurators(project: Project) = ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project).filter {
-        it.getTargetPlatform() == TargetPlatform.JVM
+        it.getTargetPlatform() == JvmPlatform
     }
 }

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin
+package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.cfg.WhenChecker
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
+import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
+import org.jetbrains.kotlin.load.kotlin.JavaAnnotationMethodCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -52,21 +56,36 @@ import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
-public class KotlinJvmCheckerProvider(private val module: ModuleDescriptor) : AdditionalCheckerProvider(
-        additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(),
-                                               LocalFunInlineChecker(),
-                                               ReifiedTypeParameterAnnotationChecker(),
-                                               NativeFunChecker(),
-                                               OverloadsAnnotationChecker(),
-                                               PublicFieldAnnotationChecker()),
+public object JvmPlatformConfigurator : PlatformConfigurator(
+        additionalDeclarationCheckers = listOf(
+                PlatformStaticAnnotationChecker(),
+                LocalFunInlineChecker(),
+                ReifiedTypeParameterAnnotationChecker(),
+                NativeFunChecker(),
+                OverloadsAnnotationChecker(),
+                PublicFieldAnnotationChecker()
+        ),
 
-        additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
-                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker(),
-                                        ReflectionAPICallChecker(module)),
+        additionalCallCheckers = listOf(
+                NeedSyntheticChecker(),
+                JavaAnnotationCallChecker(),
+                JavaAnnotationMethodCallChecker(),
+                TraitDefaultMethodCallChecker()
+        ),
 
-        additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker(), RuntimeAssertionsTypeChecker),
+        additionalTypeCheckers = listOf(
+                JavaNullabilityWarningsChecker(),
+                RuntimeAssertionsTypeChecker
+        ),
         additionalSymbolUsageValidators = listOf()
-)
+) {
+
+    override fun configure(container: StorageComponentContainer) {
+        super.configure(container)
+
+        container.useImpl<ReflectionAPICallChecker>()
+    }
+}
 
 public class LocalFunInlineChecker : DeclarationChecker {
 
@@ -145,7 +164,7 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
         }
         else if ((!descriptor.getVisibility().isPublicAPI() && descriptor.getVisibility() != Visibilities.INTERNAL) ||
-            DescriptorUtils.isLocal(descriptor)) {
+                 DescriptorUtils.isLocal(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
         }
         else if (descriptor.getValueParameters().none { it.declaresDefaultValue() }) {

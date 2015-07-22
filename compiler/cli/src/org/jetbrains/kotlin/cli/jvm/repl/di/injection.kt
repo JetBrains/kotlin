@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.UsageCollector
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformConfigurator
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -39,7 +39,7 @@ public fun createContainerForReplWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
-    configureModule(moduleContext, KotlinJvmCheckerProvider(moduleContext.module), bindingTrace)
+    configureModule(moduleContext, JvmPlatformConfigurator, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, UsageCollector.DO_NOTHING)
 
     useInstance(additionalFileScopeProvider)
