@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.AnnotationResolver;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -80,7 +82,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Nullable
-    private static JetType checkAssignmentType(
+    private JetType checkAssignmentType(
             @Nullable JetType assignmentType,
             @NotNull JetBinaryExpression expression,
             @NotNull ExpressionTypingContext context
@@ -90,7 +92,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
-        return DataFlowUtils.checkStatementType(expression, context);
+        return components.dataFlowAnalyzer.checkStatementType(expression, context);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
                 scope.getContainingDeclaration(),
                 declaration);
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(declaration, context), context);
+        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(declaration, context), context);
     }
 
     @Override
@@ -163,7 +165,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         scope.addVariableDescriptor(propertyDescriptor);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
-        return typeInfo.replaceType(DataFlowUtils.checkStatementType(property, context));
+        return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(property, context));
     }
 
     @Override
@@ -183,7 +185,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             return TypeInfoFactoryPackage.noTypeInfo(context);
         }
         components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
-        return typeInfo.replaceType(DataFlowUtils.checkStatementType(multiDeclaration, context));
+        return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
     }
 
     @Override
@@ -197,7 +199,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT),
                 scope.getContainingDeclaration(),
                 klass);
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(klass, context), context);
+        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(klass, context), context);
     }
 
     @Override
@@ -208,7 +210,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext context) {
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkStatementType(dcl, context), context);
+        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkStatementType(dcl, context), context);
     }
 
     @Override
@@ -225,7 +227,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         else {
             return facade.getTypeInfo(expression, context);
         }
-        return DataFlowUtils.checkType(result, expression, context);
+        return components.dataFlowAnalyzer.checkType(result, expression, context);
     }
 
     @NotNull
@@ -320,7 +322,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
-            DataFlowUtils.checkType(binaryOperationType, expression, context.replaceExpectedType(leftType).replaceDataFlowInfo(rightInfo.getDataFlowInfo()));
+            components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(leftType).replaceDataFlowInfo(rightInfo.getDataFlowInfo()));
             basic.checkLValue(context.trace, context, leftOperand, right);
         }
         temporary.commit();
@@ -368,7 +370,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (leftType != null && leftOperand != null) { //if leftType == null, some other error has been generated
             basic.checkLValue(context.trace, context, leftOperand, right);
         }
-        return resultInfo.replaceType(DataFlowUtils.checkStatementType(expression, contextWithExpectedType));
+        return resultInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(expression, contextWithExpectedType));
     }
 
 

@@ -41,13 +41,14 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.DataFlowUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.ArrayList
 
 public class CallCompleter(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val candidateResolver: CandidateResolver,
         private val symbolUsageValidator: SymbolUsageValidator,
+        private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
@@ -260,7 +261,7 @@ public class CallCompleter(
             argumentTypeResolver.getCallableReferenceTypeInfo(expression, callableReferenceArgument, context, RESOLVE_FUNCTION_ARGUMENTS)
         }
 
-        DataFlowUtils.checkType(updatedType, deparenthesized, context)
+        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context)
     }
 
     private fun completeCallForArgument(

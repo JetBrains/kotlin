@@ -96,7 +96,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = components.callExpressionResolver;
         JetTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
-        return DataFlowUtils.checkType(typeInfo, expression, context); // TODO : Extensions to this
+        return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 
     @Override
@@ -125,7 +125,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         assert compileTimeConstant != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return createCompileTimeConstantTypeInfo(compileTimeConstant, expression, context);
+        return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(compileTimeConstant, expression, context);
     }
 
     @NotNull
@@ -175,7 +175,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType.replaceExpectedType(targetType));
             checkBinaryWithTypeRHS(expression, context, targetType, typeInfo.getType());
-            return DataFlowUtils.checkType(typeInfo.replaceType(targetType), expression, context);
+            return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(targetType), expression, context);
         }
 
         JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithNoExpectedType);
@@ -193,7 +193,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         JetType result = operationType == AS_SAFE ? TypeUtils.makeNullable(targetType) : targetType;
-        return DataFlowUtils.checkType(typeInfo.replaceType(result), expression, context);
+        return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(result), expression, context);
     }
 
     private void checkBinaryWithTypeRHS(
@@ -241,7 +241,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(USELESS_CAST.on(expression));
             return;
         }
-        Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
+        Collection<JetType> possibleTypes = components.dataFlowAnalyzer.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
 
         boolean checkExactType = checkExactTypeForUselessCast(expression);
@@ -295,7 +295,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.recordType(expression.getInstanceReference(), result);
                 break;
         }
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(result, context, expression);
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(result, context, expression);
     }
 
     @Override
@@ -319,7 +319,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (result != null) {
                     context.trace.recordType(expression.getInstanceReference(), result);
                 }
-                return TypeInfoFactoryPackage.createCheckedTypeInfo(result, context, expression);
+                return components.dataFlowAnalyzer.createCheckedTypeInfo(result, context, expression);
         }
         throw new IllegalStateException("Unknown code: " + resolutionResult.getCode());
     }
@@ -509,7 +509,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
-            return TypeInfoFactoryPackage.createCheckedTypeInfo(
+            return components.dataFlowAnalyzer.createCheckedTypeInfo(
                     components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c, expression
             );
         }
@@ -604,11 +604,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (callableReference.getReferencedName().isEmpty()) {
             c.trace.report(UNRESOLVED_REFERENCE.on(callableReference, callableReference));
             JetType errorType = ErrorUtils.createErrorType("Empty callable reference");
-            return TypeInfoFactoryPackage.createCheckedTypeInfo(errorType, c, expression);
+            return components.dataFlowAnalyzer.createCheckedTypeInfo(errorType, c, expression);
         }
 
         JetType result = getCallableReferenceType(expression, receiverType, c);
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(result, c, expression);
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(result, c, expression);
     }
 
     @Override
@@ -651,9 +651,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         // Breaks are not possible inside constructor arguments, so jumpPossible or jumpFlowInfo are not necessary here
-        JetTypeInfo resultTypeInfo = DataFlowUtils.checkType(TypeInfoFactoryPackage.createTypeInfo(result[0], resultFlowInfo),
-                                                             expression,
-                                                             context);
+        JetTypeInfo resultTypeInfo = components.dataFlowAnalyzer.checkType(TypeInfoFactoryPackage.createTypeInfo(result[0], resultFlowInfo),
+                                                                expression,
+                                                                context);
         // We have to record it here,
         // otherwise ExpressionTypingVisitorDispatcher records wrong information
         context.trace.record(EXPRESSION_TYPE_INFO, expression, resultTypeInfo);
@@ -781,12 +781,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+            return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
 
-        return DataFlowUtils.checkType(typeInfo.replaceType(result),
-                                       expression,
-                                       contextWithExpectedType.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
+        return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(result),
+                                          expression,
+                                          contextWithExpectedType.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
     }
 
     private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {
@@ -820,7 +820,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // The call to checkType() is only needed here to execute additionalTypeCheckers, hence the NO_EXPECTED_TYPE
-        return DataFlowUtils.checkType(baseTypeInfo.replaceType(resultingType), expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        return components.dataFlowAnalyzer.checkType(baseTypeInfo.replaceType(resultingType), expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
     }
 
     @Override
@@ -977,9 +977,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
-            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+            return components.dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
-        return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
+        return components.dataFlowAnalyzer.checkType(result, expression, contextWithExpectedType);
     }
 
     private JetTypeInfo visitEquality(
@@ -1092,7 +1092,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
         // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
         boolean isAnd = operationType == JetTokens.ANDAND;
-        DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
+        DataFlowInfo flowInfoLeft = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
         WritableScopeImpl rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
 
         ExpressionTypingContext contextForRightExpr =
@@ -1149,10 +1149,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkType(type, expression, contextWithExpectedType),
-                                                        dataFlowInfo,
-                                                        loopBreakContinuePossible,
-                                                        context.dataFlowInfo);
+        return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkType(type, expression, contextWithExpectedType),
+                                                     dataFlowInfo,
+                                                     loopBreakContinuePossible,
+                                                     context.dataFlowInfo);
     }
 
     @NotNull
@@ -1265,7 +1265,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, ExpressionTypingContext context) {
-        return DataFlowUtils.checkType(resolveArrayAccessGetMethod(expression, context), expression, context);
+        return components.dataFlowAnalyzer.checkType(resolveArrayAccessGetMethod(expression, context), expression, context);
     }
 
     @NotNull
@@ -1345,9 +1345,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             entry.accept(visitor);
         }
         components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, contextWithExpectedType.expectedType);
-        return DataFlowUtils.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
-                                       expression,
-                                       contextWithExpectedType);
+        return components.dataFlowAnalyzer.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
+                                          expression,
+                                          contextWithExpectedType);
     }
 
     @Override

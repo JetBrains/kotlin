@@ -67,7 +67,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo newDataFlowInfo = conditionInfo.and(typeInfo.getDataFlowInfo());
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
-        return DataFlowUtils.checkType(typeInfo.replaceType(components.builtIns.getBooleanType()), expression, contextWithExpectedType);
+        return components.dataFlowAnalyzer.checkType(typeInfo.replaceType(components.builtIns.getBooleanType()), expression, contextWithExpectedType);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        DataFlowUtils.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
+        components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         // TODO :change scope according to the bound value in the when header
@@ -94,7 +94,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             assert subjectType != null;
             if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
                 ExpressionTypingContext subjectContext = context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType));
-                DataFlowUtils.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression, false), subjectContext);
+                components.dataFlowAnalyzer.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression, false), subjectContext);
             }
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
@@ -143,8 +143,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             commonDataFlowInfo = commonDataFlowInfo.or(context.dataFlowInfo);
         }
 
-        return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : DataFlowUtils.checkType(
-                                                             DataFlowUtils.checkImplicitCast(
+        return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
+                                                             components.dataFlowAnalyzer.checkImplicitCast(
                                                                      CommonSupertypes.commonSupertype(expressionTypes), expression,
                                                                      contextWithExpectedType, isStatement),
                                                              expression, contextWithExpectedType),
@@ -280,8 +280,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
             else {
-                DataFlowInfo ifInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, true, context);
-                DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(expression, false, context);
+                DataFlowInfo ifInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(expression, true, context);
+                DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(expression, false, context);
                 return new DataFlowInfos(ifInfo, elseInfo);
             }
             return noChange(context);

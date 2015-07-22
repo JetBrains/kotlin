@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -46,12 +46,10 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.*;
 
-public class DataFlowUtils {
-    private DataFlowUtils() {
-    }
+public class DataFlowAnalyzer {
 
     @NotNull
-    public static DataFlowInfo extractDataFlowInfoFromCondition(
+    public DataFlowInfo extractDataFlowInfoFromCondition(
             @Nullable JetExpression condition,
             final boolean conditionValue,
             final ExpressionTypingContext context
@@ -143,17 +141,17 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+    public JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
         return checkType(expressionType, expression, context, null);
     }
 
     @NotNull
-    public static JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
+    public JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
         return typeInfo.replaceType(checkType(typeInfo.getType(), expression, context));
     }
 
     @Nullable
-    public static JetType checkType(
+    public JetType checkType(
             @Nullable JetType expressionType,
             @NotNull JetExpression expressionToCheck,
             @NotNull ResolutionContext c,
@@ -195,7 +193,7 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkPossibleCast(
+    public JetType checkPossibleCast(
             @NotNull JetType expressionType,
             @NotNull JetExpression expression,
             @NotNull ResolutionContext c
@@ -212,7 +210,7 @@ public class DataFlowUtils {
         return null;
     }
 
-    public static void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
+    public void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
         if (expectedType != NO_EXPECTED_TYPE) {
             JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? KotlinBuiltIns.getInstance().getUnitType() : expectedType;
             trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, normalizeExpectedType);
@@ -220,7 +218,7 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context) {
+    public JetType checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context) {
         if (!noExpectedType(context.expectedType) && !KotlinBuiltIns.isUnit(context.expectedType) && !context.expectedType.isError()) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
@@ -229,7 +227,7 @@ public class DataFlowUtils {
     }
 
     @Nullable
-    public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
+    public JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
         if (expressionType != null && context.expectedType == NO_EXPECTED_TYPE && context.contextDependency == INDEPENDENT && !isStatement
                 && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
                 && !TypesPackage.isDynamic(expressionType)) {
@@ -239,12 +237,12 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static JetTypeInfo checkImplicitCast(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
+    public JetTypeInfo checkImplicitCast(@NotNull JetTypeInfo typeInfo, @NotNull JetExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
         return typeInfo.replaceType(checkImplicitCast(typeInfo.getType(), expression, context, isStatement));
     }
 
     @NotNull
-    public static JetTypeInfo illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+    public JetTypeInfo illegalStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
@@ -252,7 +250,7 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static Collection<JetType> getAllPossibleTypes(
+    public Collection<JetType> getAllPossibleTypes(
             @NotNull JetExpression expression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType type,
@@ -264,5 +262,38 @@ public class DataFlowUtils {
             possibleTypes.addAll(dataFlowInfo.getPossibleTypes(dataFlowValue));
         }
         return possibleTypes;
+    }
+
+    @NotNull
+    public JetTypeInfo createCheckedTypeInfo(
+            @Nullable JetType type,
+            @NotNull ResolutionContext<?> context,
+            @NotNull JetExpression expression
+    ) {
+        return checkType(TypeInfoFactoryPackage.createTypeInfo(type, context), expression, context);
+    }
+
+    @NotNull
+    public JetTypeInfo createCompileTimeConstantTypeInfo(
+            @NotNull CompileTimeConstant<?> value,
+            @NotNull JetExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        JetType expressionType;
+        if (value instanceof IntegerValueTypeConstant) {
+            IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
+            if (context.contextDependency == INDEPENDENT) {
+                expressionType = integerValueTypeConstant.getType(context.expectedType);
+                ArgumentTypeResolver.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
+            }
+            else {
+                expressionType = integerValueTypeConstant.getUnknownIntegerType();
+            }
+        }
+        else {
+            expressionType = ((TypedCompileTimeConstant<?>) value).getType();
+        }
+
+        return createCheckedTypeInfo(expressionType, context, expression);
     }
 }

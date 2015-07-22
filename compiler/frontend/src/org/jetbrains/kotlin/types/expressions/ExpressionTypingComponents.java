@@ -52,6 +52,7 @@ public class ExpressionTypingComponents {
     /*package*/ MultiDeclarationResolver multiDeclarationResolver;
     /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
     /*package*/ ModifiersChecker modifiersChecker;
+    /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -164,7 +165,12 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setModifiersChecker(ModifiersChecker modifiersChecker) {
+    public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
         this.modifiersChecker = modifiersChecker;
+    }
+
+    @Inject
+    public void setDataFlowAnalyzer(@NotNull DataFlowAnalyzer dataFlowAnalyzer) {
+        this.dataFlowAnalyzer = dataFlowAnalyzer;
     }
 }
