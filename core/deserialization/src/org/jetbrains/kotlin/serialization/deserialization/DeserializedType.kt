@@ -29,36 +29,29 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 class DeserializedType(
         c: DeserializationContext,
         private val typeProto: ProtoBuf.Type
-) : AbstractJetType(), LazyType {
+) : AbstractLazyType(c.storageManager), LazyType {
     private val typeDeserializer = c.typeDeserializer
 
-    private val constructor = c.storageManager.createLazyValue {
-        typeDeserializer.typeConstructor(typeProto)
-    }
+    override fun computeTypeConstructor() = typeDeserializer.typeConstructor(typeProto)
 
-    private val arguments = c.storageManager.createLazyValue {
+    override fun computeArguments() =
         typeProto.getArgumentList().mapIndexed {
             index, proto ->
             typeDeserializer.typeArgument(getConstructor().getParameters().getOrNull(index), proto)
         }.toReadOnlyList()
-    }
 
-    private val memberScope = c.storageManager.createLazyValue {
+    override fun computeMemberScope() =
         if (isError()) {
             ErrorUtils.createErrorScope(getConstructor().toString())
         }
         else {
             getTypeMemberScope(getConstructor(), getArguments())
         }
-    }
 
     private val annotations = DeserializedAnnotations(c.storageManager) {
         c.components.annotationAndConstantLoader.loadTypeAnnotations(typeProto, c.nameResolver)
     }
 
-    override fun getConstructor(): TypeConstructor = constructor()
-
-    override fun getArguments(): List<TypeProjection> = arguments()
 
     override fun isMarkedNullable(): Boolean = typeProto.getNullable()
 
@@ -70,8 +63,6 @@ class DeserializedType(
             else -> throw IllegalStateException("Unsupported classifier: $descriptor")
         }
     }
-
-    override fun getMemberScope(): JetScope = memberScope()
 
     override fun isError(): Boolean {
         val descriptor = getConstructor().getDeclarationDescriptor()
