@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
@@ -166,7 +165,7 @@ public class ShadowedDeclarationsFilter(
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
+                                                        CompositeChecker(listOf()), AdditionalTypeChecker.Composite(listOf()), false)
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }

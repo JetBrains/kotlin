@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -181,7 +180,7 @@ class ExpectedInfos(
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
+                                                        CompositeChecker(listOf()), AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)

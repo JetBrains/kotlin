@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.*;
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.*;
@@ -431,7 +430,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull // No class receivers
-    private static LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
+    private LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
             JetInstanceExpressionWithLabel expression,
             ExpressionTypingContext context,
             boolean onlyClassReceivers
@@ -471,7 +470,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    private static void recordThisOrSuperCallInTraceAndCallExtension(
+    private void recordThisOrSuperCallInTraceAndCallExtension(
             ExpressionTypingContext context,
             ReceiverParameterDescriptor descriptor,
             JetExpression expression
@@ -494,7 +493,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         BasicCallResolutionContext resolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE);
         context.callChecker.check(resolvedCall, resolutionContext);
-        context.symbolUsageValidator.validateCall(descriptor, trace, expression);
+        components.symbolUsageValidator.validateCall(descriptor, trace, expression);
     }
 
     private static boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
@@ -901,7 +900,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = false;
             } else {
                 if (setter != null) {
-                    context.symbolUsageValidator.validateCall(setter, trace, reportOn);
+                    components.symbolUsageValidator.validateCall(setter, trace, reportOn);
                 }
             }
         }
