@@ -37,7 +37,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
@@ -60,7 +60,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull CallChecker callChecker,
             @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull AdditionalTypeChecker additionalTypeChecker,
@@ -73,7 +73,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
 
     @NotNull
     public static BasicCallResolutionContext create(
-            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckArgumentTypesMode checkArguments,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         return new BasicCallResolutionContext(
@@ -85,7 +85,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
 
     @NotNull
     public static BasicCallResolutionContext create(
-            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckValueArgumentsMode checkArguments
+            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckArgumentTypesMode checkArguments
     ) {
         return create(context, call, checkArguments, null);
     }

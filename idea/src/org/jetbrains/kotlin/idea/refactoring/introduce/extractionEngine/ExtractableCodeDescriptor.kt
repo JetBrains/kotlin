@@ -31,28 +31,25 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Analysis
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.Collections
-import kotlin.properties.Delegates
 
-trait Parameter {
+interface Parameter {
     val argumentText: String
     val originalDescriptor: DeclarationDescriptor
     val name: String
@@ -73,9 +70,9 @@ data class TypeParameter(
         val originalConstraints: List<JetTypeConstraint>
 )
 
-trait Replacement: Function1<JetElement, JetElement>
+interface Replacement: Function1<JetElement, JetElement>
 
-trait ParameterReplacement : Replacement {
+interface ParameterReplacement : Replacement {
     val parameter: Parameter
     fun copy(parameter: Parameter): ParameterReplacement
 }
@@ -124,7 +121,7 @@ class FqNameReplacement(val fqName: FqName): Replacement {
     }
 }
 
-trait OutputValue {
+interface OutputValue {
     val originalExpressions: List<JetExpression>
     val valueType: JetType
 
@@ -207,7 +204,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             private val selectors = arrayOf("first", "second", "third")
         }
 
-        override val returnType: JetType by Delegates.lazy {
+        override val returnType: JetType by lazy {
             fun getType(): JetType {
                 val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
@@ -252,7 +249,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
     }
 
     class AsList(outputValues: List<OutputValue>): OutputValueBoxer(outputValues) {
-        override val returnType: JetType by Delegates.lazy {
+        override val returnType: JetType by lazy {
             if (outputValues.isEmpty()) DEFAULT_RETURN_TYPE
             else TypeUtils.substituteParameters(
                     KotlinBuiltIns.getInstance().getList(),
@@ -331,7 +328,7 @@ data class ExtractableCodeDescriptor(
         val returnType: JetType
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
-    val duplicates: List<DuplicateInfo> by Delegates.lazy { findDuplicates() }
+    val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
 }
 
 enum class ExtractionTarget(val name: String) {

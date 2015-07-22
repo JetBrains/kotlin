@@ -1,0 +1,13 @@
+package
+
+internal fun f1(): kotlin.reflect.KProperty<kotlin.Int>
+internal fun f2(): (A) -> kotlin.Unit
+
+internal final class A {
+    public constructor A()
+    internal final val x: kotlin.Int = 1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun x(): kotlin.Unit
+}

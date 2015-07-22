@@ -31,8 +31,8 @@ public class ProjectDescriptorWithStdlibSources extends JetWithJdkAndRuntimeLigh
     public static final ProjectDescriptorWithStdlibSources INSTANCE = new ProjectDescriptorWithStdlibSources();
 
     @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
-        super.configureModule(module, model, contentEntry);
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
+        super.configureModule(module, model);
 
         Library library = model.getModuleLibraryTable().getLibraryByName(LIBRARY_NAME);
         assert library != null;

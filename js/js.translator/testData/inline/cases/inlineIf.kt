@@ -4,7 +4,7 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: testIf2
 // CHECK_CONTAINS_NO_CALLS: testIf3
 
-inline fun if1(inline f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
+inline fun if1(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     val result = f(a)
 
     if (result == b) {
@@ -14,7 +14,7 @@ inline fun if1(inline f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     return f(c)
 }
 
-inline fun if2(inline f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
+inline fun if2(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     if (f(a) == b) {
         return f(a)
     }
@@ -22,7 +22,7 @@ inline fun if2(inline f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     return f(c)
 }
 
-inline fun if3(inline f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
+inline fun if3(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     if (f(a) == b) {
         return f(a)
     } else {

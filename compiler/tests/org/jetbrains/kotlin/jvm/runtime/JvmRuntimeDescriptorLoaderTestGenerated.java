@@ -3378,6 +3378,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotationTargets.java")
+            public void testAnnotationTargets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotationTargets.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("ArithmeticExpressionInParam.java")
             public void testArithmeticExpressionInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/ArithmeticExpressionInParam.java");

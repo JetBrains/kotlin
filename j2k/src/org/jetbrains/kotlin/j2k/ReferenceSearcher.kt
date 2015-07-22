@@ -27,7 +27,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.JetLanguage
 import java.util.ArrayList
 
-public trait ReferenceSearcher {
+public interface ReferenceSearcher {
     fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference>
     fun hasInheritors(`class`: PsiClass): Boolean
     fun hasOverrides(method: PsiMethod): Boolean

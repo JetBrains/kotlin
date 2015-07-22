@@ -33,7 +33,7 @@ object JetQualifiedExpressionImpl {
     }
 
     private fun JetQualifiedExpression.getExpression(afterOperation: Boolean): JetExpression? {
-        return getOperationTokenNode()?.getPsi()?.siblings(afterOperation, false)?.firstOrNull { it is JetExpression } as? JetExpression
+        return getOperationTokenNode().getPsi()?.siblings(afterOperation, false)?.firstOrNull { it is JetExpression } as? JetExpression
     }
 
     public fun JetQualifiedExpression.getReceiverExpression(): JetExpression {

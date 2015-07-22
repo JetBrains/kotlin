@@ -34,10 +34,10 @@ abstract class JavaAnnotationArgumentImpl(
             }
 
             return when (argument) {
-                is PsiReferenceExpression -> JavaEnumValueAnnotationArgumentImpl(argument as PsiReferenceExpression, name)
-                is PsiArrayInitializerMemberValue -> JavaArrayAnnotationArgumentImpl(argument as PsiArrayInitializerMemberValue, name)
-                is PsiAnnotation -> JavaAnnotationAsAnnotationArgumentImpl(argument as PsiAnnotation, name)
-                is PsiClassObjectAccessExpression -> JavaClassObjectAnnotationArgumentImpl(argument as PsiClassObjectAccessExpression, name)
+                is PsiReferenceExpression -> JavaEnumValueAnnotationArgumentImpl(argument, name)
+                is PsiArrayInitializerMemberValue -> JavaArrayAnnotationArgumentImpl(argument, name)
+                is PsiAnnotation -> JavaAnnotationAsAnnotationArgumentImpl(argument, name)
+                is PsiClassObjectAccessExpression -> JavaClassObjectAnnotationArgumentImpl(argument, name)
                 else -> throw UnsupportedOperationException("Unsupported annotation argument type: " + argument)
             }
         }

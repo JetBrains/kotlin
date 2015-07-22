@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
+import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -151,7 +152,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.getUpperBounds()) {
-                if (KotlinBuiltIns.isNullableAny(declaredUpperBound)) continue //todo remove this line (?)
+                if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
                 val position = TYPE_BOUND_POSITION.position(typeVariable.getIndex())
                 addBound(typeVariable, declaredUpperBound, UPPER_BOUND, position)
             }
@@ -403,7 +404,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constraintPosition: ConstraintPosition
     ) {
         val typeVariable = getMyTypeVariable(parameterType)!!
-        if (!KotlinBuiltIns.isNullableAny(typeVariable.getUpperBoundsAsType())
+        if (!typeVariable.getUpperBoundsAsType().isDefaultBound()
             && constrainingTypeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
             errors.add(CannotCapture(constraintPosition, typeVariable))
         }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerFo
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.incremental.components.UsageCollector
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.*
@@ -57,7 +58,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                providerFactory, GlobalSearchScope.allScope(environment.project)
+                providerFactory, GlobalSearchScope.allScope(environment.project), UsageCollector.DO_NOTHING
         )
         moduleContext.initializeModuleContents(container.javaDescriptorResolver.packageFragmentProvider)
 

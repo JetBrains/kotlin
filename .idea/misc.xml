@@ -7,6 +7,9 @@
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="javax.inject.Inject" />
+    </list>
   </component>
   <component name="FacetAutodetectingManager">
     <autodetection-disabled>

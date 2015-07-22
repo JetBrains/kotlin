@@ -88,7 +88,7 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
             assert(range != null)
             object : WriteCommandAction.Simple<Any>(project) {
                 override fun run() {
-                    editor.getDocument().replaceString(range!!.getStartOffset(), range!!.getEndOffset(), newName)
+                    editor.getDocument().replaceString(range!!.getStartOffset(), range.getEndOffset(), newName)
                 }
             }.execute().throwException()
 

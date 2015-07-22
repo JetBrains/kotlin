@@ -29,12 +29,12 @@ import java.util.HashSet
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
-trait DeclarationSearchRequest<in T> {
+interface DeclarationSearchRequest<in T> {
     val project: Project
     val searchScope: SearchScope
 }
 
-public trait SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest<T> {
+public interface SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest<T> {
     val originalElement: T
     override val project: Project get() = originalElement.getProject()
 }
@@ -65,7 +65,7 @@ public class HierarchySearchRequest<T: PsiElement> (
             HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
 }
 
-trait HierarchyTraverser<T> {
+interface HierarchyTraverser<T> {
     protected fun nextElements(current: T): Iterable<T>
     protected fun shouldDescend(element: T): Boolean
 

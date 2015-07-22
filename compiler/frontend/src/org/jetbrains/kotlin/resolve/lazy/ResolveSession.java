@@ -27,6 +27,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.incremental.components.UsageCollector;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.storage.*;
 
 import javax.inject.Inject;
@@ -74,6 +76,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LazyDeclarationResolver lazyDeclarationResolver;
     private FileScopeProvider fileScopeProvider;
     private DeclarationScopeProvider declarationScopeProvider;
+    private UsageCollector usageCollector;
 
     @Inject
     public void setJetImportFactory(JetImportsFactory jetImportFactory) {
@@ -125,6 +128,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.declarationScopeProvider = declarationScopeProvider;
     }
 
+    @Inject
+    public void setUsageCollector(@NotNull UsageCollector usageCollector) {
+        this.usageCollector = usageCollector;
+    }
+
     // Only calls from injectors expected
     @Deprecated
     public ResolveSession(
@@ -144,6 +152,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         this.packages =
                 storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, LazyPackageDescriptor>() {
+                    @Override
                     @Nullable
                     public LazyPackageDescriptor invoke(FqName fqName) {
                         return createPackage(fqName);
@@ -280,7 +289,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
         JetScope resolutionScope = lazyDeclarationResolver.resolutionScopeToResolveDeclaration(script);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName());
+        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), UsageLocation.NO_LOCATION);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
         return (ClassDescriptor) classifier;
     }
@@ -398,5 +407,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @NotNull
     public FileScopeProvider getFileScopeProvider() {
         return fileScopeProvider;
+    }
+
+    @NotNull
+    @Override
+    public UsageCollector getUsageCollector() {
+        return usageCollector;
     }
 }

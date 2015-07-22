@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
-public trait CodeAnalyzerInitializer {
+public interface CodeAnalyzerInitializer {
     public fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer?)
     public fun createTrace(): BindingTrace
     

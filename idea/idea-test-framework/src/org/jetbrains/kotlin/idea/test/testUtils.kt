@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.psi.JetFile
@@ -36,7 +39,7 @@ public enum class ModuleKind {
     KOTLIN_JAVASCRIPT
 }
 
-public fun Module.configureAs(descriptor: LightProjectDescriptor) {
+public fun Module.configureAs(descriptor: JetLightProjectDescriptor) {
     val module = this
     updateModel(module, object : Consumer<ModifiableRootModel> {
         override fun consume(model: ModifiableRootModel) {
@@ -44,8 +47,12 @@ public fun Module.configureAs(descriptor: LightProjectDescriptor) {
                 model.setSdk(descriptor.getSdk())
             }
             val entries = model.getContentEntries()
-            val entry = if (entries.size() > 0) entries[0] else null
-            descriptor.configureModule(module, model, entry)
+            if (entries.isEmpty()) {
+                descriptor.configureModule(module, model)
+            }
+            else {
+                descriptor.configureModule(module, model, entries[0])
+            }
         }
     })
 }
@@ -74,3 +81,20 @@ public fun JetFile.dumpTextWithErrors(): String {
 public fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
+public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithException) {
+    // Doesn't work in idea 141. Shouldn't be used.
+    val builtInsSources = project.getComponent<org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>()).getBuiltInsSources()
+
+    runnable.run()
+
+    // Base tearDown() invalidates builtins. Restore them with brute force.
+    for (source in builtInsSources) {
+        val field = javaClass<PsiFileImpl>().getDeclaredField("myInvalidated")!!
+        field.setAccessible(true)
+        field.set(source, false)
+    }
+}
+
+public fun unInvalidateBuiltins(project: Project, runnable: () -> Unit) {
+    unInvalidateBuiltins(project, RunnableWithException { runnable() })
+}

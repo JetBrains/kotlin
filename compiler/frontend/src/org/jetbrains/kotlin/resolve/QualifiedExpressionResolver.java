@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 
@@ -228,14 +229,14 @@ public class QualifiedExpressionResolver {
             descriptors.add(packageDescriptor);
         }
 
-        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
+        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName, UsageLocation.NO_LOCATION);
         if (classifierDescriptor != null) {
             descriptors.add(classifierDescriptor);
         }
 
         if (lookupMode == LookupMode.EVERYTHING) {
-            descriptors.addAll(outerScope.getFunctions(referencedName));
-            descriptors.addAll(outerScope.getProperties(referencedName));
+            descriptors.addAll(outerScope.getFunctions(referencedName, UsageLocation.NO_LOCATION));
+            descriptors.addAll(outerScope.getProperties(referencedName, UsageLocation.NO_LOCATION));
 
             VariableDescriptor localVariable = outerScope.getLocalVariable(referencedName);
             if (localVariable != null) {

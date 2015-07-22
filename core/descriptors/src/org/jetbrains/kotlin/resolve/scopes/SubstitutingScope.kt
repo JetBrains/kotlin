@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.HashMap
-import kotlin.properties.Delegates
 
 public class SubstitutingScope(private val workerScope: JetScope, private val substitutor: TypeSubstitutor) : JetScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by Delegates.lazy { substitute(workerScope.getDescriptors()) }
+    private val _allDescriptors by lazy { substitute(workerScope.getDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null
@@ -62,13 +61,13 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
         return result
     }
 
-    override fun getProperties(name: Name) = substitute(workerScope.getProperties(name))
+    override fun getProperties(name: Name, location: UsageLocation) = substitute(workerScope.getProperties(name, location))
 
     override fun getLocalVariable(name: Name) = substitute(workerScope.getLocalVariable(name))
 
-    override fun getClassifier(name: Name) = substitute(workerScope.getClassifier(name))
+    override fun getClassifier(name: Name, location: UsageLocation) = substitute(workerScope.getClassifier(name, location))
 
-    override fun getFunctions(name: Name) = substitute(workerScope.getFunctions(name))
+    override fun getFunctions(name: Name, location: UsageLocation) = substitute(workerScope.getFunctions(name, location))
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name))
 

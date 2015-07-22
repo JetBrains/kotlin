@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
 
-public trait ExpressionCodegenExtension {
+public interface ExpressionCodegenExtension {
     companion object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())
 
     public class Context(

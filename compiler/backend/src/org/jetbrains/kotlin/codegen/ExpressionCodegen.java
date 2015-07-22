@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
@@ -1074,7 +1075,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
 
-            Collection<VariableDescriptor> incrementProp = loopRangeType.getMemberScope().getProperties(Name.identifier("increment"));
+            Collection<VariableDescriptor> incrementProp =
+                    loopRangeType.getMemberScope().getProperties(Name.identifier("increment"), UsageLocation.NO_LOCATION);
             assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
             incrementType = asmType(incrementProp.iterator().next().getType());
 

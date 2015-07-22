@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 
-public trait ResolverForDecompiler {
+public interface ResolverForDecompiler {
     public fun resolveTopLevelClass(classId: ClassId): ClassDescriptor?
 
     public fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor>

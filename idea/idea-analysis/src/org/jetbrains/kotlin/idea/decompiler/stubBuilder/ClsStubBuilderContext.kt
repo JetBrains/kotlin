@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 
 class ClsStubBuilderComponents(
         val classDataFinder: ClassDataFinder,
@@ -42,7 +41,7 @@ class ClsStubBuilderComponents(
     }
 }
 
-trait TypeParameters {
+interface TypeParameters {
     fun get(id: Int): Name
 
     fun child(nameResolver: NameResolver, innerTypeParameters: List<ProtoBuf.TypeParameter>)

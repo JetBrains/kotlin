@@ -2,8 +2,8 @@ package
 
 package p {
 
-    public open class Base</*0*/ T> {
-        public constructor Base</*0*/ T>()
+    public open class Base</*0*/ T : kotlin.Any!> {
+        public constructor Base</*0*/ T : kotlin.Any!>()
         public/*package*/ open fun coll(/*0*/ r: kotlin.(Mutable)Collection<*>!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -347,7 +347,7 @@ class LazyJavaTypeResolver(
 
 }
 
-trait JavaTypeAttributes {
+interface JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
     val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
     val isMarkedNotNull: Boolean

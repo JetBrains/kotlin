@@ -30,17 +30,15 @@ import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl;
@@ -57,17 +55,13 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperPackage;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
-import org.jetbrains.kotlin.utils.ThrowingList;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -78,12 +72,10 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.AS_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.AS_SAFE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory.createDataFlowValue;
 import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
-import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 import static org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -119,7 +111,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
-        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.evaluate(expression, context.trace, context.expectedType);
+        CompileTimeConstant<?> compileTimeConstant = components.constantExpressionEvaluator.evaluateExpression(
+                expression, context.trace, context.expectedType
+        );
 
         if (!(compileTimeConstant instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
@@ -498,7 +492,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         trace.record(RESOLVED_CALL, call, resolvedCall);
         trace.record(CALL, expression, call);
 
-        BasicCallResolutionContext resolutionContext = BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.DISABLED);
+        BasicCallResolutionContext resolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_CALLABLE_TYPE);
         context.callChecker.check(resolvedCall, resolutionContext);
         context.symbolUsageValidator.validateCall(descriptor, trace, expression);
     }
@@ -676,166 +670,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetSimpleNameExpression reference = expression.getCallableReference();
 
-        boolean[] result = new boolean[1];
-        CallableDescriptor descriptor = resolveCallableReferenceTarget(
-                lhsType, context.replaceContextDependency(INDEPENDENT), expression, result);
-
-        if (!result[0]) {
+        boolean[] resolved = new boolean[1];
+        CallableDescriptor descriptor = CallableReferencesPackage.resolveCallableReferenceTarget(
+                expression, lhsType, context, resolved, components.callResolver);
+        if (!resolved[0]) {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
         }
         if (descriptor == null) return null;
 
-        ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
-        if (extensionReceiver != null && dispatchReceiver != null && descriptor instanceof CallableMemberDescriptor) {
-            context.trace.report(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED.on(reference, (CallableMemberDescriptor) descriptor));
-            return null;
-        }
-
-        JetType receiverType = extensionReceiver != null ? extensionReceiver.getType() :
-                               dispatchReceiver != null ? dispatchReceiver.getType() :
-                               null;
-
-        if (descriptor instanceof FunctionDescriptor) {
-            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType);
-        }
-        else if (descriptor instanceof PropertyDescriptor) {
-            return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType);
-        }
-        else if (descriptor instanceof VariableDescriptor) {
-            context.trace.report(UNSUPPORTED.on(reference, "References to variables aren't supported yet"));
-            return null;
-        }
-
-        throw new UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: " + descriptor);
-    }
-
-    @Nullable
-    private JetType createFunctionReferenceType(
-            @NotNull JetCallableReferenceExpression expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull FunctionDescriptor descriptor,
-            @Nullable JetType receiverType
-    ) {
-        //noinspection ConstantConditions
-        JetType type = components.reflectionTypes.getKFunctionType(
-                Annotations.EMPTY,
-                receiverType,
-                getValueParametersTypes(descriptor.getValueParameters()),
-                descriptor.getReturnType()
-        );
-
-        AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
-                context.scope.getContainingDeclaration(),
-                Annotations.EMPTY,
-                CallableMemberDescriptor.Kind.DECLARATION,
-                toSourceElement(expression)
-        );
-
-        FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
-
-        context.trace.record(FUNCTION, expression, functionDescriptor);
-
-        return type;
-    }
-
-    @Nullable
-    private JetType createPropertyReferenceType(
-            @NotNull JetCallableReferenceExpression expression,
-            @NotNull ExpressionTypingContext context,
-            @NotNull PropertyDescriptor descriptor,
-            @Nullable JetType receiverType
-    ) {
-        JetType type = components.reflectionTypes.getKPropertyType(
-                Annotations.EMPTY, receiverType, descriptor.getType(), descriptor.isVar()
-        );
-
-        LocalVariableDescriptor localVariable =
-                new LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),
-                                            type, /* mutable = */ false, toSourceElement(expression));
-
-        context.trace.record(VARIABLE, expression, localVariable);
-
-        return type;
-    }
-
-    @Nullable
-    private CallableDescriptor resolveCallableReferenceTarget(
-            @Nullable JetType lhsType,
-            @NotNull ExpressionTypingContext context,
-            @NotNull JetCallableReferenceExpression expression,
-            @NotNull boolean[] result
-    ) {
-        JetSimpleNameExpression reference = expression.getCallableReference();
-
-        if (lhsType == null) {
-            return resolveCallableNotCheckingArguments(reference, NO_RECEIVER, context, result);
-        }
-
-        ClassifierDescriptor classifier = lhsType.getConstructor().getDeclarationDescriptor();
-        if (!(classifier instanceof ClassDescriptor)) {
-            context.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(expression));
-            return null;
-        }
-
-        JetScope staticScope = ((ClassDescriptor) classifier).getStaticScope();
-        TemporaryTraceAndCache temporaryForStatic = TemporaryTraceAndCache.create(
-                context, "trace to resolve callable reference in static scope", reference);
-        CallableDescriptor possibleStatic = resolveCallableNotCheckingArguments(
-                reference, NO_RECEIVER, context.replaceTraceAndCache(temporaryForStatic).replaceScope(staticScope), result);
-        if (result[0]) {
-            temporaryForStatic.commit();
-            return possibleStatic;
-        }
-
-        JetScope staticNestedClasses = getStaticNestedClassesScope((ClassDescriptor) classifier);
-        TemporaryTraceAndCache temporaryForNested = TemporaryTraceAndCache.create(
-                context, "trace to resolve callable reference in static nested classes scope", reference);
-        CallableDescriptor possibleNestedClassConstructor = resolveCallableNotCheckingArguments(reference, NO_RECEIVER,
-                context.replaceTraceAndCache(temporaryForNested).replaceScope(staticNestedClasses), result);
-        if (result[0]) {
-            temporaryForNested.commit();
-            return possibleNestedClassConstructor;
-        }
-
-        ReceiverValue receiver = new TransientReceiver(lhsType);
-        TemporaryTraceAndCache temporaryWithReceiver = TemporaryTraceAndCache.create(
-                context, "trace to resolve callable reference with receiver", reference);
-        CallableDescriptor descriptor = resolveCallableNotCheckingArguments(
-                reference, receiver, context.replaceTraceAndCache(temporaryWithReceiver), result);
-        if (result[0]) {
-            temporaryWithReceiver.commit();
-            return descriptor;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private CallableDescriptor resolveCallableNotCheckingArguments(
-            @NotNull JetSimpleNameExpression reference,
-            @NotNull ReceiverValue receiver,
-            @NotNull ExpressionTypingContext context,
-            @NotNull boolean[] result
-    ) {
-        Call call = CallMaker.makeCall(reference, receiver, null, reference, ThrowingList.<ValueArgument>instance());
-        TemporaryTraceAndCache temporaryTrace = TemporaryTraceAndCache.create(context, "trace to resolve callable reference as function",
-                                                                              reference);
-
-        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(
-                context.replaceTraceAndCache(temporaryTrace).replaceExpectedType(NO_EXPECTED_TYPE), call, CheckValueArgumentsMode.DISABLED);
-        OverloadResolutionResults<CallableDescriptor> results =
-                components.callResolver.resolveCallForMember(reference, callResolutionContext);
-        if (!results.isNothing()) {
-            temporaryTrace.commit();
-            result[0] = true;
-            ResolvedCall<CallableDescriptor> callable =
-                    OverloadResolutionResultsUtil.getResultingCall(results, context.contextDependency);
-            if (callable != null) {
-                return callable.getResultingDescriptor();
-            }
-        }
-        return null;
+        return CallableReferencesPackage.createReflectionTypeForResolvedCallableReference(expression, descriptor, context, components.reflectionTypes);
     }
 
     @Override
@@ -935,8 +778,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = returnType;
         }
 
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(expression, contextWithExpectedType.trace,
-                                                                                    contextWithExpectedType.expectedType);
+        CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
+                expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
+        );
         if (value != null) {
             return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
         }
@@ -1130,7 +974,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             result = TypeInfoFactoryPackage.noTypeInfo(context);
         }
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.evaluate(
+        CompileTimeConstant<?> value = components.constantExpressionEvaluator.evaluateExpression(
                 expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType
         );
         if (value != null) {
@@ -1306,7 +1150,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // If break or continue was possible, take condition check info as the jump info
-        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkType(type, expression, context),
+        return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkType(type, expression, contextWithExpectedType),
                                                         dataFlowInfo,
                                                         loopBreakContinuePossible,
                                                         context.dataFlowInfo);
@@ -1501,7 +1345,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(visitor);
         }
-        ConstantExpressionEvaluator.evaluate(expression, context.trace, contextWithExpectedType.expectedType);
+        components.constantExpressionEvaluator.evaluateExpression(expression, context.trace, contextWithExpectedType.expectedType);
         return DataFlowUtils.checkType(visitor.typeInfo.replaceType(components.builtIns.getStringType()),
                                        expression,
                                        contextWithExpectedType);

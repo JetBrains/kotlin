@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
@@ -130,7 +128,7 @@ public object OptionalParametersHelper {
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.getNavigationElement() as? JetParameter
         val expression = declaration?.getDefaultValue() ?: return null
 
-        val allParameters = (parameter.getContainingDeclaration() as CallableDescriptor).getValueParameters().toSet()
+        val allParameters = parameter.getContainingDeclaration().getValueParameters().toSet()
 
         val parameterUsages = HashMap<ValueParameterDescriptor, MutableCollection<JetExpression>>()
 

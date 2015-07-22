@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -45,7 +46,11 @@ private abstract class AbstractNativeAnnotationsChecker(private val requiredAnno
         val annotationDescriptor = descriptor.getAnnotations().findAnnotation(requiredAnnotation.fqName) ?: return
 
         if (declaration !is JetNamedFunction || descriptor !is FunctionDescriptor) {
-            diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(declaration, annotationDescriptor.getType()))
+            if (descriptor is FunctionDescriptor && descriptor !is ConstructorDescriptor) {
+                diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(
+                        declaration, annotationDescriptor.type)
+                )
+            }
             return
         }
 

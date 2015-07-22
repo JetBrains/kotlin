@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.modules
 
-public trait Module {
+public interface Module {
     public fun getModuleName(): String
 
     public fun getOutputDirectory(): String

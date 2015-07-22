@@ -299,7 +299,7 @@ public class ModifiersChecker {
         JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
         if (annotationEntry == null) return;
 
-        if (!isRenamableDeclaration(descriptor)) {
+        if (descriptor instanceof FunctionDescriptor && !isRenamableFunction((FunctionDescriptor) descriptor)) {
             trace.report(INAPPLICABLE_PLATFORM_NAME.on(annotationEntry));
         }
 
@@ -324,12 +324,10 @@ public class ModifiersChecker {
 
     }
 
-    private static boolean isRenamableDeclaration(@NotNull DeclarationDescriptor descriptor) {
+    private static boolean isRenamableFunction(@NotNull FunctionDescriptor descriptor) {
         DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
 
-        return (descriptor instanceof PropertyAccessorDescriptor)
-               || (containingDescriptor instanceof PackageFragmentDescriptor || containingDescriptor instanceof ClassDescriptor)
-                   && descriptor instanceof FunctionDescriptor && !(descriptor instanceof ConstructorDescriptor);
+        return containingDescriptor instanceof PackageFragmentDescriptor || containingDescriptor instanceof ClassDescriptor;
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {

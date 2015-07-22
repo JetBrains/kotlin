@@ -1277,19 +1277,19 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annota
     /*primary*/ public constructor extension()
 }
 
-kotlin.annotation.annotation() public final class inline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
         public final fun <get-strategy>(): kotlin.InlineStrategy
 }
 
-kotlin.annotation.annotation() public final class inlineOptions : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class inlineOptions : kotlin.Annotation {
     /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
     internal final val value: kotlin.Array<out kotlin.InlineOption>
         internal final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
 
-kotlin.annotation.annotation() public final class noinline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
 

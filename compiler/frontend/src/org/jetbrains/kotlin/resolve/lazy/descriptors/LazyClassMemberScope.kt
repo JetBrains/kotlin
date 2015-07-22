@@ -17,30 +17,31 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Lists
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.dataClassUtils.*
-import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.storage.NullableLazyValue
-
-import java.util.*
-
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
-import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
+import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
+import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.NullableLazyValue
+import org.jetbrains.kotlin.types.DeferredType
+import org.jetbrains.kotlin.types.JetType
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 public open class LazyClassMemberScope(
         c: LazyClassContext,
@@ -83,7 +84,7 @@ public open class LazyClassMemberScope(
         return result
     }
 
-    private trait MemberExtractor<T : CallableMemberDescriptor> {
+    private interface MemberExtractor<T : CallableMemberDescriptor> {
         public fun extract(extractFrom: JetType, name: Name): Collection<T>
     }
 
@@ -114,9 +115,9 @@ public open class LazyClassMemberScope(
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
-        val functions = super.getFunctions(name)
+        val functions = super.getFunctions(name, location)
         resolveUnknownVisibilitiesForMembers(functions)
         return functions
     }
@@ -172,9 +173,9 @@ public open class LazyClassMemberScope(
         }
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
         // TODO: this should be handled by lazy property descriptors
-        val properties = super.getProperties(name)
+        val properties = super.getProperties(name, location)
         resolveUnknownVisibilitiesForMembers(properties as Collection<CallableMemberDescriptor>)
         return properties
     }

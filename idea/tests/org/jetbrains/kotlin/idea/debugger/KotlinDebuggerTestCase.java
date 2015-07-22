@@ -84,7 +84,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                     public void run() {
                         ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
 
-                        projectDescriptor.configureModule(getModule(), model, null);
+                        projectDescriptor.configureModule(getModule(), model);
 
                         VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
                         assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";

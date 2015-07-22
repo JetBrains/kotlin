@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
@@ -401,7 +402,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private boolean isGenericToArrayPresent() {
-        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"));
+        Collection<FunctionDescriptor> functions =
+                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"), UsageLocation.NO_LOCATION);
         for (FunctionDescriptor function : functions) {
             if (CallResolverUtilPackage.isOrOverridesSynthesized(function)) {
                 continue;
@@ -815,7 +817,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type type = typeMapper.mapType(getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         FunctionDescriptor valuesFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES), new Function1<FunctionDescriptor, Boolean>() {
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES, UsageLocation.NO_LOCATION), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValuesMethod(descriptor);
@@ -835,7 +837,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF), new Function1<FunctionDescriptor, Boolean>() {
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, UsageLocation.NO_LOCATION), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValueOfMethod(descriptor);

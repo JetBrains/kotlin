@@ -1,0 +1,8 @@
+package
+
+internal val x1: () -> kotlin.Unit
+internal val x2: kotlin.Int
+internal fun bar(/*0*/ f: () -> kotlin.Unit): kotlin.Int
+internal fun bar(/*0*/ f: (kotlin.String) -> kotlin.Unit): kotlin.Int
+internal fun foo(): kotlin.Unit
+internal fun foo(/*0*/ s: kotlin.String): kotlin.Unit

@@ -67,10 +67,10 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
         while (atCaret != null) {
             when {
-                atCaret?.isJetStatement() == true -> return atCaret
-                atCaret?.getParent() is JetFunctionLiteral -> return atCaret
+                atCaret.isJetStatement() == true -> return atCaret
+                atCaret.getParent() is JetFunctionLiteral -> return atCaret
                 atCaret is JetDeclaration -> {
-                    val declaration = atCaret!!
+                    val declaration = atCaret
                     when {
                         declaration is JetParameter && !declaration.isInLambdaExpression() -> {/* proceed to function declaration */}
                         declaration.getParent() is JetForExpression -> {/* skip variable declaration in 'for' expression */}
@@ -79,7 +79,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
                 }
             }
 
-            atCaret = atCaret?.getParent()
+            atCaret = atCaret.getParent()
         }
 
         return null

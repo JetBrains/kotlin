@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.ArrayList
 import java.util.EnumSet
 import java.util.HashMap
-import kotlin.properties.Delegates
 
 public data class JavaRoot(public val file: VirtualFile, public val type: JavaRoot.RootType) {
     public enum class RootType {
@@ -43,7 +42,7 @@ public data class JavaRoot(public val file: VirtualFile, public val type: JavaRo
 public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 
     //these fields are computed based on _roots passed to constructor which are filled in later
-    private val roots: List<JavaRoot> by Delegates.lazy { _roots.toList() }
+    private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
     private val maxIndex: Int
         get() = roots.size()
@@ -61,7 +60,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     }
 
     // root "Cache" object corresponds to DefaultPackage which exists in every root
-    private val rootCache: Cache by Delegates.lazy {
+    private val rootCache: Cache by lazy {
         with(Cache()) {
             roots.indices.forEach {
                 rootIndices.add(it)
@@ -236,12 +235,12 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
             override val acceptedRootTypes: Set<JavaRoot.RootType>
     ) : SearchRequest
 
-    private trait SearchRequest {
+    private interface SearchRequest {
         val packageFqName: FqName
         val acceptedRootTypes: Set<JavaRoot.RootType>
     }
 
-    private trait SearchResult {
+    private interface SearchResult {
         class Found(val packageDirectory: VirtualFile, val root: JavaRoot) : SearchResult
 
         object NotFound : SearchResult

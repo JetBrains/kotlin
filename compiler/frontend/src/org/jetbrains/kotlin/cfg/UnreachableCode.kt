@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiComment
 
-trait UnreachableCode {
+interface UnreachableCode {
     val elements: Set<JetElement>
     fun getUnreachableTextRanges(element: JetElement): List<TextRange>
 }

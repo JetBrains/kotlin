@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -101,6 +102,7 @@ public class KotlinBuiltIns {
 
     private final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
+    private final BuiltinsPackageFragment annotationPackageFragment;
 
     private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
@@ -130,6 +132,7 @@ public class KotlinBuiltIns {
         builtInsModule.setDependencies(builtInsModule);
 
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
+        annotationPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(ANNOTATION_PACKAGE_FQ_NAME));
 
         primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
         primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
@@ -178,6 +181,7 @@ public class KotlinBuiltIns {
         public final FqName extension = fqName("extension");
         public final FqName target = annotationName("target");
         public final FqName annotation = annotationName("annotation");
+        public final FqName annotationTarget = annotationName("AnnotationTarget");
 
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
@@ -232,6 +236,14 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
+    private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
+        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
+        assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
+                                                       (classifier == null ? "null" : classifier.toString());
+        return (ClassDescriptor) classifier;
+    }
+
+    @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
         ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName);
         assert classDescriptor != null : "Must be a class descriptor " + simpleName + ", but was null";
@@ -240,7 +252,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -375,6 +387,22 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
         return getBuiltInClassByName("deprecated");
+    }
+
+    @NotNull
+    public ClassDescriptor getTargetAnnotation() {
+        return getAnnotationClassByName(FQ_NAMES.target.shortName());
+    }
+
+    @NotNull
+    public ClassDescriptor getAnnotationTargetEnum() {
+        return getAnnotationClassByName(FQ_NAMES.annotationTarget.shortName());
+    }
+
+    @Nullable
+    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull Name name) {
+        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(name, UsageLocation.NO_LOCATION);
+        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
 
     @NotNull
@@ -923,6 +951,10 @@ public class KotlinBuiltIns {
         return isAnyOrNullableAny(type) && type.isMarkedNullable();
     }
 
+    public static boolean isDefaultBound(@NotNull JetType type) {
+        return isNullableAny(type);
+    }
+
     public static boolean isUnit(@NotNull JetType type) {
         return isNotNullConstructedFromGivenClass(type, FQ_NAMES.unit);
     }
@@ -987,6 +1019,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals")));
+        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), UsageLocation.NO_LOCATION));
     }
 }

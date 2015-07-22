@@ -28,11 +28,10 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
         if (psiElement !is JetDoWhileExpression) return
 
         val doc = editor.getDocument()
-        val stmt = psiElement as JetDoWhileExpression
-        val start = stmt.range.start
-        val body = stmt.getBody()
+        val start = psiElement.range.start
+        val body = psiElement.getBody()
 
-        val whileKeyword = stmt.getWhileKeyword()
+        val whileKeyword = psiElement.getWhileKeyword()
         if (body == null) {
             if (whileKeyword == null) {
                 doc.replaceString(start, start + "do".length(), "do {} while()")
@@ -42,19 +41,19 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
             }
             return
         }
-        else if (whileKeyword != null && body !is JetBlockExpression && body.startLine(doc) > stmt.startLine(doc)) {
+        else if (whileKeyword != null && body !is JetBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
             doc.insertString(whileKeyword.range.start, "}")
             doc.insertString(start + "do".length(), "{")
 
             return
         }
 
-        if (stmt.getCondition() == null) {
-            val lParen = stmt.getLeftParenthesis()
-            val rParen = stmt.getRightParenthesis()
+        if (psiElement.getCondition() == null) {
+            val lParen = psiElement.getLeftParenthesis()
+            val rParen = psiElement.getRightParenthesis()
 
             when {
-                whileKeyword == null -> doc.insertString(stmt.range.end, "while()")
+                whileKeyword == null -> doc.insertString(psiElement.range.end, "while()")
                 lParen == null && rParen == null -> {
                     doc.replaceString(whileKeyword.range.start, whileKeyword.range.end, "while()")
                 }

@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.resolve.calls
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
 import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -60,11 +62,14 @@ import java.util.ArrayList
 
 public class CandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
-        private val genericCandidateResolver: GenericCandidateResolver
+        private val genericCandidateResolver: GenericCandidateResolver,
+        private val reflectionTypes: ReflectionTypes
 ){
 
-    public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(context: CallCandidateResolutionContext<D>,
-                                                                                 task: ResolutionTask<D, F>): Unit = with(context) {
+    public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
+            context: CallCandidateResolutionContext<D>,
+            task: ResolutionTask<D, F>
+    ): Unit = with(context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         if (ErrorUtils.isError(candidateDescriptor)) {
@@ -78,7 +83,13 @@ public class CandidateResolver(
         }
 
         checkVisibility()
-        mapArguments(task)
+
+        when (task.checkArguments) {
+            CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
+                mapArguments()
+            CheckArgumentTypesMode.CHECK_CALLABLE_TYPE ->
+                checkExpectedCallableType()
+        }
 
         checkReceiverTypeError()
         checkExtensionReceiver()
@@ -143,15 +154,27 @@ public class CandidateResolver(
         }
     }
 
-    private fun <D : CallableDescriptor, F : D> CallCandidateResolutionContext<D>.mapArguments(task: ResolutionTask<D, F>) = check {
-        if (task.checkArguments == CheckValueArgumentsMode.ENABLED) {
-            val argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
-                    call, tracing, candidateCall, Sets.newLinkedHashSet<ValueArgument>())
-            if (!argumentMappingStatus.isSuccess()) {
-                candidateCall.addStatus(OTHER_ERROR)
+    private fun <D : CallableDescriptor, F : D> CallCandidateResolutionContext<D>.mapArguments()
+            = check {
+                val argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
+                        call, tracing, candidateCall, Sets.newLinkedHashSet<ValueArgument>())
+                if (!argumentMappingStatus.isSuccess()) {
+                    candidateCall.addStatus(OTHER_ERROR)
+                }
             }
-        }
-    }
+
+    private fun <D : CallableDescriptor, F : D> CallCandidateResolutionContext<D>.checkExpectedCallableType()
+            = check {
+                if (!noExpectedType(expectedType)) {
+                    val candidate = candidateCall.getCandidateDescriptor()
+                    val candidateReflectionType = getReflectionTypeForCandidateDescriptor(candidate, this, reflectionTypes);
+                    if (candidateReflectionType != null) {
+                        if (!JetTypeChecker.DEFAULT.isSubtypeOf(candidateReflectionType, expectedType)) {
+                            candidateCall.addStatus(OTHER_ERROR)
+                        }
+                    }
+                }
+            }
 
     private fun CallCandidateResolutionContext<*>.checkVisibility() = checkAndReport {
         val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidateCall.getDispatchReceiver(),
@@ -290,28 +313,6 @@ public class CandidateResolver(
         return ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes)
     }
 
-    private fun <D : CallableDescriptor> checkReceivers(context: CallCandidateResolutionContext<D>): ResolutionStatus {
-        var resultStatus = SUCCESS
-        val candidateCall = context.candidateCall
-
-        // Comment about a very special case.
-        // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
-        // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
-        // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
-
-        resultStatus = resultStatus.combine(context.checkReceiver(
-                candidateCall,
-                candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
-                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
-
-        resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
-                candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
-                candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
-                // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                context.call is CallForImplicitInvoke))
-        return resultStatus
-    }
-
     private fun <D : CallableDescriptor, C : CallResolutionContext<C>> checkValueArgumentTypes(
             context: CallResolutionContext<C>,
             candidateCall: MutableResolvedCall<D>,
@@ -402,6 +403,28 @@ public class CandidateResolver(
         } else {
             SUCCESS
         }
+    }
+
+    private fun <D : CallableDescriptor> checkReceivers(context: CallCandidateResolutionContext<D>): ResolutionStatus {
+        var resultStatus = SUCCESS
+        val candidateCall = context.candidateCall
+
+        // Comment about a very special case.
+        // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
+        // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
+        // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
+
+        resultStatus = resultStatus.combine(context.checkReceiver(
+                candidateCall,
+                candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
+                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
+
+        resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
+                                                                  candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
+                                                                  candidateCall.getExplicitReceiverKind().isDispatchReceiver(),
+                // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
+                                                                  context.call is CallForImplicitInvoke))
+        return resultStatus
     }
 
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkReceiver(

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -155,7 +155,7 @@ class ExpectedInfos(
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, expectedType, dataFlowInfo,
-                                                        ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = createContainerForMacros(

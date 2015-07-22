@@ -53,7 +53,7 @@ public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtu
     }
 
     protected fun FileStructurePopup.setup() {
-        val fileText = FileUtil.loadFile(File(getTestDataPath(), fileName()!!), true)
+        val fileText = FileUtil.loadFile(File(getTestDataPath(), fileName()), true)
 
         val withInherited = InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_INHERITED")
         setTreeActionState(javaClass<KotlinInheritedMembersNodeProvider>(), withInherited)

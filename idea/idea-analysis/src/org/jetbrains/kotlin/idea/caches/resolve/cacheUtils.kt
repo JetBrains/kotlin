@@ -28,7 +28,7 @@ class SynchronizedCachedValue<V>(project: Project, provider: () -> CachedValuePr
 
     public fun getValue(): V {
         return synchronized(cachedValue) {
-            cachedValue.getValue() as V
+            cachedValue.getValue()
         }
     }
 }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.common.bridges
 import org.jetbrains.kotlin.utils.DFS
 import java.util.HashSet
 
-public trait FunctionHandle {
+public interface FunctionHandle {
     public val isDeclaration: Boolean
     public val isAbstract: Boolean
 

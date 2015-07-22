@@ -52,7 +52,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,

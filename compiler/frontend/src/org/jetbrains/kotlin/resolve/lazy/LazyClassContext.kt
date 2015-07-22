@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.UsageCollector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
-public trait LazyClassContext {
+public interface LazyClassContext {
     val declarationScopeProvider: DeclarationScopeProvider
 
     val storageManager: StorageManager
@@ -32,4 +33,5 @@ public trait LazyClassContext {
     val typeResolver: TypeResolver
     val declarationProviderFactory: DeclarationProviderFactory
     val annotationResolver: AnnotationResolver
+    val usageCollector: UsageCollector
 }

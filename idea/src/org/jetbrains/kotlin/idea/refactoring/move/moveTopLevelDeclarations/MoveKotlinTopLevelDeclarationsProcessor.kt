@@ -65,7 +65,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 
-trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
+interface Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
     object Default: Mover {
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
             val newElement = targetFile.add(originalElement) as JetNamedDeclaration

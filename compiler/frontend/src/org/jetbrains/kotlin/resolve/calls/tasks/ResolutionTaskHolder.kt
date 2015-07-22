@@ -67,7 +67,7 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
         return internalTasks!!
     }
 
-    public trait PriorityProvider<D> {
+    public interface PriorityProvider<D> {
         public fun getPriority(candidate: D): Int
 
         public fun getMaxPriority(): Int

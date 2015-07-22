@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.common.output
 
 import java.io.File
 
-public trait OutputFileCollection {
+public interface OutputFileCollection {
     public fun get(relativePath: String): OutputFile?
     public fun asList(): List<OutputFile>
 }
@@ -28,7 +28,7 @@ public class SimpleOutputFileCollection(private val outputFiles: List<OutputFile
     override fun asList(): List<OutputFile> = outputFiles
 }
 
-public trait OutputFile {
+public interface OutputFile {
     public val relativePath: String
     public val sourceFiles: List<File>
     public fun asByteArray(): ByteArray

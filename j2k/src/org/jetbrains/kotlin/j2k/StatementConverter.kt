@@ -20,11 +20,11 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
 import java.util.ArrayList
 
-trait StatementConverter {
+interface StatementConverter {
     fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
 }
 
-trait SpecialStatementConverter {
+interface SpecialStatementConverter {
     fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement?
 }
 

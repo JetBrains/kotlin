@@ -423,6 +423,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/notNullAssertions/Delegation.kt");
             doTestAgainstJava(fileName);
         }
+
+        @TestMetadata("RightElvisOperand.kt")
+        public void testRightElvisOperand() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/notNullAssertions/RightElvisOperand.kt");
+            doTestAgainstJava(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/platformTypes")

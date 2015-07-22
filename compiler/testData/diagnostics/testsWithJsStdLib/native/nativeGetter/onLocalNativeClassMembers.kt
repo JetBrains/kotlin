@@ -15,8 +15,8 @@ fun foo() {
 
     @native
     class B {
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
-        val foo<!> = 0
+        <!WRONG_ANNOTATION_TARGET!>nativeGetter<!>
+        val foo = 0
     }
 
     @native

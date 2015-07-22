@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.compiler.plugin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-public trait CommandLineProcessor {
+public interface CommandLineProcessor {
     public val pluginId: String
     public val pluginOptions: Collection<CliOption>
 

@@ -2,7 +2,7 @@ package test
 
 public interface MethodTypeParameterErased {
 
-    public interface Bug</*0*/ T> {
+    public interface Bug</*0*/ T : kotlin.Any!> {
         public abstract fun </*0*/ RET : test.MethodTypeParameterErased.Bug<T!>!> save(): RET!
     }
 

@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.kotlin.utils.WrappedValues;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
@@ -224,7 +226,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
-        throw new IllegalStateException("Recursive call in a lazy value under " + this);
+        throw sanitizeStackTrace(new IllegalStateException("Recursive call in a lazy value under " + this));
     }
 
     private static class RecursionDetectedResult<T> {
@@ -376,7 +378,9 @@ public class LockBasedStorageManager implements StorageManager {
             lock.lock();
             try {
                 value = cache.get(input);
-                assert value != NotValue.COMPUTING : "Recursion detected on input: " + input + " under " + LockBasedStorageManager.this;
+                if (value == NotValue.COMPUTING) {
+                    throw recursionDetected(input);
+                }
                 if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
                 AssertionError error = null;
@@ -390,8 +394,7 @@ public class LockBasedStorageManager implements StorageManager {
                     // A seemingly obvious way to come about this case would be to declare a special exception class, but the problem is that
                     // one memoized function is likely to (indirectly) call another, and if this second one throws this exception, we are screwed
                     if (oldValue != NotValue.COMPUTING) {
-                        error = new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue +
-                                                   " under " + LockBasedStorageManager.this);
+                        error = raceCondition(input, oldValue);
                         throw error;
                     }
 
@@ -401,8 +404,9 @@ public class LockBasedStorageManager implements StorageManager {
                     if (throwable == error) throw exceptionHandlingStrategy.handleException(throwable);
 
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                    assert oldValue == NotValue.COMPUTING : "Race condition detected on input " + input + ". Old value is " + oldValue +
-                                                            " under " + LockBasedStorageManager.this;
+                    if (oldValue != NotValue.COMPUTING) {
+                        throw raceCondition(input, oldValue);
+                    }
 
                     throw exceptionHandlingStrategy.handleException(throwable);
                 }
@@ -410,6 +414,21 @@ public class LockBasedStorageManager implements StorageManager {
             finally {
                 lock.unlock();
             }
+        }
+
+        @NotNull
+        private AssertionError recursionDetected(K input) {
+            return sanitizeStackTrace(
+                    new AssertionError("Recursion detected on input: " + input + " under " + LockBasedStorageManager.this)
+            );
+        }
+
+        @NotNull
+        private AssertionError raceCondition(K input, Object oldValue) {
+            return sanitizeStackTrace(
+                    new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue +
+                                       " under " + LockBasedStorageManager.this)
+            );
         }
 
         @Override
@@ -443,5 +462,26 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull ExceptionHandlingStrategy newStrategy
     ) {
         return new LockBasedStorageManager(getPointOfConstruction(), newStrategy, base.lock);
+    }
+
+    @NotNull
+    private static <T extends Throwable> T sanitizeStackTrace(@NotNull T throwable) {
+        String storagePackageName = LockBasedStorageManager.class.getPackage().getName();
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        int size = stackTrace.length;
+
+        int firstNonStorage = -1;
+        for (int i = 0; i < size; i++) {
+            // Skip everything (memoized functions and lazy values) from package org.jetbrains.kotlin.storage
+            if (!stackTrace[i].getClassName().startsWith(storagePackageName)) {
+                firstNonStorage = i;
+                break;
+            }
+        }
+        assert firstNonStorage >= 0 : "This method should only be called on exceptions created in LockBasedStorageManager";
+
+        List<StackTraceElement> list = Arrays.asList(stackTrace).subList(firstNonStorage, size);
+        throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
+        return throwable;
     }
 }

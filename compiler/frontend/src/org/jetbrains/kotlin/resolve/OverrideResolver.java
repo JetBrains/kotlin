@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -733,9 +734,9 @@ public class OverrideResolver {
     ) {
         for (JetType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
-            all.addAll(supertype.getMemberScope().getFunctions(declared.getName()));
+            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), UsageLocation.NO_LOCATION));
             //noinspection unchecked
-            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName()));
+            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), UsageLocation.NO_LOCATION));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSuper, declared)) {

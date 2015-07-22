@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.config
 
 import java.io.File
 
-public trait ContentRoot
+public interface ContentRoot
 
 public data class KotlinSourceRoot(public val path: String): ContentRoot
 

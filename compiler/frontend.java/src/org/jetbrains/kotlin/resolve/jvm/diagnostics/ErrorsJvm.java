@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -40,7 +43,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<JetDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> PLATFORM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory1<JetDeclaration, DeclarationDescriptor> PLATFORM_STATIC_ILLEGAL_USAGE = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetDeclaration> OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> OVERLOADS_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
@@ -51,8 +53,9 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory0<JetExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetElement>    DEPRECATED_ANNOTATION_METHOD_CALL      = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetExpression>              POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement>                 DEPRECATED_ANNOTATION_METHOD_CALL      = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<JetAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory0<JetElement> TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
 

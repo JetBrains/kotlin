@@ -24,9 +24,11 @@ import kotlin.InlineOption.ONLY_LOCAL_RETURN
 // They was reserved word in ECMAScript 2, but is not since ECMAScript 5.
 
 native
-public annotation class volatile
+target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
+public annotation(retention = AnnotationRetention.SOURCE) class volatile
 
 native
-public annotation class synchronized
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+public annotation(retention = AnnotationRetention.SOURCE) class synchronized
 
 public inline fun <R> synchronized(lock: Any, @inlineOptions(ONLY_LOCAL_RETURN) block: () -> R): R = block()

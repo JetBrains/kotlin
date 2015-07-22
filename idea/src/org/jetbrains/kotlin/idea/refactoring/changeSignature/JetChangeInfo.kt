@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashSet
-import kotlin.properties.Delegates
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -72,7 +71,7 @@ public class JetChangeInfo(
     private val newParameters = parameterInfos.toArrayList()
     private val originalPsiMethods: List<PsiMethod> = getMethod().toLightMethods()
 
-    private val oldNameToParameterIndex: Map<String, Int> by Delegates.lazy {
+    private val oldNameToParameterIndex: Map<String, Int> by lazy {
         val map = HashMap<String, Int>()
 
         val parameters = methodDescriptor.baseDescriptor.getValueParameters()
@@ -81,7 +80,7 @@ public class JetChangeInfo(
         map
     }
 
-    public val isParameterSetOrOrderChanged: Boolean by Delegates.lazy {
+    public val isParameterSetOrOrderChanged: Boolean by lazy {
         val signatureParameters = getNonReceiverParameters()
         methodDescriptor.receiver != receiverParameterInfo ||
         signatureParameters.size() != methodDescriptor.getParametersCount() ||

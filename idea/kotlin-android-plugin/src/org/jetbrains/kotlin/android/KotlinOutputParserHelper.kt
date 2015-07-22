@@ -25,7 +25,6 @@ import java.io.File
 import java.lang.reflect.Constructor
 import java.util.HashMap
 import java.util.regex.Pattern
-import kotlin.properties.Delegates
 import kotlin.reflect.jvm.java
 import java.lang.reflect.Array as RArray
 
@@ -82,14 +81,14 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
     var nextLine = reader.readLine()
 
     val builder = StringBuilder(this)
-    while (nextLine != null && nextLine!!.isNextMessage().not()) {
+    while (nextLine != null && nextLine.isNextMessage().not()) {
         builder.append("\n").append(nextLine)
         if (!reader.hasNextLine()) break
 
         nextLine = reader.readLine()
     }
 
-    if (nextLine != null) reader.pushBack(nextLine!!)
+    if (nextLine != null) reader.pushBack(nextLine)
 
     return builder.toString()
 }
@@ -148,7 +147,7 @@ object KotlinOutputParserHelper {
         loadSeverityEnums()
     }
 
-    private val simpleMessageConstructor: Constructor<*> by Delegates.lazy {
+    private val simpleMessageConstructor: Constructor<*> by lazy {
         if (!isNewAndroidPlugin) {
             val messageClass = Class.forName("$packagePrefix.GradleMessage")
             val messageKindClass = Class.forName("$packagePrefix.GradleMessage\$Kind")
@@ -165,7 +164,7 @@ object KotlinOutputParserHelper {
         }
     }
 
-    private val complexMessageConstructor: Constructor<*> by Delegates.lazy {
+    private val complexMessageConstructor: Constructor<*> by lazy {
         if (!isNewAndroidPlugin) {
             val messageClass = Class.forName("$packagePrefix.GradleMessage")
             val messageKindClass = Class.forName("$packagePrefix.GradleMessage\$Kind")
@@ -187,20 +186,20 @@ object KotlinOutputParserHelper {
         }
     }
 
-    private val sourceFilePositionConstructor: Constructor<*> by Delegates.lazy {
+    private val sourceFilePositionConstructor: Constructor<*> by lazy {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourcePositionClass = Class.forName("$packagePrefix.SourcePosition")
         val sourceFilePositionClass = Class.forName("$packagePrefix.SourceFilePosition")
         sourceFilePositionClass.getConstructor(File::class.java, sourcePositionClass)
     }
 
-    private val sourcePositionConstructor: Constructor<*> by Delegates.lazy {
+    private val sourcePositionConstructor: Constructor<*> by lazy {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourcePositionClass = Class.forName("$packagePrefix.SourcePosition")
         sourcePositionClass.getConstructor(Int::class.java, Int::class.java, Int::class.java)
     }
 
-    private val sourcePositionVarargArg: Any by Delegates.lazy {
+    private val sourcePositionVarargArg: Any by lazy {
         assert(isNewAndroidPlugin) { "This property should be used only for New Android Plugin" }
         val sourceFilePositionClass = Class.forName("$packagePrefix.SourceFilePosition")
         RArray.newInstance(sourceFilePositionClass, 0)

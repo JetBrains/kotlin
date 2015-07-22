@@ -21,14 +21,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesPackage;
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
@@ -51,10 +55,14 @@ public class ExpressionTypingServices {
 
     @NotNull private final StatementFilter statementFilter;
 
-    public ExpressionTypingServices(@NotNull ExpressionTypingComponents components, @NotNull StatementFilter statementFilter) {
+    public ExpressionTypingServices(
+            @NotNull ExpressionTypingComponents components,
+            @NotNull StatementFilter statementFilter,
+            @NotNull ExpressionTypingVisitorDispatcher.ForDeclarations facade
+    ) {
         this.expressionTypingComponents = components;
         this.statementFilter = statementFilter;
-        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(components);
+        this.expressionTypingFacade = facade;
     }
 
     @NotNull public StatementFilter getStatementFilter() {
@@ -222,7 +230,7 @@ public class ExpressionTypingServices {
             return TypeInfoFactoryPackage.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
+        ExpressionTypingInternals blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
@@ -255,7 +263,7 @@ public class ExpressionTypingServices {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
                 // We take current data flow info if jump there is not possible
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
+            blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
         }
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
@@ -301,4 +309,5 @@ public class ExpressionTypingServices {
         }
         return result;
     }
+
 }

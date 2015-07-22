@@ -58,10 +58,7 @@ public class NativeFunChecker : DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 
-        if (descriptor is ConstructorDescriptor) {
-            diagnosticHolder.report(Errors.INAPPLICABLE_ANNOTATION.on(declaration));
-        }
-        else if (declaration is JetDeclarationWithBody && declaration.hasBody()) {
+        if (descriptor !is ConstructorDescriptor && declaration is JetDeclarationWithBody && declaration.hasBody()) {
             diagnosticHolder.report(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 

@@ -90,7 +90,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 var parent = tokenAt.getParent()
                 if (parent is JetExpression && parent !is JetBlockExpression) {
                     // search expression to be replaced - go up while we are the first child of parent expression
-                    var expression = parent as JetExpression
+                    var expression: JetExpression = parent
                     parent = expression.getParent()
                     while (parent is JetExpression && parent.getFirstChild() == expression) {
                         expression = parent

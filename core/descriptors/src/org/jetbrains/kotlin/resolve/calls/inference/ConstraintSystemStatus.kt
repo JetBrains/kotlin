@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
-public trait ConstraintSystemStatus {
+public interface ConstraintSystemStatus {
     /**
      * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
      */

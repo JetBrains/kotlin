@@ -81,7 +81,7 @@ class KotlinEvaluateExpressionCache(val project: Project) {
 
             val thisDescriptor = value.asmType.getClassDescriptor(project)
             val superClassDescriptor = jetType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
-            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }!!
+            return@all thisDescriptor != null && superClassDescriptor != null && runReadAction { DescriptorUtils.isSubclass(thisDescriptor, superClassDescriptor) }
         }
     }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
-public trait TypePredicate: (JetType) -> Boolean {
+public interface TypePredicate: (JetType) -> Boolean {
     override fun invoke(typeToCheck: JetType): Boolean
 }
 

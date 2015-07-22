@@ -135,7 +135,6 @@ public class DefaultErrorMessages {
         });
         MAP.put(ILLEGAL_MODIFIER, "Illegal modifier ''{0}''", TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
-        MAP.put(INAPPLICABLE_ANNOTATION, "This annotation is only applicable to top level functions");
         MAP.put(INAPPLICABLE_PLATFORM_NAME, "platformName annotation is not applicable to this declaration");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
 

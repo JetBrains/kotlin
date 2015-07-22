@@ -13,8 +13,8 @@ fun foo() {
     }
 
     class B {
-        <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
-        var foo<!> = 0
+        <!WRONG_ANNOTATION_TARGET!>nativeSetter<!>
+        var foo = 0
     }
 
     class C {

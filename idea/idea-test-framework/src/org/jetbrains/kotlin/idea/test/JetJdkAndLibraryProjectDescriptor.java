@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor {
+public class JetJdkAndLibraryProjectDescriptor extends JetLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myLibrary";
 
     private final File libraryFile;
@@ -52,7 +52,7 @@ public class JetJdkAndLibraryProjectDescriptor implements LightProjectDescriptor
     }
 
     @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         NewLibraryEditor editor = new NewLibraryEditor();
         editor.setName(LIBRARY_NAME);
         editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);

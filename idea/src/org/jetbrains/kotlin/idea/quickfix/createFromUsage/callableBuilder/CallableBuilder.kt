@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.DialogWithEditor
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -136,7 +138,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
 
-    val pseudocode: Pseudocode? by Delegates.lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
+    val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
 
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 

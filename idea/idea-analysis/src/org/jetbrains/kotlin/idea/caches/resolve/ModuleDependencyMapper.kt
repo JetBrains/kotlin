@@ -111,7 +111,7 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
     return collectAllModuleInfos
 }
 
-trait ModuleResolverProvider {
+interface ModuleResolverProvider {
     val exceptionTracker: ExceptionTracker
     fun resolverByModule(module: IdeaModuleInfo): ResolverForModule = resolverForProject.resolverForModule(module)
 

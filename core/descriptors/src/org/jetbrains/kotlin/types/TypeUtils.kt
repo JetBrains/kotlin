@@ -127,3 +127,5 @@ fun JetType.getNestedArguments(): List<TypeProjection> {
     }
     return result
 }
+
+public fun JetType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())

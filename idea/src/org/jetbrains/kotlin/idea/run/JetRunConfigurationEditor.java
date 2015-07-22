@@ -39,7 +39,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     private CommonJavaParametersPanel myCommonProgramParameters;
     private AlternativeJREPanel alternativeJREPanel;
     private LabeledComponent<JTextField> mainClass;
-    private ConfigurationModuleSelector myModuleSelector;
+    private final ConfigurationModuleSelector myModuleSelector;
     private JComponent anchor;
     private final LabeledComponent<JComboBox> moduleChooser;
 

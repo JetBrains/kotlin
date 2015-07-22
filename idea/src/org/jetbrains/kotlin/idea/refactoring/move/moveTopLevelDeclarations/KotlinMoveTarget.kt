@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations
 
-import com.intellij.refactoring.PackageWrapper
-import com.intellij.refactoring.MoveDestination
-import org.jetbrains.kotlin.psi.JetFile
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.refactoring.PackageWrapper
 import org.jetbrains.kotlin.name.FqName
-import com.intellij.openapi.project.Project
-import kotlin.properties.Delegates
+import org.jetbrains.kotlin.psi.JetFile
 
-public trait KotlinMoveTarget {
+public interface KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
     fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiFile?
     fun getTargetPsiIfExists(originalPsi: PsiElement): PsiFile?
@@ -52,7 +50,7 @@ public class DeferredJetFileKotlinMoveTarget(
         project: Project,
         val packageFqName: FqName,
         createFile: () -> JetFile?): KotlinMoveTarget {
-    val createdFile: JetFile? by Delegates.lazy(createFile)
+    val createdFile: JetFile? by lazy(createFile)
 
     override val packageWrapper: PackageWrapper = PackageWrapper(PsiManager.getInstance(project), packageFqName.asString())
 

@@ -6,7 +6,6 @@ package foo
 class X
 class Y
 
-noinline
 fun doRun<R>(fn: ()->R): R = fn()
 
 inline fun test<reified A, reified B>(x: Any, y: Any): Boolean =

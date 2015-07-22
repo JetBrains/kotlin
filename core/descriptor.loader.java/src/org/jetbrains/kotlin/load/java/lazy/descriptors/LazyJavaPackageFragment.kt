@@ -16,16 +16,15 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import kotlin.properties.Delegates
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
-    private val scope by Delegates.lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
+    private val scope by lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
 
     override fun getMemberScope() = scope
 

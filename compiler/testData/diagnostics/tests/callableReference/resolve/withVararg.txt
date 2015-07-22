@@ -1,0 +1,9 @@
+package
+
+internal val fn1: (kotlin.Int) -> kotlin.Unit
+internal val fn2: (kotlin.IntArray) -> kotlin.Unit
+internal val fn3: (kotlin.Int, kotlin.Int) -> kotlin.Unit
+internal val fn4: (kotlin.Array<kotlin.String>) -> kotlin.Unit
+internal fun foo(/*0*/ vararg ss: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+internal fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+internal fun foo(/*0*/ vararg ii: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit

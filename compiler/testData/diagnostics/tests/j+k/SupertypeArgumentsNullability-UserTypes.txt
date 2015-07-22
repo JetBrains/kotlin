@@ -9,8 +9,8 @@ public open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public open class X</*0*/ T> {
-    public constructor X</*0*/ T>()
+public open class X</*0*/ T : kotlin.Any!> {
+    public constructor X</*0*/ T : kotlin.Any!>()
     public/*package*/ open fun bar(/*0*/ a: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public/*package*/ open fun foo(): T!

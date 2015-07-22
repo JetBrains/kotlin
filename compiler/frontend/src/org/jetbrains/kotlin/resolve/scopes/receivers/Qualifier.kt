@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
-public trait Qualifier: ReceiverValue {
+public interface Qualifier: ReceiverValue {
 
     public val expression: JetExpression
 

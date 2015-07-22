@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetScript
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 
-public trait TopLevelDescriptorProvider {
+public interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
     fun getScriptDescriptor(script: JetScript): ScriptDescriptor

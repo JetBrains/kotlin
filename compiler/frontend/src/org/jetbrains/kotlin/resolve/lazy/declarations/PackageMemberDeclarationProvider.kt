@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public trait PackageMemberDeclarationProvider : DeclarationProvider {
+public interface PackageMemberDeclarationProvider : DeclarationProvider {
     public fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName>
 
     public fun getPackageFiles(): Collection<JetFile>

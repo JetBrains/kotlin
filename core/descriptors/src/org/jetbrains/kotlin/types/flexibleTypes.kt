@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import kotlin.platform.platformStatic
 
-public trait FlexibleTypeCapabilities {
+public interface FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
     val id: String
 
@@ -31,7 +31,7 @@ public trait FlexibleTypeCapabilities {
     }
 }
 
-public trait Flexibility : TypeCapability, SubtypingRepresentatives {
+public interface Flexibility : TypeCapability, SubtypingRepresentatives {
     companion object {
         // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
         // it creates a flexible type, e.g. (Foo..Foo?).
@@ -100,12 +100,12 @@ fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
 public fun JetType.lowerIfFlexible(): JetType = if (this.isFlexible()) this.flexibility().lowerBound else this
 public fun JetType.upperIfFlexible(): JetType = if (this.isFlexible()) this.flexibility().upperBound else this
 
-public trait NullAwareness : TypeCapability {
+public interface NullAwareness : TypeCapability {
     public fun makeNullableAsSpecified(nullable: Boolean): JetType
     public fun computeIsNullable(): Boolean
 }
 
-trait FlexibleTypeDelegation : TypeCapability {
+interface FlexibleTypeDelegation : TypeCapability {
     public val delegateType: JetType
 }
 

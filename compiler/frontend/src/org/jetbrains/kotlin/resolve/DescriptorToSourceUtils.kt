@@ -83,8 +83,8 @@ public object DescriptorToSourceUtils {
         if (declarationDescriptor is PropertyAccessorDescriptor) {
             descriptor = (descriptor as PropertyAccessorDescriptor).getCorrespondingProperty()
         }
-        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor!!))) {
-            descriptor = descriptor!!.getContainingDeclaration()
+        while (!(descriptor == null || DescriptorUtils.isTopLevelDeclaration(descriptor))) {
+            descriptor = descriptor.getContainingDeclaration()
         }
         return descriptor
     }

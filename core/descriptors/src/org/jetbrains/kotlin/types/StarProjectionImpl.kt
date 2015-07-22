@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.types
 
-import kotlin.properties.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 class StarProjectionImpl(
         private val typeParameter: TypeParameterDescriptor
@@ -27,7 +27,7 @@ class StarProjectionImpl(
     override fun getProjectionKind() = Variance.OUT_VARIANCE
 
     // No synchronization here: there's no problem in accidentally computing this twice
-    private val _type: JetType by Delegates.lazy {
+    private val _type: JetType by lazy {
         typeParameter.starProjectionType()
     }
 

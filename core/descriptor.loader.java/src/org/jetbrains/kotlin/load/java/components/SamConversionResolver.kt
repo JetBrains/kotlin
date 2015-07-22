@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.JetType
 
-public trait SamConversionResolver {
+public interface SamConversionResolver {
     public companion object EMPTY : SamConversionResolver {
         override fun <D : FunctionDescriptor> resolveSamAdapter(original: D) = null
         override fun resolveSamConstructor(name: Name, scope: JetScope) = null

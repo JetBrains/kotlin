@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.ArrayList
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
@@ -111,6 +112,34 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         public fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
             val containingPackage = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>())
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
+        }
+
+        private val PROPERTY_CLASS_NAMES = hashSetOf(
+                "KProperty", "KMutableProperty",
+                "KProperty0", "KMutableProperty0",
+                "KProperty1", "KMutableProperty1",
+                "KProperty2", "KMutableProperty2"
+        )
+
+        public fun isCallableType(type: JetType): Boolean =
+                KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) ||
+                isPropertyType(type)
+
+        public fun isPropertyType(type: JetType): Boolean =
+                isExactPropertyType(type) ||
+                type.getConstructor().getSupertypes().any { isPropertyType(it) }
+
+        public fun isExactPropertyType(type: JetType): Boolean {
+            val descriptor = type.getConstructor().getDeclarationDescriptor()
+            if (descriptor is ClassDescriptor) {
+                val fqName = DescriptorUtils.getFqName(descriptor)
+                val parentName = fqName.parent().asString()
+                if (parentName != KOTLIN_REFLECT_FQ_NAME.asString())
+                    return false
+                val shortName = fqName.shortName().asString()
+                return PROPERTY_CLASS_NAMES.contains(shortName)
+            }
+            return false
         }
     }
 }

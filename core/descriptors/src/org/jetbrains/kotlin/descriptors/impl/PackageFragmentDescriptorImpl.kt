@@ -29,7 +29,7 @@ public abstract class PackageFragmentDescriptorImpl(
     override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? = this
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-            visitor.visitPackageFragmentDescriptor(this, data) as R
+            visitor.visitPackageFragmentDescriptor(this, data)
 
     override fun getContainingDeclaration(): ModuleDescriptor {
         return super<DeclarationDescriptorNonRootImpl>.getContainingDeclaration() as ModuleDescriptor

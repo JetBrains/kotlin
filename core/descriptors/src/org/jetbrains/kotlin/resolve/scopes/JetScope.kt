@@ -23,17 +23,17 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
-public trait JetScope {
+public interface JetScope {
 
-    public fun getClassifier(name: Name): ClassifierDescriptor?
+    public fun getClassifier(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): ClassifierDescriptor?
 
     public fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getProperties(name: Name): Collection<VariableDescriptor>
+    public fun getProperties(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<VariableDescriptor>
 
     public fun getLocalVariable(name: Name): VariableDescriptor?
 
-    public fun getFunctions(name: Name): Collection<FunctionDescriptor>
+    public fun getFunctions(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
 
@@ -100,17 +100,25 @@ public fun JetScope.getDescriptorsFiltered(
 }
 
 public class DescriptorKindFilter(
-        public val kindMask: Int,
+        kindMask: Int,
         public val excludes: List<DescriptorKindExclude> = listOf()
 ) {
+    public val kindMask: Int
+
+    init {
+        var mask = kindMask
+        excludes.forEach { mask = mask and it.fullyExcludedDescriptorKinds.inv() }
+        this.kindMask = mask
+    }
+
     public fun accepts(descriptor: DeclarationDescriptor): Boolean
-            = kindMask and descriptor.kind() != 0 && excludes.all { !it.matches(descriptor) }
+            = kindMask and descriptor.kind() != 0 && excludes.all { !it.excludes(descriptor) }
 
     public fun acceptsKinds(kinds: Int): Boolean
             = kindMask and kinds != 0
 
     public fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
-            = DescriptorKindFilter(kindMask and exclude.fullyExcludedDescriptorKinds.inv(), excludes + listOf(exclude))
+            = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
 
     public fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)
@@ -193,22 +201,22 @@ public class DescriptorKindFilter(
     }
 }
 
-public trait DescriptorKindExclude {
-    public fun matches(descriptor: DeclarationDescriptor): Boolean
+public interface DescriptorKindExclude {
+    public fun excludes(descriptor: DeclarationDescriptor): Boolean
 
     public val fullyExcludedDescriptorKinds: Int
 
     override fun toString() = this.javaClass.getSimpleName()
 
     public object Extensions : DescriptorKindExclude {
-        override fun matches(descriptor: DeclarationDescriptor)
+        override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
 
     public object NonExtensions : DescriptorKindExclude {
-        override fun matches(descriptor: DeclarationDescriptor)
+        override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor !is CallableDescriptor || descriptor.getExtensionReceiverParameter() == null
 
         override val fullyExcludedDescriptorKinds: Int
@@ -216,9 +224,28 @@ public trait DescriptorKindExclude {
     }
 
     public object EnumEntry : DescriptorKindExclude {
-        override fun matches(descriptor: DeclarationDescriptor)
+        override fun excludes(descriptor: DeclarationDescriptor)
                 = descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
+    }
+
+    public object TopLevelPackages : DescriptorKindExclude {
+        override fun excludes(descriptor: DeclarationDescriptor): Boolean {
+            val fqName = when (descriptor) {
+                is PackageFragmentDescriptor -> descriptor.fqName
+                is PackageViewDescriptor -> descriptor.fqName
+                else -> return false
+            }
+            return fqName.parent().isRoot()
+        }
+
+        override val fullyExcludedDescriptorKinds: Int get() = 0
+    }
+}
+
+public interface UsageLocation {
+    companion object {
+        val NO_LOCATION = object : UsageLocation {}
     }
 }

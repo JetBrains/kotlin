@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-trait ExpressionConverter {
+interface ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
 }
 
-trait SpecialExpressionConverter {
+interface SpecialExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression?
 }
 

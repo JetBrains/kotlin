@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public trait Callable {
+public interface Callable {
     public val owner: Type
 
     public val dispatchReceiverType: Type?

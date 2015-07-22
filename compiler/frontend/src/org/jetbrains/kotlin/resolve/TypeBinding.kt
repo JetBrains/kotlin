@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 
-trait TypeBinding<out P : PsiElement> {
+interface TypeBinding<out P : PsiElement> {
     val psiElement: P
     val jetType: JetType
     fun getArgumentBindings(): List<TypeArgumentBinding<P>?>
 }
 
-trait TypeArgumentBinding<out P: PsiElement> {
+interface TypeArgumentBinding<out P: PsiElement> {
     val typeProjection: TypeProjection
     val typeParameterDescriptor: TypeParameterDescriptor?
     val typeBinding: TypeBinding<P>

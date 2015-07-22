@@ -41,7 +41,7 @@ internal abstract class AL : java.util.ArrayList<p.P> {
     public open override /*1*/ /*fake_override*/ fun size(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<p.P>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun trimToSize(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
@@ -64,23 +64,23 @@ package p {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public open class B</*0*/ TB> : p.A<TB!> {
-        public constructor B</*0*/ TB>()
+    public open class B</*0*/ TB : kotlin.Any!> : p.A<TB!> {
+        public constructor B</*0*/ TB : kotlin.Any!>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public/*package*/ open override /*1*/ fun foo(/*0*/ p: p.A<TB!>): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public open class C</*0*/ TC> : p.B<TC!>, p.A<TC!> {
-        public constructor C</*0*/ TC>()
+    public open class C</*0*/ TC : kotlin.Any!> : p.B<TC!>, p.A<TC!> {
+        public constructor C</*0*/ TC : kotlin.Any!>()
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*2*/ /*fake_override*/ fun foo(/*0*/ p: p.A<TC!>): kotlin.Unit
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public interface G</*0*/ TG> {
+    public interface G</*0*/ TG : kotlin.Any!> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

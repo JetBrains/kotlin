@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.structure
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public trait JavaPackage : JavaElement {
+public interface JavaPackage : JavaElement {
     public fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass>
 
     public fun getSubPackages(): Collection<JavaPackage>

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
@@ -80,14 +81,15 @@ public class ErrorUtils {
             this.debugMessage = debugMessage;
         }
 
+        @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull UsageLocation location) {
             return createErrorClass(name.asString());
         }
 
         @NotNull
         @Override
-        public Set<VariableDescriptor> getProperties(@NotNull Name name) {
+        public Set<VariableDescriptor> getProperties(@NotNull Name name, @NotNull UsageLocation location) {
             return ERROR_VARIABLE_GROUP;
         }
 
@@ -123,7 +125,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull UsageLocation location) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -179,7 +181,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull UsageLocation location) {
             throw new IllegalStateException();
         }
 
@@ -191,7 +193,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull UsageLocation location) {
             throw new IllegalStateException();
         }
 
@@ -203,7 +205,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull UsageLocation location) {
             throw new IllegalStateException();
         }
 

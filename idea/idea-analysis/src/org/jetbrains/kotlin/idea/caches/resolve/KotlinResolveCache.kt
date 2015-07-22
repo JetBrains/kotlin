@@ -21,7 +21,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -42,17 +41,12 @@ import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.HashMap
 
-public trait CacheExtension<T> {
+public interface CacheExtension<T> {
     public val platform: TargetPlatform
     public fun getData(resolverProvider: ModuleResolverProvider): T
 }
@@ -129,8 +123,8 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
                 descendantsOfCurrent.clear()
             }
 
-            descendantsOfCurrent.add(current!!)
-            current = current!!.getParent()
+            descendantsOfCurrent.add(current)
+            current = current.getParent()
         }
 
         cache.keySet().removeAll(toRemove)

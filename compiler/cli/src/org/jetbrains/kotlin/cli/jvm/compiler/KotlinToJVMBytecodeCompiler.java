@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
@@ -329,7 +329,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)
+                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
                         );
                     }
                 }
@@ -362,14 +362,14 @@ public class KotlinToJVMBytecodeCompiler {
             File outputDirectory
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
-        IncrementalCacheProvider incrementalCacheProvider = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER);
+        IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
 
         Collection<FqName> packagesWithObsoleteParts;
-        if (moduleId == null || incrementalCacheProvider == null) {
+        if (moduleId == null || incrementalCompilationComponents == null) {
             packagesWithObsoleteParts = null;
         }
         else {
-            IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
+            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
             packagesWithObsoleteParts = new HashSet<FqName>();
             for (String internalName : incrementalCache.getObsoletePackageParts()) {
                 packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());

@@ -22,7 +22,6 @@ import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
@@ -33,8 +32,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
-import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClass
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
 import java.util.HashSet
-import kotlin.properties.Delegates
 
 public class JetChangeSignatureData(
         override val baseDescriptor: CallableDescriptor,
@@ -95,7 +91,7 @@ public class JetChangeSignatureData(
     override val original: JetMethodDescriptor
         get() = this
 
-    override val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>> by Delegates.lazy {
+    override val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
@@ -103,11 +99,11 @@ public class JetChangeSignatureData(
         }
     }
 
-    override val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement> by Delegates.lazy {
+    override val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement> by lazy {
         primaryCallables.first { it.getDeclaration() == baseDeclaration }
     }
 
-    override val affectedCallables: Collection<UsageInfo> by Delegates.lazy {
+    override val affectedCallables: Collection<UsageInfo> by lazy {
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.getDeclaration() as? JetCallableDeclaration
             val lightMethods = primaryDeclaration?.toLightMethods() ?: Collections.emptyList()

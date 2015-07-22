@@ -30,7 +30,7 @@ public class SplitPair<T: Interval>(val patchedPart: T, val newPart: T)
 
 class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode ) : Interval
 
-trait Interval {
+interface Interval {
     val startLabel: LabelNode
     val endLabel: LabelNode
 
@@ -39,12 +39,12 @@ trait Interval {
 
 }
 
-trait SplittableInterval<T: Interval> : Interval {
+interface SplittableInterval<T: Interval> : Interval {
     fun split(splitBy: Interval, keepStart: Boolean): SplitPair<T>
 }
 
 
-trait IntervalWithHandler : Interval {
+interface IntervalWithHandler : Interval {
     val handler: LabelNode
     val type: String?
 }

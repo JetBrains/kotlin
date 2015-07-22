@@ -39,7 +39,7 @@ public enum class ConstraintPositionKind {
     }
 }
 
-public trait ConstraintPosition {
+public interface ConstraintPosition {
     val kind: ConstraintPositionKind
 
     fun isStrong(): Boolean = kind != TYPE_BOUND_POSITION

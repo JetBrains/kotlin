@@ -90,7 +90,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclara
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
 
-public trait UnificationResult {
+public interface UnificationResult {
     public enum class Status {
         MATCHED {
             override fun and(other: Status): Status = other
@@ -107,7 +107,7 @@ public trait UnificationResult {
         override val status: Status get() = UNMATCHED
     }
 
-    trait Matched: UnificationResult {
+    interface Matched: UnificationResult {
         val substitution: Map<UnifierParameter, JetExpression>
         override val status: Status get() = MATCHED
     }

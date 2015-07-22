@@ -733,6 +733,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("PackageCompletionInClassBody.kt")
+        public void testPackageCompletionInClassBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/PackageCompletionInClassBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PrivatesInSecondPressCompletion.kt")
         public void testPrivatesInSecondPressCompletion() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/PrivatesInSecondPressCompletion.kt");
@@ -862,12 +868,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("TopLevelClassCompletionInQualifiedCall.kt")
         public void testTopLevelClassCompletionInQualifiedCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassCompletionInQualifiedCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("TopLevelPackageInClassBody.kt")
-        public void testTopLevelPackageInClassBody() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelPackageInClassBody.kt");
             doTest(fileName);
         }
 

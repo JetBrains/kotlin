@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
 
-public trait TypeBounds {
+public interface TypeBounds {
     public val varianceOfPosition: Variance
 
     public val typeVariable: TypeParameterDescriptor

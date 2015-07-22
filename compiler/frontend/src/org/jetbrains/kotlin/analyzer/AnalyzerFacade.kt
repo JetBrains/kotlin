@@ -31,17 +31,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 import java.util.HashMap
-import kotlin.properties.Delegates
 
-public trait ResolverForModule {
+public interface ResolverForModule {
     public val lazyResolveSession: ResolveSession
     public val packageFragmentProvider: PackageFragmentProvider
 }
 
-public trait ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
+public interface ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
     public fun resolverForModule(moduleInfo: M): R = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     public fun descriptorForModule(moduleInfo: M): ModuleDescriptor
     public fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R
@@ -61,7 +59,7 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
 ) : ResolverForProject<M, R> {
     val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, () -> R> = HashMap()
 
-    override val allModules: Collection<M> by Delegates.lazy {
+    override val allModules: Collection<M> by lazy {
         (descriptorByModule.keySet() + delegateResolver.allModules).toSet()
     }
 
@@ -87,9 +85,9 @@ public data class ModuleContent(
         public val moduleContentScope: GlobalSearchScope
 )
 
-public trait PlatformAnalysisParameters
+public interface PlatformAnalysisParameters
 
-public trait ModuleInfo {
+public interface ModuleInfo {
     public val isLibrary: Boolean
         get() = false
     public val name: Name
@@ -98,7 +96,7 @@ public trait ModuleInfo {
     public fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    public trait DependencyOnBuiltins {
+    public interface DependencyOnBuiltins {
         public fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>)
     }
 
@@ -122,7 +120,7 @@ public trait ModuleInfo {
     }
 }
 
-public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
+public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
             projectContext: ProjectContext,
             modules: Collection<M>,

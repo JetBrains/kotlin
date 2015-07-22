@@ -42,6 +42,20 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import javax.swing.Icon
 
+public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
+    override val psiElement: PsiElement? get() = null
+
+    override val descriptor: DeclarationDescriptor? get() = null
+
+    override val name: Name get() = fqName.shortName()
+
+    override val importableFqName: FqName get() = fqName
+
+    override val isDeprecated: Boolean get() = false
+
+    override fun getIcon(flags: Int) = PlatformIcons.PACKAGE_ICON
+}
+
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>
@@ -142,8 +156,7 @@ public class LookupElementFactory(
     }
 
     public fun createLookupElementForPackage(name: FqName): LookupElement {
-        val shortName = name.shortName()
-        var element = LookupElementBuilder.create(PackageLookupObject(shortName), shortName.asString())
+        var element = LookupElementBuilder.create(PackageLookupObject(name), name.shortName().asString())
 
         element = element.withInsertHandler(BaseDeclarationInsertHandler())
 
@@ -152,18 +165,6 @@ public class LookupElementFactory(
         }
 
         return element.withIconFromLookupObject()
-    }
-
-    private data class PackageLookupObject(override val name: Name) : DeclarationLookupObject {
-        override val psiElement: PsiElement? get() = null
-
-        override val descriptor: DeclarationDescriptor? get() = null
-
-        override val importableFqName: FqName? get() = null
-
-        override val isDeprecated: Boolean get() = false
-
-        override fun getIcon(flags: Int) = PlatformIcons.PACKAGE_ICON
     }
 
     private fun createLookupElement(

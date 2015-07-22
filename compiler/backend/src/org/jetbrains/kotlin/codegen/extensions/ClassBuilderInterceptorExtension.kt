@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public trait ClassBuilderInterceptorExtension {
+public interface ClassBuilderInterceptorExtension {
     companion object : ProjectExtensionDescriptor<ClassBuilderInterceptorExtension>(
             "org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension", javaClass<ClassBuilderInterceptorExtension>())
 

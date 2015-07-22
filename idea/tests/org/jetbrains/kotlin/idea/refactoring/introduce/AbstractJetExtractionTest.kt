@@ -228,7 +228,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             val handler = KotlinIntroducePropertyHandler(helper)
             val editor = fixture.getEditor()
             handler.selectElements(editor, file) { elements, previousSibling ->
-                handler.doInvoke(getProject(), editor, file as JetFile, elements, explicitPreviousSibling ?: previousSibling)
+                handler.doInvoke(getProject(), editor, file, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }

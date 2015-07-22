@@ -349,7 +349,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getUnsubstitutedMemberScope().getClassifier(name);
+        getUnsubstitutedMemberScope().getClassifier(name, UsageLocation.NO_LOCATION);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof LazyClassDescriptor) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;

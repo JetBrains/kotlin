@@ -156,21 +156,21 @@ public class WritableScopeImpl @jvmOverloads constructor(
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         checkMayRead()
 
-        return concatInOrder(functionsByName(name), workerScope.getFunctions(name))
+        return concatInOrder(functionsByName(name), workerScope.getFunctions(name, location))
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
         checkMayRead()
 
         return variableOrClassDescriptorByName(name) as? ClassifierDescriptor
-               ?: workerScope.getClassifier(name)
+               ?: workerScope.getClassifier(name, location)
     }
 
     override fun getImplicitReceiversHierarchy() = implicitReceiverHierarchy
@@ -270,17 +270,17 @@ public class WritableScopeImpl @jvmOverloads constructor(
             return workerScope.getLocalVariable(name)
         }
 
-        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+        override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
             checkMayRead()
 
-            return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name))
+            return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name, location))
         }
 
-        override fun getClassifier(name: Name): ClassifierDescriptor? {
+        override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
             checkMayRead()
 
             return variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
-                   ?: workerScope.getClassifier(name)
+                   ?: workerScope.getClassifier(name, location)
         }
 
         override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = addedDescriptors.truncated(descriptorLimit)

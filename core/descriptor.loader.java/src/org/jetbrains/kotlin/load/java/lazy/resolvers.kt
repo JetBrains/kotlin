@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.mapToIndex
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
-trait LazyJavaClassResolver {
+interface LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
-trait TypeParameterResolver {
+interface TypeParameterResolver {
     object EMPTY : TypeParameterResolver {
         override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? = null
     }

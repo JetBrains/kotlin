@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
+import org.jetbrains.kotlin.load.java.lazy.types.toFlexible
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContext,
@@ -45,7 +48,10 @@ class LazyJavaTypeParameterDescriptor(
     override fun resolveUpperBounds(): Set<JetType> {
         val bounds = javaTypeParameter.getUpperBounds()
         if (bounds.isEmpty()) {
-            return setOf(c.module.builtIns.getDefaultBound())
+            return setOf(LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(
+                    c.module.builtIns.getAnyType(),
+                    c.module.builtIns.getNullableAnyType()
+            ))
         }
         else {
             return bounds.map {

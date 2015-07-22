@@ -1,5 +1,5 @@
 package test
 
-public final class ClassWithTypeP</*0*/ P> {
-    public constructor ClassWithTypeP</*0*/ P>()
+public final class ClassWithTypeP</*0*/ P : kotlin.Any!> {
+    public constructor ClassWithTypeP</*0*/ P : kotlin.Any!>()
 }

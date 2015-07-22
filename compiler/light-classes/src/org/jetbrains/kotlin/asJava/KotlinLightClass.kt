@@ -20,6 +20,6 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject
 
-public trait KotlinLightClass : PsiClass, KotlinLightElement<JetClassOrObject, PsiClass> {
+public interface KotlinLightClass : PsiClass, KotlinLightElement<JetClassOrObject, PsiClass> {
     public fun getFqName(): FqName
 }

@@ -65,7 +65,7 @@ public fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boo
 }
 
 private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElement): String? {
-    if (name in annotationConverter.annotationsToRemove) return null
+    if (annotationConverter.isImportRequired(name)) return null
 
     // If imported class has a kotlin analog, drop the import
     if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name)).isEmpty()) return null

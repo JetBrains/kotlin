@@ -40,6 +40,9 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import kotlin.platform.platformStatic
 
@@ -53,6 +56,11 @@ public class JsCallChecker : CallChecker {
             val descriptor = getResultingDescriptor()
             return descriptor is SimpleFunctionDescriptor && JS_PATTERN.apply(descriptor)
         }
+
+        platformStatic
+        public fun extractStringValue(compileTimeConstant: CompileTimeConstant<*>?): String? {
+            return ((compileTimeConstant as? TypedCompileTimeConstant<*>)?.constantValue as? StringValue)?.value
+        }
     }
 
     override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -62,20 +70,20 @@ public class JsCallChecker : CallChecker {
         if (expression !is JetCallExpression) return
 
         val arguments = expression.getValueArgumentList()?.getArguments()
-        val argument = arguments?.firstOrNull()?.getArgumentExpression()
+        val argument = arguments?.firstOrNull()?.getArgumentExpression() ?: return
 
-        if (argument == null) return
-
-        val stringType = KotlinBuiltIns.getInstance().getStringType()
         val trace = TemporaryBindingTrace.create(context.trace, "JsCallChecker")
-        val evaluationResult = ConstantExpressionEvaluator.evaluate(argument, trace, stringType)
 
-        if (evaluationResult == null) {
+        val evaluationResult = ConstantExpressionEvaluator.evaluate(argument, trace, KotlinBuiltIns.getInstance().getStringType())
+        val code = extractStringValue(evaluationResult)
+
+        if (code == null) {
             context.trace.report(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_CONSTANT.on(argument))
             return
         }
 
-        val code = evaluationResult.getValue(stringType) as String
+        trace.commit()
+
         val errorReporter = JsCodeErrorReporter(argument, code, context.trace)
 
         try {

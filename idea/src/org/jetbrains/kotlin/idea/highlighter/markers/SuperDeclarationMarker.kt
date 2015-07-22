@@ -85,7 +85,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
             val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.getProject(), overriddenMember)
             for (declaration in declarations) {
                 if (declaration is NavigatablePsiElement) {
-                    superDeclarations.add(declaration as NavigatablePsiElement)
+                    superDeclarations.add(declaration)
                 }
             }
         }

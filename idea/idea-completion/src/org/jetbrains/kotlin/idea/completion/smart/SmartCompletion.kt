@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.ArrayList
 import java.util.HashSet
 
-trait InheritanceItemsSearcher {
+interface InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
 }
 

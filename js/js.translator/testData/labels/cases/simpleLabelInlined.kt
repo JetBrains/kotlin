@@ -17,7 +17,7 @@ inline fun testBreak(): Int {
     return i
 }
 
-noinline fun testBreakNoinline() {
+fun testBreakNoinline() {
     assertEquals(4, testBreak(), "break")
 }
 
@@ -33,7 +33,7 @@ inline fun testContinue(): Int {
     return sum
 }
 
-noinline fun testContinueNoinline() {
+fun testContinueNoinline() {
     assertEquals(6, testContinue(), "continue")
 }
 

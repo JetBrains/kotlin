@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
-public trait Instruction {
+public interface Instruction {
     public var owner: Pseudocode
 
     public val previousInstructions: Collection<Instruction>

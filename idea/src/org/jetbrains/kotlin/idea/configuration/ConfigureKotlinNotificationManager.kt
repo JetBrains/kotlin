@@ -35,16 +35,13 @@ object AbsentSdkAnnotationsNotificationManager: KotlinSingleNotificationManager<
     }
 }
 
-trait KotlinSingleNotificationManager<T: Notification> {
+interface KotlinSingleNotificationManager<T: Notification> {
     fun notify(project: Project, notification: T) {
-        val notificationsManager = NotificationsManager.getNotificationsManager()
-        if (notificationsManager == null) {
-            return
-        }
+        val notificationsManager = NotificationsManager.getNotificationsManager() ?: return
 
         var isNotificationExists = false
 
-        val notifications = notificationsManager.getNotificationsOfType(notification.javaClass, project) as Array<Notification>
+        val notifications = notificationsManager.getNotificationsOfType(notification.javaClass, project)
         for (oldNotification in notifications) {
             if (oldNotification == notification) {
                 isNotificationExists = true

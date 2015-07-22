@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.util.LinkedHashSet
-import kotlin.properties.Delegates
 
 public class ModuleDescriptorImpl(
         moduleName: Name,
@@ -56,7 +55,7 @@ public class ModuleDescriptorImpl(
         return packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
     }
 
-    private val packageFragmentProviderForWholeModuleWithDependencies by Delegates.lazy {
+    private val packageFragmentProviderForWholeModuleWithDependencies by lazy {
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.descriptors
         assert(this in dependenciesDescriptors) { "Module ${id} is not contained in his own dependencies, this is probably a misconfiguration" }

@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.LinkedHashSet
-import kotlin.properties.Delegates
 
-trait IndexedImports {
+interface IndexedImports {
     val imports: List<JetImportDirective>
     fun importsForName(name: Name): Collection<JetImportDirective>
 }
@@ -50,7 +50,7 @@ class AllUnderImportsIndexed(allImports: Collection<JetImportDirective>) : Index
 class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedImports {
     override val imports = allImports.filter { !it.isAllUnder() }
 
-    private val nameToDirectives: ListMultimap<Name, JetImportDirective> by Delegates.lazy {
+    private val nameToDirectives: ListMultimap<Name, JetImportDirective> by lazy {
         val builder = ImmutableListMultimap.builder<Name, JetImportDirective>()
 
         for (directive in imports) {
@@ -234,9 +234,9 @@ class LazyImportScope(
         return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name ->
-            val descriptor = scope.getClassifier(name)
+            val descriptor = scope.getClassifier(name, location)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
         }
     }
@@ -246,16 +246,16 @@ class LazyImportScope(
         return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name -> scope.getPackage(name) }
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name) }
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name, location) }
     }
 
     override fun getLocalVariable(name: Name) = null
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {

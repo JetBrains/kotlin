@@ -327,6 +327,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("AnnotationTargets.java")
+            public void testAnnotationTargets() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotationTargets.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("ArithmeticExpressionInParam.java")
             public void testArithmeticExpressionInParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/ArithmeticExpressionInParam.java");

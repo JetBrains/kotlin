@@ -1,10 +1,10 @@
 class A {
-    <!INAPPLICABLE_ANNOTATION!>native constructor() {}<!>
+    <!WRONG_ANNOTATION_TARGET!>native<!> constructor() {}
     inner class B {
-        <!INAPPLICABLE_ANNOTATION!>native constructor() {}<!>
+        <!WRONG_ANNOTATION_TARGET!>native<!> constructor() {}
     }
 
-    <!INAPPLICABLE_ANNOTATION!>native constructor(<!UNUSED_PARAMETER!>x<!>: Int)
-<!>}
+    <!WRONG_ANNOTATION_TARGET!>native<!> constructor(<!UNUSED_PARAMETER!>x<!>: Int)
+}
 
-class C <!INAPPLICABLE_ANNOTATION!>native constructor()<!>
+class C <!WRONG_ANNOTATION_TARGET!>native<!> constructor()

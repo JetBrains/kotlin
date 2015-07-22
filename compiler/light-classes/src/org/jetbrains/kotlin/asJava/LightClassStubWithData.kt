@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.name.FqName
 
-trait LightClassData
+interface LightClassData
 
-trait WithFileStubAndExtraDiagnostics {
+interface WithFileStubAndExtraDiagnostics {
     val javaFileStub: PsiJavaFileStub
     val extraDiagnostics: Diagnostics
 }
 
-trait LightClassDataForKotlinClass: LightClassData {
+interface LightClassDataForKotlinClass: LightClassData {
     val classOrObject: JetClassOrObject
     val descriptor: ClassDescriptor?
     val jvmQualifiedName: FqName

@@ -166,7 +166,7 @@ public class KotlinIntroduceParameterDialog private constructor(
                     doCancelAction()
                 }
             }
-            parameterTablePanel.init(lambdaExtractionDescriptor!!.receiverParameter, lambdaExtractionDescriptor.parameters)
+            parameterTablePanel.init(lambdaExtractionDescriptor.receiverParameter, lambdaExtractionDescriptor.parameters)
 
             gbConstraints.insets = Insets(4, 4, 4, 8)
             gbConstraints.gridwidth = 1

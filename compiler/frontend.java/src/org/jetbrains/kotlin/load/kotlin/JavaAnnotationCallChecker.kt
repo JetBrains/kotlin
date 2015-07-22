@@ -23,8 +23,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -33,6 +38,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import java.lang.annotation.Target
 
 public class JavaAnnotationCallChecker : CallChecker {
     override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -41,6 +48,15 @@ public class JavaAnnotationCallChecker : CallChecker {
             resultingDescriptor.getContainingDeclaration().getKind() != ClassKind.ANNOTATION_CLASS) return
 
         reportErrorsOnPositionedArguments(resolvedCall, context)
+        reportDeprecatedJavaAnnotation(resolvedCall, context)
+    }
+
+    private fun reportDeprecatedJavaAnnotation(resolvedCall: ResolvedCall<*>, context: BasicCallResolutionContext) {
+        val annotationEntry = resolvedCall.call.callElement as? JetAnnotationEntry ?: return
+        val type = context.trace.get(BindingContext.TYPE, annotationEntry.typeReference) ?: return
+        JavaAnnotationMapper.javaToKotlinNameMap[type.constructor.declarationDescriptor?.let { DescriptorUtils.getFqNameSafe(it) }]?.let {
+            context.trace.report(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION.on(annotationEntry, it))
+        }
     }
 
     private fun reportErrorsOnPositionedArguments(

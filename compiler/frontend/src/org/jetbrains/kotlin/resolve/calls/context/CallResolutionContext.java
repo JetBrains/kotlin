@@ -34,7 +34,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
     @NotNull
     public final Call call;
     @NotNull
-    public final CheckValueArgumentsMode checkArguments;
+    public final CheckArgumentTypesMode checkArguments;
     @NotNull
     public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
 
@@ -45,7 +45,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
-            @NotNull CheckValueArgumentsMode checkArguments,
+            @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
@@ -65,7 +65,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
         if (dataFlowInfoForArguments != null) {
             this.dataFlowInfoForArguments = dataFlowInfoForArguments;
         }
-        else if (checkArguments == CheckValueArgumentsMode.ENABLED) {
+        else if (checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             this.dataFlowInfoForArguments = new DataFlowInfoForArgumentsImpl(call);
         }
         else {

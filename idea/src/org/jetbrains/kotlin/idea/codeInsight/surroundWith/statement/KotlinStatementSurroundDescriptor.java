@@ -34,11 +34,13 @@ public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
             new KotlinTryCatchSurrounder()
     };
 
+    @Override
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
         return CodeInsightUtils.findStatements(file, startOffset, endOffset);
     }
 
+    @Override
     @NotNull public Surrounder[] getSurrounders() {
         return SURROUNDERS;
     }

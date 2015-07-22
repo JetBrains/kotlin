@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
+public interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     public val builtIns: KotlinBuiltIns
@@ -43,7 +43,7 @@ public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 }
 
-trait ModuleParameters {
+interface ModuleParameters {
     public val defaultImports: List<ImportPath>
     public val platformToKotlinClassMap: PlatformToKotlinClassMap
 

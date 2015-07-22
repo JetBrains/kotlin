@@ -8,10 +8,10 @@ fun foo() {}
 @platformName("b")
 fun Any.foo() {}
 
-<!INAPPLICABLE_PLATFORM_NAME!>@platformName("c")<!>
+<!WRONG_ANNOTATION_TARGET!>@platformName("c")<!>
 val px = 1
 
-<!INAPPLICABLE_PLATFORM_NAME!>@platformName("d")<!>
+<!WRONG_ANNOTATION_TARGET!>@platformName("d")<!>
 val Any.px : Int
     get() = 1
 
@@ -31,9 +31,9 @@ var vardef: Int = 1
     @platformName("i")
     set
 
-<!INAPPLICABLE_PLATFORM_NAME!>@platformName("C")<!>
-class C <!INAPPLICABLE_PLATFORM_NAME!>platformName("primary")<!> constructor() {
-    <!INAPPLICABLE_PLATFORM_NAME!>platformName("ctr")<!> constructor(x: Int): this() {}
+<!WRONG_ANNOTATION_TARGET!>@platformName("C")<!>
+class C <!WRONG_ANNOTATION_TARGET!>platformName("primary")<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>platformName("ctr")<!> constructor(x: Int): this() {}
 
     @platformName("a")
     fun foo() {}
@@ -41,10 +41,10 @@ class C <!INAPPLICABLE_PLATFORM_NAME!>platformName("primary")<!> constructor() {
     @platformName("b")
     fun Any.foo() {}
 
-    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("c")<!>
+    <!WRONG_ANNOTATION_TARGET!>@platformName("c")<!>
     val px = 1
 
-    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("d")<!>
+    <!WRONG_ANNOTATION_TARGET!>@platformName("d")<!>
     val Any.px : Int
         get() = 1
 
@@ -63,7 +63,7 @@ fun foo1() {
     <!INAPPLICABLE_PLATFORM_NAME!>@platformName("a")<!>
     fun foo() {}
 
-    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("a")<!>
+    <!WRONG_ANNOTATION_TARGET!>@platformName("a")<!>
     val x = 1
 }
 

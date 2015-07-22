@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.JetType
 
 enum class CaretPosition {
-    IN_BRACKETS
+    IN_BRACKETS,
     AFTER_BRACKETS
 }
 

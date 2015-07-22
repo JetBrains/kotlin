@@ -263,7 +263,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             myTypeMappers.put(key, value)
         }
 
-        return value!!.getValue()
+        return value.getValue()
     }
 
     override fun locationsOfLine(type: ReferenceType, position: SourcePosition): List<Location> {

@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
@@ -69,7 +69,7 @@ public abstract class DeserializedMemberScope protected constructor(
                 protos = ArrayList(1)
                 map.put(key, protos)
             }
-            protos!!.add(memberProto)
+            protos.add(memberProto)
         }
         return map
     }
@@ -93,7 +93,7 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> = functions(name)
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> = functions(name)
 
     private fun computeProperties(name: Name): Collection<VariableDescriptor> {
         val descriptors = computeMembers<PropertyDescriptor>(name, Kind.PROPERTY)
@@ -104,9 +104,9 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = properties.invoke(name)
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> = properties.invoke(name)
 
-    override fun getClassifier(name: Name) = getClassDescriptor(name)
+    override fun getClassifier(name: Name, location: UsageLocation) = getClassDescriptor(name)
 
     protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
 

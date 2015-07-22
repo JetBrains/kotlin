@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -59,7 +60,7 @@ public class CodegenUtil {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
+        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name, UsageLocation.NO_LOCATION);
         for (FunctionDescriptor function : functions) {
             if (!CallResolverUtilPackage.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()

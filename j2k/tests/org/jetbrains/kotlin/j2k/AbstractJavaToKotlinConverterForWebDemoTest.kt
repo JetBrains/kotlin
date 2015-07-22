@@ -112,7 +112,7 @@ public abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
                     }
                 }
             }
-            classLoader = classLoader?.getParent()
+            classLoader = classLoader.getParent()
         }
         return null
     }

@@ -52,14 +52,17 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
         init();
     }
 
+    @Override
     protected JComponent createCenterPanel() {
         myClassChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
             public void textChanged(DocumentEvent event) {
                 updateUI();
             }
         });
 
         myClassChooser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 PsiClass currentClass = getSelectedClass();
                 TreeClassChooser chooser = TreeClassChooserFactory.getInstance(myProject).createAllProjectScopeChooser(

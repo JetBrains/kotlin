@@ -3,8 +3,8 @@ package test
 public open class InnerOfGeneric {
     public constructor InnerOfGeneric()
 
-    public abstract inner class A</*0*/ K> {
-        public constructor A</*0*/ K>()
+    public abstract inner class A</*0*/ K : kotlin.Any!> {
+        public constructor A</*0*/ K : kotlin.Any!>()
 
         public abstract inner class Inner : test.InnerOfGeneric.S<K!> {
             public constructor Inner()
@@ -12,8 +12,8 @@ public open class InnerOfGeneric {
         }
     }
 
-    public open inner class B</*0*/ L> : test.InnerOfGeneric.A<L!> {
-        public constructor B</*0*/ L>()
+    public open inner class B</*0*/ L : kotlin.Any!> : test.InnerOfGeneric.A<L!> {
+        public constructor B</*0*/ L : kotlin.Any!>()
 
         public open inner class SubInner : test.InnerOfGeneric.A.Inner {
             public constructor SubInner()
@@ -21,8 +21,8 @@ public open class InnerOfGeneric {
         }
     }
 
-    public open inner class S</*0*/ E> {
-        public constructor S</*0*/ E>()
+    public open inner class S</*0*/ E : kotlin.Any!> {
+        public constructor S</*0*/ E : kotlin.Any!>()
         public open fun iterator(): kotlin.(Mutable)Iterator<E!>!
     }
 }

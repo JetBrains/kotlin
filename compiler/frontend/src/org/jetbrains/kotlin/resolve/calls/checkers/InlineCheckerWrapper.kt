@@ -33,14 +33,12 @@ public class InlineCheckerWrapper : CallChecker {
         var parentDescriptor: DeclarationDescriptor? = context.scope.getContainingDeclaration()
 
         while (parentDescriptor != null) {
-            val descriptor = parentDescriptor!!
-
-            if (InlineUtil.isInline(descriptor)) {
-                val checker = getChecker(descriptor as SimpleFunctionDescriptor)
+            if (InlineUtil.isInline(parentDescriptor)) {
+                val checker = getChecker(parentDescriptor as SimpleFunctionDescriptor)
                 checker.check(resolvedCall, context)
             }
 
-            parentDescriptor = parentDescriptor?.getContainingDeclaration()
+            parentDescriptor = parentDescriptor.getContainingDeclaration()
         }
     }
 

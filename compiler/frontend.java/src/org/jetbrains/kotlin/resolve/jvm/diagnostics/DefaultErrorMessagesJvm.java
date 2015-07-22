@@ -47,7 +47,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT, "Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'");
         MAP.put(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be 'platformStatic' in object");
-        MAP.put(ErrorsJvm.PLATFORM_STATIC_ILLEGAL_USAGE, "This declaration does not support ''platformStatic''", DescriptorRenderer.SHORT_NAMES_IN_TYPES);
         MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''jvmOverloads'' annotation has no effect for methods without default arguments");
         MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''jvmOverloads'' annotation cannot be used on abstract methods");
         MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''jvmOverloads'' annotation has no effect on private and local declarations");
@@ -58,6 +57,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");
+        MAP.put(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''{0}'' instead", Renderers.TO_STRING);
 
         MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                                        "Make sure you have kotlin-reflect.jar in the classpath");

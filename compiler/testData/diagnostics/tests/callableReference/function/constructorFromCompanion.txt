@@ -1,0 +1,35 @@
+package
+
+kotlin.inline() internal fun </*0*/ reified T> createWith(/*0*/ x: T, /*1*/ f: (T) -> A<T>?): A<T>?
+
+internal open class A</*0*/ T> {
+    public constructor A</*0*/ T>(/*0*/ x: T)
+    internal final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal abstract class AFactory {
+    public constructor AFactory()
+    internal abstract fun create(): A<kotlin.Int>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B : A<kotlin.Int> {
+    public constructor B(/*0*/ x: kotlin.Int)
+    internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : AFactory {
+        private constructor Companion()
+        internal open override /*1*/ fun create(): A<kotlin.Int>?
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

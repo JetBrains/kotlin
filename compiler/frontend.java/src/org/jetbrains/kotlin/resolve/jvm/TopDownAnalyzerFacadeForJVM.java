@@ -30,9 +30,10 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.frontend.java.di.DiPackage;
+import org.jetbrains.kotlin.incremental.components.UsageCollector;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
@@ -101,10 +102,10 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @Nullable List<String> moduleIds,
-            @Nullable IncrementalCacheProvider incrementalCacheProvider
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
     ) {
         return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCacheProvider
+                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCompilationComponents
         );
     }
 
@@ -115,7 +116,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @Nullable List<String> moduleIds,
-            @Nullable IncrementalCacheProvider incrementalCacheProvider
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
     ) {
         Project project = moduleContext.getProject();
         List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
@@ -123,18 +124,22 @@ public enum TopDownAnalyzerFacadeForJVM {
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
+        UsageCollector usageCollector =
+                incrementalCompilationComponents != null ? incrementalCompilationComponents.getUsageCollector() : UsageCollector.DO_NOTHING;
+
         ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 providerFactory,
-                GlobalSearchScope.allScope(project)
+                GlobalSearchScope.allScope(project),
+                usageCollector
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
-        if (moduleIds != null && incrementalCacheProvider != null) {
+        if (moduleIds != null && incrementalCompilationComponents != null) {
             for (String moduleId : moduleIds) {
-                IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
+                IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
 
                 additionalProviders.add(
                         new IncrementalPackageFragmentProvider(

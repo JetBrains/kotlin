@@ -27,10 +27,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetSecondaryConstructor
-import kotlin.properties.Delegates
 
 public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
-    private val javaMethodProcessorInstance by Delegates.lazy {
+    private val javaMethodProcessorInstance by lazy {
         // KT-4250
         // RenamePsiElementProcessor.EP_NAME.findExtension(javaClass<RenameJavaMethodProcessor>())!!
 

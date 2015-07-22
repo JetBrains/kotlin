@@ -16,18 +16,24 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.lazy.findClassInJava
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.findClassInJava
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyPackageFragmentScopeForJavaPackage(
         c: LazyJavaResolverContext,
@@ -64,10 +70,10 @@ public class LazyPackageFragmentScopeForJavaPackage(
         }
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = classes(name)
 
-    override fun getProperties(name: Name) = deserializedPackageScope().getProperties(name)
-    override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
+    override fun getProperties(name: Name, location: UsageLocation) = deserializedPackageScope().getProperties(name, location)
+    override fun getFunctions(name: Name, location: UsageLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,

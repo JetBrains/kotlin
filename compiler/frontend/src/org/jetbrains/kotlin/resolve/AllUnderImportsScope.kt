@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
@@ -41,16 +42,16 @@ class AllUnderImportsScope : JetScope {
         return scopes.flatMap { it.getDescriptors(kindFilter, nameFilter) }
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? {
-        return scopes.asSequence().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
+    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
+        return scopes.asSequence().map { it.getClassifier(name, location) }.filterNotNull().singleOrNull()
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        return scopes.flatMap { it.getProperties(name) }
+    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
+        return scopes.flatMap { it.getProperties(name, location) }
     }
 
-    override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
-        return scopes.flatMap { it.getFunctions(name) }
+    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+        return scopes.flatMap { it.getFunctions(name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {

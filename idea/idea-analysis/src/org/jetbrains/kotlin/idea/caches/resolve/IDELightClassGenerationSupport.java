@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
 
 import java.io.IOException;
 import java.util.*;
@@ -139,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
-                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, UsageLocation.NO_LOCATION);
                     for (FunctionDescriptor descriptor : functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
@@ -147,7 +148,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 else if (declaration instanceof JetProperty) {
                     JetProperty jetProperty = (JetProperty) declaration;
                     Name name = jetProperty.getNameAsSafeName();
-                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name);
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, UsageLocation.NO_LOCATION);
                     for (VariableDescriptor descriptor : properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
@@ -223,6 +224,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Nullable
     private static PsiClass getLightClassForDecompiledClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
+        if (decompiledClassOrObject instanceof JetEnumEntry) {
+            return null;
+        }
         JetFile containingJetFile = decompiledClassOrObject.getContainingJetFile();
         if (!containingJetFile.isCompiled()) {
             return null;
@@ -248,7 +252,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         while (iterator.hasNext()) {
             Name name = iterator.next();
             PsiClass innerClass = current.findInnerClassByName(name.asString(), false);
-            assert innerClass != null : "Could not find corresponding inner/nested class " + relativeFqName + "in class " + decompiledClassOrObject.getName() + "\n" +
+            assert innerClass != null : "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.getFqName() + "\n" +
                                         "File: " + decompiledClassOrObject.getContainingJetFile().getVirtualFile().getName();
             current = innerClass;
         }

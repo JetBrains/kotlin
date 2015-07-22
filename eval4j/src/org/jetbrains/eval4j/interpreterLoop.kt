@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.ArrayList
 
-public trait InterpreterResult {
+public interface InterpreterResult {
     override fun toString(): String
 }
 
@@ -46,7 +46,7 @@ public class AbnormalTermination(public val message: String): InterpreterResult 
     override fun toString(): String = "Terminated abnormally: $message"
 }
 
-public trait InterpretationEventHandler {
+public interface InterpretationEventHandler {
     object NONE : InterpretationEventHandler {
         override fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult? = null
         override fun exceptionThrown(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
@@ -80,7 +80,7 @@ public fun interpreterLoop(
     val firstInsn = m.instructions.getFirst()
     if (firstInsn == null) throw IllegalArgumentException("Empty method")
 
-    var currentInsn = firstInsn!!
+    var currentInsn = firstInsn
 
     fun goto(nextInsn: AbstractInsnNode?) {
         if (nextInsn == null) throw IllegalArgumentException("Instruction flow ended with no RETURN")

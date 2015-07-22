@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
-public trait DeclarationProvider {
+public interface DeclarationProvider {
     public fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration>
 
     public fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction>

@@ -2,7 +2,7 @@ package test
 
 public interface ArraysInSubtypes {
 
-    public interface Sub</*0*/ T> : test.ArraysInSubtypes.Super {
+    public interface Sub</*0*/ T : kotlin.Any!> : test.ArraysInSubtypes.Super {
         public abstract override /*1*/ fun array(): kotlin.Array<(out) kotlin.String!>!
         public abstract override /*1*/ fun listOfArray(): (kotlin.MutableList<out kotlin.Array<(out) kotlin.String!>!>..kotlin.List<kotlin.Array<(out) kotlin.String!>!>?)
         public abstract override /*1*/ fun objArray(): kotlin.Array<(out) T!>!
