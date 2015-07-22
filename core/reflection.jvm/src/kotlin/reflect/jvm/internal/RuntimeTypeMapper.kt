@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.reflect.*
 import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer
 import org.jetbrains.kotlin.name.ClassId
@@ -52,61 +51,28 @@ object RuntimeTypeMapper {
             return SignatureDeserializer(function.nameResolver).methodSignatureString(signature)
         }
         else if (function is JavaMethodDescriptor) {
-            val method = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaMethod ?:
+            val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member ?:
                          throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
 
             return StringBuilder {
-                append(method.getName().asString())
-                appendParameters(method)
-                appendJavaType(method.getReturnType())
+                append(method.name)
+                append("(")
+                method.parameterTypes.forEach { append(it.desc) }
+                append(")")
+                append(method.returnType.desc)
             }.toString()
         }
         else if (function is JavaConstructorDescriptor) {
-            val constructor = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaConstructor ?:
+            val constructor = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaConstructor)?.member ?:
                               throw KotlinReflectionInternalError("Incorrect resolution sequence for Java constructor $function")
 
             return StringBuilder {
-                append("<init>")
-                appendParameters(constructor)
-                append("V")
+                append("<init>(")
+                constructor.parameterTypes.forEach { append(it.desc) }
+                append(")V")
             }.toString()
         }
         else throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
-    }
-
-    private fun StringBuilder.appendParameters(callable: JavaCallable) {
-        append("(")
-        for (parameter in callable.getValueParameters()) {
-            appendJavaType(parameter.getType())
-        }
-        append(")")
-    }
-
-    // TODO: verify edge cases when it's possible to reference generic functions
-    private tailRecursive fun StringBuilder.appendJavaType(type: JavaType) {
-        when (type) {
-            is JavaPrimitiveType -> {
-                append(type.getType()?.let { JvmPrimitiveType.get(it).getDesc() } ?: "V")
-            }
-            is JavaArrayType -> {
-                append("[")
-                appendJavaType(type.getComponentType())
-            }
-            is JavaWildcardType -> {
-                val bound = type.getBound()
-                if (bound != null && type.isExtends()) appendJavaType(bound)
-                else append("Ljava/lang/Object;")
-            }
-            is JavaClassifierType -> {
-                val classifier = type.getClassifier()
-                when (classifier) {
-                    is ReflectJavaClass ->
-                        append(classifier.element.desc)
-                    is ReflectJavaTypeParameter ->
-                        appendJavaType(ReflectJavaType.create(classifier.typeVariable.getBounds().first()))
-                }
-            }
-        }
     }
 
     fun mapPropertySignature(property: PropertyDescriptor): String {
@@ -133,13 +99,13 @@ object RuntimeTypeMapper {
                    deserializer.typeDescriptor(field.getType())
         }
         else if (property is JavaPropertyDescriptor) {
-            val method = (property.getSource() as? JavaSourceElement)?.javaElement as? JavaField ?:
+            val field = ((property.source as? JavaSourceElement)?.javaElement as? ReflectJavaField)?.member ?:
                          throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property")
 
             return StringBuilder {
-                append(JvmAbi.getterName(method.getName().asString()))
+                append(JvmAbi.getterName(field.name))
                 append("()")
-                appendJavaType(method.getType())
+                append(field.type.desc)
             }.toString()
         }
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
