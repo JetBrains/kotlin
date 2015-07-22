@@ -47,13 +47,15 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
 
         for (actualTargetName in actual) {
             assert(actualTargetName in expected) {
-                "Unexpected step into target was found: $actualTargetName\n${renderTableWithResults(expected, actual)}"
+                "Unexpected step into target was found: $actualTargetName\n${renderTableWithResults(expected, actual)}" +
+                "\n // EXISTS: ${actual.joinToString()}"
             }
         }
 
         for (expectedTargetName in expected) {
             assert(expectedTargetName in actual) {
-                "Missed step into target: $expectedTargetName\n${renderTableWithResults(expected, actual)}"
+                "Missed step into target: $expectedTargetName\n${renderTableWithResults(expected, actual)}" +
+                "\n // EXISTS: ${actual.joinToString()}"
             }
         }
     }
@@ -62,8 +64,8 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         val sb = StringBuilder()
 
         val maxExtStrSize = (expected.maxBy { it.length() }?.length() ?: 0) + 5
-        val longerList = if (expected.size() < actual.size()) actual else expected
-        val shorterList = if (expected.size() < actual.size()) expected else actual
+        val longerList = (if (expected.size() < actual.size()) actual else expected).sort()
+        val shorterList = (if (expected.size() < actual.size()) expected else actual).sort()
         for ((i, element) in longerList.withIndex()) {
             sb.append(element)
             sb.append(" ".repeat(maxExtStrSize - element.length()))

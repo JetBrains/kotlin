@@ -9,4 +9,4 @@ fun f1(vararg i: Int) {}
 fun f2() = 1
 fun f3() = 1
 
-// EXISTS: f1(int...), f2(), f3()
+// EXISTS: f1(vararg Int), f2(), f3()

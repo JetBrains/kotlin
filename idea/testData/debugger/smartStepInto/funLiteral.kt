@@ -7,4 +7,4 @@ fun foo() {
 fun f1(f: () -> Unit) {}
 fun f2() {}
 
-// EXISTS: f1(Function0<? extends Unit>), f1: f.invoke()
+// EXISTS: f1(() -> Unit), f1: f.invoke()

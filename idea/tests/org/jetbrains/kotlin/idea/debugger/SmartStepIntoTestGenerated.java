@@ -161,6 +161,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renderer.kt")
+    public void testRenderer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/renderer.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/simple.kt");

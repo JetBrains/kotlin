@@ -4,4 +4,4 @@ fun foo() {
 
 inline fun f1(f: () -> Unit) {}
 
-// EXISTS: f1(Function0<? extends Unit>)
+// EXISTS: f1(() -> Unit)

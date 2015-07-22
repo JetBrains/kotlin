@@ -8,4 +8,4 @@ class Delegate {
     fun get(t: Any?, p: PropertyMetadata) = 1
 }
 
-// EXISTS: a.get(Object\, PropertyMetadata)
+// EXISTS: a.get(Any?\, PropertyMetadata)
