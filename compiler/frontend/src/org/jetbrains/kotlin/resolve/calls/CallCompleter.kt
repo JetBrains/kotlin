@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -44,9 +45,10 @@ import org.jetbrains.kotlin.types.expressions.DataFlowUtils
 import java.util.ArrayList
 
 public class CallCompleter(
-        val argumentTypeResolver: ArgumentTypeResolver,
-        val candidateResolver: CandidateResolver,
-        val builtIns: KotlinBuiltIns
+        private val argumentTypeResolver: ArgumentTypeResolver,
+        private val candidateResolver: CandidateResolver,
+        private val symbolUsageValidator: SymbolUsageValidator,
+        private val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -75,7 +77,7 @@ public class CallCompleter(
                 resolvedCall.variableCall.getCall().getCalleeExpression()
             else
                 resolvedCall.getCall().getCalleeExpression()
-            context.symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
+            symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
         }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {

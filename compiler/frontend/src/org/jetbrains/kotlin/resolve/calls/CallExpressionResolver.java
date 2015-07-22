@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -61,10 +62,16 @@ public class CallExpressionResolver {
 
     private final CallResolver callResolver;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    private final SymbolUsageValidator symbolUsageValidator;
 
-    public CallExpressionResolver(@NotNull CallResolver callResolver, @NotNull ConstantExpressionEvaluator constantExpressionEvaluator) {
+    public CallExpressionResolver(
+            @NotNull CallResolver callResolver,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull SymbolUsageValidator symbolUsageValidator
+    ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.symbolUsageValidator = symbolUsageValidator;
     }
 
     private ExpressionTypingServices expressionTypingServices;
@@ -120,7 +127,7 @@ public class CallExpressionResolver {
         if (qualifier != null) {
             result[0] = true;
             if (!isLHSOfDot) {
-                resolveAsStandaloneExpression(qualifier, context);
+                resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
             }
             return null;
         }
@@ -422,7 +429,7 @@ public class CallExpressionResolver {
         return typeInfo;
     }
 
-    private static void resolveDeferredReceiverInQualifiedExpression(
+    private void resolveDeferredReceiverInQualifiedExpression(
             @Nullable QualifierReceiver qualifierReceiver,
             @NotNull JetQualifiedExpression qualifiedExpression,
             @NotNull ExpressionTypingContext context
@@ -433,7 +440,7 @@ public class CallExpressionResolver {
         DeclarationDescriptor selectorDescriptor =
                 calleeExpression instanceof JetReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
-        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor);
+        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, symbolUsageValidator, selectorDescriptor);
     }
 
     private static void checkNestedClassAccess(
