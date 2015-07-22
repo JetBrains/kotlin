@@ -144,6 +144,25 @@ class ComponentContainerTest {
         }
     }
 
+    Test fun should_resolve_java_iterable() {
+        createContainer("test") {
+            useImpl<TestComponent>()
+            useImpl<TestClientComponent>()
+            useImpl<TestClientComponent2>()
+            useImpl<TestStringComponent>()
+            useImpl<JavaTestComponents>()
+        }.use {
+            val descriptor = it.resolve<JavaTestComponents>()
+            assertNotNull(descriptor)
+            val iterableComponent = descriptor!!.getValue() as JavaTestComponents
+            assertEquals(2, iterableComponent.components.count())
+            assertTrue(iterableComponent.components.any { it is TestClientComponent })
+            assertTrue(iterableComponent.components.any { it is TestClientComponent2 })
+            assertEquals(1, iterableComponent.genericComponents.count())
+            assertTrue(iterableComponent.genericComponents.any { it is TestStringComponent })
+        }
+    }
+
     Test fun should_distinguish_generic() {
         createContainer("test") {
             useImpl<TestGenericClient>()
