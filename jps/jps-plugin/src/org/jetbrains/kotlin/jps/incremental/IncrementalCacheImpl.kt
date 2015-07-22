@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -144,9 +143,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
+    public fun getInlineDependencies(sourceFile: File): Collection<String> {
+        return hasInlineTo.getState(sourceFile.getCanonicalPath()) ?: emptyList()
+    }
+
     private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
             when {
-                inlinesChanged -> RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
                 constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
                 protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
                 else -> DO_NOTHING

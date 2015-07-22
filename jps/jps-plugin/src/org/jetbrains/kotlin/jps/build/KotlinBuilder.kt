@@ -212,6 +212,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (IncrementalCompilation.ENABLED) {
+            val inlines = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+
+            for ((target, files) in filesToCompile.entrySet()) {
+                val cacheImpl = incrementalCaches[target]
+                files.forEach {
+                    cacheImpl?.getInlineDependencies(it)?.let {
+                        inlines.addAll(it)
+                    }
+                }
+            }
+
+            inlines.forEach {
+                FSOperations.markDirty(context, CompilationRound.NEXT, File(it))
+            }
+
             when (recompilationDecision) {
                 RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS -> {
                     allCompiledFiles.clear()
