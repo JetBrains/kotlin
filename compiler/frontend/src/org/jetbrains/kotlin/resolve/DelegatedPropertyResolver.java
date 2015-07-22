@@ -139,7 +139,7 @@ public class DelegatedPropertyResolver {
     ) {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                additionalCheckerProvider, traceToResolvePDMethod, scope,
+                traceToResolvePDMethod, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         List<JetExpression> arguments = Lists.newArrayList();
@@ -236,7 +236,7 @@ public class DelegatedPropertyResolver {
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                additionalCheckerProvider, trace, scope,
+                trace, scope,
                 DataFlowInfo.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;

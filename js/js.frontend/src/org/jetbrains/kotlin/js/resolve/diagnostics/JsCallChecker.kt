@@ -63,7 +63,7 @@ public class JsCallChecker : CallChecker {
         }
     }
 
-    override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext || !resolvedCall.isJsCall()) return
 
         val expression = resolvedCall.getCall().getCallElement()

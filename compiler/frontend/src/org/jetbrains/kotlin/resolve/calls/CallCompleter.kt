@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -49,6 +50,7 @@ public class CallCompleter(
         private val candidateResolver: CandidateResolver,
         private val symbolUsageValidator: SymbolUsageValidator,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
+        private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
@@ -73,7 +75,11 @@ public class CallCompleter(
         }
 
         if (resolvedCall != null) {
-            context.callChecker.check(resolvedCall, context)
+            context.performContextDependentCallChecks(resolvedCall)
+            for (callChecker in callCheckers) {
+                callChecker.check(resolvedCall, context)
+            }
+
             val element = if (resolvedCall is VariableAsFunctionResolvedCall)
                 resolvedCall.variableCall.getCall().getCalleeExpression()
             else

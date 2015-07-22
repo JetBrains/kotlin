@@ -50,6 +50,9 @@ public fun StorageComponentContainer.configureModule(
     additionalCheckerProvider.typeCheckers.forEach {
         useInstance(it)
     }
+    additionalCheckerProvider.callCheckers.forEach {
+        useInstance(it)
+    }
 }
 
 public fun StorageComponentContainer.configureModule(

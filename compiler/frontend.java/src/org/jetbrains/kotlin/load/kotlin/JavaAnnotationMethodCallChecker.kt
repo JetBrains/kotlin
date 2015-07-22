@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 public class JavaAnnotationMethodCallChecker : CallChecker {
-    override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val descriptor = resolvedCall.getCandidateDescriptor().getOriginal()
         val containingDeclaration = descriptor.getContainingDeclaration()
 

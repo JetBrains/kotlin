@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
@@ -35,27 +34,25 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     @NotNull
     public static ExpressionTypingContext newContext(
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType
     ) {
-        return newContext(additionalCheckerProvider, trace, scope, dataFlowInfo, expectedType, null);
+        return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE$);
     }
 
     @NotNull
     public static ExpressionTypingContext newContext(
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @Nullable CallChecker callChecker
+            @NotNull CallChecker callChecker
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
                           ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(),
-                          callChecker != null ? callChecker : additionalCheckerProvider.getCallChecker(),
+                          callChecker,
                           StatementFilter.NONE, false);
     }
 

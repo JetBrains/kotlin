@@ -63,12 +63,10 @@ public class BodyResolver {
     @NotNull private final AnnotationResolver annotationResolver;
     @NotNull private final DelegatedPropertyResolver delegatedPropertyResolver;
     @NotNull private final FunctionAnalyzerExtension functionAnalyzerExtension;
-    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
     @NotNull private final ValueParameterResolver valueParameterResolver;
     @NotNull private final BodyResolveCache bodyResolveCache;
 
     public BodyResolver(
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull AnnotationResolver annotationResolver,
             @NotNull BodyResolveCache bodyResolveCache,
             @NotNull CallResolver callResolver,
@@ -82,7 +80,6 @@ public class BodyResolver {
             @NotNull ValueParameterResolver valueParameterResolver,
             @NotNull ModifiersChecker modifiersChecker
     ) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
         this.callResolver = callResolver;
@@ -138,7 +135,7 @@ public class BodyResolver {
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
-        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, additionalCheckerProvider.getCallChecker());
+        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor);
         resolveFunctionBody(outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
                             new Function1<JetScope, DataFlowInfo>() {
                                 @Override
@@ -741,7 +738,7 @@ public class BodyResolver {
     ) {
         computeDeferredType(functionDescriptor.getReturnType());
 
-        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, null);
+        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, CallChecker.DoNothing.INSTANCE$);
 
         assert functionDescriptor.getReturnType() != null;
     }
@@ -753,7 +750,7 @@ public class BodyResolver {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope scope,
             @Nullable Function1<JetScope, DataFlowInfo> beforeBlockBody,
-            @Nullable CallChecker callChecker
+            @NotNull CallChecker callChecker
     ) {
         JetScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<JetParameter> valueParameters = function.getValueParameters();
@@ -762,7 +759,7 @@ public class BodyResolver {
         valueParameterResolver.resolveValueParameters(
                 valueParameters, valueParameterDescriptors,
                 ExpressionTypingContext.newContext(
-                        additionalCheckerProvider, trace, innerScope, outerDataFlowInfo, NO_EXPECTED_TYPE, callChecker)
+                        trace, innerScope, outerDataFlowInfo, NO_EXPECTED_TYPE, callChecker)
         );
 
         DataFlowInfo dataFlowInfo = null;

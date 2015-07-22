@@ -42,8 +42,7 @@ public class ValueParameterResolver(
             trace: BindingTrace
     ) {
         resolveValueParameters(valueParameters, valueParameterDescriptors,
-                               ExpressionTypingContext.newContext(additionalCheckerProvider, trace, declaringScope,
-                                                                  dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
+                               ExpressionTypingContext.newContext(trace, declaringScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
         )
     }
 

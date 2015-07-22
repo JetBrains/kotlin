@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -53,6 +54,7 @@ public class ExpressionTypingComponents {
     /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
+    /*package*/ Iterable<? extends CallChecker> callCheckers;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -172,5 +174,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setDataFlowAnalyzer(@NotNull DataFlowAnalyzer dataFlowAnalyzer) {
         this.dataFlowAnalyzer = dataFlowAnalyzer;
+    }
+
+    @Inject
+    public void setCallCheckers(@NotNull Iterable<? extends CallChecker> callCheckers) {
+        this.callCheckers = callCheckers;
     }
 }

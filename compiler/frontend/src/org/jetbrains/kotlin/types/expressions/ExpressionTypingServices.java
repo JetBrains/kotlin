@@ -86,7 +86,7 @@ public class ExpressionTypingServices {
             @NotNull BindingTrace trace
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingComponents.additionalCheckerProvider, trace, scope, dataFlowInfo, expectedType
+                trace, scope, dataFlowInfo, expectedType
         );
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
@@ -124,7 +124,7 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                expressionTypingComponents.additionalCheckerProvider, trace,
+                trace,
                 functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE
         ));
     }
@@ -199,7 +199,7 @@ public class ExpressionTypingServices {
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingComponents.additionalCheckerProvider, trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
         );
         JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 

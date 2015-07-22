@@ -61,7 +61,6 @@ public class ScriptBodyResolver {
     ) {
         // Resolve all contents of the script
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                additionalCheckerProvider,
                 trace,
                 scriptDescriptor.getScopeForBodyResolution(),
                 DataFlowInfo.EMPTY,

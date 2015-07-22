@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
-import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
@@ -179,7 +179,7 @@ class ExpectedInfos(
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        CompositeChecker(listOf()), false)
+                                                        CallChecker.DoNothing, false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
