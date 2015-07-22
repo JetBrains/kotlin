@@ -54,6 +54,7 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
     @NotNull private final ScriptBodyResolver scriptBodyResolverResolver;
+    @NotNull private final ModifiersChecker modifiersChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
     @NotNull private final ObservableBindingTrace trace;
@@ -78,7 +79,8 @@ public class BodyResolver {
             @NotNull FunctionAnalyzerExtension functionAnalyzerExtension,
             @NotNull ScriptBodyResolver scriptBodyResolverResolver,
             @NotNull BindingTrace trace,
-            @NotNull ValueParameterResolver valueParameterResolver
+            @NotNull ValueParameterResolver valueParameterResolver,
+            @NotNull ModifiersChecker modifiersChecker
     ) {
         this.additionalCheckerProvider = additionalCheckerProvider;
         this.annotationResolver = annotationResolver;
@@ -90,6 +92,7 @@ public class BodyResolver {
         this.expressionTypingServices = expressionTypingServices;
         this.functionAnalyzerExtension = functionAnalyzerExtension;
         this.scriptBodyResolverResolver = scriptBodyResolverResolver;
+        this.modifiersChecker = modifiersChecker;
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
     }
@@ -512,7 +515,7 @@ public class BodyResolver {
 
         annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
 
-        ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
+        modifiersChecker.withTrace(trace).reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
     }
 
     private void resolvePrimaryConstructorParameters(@NotNull BodiesResolveContext c) {

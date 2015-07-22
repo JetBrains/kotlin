@@ -20,12 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.psi.JetObjectDeclaration;
-import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.psi.JetTypeParameterList;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
-
-import java.util.Collections;
-import java.util.List;
 
 public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
     @NotNull
@@ -49,6 +45,6 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
     }
 
     public boolean isCompanionObject() {
-        return element.isCompanion() && ModifiersChecker.isDefaultModifierAllowed(element);
+        return element.isCompanion() && ModifiersChecker.isCompanionModifierAllowed(element);
     }
 }

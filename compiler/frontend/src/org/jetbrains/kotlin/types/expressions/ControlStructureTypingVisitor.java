@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.DescriptorResolver;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -426,7 +423,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType expectedParameterType,
             ExpressionTypingContext context
     ) {
-        DescriptorResolver.checkParameterHasNoValOrVar(context.trace, loopParameter, VAL_OR_VAR_ON_LOOP_PARAMETER);
+        components.modifiersChecker.withTrace(context.trace).checkParameterHasNoValOrVar(loopParameter, VAL_OR_VAR_ON_LOOP_PARAMETER);
 
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
@@ -468,8 +465,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
-                DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
-                DescriptorResolver.checkParameterHasNoModifier(context.trace, catchParameter);
+                ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
+                modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
+                modifiersChecking.checkParameterHasNoModifier(catchParameter);
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);

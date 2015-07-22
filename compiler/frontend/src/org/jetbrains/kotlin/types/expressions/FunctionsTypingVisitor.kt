@@ -103,8 +103,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope, context.dataFlowInfo, context.trace
         )
 
-        ModifiersChecker.create(context.trace, components.additionalCheckerProvider)
-                .checkModifiersForLocalDeclaration(function, functionDescriptor)
+        components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         if (!function.hasBody()) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }

@@ -63,7 +63,8 @@ import java.util.ArrayList
 public class CandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val genericCandidateResolver: GenericCandidateResolver,
-        private val reflectionTypes: ReflectionTypes
+        private val reflectionTypes: ReflectionTypes,
+        private val modifiersChecker: ModifiersChecker
 ){
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
@@ -123,7 +124,7 @@ public class CandidateResolver(
             for (projection in jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection))
-                    ModifiersChecker.checkIncompatibleVarianceModifiers(projection.getModifierList(), trace)
+                    modifiersChecker.withTrace(trace).checkIncompatibleVarianceModifiers(projection.getModifierList())
                 }
                 val type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), scope, trace,
