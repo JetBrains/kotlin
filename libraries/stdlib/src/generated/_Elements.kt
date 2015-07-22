@@ -477,7 +477,7 @@ public fun ShortArray.contains(element: Short): Boolean {
  * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Iterable<T>.contains(element: T): Boolean {
-    if (this is Collection<*>)
+    if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
 }
@@ -486,8 +486,6 @@ public fun <T> Iterable<T>.contains(element: T): Boolean {
  * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Sequence<T>.contains(element: T): Boolean {
-    if (this is Collection<*>)
-        return contains(element)
     return indexOf(element) >= 0
 }
 
@@ -558,7 +556,7 @@ public fun ShortArray.elementAt(index: Int): Short {
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
-    if (this is List<T>)
+    if (this is List)
         return get(index)
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index.") }
 }
@@ -651,7 +649,7 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
  */
 public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
-    if (this is List<T>)
+    if (this is List)
         return this.getOrElse(index, defaultValue)
     if (index < 0)
         return defaultValue(index)
@@ -762,7 +760,7 @@ public fun ShortArray.elementAtOrNull(index: Int): Short? {
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
  */
 public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
-    if (this is List<T>)
+    if (this is List)
         return this.getOrNull(index)
     if (index < 0)
         return null
@@ -1077,11 +1075,11 @@ public fun ShortArray.first(): Short {
  */
 public fun <T> Iterable<T>.first(): T {
     when (this) {
-        is List<*> -> {
+        is List -> {
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
             else
-                return this[0] as T
+                return this[0]
         }
         else -> {
             val iterator = iterator()
@@ -1107,20 +1105,10 @@ public fun <T> List<T>.first(): T {
  * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Sequence<T>.first(): T {
-    when (this) {
-        is List<*> -> {
-            if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
-            else
-                return this[0] as T
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty.")
-            return iterator.next()
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        throw NoSuchElementException("Sequence is empty.")
+    return iterator.next()
 }
 
 /**
@@ -1309,11 +1297,11 @@ public fun ShortArray.firstOrNull(): Short? {
  */
 public fun <T> Iterable<T>.firstOrNull(): T? {
     when (this) {
-        is List<*> -> {
+        is List -> {
             if (isEmpty())
                 return null
             else
-                return this[0] as T
+                return this[0]
         }
         else -> {
             val iterator = iterator()
@@ -1335,20 +1323,10 @@ public fun <T> List<T>.firstOrNull(): T? {
  * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Sequence<T>.firstOrNull(): T? {
-    when (this) {
-        is List<*> -> {
-            if (isEmpty())
-                return null
-            else
-                return this[0] as T
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                return null
-            return iterator.next()
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        return null
+    return iterator.next()
 }
 
 /**
@@ -2164,11 +2142,11 @@ public fun ShortArray.last(): Short {
  */
 public fun <T> Iterable<T>.last(): T {
     when (this) {
-        is List<*> -> {
+        is List -> {
             if (isEmpty())
                 throw NoSuchElementException("Collection is empty.")
             else
-                return this[this.lastIndex] as T
+                return this[this.lastIndex]
         }
         else -> {
             val iterator = iterator()
@@ -2199,7 +2177,7 @@ public fun <T> List<T>.last(): T {
 public fun <T> Sequence<T>.last(): T {
     val iterator = iterator()
     if (!iterator.hasNext())
-        throw NoSuchElementException("Collection is empty.")
+        throw NoSuchElementException("Sequence is empty.")
     var last = iterator.next()
     while (iterator.hasNext())
         last = iterator.next()
@@ -2329,7 +2307,7 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
  * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
-    if (this is List<T>)
+    if (this is List)
         return this.last(predicate)
     var last: T? = null
     var found = false
@@ -2601,7 +2579,7 @@ public fun ShortArray.lastOrNull(): Short? {
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
-        is List<*> -> return if (isEmpty()) null else this[size() - 1] as T
+        is List -> return if (isEmpty()) null else this[size() - 1]
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -2744,7 +2722,7 @@ public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
-    if (this is List<T>)
+    if (this is List)
         return this.lastOrNull(predicate)
     var last: T? = null
     for (element in this) {
@@ -2896,9 +2874,9 @@ public fun ShortArray.single(): Short {
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
-        is List<*> -> return when (size()) {
+        is List -> return when (size()) {
             0 -> throw NoSuchElementException("Collection is empty.")
-            1 -> this[0] as T
+            1 -> this[0]
             else -> throw IllegalArgumentException("Collection has more than one element.")
         }
         else -> {
@@ -2928,22 +2906,13 @@ public fun <T> List<T>.single(): T {
  * Returns the single element, or throws an exception if the collection is empty or has more than one element.
  */
 public fun <T> Sequence<T>.single(): T {
-    when (this) {
-        is List<*> -> return when (size()) {
-            0 -> throw NoSuchElementException("Collection is empty.")
-            1 -> this[0] as T
-            else -> throw IllegalArgumentException("Collection has more than one element.")
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty.")
-            var single = iterator.next()
-            if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element.")
-            return single
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        throw NoSuchElementException("Sequence is empty.")
+    var single = iterator.next()
+    if (iterator.hasNext())
+        throw IllegalArgumentException("Sequence has more than one element.")
+    return single
 }
 
 /**
@@ -3229,7 +3198,7 @@ public fun ShortArray.singleOrNull(): Short? {
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
-        is List<*> -> return if (size() == 1) this[0] as T else null
+        is List -> return if (size() == 1) this[0] else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -3253,18 +3222,13 @@ public fun <T> List<T>.singleOrNull(): T? {
  * Returns single element, or `null` if the collection is empty or has more than one element.
  */
 public fun <T> Sequence<T>.singleOrNull(): T? {
-    when (this) {
-        is List<*> -> return if (size() == 1) this[0] as T else null
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                return null
-            var single = iterator.next()
-            if (iterator.hasNext())
-                return null
-            return single
-        }
-    }
+    val iterator = iterator()
+    if (!iterator.hasNext())
+        return null
+    var single = iterator.next()
+    if (iterator.hasNext())
+        return null
+    return single
 }
 
 /**

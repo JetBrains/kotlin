@@ -10,13 +10,13 @@ fun elements(): List<GenericFunction> {
         returns("Boolean")
         body {
             """
-            if (this is Collection<*>)
+            if (this is Collection)
                 return contains(element)
             return indexOf(element) >= 0
             """
         }
         exclude(Strings, Lists, Collections)
-        body(ArraysOfPrimitives, ArraysOfObjects) {
+        body(ArraysOfPrimitives, ArraysOfObjects, Sequences) {
             """
             return indexOf(element) >= 0
             """
@@ -181,7 +181,7 @@ fun elements(): List<GenericFunction> {
         returns("T")
         body {
             """
-            if (this is List<T>)
+            if (this is List)
                 return get(index)
 
             return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index.") }
@@ -204,7 +204,7 @@ fun elements(): List<GenericFunction> {
         returns("T")
         body {
             """
-            if (this is List<T>)
+            if (this is List)
                 return this.getOrElse(index, defaultValue)
             if (index < 0)
                 return defaultValue(index)
@@ -258,7 +258,7 @@ fun elements(): List<GenericFunction> {
         returns("T?")
         body {
             """
-            if (this is List<T>)
+            if (this is List)
                 return this.getOrNull(index)
             if (index < 0)
                 return null
@@ -316,11 +316,11 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> {
+                is List -> {
                     if (isEmpty())
                         throw NoSuchElementException("Collection is empty.")
                     else
-                        return this[0] as T
+                        return this[0]
                 }
                 else -> {
                     val iterator = iterator()
@@ -338,6 +338,14 @@ fun elements(): List<GenericFunction> {
             return this[0]
             """
         }
+        body(Sequences) {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                throw NoSuchElementException("Sequence is empty.")
+            return iterator.next()
+            """
+        }
     }
     templates add f("firstOrNull()") {
         doc { "Returns the first element, or `null` if the collection is empty." }
@@ -346,11 +354,11 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> {
+                is List -> {
                     if (isEmpty())
                         return null
                     else
-                        return this[0] as T
+                        return this[0]
                 }
                 else -> {
                     val iterator = iterator()
@@ -364,6 +372,14 @@ fun elements(): List<GenericFunction> {
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return if (isEmpty()) null else this[0]
+            """
+        }
+        body(Sequences) {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                return null
+            return iterator.next()
             """
         }
     }
@@ -415,11 +431,11 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> {
+                is List -> {
                     if (isEmpty())
                         throw NoSuchElementException("Collection is empty.")
                     else
-                        return this[this.lastIndex] as T
+                        return this[this.lastIndex]
                 }
                 else -> {
                     val iterator = iterator()
@@ -437,7 +453,7 @@ fun elements(): List<GenericFunction> {
             """
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty.")
+                throw NoSuchElementException("Sequence is empty.")
             var last = iterator.next()
             while (iterator.hasNext())
                 last = iterator.next()
@@ -460,7 +476,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (isEmpty()) null else this[size() - 1] as T
+                is List -> return if (isEmpty()) null else this[size() - 1]
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -520,7 +536,7 @@ fun elements(): List<GenericFunction> {
 
         body(Iterables) {
             """
-            if (this is List<T>)
+            if (this is List)
                 return this.last(predicate)
 
             var last: T? = null
@@ -566,7 +582,7 @@ fun elements(): List<GenericFunction> {
 
         body(Iterables) {
             """
-            if (this is List<T>)
+            if (this is List)
                 return this.lastOrNull(predicate)
 
             var last: T? = null
@@ -608,9 +624,9 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return when (size()) {
+                is List -> return when (size()) {
                     0 -> throw NoSuchElementException("Collection is empty.")
-                    1 -> this[0] as T
+                    1 -> this[0]
                     else -> throw IllegalArgumentException("Collection has more than one element.")
                 }
                 else -> {
@@ -623,6 +639,17 @@ fun elements(): List<GenericFunction> {
                     return single
                 }
             }
+            """
+        }
+        body(Sequences) {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                throw NoSuchElementException("Sequence is empty.")
+            var single = iterator.next()
+            if (iterator.hasNext())
+                throw IllegalArgumentException("Sequence has more than one element.")
+            return single
             """
         }
         body(Strings) {
@@ -652,7 +679,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (size() == 1) this[0] as T else null
+                is List -> return if (size() == 1) this[0] else null
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -663,6 +690,17 @@ fun elements(): List<GenericFunction> {
                     return single
                 }
             }
+            """
+        }
+        body(Sequences) {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                return null
+            var single = iterator.next()
+            if (iterator.hasNext())
+                return null
+            return single
             """
         }
         body(Strings) {
