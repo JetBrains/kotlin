@@ -44,7 +44,7 @@ open class KFunctionImpl protected constructor(
     constructor(container: KCallableContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
     constructor(container: KCallableContainerImpl, descriptor: FunctionDescriptor) : this(
-            container, descriptor.getName().asString(), RuntimeTypeMapper.mapSignature(descriptor), descriptor
+            container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
     )
 
     private data class FunctionProtoData(

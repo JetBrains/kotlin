@@ -110,7 +110,7 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
                 .getProperties(Name.guess(name))
                 .filter { descriptor ->
                     descriptor is PropertyDescriptor &&
-                    RuntimeTypeMapper.mapPropertySignature(descriptor) == signature
+                    RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
         if (properties.size() != 1) {
@@ -127,7 +127,7 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
         val functions = (if (name == "<init>") constructorDescriptors.toList() else scope.getFunctions(Name.guess(name)))
                 .filter { descriptor ->
-                    RuntimeTypeMapper.mapSignature(descriptor) == signature
+                    RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
                 }
 
         if (functions.size() != 1) {

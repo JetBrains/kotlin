@@ -38,8 +38,8 @@ abstract class DescriptorBasedProperty<out R> protected constructor(
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : this(
             container,
-            descriptor.getName().asString(),
-            RuntimeTypeMapper.mapPropertySignature(descriptor),
+            descriptor.name.asString(),
+            RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
             descriptor
     )
 
