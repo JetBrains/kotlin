@@ -50,6 +50,6 @@ public interface BooleanVariableValue {
 
     companion object {
         public val undefinedWithNoRestrictions: Undefined = Undefined(mapOf(), mapOf())
-        public fun createTrueOrFalse(value: Boolean): BooleanVariableValue = if(value) True else False
+        public fun create(value: Boolean): BooleanVariableValue = if(value) True else False
     }
 }

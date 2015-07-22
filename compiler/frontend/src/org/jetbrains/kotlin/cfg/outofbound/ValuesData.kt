@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.*
 
 public data class ValuesData(
-        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues>,
-        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues>,
-        val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue>,
-        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue>
+        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
+        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
+        val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
+        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
 ) {
     override fun toString(): String {
         val ints = "ints:${MapUtils.mapToString(intVarsToValues, { it.getName().asString() })}"
@@ -43,9 +43,5 @@ public data class ValuesData(
                 HashMap(boolVarsToValues),
                 HashMap(boolFakeVarsToValues)
         )
-    }
-
-    companion object {
-        public fun createEmpty(): ValuesData = ValuesData(HashMap(), HashMap(), HashMap(), HashMap())
     }
 }

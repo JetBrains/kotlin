@@ -89,7 +89,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
                 { previous, current, edgeData -> updateEdge(previous, current, edgeData) },
-                ValuesData.createEmpty()
+                ValuesData()
         )
     }
 
@@ -159,7 +159,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
-        if(previousInstruction is MarkInstruction && previousInstruction.previousInstructions.size() == 1) {
+        if (previousInstruction is MarkInstruction && previousInstruction.previousInstructions.size() == 1) {
             val beforePreviousInstruction = previousInstruction.previousInstructions.first()
             if (beforePreviousInstruction is ConditionalJumpInstruction && beforePreviousInstruction.element is JetIfExpression) {
                 val conditionFakeVariable = beforePreviousInstruction.conditionValue
@@ -186,14 +186,15 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
                                 // We are in "then" block and need to apply onTrue restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onTrueRestrictions) {
-                                    edgeData.intVarsToValues.get(variable)
+                                    edgeData.intVarsToValues[variable]
                                             ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
                                 }
                             }
                             else {
+                                assert(beforePreviousInstruction.nextOnFalse == previousInstruction)
                                 // We are in "else" block and need to apply onFalse restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onFalseRestrictions) {
-                                    edgeData.intVarsToValues.get(variable)
+                                    edgeData.intVarsToValues[variable]
                                             ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
                                 }
                             }
@@ -209,16 +210,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
-        if(previousInstruction.lexicalScope.depth > currentInstruction.lexicalScope.depth) {
+        if (previousInstruction.lexicalScope.depth > currentInstruction.lexicalScope.depth) {
             edgeData.intVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
             edgeData.intFakeVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
         }
     }
 
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
-        if(instruction is SubroutineSinkInstruction) {
+        if (instruction is SubroutineSinkInstruction) {
             // this instruction is assumed to be the last one in function so it is not processed
-            return Edges(ValuesData.createEmpty(), ValuesData.createEmpty())
+            return Edges(ValuesData(), ValuesData())
         }
         val enterInstructionData = unionIncomingVariablesValues(incomingEdgesData)
         val exitInstructionData = updateValues(instruction, enterInstructionData)
@@ -226,8 +227,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData {
-        if(incomingEdgesData.isEmpty()) {
-            return ValuesData.createEmpty()
+        if (incomingEdgesData.isEmpty()) {
+            return ValuesData()
         }
         val headData = incomingEdgesData.first()
         val tailData = incomingEdgesData.drop(1)
@@ -250,11 +251,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     ) {
         val targetMapKeys = HashSet(targetVariablesMap.keySet())
         for(key in targetMapKeys) {
-            val values1 = targetVariablesMap.get(key) ?: throw Exception("No corresponding element in map")
-            val values2 = variablesToConsume.get(key) ?: throw Exception("No corresponding element in map")
-            if(values1.cantBeDefined || values2.cantBeDefined) {
-                values1.setCantBeDefined()
-            } else {
+            val values1 = targetVariablesMap[key] ?: throw Exception("No corresponding element in map")
+            val values2 = variablesToConsume[key] ?: throw Exception("No corresponding element in map")
+            if (values1.isUndefined || values2.isUndefined) {
+                values1.setUndefined()
+            }
+            else {
                 values1.addAll(values2)
             }
         }
@@ -273,16 +275,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
-                if(instruction.element is JetBinaryExpression) {
+                if (instruction.element is JetBinaryExpression) {
                     processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
-                if(instruction.kind == MagicKind.LOOP_RANGE_ITERATION) {
+                if (instruction.kind == MagicKind.LOOP_RANGE_ITERATION) {
                     // process range operator result storing in fake variable
                     assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
-                    val rangeValuesFakeVariable = instruction.inputValues.get(0)
-                    val rangeValues = updatedData.intFakeVarsToValues.get(rangeValuesFakeVariable)
+                    val rangeValuesFakeVariable = instruction.inputValues[0]
+                    val rangeValues = updatedData.intFakeVarsToValues[rangeValuesFakeVariable]
                                       ?: throw Exception("Range values are not computed")
                     val target = instruction.outputValue
                     updatedData.intFakeVarsToValues.put(target, rangeValues)
@@ -298,7 +300,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variableType = variableDescriptor.getType()
         when {
             KotlinBuiltIns.isInt(variableType) ->
-                updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createEmpty())
+                updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
         }
@@ -314,11 +316,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         when (nodeType) {
             JetNodeTypes.INTEGER_CONSTANT -> {
                 val literalValue = Integer.parseInt(valueAsText)
-                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues.createSingleton(literalValue))
+                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues(literalValue))
             }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
                 val booleanValue = Boolean.parseBoolean(valueAsText)
-                updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.createTrueOrFalse(booleanValue))
+                updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.create(booleanValue))
             }
         }
     }
@@ -328,7 +330,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                  ?: throw Exception("Variable descriptor is null")
         val newFakeVariable = instruction.outputValue
         val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
-                variableDescriptor, { updatedData.boolVarsToValues.get(variableDescriptor) })
+                variableDescriptor, { updatedData.boolVarsToValues[variableDescriptor] })
         when (referencedVariableValue) {
             is IntegerVariableValues ->
                 // we have the information about value, so it is definitely of integer type
@@ -350,29 +352,27 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                          ?: throw Exception("Cannot define target type in assignment")
         when {
             KotlinBuiltIns.isInt(targetType) -> {
-                val valuesToAssign = updatedData.intFakeVarsToValues.get(fakeVariable)
-                if (valuesToAssign != null) {
-                    updatedData.intVarsToValues.put(variableDescriptor, valuesToAssign.copy())
-                } else {
-                    updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createCantBeDefined())
-                }
+                val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
+                updatedData.intVarsToValues.put(
+                        variableDescriptor,
+                        valuesToAssign?.let { it.copy() } ?: IntegerVariableValues.createUndefined()
+                )
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
-                val valueToAssign = updatedData.boolFakeVarsToValues.get(fakeVariable)
-                if (valueToAssign != null) {
-                    updatedData.boolVarsToValues.put(variableDescriptor, valueToAssign.copy())
-                } else {
-                    updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
-                }
+                val valueToAssign = updatedData.boolFakeVarsToValues[fakeVariable]
+                updatedData.boolVarsToValues.put(
+                        variableDescriptor,
+                        valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
+                )
             }
         }
     }
 
     private fun processBinaryOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
-        assert(instruction.inputValues.size().equals(2),
+        assert(instruction.inputValues.size() == 2,
                "Binary expression instruction is supposed to have two input values")
-        val leftOperandVariable = instruction.inputValues.get(0)
-        val rightOperandVariable = instruction.inputValues.get(1)
+        val leftOperandVariable = instruction.inputValues[0]
+        val rightOperandVariable = instruction.inputValues[1]
         val resultVariable = instruction.outputValue
                              ?: return
         fun performOperation<Op, R>(
@@ -404,7 +404,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
         }
     }
-    
+
     private fun tryGetTargetDescriptor(target: AccessTarget): CallableDescriptor? {
         return when(target) {
             is AccessTarget.Declaration -> target.descriptor
