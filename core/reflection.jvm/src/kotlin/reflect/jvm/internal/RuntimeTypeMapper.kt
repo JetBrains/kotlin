@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -40,32 +41,33 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.reflect.KotlinReflectionInternalError
 
-interface JvmFunctionSignature {
-    fun asString(): String
+sealed class JvmFunctionSignature {
+    abstract fun asString(): String
 
     class KotlinFunction(
-            private val signature: JvmProtoBuf.JvmMethodSignature,
-            private val nameResolver: NameResolver
-    ) : JvmFunctionSignature {
+            val proto: ProtoBuf.Callable,
+            val signature: JvmProtoBuf.JvmMethodSignature,
+            val nameResolver: NameResolver
+    ) : JvmFunctionSignature() {
         override fun asString(): String =
                 SignatureDeserializer(nameResolver).methodSignatureString(signature)
     }
 
-    class JavaMethod(private val method: Method) : JvmFunctionSignature {
+    class JavaMethod(val method: Method) : JvmFunctionSignature() {
         override fun asString(): String =
                 method.name +
                 method.parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
                 method.returnType.desc
     }
 
-    class JavaConstructor(private val constructor: Constructor<*>) : JvmFunctionSignature {
+    class JavaConstructor(val constructor: Constructor<*>) : JvmFunctionSignature() {
         override fun asString(): String =
                 "<init>" +
                 constructor.parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
                 "V"
     }
 
-    class BuiltInFunction(private val signature: String) : JvmFunctionSignature {
+    class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
         override fun asString(): String = signature
     }
 }
@@ -85,7 +87,7 @@ interface JvmPropertySignature {
 
         init {
             if (signature.hasGetter()) {
-                string = JvmFunctionSignature.KotlinFunction(signature.getter, nameResolver).asString()
+                string = SignatureDeserializer(nameResolver).methodSignatureString(signature.getter)
             }
             else {
                 string = JvmAbi.getterName(nameResolver.getString(signature.field.name)) +
@@ -114,7 +116,7 @@ object RuntimeTypeMapper {
                 val proto = function.proto
                 if (proto.hasExtension(JvmProtoBuf.methodSignature)) {
                     val signature = proto.getExtension(JvmProtoBuf.methodSignature)
-                    return JvmFunctionSignature.KotlinFunction(signature, function.nameResolver)
+                    return JvmFunctionSignature.KotlinFunction(proto, signature, function.nameResolver)
                 }
                 // If it's a deserialized function but has no JVM signature, it must be from built-ins
                 return mapIntrinsicFunctionSignature(function) ?:

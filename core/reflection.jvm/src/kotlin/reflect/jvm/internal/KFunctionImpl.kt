@@ -19,23 +19,20 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaConstructor
-import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaMethod
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Constructor
+import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.BuiltInFunction
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaConstructor
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaMethod
+import kotlin.reflect.jvm.internal.JvmFunctionSignature.KotlinFunction
 
 open class KFunctionImpl protected constructor(
-        container: KCallableContainerImpl,
+        private val container: KCallableContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
@@ -47,80 +44,42 @@ open class KFunctionImpl protected constructor(
             container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
     )
 
-    private data class FunctionProtoData(
-            val proto: ProtoBuf.Callable,
-            val nameResolver: NameResolver,
-            val signature: JvmProtoBuf.JvmMethodSignature
-    )
-
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
     }
 
-    // null if this is a function declared in a foreign (Java) class
-    private val protoData: FunctionProtoData? by ReflectProperties.lazyWeak {
-        val function = DescriptorUtils.unwrapFakeOverride(descriptor) as? DeserializedCallableMemberDescriptor
-        if (function != null) {
-            val proto = function.proto
-            if (proto.hasExtension(JvmProtoBuf.methodSignature)) {
-                return@lazyWeak FunctionProtoData(proto, function.nameResolver, proto.getExtension(JvmProtoBuf.methodSignature))
-            }
+    override val name: String get() = descriptor.name.asString()
+
+    internal val caller: FunctionCaller by ReflectProperties.lazySoft {
+        val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
+        val member: Member? = when (jvmSignature) {
+            is KotlinFunction ->
+                if (name == "<init>") container.findConstructorBySignature(jvmSignature.signature, jvmSignature.nameResolver,
+                                                                           Visibilities.isPrivate(descriptor.visibility))
+                else container.findMethodBySignature(jvmSignature.proto, jvmSignature.signature, jvmSignature.nameResolver,
+                                                     Visibilities.isPrivate(descriptor.visibility))
+            is JavaMethod -> jvmSignature.method
+            is JavaConstructor -> jvmSignature.constructor
+            is BuiltInFunction -> throw KotlinReflectionInternalError("Built-in functions are not fully supported yet: $descriptor")
         }
-        null
-    }
 
-    internal val javaMethod: Method? by ReflectProperties.lazySoft {
-        if (!isConstructor) {
-            val proto = protoData
-            if (proto != null) {
-                container.findMethodBySignature(proto.proto, proto.signature, proto.nameResolver,
-                                                Visibilities.isPrivate(descriptor.getVisibility()))
+        when (member) {
+            is Constructor<*> -> FunctionCaller.Constructor(member)
+            is Method -> when {
+                !Modifier.isStatic(member.modifiers) -> FunctionCaller.InstanceMethod(member)
+                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null -> FunctionCaller.PlatformStaticInObject(member)
+                else -> FunctionCaller.StaticMethod(member)
             }
-            else {
-                ((descriptor.getOriginal().getSource() as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
-            }
+            else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor")
         }
-        else null
-    }
-
-    internal val javaConstructor: Constructor<*>? by ReflectProperties.lazySoft {
-        if (isConstructor) {
-            val proto = protoData
-            if (proto != null) {
-                return@lazySoft container.findConstructorBySignature(
-                        proto.signature, proto.nameResolver, Visibilities.isPrivate(descriptor.getVisibility())
-                )
-            }
-            else {
-                ((descriptor.getOriginal().getSource() as? JavaSourceElement)?.javaElement as? ReflectJavaConstructor)?.member
-            }
-        }
-        else null
-    }
-
-    override val name: String get() = descriptor.getName().asString()
-
-    private val caller: FunctionCaller by ReflectProperties.lazySoft {
-        javaConstructor?.let { FunctionCaller.Constructor(it) } ?:
-        javaMethod?.let { method ->
-            when {
-                !Modifier.isStatic(method.modifiers) -> FunctionCaller.InstanceMethod(method)
-                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null -> FunctionCaller.PlatformStaticInObject(method)
-                else -> FunctionCaller.StaticMethod(method)
-            }
-        } ?:
-        throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor")
     }
 
     override fun call(vararg args: Any?): Any? = caller.call(args)
 
-    private val isConstructor: Boolean get() = name == "<init>"
-
     override fun getArity(): Int {
-        // TODO: test?
-        return descriptor.getValueParameters().size() +
-               (if (descriptor.getDispatchReceiverParameter() != null) 1 else 0) +
-               (if (descriptor.getExtensionReceiverParameter() != null) 1 else 0)
+        return descriptor.valueParameters.size() +
+               (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
+               (if (descriptor.extensionReceiverParameter != null) 1 else 0)
     }
 
     override fun equals(other: Any?): Boolean =
