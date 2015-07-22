@@ -20,6 +20,7 @@ import com.intellij.psi.tree.IElementType
 import com.sun.org.apache.xml.internal.security.keys.content.KeyValue
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfo
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfoImpl
@@ -294,11 +295,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: throw Exception("Variable descriptor is null")
-        val typeName = tryGetVariableType(variableDescriptor)
-                       ?: throw Exception("Variable type name is null")
-        when(typeName) {
-            "Int" -> updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createEmpty())
-            "Boolean" -> updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
+        val variableType = variableDescriptor.getType()
+        when {
+            KotlinBuiltIns.isInt(variableType) ->
+                updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createEmpty())
+            KotlinBuiltIns.isBoolean(variableType) ->
+                updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
         }
     }
 
@@ -344,10 +346,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: throw Exception("Variable descriptor is null")
         val fakeVariable = instruction.rValue
-        val targetTypeName = tryGetTargetType(instruction.target)
-                             ?: throw Exception("Cannot define target type in assignment")
-        when (targetTypeName) {
-            "Int" -> {
+        val targetType = tryGetTargetDescriptor(instruction.target)?.getReturnType()
+                         ?: throw Exception("Cannot define target type in assignment")
+        when {
+            KotlinBuiltIns.isInt(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues.get(fakeVariable)
                 if (valuesToAssign != null) {
                     updatedData.intVarsToValues.put(variableDescriptor, valuesToAssign.copy())
@@ -355,7 +357,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.createCantBeDefined())
                 }
             }
-            "Boolean" -> {
+            KotlinBuiltIns.isBoolean(targetType) -> {
                 val valueToAssign = updatedData.boolFakeVarsToValues.get(fakeVariable)
                 if (valueToAssign != null) {
                     updatedData.boolVarsToValues.put(variableDescriptor, valueToAssign.copy())
@@ -402,16 +404,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
         }
     }
-
-    private fun tryGetVariableType(descriptor: CallableDescriptor): String? =
-        // todo: there should be easier way to define type, for example JetType constants (or consider JetTypeMapper)
-        descriptor.getReturnType()?.getConstructor()?.getDeclarationDescriptor()?.getName()?.asString()
-
-
-    private fun tryGetTargetType(target: AccessTarget): String? {
+    
+    private fun tryGetTargetDescriptor(target: AccessTarget): CallableDescriptor? {
         return when(target) {
-            is AccessTarget.Declaration -> tryGetVariableType(target.descriptor)
-            is AccessTarget.Call -> tryGetVariableType(target.resolvedCall.getResultingDescriptor())
+            is AccessTarget.Declaration -> target.descriptor
+            is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
             else -> null
         }
     }
