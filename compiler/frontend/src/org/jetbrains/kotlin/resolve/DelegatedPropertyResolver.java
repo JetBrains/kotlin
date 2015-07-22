@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -60,15 +61,15 @@ public class DelegatedPropertyResolver {
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
     @NotNull private final KotlinBuiltIns builtIns;
-    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
+    @NotNull private final SymbolUsageValidator symbolUsageValidator;
 
     public DelegatedPropertyResolver(
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull CallResolver callResolver,
             @NotNull ExpressionTypingServices expressionTypingServices
     ) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
+        this.symbolUsageValidator = symbolUsageValidator;
         this.builtIns = builtIns;
         this.callResolver = callResolver;
         this.expressionTypingServices = expressionTypingServices;
@@ -213,7 +214,7 @@ public class DelegatedPropertyResolver {
             JetPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
-                additionalCheckerProvider.getSymbolUsageValidator().validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
+                symbolUsageValidator.validateCall(resultingCall.getResultingDescriptor(), trace, byKeyword);
             }
         }
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall);

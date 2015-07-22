@@ -45,5 +45,4 @@ class ContainerForTests(container: StorageComponentContainer) {
     val typeResolver: TypeResolver by container
     val fakeCallResolver: FakeCallResolver by container
     val expressionTypingServices: ExpressionTypingServices by container
-    val additionalCheckerProvider: AdditionalCheckerProvider by container
 }

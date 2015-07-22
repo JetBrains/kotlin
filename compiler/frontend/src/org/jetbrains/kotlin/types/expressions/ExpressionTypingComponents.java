@@ -39,7 +39,6 @@ public class ExpressionTypingComponents {
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
-    /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
     /*package*/ SymbolUsageValidator symbolUsageValidator;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
@@ -89,11 +88,6 @@ public class ExpressionTypingComponents {
     @Inject
     public void setReflectionTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @Inject
@@ -154,11 +148,6 @@ public class ExpressionTypingComponents {
     @NotNull
     public ForLoopConventionsChecker getForLoopConventionsChecker() {
         return forLoopConventionsChecker;
-    }
-
-    @NotNull
-    public AdditionalCheckerProvider getAdditionalCheckerProvider() {
-        return additionalCheckerProvider;
     }
 
     @Inject

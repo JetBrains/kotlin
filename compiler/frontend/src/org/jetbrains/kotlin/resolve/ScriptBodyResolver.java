@@ -36,13 +36,10 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ScriptBodyResolver {
 
     @NotNull private final ExpressionTypingServices expressionTypingServices;
-    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
 
     public ScriptBodyResolver(
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider,
             @NotNull ExpressionTypingServices expressionTypingServices
     ) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
         this.expressionTypingServices = expressionTypingServices;
     }
 

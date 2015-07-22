@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types.expressions
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.TypeUtils
 
 public class ValueParameterResolver(
-        private val additionalCheckerProvider: AdditionalCheckerProvider,
         private val expressionTypingServices: ExpressionTypingServices,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
