@@ -34,7 +34,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         b.addDependency(a)
 
         b.production.assertDependenciesEqual(b.production, a.production)
-        assertDoesntContain(a.production.dependencies(), b.production)
+        UsefulTestCase.assertDoesntContain(a.production.dependencies(), b.production)
     }
 
     fun testCircularDependency() {
