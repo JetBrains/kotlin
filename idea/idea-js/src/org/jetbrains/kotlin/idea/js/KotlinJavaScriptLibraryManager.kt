@@ -220,6 +220,6 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
 
         platformStatic
         public fun getInstance(project: Project): KotlinJavaScriptLibraryManager =
-            project.getComponent(javaClass<KotlinJavaScriptLibraryManager>())
+            project.getComponent(javaClass<KotlinJavaScriptLibraryManager>())!!
     }
 }

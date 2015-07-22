@@ -80,7 +80,7 @@ public fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
 public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithException) {
-    val builtInsSources = project.getComponent<org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>()).getBuiltInsSources()
+    val builtInsSources = project.getComponent<org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>())!!.getBuiltInsSources()
 
     runnable.run()
 

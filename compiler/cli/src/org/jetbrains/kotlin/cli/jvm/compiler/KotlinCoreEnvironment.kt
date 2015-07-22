@@ -111,7 +111,7 @@ public class KotlinCoreEnvironment private constructor(
 
     init {
         val project = projectEnvironment.getProject()
-        annotationsManager = CoreExternalAnnotationsManager(project.getComponent(javaClass<PsiManager>()))
+        annotationsManager = CoreExternalAnnotationsManager(project.getComponent(javaClass<PsiManager>())!!)
         project.registerService(javaClass<ExternalAnnotationsManager>(), annotationsManager)
         project.registerService(javaClass<DeclarationProviderFactoryService>(), CliDeclarationProviderFactoryService(sourceFiles))
 
