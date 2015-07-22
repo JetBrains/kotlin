@@ -37,7 +37,7 @@ fun specialJS(): List<GenericFunction> {
         }
     }
 
-    templates add f("copyOfRange(from: Int, to: Int)") {
+    templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
         // TODO: Arguments checking as in java?
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
@@ -46,7 +46,7 @@ fun specialJS(): List<GenericFunction> {
         returns("SELF")
         returns(ArraysOfObjects) { "Array<T>" }
         body {
-            "return (this: dynamic).slice(from, to)"
+            "return (this: dynamic).slice(fromIndex, toIndex)"
         }
     }
 

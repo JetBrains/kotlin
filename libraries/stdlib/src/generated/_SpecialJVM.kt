@@ -345,72 +345,72 @@ public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<out T> {
-    return Arrays.copyOfRange(this, from, to)
+public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<out T> {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 platformName("mutableCopyOfRange")
-public fun <T> Array<T>.copyOfRange(from: Int, to: Int): Array<T> {
-    return Arrays.copyOfRange(this, from, to)
+public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**

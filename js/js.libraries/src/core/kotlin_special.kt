@@ -214,72 +214,72 @@ public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<T> {
-    return (this: dynamic).slice(from, to)
+public inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
-    return (this: dynamic).slice(from, to)
+public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
-    return (this: dynamic).slice(from, to)
+public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
-    return (this: dynamic).slice(from, to)
+public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
-    return (this: dynamic).slice(from, to)
+public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
-    return (this: dynamic).slice(from, to)
+public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
-    return (this: dynamic).slice(from, to)
+public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
-    return (this: dynamic).slice(from, to)
+public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
-    return (this: dynamic).slice(from, to)
+public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
