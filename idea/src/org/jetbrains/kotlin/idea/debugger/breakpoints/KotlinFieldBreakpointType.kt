@@ -61,7 +61,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<JavaFieldBreakpointP
 ) {
     private val delegate = JavaFieldBreakpointType()
 
-    override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldBreakpointProperties>): Breakpoint<*> {
+    override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldBreakpointProperties>): Breakpoint<JavaFieldBreakpointProperties> {
         return KotlinFieldBreakpoint(project, breakpoint)
     }
 

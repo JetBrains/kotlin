@@ -93,7 +93,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     ) {
         val module = jetProperty.getModule() ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
+        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())!!
         val resourceManager = processor.resourceManager
 
         val psiElements = resourceManager.propertyToXmlAttributes(jetProperty).map { it as? XmlAttribute }.filterNotNull()
@@ -120,7 +120,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
                 attribute.getContainingFile().getVirtualFile(), attribute.getProject()) ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
+        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())!!
         if (element == null) return
         val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
         val newPropName = idToName(newName)
