@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
@@ -34,10 +33,8 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -184,7 +181,7 @@ class GenericCandidateResolver(
             argumentExpression: JetExpression?,
             context: ResolutionContext<*>
     ): JetType? {
-        val deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context.statementFilter)
+        val deparenthesizedArgument = JetPsiUtil.getLastElementDeparenthesized(argumentExpression, context.statementFilter)
         if (deparenthesizedArgument == null || type == null) return type
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)

@@ -50,9 +50,14 @@ import static org.jetbrains.kotlin.types.TypeUtils.*;
 public class DataFlowAnalyzer {
 
     private final Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers;
+    private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
-    public DataFlowAnalyzer(@NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers) {
+    public DataFlowAnalyzer(
+            @NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator
+    ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     @NotNull
@@ -293,7 +298,7 @@ public class DataFlowAnalyzer {
             IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
             if (context.contextDependency == INDEPENDENT) {
                 expressionType = integerValueTypeConstant.getType(context.expectedType);
-                ArgumentTypeResolver.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
+                constantExpressionEvaluator.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
             }
             else {
                 expressionType = integerValueTypeConstant.getUnknownIntegerType();

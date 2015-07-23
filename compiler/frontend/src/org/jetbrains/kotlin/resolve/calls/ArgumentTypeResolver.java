@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPac
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.psi.JetPsiUtil.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -68,19 +69,22 @@ public class ArgumentTypeResolver {
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final ReflectionTypes reflectionTypes;
+    @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
     public ArgumentTypeResolver(
             @NotNull TypeResolver typeResolver,
             @NotNull CallResolver callResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull ReflectionTypes reflectionTypes
+            @NotNull ReflectionTypes reflectionTypes,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator
     ) {
         this.typeResolver = typeResolver;
         this.callResolver = callResolver;
         this.expressionTypingServices = expressionTypingServices;
         this.builtIns = builtIns;
         this.reflectionTypes = reflectionTypes;
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     public static boolean isSubtypeOfForArgumentType(
@@ -169,26 +173,6 @@ public class ArgumentTypeResolver {
             return (JetFunction) deparenthesizedExpression;
         }
         return null;
-    }
-
-    @Nullable
-    public static JetExpression getLastElementDeparenthesized(
-            @Nullable JetExpression expression,
-            @NotNull StatementFilter statementFilter
-    ) {
-        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
-        if (deparenthesizedExpression instanceof JetBlockExpression) {
-            JetBlockExpression blockExpression = (JetBlockExpression) deparenthesizedExpression;
-            // todo
-            // This case is a temporary hack for 'if' branches.
-            // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
-            // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
-            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(statementFilter, blockExpression);
-            if (lastStatementInABlock != null) {
-                return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
-            }
-        }
-        return deparenthesizedExpression;
     }
 
     @Nullable
@@ -356,7 +340,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public static JetType updateResultArgumentTypeIfNotDenotable(
+    public JetType updateResultArgumentTypeIfNotDenotable(
             @NotNull ResolutionContext context,
             @NotNull JetExpression expression
     ) {
@@ -365,30 +349,10 @@ public class ArgumentTypeResolver {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
                 JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
+                constantExpressionEvaluator.updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
                 return primitiveType;
             }
         }
         return type;
-    }
-
-    public static void updateNumberType(
-            @NotNull JetType numberType,
-            @Nullable JetExpression expression,
-            @NotNull StatementFilter statementFilter,
-            @NotNull BindingTrace trace
-    ) {
-        if (expression == null) return;
-        BindingContextUtils.updateRecordedType(numberType, expression, trace, false);
-
-        if (!(expression instanceof JetConstantExpression)) {
-            JetExpression deparenthesized = getLastElementDeparenthesized(expression, statementFilter);
-            if (deparenthesized != expression) {
-                updateNumberType(numberType, deparenthesized, statementFilter, trace);
-            }
-            return;
-        }
-
-        ConstantExpressionEvaluator.evaluate(expression, trace, numberType);
     }
 }
