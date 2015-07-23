@@ -37,7 +37,8 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
     }
 
     override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
-        return super.canMove(adjustElements(elements), targetContainer)
+        val adjustedElements = adjustElements(elements) ?: return false
+        return super.canMove(adjustedElements, targetContainer)
     }
 
     override fun adjustForMove(project: Project, sourceElements: Array<out PsiElement>, targetElement: PsiElement?): Array<PsiElement>? {
