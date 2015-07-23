@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-compiler-embeddable</artifactId>
+            <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

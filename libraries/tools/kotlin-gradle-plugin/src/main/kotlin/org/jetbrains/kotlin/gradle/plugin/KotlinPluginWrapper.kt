@@ -35,7 +35,9 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
         if (pluginClassLoader == null)
-            pluginClassLoader = createPluginClassLoader(kotlinPluginVersion, sourceBuildScript)
+            pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
+        else
+            log.kotlinDebug("Reusing classloader from previous run")
         val plugin = getPlugin(pluginClassLoader!!, sourceBuildScript)
         plugin.apply(project)
 
