@@ -34,7 +34,11 @@ import java.util.Set;
 
 public class OverloadingConflictResolver {
 
-    public OverloadingConflictResolver() {}
+    private final KotlinBuiltIns builtIns;
+
+    public OverloadingConflictResolver(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
+    }
 
     @Nullable
     public <D extends CallableDescriptor> MutableResolvedCall<D> findMaximallySpecific(
@@ -250,7 +254,6 @@ public class OverloadingConflictResolver {
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType _double = builtIns.getDoubleType();
         JetType _float = builtIns.getFloatType();
         JetType _long = builtIns.getLongType();
