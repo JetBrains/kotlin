@@ -54,6 +54,8 @@ class LookupElementsCollector(
             .withPrefixMatcher(defaultPrefixMatcher)
             .addKotlinSorting(completionParameters)
 
+    private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
+
     public fun flushToResultSet() {
         if (!elements.isEmpty()) {
             for ((prefixMatcher, elements) in elements) {
@@ -71,7 +73,9 @@ class LookupElementsCollector(
     public var isResultEmpty: Boolean = true
         private set
 
-    public var suppressItemSelectionByCharsOnTyping: Boolean = false
+    public fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
+        postProcessors.add(processor)
+    }
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
                                      suppressAutoInsertion: Boolean, // auto-insertion suppression is used for elements that require adding an import
@@ -178,11 +182,12 @@ class LookupElementsCollector(
                 }
             }
 
-            if (suppressItemSelectionByCharsOnTyping) {
-                decorated.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+            var result: LookupElement = decorated
+            for (postProcessor in postProcessors) {
+                result = postProcessor(result)
             }
 
-            elements.getOrPut(prefixMatcher) { ArrayList() }.add(decorated)
+            elements.getOrPut(prefixMatcher) { ArrayList() }.add(result)
         }
     }
 

@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
@@ -160,7 +162,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
-            collector.suppressItemSelectionByCharsOnTyping = true
+            collector.addLookupElementPostProcessor { lookupElement ->
+                lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
+                lookupElement
+            }
         }
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
