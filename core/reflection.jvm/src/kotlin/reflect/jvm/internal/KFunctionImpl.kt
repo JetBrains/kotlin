@@ -60,7 +60,7 @@ open class KFunctionImpl protected constructor(
                                                      Visibilities.isPrivate(descriptor.visibility))
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
-            is BuiltInFunction -> throw KotlinReflectionInternalError("Built-in functions are not fully supported yet: $descriptor")
+            is BuiltInFunction -> jvmSignature.getMember(container)
         }
 
         when (member) {

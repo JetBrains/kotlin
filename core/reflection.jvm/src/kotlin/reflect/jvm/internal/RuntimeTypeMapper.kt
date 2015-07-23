@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
+import java.lang.reflect.Member
 import java.lang.reflect.Method
 import kotlin.reflect.KotlinReflectionInternalError
 
@@ -67,8 +68,14 @@ sealed class JvmFunctionSignature {
                 "V"
     }
 
-    class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
+    open class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
+        open fun getMember(container: KCallableContainerImpl): Member? = null
+
         override fun asString(): String = signature
+
+        class Predefined(signature: String, private val member: Member): BuiltInFunction(signature) {
+            override fun getMember(container: KCallableContainerImpl): Member = member
+        }
     }
 }
 
@@ -159,20 +166,17 @@ object RuntimeTypeMapper {
         val parameters = function.valueParameters
 
         when (function.name.asString()) {
-            "equals" -> {
-                if (parameters.size() == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
-                    return JvmFunctionSignature.BuiltInFunction("equals(Ljava/lang/Object;)Z")
-                }
+            "equals" -> if (parameters.size() == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
+                return JvmFunctionSignature.BuiltInFunction.Predefined("equals(Ljava/lang/Object;)Z",
+                                                                       javaClass<Any>().getDeclaredMethod("equals", javaClass<Any>()))
             }
-            "hashCode" -> {
-                if (parameters.isEmpty()) {
-                    return JvmFunctionSignature.BuiltInFunction("hashCode()I")
-                }
+            "hashCode" -> if (parameters.isEmpty()) {
+                return JvmFunctionSignature.BuiltInFunction.Predefined("hashCode()I",
+                                                                       javaClass<Any>().getDeclaredMethod("hashCode"))
             }
-            "toString" -> {
-                if (parameters.isEmpty()) {
-                    return JvmFunctionSignature.BuiltInFunction("toString()Ljava/lang/String;")
-                }
+            "toString" -> if (parameters.isEmpty()) {
+                return JvmFunctionSignature.BuiltInFunction.Predefined("toString()Ljava/lang/String;",
+                                                                       javaClass<Any>().getDeclaredMethod("toString"))
             }
             // TODO: generalize and support other functions from built-ins
         }
