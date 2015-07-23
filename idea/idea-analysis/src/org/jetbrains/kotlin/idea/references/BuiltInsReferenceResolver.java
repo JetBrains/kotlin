@@ -111,8 +111,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         DiPackage.createLazyResolveSession(
                                 newModuleContext,
                                 declarationFactory, new BindingTraceContext(),
-                                TargetPlatform.Default.INSTANCE$.getPlatformConfigurator(),
-                                new DynamicTypesSettings()
+                                TargetPlatform.Default.INSTANCE$
                         );
 
                 newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());

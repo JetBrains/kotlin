@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.UsageCollector
-import org.jetbrains.kotlin.js.resolve.JsPlatformConfigurator
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
@@ -38,7 +38,7 @@ public fun createTopDownAnalyzerForJs(
         declarationProviderFactory: DeclarationProviderFactory
 ): LazyTopDownAnalyzerForTopLevel {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs") {
-        configureModule(moduleContext, JsPlatformConfigurator, bindingTrace)
+        configureModule(moduleContext, JsPlatform, bindingTrace)
 
         useInstance(declarationProviderFactory)
         useImpl<FileScopeProviderImpl>()
@@ -46,7 +46,6 @@ public fun createTopDownAnalyzerForJs(
         useInstance(UsageCollector.DO_NOTHING)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzerForTopLevel>()
-        useImpl<DynamicTypesAllowed>()
     }
     return storageComponentContainer.get<LazyTopDownAnalyzerForTopLevel>()
 }

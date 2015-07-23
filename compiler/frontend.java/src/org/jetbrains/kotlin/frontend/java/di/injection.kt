@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformConfigurator
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -74,7 +74,7 @@ public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver
 ): Pair<ResolveSession, JavaDescriptorResolver> = createContainer("LazyResolveWithJava") {
-    configureModule(moduleContext, JvmPlatformConfigurator, bindingTrace)
+    configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, UsageCollector.DO_NOTHING)
 
     useInstance(moduleClassResolver)
@@ -97,7 +97,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
         moduleContentScope: GlobalSearchScope,
         usageCollector: UsageCollector
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
-    configureModule(moduleContext, JvmPlatformConfigurator, bindingTrace)
+    configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, usageCollector)
 
     useInstance(declarationProviderFactory)

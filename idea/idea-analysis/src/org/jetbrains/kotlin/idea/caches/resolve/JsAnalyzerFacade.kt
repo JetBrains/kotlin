@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.resolve.JsPlatformConfigurator
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -56,9 +56,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
                 project, moduleContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
-        val resolveSession = createLazyResolveSession(
-                moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatformConfigurator, DynamicTypesAllowed()
-        )
+        val resolveSession = createLazyResolveSession(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform)
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {

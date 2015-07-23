@@ -254,8 +254,7 @@ public class JetSourceNavigationHelper {
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
-                TargetPlatform.Default.platformConfigurator,
-                new DynamicTypesSettings()
+                TargetPlatform.Default.INSTANCE$
         );
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());

@@ -50,13 +50,11 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
-import org.jetbrains.kotlin.types.flexibility
-import org.jetbrains.kotlin.types.isFlexible
 
 public object JvmPlatformConfigurator : PlatformConfigurator(
+        DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
                 PlatformStaticAnnotationChecker(),
                 LocalFunInlineChecker(),

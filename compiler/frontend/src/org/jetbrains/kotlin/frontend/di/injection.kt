@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.expressions.*
 
 public fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platformConfigurator: PlatformConfigurator
+        moduleContext: ModuleContext, platform: TargetPlatform
 ) {
     useInstance(moduleContext)
     useInstance(moduleContext.module)
@@ -42,42 +42,38 @@ public fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.builtIns)
     useInstance(moduleContext.platformToKotlinClassMap)
 
-    useInstance(platformConfigurator)
+    useInstance(platform)
 
-    platformConfigurator.configure(this)
+    platform.platformConfigurator.configure(this)
 }
 
 public fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platformConfigurator: PlatformConfigurator, trace: BindingTrace
+        moduleContext: ModuleContext, platform: TargetPlatform, trace: BindingTrace
 ) {
-    configureModule(moduleContext, platformConfigurator)
+    configureModule(moduleContext, platform)
     useInstance(trace)
 }
 
 public fun createContainerForBodyResolve(
         moduleContext: ModuleContext, bindingTrace: BindingTrace,
-        platformConfigurator: PlatformConfigurator, statementFilter: StatementFilter,
-        dynamicTypesSettings: DynamicTypesSettings
+        platform: TargetPlatform, statementFilter: StatementFilter
 ): StorageComponentContainer = createContainer("BodyResolve") {
-    configureModule(moduleContext, platformConfigurator, bindingTrace)
+    configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(statementFilter)
-    useInstance(dynamicTypesSettings)
     useInstance(BodyResolveCache.ThrowException)
     useImpl<BodyResolver>()
 }
 
 public fun createContainerForLazyBodyResolve(
         moduleContext: ModuleContext, kotlinCodeAnalyzer: KotlinCodeAnalyzer,
-        bindingTrace: BindingTrace, platformConfigurator: PlatformConfigurator,
-        dynamicTypesSettings: DynamicTypesSettings,
+        bindingTrace: BindingTrace, platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache
 ): StorageComponentContainer = createContainer("LazyBodyResolve") {
-    configureModule(moduleContext, platformConfigurator, bindingTrace)
+    configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.getFileScopeProvider())
-    useInstance(dynamicTypesSettings)
     useInstance(bodyResolveCache)
     useImpl<LazyTopDownAnalyzerForTopLevel>()
 }
@@ -85,13 +81,11 @@ public fun createContainerForLazyBodyResolve(
 public fun createContainerForLazyLocalClassifierAnalyzer(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
-        platformConfigurator: PlatformConfigurator,
-        dynamicTypesSettings: DynamicTypesSettings,
+        platform: TargetPlatform,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer") {
-    configureModule(moduleContext, platformConfigurator, bindingTrace)
+    configureModule(moduleContext, platform, bindingTrace)
 
-    useInstance(dynamicTypesSettings)
     useInstance(localClassDescriptorHolder)
 
     useImpl<LazyTopDownAnalyzer>()
@@ -105,12 +99,13 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
 }
 
 private fun createContainerForLazyResolve(
-        moduleContext: ModuleContext, declarationProviderFactory: DeclarationProviderFactory, bindingTrace: BindingTrace,
-        platformConfigurator: PlatformConfigurator, dynamicTypesSettings: DynamicTypesSettings
+        moduleContext: ModuleContext,
+        declarationProviderFactory: DeclarationProviderFactory,
+        bindingTrace: BindingTrace,
+        platform: TargetPlatform
 ): StorageComponentContainer = createContainer("LazyResolve") {
-    configureModule(moduleContext, platformConfigurator, bindingTrace)
+    configureModule(moduleContext, platform, bindingTrace)
 
-    useInstance(dynamicTypesSettings)
     useInstance(declarationProviderFactory)
     useInstance(UsageCollector.DO_NOTHING)
 
@@ -120,14 +115,12 @@ private fun createContainerForLazyResolve(
 
 public fun createLazyResolveSession(
         moduleContext: ModuleContext, declarationProviderFactory: DeclarationProviderFactory, bindingTrace: BindingTrace,
-        platformConfigurator: PlatformConfigurator, dynamicTypesSettings: DynamicTypesSettings
-): ResolveSession = createContainerForLazyResolve(
-        moduleContext, declarationProviderFactory, bindingTrace, platformConfigurator, dynamicTypesSettings
-).get<ResolveSession>()
+        platform: TargetPlatform
+): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform).get<ResolveSession>()
 
 public fun createContainerForMacros(project: Project, module: ModuleDescriptor): ContainerForMacros {
     val componentContainer = createContainer("Macros") {
-        configureModule(ModuleContext(module, project), TargetPlatform.Default.platformConfigurator)
+        configureModule(ModuleContext(module, project), TargetPlatform.Default)
         useImpl<ExpressionTypingServices>()
     }
     return ContainerForMacros(componentContainer)

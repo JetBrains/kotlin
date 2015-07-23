@@ -232,8 +232,7 @@ private object KotlinResolveDataProvider {
                     moduleContext,
                     resolveSession,
                     trace,
-                    targetPlatform.platformConfigurator,
-                    targetPlatform.dynamicTypesSettings,
+                    targetPlatform,
                     resolveSession.getBodyResolveCache()
             ).get<LazyTopDownAnalyzerForTopLevel>()
 

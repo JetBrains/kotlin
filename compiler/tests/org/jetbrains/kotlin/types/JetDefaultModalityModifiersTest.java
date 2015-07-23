@@ -105,8 +105,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
                                                             Collections.singleton(aClass.getContainingJetFile())),
                     new BindingTraceContext(),
-                    TargetPlatform.Default.platformConfigurator,
-                    new DynamicTypesSettings()
+                    TargetPlatform.Default.INSTANCE$
             );
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass);

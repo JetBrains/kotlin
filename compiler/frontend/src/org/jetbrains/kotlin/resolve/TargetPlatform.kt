@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 public abstract class TargetPlatform(
-        public val platformName: String,
-        public val dynamicTypesSettings: DynamicTypesSettings
+        public val platformName: String
 ) {
     override fun toString(): String {
         return platformName
@@ -33,8 +32,8 @@ public abstract class TargetPlatform(
 
     public abstract val platformConfigurator: PlatformConfigurator
 
-    public object Default : TargetPlatform("Default", DynamicTypesSettings()) {
-        override val platformConfigurator = PlatformConfigurator(listOf(), listOf(), listOf(), listOf())
+    public object Default : TargetPlatform("Default") {
+        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf())
     }
 }
 
@@ -45,6 +44,7 @@ private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator())
 
 
 public open class PlatformConfigurator(
+        private val dynamicTypesSettings: DynamicTypesSettings,
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
@@ -58,6 +58,7 @@ public open class PlatformConfigurator(
 
     public open fun configure(container: StorageComponentContainer) {
         with (container) {
+            useInstance(dynamicTypesSettings)
             declarationCheckers.forEach { useInstance(it) }
             callCheckers.forEach { useInstance(it) }
             typeCheckers.forEach { useInstance(it) }

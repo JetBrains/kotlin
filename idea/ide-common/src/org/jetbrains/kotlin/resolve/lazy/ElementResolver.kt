@@ -130,7 +130,7 @@ public abstract class ElementResolver protected constructor(
             return statementFilterUsed
         }
 
-        val trace : BindingTrace = when (resolveElement) {
+        val trace: BindingTrace = when (resolveElement) {
             is JetNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
             is JetClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
@@ -388,10 +388,11 @@ public abstract class ElementResolver protected constructor(
     ): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
         val module = resolveSession.getModuleDescriptor()
-        val targetPlatform = getTargetPlatform(file)
         return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(module),
-                trace, targetPlatform.platformConfigurator, statementFilter, targetPlatform.dynamicTypesSettings
+                trace,
+                getTargetPlatform(file),
+                statementFilter
         ).get<BodyResolver>()
     }
 

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformConfigurator
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -39,7 +39,7 @@ public fun createContainerForReplWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
-    configureModule(moduleContext, JvmPlatformConfigurator, bindingTrace)
+    configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, UsageCollector.DO_NOTHING)
 
     useInstance(additionalFileScopeProvider)

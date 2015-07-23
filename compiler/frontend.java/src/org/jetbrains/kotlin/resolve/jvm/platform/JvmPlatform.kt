@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-public object JvmPlatform : TargetPlatform("JVM", DynamicTypesSettings()) {
+public object JvmPlatform : TargetPlatform("JVM") {
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 }

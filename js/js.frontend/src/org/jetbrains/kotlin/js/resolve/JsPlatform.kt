@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
-public object JsPlatform : TargetPlatform("JS", DynamicTypesAllowed()) {
+public object JsPlatform : TargetPlatform("JS") {
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 }

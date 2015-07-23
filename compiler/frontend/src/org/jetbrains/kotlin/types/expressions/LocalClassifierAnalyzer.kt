@@ -52,7 +52,7 @@ public class LocalClassifierAnalyzer(
         private val funcionDescriptorResolver: FunctionDescriptorResolver,
         private val typeResolver: TypeResolver,
         private val annotationResolver: AnnotationResolver,
-        private val platformConfigurator: PlatformConfigurator,
+        private val platform: TargetPlatform,
         private val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
@@ -66,8 +66,7 @@ public class LocalClassifierAnalyzer(
         val container = createContainerForLazyLocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,
-                platformConfigurator,
-                dynamicTypesSettings,
+                platform,
                 LocalClassDescriptorHolder(
                         scope,
                         classOrObject,

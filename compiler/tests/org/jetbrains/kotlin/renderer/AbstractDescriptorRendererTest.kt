@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformConfigurator
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -53,7 +53,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 context,
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                JvmPlatformConfigurator, DynamicTypesSettings()
+                JvmPlatform
         )
 
         context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
@@ -81,7 +81,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                         val classDescriptor = getDescriptor(jetClassOrObject, resolveSession) as ClassDescriptor
                         addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor()!!, parameter)
                     }
-                    else ->  super.visitParameter(parameter)
+                    else -> super.visitParameter(parameter)
                 }
             }
 
