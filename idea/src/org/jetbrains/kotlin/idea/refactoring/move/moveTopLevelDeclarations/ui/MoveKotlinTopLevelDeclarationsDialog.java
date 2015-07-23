@@ -555,7 +555,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                         myProject,
                                         new PsiElement[] {sourceFile},
                                         targetDirectory,
-                                        RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE,
+                                        true,
                                         isSearchInComments(),
                                         isSearchInNonJavaFiles(),
                                         new MoveCallback() {
