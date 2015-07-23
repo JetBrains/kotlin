@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
+import org.jetbrains.kotlin.cfg.AbstractVariableValuesTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.cli.AbstractKotlincExecutableTest
 import org.jetbrains.kotlin.codegen.*
@@ -314,6 +315,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractLocalClassProtoTest>()) {
             model("serialization/local")
+        }
+
+        testClass(javaClass<AbstractVariableValuesTest>()) {
+            model("variablesValues")
         }
     }
 
