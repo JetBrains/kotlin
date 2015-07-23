@@ -20,6 +20,7 @@ import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KDeclarationContainer;
 import kotlin.reflect.KParameter;
+import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -66,6 +67,11 @@ public abstract class CallableReference implements KCallable {
 
     @Override
     public List<KParameter> getParameters() {
+        throw error();
+    }
+
+    @Override
+    public KType getReturnType() {
         throw error();
     }
 

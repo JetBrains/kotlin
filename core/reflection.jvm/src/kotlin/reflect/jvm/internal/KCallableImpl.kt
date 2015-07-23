@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import java.util.ArrayList
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 
 interface KCallableImpl<out R> : KCallable<R> {
     val descriptor: CallableMemberDescriptor
@@ -44,4 +45,7 @@ interface KCallableImpl<out R> : KCallable<R> {
             result.trimToSize()
             return result
         }
+
+    override val returnType: KType
+        get() = KTypeImpl(descriptor.returnType!!)
 }

@@ -40,6 +40,11 @@ public interface KCallable<out R> {
     public val parameters: List<KParameter>
 
     /**
+     * The type of values returned by this callable.
+     */
+    public val returnType: KType
+
+    /**
      * Calls this callable with the specified arguments and returns the result.
      * Throws an exception if the number of specified arguments is not equal to the size of [parameters],
      * or if their types do not match the types of the parameters.
