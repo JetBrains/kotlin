@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -186,7 +185,7 @@ public class DataFlowAnalyzer {
         }
 
         if (expression instanceof JetConstantExpression) {
-            ConstantValue<?> constantValue = ConstantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
+            ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
             boolean error = new CompileTimeConstantChecker(c.trace, true)
                     .checkConstantExpressionType(constantValue, (JetConstantExpression) expression, c.expectedType);
             if (hasError != null) hasError.set(error);

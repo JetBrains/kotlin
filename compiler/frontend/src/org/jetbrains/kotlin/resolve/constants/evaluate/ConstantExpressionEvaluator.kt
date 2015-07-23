@@ -44,9 +44,10 @@ import java.util.HashMap
 import kotlin.platform.platformStatic
 
 public class ConstantExpressionEvaluator(
-        internal val constantValueFactory: ConstantValueFactory,
         internal val builtIns: KotlinBuiltIns
 ) {
+    internal val constantValueFactory = ConstantValueFactory(builtIns)
+
     public fun updateNumberType(
             numberType: JetType,
             expression: JetExpression?,
@@ -201,18 +202,16 @@ public class ConstantExpressionEvaluator(
         return if (!constant.isError) constant else null
     }
 
-    companion object {
-        platformStatic public fun evaluateToConstantValue(
-                expression: JetExpression,
-                trace: BindingTrace,
-                expectedType: JetType
-        ): ConstantValue<*>? {
-            val builtIns = KotlinBuiltIns.getInstance()
-            return ConstantExpressionEvaluator(ConstantValueFactory(builtIns), builtIns).
-                    evaluateExpression(expression, trace, expectedType)?.
-                    toConstantValue(expectedType)
-        }
+    public fun evaluateToConstantValue(
+            expression: JetExpression,
+            trace: BindingTrace,
+            expectedType: JetType
+    ): ConstantValue<*>? {
+        return evaluateExpression(expression, trace, expectedType)?.toConstantValue(expectedType)
+    }
 
+
+    companion object {
         platformStatic public fun getConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             val constant = getPossiblyErrorConstant(expression, bindingContext) ?: return null
             return if (!constant.isError) constant else null

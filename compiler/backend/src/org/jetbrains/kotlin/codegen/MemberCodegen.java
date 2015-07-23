@@ -81,6 +81,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     private NameGenerator inlineNameGenerator;
 
     private SourceMapper sourceMapper;
+    private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
     public MemberCodegen(
             @NotNull GenerationState state,
@@ -98,6 +99,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
         this.parentCodegen = parentCodegen;
+        this.constantExpressionEvaluator = new ConstantExpressionEvaluator(state.getModule().getBuiltIns());
     }
 
     protected MemberCodegen(@NotNull MemberCodegen<T> wrapped, T declaration, FieldOwnerContext codegenContext) {
@@ -397,7 +399,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     ) {
         if (property.isVar() && initializer != null) {
             BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
-            return ConstantExpressionEvaluator.evaluateToConstantValue(initializer, tempTrace, propertyDescriptor.getType());
+            return constantExpressionEvaluator.evaluateToConstantValue(initializer, tempTrace, propertyDescriptor.getType());
         }
         return propertyDescriptor.getCompileTimeInitializer();
     }

@@ -66,8 +66,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
 
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as JetProperty
-        val builtIns = KotlinBuiltIns.getInstance()
-        val compileTimeConstant = ConstantExpressionEvaluator(ConstantValueFactory(builtIns), builtIns).evaluateExpression(
+        val compileTimeConstant = ConstantExpressionEvaluator(KotlinBuiltIns.getInstance()).evaluateExpression(
                 propertyDeclaration.getInitializer()!!,
                 DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
                 property.getType()
