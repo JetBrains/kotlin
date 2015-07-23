@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.*
+import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
@@ -102,6 +104,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val INLINE_FUNCTIONS = "inline-functions.tab"
         val PACKAGE_PARTS = "package-parts.tab"
         val SOURCE_TO_CLASSES = "source-to-classes.tab"
+        val CLASS_TO_SOURCES = "class-to-sources.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
         val HAS_INLINE_TO = "has-inline-to.tab"
 
@@ -114,6 +117,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val inlineFunctionsMap = InlineFunctionsMap()
     private val packagePartMap = PackagePartMap()
     private val sourceToClassesMap = SourceToClassesMap()
+    private val classToSourcesMap = ClassToSourcesMap()
     private val dirtyOutputClassesMap = DirtyOutputClassesMap()
     private val hasInlineTo = OneToManyPathsMapping(File(baseDir, HAS_INLINE_TO))
 
@@ -137,7 +141,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     public fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
         for (sourceFile in removedAndCompiledSources) {
             val classes = sourceToClassesMap[sourceFile]
-            classes.forEach { dirtyOutputClassesMap.markDirty(it.getInternalName()) }
+            classes.forEach {
+                dirtyOutputClassesMap.markDirty(it.internalName)
+                classToSourcesMap.remove(it)
+            }
 
             sourceToClassesMap.clearOutputsForSource(sourceFile)
         }
@@ -172,7 +179,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val header = kotlinClass.getClassHeader()
 
         dirtyOutputClassesMap.notDirty(className.getInternalName())
-        sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, className) }
+        sourceFiles.forEach {
+            sourceToClassesMap.addSourceToClass(it, className)
+            classToSourcesMap.add(className, it)
+        }
 
         val decision = when {
             header.isCompatiblePackageFacadeKind() ->
@@ -679,6 +689,30 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: List<String>) = value.toString()
     }
 
+    private inner class ClassToSourcesMap : BasicMap<Collection<String>>() {
+        override fun createMap(): PersistentHashMap<String, Collection<String>> = PersistentHashMap(
+                File(baseDir, CLASS_TO_SOURCES),
+                EnumeratorStringDescriptor(),
+                PathCollectionExternalizer
+        )
+
+        public fun get(className: JvmClassName): Collection<File>? =
+                storage[className.internalName]?.let { it.map { path -> File(path) } }
+
+        public fun add(className: JvmClassName, sourceFile: File) {
+            storage.appendData(className.internalName) { out ->
+                IOUtil.writeUTF(out, FileUtil.normalize(sourceFile.normalizedPath))
+            }
+        }
+
+        public fun remove(className: JvmClassName) {
+            storage.remove(className.internalName)
+        }
+
+        override fun dumpValue(value: Collection<String>): String =
+                value.join(", ")
+    }
+
     private inner class DirtyOutputClassesMap : BasicMap<Boolean>() {
         override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
                 File(baseDir, DIRTY_OUTPUT_CLASSES),
@@ -767,3 +801,25 @@ private object StringListExternalizer : DataExternalizer<List<String>> {
         return result
     }
 }
+
+private object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
+    override fun save(out: DataOutput, value: Collection<String>) {
+        for (str in value) {
+            IOUtil.writeUTF(out, str)
+        }
+    }
+
+    override fun read(`in`: DataInput): Collection<String> {
+        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+        val stream = `in` as DataInputStream
+        while (stream.available() > 0) {
+            val str = IOUtil.readUTF(stream)
+            result.add(str)
+        }
+        return result
+    }
+}
+
+private val File.normalizedPath: String
+    get() = FileUtil.toSystemIndependentName(canonicalPath)
+
