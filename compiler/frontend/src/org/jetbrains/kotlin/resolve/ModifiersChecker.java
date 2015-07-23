@@ -377,7 +377,7 @@ public class ModifiersChecker {
             AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
             if (annotation == null) return;
 
-            JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
+            JetAnnotationEntry annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
             if (annotationEntry == null) return;
 
             if (descriptor instanceof FunctionDescriptor && !isRenamableFunction((FunctionDescriptor) descriptor)) {

@@ -86,9 +86,7 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<AnnotationDescriptor, JetAnnotationEntry> ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT = Slices.createSimpleSlice();
-    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION =
-            Slices.<JetAnnotationEntry, AnnotationDescriptor>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
+    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
 

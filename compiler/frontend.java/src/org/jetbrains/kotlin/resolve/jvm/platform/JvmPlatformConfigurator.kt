@@ -181,7 +181,7 @@ public class PublicFieldAnnotationChecker: DeclarationChecker {
         val annotation = descriptor.findPublicFieldAnnotation() ?: return
 
         fun report() {
-            val annotationEntry = bindingContext.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation) ?: return
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
             diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD.on(annotationEntry))
         }
 
