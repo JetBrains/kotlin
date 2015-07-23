@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -54,8 +52,6 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
@@ -71,7 +67,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -714,20 +709,6 @@ public class JetTypeMapper {
         else {
             return descriptor.getName().asString();
         }
-    }
-
-    @Nullable
-    private static String getPlatformName(@NotNull Annotated descriptor) {
-        AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
-        if (platformNameAnnotation == null) return null;
-
-        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = platformNameAnnotation.getAllValueArguments();
-        if (arguments.isEmpty()) return null;
-
-        ConstantValue<?> name = arguments.values().iterator().next();
-        if (!(name instanceof StringValue)) return null;
-
-        return ((StringValue) name).getValue();
     }
 
     @NotNull
