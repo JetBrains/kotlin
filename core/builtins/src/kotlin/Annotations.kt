@@ -18,6 +18,7 @@ package kotlin
 
 import kotlin.annotation.*
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.annotation.AnnotationRetention.*
 
 /**
  * Marks the annotated class as a data class. The compiler automatically generates
@@ -51,7 +52,8 @@ public annotation class deprecated(val value: String, val replaceWith: ReplaceWi
  * @property imports the qualified names that need to be imported in order for the references in the
  *     replacement expression to be resolved correctly.
  */
-public annotation class ReplaceWith(val expression: String, vararg val imports: String)
+target()
+public annotation(retention = BINARY) class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
  * Signifies that the annotated functional type represents an extension function.
@@ -65,7 +67,7 @@ public annotation class extension
  */
 target(CLASSIFIER, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE)
-public annotation class suppress(vararg val names: String)
+public annotation(retention = SOURCE) class suppress(vararg val names: String)
 
 /**
  * Enables the tail call optimization for the annotated function. If the annotated function
@@ -74,4 +76,4 @@ public annotation class suppress(vararg val names: String)
  * backend.
  */
 target(FUNCTION)
-public annotation class tailRecursive
+public annotation(retention = SOURCE) class tailRecursive
