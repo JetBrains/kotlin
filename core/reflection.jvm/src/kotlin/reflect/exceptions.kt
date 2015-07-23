@@ -22,7 +22,7 @@ package kotlin.reflect
  *
  * @param cause the original exception thrown by the JVM.
  *
- * @see [kotlin.reflect.jvm.accessible]
+ * @see [kotlin.reflect.jvm.isAccessible]
  */
 public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
     init {

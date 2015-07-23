@@ -1,5 +1,5 @@
 import kotlin.reflect.*
-import kotlin.reflect.jvm.accessible
+import kotlin.reflect.jvm.isAccessible
 
 class Result {
     private val value = "OK"
@@ -14,11 +14,11 @@ fun box(): String {
         return "Fail: private property is accessible by default"
     } catch(e: IllegalPropertyAccessException) { }
 
-    p.accessible = true
+    p.isAccessible = true
 
     val r = p.get(Result())
 
-    p.accessible = false
+    p.isAccessible = false
     try {
         p.get(Result())
         return "Fail: setAccessible(false) had no effect"

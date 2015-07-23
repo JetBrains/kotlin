@@ -13,7 +13,7 @@ fun box(): String {
         // OK
     }
 
-    p.accessible = true
+    p.isAccessible = true
 
     return p.get(K("OK"))
 }

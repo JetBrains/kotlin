@@ -2775,6 +2775,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/call"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("cannotCallEnumConstructor.kt")
+            public void testCannotCallEnumConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/cannotCallEnumConstructor.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("equalsHashCodeToString.kt")
             public void testEqualsHashCodeToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/equalsHashCodeToString.kt");

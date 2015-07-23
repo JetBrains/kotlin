@@ -1,5 +1,5 @@
 import kotlin.reflect.*
-import kotlin.reflect.jvm.accessible
+import kotlin.reflect.jvm.isAccessible
 
 class A(param: String) {
     protected var v: String = param
@@ -21,7 +21,7 @@ fun box(): String {
         return "Fail: protected property setter is accessible by default"
     } catch (e: IllegalPropertyAccessException) { }
 
-    f.accessible = true
+    f.isAccessible = true
 
     f.set(a, ":)")
 

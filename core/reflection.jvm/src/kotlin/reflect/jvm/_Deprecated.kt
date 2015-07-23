@@ -39,3 +39,9 @@ public val <T> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
 @deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
 public val <T> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = declaredMemberExtensionProperties
+
+
+@deprecated("Use isAccessible instead.", ReplaceWith("isAccessible"))
+public var KProperty<*>.accessible: Boolean
+    get() = isAccessible
+    set(value) { isAccessible = value }
