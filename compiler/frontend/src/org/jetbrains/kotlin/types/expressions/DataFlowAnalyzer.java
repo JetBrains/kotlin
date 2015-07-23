@@ -50,13 +50,16 @@ public class DataFlowAnalyzer {
 
     private final Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    private final KotlinBuiltIns builtIns;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers,
-            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull KotlinBuiltIns builtIns
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.builtIns = builtIns;
     }
 
     @NotNull
@@ -225,7 +228,7 @@ public class DataFlowAnalyzer {
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
         if (expectedType != NO_EXPECTED_TYPE) {
-            JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? KotlinBuiltIns.getInstance().getUnitType() : expectedType;
+            JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? builtIns.getUnitType() : expectedType;
             trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, normalizeExpectedType);
         }
     }
@@ -236,7 +239,7 @@ public class DataFlowAnalyzer {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
-        return KotlinBuiltIns.getInstance().getUnitType();
+        return builtIns.getUnitType();
     }
 
     @Nullable
