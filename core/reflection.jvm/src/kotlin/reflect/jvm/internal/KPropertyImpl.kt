@@ -57,6 +57,8 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
     override val setter: Setter<R>
 
     abstract class Setter<R> : KMutableProperty.Setter<R>, KPropertyImpl.Accessor<R>, KCallableImpl<Unit> {
+        abstract override val property: KMutablePropertyImpl<R>
+
         override val name: String get() = "<set-${property.name}>"
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
