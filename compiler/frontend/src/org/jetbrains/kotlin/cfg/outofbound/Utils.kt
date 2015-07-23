@@ -23,7 +23,10 @@ public object MapUtils {
             valueToString: (V) -> String = { it.toString() }
     ): String {
         val mapAsString = map.toList().fold("") { acc, keyValue ->
-            "$acc${keyToString(keyValue.first)}:${valueToString(keyValue.second)};"
+            "$acc${keyToString(keyValue.first)}:${valueToString(keyValue.second)},"
+        }
+        if(!mapAsString.isEmpty()) {
+            return "{${mapAsString.take(mapAsString.length() - 1)}}"
         }
         return "{$mapAsString}"
     }
