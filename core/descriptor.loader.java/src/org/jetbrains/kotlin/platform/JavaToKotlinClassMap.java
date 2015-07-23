@@ -85,15 +85,12 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
         }
 
-        addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
-
         addKotlinToJava(builtIns.getNothing(), classId(Void.class));
     }
 
     /**
      * E.g.
      * java.lang.String -> kotlin.String
-     * java.lang.Deprecated -> kotlin.deprecated
      * java.lang.Integer -> kotlin.Int
      * kotlin.jvm.internal.IntCompanionObject -> kotlin.Int.Companion
      * java.util.List -> kotlin.List

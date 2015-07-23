@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
@@ -47,21 +48,25 @@ public object JavaAnnotationMapper {
 
     private val javaTargetFqName = FqName(javaClass<Target>().canonicalName)
     private val javaRetentionFqName = FqName(javaClass<Retention>().canonicalName)
+    private val javaDeprecatedFqName = FqName(javaClass<Deprecated>().canonicalName)
 
     public fun mapJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
                 ClassId.topLevel(javaTargetFqName) -> JavaTargetAnnotationDescriptor(annotation, c)
                 ClassId.topLevel(javaRetentionFqName) -> JavaRetentionAnnotationDescriptor(annotation, c)
+                ClassId.topLevel(javaDeprecatedFqName) -> JavaDeprecatedAnnotationDescriptor(annotation, c)
                 else -> null
             }
 
     public val kotlinToJavaNameMap: Map<FqName, FqName> =
             mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName,
-                  KotlinBuiltIns.FQ_NAMES.annotation to javaRetentionFqName)
+                  KotlinBuiltIns.FQ_NAMES.annotation to javaRetentionFqName,
+                  KotlinBuiltIns.FQ_NAMES.deprecated to javaDeprecatedFqName)
 
     public val javaToKotlinNameMap: Map<FqName, FqName> =
             mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
-                  javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation)
+                  javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation,
+                  javaDeprecatedFqName to KotlinBuiltIns.FQ_NAMES.deprecated)
 }
 
 abstract class AbstractJavaAnnotationDescriptor(
@@ -74,6 +79,21 @@ abstract class AbstractJavaAnnotationDescriptor(
             get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters
 
     protected val firstArgument: JavaAnnotationArgument? = annotation.arguments.firstOrNull()
+}
+
+class JavaDeprecatedAnnotationDescriptor(
+        annotation: JavaAnnotation,
+        c: LazyJavaResolverContext
+): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.deprecatedAnnotation) {
+
+    private val valueArguments = c.storageManager.createLazyValue {
+        val parameterDescriptor = valueParameters.firstOrNull {
+            it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
+        }
+        parameterDescriptor?.let { mapOf(it to ConstantValueFactory(c.module.builtIns).createConstantValue("Deprecated in Java")) } ?: emptyMap()
+    }
+
+    override fun getAllValueArguments() = valueArguments()
 }
 
 class JavaRetentionAnnotationDescriptor(
