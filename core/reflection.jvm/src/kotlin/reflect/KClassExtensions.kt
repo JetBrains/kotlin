@@ -16,7 +16,19 @@
 
 package kotlin.reflect
 
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import kotlin.reflect.jvm.internal.KClassImpl
+import kotlin.reflect.jvm.internal.KFunctionImpl
+
+/**
+ * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/classes.html#constructors)
+ * for more information.
+ */
+public val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
+    get() = (this as KClassImpl<T>).constructors.firstOrNull {
+        ((it as KFunctionImpl).descriptor as ConstructorDescriptor).isPrimary
+    }
 
 /**
  * Returns all functions declared in this class.
