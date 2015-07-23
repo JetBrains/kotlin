@@ -63,14 +63,15 @@ public class IntegerValueTypeConstant(
 
     override fun toConstantValue(expectedType: JetType): ConstantValue<Number> {
         val factory = ConstantValueFactory(KotlinBuiltIns.getInstance())
-        return when (getType(expectedType)) {
-            KotlinBuiltIns.getInstance().getIntType() -> {
+        val type = getType(expectedType)
+        return when {
+            KotlinBuiltIns.isInt(type) -> {
                 factory.createIntValue(value.toInt())
             }
-            KotlinBuiltIns.getInstance().getByteType() -> {
+            KotlinBuiltIns.isByte(type) -> {
                 factory.createByteValue(value.toByte())
             }
-            KotlinBuiltIns.getInstance().getShortType() -> {
+            KotlinBuiltIns.isShort(type) -> {
                 factory.createShortValue(value.toShort())
             }
             else -> {
