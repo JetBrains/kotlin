@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
@@ -113,9 +114,8 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         val descendantsOfCurrent = arrayListOf<PsiElement>()
         val toRemove = hashSetOf<PsiElement>()
 
-        var current: PsiElement? = analyzableElement
         var result: AnalysisResult? = null
-        while (current != null) {
+        for (current in analyzableElement.parentsWithSelf) {
             val cached = cache[current]
             if (cached != null) {
                 result = cached
@@ -124,7 +124,6 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
             }
 
             descendantsOfCurrent.add(current)
-            current = current.getParent()
         }
 
         cache.keySet().removeAll(toRemove)
