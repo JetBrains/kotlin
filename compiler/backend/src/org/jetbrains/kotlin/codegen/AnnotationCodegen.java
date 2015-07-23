@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationTarget;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
@@ -171,26 +168,26 @@ public abstract class AnnotationCodegen {
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
     }
 
-    private static final Map<AnnotationTarget, ElementType> annotationTargetMap =
-            new EnumMap<AnnotationTarget, ElementType>(AnnotationTarget.class);
+    private static final Map<KotlinTarget, ElementType> annotationTargetMap =
+            new EnumMap<KotlinTarget, ElementType>(KotlinTarget.class);
 
     static {
-        annotationTargetMap.put(AnnotationTarget.PACKAGE, ElementType.PACKAGE);
-        annotationTargetMap.put(AnnotationTarget.CLASSIFIER, ElementType.TYPE);
-        annotationTargetMap.put(AnnotationTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
-        annotationTargetMap.put(AnnotationTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
-        annotationTargetMap.put(AnnotationTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
-        annotationTargetMap.put(AnnotationTarget.FUNCTION, ElementType.METHOD);
-        annotationTargetMap.put(AnnotationTarget.PROPERTY_GETTER, ElementType.METHOD);
-        annotationTargetMap.put(AnnotationTarget.PROPERTY_SETTER, ElementType.METHOD);
-        annotationTargetMap.put(AnnotationTarget.FIELD, ElementType.FIELD);
-        annotationTargetMap.put(AnnotationTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+        annotationTargetMap.put(KotlinTarget.PACKAGE, ElementType.PACKAGE);
+        annotationTargetMap.put(KotlinTarget.CLASSIFIER, ElementType.TYPE);
+        annotationTargetMap.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
+        annotationTargetMap.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
+        annotationTargetMap.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
+        annotationTargetMap.put(KotlinTarget.FUNCTION, ElementType.METHOD);
+        annotationTargetMap.put(KotlinTarget.PROPERTY_GETTER, ElementType.METHOD);
+        annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
+        annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
+        annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
     }
 
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
-        Set<AnnotationTarget> targets = AnnotationTargetChecker.INSTANCE$.possibleTargetSet(classDescriptor);
+        Set<KotlinTarget> targets = AnnotationTargetChecker.INSTANCE$.possibleTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
             javaTargets = getJavaTargetList(classDescriptor);
@@ -198,7 +195,7 @@ public abstract class AnnotationCodegen {
         }
         else {
             javaTargets = EnumSet.noneOf(ElementType.class);
-            for (AnnotationTarget target : targets) {
+            for (KotlinTarget target : targets) {
                 if (annotationTargetMap.get(target) == null) continue;
                 javaTargets.add(annotationTargetMap.get(target));
             }
@@ -371,16 +368,13 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
-    private enum KotlinRetention {
-        SOURCE(RetentionPolicy.SOURCE),
-        BINARY(RetentionPolicy.CLASS),
-        RUNTIME(RetentionPolicy.RUNTIME);
+    private static final Map<KotlinRetention, RetentionPolicy> annotationRetentionMap =
+            new EnumMap<KotlinRetention, RetentionPolicy>(KotlinRetention.class);
 
-        final RetentionPolicy mapped;
-
-        KotlinRetention(RetentionPolicy mapped) {
-            this.mapped = mapped;
-        }
+    static {
+        annotationRetentionMap.put(KotlinRetention.SOURCE, RetentionPolicy.SOURCE);
+        annotationRetentionMap.put(KotlinRetention.BINARY, RetentionPolicy.CLASS);
+        annotationRetentionMap.put(KotlinRetention.RUNTIME, RetentionPolicy.RUNTIME);
     }
 
     @Nullable
@@ -421,10 +415,8 @@ public abstract class AnnotationCodegen {
                     JetType classObjectType = getClassObjectType(enumEntry);
                     if (classObjectType != null) {
                         if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                            String entryName = enumEntry.getName().asString();
-                            for (KotlinRetention retention : KotlinRetention.values()) {
-                                if (retention.name().equals(entryName)) return retention.mapped;
-                            }
+                            KotlinRetention retention = KotlinRetention.valueOf(enumEntry.getName().asString());
+                            return annotationRetentionMap.get(retention);
                         }
                     }
                 }

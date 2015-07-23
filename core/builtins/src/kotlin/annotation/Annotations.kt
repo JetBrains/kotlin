@@ -85,7 +85,7 @@ public annotation class target(vararg val allowedTargets: AnnotationTarget)
  * @property repeatable true if annotation is repeatable (applicable twice or more on a single code element), otherwise false (default)
  */
 target(AnnotationTarget.ANNOTATION_CLASS)
-public annotation class annotation (
+public annotation(retention = AnnotationRetention.SOURCE) class annotation (
         val retention: AnnotationRetention = AnnotationRetention.RUNTIME,
         val repeatable: Boolean = false
 )

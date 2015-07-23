@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class ResolveElementCacheTest : JetLightCodeInsightFixtureTestCase() {
@@ -166,5 +167,18 @@ class C(param1: String = "", param2: Int = 0) {
             val bindingContext2 = defaultValue2.analyze(BodyResolveMode.FULL)
             assert(bindingContext1 === bindingContext2)
         }
+    }
+
+    public fun testAnnotationEntry() {
+        val file = myFixture.configureByText("Test.kt", """
+        annotation class A
+        A class B {}
+        """) as JetFile
+
+        val klass = file.getDeclarations()[1] as JetClass
+        val annotationEntry = klass.getAnnotationEntries().single()
+
+        val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
+        assert(context[BindingContext.ANNOTATION, annotationEntry] != null)
     }
 }

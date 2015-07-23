@@ -1,7 +1,5 @@
 package kotlin
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import kotlin.jvm.internal.unsafe.*
 import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.KClass
@@ -24,8 +22,7 @@ import kotlin.reflect.KClass
  *
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
-Retention(RetentionPolicy.SOURCE)
-public annotation class throws(public vararg val exceptionClasses: KClass<out Throwable>)
+public annotation(retention = AnnotationRetention.SOURCE) class throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
  * Returns the runtime Java class of this object.

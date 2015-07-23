@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetClassOrObject
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
@@ -43,4 +43,11 @@ class KotlinLightClassForDecompiledDeclaration(
     override fun getOrigin() = origin
 
     override fun getFqName() = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
+
+    override fun equals(other: Any?): Boolean =
+            other is KotlinLightClassForDecompiledDeclaration &&
+            getFqName() == other.getFqName()
+
+    override fun hashCode(): Int =
+            getFqName().hashCode()
 }

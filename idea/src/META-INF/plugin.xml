@@ -795,6 +795,16 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddForLoopIndicesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SwapBinaryExpressionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -1036,7 +1046,7 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
-        displayName="Unused Symbol"
+        displayName="Unused symbol"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"
@@ -1048,6 +1058,13 @@
         enabledByDefault="true"
         level="WARNING"
         />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedImportInspection"
+                     displayName="Unused import directive"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
         displayName="Unresolved reference in KDoc"
@@ -1070,6 +1087,13 @@
         enabledByDefault="true"
         cleanupTool="true"
         level="WARNING"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
+                     displayName="Index is unused"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 

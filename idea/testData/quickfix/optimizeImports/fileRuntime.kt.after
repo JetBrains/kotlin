@@ -1,0 +1,7 @@
+// "Optimize imports" "true"
+
+import java.util.ArrayList
+
+fun foo(list: ArrayList<String>) {
+    list.add("")
+}

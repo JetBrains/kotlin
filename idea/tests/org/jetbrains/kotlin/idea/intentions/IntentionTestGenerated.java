@@ -92,6 +92,93 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addForLoopIndices")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddForLoopIndices extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddForLoopIndices() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addForLoopIndices"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("explicitParamType.kt")
+        public void testExplicitParamType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/explicitParamType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableExistingIndices.kt")
+        public void testInapplicableExistingIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableExistingIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableInBody.kt")
+        public void testInapplicableInBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableInBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOnMap.kt")
+        public void testInapplicableOnMap() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableOnMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOverridenFunction.kt")
+        public void testInapplicableOverridenFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableOverridenFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableUnresolved.kt")
+        public void testInapplicableUnresolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/inapplicableUnresolved.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intArray.kt")
+        public void testIntArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/intArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("iterable.kt")
+        public void testIterable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/iterable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noBody.kt")
+        public void testNoBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/noBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectArray.kt")
+        public void testObjectArray() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/objectArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sequence.kt")
+        public void testSequence() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/sequence.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleIntList.kt")
+        public void testSimpleIntList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/simpleIntList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addForLoopIndices/string.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addNameToArgument")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6087,6 +6174,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+    }
+
+    @TestMetadata("idea/testData/intentions/removeForLoopIndices")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveForLoopIndices extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveForLoopIndices() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeForLoopIndices"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inapplicableForLoop.kt")
+        public void testInapplicableForLoop() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/inapplicableForLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIndexUse.kt")
+        public void testInapplicableIndexUse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/inapplicableIndexUse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOverridenFunction.kt")
+        public void testInapplicableOverridenFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/inapplicableOverridenFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("loopWithType.kt")
+        public void testLoopWithType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/loopWithType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLoopWithIndices.kt")
+        public void testSimpleLoopWithIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndices.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeUnnecessaryParentheses")

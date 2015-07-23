@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(bar: List<String>) {
+    for (a in bar) {
+
+    }
+}

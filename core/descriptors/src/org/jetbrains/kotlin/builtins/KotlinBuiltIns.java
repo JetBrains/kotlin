@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
@@ -182,6 +179,7 @@ public class KotlinBuiltIns {
         public final FqName target = annotationName("target");
         public final FqName annotation = annotationName("annotation");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
+        public final FqName annotationRetention = annotationName("AnnotationRetention");
 
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
@@ -400,9 +398,29 @@ public class KotlinBuiltIns {
     }
 
     @Nullable
-    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull Name name) {
-        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(name, UsageLocation.NO_LOCATION);
+    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
+        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(
+                Name.identifier(target.name()), UsageLocation.NO_LOCATION
+        );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+    }
+
+    @NotNull
+    public ClassDescriptor getAnnotationRetentionEnum() {
+        return getAnnotationClassByName(FQ_NAMES.annotationRetention.shortName());
+    }
+
+    @Nullable
+    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
+        ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getClassifier(
+                Name.identifier(retention.name()), UsageLocation.NO_LOCATION
+        );
+        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+    }
+
+    @NotNull
+    public ClassDescriptor getAnnotationAnnotation() {
+        return getAnnotationClassByName(FQ_NAMES.annotation.shortName());
     }
 
     @NotNull

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantL
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class ClsStubBuilderComponents(
@@ -92,6 +93,17 @@ class AnnotationLoaderForStubBuilder(
         errorReporter: ErrorReporter
 ) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(
         LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
+
+    override fun loadClassAnnotations(
+            classProto: ProtoBuf.Class,
+            nameResolver: NameResolver
+    ): List<ClassId> {
+        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
+        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
+        val serializedAnnotationDescriptors = serializedAnnotations.map { nameResolver.getClassId(it.id) }
+        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
+    }
+
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
             nameResolver.getClassId(proto.getId())
 

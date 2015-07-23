@@ -202,4 +202,10 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
+    public abstract int hashCode();
 }

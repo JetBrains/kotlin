@@ -327,6 +327,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("AnnotationRetentions.java")
+            public void testAnnotationRetentions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotationRetentions.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("AnnotationTargets.java")
             public void testAnnotationTargets() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotationTargets.java");

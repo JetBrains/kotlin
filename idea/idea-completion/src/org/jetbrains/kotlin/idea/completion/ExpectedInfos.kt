@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -46,13 +48,15 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import java.util.HashSet
+import org.jetbrains.kotlin.types.typeUtil.containsError
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import java.util.LinkedHashSet
 
 enum class Tail {
     COMMA,
     RPARENTH,
-    ELSE
+    ELSE,
+    RBRACE
 }
 
 data class ItemOptions(val starPrefix: Boolean) {
@@ -62,7 +66,9 @@ data class ItemOptions(val starPrefix: Boolean) {
     }
 }
 
-open data class ExpectedInfo(val type: JetType, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT)
+open data class ExpectedInfo(val fuzzyType: FuzzyType, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT) {
+    constructor(type: JetType, expectedName: String?, tail: Tail?) : this(FuzzyType(type, emptyList()), expectedName, tail)
+}
 
 data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val isFunctionLiteralArgument: Boolean) {
     constructor(argumentIndex: Int, isFunctionLiteralArgument: Boolean = false) : this(argumentIndex, null, isFunctionLiteralArgument)
@@ -70,7 +76,7 @@ data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val
 }
 
 class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT)
-  : ExpectedInfo(type, name, tail, itemOptions) {
+  : ExpectedInfo(FuzzyType(type, function.typeParameters), name, tail, itemOptions) {
 
     override fun equals(other: Any?)
             = other is ArgumentExpectedInfo && super.equals(other) && function == other.function && position == other.position
@@ -87,12 +93,12 @@ class ReturnValueExpectedInfo(type: JetType, val callable: CallableDescriptor) :
             = callable.hashCode()
 }
 
-
 class ExpectedInfos(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
         val moduleDescriptor: ModuleDescriptor,
-        val useHeuristicSignatures: Boolean
+        val useHeuristicSignatures: Boolean = true,
+        val useOuterCallsExpectedTypeCount: Int = 0
 ) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         return calculateForArgument(expressionWithType)
@@ -130,6 +136,26 @@ class ExpectedInfos(
     }
 
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
+        val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument) ?: return null
+
+        if (useOuterCallsExpectedTypeCount > 0 && results.any { it.fuzzyType.freeParameters.isNotEmpty() && it.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false }) {
+            val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
+            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
+                    .calculate(callExpression)
+                    ?.map { it.fuzzyType } ?: return results
+            if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
+
+            return expectedFuzzyTypes
+                    .map { it.type }
+                    .toSet()
+                    .flatMap { calculateForArgument(call, it, argument) ?: emptyList() }
+                    .toSet()
+        }
+
+        return results
+    }
+
+    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ArgumentExpectedInfo>? {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
@@ -138,8 +164,8 @@ class ExpectedInfos(
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
         val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
 
-        val callElement = call.getCallElement()
-        val calleeExpression = call.getCalleeExpression()
+        val project = call.callElement.getProject()
+        val moduleDescriptor = resolutionFacade.findModuleDescriptor(call.callElement)
 
         // leave only arguments before the current one
         val truncatedCall = object : DelegatingCall(call) {
@@ -149,22 +175,18 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
+        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, call.calleeExpression] ?: return null //TODO: discuss it
 
-        val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
-        val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, expectedType, dataFlowInfo,
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, callExpectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = createContainerForMacros(
-                callElement.getProject(),
-                resolutionFacade.findModuleDescriptor(callElement)
-        ).callResolver
+        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val expectedInfos = HashSet<ExpectedInfo>()
+        val expectedInfos = LinkedHashSet<ArgumentExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val status = candidate.getStatus()
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
@@ -172,17 +194,25 @@ class ExpectedInfos(
             // check that all arguments before the current one matched
             if (!candidate.noErrorsInValueArguments()) continue
 
-            val descriptor = candidate.getResultingDescriptor()
-            val parameters = descriptor.getValueParameters()
-            if (parameters.isEmpty()) continue
-
-            val argumentToParameter = call.mapArgumentsToParameters(descriptor)
-            val parameter = argumentToParameter[argument] ?: continue
+            var descriptor = candidate.getResultingDescriptor()
+            if (descriptor.valueParameters.isEmpty()) continue
 
             val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
             if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
 
+            var argumentToParameter = call.mapArgumentsToParameters(descriptor)
+            var parameter = argumentToParameter[argument] ?: continue
+
+            //TODO: we can loose partially inferred substitution here but what to do?
+            if (parameter.type.containsError()) {
+                parameter = parameter.original
+                descriptor = descriptor.original
+                argumentToParameter = call.mapArgumentsToParameters(descriptor)
+            }
+
             val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
+
+            val parameters = descriptor.valueParameters
 
             fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
                 if (parameter.hasDefaultValue()) return false // parameter is optional
@@ -226,7 +256,7 @@ class ExpectedInfos(
                 if (alreadyHasStar) continue
 
                 val parameterType = if (useHeuristicSignatures)
-                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
+                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, project) ?: parameter.getType()
                 else
                     parameter.getType()
 
@@ -236,7 +266,6 @@ class ExpectedInfos(
                     }
                 }
                 else {
-
                     expectedInfos.add(ArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, argumentPosition))
                 }
             }
@@ -276,13 +305,13 @@ class ExpectedInfos(
         return when (expressionWithType) {
             ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.type, it.expectedName, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.fuzzyType, it.expectedName, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
-                if (thenType != null)
-                    ifExpectedInfo?.filter { it.type.isSubtypeOf(thenType) }
+                if (thenType != null && !thenType.isError())
+                    ifExpectedInfo?.filter { it.fuzzyType.checkIsSubtypeOf(thenType) != null }
                 else
                     ifExpectedInfo
             }
@@ -302,7 +331,7 @@ class ExpectedInfos(
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos != null) {
                     return if (leftTypeNotNullable != null)
-                        expectedInfos.filter { leftTypeNotNullable.isSubtypeOf(it.type) }
+                        expectedInfos.filter { it.fuzzyType.checkIsSuperTypeOf(leftTypeNotNullable) != null }
                     else
                         expectedInfos
                 }
@@ -315,9 +344,23 @@ class ExpectedInfos(
     }
 
     private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
-        if (expressionWithType != block.getStatements().last()) return null
-        return calculate(block)?.map { ExpectedInfo(it.type, it.expectedName, null) }
+        val block = expressionWithType.parent as? JetBlockExpression ?: return null
+        if (expressionWithType != block.statements.last()) return null
+
+        val functionLiteral = block.parent as? JetFunctionLiteral
+        if (functionLiteral != null) {
+            val literalExpression = functionLiteral.parent as JetFunctionLiteralExpression
+            return calculate(literalExpression)
+                    ?.map { it.fuzzyType }
+                    ?.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
+                    ?.map {
+                        val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)
+                        ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
+                    }
+        }
+        else {
+            return calculate(block)?.map { ExpectedInfo(it.fuzzyType, it.expectedName, null) }
+        }
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

@@ -1,0 +1,3 @@
+for (<spot>(i, x) in foo.withIndices()</spot>) {
+
+}

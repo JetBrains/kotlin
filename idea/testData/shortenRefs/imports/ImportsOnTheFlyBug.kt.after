@@ -1,5 +1,0 @@
-// OPTIMIZE_IMPORTS: true
-// NAME_COUNT_TO_USE_STAR_IMPORT: 1
-import java.util.*
-
-val v: HashMap<String, Date>

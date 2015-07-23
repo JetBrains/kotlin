@@ -47,6 +47,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ClassFromSameFileImportAddedBug.kt")
+    public void testClassFromSameFileImportAddedBug() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ClassFromSameFileImportAddedBug.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassMemberImported.kt")
     public void testClassMemberImported() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/ClassMemberImported.kt");

@@ -1,0 +1,91 @@
+<problems>
+    <problem>
+        <file>file.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>file.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="simple.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>fileInPack1.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="fileInPack1.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>fileInPack2.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="fileInPack2.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+    
+    <problem>
+        <file>unusedStarWhenExplicit.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unusedStarWhenExplicit.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>unusedStarWhenExplicit.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="unusedStarWhenExplicit.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>7</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+
+    <problem>
+        <file>duplicatedImports.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="duplicatedImports.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused import directive</problem_class>
+        <description>Unused import directive</description>
+    </problem>
+</problems>

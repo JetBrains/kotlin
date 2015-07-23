@@ -1,4 +1,4 @@
-// OPTIMIZE_IMPORTS: true
-import java.sql.Date
+import java.sql
+import java.util.Date
 
-class A : Date
+class A : sql.Date

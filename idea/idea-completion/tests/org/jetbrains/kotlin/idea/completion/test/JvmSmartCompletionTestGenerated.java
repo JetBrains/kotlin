@@ -131,6 +131,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("FilterTo.kt")
+    public void testFilterTo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/FilterTo.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("GroupBySubstitutor.kt")
     public void testGroupBySubstitutor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/GroupBySubstitutor.kt");
@@ -254,6 +260,42 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("kt5873.kt")
     public void testKt5873() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/kt5873.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaValue1.kt")
+    public void testLambdaValue1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaValue2.kt")
+    public void testLambdaValue2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaValue3.kt")
+    public void testLambdaValue3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LambdaValue4.kt")
+    public void testLambdaValue4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MapTo.kt")
+    public void testMapTo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/MapTo.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("MapTo2.kt")
+    public void testMapTo2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/MapTo2.kt");
         doTest(fileName);
     }
 

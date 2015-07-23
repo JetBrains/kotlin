@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="ProjectDictionaryState">
   <dictionary name="valentin">
     <words>
@@ -9,6 +10,7 @@
       <w>negatable</w>
       <w>pparent</w>
       <w>processings</w>
+      <w>rbrace</w>
       <w>rbracket</w>
       <w>renderers</w>
       <w>rparenth</w>

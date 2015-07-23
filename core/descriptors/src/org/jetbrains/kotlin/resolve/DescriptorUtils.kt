@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
 import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 
@@ -35,6 +36,12 @@ public fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescripto
         else -> this
     }
 }
+
+public val DeclarationDescriptor.fqNameUnsafe: FqNameUnsafe
+    get() = DescriptorUtils.getFqName(this)
+
+public val DeclarationDescriptor.fqNameSafe: FqName
+    get() = DescriptorUtils.getFqNameSafe(this)
 
 public val DeclarationDescriptor.isExtension: Boolean
     get() = this is CallableDescriptor && getExtensionReceiverParameter() != null

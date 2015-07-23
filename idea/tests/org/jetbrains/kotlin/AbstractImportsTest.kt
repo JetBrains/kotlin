@@ -34,14 +34,11 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {
-        val codeInsightSettings = CodeInsightSettings.getInstance()
-
         val settingManager = CodeStyleSettingsManager.getInstance()
         val tempSettings = settingManager.getCurrentSettings().clone()
         settingManager.setTemporarySettings(tempSettings)
 
         val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
-        val optimizeImportsSaved = codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY
 
         try {
             val fixture = myFixture
@@ -59,7 +56,6 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             val file = fixture.getFile() as JetFile
 
             val fileText = file.getText()
-            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// OPTIMIZE_IMPORTS:") ?: false
 
             codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT = InTextDirectivesUtils.getPrefixedInt(fileText, "// NAME_COUNT_TO_USE_STAR_IMPORT:") ?: nameCountToUseStarImportDefault
             codeStyleSettings.IMPORT_PACKAGES = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// IMPORT_PACKAGES:") ?: true
@@ -79,7 +75,6 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
             JetTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.getFile().getText())
         }
         finally {
-            codeInsightSettings.OPTIMIZE_IMPORTS_ON_THE_FLY = optimizeImportsSaved
             settingManager.dropTemporarySettings()
         }
     }

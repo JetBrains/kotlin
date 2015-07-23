@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaElement
 
-// NOTE: currently source elements for descriptors at runtime are stored primarily for easier debugging experience.
-// Consider not storing them if this proves to have significant performance implications
 public object RuntimeSourceElementFactory : JavaSourceElementFactory {
     private class RuntimeSourceElement(override val javaElement: ReflectJavaElement) : JavaSourceElement
 

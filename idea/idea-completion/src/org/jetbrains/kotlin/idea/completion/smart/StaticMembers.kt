@@ -46,7 +46,7 @@ class StaticMembers(
                                context: JetSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
-        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.type) }
+        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.fuzzyType.type) }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
                 addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)
