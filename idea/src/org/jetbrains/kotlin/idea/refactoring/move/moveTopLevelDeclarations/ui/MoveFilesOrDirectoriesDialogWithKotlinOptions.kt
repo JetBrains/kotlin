@@ -78,14 +78,8 @@ public class MoveFilesOrDirectoriesDialogWithKotlinOptions(
             }
 
             val singleFile = jetFiles.singleOrNull()
-            if (singleFile != null) {
-                setSelected(singleFile.packageMatchesDirectory())
-                setText("Update package directive")
-            }
-            else {
-                setSelected(true)
-                setText("Update package directive for Kotlin files")
-            }
+            setSelected(singleFile == null || singleFile.packageMatchesDirectory())
+            setText("Update package directive (Kotlin files)")
         }
     }
 }
