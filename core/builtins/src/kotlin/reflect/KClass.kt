@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-public interface KClass<T> : KDeclarationContainer, KAnnotatedElement {
+public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement {
     /**
      * The simple name of the class as it was declared in the source code,
      * or `null` if the class has no name (if, for example, it is an anonymous object literal).
@@ -48,4 +48,9 @@ public interface KClass<T> : KDeclarationContainer, KAnnotatedElement {
      * All constructors declared in this class.
      */
     public val constructors: Collection<KFunction<T>>
+
+    /**
+     * The instance of the object declaration, or `null` if this class is not an object declaration.
+     */
+    public val objectInstance: T?
 }
