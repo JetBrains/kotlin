@@ -251,7 +251,7 @@ public class IntegerVariableValues() {
         return when {
             isEmpty -> "-"
             isUndefined -> "?"
-            else -> "${availableValues.toString()}${unavailableValues.toString()}"
+            else -> "${availableValues.toSortedList().toString()}${unavailableValues.toSortedListBy { it.value }.toString()}"
         }
     }
 
