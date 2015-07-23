@@ -52,7 +52,7 @@ import javax.swing.JComponent
 public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
         "kotlin-field", JetBundle.message("debugger.field.watchpoints.tab.title")
 ) {
-    override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>): Breakpoint<*> {
+    override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>): Breakpoint<KotlinPropertyBreakpointProperties> {
         return KotlinFieldBreakpoint(project, breakpoint)
     }
 
