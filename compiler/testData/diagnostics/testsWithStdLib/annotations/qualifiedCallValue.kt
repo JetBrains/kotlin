@@ -4,14 +4,14 @@ package a.b.c
 kotlin.deprecated("aaa")
 ann1(kotlin.deprecated("aaa"))
 
-a.b.c.ann1()
+<!REPEATED_ANNOTATION!>a.b.c.ann1()<!>
 ann2(a.b.c.ann1())
 
 A.IAnn()
 ann3(A.IAnn())
 
-a.b.c.A.IAnn()
-ann3(a.b.c.A.IAnn())
+<!REPEATED_ANNOTATION!>a.b.c.A.IAnn()<!>
+<!REPEATED_ANNOTATION!>ann3(a.b.c.A.IAnn())<!>
 
 annArray(kotlin.arrayOf("a"))
 fun test() = 1

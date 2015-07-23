@@ -1,0 +1,40 @@
+package
+
+ann(y = 0) ann(y = 1) internal fun foo(/*0*/ ann(y = 7) ann(y = 2) x: kotlin.Int): kotlin.Int
+
+unrepann(x = 1) unrepann(x = 2) internal final class DoubleAnnotated {
+    public constructor DoubleAnnotated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+ann(y = 3) ann(y = 7) ann(y = 42) internal final class TripleAnnotated {
+    public constructor TripleAnnotated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation() internal final class ann : kotlin.Annotation {
+    public constructor ann(/*0*/ y: kotlin.Int)
+    internal final val y: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.EXPRESSION}) kotlin.annotation.annotation() internal final class annexpr : kotlin.Annotation {
+    public constructor annexpr()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation(repeatable = false) internal final class unrepann : kotlin.Annotation {
+    public constructor unrepann(/*0*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

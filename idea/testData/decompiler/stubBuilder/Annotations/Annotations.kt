@@ -32,6 +32,6 @@ annotation class a
 
 target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASSIFIER,
        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
-annotation(repeatable = false) class b(val e: E)
+annotation(repeatable = true) class b(val e: E)
 
 enum class E { E1 E2 }

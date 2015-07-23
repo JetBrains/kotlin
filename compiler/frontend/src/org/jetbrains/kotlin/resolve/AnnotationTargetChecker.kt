@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.annotation.ElementType
 import java.util.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import kotlin.annotation
 
 public object AnnotationTargetChecker {
@@ -37,9 +38,7 @@ public object AnnotationTargetChecker {
     public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
         val actualTargets = getActualTargetList(annotated, descriptor)
-        for (entry in annotated.getAnnotationEntries()) {
-            checkAnnotationEntry(entry, actualTargets, trace)
-        }
+        checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is JetCallableDeclaration) {
             annotated.getTypeReference()?.let { check(it, trace) }
         }
@@ -61,12 +60,30 @@ public object AnnotationTargetChecker {
     }
 
     public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
-        for (entry in expression.getAnnotationEntries()) {
-            checkAnnotationEntry(entry, listOf(KotlinTarget.EXPRESSION), trace)
-        }
+        checkEntries(expression.getAnnotationEntries(), listOf(KotlinTarget.EXPRESSION), trace)
         if (expression is JetFunctionLiteralExpression) {
             for (parameter in expression.getValueParameters()) {
                 parameter.getTypeReference()?.let { check(it, trace) }
+            }
+        }
+    }
+
+    private fun isRepeatable(classDescriptor: ClassDescriptor): Boolean {
+        val annotationEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return false
+        val repeatableArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
+            "repeatable" == it.key.name.asString()
+        }?.getValue() as? BooleanValue ?: return false
+        return repeatableArgumentValue.value
+    }
+
+    private fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+        val entryTypes: MutableSet<JetType> = hashSetOf()
+        for (entry in entries) {
+            checkAnnotationEntry(entry, actualTargets, trace)
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
+            if (!entryTypes.add(descriptor.type) && !isRepeatable(classDescriptor)) {
+                trace.report(Errors.REPEATED_ANNOTATION.on(entry));
             }
         }
     }

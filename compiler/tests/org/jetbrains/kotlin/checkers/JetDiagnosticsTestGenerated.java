@@ -1040,6 +1040,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("unrepeatable.kt")
+                public void testUnrepeatable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/unrepeatable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("compiler/testData/diagnostics/tests/annotations/options/targets")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
