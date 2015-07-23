@@ -180,7 +180,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
         dirtyOutputClassesMap.notDirty(className.getInternalName())
         sourceFiles.forEach {
-            sourceToClassesMap.addSourceToClass(it, className)
+            sourceToClassesMap.add(it, className)
             classToSourcesMap.add(className, it)
         }
 
@@ -678,7 +678,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             storage.remove(sourceFile.getAbsolutePath())
         }
 
-        public fun addSourceToClass(sourceFile: File, className: JvmClassName) {
+        public fun add(sourceFile: File, className: JvmClassName) {
             storage.appendData(sourceFile.getAbsolutePath(), { out -> IOUtil.writeUTF(out, className.getInternalName()) })
         }
 
