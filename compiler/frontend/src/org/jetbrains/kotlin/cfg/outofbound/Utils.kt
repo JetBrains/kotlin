@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 public object MapUtils {
-    public fun mapToString<K, V>(
+    public fun mapToString<K, V, C : Comparable<C>>(
             map: Map<K,V>,
+            keyToComparable: (K) -> C,
             keyToString: (K) -> String = { it.toString() },
             valueToString: (V) -> String = { it.toString() }
     ): String {
-        val mapAsString = map.toList().fold("") { acc, keyValue ->
+        val mapAsString = map.toList().toSortedListBy { keyToComparable(it.first) }.fold("") { acc, keyValue ->
             "$acc${keyToString(keyValue.first)}:${valueToString(keyValue.second)},"
         }
         if(!mapAsString.isEmpty()) {

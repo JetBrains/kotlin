@@ -37,9 +37,10 @@ public interface BooleanVariableValue {
             val onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
     ): BooleanVariableValue {
         override fun toString(): String {
-            val ontTrue = "onTrue:${MapUtils.mapToString(onTrueRestrictions, { it.getName().asString() })}"
-            val ontFalse = "onFalse:${MapUtils.mapToString(onFalseRestrictions, { it.getName().asString() })}"
-            return "Undef:[$ontTrue, $ontFalse]"
+            val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
+            val ontTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString)
+            val ontFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString)
+            return "Undef:[onTrue:$ontTrue, onFalse:$ontFalse]"
         }
     }
 
