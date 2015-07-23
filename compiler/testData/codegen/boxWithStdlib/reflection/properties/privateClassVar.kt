@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.accessible
 class A {
     private var value = 0
 
-    fun ref() = A::class.properties.single() as KMutableProperty1<A, Int>
+    fun ref() = A::class.memberProperties.single() as KMutableProperty1<A, Int>
 }
 
 fun box(): String {

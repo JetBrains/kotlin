@@ -17,8 +17,25 @@
 package kotlin.reflect.jvm
 
 import java.lang.reflect.Field
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 
 @deprecated("Use kotlinProperty instead.", ReplaceWith("kotlinProperty"))
 public val Field.kotlin: KProperty<*>?
     get() = kotlinProperty
+
+
+@deprecated("Use memberProperties instead.", ReplaceWith("memberProperties"))
+public val <T> KClass<T>.properties: Collection<KProperty1<T, *>>
+    get() = memberProperties
+
+@deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties"))
+public val <T> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
+    get() = memberExtensionProperties
+
+@deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties"))
+public val <T> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
+    get() = declaredMemberProperties
+
+@deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
+public val <T> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
+    get() = declaredMemberExtensionProperties

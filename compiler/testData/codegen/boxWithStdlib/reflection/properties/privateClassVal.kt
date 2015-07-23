@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.accessible
 class Result {
     private val value = "OK"
 
-    fun ref() = Result::class.properties.single() as KProperty1<Result, String>
+    fun ref() = Result::class.memberProperties.single() as KProperty1<Result, String>
 }
 
 fun box(): String {

@@ -4,7 +4,7 @@ import kotlin.reflect.jvm.accessible
 class A(param: String) {
     protected var v: String = param
 
-    fun ref() = A::class.properties.single() as KMutableProperty1<A, String>
+    fun ref() = A::class.memberProperties.single() as KMutableProperty1<A, String>
 }
 
 fun box(): String {

@@ -111,7 +111,7 @@ public val Field.kotlinProperty: KProperty<*>?
 
         // TODO: fields in package parts
         // TODO: optimize (search by name)
-        return getDeclaringClass().kotlin.properties.firstOrNull { it.javaField == this }
+        return getDeclaringClass().kotlin.memberProperties.firstOrNull { it.javaField == this }
     }
 
 

@@ -7,7 +7,7 @@ class A(private var result: String)
 fun box(): String {
     val a = A("abc")
 
-    val p = A::class.declaredProperties.single() as KMutableProperty1<A, String>
+    val p = A::class.declaredMemberProperties.single() as KMutableProperty1<A, String>
     p.accessible = true
     assertEquals("abc", p.call(a))
     assertEquals(Unit, p.setter.call(a, "def"))

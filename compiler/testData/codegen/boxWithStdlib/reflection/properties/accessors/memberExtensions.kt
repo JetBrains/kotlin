@@ -8,7 +8,7 @@ class C(var state: String) {
 }
 
 fun box(): String {
-    val prop = C::class.extensionProperties.single() as KMutableProperty2<C, String, String>
+    val prop = C::class.memberExtensionProperties.single() as KMutableProperty2<C, String, String>
 
     val c = C("")
     assertEquals("3", prop.getter.invoke(c, "abc"))

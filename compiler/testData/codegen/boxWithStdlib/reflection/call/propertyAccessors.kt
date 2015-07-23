@@ -26,7 +26,7 @@ fun box(): String {
     assertEquals(1, (::p0).getter.call())
     assertEquals(2, (Int::p1).call(2))
     assertEquals(2, (Int::p1).getter.call(2))
-    val p2 = A::class.extensionProperties.single()
+    val p2 = A::class.memberExtensionProperties.single()
     assertEquals(3, p2.call(A(), 3))
     assertEquals(3, p2.getter.call(A(), 3))
 
@@ -34,7 +34,7 @@ fun box(): String {
     assertEquals(1, (::mp0).getter.call())
     assertEquals(2, (Int::mp1).call(2))
     assertEquals(2, (Int::mp1).getter.call(2))
-    val mp2 = B::class.extensionProperties.single() as KMutableProperty2
+    val mp2 = B::class.memberExtensionProperties.single() as KMutableProperty2
     assertEquals(3, mp2.call(B(), 3))
     assertEquals(3, mp2.getter.call(B(), 3))
 
