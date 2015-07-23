@@ -26,10 +26,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.JetVisitorVoid;
 
-class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
+class SoftKeywordsHighlightingVisitor extends JetVisitorVoid {
+    private final AnnotationHolder holder;
+
     SoftKeywordsHighlightingVisitor(AnnotationHolder holder) {
-        super(holder);
+        this.holder = holder;
     }
 
     @Override

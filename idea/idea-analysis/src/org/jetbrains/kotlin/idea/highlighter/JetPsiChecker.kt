@@ -48,8 +48,6 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import kotlin.platform.platformStatic
@@ -58,8 +56,6 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (!(ProjectRootsUtil.isInProjectOrLibraryContent(element) || element.getContainingFile() is JetCodeFragment)) return
-
-        getBeforeAnalysisVisitors(holder).forEach { visitor -> element.accept(visitor) }
 
         val file = element.getContainingFile() as JetFile
 
@@ -239,12 +235,6 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
             }
         }
-
-        private fun getBeforeAnalysisVisitors(holder: AnnotationHolder) = arrayOf(
-                SoftKeywordsHighlightingVisitor(holder),
-                LabelsHighlightingVisitor(holder),
-                KDocHighlightingVisitor(holder)
-        )
 
         private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
                 PropertiesHighlightingVisitor(holder, bindingContext),
