@@ -14,36 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.types;
+package org.jetbrains.kotlin.types
 
-import org.jetbrains.annotations.Nullable;
+import kotlin.platform.platformStatic
 
 public abstract class TypeSubstitution {
-    public static final TypeSubstitution EMPTY = new TypeSubstitution() {
-        @Override
-        public TypeProjection get(TypeConstructor key) {
-            return null;
+    companion object {
+        platformStatic public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
+            override fun get(key: TypeConstructor) = null
+            override fun isEmpty() = true
+            override fun toString() = "Empty TypeSubstitution"
         }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "Empty TypeSubstitution";
-        }
-    };
-
-    @Nullable
-    public abstract TypeProjection get(TypeConstructor key);
-
-    public boolean isEmpty() {
-        return false;
     }
 
-    public boolean approximateCapturedTypes() {
-        return false;
-    }
+    public abstract fun get(key: TypeConstructor): TypeProjection?
+
+    public open fun isEmpty(): Boolean = false
+
+    public open fun approximateCapturedTypes(): Boolean = false
 }

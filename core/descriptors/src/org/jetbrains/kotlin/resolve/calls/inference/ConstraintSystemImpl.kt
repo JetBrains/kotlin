@@ -525,7 +525,7 @@ private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
 }
 
 private class SubstitutionWithCapturedTypeApproximation(val substitution: TypeSubstitution) : TypeSubstitution() {
-    override fun get(key: TypeConstructor?) = substitution[key]
+    override fun get(key: TypeConstructor) = substitution[key]
     override fun isEmpty() = substitution.isEmpty()
     override fun approximateCapturedTypes() = true
 }
