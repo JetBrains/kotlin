@@ -40,26 +40,15 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
-    private var packageNameInfo: PackageNameInfo? = null
-    private var declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor? = null
+    private data class MoveContext(
+            val packageNameInfo: PackageNameInfo,
+            val declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor
+    )
 
-    private fun clearState() {
-        packageNameInfo = null
-        declarationMoveProcessor = null
-    }
+    private var moveContext: MoveContext? = null
 
-    override fun canProcessElement(element: PsiFile?): Boolean {
-        if (element is PsiCompiledElement || element !is JetFile) return false
-        return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
-    }
-
-    override fun findUsages(
-            psiFile: PsiFile,
-            newParent: PsiDirectory,
-            searchInComments: Boolean,
-            searchInNonJavaFiles: Boolean
-    ): List<UsageInfo>? {
-        clearState()
+    private fun initMoveContext(psiFile: PsiFile, newParent: PsiDirectory): MoveContext? {
+        this.moveContext = null
 
         if (psiFile !is JetFile || !(psiFile.updatePackageDirective ?: psiFile.packageMatchesDirectory())) return null
 
@@ -83,21 +72,36 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
                 Mover.Idle
         )
 
-        this.packageNameInfo = packageNameInfo
-        this.declarationMoveProcessor = declarationMoveProcessor
+        val moveContext = MoveContext(packageNameInfo, declarationMoveProcessor)
+        this.moveContext = moveContext
+        return moveContext
+    }
 
-        return declarationMoveProcessor.findUsages().toList()
+    override fun canProcessElement(element: PsiFile?): Boolean {
+        if (element is PsiCompiledElement || element !is JetFile) return false
+        return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
+    }
+
+    override fun findUsages(
+            psiFile: PsiFile,
+            newParent: PsiDirectory,
+            searchInComments: Boolean,
+            searchInNonJavaFiles: Boolean
+    ): List<UsageInfo> {
+        val moveContext = initMoveContext(psiFile, newParent) ?: return emptyList()
+        return moveContext.declarationMoveProcessor.findUsages().toList()
     }
 
     override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: Map<PsiElement, PsiElement>) {
-
+        initMoveContext(file, moveDestination)
     }
 
     override fun updateMovedFile(file: PsiFile) {
         if (file !is JetFile) return
+        val moveContext = this.moveContext ?: return
 
         file.updatePackageDirective = null
-        val packageNameInfo = packageNameInfo ?: return
+        val packageNameInfo = moveContext.packageNameInfo
 
         val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
         file.getPackageDirective()?.setFqName(packageNameInfo.newPackageName)
@@ -105,12 +109,13 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>?) {
-        val processor = declarationMoveProcessor ?: return
+        val moveContext = this.moveContext ?: return
+        val processor = moveContext.declarationMoveProcessor
         processor.project.runWithElementsToShortenIsEmptyIgnored {
             try {
                 usageInfos?.let { processor.execute(it) }
             } finally {
-                clearState()
+                this.moveContext = null
             }
         }
     }
