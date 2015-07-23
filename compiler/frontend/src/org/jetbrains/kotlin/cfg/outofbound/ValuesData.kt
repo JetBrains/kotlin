@@ -27,11 +27,13 @@ public data class ValuesData(
         val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
 ) {
     override fun toString(): String {
-        val ints = "I${MapUtils.mapToString(intVarsToValues, { it.getName().asString() })}"
-        val fakeInts = "FI${MapUtils.mapToString(intFakeVarsToValues, { it.debugName })}"
-        val bools = "B${MapUtils.mapToString(boolVarsToValues, { it.getName().asString() })}"
-        val fakeBools = "FB${MapUtils.mapToString(boolFakeVarsToValues, { it.debugName })}"
-        return "$ints|$fakeInts|$bools|$fakeBools"
+        val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
+        val pseudoValToString: (PseudoValue) -> String = { it.debugName }
+        val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
+        val fakeInts = MapUtils.mapToString(intFakeVarsToValues, pseudoValToString, pseudoValToString)
+        val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
+        val fakeBools = MapUtils.mapToString(boolFakeVarsToValues, pseudoValToString, pseudoValToString)
+        return "I$ints|FI$fakeInts|B$bools|FB$fakeBools"
     }
 
     public fun copy(): ValuesData {
