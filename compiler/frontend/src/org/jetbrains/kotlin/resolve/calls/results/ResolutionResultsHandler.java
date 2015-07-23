@@ -34,9 +34,11 @@ import static org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl.MAP_TO_R
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
 public class ResolutionResultsHandler {
-    public static ResolutionResultsHandler INSTANCE = new ResolutionResultsHandler();
+    private final OverloadingConflictResolver overloadingConflictResolver;
 
-    private ResolutionResultsHandler() {}
+    public ResolutionResultsHandler(@NotNull OverloadingConflictResolver overloadingConflictResolver) {
+        this.overloadingConflictResolver = overloadingConflictResolver;
+    }
 
     @NotNull
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
@@ -184,13 +186,13 @@ public class ResolutionResultsHandler {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
 
-        MutableResolvedCall<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(noOverrides, false);
+        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
-            MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(
+            MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(
                     noOverrides, true);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);

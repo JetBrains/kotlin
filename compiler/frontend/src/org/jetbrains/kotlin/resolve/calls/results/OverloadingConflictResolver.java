@@ -34,9 +34,7 @@ import java.util.Set;
 
 public class OverloadingConflictResolver {
 
-    public static OverloadingConflictResolver INSTANCE = new OverloadingConflictResolver();
-
-    private OverloadingConflictResolver() {}
+    public OverloadingConflictResolver() {}
 
     @Nullable
     public <D extends CallableDescriptor> MutableResolvedCall<D> findMaximallySpecific(
