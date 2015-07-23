@@ -22,6 +22,9 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.SubtreeModificationCountUpdater
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.psi.*
@@ -32,13 +35,24 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.*
 
 public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
-    // Recreate internal cache after change of modification count
-    private val fullResolveCache: CachedValue<MutableMap<JetElement, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MutableMap<JetElement, BindingContext>> {
-                override fun compute(): CachedValueProvider.Result<MutableMap<JetElement, BindingContext>> {
-                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetElement, BindingContext>(),
-                                                             PsiModificationTracker.MODIFICATION_COUNT,
-                                                             resolveSession.getExceptionTracker())
+    private class CachedResolve(val bindingContext: BindingContext, resolveElement: JetElement) {
+        private val elementModificationCount: Int? =
+                if (resolveElement is JetDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement))
+                    SubtreeModificationCountUpdater.getModificationCount(resolveElement)
+                else
+                    null
+
+        fun isUpToDate(resolveElement: JetElement)
+                = elementModificationCount == null || elementModificationCount == SubtreeModificationCountUpdater.getModificationCount(resolveElement)
+    }
+
+    // drop whole cache after change "out of code block"
+    private val fullResolveCache: CachedValue<MutableMap<JetElement, CachedResolve>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MutableMap<JetElement, CachedResolve>> {
+                override fun compute(): CachedValueProvider.Result<MutableMap<JetElement, CachedResolve>> {
+                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetElement, CachedResolve>(),
+                                                             PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                                                             resolveSession.exceptionTracker)
                 }
             },
             false)
@@ -48,19 +62,28 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
                 override fun compute(): CachedValueProvider.Result<MutableMap<JetExpression, BindingContext>> {
                     return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetExpression, BindingContext>(),
                                                              PsiModificationTracker.MODIFICATION_COUNT,
-                                                             resolveSession.getExceptionTracker())
+                                                             resolveSession.exceptionTracker)
                 }
             },
             false)
 
     override fun getElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        val fullResolveMap = fullResolveCache.getValue()
-        fullResolveMap[resolveElement]?.let { return it } // check if full additional resolve already performed
+        // check if full additional resolve already performed and is up-to-date
+        val fullResolveMap = fullResolveCache.value
+        val cachedFullResolve = fullResolveMap[resolveElement]
+        if (cachedFullResolve != null) {
+            if (cachedFullResolve.isUpToDate(resolveElement)) {
+                return cachedFullResolve.bindingContext
+            }
+            else {
+                fullResolveMap.remove(resolveElement) // remove outdated cache entry
+            }
+        }
 
         when (bodyResolveMode) {
             BodyResolveMode.FULL -> {
                 val bindingContext = performElementAdditionalResolve(resolveElement, resolveElement, BodyResolveMode.FULL).first
-                fullResolveMap[resolveElement] = bindingContext
+                fullResolveMap[resolveElement] = CachedResolve(bindingContext, resolveElement)
                 return bindingContext
             }
 
@@ -70,14 +93,13 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
                 }
 
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
-                val partialResolveMap = partialBodyResolveCache.getValue()
+                val partialResolveMap = partialBodyResolveCache.value
                 partialResolveMap[statementToResolve ?: resolveElement]?.let { return it } // partial resolve is already cached for this statement
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
-                if (statementFilter == StatementFilter.NONE) {
-                    // partial resolve is not supported for the given declaration - full resolve performed instead
-                    fullResolveMap[resolveElement] = bindingContext
+                if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
+                    fullResolveMap[resolveElement] = CachedResolve(bindingContext, resolveElement)
                     return bindingContext
                 }
 

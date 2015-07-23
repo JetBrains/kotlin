@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.PsiInvalidElementAccessException
 import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
+import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.*
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.psi.*
-import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 /**
  * Tested in OutOfBlockModificationTestGenerated
@@ -33,9 +36,9 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
-        if (event.getFile() !is JetFile) return
+        if (event.file !is JetFile) return
 
-        when (event.getCode()) {
+        when (event.code) {
             BEFORE_CHILDREN_CHANGE,
             BEFORE_PROPERTY_CHANGE,
             BEFORE_CHILD_MOVEMENT,
@@ -48,12 +51,12 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             CHILD_ADDED,
             CHILD_REMOVED,
             CHILD_REPLACED -> {
-                processChange(event.getParent(), event.getOldChild(), event.getChild())
+                processChange(event.parent, event.oldChild, event.child)
             }
 
             CHILDREN_CHANGED -> {
-                if (!event.isGenericChange()) {
-                    processChange(event.getParent(), event.getParent(), null)
+                if (!event.isGenericChange) {
+                    processChange(event.parent, event.parent, null)
                 }
             }
 
@@ -62,14 +65,14 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
                 myModificationTracker.incCounter()
             }
 
-            else -> LOG.error("Unknown code:" + event.getCode())
+            else -> LOG.error("Unknown code:" + event.code)
         }
     }
 
     private fun processChange(parent: PsiElement?, child1: PsiElement?, child2: PsiElement?) {
         try {
             if (!isInsideCodeBlock(parent)) {
-                if (parent != null && parent.getContainingFile() is JetFile) {
+                if (parent != null && parent.containingFile is JetFile) {
                     myModificationTracker.incCounter()
                 }
                 else {
@@ -88,16 +91,16 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
     }
 
     companion object {
-        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.JetCodeBlockModificationListener")
+        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener")
 
         private fun containsClassesInside(element: PsiElement?): Boolean {
             if (element == null) return false
             if (element is PsiClass) return true
 
-            var child = element.getFirstChild()
+            var child = element.firstChild
             while (child != null) {
                 if (containsClassesInside(child)) return true
-                child = child.getNextSibling()
+                child = child.nextSibling
             }
 
             return false
@@ -105,38 +108,42 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
 
         public fun isInsideCodeBlock(element: PsiElement?): Boolean {
             if (element is PsiFileSystemItem) return false
-            if (element == null || element.getParent() == null) return true
+            if (element == null || element.parent == null) return true
 
-            val blockDeclarationCandidate = JetPsiUtil.getTopmostParentOfTypes(
-                    element,
-                    javaClass<JetProperty>(),
-                    javaClass<JetNamedFunction>())
+            //TODO: other types
+            val blockDeclaration = JetPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
 
-            when (blockDeclarationCandidate) {
+            when (blockDeclaration) {
                 is JetNamedFunction -> {
-                    val function = blockDeclarationCandidate : JetNamedFunction
-                    if (function.hasBlockBody() && function.getBodyExpression().isAncestorOf(element)) {
-                        return true
+                    if (blockDeclaration.hasBlockBody()) {
+                        return blockDeclaration.bodyExpression.isAncestor(element)
                     }
-
-                    if (function.hasDeclaredReturnType() && function.getInitializer().isAncestorOf(element)) {
-                        return true
+                    else if (blockDeclaration.hasDeclaredReturnType()) {
+                        return blockDeclaration.initializer.isAncestor(element)
                     }
                 }
+
                 is JetProperty -> {
-                    val property = blockDeclarationCandidate : JetProperty
-                    for (accessor in property.getAccessors()) {
-                        when {
-                            accessor.getInitializer().isAncestorOf(element) -> return true
-                            accessor.getBodyExpression().isAncestorOf(element) -> return true
+                    for (accessor in blockDeclaration.accessors) {
+                        if (accessor.initializer.isAncestor(element) || accessor.bodyExpression.isAncestor(element)) {
+                            return true
                         }
                     }
                 }
+
+                else -> throw IllegalStateException()
             }
 
             return false
         }
 
-        private fun PsiElement?.isAncestorOf(element: PsiElement) = PsiTreeUtil.isAncestor(this, element, false)
+        public fun isBlockDeclaration(declaration: JetDeclaration): Boolean {
+            return BLOCK_DECLARATION_TYPES.any { it.isInstance(declaration) }
+        }
+
+        private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out JetDeclaration>>(
+                javaClass<JetProperty>(),
+                javaClass<JetNamedFunction>()
+        )
     }
 }
