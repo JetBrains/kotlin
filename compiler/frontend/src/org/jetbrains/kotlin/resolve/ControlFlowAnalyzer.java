@@ -32,9 +32,11 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ControlFlowAnalyzer {
     @NotNull private final BindingTrace trace;
+    @NotNull private final KotlinBuiltIns builtIns;
 
-    public ControlFlowAnalyzer(@NotNull BindingTrace trace) {
+    public ControlFlowAnalyzer(@NotNull BindingTrace trace, @NotNull KotlinBuiltIns builtIns) {
         this.trace = trace;
+        this.builtIns = builtIns;
     }
 
     public void process(@NotNull BodiesResolveContext c) {
@@ -65,7 +67,7 @@ public class ControlFlowAnalyzer {
     private void checkSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(constructor, trace);
         flowInformationProvider.checkDeclaration();
-        flowInformationProvider.checkFunction(KotlinBuiltIns.getInstance().getUnitType());
+        flowInformationProvider.checkFunction(builtIns.getUnitType());
     }
 
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, JetDeclarationContainer declarationContainer) {
