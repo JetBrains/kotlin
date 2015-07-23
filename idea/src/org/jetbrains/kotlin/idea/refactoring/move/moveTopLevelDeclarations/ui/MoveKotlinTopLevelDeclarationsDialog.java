@@ -196,6 +196,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
                     @Override
                     public void memberInfoChanged(MemberInfoChange<JetNamedDeclaration, KotlinMemberInfo> event) {
+                        updatePackageDirectiveCheckBox();
                         // Update file name field only if it user hasn't changed it to some non-default value
                         if (shouldUpdateFileNameField(event.getChangedMembers())) {
                             updateSuggestedFileName();
@@ -324,10 +325,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         classPackageChooser.setEnabled(moveToPackage);
         updateFileNameInPackageField();
         fileChooser.setEnabled(!moveToPackage);
-        cbUpdatePackageDirective.setEnabled(moveToPackage);
+        updatePackageDirectiveCheckBox();
         UIUtil.setEnabled(targetPanel, moveToPackage && hasAnySourceRoots(), true);
         updateSuggestedFileName();
         validateButtons();
+    }
+
+    private void updatePackageDirectiveCheckBox() {
+        cbUpdatePackageDirective.setEnabled(isMoveToPackage() && getSelectedElementsToMove().size() == sourceFile.getDeclarations().size());
     }
 
     private boolean hasAnySourceRoots() {
