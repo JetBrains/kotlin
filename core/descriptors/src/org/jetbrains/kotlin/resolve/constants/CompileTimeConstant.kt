@@ -57,12 +57,13 @@ public class TypedCompileTimeConstant<out T>(
 
 public class IntegerValueTypeConstant(
         private val value: Number,
+        private val builtIns: KotlinBuiltIns,
         override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Number> {
-    private val typeConstructor = IntegerValueTypeConstructor(value.toLong())
+    private val typeConstructor = IntegerValueTypeConstructor(value.toLong(), builtIns)
 
     override fun toConstantValue(expectedType: JetType): ConstantValue<Number> {
-        val factory = ConstantValueFactory(KotlinBuiltIns.getInstance())
+        val factory = ConstantValueFactory(builtIns)
         val type = getType(expectedType)
         return when {
             KotlinBuiltIns.isInt(type) -> {

@@ -680,7 +680,7 @@ private class ConstantExpressionEvaluatorVisitor(
             expectedType: JetType
     ): CompileTimeConstant<*>? {
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError()) {
-            return IntegerValueTypeConstant(value, parameters)
+            return IntegerValueTypeConstant(value, constantExpressionEvaluator.builtIns, parameters)
         }
         val integerValue = factory.createIntegerConstantValue(value, expectedType)
         if (integerValue != null) {
