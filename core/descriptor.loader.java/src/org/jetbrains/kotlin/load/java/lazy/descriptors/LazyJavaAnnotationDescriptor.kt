@@ -60,6 +60,8 @@ class LazyJavaAnnotationDescriptor(
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
+    private val source = c.sourceElementFactory.source(javaAnnotation)
+
     private val factory = ConstantValueFactory(c.module.builtIns)
 
     override fun getType(): JetType = type()
@@ -69,6 +71,8 @@ class LazyJavaAnnotationDescriptor(
     }
 
     override fun getAllValueArguments() = allValueArguments()
+
+    override fun getSource() = source
 
     private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
         val constructors = getAnnotationClass().getConstructors()

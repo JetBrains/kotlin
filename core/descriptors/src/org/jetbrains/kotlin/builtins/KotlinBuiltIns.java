@@ -709,7 +709,7 @@ public class KotlinBuiltIns {
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
         return new AnnotationDescriptorImpl(getBuiltInClassByName("extension").getDefaultType(),
-                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap());
+                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
     private static boolean isTypeAnnotatedWithExtension(@NotNull JetType type) {

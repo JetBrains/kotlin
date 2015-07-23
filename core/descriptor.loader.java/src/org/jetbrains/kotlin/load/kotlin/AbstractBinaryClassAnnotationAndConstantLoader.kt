@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -47,6 +48,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     protected abstract fun loadAnnotation(
             annotationClassId: ClassId,
+            source: SourceElement,
             result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
@@ -54,11 +56,12 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     private fun loadAnnotationIfNotSpecial(
             annotationClassId: ClassId,
+            source: SourceElement,
             result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         if (JvmAnnotationNames.isSpecialAnnotation(annotationClassId, true)) return null
 
-        return loadAnnotation(annotationClassId, result)
+        return loadAnnotation(annotationClassId, source, result)
     }
 
     override fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<A> {
@@ -74,8 +77,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val result = ArrayList<A>(1)
 
         kotlinClass.loadClassAnnotations(object : KotlinJvmBinaryClass.AnnotationVisitor {
-            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                return loadAnnotationIfNotSpecial(classId, result)
+            override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                return loadAnnotationIfNotSpecial(classId, source, result)
             }
 
             override fun visitEnd() {
@@ -220,22 +223,24 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
             inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature), KotlinJvmBinaryClass.MethodAnnotationVisitor {
 
-                override fun visitParameterAnnotation(index: Int, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                override fun visitParameterAnnotation(
+                        index: Int, classId: ClassId, source: SourceElement
+                ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
                     var result = memberAnnotations[paramSignature]
                     if (result == null) {
                         result = ArrayList<A>()
                         memberAnnotations[paramSignature] = result
                     }
-                    return loadAnnotationIfNotSpecial(classId, result)
+                    return loadAnnotationIfNotSpecial(classId, source, result)
                 }
             }
 
             open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
                 private val result = ArrayList<A>()
 
-                override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-                    return loadAnnotationIfNotSpecial(classId, result)
+                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    return loadAnnotationIfNotSpecial(classId, source, result)
                 }
 
                 override fun visitEnd() {

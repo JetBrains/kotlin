@@ -18,29 +18,22 @@ package org.jetbrains.kotlin.load.java.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.resolveAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
-import org.jetbrains.kotlin.load.java.structure.JavaArrayAnnotationArgument
-import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
-import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
+import org.jetbrains.kotlin.types.ErrorUtils
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
-import java.util.*
+import java.util.EnumSet
 
 public object JavaAnnotationMapper {
 
@@ -93,10 +86,15 @@ public object JavaAnnotationMapper {
 }
 
 abstract class AbstractJavaAnnotationDescriptor(
+        c: LazyJavaResolverContext,
         annotation: JavaAnnotation?,
         private val kotlinAnnotationClassDescriptor: ClassDescriptor
 ): AnnotationDescriptor {
+    private val source = annotation?.let { c.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
+
     override fun getType() = kotlinAnnotationClassDescriptor.defaultType
+
+    override fun getSource() = source
 
     protected val valueParameters: List<ValueParameterDescriptor>
             get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters
@@ -107,7 +105,7 @@ abstract class AbstractJavaAnnotationDescriptor(
 class JavaDeprecatedAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
-): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.deprecatedAnnotation) {
+): AbstractJavaAnnotationDescriptor(c, annotation, c.module.builtIns.deprecatedAnnotation) {
 
     private val valueArguments = c.storageManager.createLazyValue {
         val parameterDescriptor = valueParameters.firstOrNull {
@@ -123,7 +121,7 @@ class JavaRetentionRepeatableAnnotationDescriptor(
         retentionAnnotation: JavaAnnotation?,
         repeatable: Boolean,
         c: LazyJavaResolverContext
-): AbstractJavaAnnotationDescriptor(retentionAnnotation, c.module.builtIns.annotationAnnotation) {
+): AbstractJavaAnnotationDescriptor(c, retentionAnnotation, c.module.builtIns.annotationAnnotation) {
 
     private val valueArguments = c.storageManager.createLazyValue {
         val retentionArgument = when (firstArgument) {
@@ -147,7 +145,7 @@ class JavaRetentionRepeatableAnnotationDescriptor(
 class JavaTargetAnnotationDescriptor(
         annotation: JavaAnnotation,
         c: LazyJavaResolverContext
-): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.targetAnnotation) {
+): AbstractJavaAnnotationDescriptor(c, annotation, c.module.builtIns.targetAnnotation) {
 
     private val valueArguments = c.storageManager.createLazyValue {
         val targetArgument = when (firstArgument) {

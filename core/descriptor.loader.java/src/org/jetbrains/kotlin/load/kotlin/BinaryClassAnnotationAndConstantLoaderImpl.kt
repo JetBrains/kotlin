@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -86,6 +83,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 
     override fun loadAnnotation(
             annotationClassId: ClassId,
+            source: SourceElement,
             result: MutableList<AnnotationDescriptor>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         val annotationClass = resolveClass(annotationClassId)
@@ -127,7 +125,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
 
             override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                 val list = ArrayList<AnnotationDescriptor>()
-                val visitor = loadAnnotation(classId, list)!!
+                val visitor = loadAnnotation(classId, SourceElement.NO_SOURCE, list)!!
                 return object: KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                     override fun visitEnd() {
                         visitor.visitEnd()
@@ -149,7 +147,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnd() {
-                result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments))
+                result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments, source))
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {

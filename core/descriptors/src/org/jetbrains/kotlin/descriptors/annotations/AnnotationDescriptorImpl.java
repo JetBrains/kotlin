@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -28,13 +29,16 @@ import java.util.Map;
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     private final JetType annotationType;
     private final Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments;
+    private final SourceElement source;
 
     public AnnotationDescriptorImpl(
             @NotNull JetType annotationType,
-            @NotNull Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments
+            @NotNull Map<ValueParameterDescriptor, ConstantValue<?>> valueArguments,
+            @NotNull SourceElement source
     ) {
         this.annotationType = annotationType;
         this.valueArguments = Collections.unmodifiableMap(valueArguments);
+        this.source = source;
     }
 
     @Override
@@ -47,6 +51,12 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     @NotNull
     public Map<ValueParameterDescriptor, ConstantValue<?>> getAllValueArguments() {
         return valueArguments;
+    }
+
+    @Override
+    @NotNull
+    public SourceElement getSource() {
+        return source;
     }
 
     @Override

@@ -21,11 +21,15 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.AnnotationResolver
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class LazyAnnotationsContext(
@@ -98,11 +102,13 @@ public class LazyAnnotationDescriptor(
         )
     }
 
-    override fun getType() = type()
-
     private val valueArguments = c.storageManager.createLazyValue {
         computeValueArguments()
     }
+
+    private val source = annotationEntry.toSourceElement()
+
+    override fun getType() = type()
 
     override fun getAllValueArguments() = valueArguments()
 
@@ -120,6 +126,8 @@ public class LazyAnnotationDescriptor(
                 }
                 .filterValues { it != null } as Map<ValueParameterDescriptor, ConstantValue<*>>
     }
+
+    override fun getSource() = source
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(getType())

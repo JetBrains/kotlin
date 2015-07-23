@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -587,7 +584,8 @@ private class ConstantExpressionEvaluatorVisitor(
             if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
                 val descriptor = AnnotationDescriptorImpl(
                         classDescriptor.getDefaultType(),
-                        constantExpressionEvaluator.resolveAnnotationArguments(call, trace)
+                        constantExpressionEvaluator.resolveAnnotationArguments(call, trace),
+                        SourceElement.NO_SOURCE
                 )
                 return AnnotationValue(descriptor).wrap()
             }
