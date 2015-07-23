@@ -105,7 +105,7 @@ public val Class<*>.kotlinPackage: KPackage?
  * or `null` if this field cannot be represented by a Kotlin property
  * (for example, if it is a synthetic field).
  */
-public val Field.kotlin: KProperty<*>?
+public val Field.kotlinProperty: KProperty<*>?
     get() {
         if (isSynthetic()) return null
 
