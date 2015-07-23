@@ -22,6 +22,7 @@ import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.codeInsight.daemon.impl.HighlightingSessionImpl
+import com.intellij.codeInsight.daemon.impl.ProgressableTextEditorHighlightingPass
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
@@ -135,7 +136,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         val progress = sequence(ProgressManager.getInstance().progressIndicator) {
             (it as? ProgressWrapper)?.originalProgressIndicator
         }.last()
-        val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
+        val highlightingSession = ProgressableTextEditorHighlightingPass.getHighlightingSession(progress)
 
         val project = highlightingSession.project
         val editor = highlightingSession.editor
