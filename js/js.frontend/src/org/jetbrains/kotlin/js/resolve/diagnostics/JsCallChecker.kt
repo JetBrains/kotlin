@@ -44,9 +44,12 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.platform.platformStatic
 
-public class JsCallChecker : CallChecker {
+public class JsCallChecker(
+        private val constantExpressionEvaluator: ConstantExpressionEvaluator
+) : CallChecker {
 
     companion object {
         private val JS_PATTERN: DescriptorPredicate = PatternBuilder.pattern("kotlin.js.js(String)")
@@ -74,7 +77,7 @@ public class JsCallChecker : CallChecker {
 
         val trace = TemporaryBindingTrace.create(context.trace, "JsCallChecker")
 
-        val evaluationResult = ConstantExpressionEvaluator.evaluate(argument, trace, KotlinBuiltIns.getInstance().getStringType())
+        val evaluationResult = constantExpressionEvaluator.evaluateExpression(argument, trace, TypeUtils.NO_EXPECTED_TYPE)
         val code = extractStringValue(evaluationResult)
 
         if (code == null) {
