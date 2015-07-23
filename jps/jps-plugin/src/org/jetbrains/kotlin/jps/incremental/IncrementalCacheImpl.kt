@@ -252,7 +252,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             constantsMap.remove(className)
             inlineFunctionsMap.remove(className)
         }
-        dirtyOutputClassesMap.clear()
+        dirtyOutputClassesMap.clean()
         return recompilationDecision
     }
 
@@ -730,10 +730,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
         public fun getDirtyOutputClasses(): Collection<String> {
             return storage.getAllKeysWithExistingMapping()
-        }
-
-        public fun clear() {
-            storage.getAllKeysWithExistingMapping().forEach { storage.remove(it) }
         }
 
         override fun dumpValue(value: Boolean) = ""
