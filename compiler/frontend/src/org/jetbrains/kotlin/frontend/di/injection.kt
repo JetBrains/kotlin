@@ -60,7 +60,9 @@ public fun createContainerForBodyResolve(
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(statementFilter)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
+
     useImpl<BodyResolver>()
 }
 
@@ -90,7 +92,9 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<LazyTopDownAnalyzer>()
 
     useInstance(NoTopLevelDescriptorProvider)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
+
     useInstance(FileScopeProvider.ThrowException)
 
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()

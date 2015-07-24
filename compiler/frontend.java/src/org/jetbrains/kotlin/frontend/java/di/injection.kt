@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BodyResolveCache
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
@@ -80,7 +77,9 @@ public fun createContainerForLazyResolveWithJava(
     useInstance(moduleClassResolver)
 
     useInstance(declarationProviderFactory)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
+
     useImpl<FileScopeProviderImpl>()
     useImpl<LazyResolveToken>()
 }.let {
@@ -101,7 +100,8 @@ public fun createContainerForTopDownAnalyzerForJvm(
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
 
     useInstance(declarationProviderFactory)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
 
     useImpl<SingleModuleClassResolver>()
     useImpl<FileScopeProviderImpl>()
