@@ -118,15 +118,18 @@ fun ranges(): List<GenericFunction> {
             .map { until(it.first, it.second) }
 
     fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
-        only(RangesOfPrimitives)
-        only(rangeType)
         val meaningless = (rangeType.isNumeric() != itemType.isNumeric())
         if (!meaningless) {
+            only(Ranges)
+            onlyPrimitives(Ranges, rangeType)
+            platformName("${rangeType.name.decapitalize()}RangeContains")
             returns("Boolean")
             doc { "Checks if the specified [item] belongs to this range." }
             body { "return start <= item && item <= end" }
         }
         else {
+            only(RangesOfPrimitives)
+            only(rangeType)
             returns("Nothing")
             annotations("""deprecated("The 'contains' operation for a range of $rangeType and $itemType item is not supported and should not be used.")""")
             body { """throw UnsupportedOperationException()""" }
