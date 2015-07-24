@@ -769,4 +769,23 @@ class ArraysTest {
 
         assertEquals(Array(0, { "" }).asList(), emptyList<String>())
     }
+
+    test fun sort() {
+        val intArr = intArrayOf(5, 2, 1, 9, 80, Int.MIN_VALUE, Int.MAX_VALUE)
+        intArr.sort()
+        assertArrayNotSameButEquals(intArrayOf(Int.MIN_VALUE, 1, 2, 5, 9, 80, Int.MAX_VALUE), intArr)
+
+        val longArr = longArrayOf(200, 2, 1, 4, 3, Long.MIN_VALUE, Long.MAX_VALUE)
+        longArr.sort()
+        assertArrayNotSameButEquals(longArrayOf(Long.MIN_VALUE, 1, 2, 3, 4, 200, Long.MAX_VALUE), longArr)
+
+        val charArr = charArrayOf('d', 'c', 'E', 'a', '\u0000', '\uFFFF')
+        charArr.sort()
+        assertArrayNotSameButEquals(charArrayOf('\u0000', 'E', 'a', 'c', 'd', '\uFFFF'), charArr)
+
+        val strArr = arrayOf("9", "80", "all", "Foo")
+        strArr.sort()
+        assertArrayNotSameButEquals(arrayOf("80", "9", "Foo", "all"), strArr)
+    }
+
 }

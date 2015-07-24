@@ -1005,6 +1005,10 @@
         }
     };
 
+    Kotlin.primitiveArraySort = function(array) {
+        array.sort(Kotlin.primitiveCompareTo)
+    };
+
     Kotlin.copyToArray = function (collection) {
         var array = [];
         var it = collection.iterator();

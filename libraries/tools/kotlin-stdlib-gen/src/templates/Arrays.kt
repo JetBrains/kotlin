@@ -68,6 +68,7 @@ fun toPrimitiveArrays(): List<GenericFunction> =
             doc(ArraysOfObjects) { "Returns an array of ${primitive.name} containing all of the elements of this generic array." }
             doc(Collections) { "Returns an array of ${primitive.name} containing all of the elements of this collection." }
             returns(arrayType)
+            // TODO: Use different implementations for JS
             body {
                 """
                 val result = $arrayType(size())
