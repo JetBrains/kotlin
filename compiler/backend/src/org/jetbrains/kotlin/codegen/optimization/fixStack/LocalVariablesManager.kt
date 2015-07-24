@@ -52,7 +52,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
         return savedStackDescriptor
     }
 
-    fun getSavedStackDescriptorOrNull(restoreStackMarker: AbstractInsnNode): SavedStackDescriptor {
+    fun getSavedStackDescriptor(restoreStackMarker: AbstractInsnNode): SavedStackDescriptor {
         val saveStackMarker = context.saveStackMarkerForRestoreMarker[restoreStackMarker]
         return allocatedHandles[saveStackMarker]!!.savedStackDescriptor
     }

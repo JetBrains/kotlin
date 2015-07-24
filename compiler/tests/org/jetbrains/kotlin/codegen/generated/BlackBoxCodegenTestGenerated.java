@@ -2322,6 +2322,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("deadTryCatch.kt")
+            public void testDeadTryCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/deadTryCatch.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("differentTypes.kt")
             public void testDifferentTypes() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/differentTypes.kt");
@@ -2355,6 +2361,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("inlineTryFinally.kt")
             public void testInlineTryFinally() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryFinally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt8608.kt")
+            public void testKt8608() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt8608.kt");
                 doTest(fileName);
             }
 

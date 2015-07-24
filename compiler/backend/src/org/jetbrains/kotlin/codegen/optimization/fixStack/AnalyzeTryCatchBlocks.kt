@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.hasOpcode
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
+import java.util.*
 
 private class DecompiledTryDescriptor(val tryStartLabel: LabelNode) {
     var defaultHandlerTcb : TryCatchBlockNode? = null
@@ -41,6 +43,71 @@ internal fun insertTryCatchBlocksMarkers(methodNode: MethodNode) {
     val decompiledTryDescriptorForStart = linkedMapOf<LabelNode, DecompiledTryDescriptor>()
     val decompiledTryDescriptorForHandler = hashMapOf<LabelNode, DecompiledTryDescriptor>()
 
+    collectDecompiledTryDescriptors(decompiledTryDescriptorForStart, decompiledTryDescriptorForHandler, methodNode)
+
+
+    val newTryStartLabels = hashMapOf<LabelNode, LabelNode>()
+
+    insertSaveRestoreStackMarkers(decompiledTryDescriptorForStart, methodNode, newTryStartLabels)
+
+    transformTryCatchBlocks(methodNode, newTryStartLabels)
+}
+
+private fun transformTryCatchBlocks(methodNode: MethodNode, newTryStartLabels: HashMap<LabelNode, LabelNode>) {
+    methodNode.tryCatchBlocks = methodNode.tryCatchBlocks.map { tcb ->
+        val newTryStartLabel = newTryStartLabels[tcb.start]
+        if (newTryStartLabel == null)
+            tcb
+        else
+            TryCatchBlockNode(newTryStartLabel, tcb.end, tcb.handler, tcb.type)
+    }
+}
+
+private fun insertSaveRestoreStackMarkers(
+        decompiledTryDescriptorForStart: Map<LabelNode, DecompiledTryDescriptor>,
+        methodNode: MethodNode,
+        newTryStartLabels: MutableMap<LabelNode, LabelNode>
+) {
+    val doneTryStartLabels = hashSetOf<LabelNode>()
+    val doneHandlerLabels = hashSetOf<LabelNode>()
+
+    for (decompiledTryDescriptor in decompiledTryDescriptorForStart.values()) {
+        with(decompiledTryDescriptor) {
+            if (!doneTryStartLabels.contains(tryStartLabel)) {
+                doneTryStartLabels.add(tryStartLabel)
+
+                val nopNode = tryStartLabel.findNextOrNull { it.hasOpcode() }!!
+                assert(nopNode.getOpcode() == Opcodes.NOP,
+                       "${methodNode.instructions.indexOf(nopNode)}: try block should start with NOP")
+
+                val newTryStartLabel = LabelNode(Label())
+                newTryStartLabels[tryStartLabel] = newTryStartLabel
+
+                methodNode.instructions.insertBefore(nopNode, PseudoInsn.SAVE_STACK_BEFORE_TRY.createInsnNode())
+                methodNode.instructions.insertBefore(nopNode, newTryStartLabel)
+                methodNode.instructions.insert(nopNode, PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode())
+            }
+
+            for (handlerStartLabel in handlerStartLabels) {
+                if (!doneHandlerLabels.contains(handlerStartLabel)) {
+                    doneHandlerLabels.add(handlerStartLabel)
+
+                    val storeNode = handlerStartLabel.findNextOrNull { it.hasOpcode() }!!
+                    assert(storeNode.getOpcode() == Opcodes.ASTORE,
+                           "${methodNode.instructions.indexOf(storeNode)}: handler should start with ASTORE")
+
+                    methodNode.instructions.insert(storeNode, PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode())
+                }
+            }
+        }
+    }
+}
+
+private fun collectDecompiledTryDescriptors(
+        decompiledTryDescriptorForStart: MutableMap<LabelNode, DecompiledTryDescriptor>,
+        decompiledTryDescriptorForHandler: MutableMap<LabelNode, DecompiledTryDescriptor>,
+        methodNode: MethodNode
+) {
     for (tcb in methodNode.tryCatchBlocks) {
         if (tcb.isDefaultHandlerNode()) {
             assert(decompiledTryDescriptorForHandler.containsKey(tcb.start),
@@ -61,36 +128,6 @@ internal fun insertTryCatchBlocksMarkers(methodNode: MethodNode) {
                 }
 
                 defaultHandlerTcb = tcb
-            }
-        }
-    }
-
-    val doneTryStartLabels = hashSetOf<LabelNode>()
-    val doneHandlerLabels = hashSetOf<LabelNode>()
-
-    for (decompiledTryDescriptor in decompiledTryDescriptorForStart.values()) {
-        with(decompiledTryDescriptor) {
-            if (!doneTryStartLabels.contains(tryStartLabel)) {
-                doneTryStartLabels.add(tryStartLabel)
-
-                val nopNode = tryStartLabel.findNextOrNull { it.hasOpcode() }!!
-                assert(nopNode.getOpcode() == Opcodes.NOP,
-                       "${methodNode.instructions.indexOf(nopNode)}: try block should start with NOP")
-
-                methodNode.instructions.insertBefore(tryStartLabel, PseudoInsn.SAVE_STACK_BEFORE_TRY.createInsnNode())
-                methodNode.instructions.insert(nopNode, PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode())
-            }
-
-            for (handlerStartLabel in handlerStartLabels) {
-                if (!doneHandlerLabels.contains(handlerStartLabel)) {
-                    doneHandlerLabels.add(handlerStartLabel)
-
-                    val storeNode = handlerStartLabel.findNextOrNull { it.hasOpcode() }!!
-                    assert(storeNode.getOpcode() == Opcodes.ASTORE,
-                           "${methodNode.instructions.indexOf(storeNode)}: handler should start with ASTORE")
-
-                    methodNode.instructions.insert(storeNode, PseudoInsn.RESTORE_STACK_IN_TRY_CATCH.createInsnNode())
-                }
             }
         }
     }

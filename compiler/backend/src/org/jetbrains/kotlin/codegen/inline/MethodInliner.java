@@ -374,7 +374,12 @@ public class MethodInliner {
     protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node, int finallyDeepShift) {
         node = prepareNode(node, finallyDeepShift);
 
-        MandatoryMethodTransformer.INSTANCE$.transform("fake", node);
+        try {
+            MandatoryMethodTransformer.INSTANCE$.transform("fake", node);
+        }
+        catch (Throwable e) {
+            throw wrapException(e, node, "couldn't inline method call");
+        }
 
         Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter()) {
             @NotNull
@@ -689,7 +694,7 @@ public class MethodInliner {
     }
 
     @NotNull
-    public RuntimeException wrapException(@NotNull Exception originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
+    public RuntimeException wrapException(@NotNull Throwable originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
         if (originalException instanceof InlineException) {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
         }

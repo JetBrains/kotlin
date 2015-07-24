@@ -148,14 +148,8 @@ public object FixStackMethodTransformer : MethodTransformer() {
             marker: AbstractInsnNode,
             localVariablesManager: LocalVariablesManager
     ) {
-        val savedStackDescriptor = localVariablesManager.getSavedStackDescriptorOrNull(marker)
-        if (savedStackDescriptor != null) {
-            actions.add({ restoreStack(methodNode, marker, savedStackDescriptor) })
-        }
-        else {
-            // marker is dead code
-            actions.add({ methodNode.instructions.remove(marker) })
-        }
+        val savedStackDescriptor = localVariablesManager.getSavedStackDescriptor(marker)
+        actions.add({ restoreStack(methodNode, marker, savedStackDescriptor) })
         localVariablesManager.markRestoreStackMarkerEmitted(marker)
     }
 
