@@ -23,6 +23,7 @@ import kotlin.reflect.KParameter;
 import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -72,6 +73,11 @@ public abstract class CallableReference implements KCallable {
 
     @Override
     public KType getReturnType() {
+        throw error();
+    }
+
+    @Override
+    public List<Annotation> getAnnotations() {
         throw error();
     }
 

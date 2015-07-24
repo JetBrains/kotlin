@@ -18,14 +18,17 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
 class KParameterImpl(
         override val index: Int,
         private val computeDescriptor: () -> ParameterDescriptor
-) : KParameter {
+) : KParameter, KAnnotatedElementImpl {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
+
+    override val annotated: Annotated get() = descriptor
 
     override val name: String? get() {
         val valueParameter = descriptor as? ValueParameterDescriptor ?: return null

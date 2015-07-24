@@ -14,27 +14,17 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal
+package kotlin.reflect.jvm.internal
 
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
+import kotlin.reflect.KAnnotatedElement
 
-public class ClassReference(override val jClass: Class<*>) : KClass<Any>, DeclarationContainerImpl {
-    override val simpleName: String?
-        get() = error()
-
-    override val qualifiedName: String?
-        get() = error()
-
-    override val members: Collection<KCallable<*>>
-        get() = error()
-
-    override val constructors: Collection<KFunction<Any>>
-        get() = error()
+interface KAnnotatedElementImpl : KAnnotatedElement {
+    val annotated: Annotated
 
     override val annotations: List<Annotation>
-        get() = error()
-
-    private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
+        get() = annotated.annotations.map {
+            (it.source as? ReflectAnnotationSource)?.annotation
+        }.filterNotNull()
 }

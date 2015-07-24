@@ -20,6 +20,7 @@ import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -68,6 +69,11 @@ public class FunctionReference
 
     @Override
     public KType getReturnType() {
+        throw error();
+    }
+
+    @Override
+    public List<Annotation> getAnnotations() {
         throw error();
     }
 

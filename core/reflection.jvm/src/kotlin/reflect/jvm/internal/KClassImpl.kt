@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -26,7 +27,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
 
-class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T> {
+class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), KClass<T>, KAnnotatedElementImpl {
     val descriptor by ReflectProperties.lazySoft {
         val classId = classId
 
@@ -36,6 +37,8 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
         descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
     }
+
+    override val annotated: Annotated get() = descriptor
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 

@@ -17,13 +17,16 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import java.util.ArrayList
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 
-interface KCallableImpl<out R> : KCallable<R> {
+interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     val descriptor: CallableMemberDescriptor
+
+    override val annotated: Annotated get() = descriptor
 
     override val parameters: List<KParameter>
         get() {

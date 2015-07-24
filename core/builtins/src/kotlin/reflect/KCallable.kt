@@ -21,7 +21,7 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-public interface KCallable<out R> {
+public interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
      * If the callable has no name, a special invented name is created.
