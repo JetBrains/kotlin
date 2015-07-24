@@ -55,7 +55,7 @@ class LazyJavaTypeParameterDescriptor(
         }
         else {
             return bounds.map {
-                javaType -> c.typeResolver.transformJavaType(javaType, TypeUsage.UPPER_BOUND.toAttributes())
+                javaType -> c.typeResolver.transformJavaType(javaType, TypeUsage.UPPER_BOUND.toAttributes(upperBoundForTypeParameter = this))
             }.toSet()
         }
     }

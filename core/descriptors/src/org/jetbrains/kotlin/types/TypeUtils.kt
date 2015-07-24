@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -134,3 +135,4 @@ fun JetType.containsError() = ErrorUtils.containsErrorType(this)
 public fun List<JetType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
 
 public fun JetType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+

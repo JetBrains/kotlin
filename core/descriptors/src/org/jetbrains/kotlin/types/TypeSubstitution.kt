@@ -90,3 +90,39 @@ public class IndexedParametersSubstitution(
         return null
     }
 }
+
+public fun JetType.computeNewSubstitutionAndArguments(
+    newParameters: List<TypeParameterDescriptor>,
+    newArguments: List<TypeProjection>
+): Pair<TypeSubstitution, List<TypeProjection>> {
+    val previousSubstitution = getSubstitution()
+    if (newArguments.isEmpty()) return Pair(previousSubstitution, emptyList())
+
+    val newIndexedSubstitution = IndexedParametersSubstitution(newParameters, newArguments)
+
+    // If previous substitution was trivial just replace it with indexed one
+    if (previousSubstitution is IndexedParametersSubstitution || previousSubstitution.isEmpty()) {
+        return Pair(newIndexedSubstitution, newArguments)
+    }
+
+    val composedSubstitution = CompositeTypeSubstitution(newIndexedSubstitution, previousSubstitution)
+    val newSubstitutor = composedSubstitution.buildSubstitutor()
+    val resultArguments = newParameters.map { newSubstitutor.substitute(TypeProjectionImpl(it.variance, it.defaultType))!! }
+
+    return Pair(composedSubstitution, resultArguments)
+}
+
+private class CompositeTypeSubstitution(
+    private val first: TypeSubstitution,
+    private val second: TypeSubstitution
+) : TypeSubstitution() {
+
+    override fun get(key: JetType): TypeProjection? {
+        val firstResult = first[key] ?: return second[key]
+        return second.buildSubstitutor().substitute(firstResult)
+    }
+
+    override fun isEmpty() = first.isEmpty() && second.isEmpty()
+    //
+    override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+}

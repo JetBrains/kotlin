@@ -1,0 +1,57 @@
+package
+
+public/*package*/ open class A</*0*/ T : kotlin.CharSequence!> {
+    public/*package*/ constructor A</*0*/ T : kotlin.CharSequence!>()
+    public/*package*/ open fun bar(/*0*/ d: kotlin.Array<(out) kotlin.Array<(out) kotlin.(Mutable)List<kotlin.Array<(out) kotlin.Double!>!>!>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(/*0*/ x: T!, /*1*/ y: kotlin.(Mutable)Map<kotlin.String!, kotlin.(Mutable)List<T!>!>!, /*2*/ z: java.util.HashMap<T!, T!>!): A<kotlin.(Mutable)List<T!>!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B1 : RawADerived {
+    public constructor B1()
+    internal open override /*1*/ fun bar(/*0*/ d: kotlin.Array<kotlin.Array<kotlin.List<*>>>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ x: kotlin.CharSequence, /*1*/ y: kotlin.Map<kotlin.Any?, kotlin.Any?>, /*2*/ z: java.util.HashMap<kotlin.Any, kotlin.Any>): A<*>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B2 : RawADerived {
+    public constructor B2()
+    internal open override /*1*/ fun bar(/*0*/ d: kotlin.Array<kotlin.Array<kotlin.MutableList<*>>>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ x: kotlin.CharSequence?, /*1*/ y: kotlin.MutableMap<kotlin.Any?, kotlin.Any?>, /*2*/ z: java.util.HashMap<kotlin.Any?, kotlin.Any?>): A<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B3 : RawADerived {
+    public constructor B3()
+    public/*package*/ open override /*1*/ /*fake_override*/ fun bar(/*0*/ d: kotlin.Array<(out) kotlin.Array<(out) (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(/*0*/ x: kotlin.CharSequence, /*1*/ y: kotlin.Map<kotlin.Any?, kotlin.Any>, /*2*/ z: java.util.HashMap<kotlin.Any, kotlin.Any>): A<*>
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.CharSequence!, /*1*/ y: (kotlin.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.Map<*, *>?), /*2*/ z: (java.util.HashMap<kotlin.Any!, kotlin.Any!>..java.util.HashMap<*, *>?)): (A<kotlin.CharSequence!>..A<*>?)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class B4 : RawADerived {
+    public constructor B4()
+    public/*package*/ open override /*1*/ /*fake_override*/ fun bar(/*0*/ d: kotlin.Array<(out) kotlin.Array<(out) (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>!>!): kotlin.Unit
+    internal open fun bar(/*0*/ d: kotlin.Array<kotlin.Array<kotlin.MutableList<kotlin.Array<kotlin.Double>>>>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.CharSequence!, /*1*/ y: (kotlin.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.Map<*, *>?), /*2*/ z: (java.util.HashMap<kotlin.Any!, kotlin.Any!>..java.util.HashMap<*, *>?)): (A<kotlin.CharSequence!>..A<*>?)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ open class RawADerived : A<kotlin.CharSequence!> {
+    public/*package*/ constructor RawADerived()
+    public/*package*/ open override /*1*/ /*fake_override*/ fun bar(/*0*/ d: kotlin.Array<(out) kotlin.Array<(out) (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.CharSequence!, /*1*/ y: (kotlin.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.Map<*, *>?), /*2*/ z: (java.util.HashMap<kotlin.Any!, kotlin.Any!>..java.util.HashMap<*, *>?)): (A<kotlin.CharSequence!>..A<*>?)
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

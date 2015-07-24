@@ -10566,6 +10566,93 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RawTypes extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInRawTypes() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/rawTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("arrays.kt")
+                public void testArrays() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/arrays.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericInnerClass.kt")
+                public void testGenericInnerClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/genericInnerClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonGenericRawMember.kt")
+                public void testNonGenericRawMember() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonGenericRawMember.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonTrivialErasure.kt")
+                public void testNonTrivialErasure() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonTrivialErasure.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawSupertype.kt")
+                public void testRawSupertype() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawSupertype.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawSupertypeOverride.kt")
+                public void testRawSupertypeOverride() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawSupertypeOverride.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawTypeInUpperBound.kt")
+                public void testRawTypeInUpperBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawTypeInUpperBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("rawWithInProjection.kt")
+                public void testRawWithInProjection() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/rawWithInProjection.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveBound.kt")
+                public void testRecursiveBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/recursiveBound.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("samRaw.kt")
+                public void testSamRaw() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/samRaw.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("starProjectionToRaw.kt")
+                public void testStarProjectionToRaw() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/starProjectionToRaw.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeEnhancement.kt")
+                public void testTypeEnhancement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/typeEnhancement.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/typeEnhancement")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

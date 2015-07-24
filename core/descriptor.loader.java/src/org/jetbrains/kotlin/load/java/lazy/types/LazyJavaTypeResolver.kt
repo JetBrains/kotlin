@@ -98,16 +98,6 @@ class LazyJavaTypeResolver(
         }.replaceAnnotations(attr.typeAnnotations)
     }
 
-    fun makeStarProjection(
-                typeParameter: TypeParameterDescriptor,
-                attr: JavaTypeAttributes
-    ): TypeProjection {
-        return if (attr.howThisTypeIsUsed == SUPERTYPE)
-                   TypeProjectionImpl(typeParameter.starProjectionType())
-               else
-                   StarProjectionImpl(typeParameter)
-    }
-
     private inner class LazyJavaClassifierType(
             private val javaType: JavaClassifierType,
             private val attr: JavaTypeAttributes
@@ -207,19 +197,24 @@ class LazyJavaTypeResolver(
             if (isRaw()) {
                 return typeParameters.map {
                     parameter ->
+                    // Some activity for preventing recursion in cases like `class A<T extends A, F extends T>`
+                    //
+                    // When calculating upper bound of some parameter (attr.upperBoundOfTypeParameter),
+                    // do not try to start upper bound calculation of it again.
+                    // If we met such recursive dependency it means that upper bound of `attr.upperBoundOfTypeParameter` based effectively
+                    // on the current class, so we can manually erase default type of current constructor.
+                    //
+                    // In example above corner cases are:
+                    // - Calculating first argument for raw upper bound of T. It depends on T, so we just get A<*, *>
+                    // - Calculating second argument for raw upper bound of T. It depends on F, that again depends on upper bound of T,
+                    //   so we get A<*, *>.
+                    // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
+                    val erasedUpperBound =
+                        parameter.getErasedUpperBound(attr.upperBoundOfTypeParameter) {
+                            constructor.declarationDescriptor!!.defaultType.replaceArgumentsWithStarProjections()
+                        }
 
-                    if (attr.howThisTypeIsUsed == UPPER_BOUND) {
-                        // not making a star projection because of this case:
-                        // Java:
-                        // class C<T extends C> {}
-                        // The upper bound is raw here, and we can't compute the projection: it would be infinite:
-                        // C<*> = C<out C<out C<...>>>
-                        // this way we lose some type information, even when the case is not so bad, but it doesn't seem to matter
-                        val projectionKind = if (parameter.getVariance() == OUT_VARIANCE) INVARIANT else OUT_VARIANCE
-                        TypeProjectionImpl(projectionKind, c.module.builtIns.getNullableAnyType())
-                    }
-                    else
-                        makeStarProjection(parameter, attr)
+                    RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
                 }
             }
             if (isConstructorTypeParameter()) {
@@ -268,10 +263,86 @@ class LazyJavaTypeResolver(
 
             if (descriptor is TypeParameterDescriptor) return descriptor.getDefaultType().getMemberScope()
 
-            return (descriptor as ClassDescriptor).getMemberScope(getArguments())
+             return (descriptor as ClassDescriptor).getMemberScope(substitution)
         }
 
-        override fun computeCustomSubstitution(): TypeSubstitution? = null
+        override fun computeCustomSubstitution() = if (isRaw()) RawSubstitution else null
+
+        private object RawSubstitution : TypeSubstitution() {
+            override fun get(key: JetType) = TypeProjectionImpl(eraseType(key))
+
+            private val lowerTypeAttr = MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(FLEXIBLE_LOWER_BOUND)
+            private val upperTypeAttr = MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(FLEXIBLE_UPPER_BOUND)
+
+            private fun eraseType(type: JetType): JetType {
+                val declaration = type.constructor.declarationDescriptor
+                return when (declaration) {
+                    is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())
+                    is ClassDescriptor -> {
+                        val lower = type.lowerIfFlexible()
+                        val upper = type.upperIfFlexible()
+                        FlexibleJavaClassifierTypeCapabilities.create(
+                            eraseInflexibleBasedOnClassDescriptor(lower, declaration, lowerTypeAttr),
+                            eraseInflexibleBasedOnClassDescriptor(upper, declaration, upperTypeAttr)
+                        )
+                    }
+                    else -> error("Unexpected declaration kind: $declaration")
+                }
+            }
+
+            private fun eraseInflexibleBasedOnClassDescriptor(type: JetType, declaration: ClassDescriptor, attr: JavaTypeAttributes): JetType {
+                if (KotlinBuiltIns.isArray(type)) {
+                    val componentTypeProjection = type.arguments[0]
+                    val arguments = listOf(
+                        TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
+                    )
+                    return JetTypeImpl(
+                        type.annotations, type.constructor, type.isMarkedNullable, arguments,
+                        (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
+                    )
+                }
+
+                val constructor = type.constructor
+                return JetTypeImpl(
+                    type.annotations, constructor, type.isMarkedNullable,
+                    type.constructor.parameters.map {
+                        parameter -> computeProjection(parameter, attr)
+                    },
+                    RawSubstitution,
+                    declaration.getMemberScope(RawSubstitution)
+                )
+            }
+
+            fun computeProjection(
+                    parameter: TypeParameterDescriptor,
+                    attr: JavaTypeAttributes,
+                    erasedUpperBound: JetType = parameter.getErasedUpperBound()
+            ) = when (attr.flexibility) {
+                    // Raw(List<T>) => (List<Any?>..List<*>)
+                    // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
+                    // In the last case upper bound is equal to star projection `Enum<*>`,
+                    // but we want to keep matching tree structure of flexible bounds (at least they should have the same size)
+                    FLEXIBLE_LOWER_BOUND -> TypeProjectionImpl(
+                            // T : String -> String
+                            // in T : String -> String
+                            // T : Enum<T> -> Enum<*>
+                            Variance.INVARIANT, erasedUpperBound
+                    )
+                    FLEXIBLE_UPPER_BOUND, INFLEXIBLE -> {
+                        if (!parameter.variance.allowsOutPosition)
+                            // in T -> Comparable<Nothing>
+                            TypeProjectionImpl(Variance.INVARIANT, parameter.lowerBounds.first())
+                        else if (erasedUpperBound.constructor.parameters.isNotEmpty())
+                            // T : Enum<E> -> out Enum<*>
+                            TypeProjectionImpl(Variance.OUT_VARIANCE, erasedUpperBound)
+                        else
+                            // T : String -> *
+                            makeStarProjection(parameter, attr)
+                    }
+                }
+
+            override fun isEmpty() = false
+        }
 
         private val nullable = c.storageManager.createLazyValue l@ {
             when (attr.flexibility) {
@@ -349,6 +420,16 @@ class LazyJavaTypeResolver(
 
 }
 
+private fun makeStarProjection(
+        typeParameter: TypeParameterDescriptor,
+        attr: JavaTypeAttributes
+): TypeProjection {
+    return if (attr.howThisTypeIsUsed == SUPERTYPE)
+        TypeProjectionImpl(typeParameter.starProjectionType())
+    else
+        StarProjectionImpl(typeParameter)
+}
+
 interface JavaTypeAttributes {
     val howThisTypeIsUsed: TypeUsage
     val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
@@ -360,6 +441,9 @@ interface JavaTypeAttributes {
     val typeAnnotations: Annotations
     val isForAnnotationParameter: Boolean
         get() = false
+    // Current type is upper bound of this type parameter
+    val upperBoundOfTypeParameter: TypeParameterDescriptor?
+        get() = null
 }
 
 enum class JavaTypeFlexibility {
@@ -390,7 +474,11 @@ class LazyJavaTypeAttributes(
 internal fun Annotations.isMarkedNotNull() = findAnnotation(JETBRAINS_NOT_NULL_ANNOTATION) != null
 internal fun Annotations.isMarkedNullable() = findAnnotation(JETBRAINS_NULLABLE_ANNOTATION) != null
 
-fun TypeUsage.toAttributes(allowFlexible: Boolean = true, isForAnnotationParameter: Boolean = false) = object : JavaTypeAttributes {
+fun TypeUsage.toAttributes(
+        allowFlexible: Boolean = true,
+        isForAnnotationParameter: Boolean = false,
+        upperBoundForTypeParameter: TypeParameterDescriptor? = null
+) = object : JavaTypeAttributes {
     override val howThisTypeIsUsed: TypeUsage = this@toAttributes
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage
             get() = howThisTypeIsUsed
@@ -400,9 +488,70 @@ fun TypeUsage.toAttributes(allowFlexible: Boolean = true, isForAnnotationParamet
     override val typeAnnotations: Annotations = Annotations.EMPTY
 
     override val isForAnnotationParameter: Boolean = isForAnnotationParameter
+    override val upperBoundOfTypeParameter: TypeParameterDescriptor? = upperBoundForTypeParameter
 }
 
 fun JavaTypeAttributes.toFlexible(flexibility: JavaTypeFlexibility) =
         object : JavaTypeAttributes by this {
             override val flexibility = flexibility
         }
+
+
+// Definition:
+// ErasedUpperBound(T : G<t>) = G<*> // UpperBound(T) is a type G<t> with arguments
+// ErasedUpperBound(T : A) = A // UpperBound(T) is a type A without arguments
+// ErasedUpperBound(T : F) = UpperBound(F) // UB(T) is another type parameter F
+private fun TypeParameterDescriptor.getErasedUpperBound(
+        // Calculation of `potentiallyRecursiveTypeParameter.upperBounds` may recursively depend on `this.getErasedUpperBound`
+        // E.g. `class A<T extends A, F extends A>`
+        // To prevent recursive calls return defaultValue() instead
+        potentiallyRecursiveTypeParameter: TypeParameterDescriptor? = null,
+        defaultValue: (() -> JetType) = { ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`") }
+): JetType {
+    if (this === potentiallyRecursiveTypeParameter) return defaultValue()
+
+    val firstUpperBound = upperBounds.first()
+
+    if (firstUpperBound.constructor.declarationDescriptor is ClassDescriptor) {
+        return firstUpperBound.replaceArgumentsWithStarProjections()
+    }
+
+    val stopAt = potentiallyRecursiveTypeParameter ?: this
+    var current = firstUpperBound.constructor.declarationDescriptor as TypeParameterDescriptor
+
+    while (current != stopAt) {
+        val nextUpperBound = current.upperBounds.first()
+        if (nextUpperBound.constructor.declarationDescriptor is ClassDescriptor) {
+            return nextUpperBound.replaceArgumentsWithStarProjections()
+        }
+
+        current = nextUpperBound.constructor.declarationDescriptor as TypeParameterDescriptor
+    }
+
+    return defaultValue()
+}
+
+private fun JetType.replaceArgumentsWithStarProjections(): JetType {
+    if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
+
+    // We could just create JetTypeImpl with current type constructor and star projections,
+    // but we want to preserve flexibility of type, and that it what TypeSubstitutor does
+    return TypeSubstitutor.create(ConstantStarSubstitution).substitute(this, Variance.INVARIANT)!!
+}
+
+private object ConstantStarSubstitution : TypeSubstitution() {
+    override fun get(key: JetType): TypeProjection? {
+        // Let substitutor deal with flexibility
+        if (key.isFlexible()) return null
+
+        val newProjections = key.constructor.parameters.map(::StarProjectionImpl)
+
+        val substitution = IndexedParametersSubstitution(key.constructor, newProjections)
+
+        return TypeProjectionImpl(
+                TypeSubstitutor.create(substitution).substitute(key.constructor.declarationDescriptor!!.defaultType, Variance.INVARIANT)!!
+        )
+    }
+
+    override fun isEmpty() = false
+}

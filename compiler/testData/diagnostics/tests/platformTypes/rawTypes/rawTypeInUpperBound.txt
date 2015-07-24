@@ -1,25 +1,32 @@
 package
 
-public /*synthesized*/ fun Bar(/*0*/ function: ((Foo<kotlin.CharSequence!>..Foo<*>?)) -> kotlin.Unit): Bar
+internal fun foo(/*0*/ x: B<*>): kotlin.Unit
 
-public interface Bar {
+public open class A</*0*/ T : kotlin.Any!> {
+    public constructor A</*0*/ T : kotlin.Any!>()
+    public/*package*/ open fun consume(/*0*/ x: T!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun f(/*0*/ f: (Foo<kotlin.CharSequence!>..Foo<*>?)): kotlin.Unit
+    public/*package*/ open fun getChildrenStubs(): kotlin.(Mutable)List<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun produce(): T!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B</*0*/ E : (A<kotlin.Any!>..A<*>?)> {
+    public constructor B</*0*/ E : (A<kotlin.Any!>..A<*>?)>()
+    public/*package*/ final var field: E!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(): E!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final class BarImpl : Bar {
-    public constructor BarImpl()
+public open class Test {
+    public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ fun f(/*0*/ f: Foo<*>?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
 
-public open class Foo</*0*/ T : kotlin.CharSequence!> {
-    public constructor Foo</*0*/ T : kotlin.CharSequence!>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    // Static members
+    public/*package*/ final var rawB: (B<(A<kotlin.Any!>..A<*>?)>..B<out (A<kotlin.Any!>..A<*>?)>?)
 }
