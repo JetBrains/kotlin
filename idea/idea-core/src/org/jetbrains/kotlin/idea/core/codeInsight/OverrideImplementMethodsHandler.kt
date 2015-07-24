@@ -221,7 +221,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
                                               classOrObject: JetClassOrObject): List<JetElement> {
             val overridingMembers = ArrayList<JetElement>()
             for (selectedElement in selectedElements) {
-                val descriptor = selectedElement.getDescriptor()
+                val descriptor = selectedElement.descriptor
                 if (descriptor is SimpleFunctionDescriptor) {
                     overridingMembers.add(overrideFunction(classOrObject, descriptor))
                 }
