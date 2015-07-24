@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.codeInsight
+package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.codeInsight.generation.ClassMemberWithElement
 import com.intellij.codeInsight.generation.MemberChooserObject

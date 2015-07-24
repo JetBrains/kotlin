@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints.dialog;
 
-import com.intellij.codeInsight.generation.PsiFieldMember;
 import com.intellij.debugger.DebuggerBundle;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.ide.util.TreeClassChooser;
@@ -27,10 +26,8 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.core.codeInsight.DescriptorClassMember;
+import org.jetbrains.kotlin.idea.core.overrideImplement.DescriptorClassMember;
 import org.jetbrains.kotlin.psi.JetProperty;
 
 import javax.swing.*;

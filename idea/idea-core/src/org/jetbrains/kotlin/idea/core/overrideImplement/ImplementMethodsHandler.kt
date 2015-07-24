@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.codeInsight
+package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMethodsHandler
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class ImplementMethodsHandler : OverrideImplementMethodsHandler(), IntentionAction {

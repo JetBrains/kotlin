@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.CaretPosition
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable

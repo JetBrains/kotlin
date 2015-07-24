@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.codeInsight.DescriptorClassMember
+import org.jetbrains.kotlin.idea.core.overrideImplement.DescriptorClassMember
 import org.jetbrains.kotlin.psi.JetProperty
 
 fun PsiClass.collectProperties(): Array<DescriptorClassMember> {

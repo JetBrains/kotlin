@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.codeInsight
+package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.google.common.collect.LinkedHashMultimap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.codeInsight
+package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.overrideImplement.DescriptorClassMember
 import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -157,7 +158,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
                     elementsToCompact.add(added as JetElement)
                 }
 
-                ShortenReferences.DEFAULT.process(elementsToCompact)
+                ShortenReferences.Companion.DEFAULT.process(elementsToCompact)
 
                 if (firstGenerated == null) return@runWriteAction
 
