@@ -234,6 +234,16 @@ fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
     return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
 }
 
+fun JetCallExpression.getParameterInfos(): List<ParameterInfo> {
+    val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+    return valueArguments.map {
+        ParameterInfo(
+                it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
+                it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+        )
+    }
+}
+
 private fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
     return when (this) {
         is SingleType -> Collections.singleton(targetType)

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
+import org.jetbrains.kotlin.psi.JetElement
 
-public abstract class CreateFromUsageFixBase(element: PsiElement) : JetIntentionAction<PsiElement>(element) {
+public abstract class CreateFromUsageFixBase<T: JetElement>(element: T) : JetIntentionAction<T>(element) {
     override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
 }

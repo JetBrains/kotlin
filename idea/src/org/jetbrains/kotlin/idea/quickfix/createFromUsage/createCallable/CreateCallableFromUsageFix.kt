@@ -21,35 +21,37 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import java.util.Collections
 import java.util.HashSet
 
-public class CreateCallableFromUsageFix(originalElement: JetElement, callableInfos: List<CallableInfo>)
-: CreateCallableFromUsageFixBase(originalElement, callableInfos, false) {
-    constructor(originalExpression: JetElement, callableInfo: CallableInfo) : this(originalExpression, Collections.singletonList(callableInfo))
-}
+public class CreateCallableFromUsageFix<E : JetElement>(
+        originalExpression: E,
+        callableInfos: List<CallableInfo>
+) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
 
-public class CreateExtensionCallableFromUsageFix(originalElement: JetElement, callableInfos: List<CallableInfo>)
-: CreateCallableFromUsageFixBase(originalElement, callableInfos, true), LowPriorityAction {
-    constructor(originalExpression: JetElement, callableInfo: CallableInfo) : this(originalExpression, Collections.singletonList(callableInfo))
-}
+public class CreateExtensionCallableFromUsageFix<E : JetElement>(
+        originalExpression: E,
+        callableInfos: List<CallableInfo>
+) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, true), LowPriorityAction
 
-public abstract class CreateCallableFromUsageFixBase(
-        originalElement: JetElement,
+public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
+        originalExpression: E,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
-) : CreateFromUsageFixBase(originalElement) {
-
+) : CreateFromUsageFixBase<E>(originalExpression) {
     init {
-        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalElement.getElementTextWithContext()}" }
+        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
         if (callableInfos.size() > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
@@ -60,7 +62,7 @@ public abstract class CreateCallableFromUsageFixBase(
     }
 
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
-        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor() ?: return null
+        val descriptor = candidate.theType.constructor.declarationDescriptor ?: return null
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
         if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
@@ -92,23 +94,23 @@ public abstract class CreateCallableFromUsageFixBase(
         }.toString()
     }
 
-    fun isAvailable(): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
+        if (file !is JetFile) return false
+
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
         if (receiverInfo is TypeInfo.Empty) return !isExtension
         // TODO: Remove after companion object extensions are supported
         if (isExtension && receiverInfo.staticContextRequired) return false
 
-        val file = element.getContainingFile() as JetFile
-        val project = file.getProject()
-        val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as JetExpression, file, null, isExtension).createBuilder()
+        val callableBuilder = CallableBuilderConfiguration(callableInfos, element, file, null, isExtension).createBuilder()
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfos.first().receiverTypeInfo)
         val propertyInfo = callableInfos.firstOrNull { it is PropertyInfo } as PropertyInfo?
         val isFunction = callableInfos.any { it.kind == CallableKind.FUNCTION }
         return receiverTypeCandidates.any {
             val declaration = getDeclarationIfApplicable(project, it)
-            val insertToJavaInterface = declaration is PsiClass && declaration.isInterface()
+            val insertToJavaInterface = declaration is PsiClass && declaration.isInterface
             when {
                 propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo.writable) ->
                     false
@@ -128,7 +130,7 @@ public abstract class CreateCallableFromUsageFixBase(
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
-            project.executeCommand(getText()) { callableBuilder.build() }
+            project.executeCommand(text) { callableBuilder.build() }
         }
 
         if (callableInfo is SecondaryConstructorInfo) {
@@ -149,30 +151,13 @@ public abstract class CreateCallableFromUsageFixBase(
         }
         else {
             assert(callableInfo.receiverTypeInfo is TypeInfo.Empty) {
-                "No receiver type candidates: ${element.getText()} in ${file.getText()}"
+                "No receiver type candidates: ${element.text} in ${file.text}"
             }
 
             chooseContainerElementIfNecessary(callableInfo.possibleContainers, editor, popupTitle, true, { it }) {
-                val container = if (it is JetClassBody) it.getParent() as JetClassOrObject else it
+                val container = if (it is JetClassBody) it.parent as JetClassOrObject else it
                 runBuilder(CallablePlacement.NoReceiver(container))
             }
         }
     }
-}
-
-public fun CreateCallableFromUsageFixes(
-        originalExpression: JetExpression,
-        callableInfos: List<CallableInfo>
-) : List<CreateCallableFromUsageFixBase> {
-    return listOf(
-            CreateCallableFromUsageFix(originalExpression, callableInfos),
-            CreateExtensionCallableFromUsageFix(originalExpression, callableInfos)
-    ).filter { it.isAvailable() }
-}
-
-public fun CreateCallableFromUsageFixes(
-        originalExpression: JetExpression,
-        callableInfo: CallableInfo
-) : List<CreateCallableFromUsageFixBase> {
-    return CreateCallableFromUsageFixes(originalExpression, Collections.singletonList(callableInfo))
 }

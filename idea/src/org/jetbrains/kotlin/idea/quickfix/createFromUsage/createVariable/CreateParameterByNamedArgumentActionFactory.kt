@@ -16,40 +16,38 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetCallElement
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
-public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val result = (diagnostic.getPsiFile() as? JetFile)?.analyzeFullyAndGetResult() ?: return null
+public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<JetValueArgument>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetValueArgument? {
+        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetValueArgument>()) ?: return null
+        return if (argument.isNamed()) argument else null
+    }
+
+    override fun createQuickFixData(element: JetValueArgument, diagnostic: Diagnostic): CreateParameterData<JetValueArgument>? {
+        val result = (diagnostic.psiFile as? JetFile)?.analyzeFullyAndGetResult() ?: return null
         val context = result.bindingContext
 
-        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetValueArgument>()) ?: return null
-        val name = argument.getArgumentName()?.getText() ?: return null
-        val argumentExpression = argument.getArgumentExpression()
+        val name = element.getArgumentName()?.text ?: return null
+        val argumentExpression = element.getArgumentExpression()
 
-        val callElement = argument.getStrictParentOfType<JetCallElement>() ?: return null
-        val functionDescriptor = callElement.getResolvedCall(context)?.getResultingDescriptor() as? FunctionDescriptor ?: return null
-        val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(callElement.getProject(), functionDescriptor) ?: return null
+        val callElement = element.getStrictParentOfType<JetCallElement>() ?: return null
+        val functionDescriptor = callElement.getResolvedCall(context)?.resultingDescriptor as? FunctionDescriptor ?: return null
+        val callable = DescriptorToSourceUtilsIde.getAnyDeclaration(callElement.project, functionDescriptor) ?: return null
         if (!((callable is JetFunction || callable is JetClass) && callable.canRefactor())) return null
 
-        val anyType = KotlinBuiltIns.getInstance().getAnyType()
+        val anyType = KotlinBuiltIns.getInstance().anyType
         val paramType = argumentExpression?.guessTypes(context, result.moduleDescriptor)?.let {
             when (it.size()) {
                 0 -> anyType
@@ -65,6 +63,7 @@ public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionAct
                 type = paramType,
                 defaultValueForCall = argumentExpression
         )
-        return CreateParameterFromUsageFix(functionDescriptor, context, parameterInfo, argument)
+
+        return CreateParameterData(context, parameterInfo, element)
     }
 }

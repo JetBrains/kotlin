@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -24,45 +23,48 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.Variance
 
-object CreateConstructorFromDelegationCallActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val delegationCall = diagnostic.getPsiElement().getStrictParentOfType<JetConstructorDelegationCall>() ?: return null
-        val calleeExpression = delegationCall.getCalleeExpression() ?: return null
-        val currentClass = delegationCall.getStrictParentOfType<JetClass>() ?: return null
+object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFromUsageFactory<JetConstructorDelegationCall>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetConstructorDelegationCall? {
+        return diagnostic.psiElement.getStrictParentOfType<JetConstructorDelegationCall>()
+    }
 
-        val project = currentClass.getProject()
+    override fun createCallableInfo(element: JetConstructorDelegationCall, diagnostic: Diagnostic): CallableInfo? {
+        val calleeExpression = element.calleeExpression ?: return null
+        val currentClass = element.getStrictParentOfType<JetClass>() ?: return null
+
+        val project = currentClass.project
 
         val classDescriptor = currentClass.resolveToDescriptor() as? ClassDescriptor ?: return null
 
-        val targetClass = if (calleeExpression.isThis()) {
+        val targetClass = if (calleeExpression.isThis) {
             currentClass
         }
         else {
-            val superClassDescriptor = DescriptorUtils.getSuperclassDescriptors(classDescriptor)
-                    .singleOrNull { it.getKind() == ClassKind.CLASS } ?: return null
+            val superClassDescriptor =
+                    DescriptorUtils.getSuperclassDescriptors(classDescriptor).singleOrNull { it.kind == ClassKind.CLASS } ?: return null
             DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
         }
         if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
 
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
-        val parameters = delegationCall.getValueArguments().map {
+        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
                     it.getArgumentName()?.asName?.asString()
             )
         }
 
-        return CreateCallableFromUsageFix(delegationCall, SecondaryConstructorInfo(parameters, targetClass))
+        return SecondaryConstructorInfo(parameters, targetClass)
     }
 }

@@ -16,48 +16,49 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.Variance
 
-object CreatePropertyDelegateAccessorsActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val expression = diagnostic.getPsiElement() as? JetExpression ?: return null
-        val context = expression.analyze()
+object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUsageFactory<JetExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetExpression? {
+        return diagnostic.psiElement as? JetExpression
+    }
+
+    override fun createQuickFixData(element: JetExpression, diagnostic: Diagnostic): List<CallableInfo> {
+        val context = element.analyze()
 
         fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =
                 accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
 
         val builtIns = KotlinBuiltIns.getInstance()
 
-        val property = expression.getNonStrictParentOfType<JetProperty>() ?: return null
+        val property = element.getNonStrictParentOfType<JetProperty>() ?: return emptyList()
         val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor
-                                 ?: return null
+                                 ?: return emptyList()
 
-        val propertyReceiver = propertyDescriptor.getExtensionReceiverParameter() ?: propertyDescriptor.getDispatchReceiverParameter()
-        val propertyType = propertyDescriptor.getType()
+        val propertyReceiver = propertyDescriptor.extensionReceiverParameter ?: propertyDescriptor.dispatchReceiverParameter
+        val propertyType = propertyDescriptor.type
 
-        val accessorReceiverType = TypeInfo(expression, Variance.IN_VARIANCE)
-        val thisRefParam = ParameterInfo(TypeInfo(propertyReceiver?.getType() ?: builtIns.getNullableNothingType(), Variance.IN_VARIANCE))
-        val metadataParam = ParameterInfo(TypeInfo(builtIns.getPropertyMetadata().getDefaultType(), Variance.IN_VARIANCE))
+        val accessorReceiverType = TypeInfo(element, Variance.IN_VARIANCE)
+        val thisRefParam = ParameterInfo(TypeInfo(propertyReceiver?.type ?: builtIns.nullableNothingType, Variance.IN_VARIANCE))
+        val metadataParam = ParameterInfo(TypeInfo(builtIns.propertyMetadata.defaultType, Variance.IN_VARIANCE))
 
         val callableInfos = SmartList<CallableInfo>()
 
-        if (isApplicableForAccessor(propertyDescriptor.getGetter())) {
+        if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
                     name = "get",
                     receiverTypeInfo = accessorReceiverType,
@@ -67,17 +68,17 @@ object CreatePropertyDelegateAccessorsActionFactory : JetIntentionActionsFactory
             callableInfos.add(getterInfo)
         }
 
-        if (propertyDescriptor.isVar() && isApplicableForAccessor(propertyDescriptor.getSetter())) {
+        if (propertyDescriptor.isVar && isApplicableForAccessor(propertyDescriptor.setter)) {
             val newValueParam = ParameterInfo(TypeInfo(propertyType, Variance.IN_VARIANCE))
             val setterInfo = FunctionInfo(
                     name = "set",
                     receiverTypeInfo = accessorReceiverType,
-                    returnTypeInfo = TypeInfo(builtIns.getUnitType(), Variance.OUT_VARIANCE),
+                    returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam, newValueParam)
             )
             callableInfos.add(setterInfo)
         }
 
-        return CreateCallableFromUsageFixes(expression, callableInfos)
+        return callableInfos
     }
 }

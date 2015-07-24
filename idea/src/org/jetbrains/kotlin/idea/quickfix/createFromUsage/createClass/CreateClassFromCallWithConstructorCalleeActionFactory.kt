@@ -16,28 +16,22 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
-import org.jetbrains.kotlin.psi.JetUserType
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.Collections
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val diagElement = diagnostic.getPsiElement()
+public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<JetCallElement>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallElement? {
+        val diagElement = diagnostic.psiElement
 
         val callElement = PsiTreeUtil.getParentOfType(
                 diagElement,
@@ -45,26 +39,34 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
                 javaClass<JetDelegatorToSuperCall>()
         ) as? JetCallElement ?: return null
 
-        val isAnnotation = callElement is JetAnnotationEntry
-
-        val callee = callElement.getCalleeExpression() as? JetConstructorCalleeExpression ?: return null
-        val calleeRef = callee.getConstructorReferenceExpression() ?: return null
+        val callee = callElement.calleeExpression as? JetConstructorCalleeExpression ?: return null
+        val calleeRef = callee.constructorReferenceExpression ?: return null
 
         if (!calleeRef.isAncestor(diagElement)) return null
+        return callElement
+    }
 
-        val file = callElement.getContainingFile() as? JetFile ?: return null
-        val typeRef = callee.getTypeReference() ?: return null
-        val userType = typeRef.getTypeElement() as? JetUserType ?: return null
+    override fun getPossibleClassKinds(element: JetCallElement, diagnostic: Diagnostic): List<ClassKind> {
+        return (if (element is JetAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS).singletonList()
+    }
+
+    override fun createQuickFixData(element: JetCallElement, diagnostic: Diagnostic): ClassInfo? {
+        val isAnnotation = element is JetAnnotationEntry
+        val callee = element.calleeExpression as? JetConstructorCalleeExpression ?: return null
+        val calleeRef = callee.constructorReferenceExpression ?: return null
+        val file = element.containingFile as? JetFile ?: return null
+        val typeRef = callee.typeReference ?: return null
+        val userType = typeRef.typeElement as? JetUserType ?: return null
 
         val context = userType.analyze()
 
-        val qualifier = userType.getQualifier()?.getReferenceExpression()
+        val qualifier = userType.qualifier?.referenceExpression
         val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
         val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
 
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
-        val valueArguments = callElement.getValueArguments()
+        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val valueArguments = element.valueArguments
         val defaultParamName = if (valueArguments.size() == 1) "value" else null
         val parameterInfos = valueArguments.map {
             ParameterInfo(
@@ -75,13 +77,12 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
 
         val typeArgumentInfos = when {
             isAnnotation -> Collections.emptyList<TypeInfo>()
-            else -> callElement.getTypeArguments()
-                    .map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }
+            else -> element.typeArguments
+                    .map { it.typeReference?.let { TypeInfo(it, Variance.INVARIANT) } }
                     .filterNotNull()
         }
 
-        val classInfo = ClassInfo(
-                kind = if (isAnnotation) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS,
+        return ClassInfo(
                 name = calleeRef.getReferencedName(),
                 targetParent = targetParent,
                 expectedTypeInfo = TypeInfo.Empty,
@@ -89,6 +90,5 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
                 open = !isAnnotation,
                 typeArguments = typeArgumentInfos
         )
-        return CreateClassFromUsageFix(callElement, classInfo)
     }
 }

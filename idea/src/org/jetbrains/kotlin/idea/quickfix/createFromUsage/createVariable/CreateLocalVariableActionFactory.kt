@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -47,7 +46,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 
-        return object: CreateFromUsageFixBase(refExpr) {
+        return object: CreateFromUsageFixBase<JetSimpleNameExpression>(refExpr) {
             override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyName)
 
             override fun invoke(project: Project, editor: Editor?, file: JetFile) {
@@ -57,12 +56,12 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
 
                 val actualContainer = when (container) {
                     is JetBlockExpression -> container
-                    else -> ConvertToBlockBodyIntention.convert(container as JetDeclarationWithBody).getBodyExpression()!!
+                    else -> ConvertToBlockBodyIntention.convert(container as JetDeclarationWithBody).bodyExpression!!
                 } as JetBlockExpression
 
                 if (actualContainer != container) {
-                    val bodyExpression = actualContainer.getStatements().first()
-                    originalElement = (bodyExpression as? JetReturnExpression)?.getReturnedExpression() ?: bodyExpression
+                    val bodyExpression = actualContainer.statements.first()!!
+                    originalElement = (bodyExpression as? JetReturnExpression)?.returnedExpression ?: bodyExpression
                 }
 
                 val typeInfo = TypeInfo(
@@ -73,7 +72,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
 
                 with (CallableBuilderConfiguration(propertyInfo.singletonOrEmptyList(), originalElement, file, editor).createBuilder()) {
                     placement = CallablePlacement.NoReceiver(actualContainer)
-                    project.executeCommand(getText()) { build() }
+                    project.executeCommand(text) { build() }
                 }
             }
         }

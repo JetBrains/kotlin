@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
@@ -250,11 +250,11 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateBinaryOperationActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateBinaryOperationActionFactory)
 
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateCallableFromCallActionFactory)
-        UNRESOLVED_REFERENCE.registerFactory(CreateCallableFromCallActionFactory)
-        NO_VALUE_FOR_PARAMETER.registerFactory(CreateCallableFromCallActionFactory)
-        TOO_MANY_ARGUMENTS.registerFactory(CreateCallableFromCallActionFactory)
-        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateCallableFromCallActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        UNRESOLVED_REFERENCE.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        NO_VALUE_FOR_PARAMETER.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        TOO_MANY_ARGUMENTS.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
 
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegationCallActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegationCallActionFactory)
@@ -269,9 +269,9 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(CreateLocalVariableActionFactory)
         EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateLocalVariableActionFactory)
 
-        UNRESOLVED_REFERENCE.registerFactory(CreateParameterActionFactory)
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateParameterActionFactory)
-        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateParameterActionFactory)
+        UNRESOLVED_REFERENCE.registerFactory(CreateParameterByRefActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateParameterByRefActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateParameterByRefActionFactory)
 
         NAMED_PARAMETER_NOT_FOUND.registerFactory(CreateParameterByNamedArgumentActionFactory)
 

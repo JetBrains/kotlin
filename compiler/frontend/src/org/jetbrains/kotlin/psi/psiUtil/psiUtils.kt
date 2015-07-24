@@ -288,3 +288,5 @@ public fun PsiElement.getTextWithLocation(): String = "'${this.getText()}' at ${
 
 public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
+public fun <E: PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
+        SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
