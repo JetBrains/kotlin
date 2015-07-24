@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierListOwner
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.move.MoveCallback
@@ -80,13 +77,12 @@ interface Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> 
 }
 
 public class MoveKotlinTopLevelDeclarationsOptions(
-        val sourceFile: JetFile,
         val elementsToMove: Collection<JetNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
         val searchInNonCode: Boolean = true,
         val updateInternalReferences: Boolean = true,
-        val deleteSourceFile: Boolean = false,
+        val deleteSourceFiles: Boolean = false,
         val moveCallback: MoveCallback? = null
 )
 
@@ -100,7 +96,9 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
     private val elementsToMove = options.elementsToMove.filter { e -> e.getContainingFile() != options.moveTarget.getTargetPsiIfExists(e) }
-    private val kotlinToLightElements = elementsToMove.keysToMap { it.toLightElements() }
+    private val kotlinToLightElementsBySourceFile = elementsToMove
+            .groupBy { it.getContainingJetFile() }
+            .mapValues { it.value.keysToMap { it.toLightElements() } }
     private val conflicts = MultiMap<PsiElement, String>()
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
@@ -113,8 +111,8 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
     public override fun findUsages(): Array<UsageInfo> {
         val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
-        fun collectUsages(): List<UsageInfo> {
-            return kotlinToLightElements.values().flatMap { it }.flatMap { lightElement ->
+        fun collectUsages(kotlinToLightElements: Map<JetNamedDeclaration, List<PsiNamedElement>>, result: MutableList<UsageInfo>) {
+            kotlinToLightElements.values().flatMap { it }.flatMapTo(result) { lightElement ->
                 val newFqName = StringUtil.getQualifiedName(newPackageName, lightElement.getName())
 
                 val foundReferences = HashSet<PsiReference>()
@@ -219,12 +217,17 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
             }
         }
 
-        // No need to find and process usages if package is not changed
-        if (options.sourceFile.getPackageFqName().asString() == newPackageName) return UsageInfo.EMPTY_ARRAY
+        val usages = ArrayList<UsageInfo>()
+        for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
+            // No need to find and process usages if package is not changed
+            if (sourceFile.getPackageFqName().asString() == newPackageName) return UsageInfo.EMPTY_ARRAY
 
-        val usages = collectUsages()
-        collectConflictsInUsages(usages)
-        collectConflictsInDeclarations()
+            collectUsages(kotlinToLightElements, usages)
+            collectConflictsInUsages(usages)
+            collectConflictsInDeclarations()
+        }
+
+
         return UsageViewUtil.removeDuplicatedUsages(usages.toTypedArray())
     }
 
@@ -264,27 +267,27 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
             val usageList = usages.toArrayList()
 
             val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
-            for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
-                val oldFile = oldDeclaration.getContainingJetFile()
-
-                val newDeclaration = moveDeclaration(oldDeclaration, options.moveTarget, usageList)
-                if (newDeclaration == null) {
-                    for (oldElement in oldLightElements) {
-                        oldToNewElementsMapping[oldElement] = oldElement
+            for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
+                for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
+                    val newDeclaration = moveDeclaration(oldDeclaration, options.moveTarget, usageList)
+                    if (newDeclaration == null) {
+                        for (oldElement in oldLightElements) {
+                            oldToNewElementsMapping[oldElement] = oldElement
+                        }
+                        continue
                     }
-                    continue
+
+                    oldToNewElementsMapping[sourceFile] = newDeclaration.getContainingJetFile()
+
+                    getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
+                    for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {
+                        oldToNewElementsMapping[oldElement] = newElement
+                    }
                 }
 
-                oldToNewElementsMapping[oldFile] = newDeclaration.getContainingJetFile()
-
-                getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
-                for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {
-                    oldToNewElementsMapping[oldElement] = newElement
+                if (options.deleteSourceFiles) {
+                    sourceFile.delete()
                 }
-            }
-
-            if (options.deleteSourceFile) {
-                options.sourceFile.delete()
             }
 
             nonCodeUsages = postProcessMoveUsages(usageList, oldToNewElementsMapping).toTypedArray()

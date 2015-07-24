@@ -42,7 +42,6 @@ public class KotlinChangePackageRefactoring(val file: JetFile) {
         val declarationProcessor = MoveKotlinTopLevelDeclarationsProcessor(
                 project,
                 MoveKotlinTopLevelDeclarationsOptions(
-                        sourceFile = file,
                         elementsToMove = file.getDeclarations().filterIsInstance<JetNamedDeclaration>(),
                         moveTarget = object: KotlinMoveTarget {
                             override val packageWrapper = PackageWrapper(file.getManager(), newFqName.asString())

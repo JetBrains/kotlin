@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.JavaProjectRootsUtil;
@@ -30,6 +31,7 @@ import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Pass;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.*;
 import com.intellij.refactoring.*;
 import com.intellij.refactoring.classMembers.DependencyMemberInfoModel;
@@ -55,6 +57,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
@@ -72,8 +75,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -195,6 +196,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
                     @Override
                     public void memberInfoChanged(MemberInfoChange<JetNamedDeclaration, KotlinMemberInfo> event) {
+                        updatePackageDirectiveCheckBox();
                         // Update file name field only if it user hasn't changed it to some non-default value
                         if (shouldUpdateFileNameField(event.getChangedMembers())) {
                             updateSuggestedFileName();
@@ -323,10 +325,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         classPackageChooser.setEnabled(moveToPackage);
         updateFileNameInPackageField();
         fileChooser.setEnabled(!moveToPackage);
-        cbUpdatePackageDirective.setEnabled(moveToPackage);
+        updatePackageDirectiveCheckBox();
         UIUtil.setEnabled(targetPanel, moveToPackage && hasAnySourceRoots(), true);
         updateSuggestedFileName();
         validateButtons();
+    }
+
+    private void updatePackageDirectiveCheckBox() {
+        cbUpdatePackageDirective.setEnabled(isMoveToPackage() && getSelectedElementsToMove().size() == sourceFile.getDeclarations().size());
     }
 
     private boolean hasAnySourceRoots() {
@@ -355,6 +361,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         return ((DestinationFolderComboBox) destinationFolderCB).selectDirectory(targetPackage, false);
     }
 
+    private boolean checkTargetFileName(String fileName) {
+        if (FileTypeManager.getInstance().getFileTypeByFileName(fileName) == JetFileType.INSTANCE) return true;
+        setErrorText("Can't move to non-Kotlin file");
+        return false;
+    }
+
     @Nullable
     private KotlinMoveTarget selectMoveTarget() {
         String message = verifyBeforeRun();
@@ -370,6 +382,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             if (moveDestination == null) return null;
 
             final String targetFileName = tfFileNameInPackage.getText();
+            if (!checkTargetFileName(targetFileName)) return null;
 
             PsiDirectory directory = moveDestination.getTargetIfExists(sourceFile);
             PsiFile targetFile = directory != null ? directory.findFile(targetFileName) : null;
@@ -403,6 +416,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         final File targetFile = new File(getTargetFilePath());
+        if (!checkTargetFileName(targetFile.getName())) return null;
         JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(targetFile, myProject);
         if (jetFile != null) {
             if (jetFile == sourceFile) {
@@ -546,7 +560,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                         myProject,
                                         new PsiElement[] {sourceFile},
                                         targetDirectory,
-                                        RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE,
+                                        true,
                                         isSearchInComments(),
                                         isSearchInNonJavaFiles(),
                                         new MoveCallback() {
@@ -610,7 +624,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
 
             MoveKotlinTopLevelDeclarationsOptions options = new MoveKotlinTopLevelDeclarationsOptions(
-                    sourceFile, elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
+                    elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
             );
             invokeRefactoring(new MoveKotlinTopLevelDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE$));
         }
