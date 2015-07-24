@@ -17,5 +17,5 @@
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
 interface InlineRegistering {
-    fun registerInline(fromPath: String, toPath: String)
+    fun registerInline(fromPath: String, jvmSignature: String, toPath: String)
 }

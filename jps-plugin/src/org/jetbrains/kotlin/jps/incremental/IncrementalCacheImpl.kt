@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.*
+import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.storage.BuildDataManager
-import org.jetbrains.jps.incremental.storage.OneToManyPathsMapping
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -122,15 +122,21 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val classToSourcesMap = ClassToSourcesMap()
     private val dirtyOutputClassesMap = DirtyOutputClassesMap()
     private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap()
-    private val hasInlineTo = OneToManyPathsMapping(File(baseDir, HAS_INLINE_TO))
+    private val hasInlineTo = InlineFunctionsFilesMap()
 
-    private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, sourceToClassesMap, dirtyOutputClassesMap)
+    private val maps = listOf(protoMap,
+                              constantsMap,
+                              inlineFunctionsMap,
+                              packagePartMap,
+                              sourceToClassesMap,
+                              dirtyOutputClassesMap,
+                              hasInlineTo)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
 
     private val inlineRegistering = object : InlineRegistering {
-        override fun registerInline(fromPath: String, toPath: String) {
-            hasInlineTo.appendData(fromPath, toPath)
+        override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
+            hasInlineTo.add(fromPath, jvmSignature, toPath)
         }
     }
 
@@ -153,8 +159,20 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    public fun getInlineDependencies(sourceFile: File): Collection<String> {
-        return hasInlineTo.getState(sourceFile.getCanonicalPath()) ?: emptyList()
+    public fun getFilesToReinline(): Collection<File> {
+        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+
+        for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
+            val sourceFiles = classToSourcesMap[className]
+
+            for (sourceFile in sourceFiles) {
+                val targetFiles = functions.flatMap { hasInlineTo[sourceFile, it] }
+                result.addAll(targetFiles)
+            }
+        }
+
+        dirtyInlineFunctionsMap.clean()
+        return result.map { File(it) }
     }
 
     private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
@@ -256,7 +274,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             inlineFunctionsMap.remove(className)
         }
         dirtyOutputClassesMap.clean()
-        dirtyInlineFunctionsMap.clean()
         return recompilationDecision
     }
 
@@ -295,7 +312,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
         public fun contains(key: String): Boolean = storage.containsMapping(key)
 
-        public fun clean() {
+        public open fun clean() {
             try {
                 storage.close()
             }
@@ -310,7 +327,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             }
         }
 
-        public fun flush(memoryCachesOnly: Boolean) {
+        public open fun flush(memoryCachesOnly: Boolean) {
             if (memoryCachesOnly) {
                 if (storage.isDirty()) {
                     storage.dropMemoryCaches()
@@ -688,12 +705,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 PathCollectionExternalizer
         )
 
-        public fun get(className: JvmClassName): Collection<File>? =
-                storage[className.internalName]?.let { it.map { path -> File(path) } }
+        public fun get(className: JvmClassName): Collection<String> =
+                storage[className.internalName] ?: emptySet()
 
         public fun add(className: JvmClassName, sourceFile: File) {
             storage.appendData(className.internalName) { out ->
-                IOUtil.writeUTF(out, FileUtil.normalize(sourceFile.normalizedPath))
+                IOUtil.writeUTF(out, sourceFile.normalizedPath)
             }
         }
 
@@ -743,6 +760,72 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
 
         override fun dumpValue(value: List<String>) = value.toString()
+    }
+
+    /**
+     * Mapping: sourceFile->{inlineFunction->...targetFiles}
+     *
+     * Where:
+     *  * sourceFile - path to some kotlin source
+     *  * inlineFunction - jvmSignature of some inline function in source file
+     *  * target files - collection of files inlineFunction has been inlined to
+     */
+    private inner class InlineFunctionsFilesMap : BasicMap<Map<String, Collection<String>>>() {
+
+        private val cache = THashMap<String, MutableMap<String, MutableCollection<String>>>(FileUtil.PATH_HASHING_STRATEGY)
+
+        override fun createMap(): PersistentHashMap<String, Map<String, Collection<String>>> = PersistentHashMap(
+                File(baseDir, HAS_INLINE_TO),
+                PathStringDescriptor(),
+                StringToPathsMapExternalizer
+        )
+
+        public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
+            val mapping = getMappingFromCache(sourcePath.normalizedPath)
+            val paths = mapping.getOrPut(jvmSignature) { THashSet(FileUtil.PATH_HASHING_STRATEGY) }
+            paths.add(targetPath.normalizedPath)
+        }
+
+        public fun get(sourceFile: String, jvmSignature: String): Collection<String> {
+            val normalizedPath = sourceFile.normalizedPath
+            if (normalizedPath !in cache && !storage.containsMapping(normalizedPath)) return emptySet()
+
+            val mapping = getMappingFromCache(normalizedPath)
+            return mapping[jvmSignature] ?: emptySet()
+        }
+
+        override fun clean() {
+            cache.clear()
+            super.clean()
+        }
+
+        override fun flush(memoryCachesOnly: Boolean) {
+            for ((k, v) in cache) {
+                storage.put(k, v)
+            }
+
+            super.flush(memoryCachesOnly)
+        }
+
+        // TODO: fix
+        override fun dumpValue(value: Map<String, Collection<String>>) =
+                value.toString()
+
+        private fun getMappingFromCache(sourcePath: String): MutableMap<String, MutableCollection<String>> {
+            val cachedValue = cache[sourcePath]
+            if (cachedValue != null) return cachedValue
+
+            val mapping = storage[sourcePath] ?: emptyMap()
+            val mutableMapping = hashMapOf<String, MutableCollection<String>>()
+
+            for ((k, v) in mapping) {
+                val paths = THashSet(v, FileUtil.PATH_HASHING_STRATEGY)
+                mutableMapping[k] = paths
+            }
+
+            cache[sourcePath] = mutableMapping
+            return mutableMapping
+        }
     }
 
     enum class RecompilationDecision {
@@ -829,6 +912,27 @@ private object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
+private object StringToPathsMapExternalizer : StringMapExternalizer<Collection<String>>() {
+    override fun readValue(input: DataInput): Collection<String> {
+        val size = input.readInt()
+        val paths = THashSet(size, FileUtil.PATH_HASHING_STRATEGY)
+
+        repeat(size) {
+            paths.add(IOUtil.readUTF(input))
+        }
+
+        return paths
+    }
+
+    override fun writeValue(output: DataOutput, value: Collection<String>) {
+        output.writeInt(value.size())
+
+        for (path in value) {
+            IOUtil.writeUTF(output, path)
+        }
+    }
+}
+
 private object StringListExternalizer : DataExternalizer<List<String>> {
     override fun save(out: DataOutput, value: List<String>) {
         value.forEach { IOUtil.writeUTF(out, it) }
@@ -863,4 +967,7 @@ private object PathCollectionExternalizer : DataExternalizer<Collection<String>>
 
 private val File.normalizedPath: String
     get() = FileUtil.toSystemIndependentName(canonicalPath)
+
+private val String.normalizedPath: String
+    get() = FileUtil.toSystemIndependentName(this)
 
