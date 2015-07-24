@@ -11,7 +11,7 @@ fun box(): String {
     if (enclosingMethod != "box") return "method: $enclosingMethod"
 
     val enclosingClass = javaClass.getEnclosingClass()!!.getName()
-    if (!enclosingClass.startsWith("_DefaultPackage\$") || enclosingClass != l.javaClass.getEnclosingClass()!!.getName())
+    if (enclosingClass != "LambdaInObjectLiteralSuperCallKt" || enclosingClass != l.javaClass.getEnclosingClass()!!.getName())
         return "enclosing class: $enclosingClass"
 
     val declaringClass = javaClass.getDeclaringClass()

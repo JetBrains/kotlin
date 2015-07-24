@@ -23,9 +23,9 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 lambda.1.kt
-//_DefaultPackage
+//Lambda_1Kt
 //+ 2 lambda.2.kt
-//builders/BuildersPackage
+//builders/Lambda_2Kt
 //*L
 //1#1,46:1
 //4#2:47
@@ -37,9 +37,9 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 lambda.2.kt
-//builders/BuildersPackage$lambda_2$HASH$call$1
+//builders/Lambda_2Kt$call$1
 //+ 2 lambda.1.kt
-//_DefaultPackage$lambda_1$HASH
+//Lambda_1Kt
 //*L
 //1#1,18:1
 //8#2:19

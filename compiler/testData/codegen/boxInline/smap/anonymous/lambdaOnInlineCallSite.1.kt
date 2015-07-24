@@ -25,9 +25,9 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 lambdaOnInlineCallSite.1.kt
-//_DefaultPackage
+//LambdaOnInlineCallSite_1Kt
 //+ 2 lambdaOnInlineCallSite.2.kt
-//builders/BuildersPackage
+//builders/LambdaOnInlineCallSite_2Kt
 //*L
 //1#1,56:1
 //4#2:57
@@ -39,7 +39,7 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 lambdaOnInlineCallSite.1.kt
-//_DefaultPackage$lambdaOnInlineCallSite_1$HASH$test$1$1
+//LambdaOnInlineCallSite_1Kt$test$1$1
 //*L
 //1#1,56:1
 //*E
@@ -50,7 +50,7 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 lambdaOnInlineCallSite.1.kt
-//_DefaultPackage$lambdaOnInlineCallSite_1$HASH$test$1$1
+//LambdaOnInlineCallSite_1Kt$test$1$1
 //*L
 //1#1,56:1
 //*E

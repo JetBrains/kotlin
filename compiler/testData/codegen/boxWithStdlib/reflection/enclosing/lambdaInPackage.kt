@@ -2,7 +2,7 @@ val l: Any = {}
 
 fun box(): String {
     val enclosingClass = l.javaClass.getEnclosingClass()!!.getName()
-    if (!enclosingClass.startsWith("_DefaultPackage") || !enclosingClass.contains("lambdaInPackage")) return "enclosing class: $enclosingClass"
+    if (enclosingClass != "LambdaInPackageKt") return "enclosing class: $enclosingClass"
 
     val enclosingConstructor = l.javaClass.getEnclosingConstructor()
     if (enclosingConstructor != null) return "enclosing constructor found: $enclosingConstructor"

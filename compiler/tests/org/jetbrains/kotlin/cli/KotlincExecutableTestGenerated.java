@@ -145,6 +145,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("sanitized-name.clash.args")
+        public void testSanitized_name_clash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/sanitized-name.clash.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("signatureClash.args")
         public void testSignatureClash() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/signatureClash.args");

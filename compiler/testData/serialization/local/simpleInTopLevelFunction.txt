@@ -1,3 +1,3 @@
-local final class `_DefaultPackage$simpleInTopLevelFunction$*$main$Local`
+local final class `SimpleInTopLevelFunctionKt$main$Local`
 
-public constructor `_DefaultPackage$simpleInTopLevelFunction$*$main$Local`()
+public constructor `SimpleInTopLevelFunctionKt$main$Local`()

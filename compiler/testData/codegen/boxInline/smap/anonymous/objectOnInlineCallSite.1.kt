@@ -27,9 +27,9 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 objectOnInlineCallSite.1.kt
-//_DefaultPackage
+//ObjectOnInlineCallSite_1Kt
 //+ 2 objectOnInlineCallSite.2.kt
-//builders/BuildersPackage
+//builders/ObjectOnInlineCallSite_2Kt
 //*L
 //1#1,58:1
 //4#2:59
@@ -41,7 +41,7 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 objectOnInlineCallSite.1.kt
-//_DefaultPackage$objectOnInlineCallSite_1$HASH$test$1$1
+//ObjectOnInlineCallSite_1Kt$test$1$1
 //*L
 //1#1,58:1
 //*E
@@ -52,7 +52,7 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 objectOnInlineCallSite.1.kt
-//_DefaultPackage$objectOnInlineCallSite_1$HASH$test$1$1
+//ObjectOnInlineCallSite_1Kt$test$1$1
 //*L
 //1#1,58:1
 //*E

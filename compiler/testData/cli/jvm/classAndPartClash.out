@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/classAndPartClash.kt:1:1: error: duplicate JVM class name 'test/ClassAndPartClash_' generated from: package-fragment test, ClassAndPartClash_
+compiler/testData/cli/jvm/classAndPartClash.kt:1:1: error: duplicate JVM class name 'test/ClassAndPartClashKt' generated from: package-fragment test, ClassAndPartClashKt
 package test
 ^
-compiler/testData/cli/jvm/classAndPartClash.kt:7:1: error: duplicate JVM class name 'test/ClassAndPartClash_' generated from: package-fragment test, ClassAndPartClash_
-class ClassAndPartClash_ {
+compiler/testData/cli/jvm/classAndPartClash.kt:5:1: error: duplicate JVM class name 'test/ClassAndPartClashKt' generated from: package-fragment test, ClassAndPartClashKt
+class ClassAndPartClashKt
 ^
 COMPILATION_ERROR

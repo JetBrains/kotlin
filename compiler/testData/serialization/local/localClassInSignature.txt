@@ -1,7 +1,7 @@
-local open class `_DefaultPackage$localClassInSignature$*$main$Local`
+local open class `LocalClassInSignatureKt$main$Local`
 
-public constructor `_DefaultPackage$localClassInSignature$*$main$Local`()
-internal final val returnType: `_DefaultPackage$localClassInSignature$*$main$Local`
-internal final fun </*0*/ T : `_DefaultPackage$localClassInSignature$*$main$Local`, /*1*/ U : T> generic(/*0*/ t: T): U
-internal final fun param(/*0*/ l: `_DefaultPackage$localClassInSignature$*$main$Local`): kotlin.Unit
-internal final fun `_DefaultPackage$localClassInSignature$*$main$Local`.receiver(): `_DefaultPackage$localClassInSignature$*$main$Local`
+public constructor `LocalClassInSignatureKt$main$Local`()
+internal final val returnType: `LocalClassInSignatureKt$main$Local`
+internal final fun </*0*/ T : `LocalClassInSignatureKt$main$Local`, /*1*/ U : T> generic(/*0*/ t: T): U
+internal final fun param(/*0*/ l: `LocalClassInSignatureKt$main$Local`): kotlin.Unit
+internal final fun `LocalClassInSignatureKt$main$Local`.receiver(): `LocalClassInSignatureKt$main$Local`
