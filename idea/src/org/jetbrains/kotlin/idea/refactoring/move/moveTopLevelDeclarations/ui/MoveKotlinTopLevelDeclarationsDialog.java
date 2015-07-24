@@ -624,7 +624,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             }
 
             MoveKotlinTopLevelDeclarationsOptions options = new MoveKotlinTopLevelDeclarationsOptions(
-                    sourceFile, elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
+                    elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
             );
             invokeRefactoring(new MoveKotlinTopLevelDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE$));
         }

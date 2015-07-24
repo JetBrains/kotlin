@@ -255,7 +255,7 @@ enum class MoveAction {
                 JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)
             }
 
-            val options = MoveKotlinTopLevelDeclarationsOptions(mainFile as JetFile, listOf(elementToMove), moveTarget)
+            val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
             MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
         }
     },
