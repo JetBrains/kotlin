@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
-import java.util.HashSet
-import java.util.LinkedHashSet
 
 public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
     override fun collectMethodsToGenerate(descriptor: ClassDescriptor): Set<CallableMemberDescriptor> {
@@ -36,29 +34,20 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
                 }
             }
         }
-        val result = HashSet<CallableMemberDescriptor>()
-        for (superMethod in superMethods) {
-            if (superMethod.modality.isOverridable) {
-                if (!isOrOverridesSynthesized(superMethod)) {
-                    result.add(superMethod)
-                }
-            }
-        }
-        return result
+
+        return superMethods
+                .filter { it.modality.isOverridable && !isOrOverridesSynthesized(it) }
+                .toSet()
     }
 
     private fun collectSuperMethods(classDescriptor: ClassDescriptor): MutableSet<CallableMemberDescriptor> {
-        val inheritedFunctions = LinkedHashSet<CallableMemberDescriptor>()
-        for (supertype in classDescriptor.typeConstructor.supertypes) {
-            for (descriptor in supertype.memberScope.getAllDescriptors()) {
-                if (descriptor is CallableMemberDescriptor) {
-                    inheritedFunctions.add(descriptor)
-                }
-            }
-        }
+        val inheritedFunctionsSet = classDescriptor.typeConstructor.supertypes
+                .flatMap { it.memberScope.getAllDescriptors() }
+                .filterIsInstance<CallableMemberDescriptor>()
+                .toSet()
 
         // Only those actually inherited
-        val filteredMembers = OverrideResolver.filterOutOverridden(inheritedFunctions)
+        val filteredMembers = OverrideResolver.filterOutOverridden(inheritedFunctionsSet)
 
         // Group members with "the same" signature
         val factoredMembers = LinkedHashMultimap.create<CallableMemberDescriptor, CallableMemberDescriptor>()
@@ -76,11 +65,7 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
         return factoredMembers.keySet()
     }
 
-    override fun getChooserTitle(): String {
-        return "Override Members"
-    }
+    override fun getChooserTitle() = "Override Members"
 
-    override fun getNoMethodsFoundHint(): String {
-        return "No methods to override have been found"
-    }
+    override fun getNoMethodsFoundHint() = "No methods to override have been found"
 }

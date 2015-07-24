@@ -20,34 +20,19 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMethodsHandler
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class ImplementMethodsHandler : OverrideImplementMethodsHandler(), IntentionAction {
-    override fun collectMethodsToGenerate(descriptor: ClassDescriptor): Set<CallableMemberDescriptor> {
-        return OverrideResolver.getMissingImplementations(descriptor)
-    }
+    override fun collectMethodsToGenerate(descriptor: ClassDescriptor) = OverrideResolver.getMissingImplementations(descriptor)
 
-    override fun getChooserTitle(): String {
-        return "Implement Members"
-    }
+    override fun getChooserTitle() = "Implement Members"
 
-    override fun getNoMethodsFoundHint(): String {
-        return "No methods to implement have been found"
-    }
+    override fun getNoMethodsFoundHint() = "No methods to implement have been found"
 
-    override fun getText(): String {
-        return JetBundle.message("implement.members")
-    }
+    override fun getText() = JetBundle.message("implement.members")
+    override fun getFamilyName() = JetBundle.message("implement.members")
 
-    override fun getFamilyName(): String {
-        return JetBundle.message("implement.members")
-    }
-
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        return isValidFor(editor, file)
-    }
+    override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)
 }

@@ -36,58 +36,38 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import javax.swing.Icon
 
-public class DescriptorClassMember(private val myPsiElement: PsiElement, public val descriptor: DeclarationDescriptor) : MemberChooserObjectBase(DescriptorClassMember.getText(descriptor), DescriptorClassMember.getIcon(myPsiElement, descriptor)), ClassMemberWithElement {
+public class DescriptorClassMember(
+        private val psiElement: PsiElement,
+        public val descriptor: DeclarationDescriptor
+) : MemberChooserObjectBase(DescriptorClassMember.getText(descriptor), DescriptorClassMember.getIcon(psiElement, descriptor)), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
-        val parent = descriptor.containingDeclaration
-        var declaration: PsiElement?
-        if (myPsiElement is JetDeclaration) {
-            // kotlin
-            declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, javaClass<JetNamedDeclaration>())
-            if (declaration == null) {
-                declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, javaClass<JetFile>())
-            }
+        val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
+
+        val declaration = if (psiElement is JetDeclaration) { // kotlin
+            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<JetNamedDeclaration>())
+                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<JetFile>())
         }
-        else {
-            // java or bytecode
-            declaration = (myPsiElement as PsiMember).containingClass
+        else { // java or compiled
+            (psiElement as PsiMember).containingClass
+        } ?: error("No parent for $psiElement")
+
+        return when (declaration) {
+            is JetFile -> PsiElementMemberChooserObject(declaration, declaration.name)
+            else -> DescriptorClassMember(declaration, parent)
         }
-        assert(parent != null) { "$NO_PARENT_FOR$descriptor" }
-        assert(declaration != null) { "$NO_PARENT_FOR$myPsiElement" }
-
-        if (declaration is JetFile) {
-            return PsiElementMemberChooserObject(declaration, declaration.name)
-        }
-
-        return DescriptorClassMember(declaration!!, parent!!)
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
+    override fun equals(other: Any?) = this === other || other is DescriptorClassMember && descriptor == other.descriptor
 
-        val that = other as DescriptorClassMember
+    override fun hashCode() = descriptor.hashCode()
 
-        if (descriptor != that.descriptor) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return descriptor.hashCode()
-    }
-
-    override fun getElement(): PsiElement {
-        return myPsiElement
-    }
+    override fun getElement() = psiElement
 
     companion object {
-
-        public val NO_PARENT_FOR: String = "No parent for "
-
         private val MEMBER_RENDERER = DescriptorRenderer.withOptions {
             withDefinedIn = false
             modifiers = emptySet<DescriptorRendererModifier>()
@@ -96,30 +76,29 @@ public class DescriptorClassMember(private val myPsiElement: PsiElement, public 
         }
 
         private fun getText(descriptor: DeclarationDescriptor): String {
-            if (descriptor is ClassDescriptor) {
-                return DescriptorUtils.getFqNameSafe(descriptor).render()
-            }
-            else {
-                return MEMBER_RENDERER.render(descriptor)
-            }
+            return if (descriptor is ClassDescriptor)
+                descriptor.fqNameSafe.render()
+            else
+                MEMBER_RENDERER.render(descriptor)
         }
 
-        private fun getIcon(element: PsiElement, declarationDescriptor: DeclarationDescriptor): Icon {
+        private fun getIcon(element: PsiElement, descriptor: DeclarationDescriptor): Icon {
             if (element.isValid) {
                 val isClass = element is PsiClass || element is JetClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
                 if (element is JetDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
-                    return JetDescriptorIconProvider.getIcon(declarationDescriptor, element, flags)
+                    return JetDescriptorIconProvider.getIcon(descriptor, element, flags)
                 }
                 else {
                     // it is better to show java icons for java code
                     return element.getIcon(flags)
                 }
             }
-
-            return JetDescriptorIconProvider.getIcon(declarationDescriptor, element, 0)
+            else {
+                return JetDescriptorIconProvider.getIcon(descriptor, element, 0)
+            }
         }
     }
 }
