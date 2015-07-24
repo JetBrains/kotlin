@@ -83,11 +83,47 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.*;
 
 public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
+    // This is special 'PsiElement' whose purpose is to wrap JetMethodDescriptor so that it can be kept in the usage list
+    private static class OriginalJavaMethodDescriptorWrapper extends UsageInfo {
+        JetMethodDescriptor originalJavaMethodDescriptor;
+
+        public OriginalJavaMethodDescriptorWrapper(@NotNull PsiElement element) {
+            super(element);
+        }
+    }
+
+    private static class DummyJetChangeInfo extends JetChangeInfo {
+        public DummyJetChangeInfo(
+                @NotNull PsiElement method,
+                @NotNull JetMethodDescriptor methodDescriptor
+        ) {
+            super(methodDescriptor,
+                  "",
+                  null,
+                  "",
+                  Visibilities.INTERNAL,
+                  Collections.<JetParameterInfo>emptyList(),
+                  null,
+                  method,
+                  Collections.<PsiElement>emptyList());
+        }
+    }
+
+    @Nullable
+    private static OriginalJavaMethodDescriptorWrapper getOriginalJavaMethodDescriptorWrapper(@NotNull UsageInfo[] usages) {
+        return KotlinPackage.firstOrNull(KotlinPackage.filterIsInstance(usages, OriginalJavaMethodDescriptorWrapper.class));
+    }
+
+    // It's here to prevent O(usage_count^2) performance
+    private boolean initializedOriginalDescriptor;
+
     @Override
     public UsageInfo[] findUsages(ChangeInfo info) {
-        originalJavaMethodDescriptor = null;
+        initializedOriginalDescriptor = false;
 
         Set<UsageInfo> result = new HashSet<UsageInfo>();
+
+        result.add(new OriginalJavaMethodDescriptorWrapper(info.getMethod()));
 
         if (info instanceof JetChangeInfo) {
             findAllMethodUsages((JetChangeInfo) info, result);
@@ -813,8 +849,6 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         });
     }
 
-    private JetMethodDescriptor originalJavaMethodDescriptor;
-
     private static boolean isJavaMethodUsage(UsageInfo usageInfo) {
         // MoveRenameUsageInfo corresponds to non-Java usage of Java method
         return usageInfo instanceof JavaMethodDeferredKotlinUsage || usageInfo instanceof MoveRenameUsageInfo;
@@ -834,6 +868,11 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         return new JavaMethodKotlinCallUsage(callElement,
                                              javaMethodChangeInfo,
                                              refTarget != null && ChangeSignaturePackage.isCaller(refTarget, allUsages));
+    }
+
+    private static boolean canCreateReplacementUsage(UsageInfo originalUsageInfo) {
+        if (originalUsageInfo instanceof JavaMethodDeferredKotlinUsage) return true;
+        return PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), JetCallElement.class) != null;
     }
 
     private static class NullabilityPropagator {
@@ -958,35 +997,30 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
 
         if (beforeMethodChange) {
-            boolean startedFromJava = method instanceof PsiMethod;
-            if (startedFromJava && originalJavaMethodDescriptor == null) {
-                FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
-                assert methodDescriptor != null;
-                originalJavaMethodDescriptor =
-                        new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));;
+            if (!(method instanceof PsiMethod) || initializedOriginalDescriptor) return true;
 
-                // This change info is used as a placeholder before primary method update
-                // It gets replaced with real change info afterwards
-                JetChangeInfo dummyChangeInfo =
-                        new JetChangeInfo(originalJavaMethodDescriptor,
-                                          "",
-                                          null,
-                                          "",
-                                          Visibilities.INTERNAL,
-                                          Collections.<JetParameterInfo>emptyList(),
-                                          null,
-                                          changeInfo.getMethod(),
-                                          Collections.<PsiElement>emptyList());
-                for (int i = 0; i < usages.length; i++) {
-                    UsageInfo oldUsageInfo = usages[i];
-                    if (!isJavaMethodUsage(oldUsageInfo)) continue;
+            OriginalJavaMethodDescriptorWrapper descriptorWrapper = getOriginalJavaMethodDescriptorWrapper(usages);
+            if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true;
 
-                    UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo, usages);
-                    if (newUsageInfo != null) {
-                        usages[i] = newUsageInfo;
-                    }
+            FunctionDescriptor methodDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) method);
+            assert methodDescriptor != null;
+            descriptorWrapper.originalJavaMethodDescriptor =
+                    new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));
+
+            // This change info is used as a placeholder before primary method update
+            // It gets replaced with real change info afterwards
+            JetChangeInfo dummyChangeInfo = new DummyJetChangeInfo(changeInfo.getMethod(), descriptorWrapper.originalJavaMethodDescriptor);
+            for (int i = 0; i < usages.length; i++) {
+                UsageInfo oldUsageInfo = usages[i];
+                if (!isJavaMethodUsage(oldUsageInfo)) continue;
+
+                UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo, usages);
+                if (newUsageInfo != null) {
+                    usages[i] = newUsageInfo;
                 }
             }
+
+            initializedOriginalDescriptor = true;
 
             return true;
         }
@@ -994,19 +1028,23 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement element = usageInfo.getElement();
         if (element == null) return false;
 
-        if (originalJavaMethodDescriptor != null) {
-            JetChangeInfo javaMethodChangeInfo = ChangeSignaturePackage.toJetChangeInfo(changeInfo, originalJavaMethodDescriptor);
-            originalJavaMethodDescriptor = null;
+        if (usageInfo instanceof JavaMethodKotlinUsageWithDelegate) {
+            JavaMethodKotlinUsageWithDelegate usageWithDelegate = (JavaMethodKotlinUsageWithDelegate) usageInfo;
+            // Do not call getOriginalJavaMethodDescriptorWrapper() on each usage to avoid O(usage_count^2) performance
+            if (((JavaMethodKotlinUsageWithDelegate) usageInfo).getJavaMethodChangeInfo() instanceof DummyJetChangeInfo) {
+                OriginalJavaMethodDescriptorWrapper descriptorWrapper = getOriginalJavaMethodDescriptorWrapper(usages);
+                JetMethodDescriptor methodDescriptor = descriptorWrapper != null ? descriptorWrapper.originalJavaMethodDescriptor : null;
+                if (methodDescriptor == null) return true;
 
-            for (UsageInfo info : usages) {
-                if (info instanceof JavaMethodKotlinUsageWithDelegate) {
-                    ((JavaMethodKotlinUsageWithDelegate) info).setJavaMethodChangeInfo(javaMethodChangeInfo);
+                JetChangeInfo javaMethodChangeInfo = ChangeSignaturePackage.toJetChangeInfo(changeInfo, methodDescriptor);
+                for (UsageInfo info : usages) {
+                    if (info instanceof JavaMethodKotlinUsageWithDelegate) {
+                        ((JavaMethodKotlinUsageWithDelegate) info).setJavaMethodChangeInfo(javaMethodChangeInfo);
+                    }
                 }
             }
-        }
 
-        if (usageInfo instanceof JavaMethodKotlinUsageWithDelegate) {
-            return ((JavaMethodKotlinUsageWithDelegate) usageInfo).processUsage(usages);
+            return usageWithDelegate.processUsage(usages);
         }
 
         if (usageInfo instanceof MoveRenameUsageInfo && isJavaMethodUsage) {
