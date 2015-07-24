@@ -551,7 +551,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun createMap(): PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
                 File(baseDir, INLINE_FUNCTIONS),
                 EnumeratorStringDescriptor(),
-                InlineFunctionsMapExternalizer
+                StringToLongMapExternalizer
         )
 
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
@@ -635,31 +635,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 append("}")
             }.toString()
         }
-    }
-
-    private object InlineFunctionsMapExternalizer : DataExternalizer<Map<String, Long>> {
-        override fun save(out: DataOutput, map: Map<String, Long>?) {
-            out.writeInt(map!!.size())
-            for (name in map.keySet()) {
-                IOUtil.writeString(name, out)
-                out.writeLong(map[name]!!)
-            }
-        }
-
-        override fun read(`in`: DataInput): Map<String, Long>? {
-            val size = `in`.readInt()
-            val map = HashMap<String, Long>(size)
-
-            repeat(size) {
-                val name = IOUtil.readString(`in`)!!
-                val value = `in`.readLong()
-
-                map[name] = value
-            }
-
-            return map
-        }
-
     }
 
     private inner class PackagePartMap : BasicMap<Boolean>() {
@@ -816,6 +791,41 @@ private object ByteArrayExternalizer : DataExternalizer<ByteArray> {
         val buf = ByteArray(length)
         `in`.readFully(buf)
         return buf
+    }
+}
+
+private abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
+    override fun save(out: DataOutput, map: Map<String, T>?) {
+        out.writeInt(map!!.size())
+
+        for ((key, value) in map.entrySet()) {
+            IOUtil.writeString(key, out)
+            writeValue(out, value)
+        }
+    }
+
+    override fun read(`in`: DataInput): Map<String, T>? {
+        val size = `in`.readInt()
+        val map = HashMap<String, T>(size)
+
+        repeat(size) {
+            val name = IOUtil.readString(`in`)!!
+            map[name] = readValue(`in`)
+        }
+
+        return map
+    }
+
+    protected abstract fun writeValue(output: DataOutput, value: T)
+    protected abstract fun readValue(input: DataInput): T
+}
+
+private object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
+    override fun readValue(input: DataInput): Long =
+            input.readLong()
+
+    override fun writeValue(output: DataOutput, value: Long) {
+        output.writeLong(value)
     }
 }
 
