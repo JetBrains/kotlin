@@ -209,12 +209,21 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
                 }
             }
         }
+        contextElement is JetPrimaryConstructor -> {
+            val classOrObject = contextElement.getContainingClassOrObject()
+            insertNewInitializer(classOrObject.getOrCreateBody())
+        }
         contextElement is JetClassOrObject -> {
             insertNewInitializer(contextElement.getBody()!!)
         }
         contextElement is JetFunctionLiteral -> {
             val block = contextElement.getBodyExpression()!!
             block.getStatements().firstOrNull() ?: block.getLastChild()
+        }
+        contextElement is JetDeclarationWithBody && !contextElement.hasBody()-> {
+            val block = psiFactory.createBlock("")
+            val newBlock = contextElement.add(block) as JetBlockExpression
+            newBlock.getRBrace()
         }
         contextElement is JetDeclarationWithBody && !contextElement.hasBlockBody()-> {
             wrapInRunFun(contextElement.getBodyExpression()!!)

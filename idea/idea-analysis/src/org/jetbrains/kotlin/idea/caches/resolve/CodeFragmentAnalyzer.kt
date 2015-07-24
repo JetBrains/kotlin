@@ -93,6 +93,20 @@ public class CodeFragmentAnalyzer(
         val dataFlowInfo: DataFlowInfo
 
         when (context) {
+            is JetPrimaryConstructor -> {
+                val descriptor = resolveSession.getClassDescriptor(context.getContainingClassOrObject(), NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
+
+                scopeForContextElement = descriptor.getScopeForInitializerResolution()
+                dataFlowInfo = DataFlowInfo.EMPTY
+            }
+            is JetSecondaryConstructor -> {
+                val correctedContext = context.getDelegationCall().calleeExpression!!
+
+                val contextForElement = resolveToElement(correctedContext)
+
+                scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
+                dataFlowInfo = DataFlowInfo.EMPTY
+            }
             is JetClassOrObject -> {
                 val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
