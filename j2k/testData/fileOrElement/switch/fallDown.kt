@@ -1,7 +1,9 @@
 package switch_demo
 
+import kotlin.platform.platformStatic
+
 public object SwitchDemo {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         val month = 8
         val monthString: String
         when (month) {
@@ -11,5 +13,3 @@ public object SwitchDemo {
         println(monthString)
     }
 }
-
-fun main(args: Array<String>) = SwitchDemo.main(args)

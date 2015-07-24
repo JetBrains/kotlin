@@ -1,5 +1,7 @@
+import kotlin.platform.platformStatic
+
 public object A {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         println(Void.TYPE)
         println(Integer.TYPE)
         println(java.lang.Double.TYPE)
@@ -8,5 +10,3 @@ public object A {
         println(javaClass<Array<Array<Any>>>())
     }
 }
-
-fun main(args: Array<String>) = A.main(args)

@@ -1,5 +1,7 @@
+import kotlin.platform.platformStatic
+
 public object TestClass {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         var i = 1
         OuterLoop1@ OuterLoop2@ while (i < 1000) {
             var j = 1
@@ -23,5 +25,3 @@ public object TestClass {
         }
     }
 }
-
-fun main(args: Array<String>) = TestClass.main(args)

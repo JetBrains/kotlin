@@ -1,6 +1,6 @@
+import kotlin.platform.platformStatic
+
 public object A {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
     }
 }
-
-fun main(args: Array<String>) = A.main(args)

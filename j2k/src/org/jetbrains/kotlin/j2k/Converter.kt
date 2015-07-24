@@ -148,17 +148,7 @@ class Converter private constructor(
 
     private fun convertFile(javaFile: PsiJavaFile): File {
         var convertedChildren = javaFile.getChildren().map { convertTopElement(it) }.filterNotNull()
-        return File(convertedChildren, createMainFunction(javaFile)).assignPrototype(javaFile)
-    }
-
-    private fun createMainFunction(file: PsiJavaFile): String? {
-        for (`class` in file.getClasses()) {
-            val mainMethod = PsiMethodUtil.findMainMethod(`class`)
-            if (mainMethod != null) {
-                return "fun main(args: Array<String>) = ${`class`.getName()}.${mainMethod.getName()}(args)"
-            }
-        }
-        return null
+        return File(convertedChildren).assignPrototype(javaFile)
     }
 
     public fun convertAnnotations(owner: PsiModifierListOwner): Annotations
@@ -427,6 +417,17 @@ class Converter private constructor(
         }
 
         if (function == null) return null
+
+        if (PsiMethodUtil.isMainMethod(method)) {
+            val fqName = FqName("kotlin.platform.platformStatic")
+            val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
+
+            function.annotations += Annotations(
+                    listOf(Annotation(identifier,
+                                      listOf(),
+                                      withAt = false,
+                                      newLineAfter = false).assignNoPrototype())).assignNoPrototype()
+        }
 
         if (function.parameterList.parameters.any { it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(

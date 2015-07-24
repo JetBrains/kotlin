@@ -1,5 +1,7 @@
+import kotlin.platform.platformStatic
+
 public object NonDefault {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
 
         val value = 3
         var valueString = ""
@@ -11,5 +13,3 @@ public object NonDefault {
         println(valueString)
     }
 }
-
-fun main(args: Array<String>) = NonDefault.main(args)
