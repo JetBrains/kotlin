@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.ArrayList
 import java.util.HashMap
@@ -126,6 +127,7 @@ public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisPa
             modules: Collection<M>,
             modulesContent: (M) -> ModuleContent,
             platformParameters: P,
+            targetEnvironment: TargetEnvironment,
             delegateResolver: ResolverForProject<M, A> = EmptyResolverForProject()
     ): ResolverForProject<M, A> {
 
@@ -181,8 +183,8 @@ public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisPa
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val computeResolverForModule = storageManager.createLazyValue {
                     createResolverForModule(
-                            module, descriptor, projectContext.withModule(descriptor),
-                            modulesContent(module), platformParameters, resolverForProject
+                            module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
+                            platformParameters, targetEnvironment, resolverForProject
                     )
                 }
 
@@ -200,7 +202,9 @@ public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisPa
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: P, resolverForProject: ResolverForProject<M, A>
+            platformParameters: P,
+            targetEnvironment: TargetEnvironment,
+            resolverForProject: ResolverForProject<M, A>
     ): A
 
     public val moduleParameters: ModuleParameters

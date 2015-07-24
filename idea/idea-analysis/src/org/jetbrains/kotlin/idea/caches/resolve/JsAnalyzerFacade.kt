@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -48,7 +49,9 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: PlatformAnalysisParameters, resolverForProject: ResolverForProject<M, JsResolverForModule>
+            platformParameters: PlatformAnalysisParameters,
+            targetEnvironment: TargetEnvironment,
+            resolverForProject: ResolverForProject<M, JsResolverForModule>
     ): JsResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -56,7 +59,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
                 project, moduleContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
-        val resolveSession = createLazyResolveSession(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform)
+        val resolveSession = createLazyResolveSession(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment)
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {

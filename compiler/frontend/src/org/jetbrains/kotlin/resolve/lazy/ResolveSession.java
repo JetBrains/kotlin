@@ -77,6 +77,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private FileScopeProvider fileScopeProvider;
     private DeclarationScopeProvider declarationScopeProvider;
     private LookupTracker lookupTracker;
+    private LocalDescriptorResolver localDescriptorResolver;
 
     @Inject
     public void setJetImportFactory(JetImportsFactory jetImportFactory) {
@@ -321,7 +322,10 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @NotNull
     public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
-        return lazyDeclarationResolver.resolveToDescriptor(declaration);
+        if (!JetPsiUtil.isLocal(declaration)) {
+            return lazyDeclarationResolver.resolveToDescriptor(declaration);
+        }
+        return localDescriptorResolver.resolveLocalDeclaration(declaration);
     }
 
     @NotNull
@@ -413,5 +417,10 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public LookupTracker getLookupTracker() {
         return lookupTracker;
+    }
+
+    @Inject
+    public void setLocalDescriptorResolver(@NotNull LocalDescriptorResolver localDescriptorResolver) {
+        this.localDescriptorResolver = localDescriptorResolver;
     }
 }

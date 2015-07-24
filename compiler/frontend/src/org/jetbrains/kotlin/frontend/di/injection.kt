@@ -61,7 +61,7 @@ public fun createContainerForBodyResolve(
 
     useInstance(statementFilter)
 
-    CompilerEnvironment.configure(this)
+    useInstance(BodyResolveCache.ThrowException)
 
     useImpl<BodyResolver>()
 }
@@ -105,21 +105,28 @@ private fun createContainerForLazyResolve(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
-        platform: TargetPlatform
+        platform: TargetPlatform,
+        targetEnvironment: TargetEnvironment
 ): StorageComponentContainer = createContainer("LazyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
 
+    targetEnvironment.configure(this)
+
     useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()
 }
 
+jvmOverloads
 public fun createLazyResolveSession(
-        moduleContext: ModuleContext, declarationProviderFactory: DeclarationProviderFactory, bindingTrace: BindingTrace,
-        platform: TargetPlatform
-): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform).get<ResolveSession>()
+        moduleContext: ModuleContext,
+        declarationProviderFactory: DeclarationProviderFactory,
+        bindingTrace: BindingTrace,
+        platform: TargetPlatform,
+        targetEnvironment: TargetEnvironment = CompilerEnvironment
+): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment).get<ResolveSession>()
 
 public fun createContainerForMacros(project: Project, module: ModuleDescriptor): ContainerForMacros {
     val componentContainer = createContainer("Macros") {

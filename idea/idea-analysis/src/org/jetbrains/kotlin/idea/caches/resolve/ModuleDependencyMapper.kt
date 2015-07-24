@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.project.IdeEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -63,7 +64,7 @@ fun createModuleResolverProvider(
 
         val resolverForProject = analyzerFacade.setupResolverForProject(
                 globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
-                jvmPlatformParameters, delegateProvider.resolverForProject
+                jvmPlatformParameters, IdeEnvironment, delegateProvider.resolverForProject
         )
         return resolverForProject
     }

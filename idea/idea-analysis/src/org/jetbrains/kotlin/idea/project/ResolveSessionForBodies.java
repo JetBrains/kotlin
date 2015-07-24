@@ -76,14 +76,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
     @NotNull
     @Override
     public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
-        if (!JetPsiUtil.isLocal(declaration)) {
-            return resolveSession.resolveToDescriptor(declaration);
-        }
-
-        BindingContext context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL);
-        return BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, declaration,
-                                              "Descriptor wasn't found for declaration " + declaration.toString() + "\n" +
-                                              PsiUtilPackage.getElementTextWithContext(declaration));
+        return resolveSession.resolveToDescriptor(declaration);
     }
 
     @Override
