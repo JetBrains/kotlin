@@ -68,6 +68,7 @@ public class DescriptorResolver {
     @NotNull private final DelegatedPropertyResolver delegatedPropertyResolver;
     @NotNull private final StorageManager storageManager;
     @NotNull private final KotlinBuiltIns builtIns;
+    @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -75,7 +76,8 @@ public class DescriptorResolver {
             @NotNull DelegatedPropertyResolver delegatedPropertyResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull StorageManager storageManager,
-            @NotNull TypeResolver typeResolver
+            @NotNull TypeResolver typeResolver,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -83,6 +85,7 @@ public class DescriptorResolver {
         this.expressionTypingServices = expressionTypingServices;
         this.storageManager = storageManager;
         this.typeResolver = typeResolver;
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
     }
 
     public List<JetType> resolveSupertypes(
@@ -848,7 +851,7 @@ public class DescriptorResolver {
                 public ConstantValue<?> invoke() {
                     JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
-                    return ConstantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
+                    return constantExpressionEvaluator.evaluateToConstantValue(initializer, trace, initializerType);
                 }
             }, null)
         );

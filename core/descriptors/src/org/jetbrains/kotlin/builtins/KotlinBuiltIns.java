@@ -181,6 +181,10 @@ public class KotlinBuiltIns {
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
 
+        public final FqName mutableList = fqName("MutableList");
+        public final FqName mutableSet = fqName("MutableSet");
+        public final FqName mutableMap = fqName("MutableMap");
+
         public final FqNameUnsafe kClass = new FqName("kotlin.reflect.KClass").toUnsafe();
 
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;

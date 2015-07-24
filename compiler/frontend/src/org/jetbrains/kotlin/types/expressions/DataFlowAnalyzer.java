@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -50,9 +49,17 @@ import static org.jetbrains.kotlin.types.TypeUtils.*;
 public class DataFlowAnalyzer {
 
     private final Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers;
+    private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    private final KotlinBuiltIns builtIns;
 
-    public DataFlowAnalyzer(@NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers) {
+    public DataFlowAnalyzer(
+            @NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull KotlinBuiltIns builtIns
+    ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
+        this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.builtIns = builtIns;
     }
 
     @NotNull
@@ -181,7 +188,7 @@ public class DataFlowAnalyzer {
         }
 
         if (expression instanceof JetConstantExpression) {
-            ConstantValue<?> constantValue = ConstantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
+            ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
             boolean error = new CompileTimeConstantChecker(c.trace, true)
                     .checkConstantExpressionType(constantValue, (JetConstantExpression) expression, c.expectedType);
             if (hasError != null) hasError.set(error);
@@ -221,7 +228,7 @@ public class DataFlowAnalyzer {
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {
         if (expectedType != NO_EXPECTED_TYPE) {
-            JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? KotlinBuiltIns.getInstance().getUnitType() : expectedType;
+            JetType normalizeExpectedType = expectedType == UNIT_EXPECTED_TYPE ? builtIns.getUnitType() : expectedType;
             trace.record(BindingContext.EXPECTED_EXPRESSION_TYPE, expression, normalizeExpectedType);
         }
     }
@@ -232,7 +239,7 @@ public class DataFlowAnalyzer {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
-        return KotlinBuiltIns.getInstance().getUnitType();
+        return builtIns.getUnitType();
     }
 
     @Nullable
@@ -293,7 +300,7 @@ public class DataFlowAnalyzer {
             IntegerValueTypeConstant integerValueTypeConstant = (IntegerValueTypeConstant) value;
             if (context.contextDependency == INDEPENDENT) {
                 expressionType = integerValueTypeConstant.getType(context.expectedType);
-                ArgumentTypeResolver.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
+                constantExpressionEvaluator.updateNumberType(expressionType, expression, context.statementFilter, context.trace);
             }
             else {
                 expressionType = integerValueTypeConstant.getUnknownIntegerType();

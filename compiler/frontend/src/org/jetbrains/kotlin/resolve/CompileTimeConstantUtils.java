@@ -81,13 +81,12 @@ public class CompileTimeConstantUtils {
             return false;
         }
 
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isEnumClass(typeDescriptor) ||
             isAnnotationClass(typeDescriptor) ||
             KotlinBuiltIns.isKClass(typeDescriptor) ||
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
-            builtIns.getStringType().equals(parameterType)) {
+            KotlinBuiltIns.isString(parameterType)) {
                 return true;
         }
 
@@ -103,7 +102,7 @@ public class CompileTimeConstantUtils {
                     return isEnumClass(arrayTypeDescriptor) ||
                            isAnnotationClass(arrayTypeDescriptor) ||
                            KotlinBuiltIns.isKClass(arrayTypeDescriptor) ||
-                           builtIns.getStringType().equals(arrayType);
+                           KotlinBuiltIns.isString(arrayType);
                 }
             }
         }

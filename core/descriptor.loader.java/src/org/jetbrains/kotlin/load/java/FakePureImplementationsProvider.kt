@@ -28,11 +28,9 @@ public object FakePureImplementationsProvider {
         else -> null
     }
 
-    private val kotlinBuiltins = KotlinBuiltIns.getInstance()
-
-    private val MUTABLE_LIST_FQ_NAME = DescriptorUtils.getFqNameSafe(kotlinBuiltins.getMutableList())
-    private val MUTABLE_SET_FQ_NAME = DescriptorUtils.getFqNameSafe(kotlinBuiltins.getMutableSet())
-    private val MUTABLE_MAP_FQ_NAME = DescriptorUtils.getFqNameSafe(kotlinBuiltins.getMutableMap())
+    private val MUTABLE_LIST_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableList
+    private val MUTABLE_SET_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableSet
+    private val MUTABLE_MAP_FQ_NAME = KotlinBuiltIns.FQ_NAMES.mutableMap
 
     private val MUTABLE_LISTS_IMPLEMENTATIONS = setOfFqNames("java.util.ArrayList", "java.util.LinkedList")
     private val MUTABLE_MAPS_IMPLEMENTATIONS = setOfFqNames(

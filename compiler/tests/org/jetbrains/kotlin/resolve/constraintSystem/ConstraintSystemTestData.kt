@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.JetType
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import java.util.regex.Pattern
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.JetTypeImpl
@@ -59,7 +60,7 @@ public class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong()), false, listOf(), JetScope.Empty)
+            return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), KotlinBuiltIns.getInstance()), false, listOf(), JetScope.Empty)
         }
         return typeResolver.resolveType(
             scopeToResolveTypeParameters, JetPsiFactory(project).createType(name),

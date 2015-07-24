@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.parsing.JetExpressionParsing;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.resolve.ResolvePackage;
+import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
@@ -874,5 +876,25 @@ public class JetPsiUtil {
         if (valueParameterList != null && valueParameterList.isParenthesized()) return true;
 
         return false;
+    }
+
+    @Nullable
+    public static JetExpression getLastElementDeparenthesized(
+            @Nullable JetExpression expression,
+            @NotNull StatementFilter statementFilter
+    ) {
+        JetExpression deparenthesizedExpression = JetPsiUtil.deparenthesize(expression, false);
+        if (deparenthesizedExpression instanceof JetBlockExpression) {
+            JetBlockExpression blockExpression = (JetBlockExpression) deparenthesizedExpression;
+            // todo
+            // This case is a temporary hack for 'if' branches.
+            // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
+            // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
+            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(statementFilter, blockExpression);
+            if (lastStatementInABlock != null) {
+                return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
+            }
+        }
+        return deparenthesizedExpression;
     }
 }

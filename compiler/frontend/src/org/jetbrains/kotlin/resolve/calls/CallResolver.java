@@ -78,15 +78,18 @@ public class CallResolver {
     private ArgumentTypeResolver argumentTypeResolver;
     private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
-    @NotNull private final TaskPrioritizer taskPrioritizer;
+    private final TaskPrioritizer taskPrioritizer;
+    private final ResolutionResultsHandler resolutionResultsHandler;
 
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
     public CallResolver(
-            @NotNull TaskPrioritizer taskPrioritizer
+            @NotNull TaskPrioritizer taskPrioritizer,
+            @NotNull ResolutionResultsHandler resolutionResultsHandler
     ) {
         this.taskPrioritizer = taskPrioritizer;
+        this.resolutionResultsHandler = resolutionResultsHandler;
     }
 
     // component dependency cycle
@@ -590,7 +593,7 @@ public class CallResolver {
             addResolvedCall(task, callTransformer, context);
         }
 
-        OverloadResolutionResultsImpl<F> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
+        OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(
                 task, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
             argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());

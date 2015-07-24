@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -235,7 +237,7 @@ public class CallCompleter(
         if (valueArgument.isExternal()) return
 
         val expression = valueArgument.getArgumentExpression() ?: return
-        val deparenthesized = ArgumentTypeResolver.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
+        val deparenthesized = JetPsiUtil.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = expression.let { context.trace.getType(it) }
         var updatedType: JetType? = recordedType
@@ -249,7 +251,7 @@ public class CallCompleter(
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
         // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
         if (recordedType != null && !recordedType.getConstructor().isDenotable()) {
-            updatedType = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression)
+            updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression)
         }
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.trace)

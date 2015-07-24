@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -45,9 +44,29 @@ import java.util.HashMap
 import kotlin.platform.platformStatic
 
 public class ConstantExpressionEvaluator(
-        internal val constantValueFactory: ConstantValueFactory,
         internal val builtIns: KotlinBuiltIns
 ) {
+    internal val constantValueFactory = ConstantValueFactory(builtIns)
+
+    public fun updateNumberType(
+            numberType: JetType,
+            expression: JetExpression?,
+            statementFilter: StatementFilter,
+            trace: BindingTrace
+    ) {
+        if (expression == null) return
+        BindingContextUtils.updateRecordedType(numberType, expression, trace, false)
+
+        if (expression !is JetConstantExpression) {
+            val deparenthesized = JetPsiUtil.getLastElementDeparenthesized(expression, statementFilter)
+            if (deparenthesized !== expression) {
+                updateNumberType(numberType, deparenthesized, statementFilter, trace)
+            }
+            return
+        }
+
+        evaluateExpression(expression, trace, numberType)
+    }
 
     internal fun resolveAnnotationArguments(
             resolvedCall: ResolvedCall<*>,
@@ -160,10 +179,10 @@ public class ConstantExpressionEvaluator(
         val constants = ArrayList<CompileTimeConstant<*>>()
         for (argument in resolvedValueArgument.getArguments()) {
             val argumentExpression = argument.getArgumentExpression() ?: continue
-            val constant = ConstantExpressionEvaluator.evaluate(argumentExpression, trace, expectedType)
+            val constant = evaluateExpression(argumentExpression, trace, expectedType)
             if (constant is IntegerValueTypeConstant) {
                 val defaultType = constant.getType(expectedType)
-                ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, StatementFilter.NONE, trace)
+                updateNumberType(defaultType, argumentExpression, StatementFilter.NONE, trace)
             }
             if (constant != null) {
                 constants.add(constant)
@@ -183,20 +202,16 @@ public class ConstantExpressionEvaluator(
         return if (!constant.isError) constant else null
     }
 
+    public fun evaluateToConstantValue(
+            expression: JetExpression,
+            trace: BindingTrace,
+            expectedType: JetType
+    ): ConstantValue<*>? {
+        return evaluateExpression(expression, trace, expectedType)?.toConstantValue(expectedType)
+    }
+
+
     companion object {
-        platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
-            val builtIns = KotlinBuiltIns.getInstance()
-            return ConstantExpressionEvaluator(ConstantValueFactory(builtIns), builtIns).evaluateExpression(expression, trace, expectedType)
-        }
-
-        platformStatic public fun evaluateToConstantValue(
-                expression: JetExpression,
-                trace: BindingTrace,
-                expectedType: JetType
-        ): ConstantValue<*>? {
-            return evaluate(expression, trace, expectedType)?.toConstantValue(expectedType)
-        }
-
         platformStatic public fun getConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             val constant = getPossiblyErrorConstant(expression, bindingContext) ?: return null
             return if (!constant.isError) constant else null
@@ -665,7 +680,7 @@ private class ConstantExpressionEvaluatorVisitor(
             expectedType: JetType
     ): CompileTimeConstant<*>? {
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError()) {
-            return IntegerValueTypeConstant(value, parameters)
+            return IntegerValueTypeConstant(value, constantExpressionEvaluator.builtIns, parameters)
         }
         val integerValue = factory.createIntegerConstantValue(value, expectedType)
         if (integerValue != null) {

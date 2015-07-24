@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.js.resolve
 
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
@@ -23,7 +25,13 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 public object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), ClassDeclarationChecker()),
-        additionalCallCheckers = listOf(JsCallChecker()),
+        additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
         additionalSymbolUsageValidators = listOf()
-)
+) {
+    override fun configure(container: StorageComponentContainer) {
+        super.configure(container)
+
+        container.useImpl<JsCallChecker>()
+    }
+}
