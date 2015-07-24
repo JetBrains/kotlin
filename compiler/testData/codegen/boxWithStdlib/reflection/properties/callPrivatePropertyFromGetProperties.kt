@@ -9,7 +9,7 @@ fun box(): String {
     try {
         return p.get(K("Fail: private property should not be accessible by default"))
     }
-    catch (e: IllegalPropertyAccessException) {
+    catch (e: IllegalCallableAccessException) {
         // OK
     }
 

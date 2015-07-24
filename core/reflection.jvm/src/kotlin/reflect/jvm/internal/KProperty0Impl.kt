@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.MutablePropertyReference0
 import kotlin.jvm.internal.PropertyReference0
-import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
@@ -35,14 +34,9 @@ open class KProperty0Impl<out R> : DescriptorBasedProperty<R>, KProperty0<R>, KP
 
     override val javaGetter: Method get() = super.javaGetter!!
 
-    override fun get(): R {
-        try {
-            @suppress("UNCHECKED_CAST")
-            return javaGetter.invoke(null) as R
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
-        }
+    @suppress("UNCHECKED_CAST")
+    override fun get(): R = reflectionCall {
+        return javaGetter.invoke(null) as R
     }
 
     override fun call(vararg args: Any?): R {
@@ -65,11 +59,8 @@ open class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R>, K
     override val javaSetter: Method get() = super.javaSetter!!
 
     override fun set(value: R) {
-        try {
+        reflectionCall {
             javaSetter.invoke(null, value)
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
         }
     }
 

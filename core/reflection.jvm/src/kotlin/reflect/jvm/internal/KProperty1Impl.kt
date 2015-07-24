@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.MutablePropertyReference1
 import kotlin.jvm.internal.PropertyReference1
-import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
@@ -34,26 +33,18 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, 
     override val getter by ReflectProperties.lazy { Getter(this) }
 
     // TODO: consider optimizing this, not to do complex checks on every access
-    @suppress("UNCHECKED_CAST")
-    override fun get(receiver: T): R {
-        try {
-            val getter = javaGetter ?:
-                         return javaField!!.get(receiver) as R
-
-            if (Modifier.isStatic(getter.getModifiers())) {
+    @suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_UNIT_OR_ANY" /* KT-8619 */)
+    override fun get(receiver: T): R = reflectionCall {
+        val getter = javaGetter
+        return when {
+            getter == null -> javaField!!.get(receiver)
+            Modifier.isStatic(getter.modifiers) -> {
                 // Workaround the case of platformStatic property in object, getter of which doesn't take a receiver
-                if (getter.getParameterTypes().isEmpty()) {
-                    return getter.invoke(null) as R
-                }
-
-                return getter.invoke(null, receiver) as R
+                if (getter.parameterTypes.isEmpty()) getter.invoke(null)
+                else getter.invoke(null, receiver)
             }
-
-            return getter.invoke(receiver) as R
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
-        }
+            else -> getter.invoke(receiver)
+        } as R
     }
 
     @suppress("UNCHECKED_CAST")
@@ -76,25 +67,17 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
     override val setter by ReflectProperties.lazy { Setter(this) }
 
     override fun set(receiver: T, value: R) {
-        try {
-            val setter = javaSetter ?:
-                         return javaField!!.set(receiver, value)
-
-            if (Modifier.isStatic(setter.getModifiers())) {
-                // Workaround the case of platformStatic property in object, setter of which doesn't take a receiver
-                if (setter.getParameterTypes().size() == 1) {
-                    setter.invoke(null, value)
+        reflectionCall {
+            val setter = javaSetter
+            when {
+                setter == null -> javaField!!.set(receiver, value)
+                Modifier.isStatic(setter.modifiers) -> {
+                    // Workaround the case of platformStatic property in object, setter of which doesn't take a receiver
+                    if (setter.parameterTypes.size() == 1) setter.invoke(null, value)
+                    else setter.invoke(null, receiver, value)
                 }
-                else {
-                    setter.invoke(null, receiver, value)
-                }
+                else -> setter.invoke(receiver, value)
             }
-            else {
-                setter.invoke(receiver, value)
-            }
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
         }
     }
 

@@ -13,7 +13,7 @@ fun box(): String {
     try {
         p.set(a, 1)
         return "Fail: private property is accessible by default"
-    } catch(e: IllegalPropertyAccessException) { }
+    } catch(e: IllegalCallableAccessException) { }
 
     p.isAccessible = true
 
@@ -24,7 +24,7 @@ fun box(): String {
     try {
         p.set(a, 3)
         return "Fail: setAccessible(false) had no effect"
-    } catch(e: IllegalPropertyAccessException) { }
+    } catch(e: IllegalCallableAccessException) { }
 
     return "OK"
 }

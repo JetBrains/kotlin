@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
@@ -36,14 +35,9 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty<R>, KProperty2<
 
     override val javaField: Field? get() = null
 
-    override fun get(receiver1: D, receiver2: E): R {
-        try {
-            @suppress("UNCHECKED_CAST")
-            return javaGetter.invoke(receiver1, receiver2) as R
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
-        }
+    @suppress("UNCHECKED_CAST")
+    override fun get(receiver1: D, receiver2: E): R = reflectionCall {
+        return javaGetter.invoke(receiver1, receiver2) as R
     }
 
     @suppress("UNCHECKED_CAST")
@@ -68,11 +62,8 @@ class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty
     override val javaSetter: Method get() = super.javaSetter!!
 
     override fun set(receiver1: D, receiver2: E, value: R) {
-        try {
+        reflectionCall {
             javaSetter.invoke(receiver1, receiver2, value)
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalPropertyAccessException(e)
         }
     }
 

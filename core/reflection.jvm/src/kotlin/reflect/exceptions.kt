@@ -17,14 +17,14 @@
 package kotlin.reflect
 
 /**
- * An exception that is thrown when `get` or `set` is called on a property
- * and that property is not accessible (in JVM terms) from the calling method.
+ * An exception that is thrown when `call` is invoked on a callable or `get` or `set` is invoked on a property
+ * and that callable is not accessible (in JVM terms) from the calling method.
  *
  * @param cause the original exception thrown by the JVM.
  *
  * @see [kotlin.reflect.jvm.isAccessible]
  */
-public class IllegalPropertyAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
+public class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
     init {
         @suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         (this as java.lang.Throwable).initCause(cause)

@@ -14,12 +14,12 @@ fun box(): String {
     try {
         f.get(a)
         return "Fail: protected property getter is accessible by default"
-    } catch (e: IllegalPropertyAccessException) { }
+    } catch (e: IllegalCallableAccessException) { }
 
     try {
         f.set(a, ":D")
         return "Fail: protected property setter is accessible by default"
-    } catch (e: IllegalPropertyAccessException) { }
+    } catch (e: IllegalCallableAccessException) { }
 
     f.isAccessible = true
 

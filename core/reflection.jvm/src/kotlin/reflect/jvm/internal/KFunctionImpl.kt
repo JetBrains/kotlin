@@ -74,7 +74,9 @@ open class KFunctionImpl protected constructor(
         }
     }
 
-    override fun call(vararg args: Any?): Any? = caller.call(args)
+    override fun call(vararg args: Any?): Any? = reflectionCall {
+        caller.call(args)
+    }
 
     override fun getArity(): Int {
         return descriptor.valueParameters.size() +
