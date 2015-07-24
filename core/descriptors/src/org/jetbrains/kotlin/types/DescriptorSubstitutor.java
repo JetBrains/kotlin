@@ -61,7 +61,7 @@ public class DescriptorSubstitutor {
             result.add(substituted);
         }
 
-        TypeSubstitutor substitutor = TypeSubstitutor.create(
+        TypeSubstitutor substitutor = TypeSubstitutor.createChainedSubstitutor(
                 originalSubstitution, TypeConstructorSubstitution.createByConstructorsMap(mutableSubstitution)
         );
 

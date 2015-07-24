@@ -46,8 +46,8 @@ public class TypeSubstitutor {
     }
 
     @NotNull
-    public static TypeSubstitutor create(@NotNull TypeSubstitution... substitutions) {
-        return create(new CompositeTypeSubstitution(substitutions));
+    public static TypeSubstitutor createChainedSubstitutor(@NotNull TypeSubstitution first, @NotNull TypeSubstitution second) {
+        return create(DisjointKeysUnionTypeSubstitution.create(first, second));
     }
 
     @NotNull

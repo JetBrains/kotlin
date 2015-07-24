@@ -17,45 +17,24 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import kotlin.platform.platformStatic
 
-public class CompositeTypeSubstitution extends TypeSubstitution {
-    private final TypeSubstitution[] inner;
+public class DisjointKeysUnionTypeSubstitution private constructor(
+    private val first: TypeSubstitution,
+    private val second: TypeSubstitution
+) : TypeSubstitution() {
+    companion object {
+        platformStatic public fun create(first: TypeSubstitution, second: TypeSubstitution): TypeSubstitution {
+            if (first.isEmpty()) return second
+            if (second.isEmpty()) return first
 
-    public CompositeTypeSubstitution(@NotNull TypeSubstitution... inner) {
-        this.inner = inner;
-    }
-
-    @Override
-    public TypeProjection get(@NotNull JetType key) {
-        for (TypeSubstitution substitution : inner) {
-            TypeProjection value = substitution.get(key);
-            if (value != null) return value;
+            return DisjointKeysUnionTypeSubstitution(first, second)
         }
-        return null;
     }
 
-    @Override
-    public boolean isEmpty() {
-        for (TypeSubstitution substitution : inner) {
-            if (!substitution.isEmpty()) return false;
-        }
-        return true;
-    }
+    override fun get(key: JetType) = first[key] ?: second[key]
 
-    @Override
-    public boolean approximateCapturedTypes() {
-        for (TypeSubstitution substitution : inner) {
-            if (substitution.approximateCapturedTypes()) return true;
-        }
-        return false;
-    }
+    override fun isEmpty() = false
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for (TypeSubstitution substitution : inner) {
-            builder.append(substitution).append(" * ");
-        }
-        return builder.toString();
-    }
+    override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
 }
