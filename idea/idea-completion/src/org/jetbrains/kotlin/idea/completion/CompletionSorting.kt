@@ -23,11 +23,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiDocCommentOwner
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
@@ -35,10 +31,8 @@ import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.HashSet
 
@@ -116,9 +110,26 @@ private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
 }
 
 private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching", false, true) {
-    override fun weigh(element: LookupElement, context: WeighingContext): Comparable<Int> {
+    private enum class Weight {
+        keywordExactMatch,
+        defaultExactMatch,
+        functionExactMatch,
+        notExactMatch
+    }
+
+    override fun weigh(element: LookupElement, context: WeighingContext): Weight {
         val prefix = context.itemPattern(element)
-        return if (element.getLookupString() == prefix) 0 else 1
+        if (element.lookupString != prefix) {
+            return Weight.notExactMatch
+        }
+        else {
+            val o = element.`object`
+            return when (o) {
+                is KeywordLookupObject -> Weight.keywordExactMatch
+                is DeclarationLookupObject -> if (o.descriptor is FunctionDescriptor) Weight.functionExactMatch else Weight.defaultExactMatch
+                else -> Weight.defaultExactMatch
+            }
+        }
     }
 }
 

@@ -89,6 +89,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("PreferMatchingKeyword.kt")
+    public void testPreferMatchingKeyword() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PreferMatchingKeyword.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReplaceFunctionCallByProperty.kt")
     public void testReplaceFunctionCallByProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByProperty.kt");
