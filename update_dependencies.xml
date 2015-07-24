@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="ideaVersion" value="142.3230.1"/>
+    <property name="ideaVersion" value="142.3371.3"/>
 
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
@@ -722,7 +722,7 @@
                     <copy file="@{download.file.archive.jps-build-test}" tofile="@{jps-test}/jps-build-test.jar"/>
 
                     <mkdir dir="@{sources}"/>
-                    <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.zip" overwrite="true"/>
+                    <copy file="@{download.file.archive.sources}" tofile="@{sources}/sources.jar" overwrite="true"/>
                 </then>
             </if>
 
@@ -740,8 +740,8 @@
             <delete dir="@{download.dir}"/>
             <mkdir dir="@{download.dir}"/>
 
-            <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.zip"
-                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.zip" usetimestamp="true"/>
+            <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.jar"
+                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar" usetimestamp="true"/>
 
             <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}.zip"
                  dest="@{download.dir}/ideaIC-@{idea.maven.version}.zip" usetimestamp="true"/>
@@ -767,7 +767,7 @@
                 download.dir.jps-standalone="@{download.dir}/jps-standalone-@{idea.maven.version}"
                 download.file.archive.idea="@{download.dir}/ideaIC-@{idea.maven.version}.zip"
                 download.file.archive.idea.win.only="true"
-                download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.zip"
+                download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.jar"
                 download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
         </sequential>
     </macrodef>
@@ -852,8 +852,8 @@
 
                     <get src="${content.base.url}/core/intellij-core-analysis.jar" dest="${core.dir}/intellij-core-analysis.jar"/>
 
-                    <delete file="${idea.download.dir}/idea-sdk-sources.zip" failonerror="false"/>
-                    <get src="${content.base.url}/sources.zip" dest="${idea.download.dir}/idea-sdk-sources.zip"/>
+                    <delete file="${idea.download.dir}/idea-sdk-sources.jar" failonerror="false"/>
+                    <get src="${content.base.url}/sources.jar" dest="${idea.download.dir}/idea-sdk-sources.jar"/>
                 </then>
             </if>
 
@@ -865,7 +865,7 @@
                 download.dir.jps-standalone="${jps.extracted.dir}"
                 download.file.archive.idea="${idea.download.dir}/${idea.archive.name}"
                 download.file.archive.idea.win.only="false"
-                download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.zip"
+                download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.jar"
                 download.file.archive.jps-build-test="${idea.download.dir}/jps-build-test.jar"/>
         </sequential>
     </macrodef>
