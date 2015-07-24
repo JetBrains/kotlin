@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -131,8 +132,11 @@ fun createQualifier(
     return qualifier
 }
 
-private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionTypingContext): JetType? {
-    resolveAndRecordReferenceTarget(context, selector = null)
+private fun QualifierReceiver.resolveAsStandaloneExpression(
+        context: ExpressionTypingContext,
+        symbolUsageValidator: SymbolUsageValidator
+): JetType? {
+    resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector = null)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
@@ -145,8 +149,12 @@ private fun QualifierReceiver.resolveAsStandaloneExpression(context: ExpressionT
     return null
 }
 
-private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
-    resolveAndRecordReferenceTarget(context, selector)
+private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(
+        context: ExpressionTypingContext,
+        symbolUsageValidator: SymbolUsageValidator,
+        selector: DeclarationDescriptor?
+) {
+    resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier))
     }
@@ -155,13 +163,18 @@ private fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(context: Ex
     }
 }
 
-private fun QualifierReceiver.resolveAndRecordReferenceTarget(context: ExpressionTypingContext, selector: DeclarationDescriptor?) {
-    resultingDescriptor = resolveReferenceTarget(context, selector)
+private fun QualifierReceiver.resolveAndRecordReferenceTarget(
+        context: ExpressionTypingContext,
+        symbolUsageValidator: SymbolUsageValidator,
+        selector: DeclarationDescriptor?
+) {
+    resultingDescriptor = resolveReferenceTarget(context, symbolUsageValidator, selector)
     context.trace.record(REFERENCE_TARGET, referenceExpression, resultingDescriptor)
 }
 
 private fun QualifierReceiver.resolveReferenceTarget(
         context: ExpressionTypingContext,
+        symbolUsageValidator: SymbolUsageValidator,
         selector: DeclarationDescriptor?
 ): DeclarationDescriptor {
     if (classifier is TypeParameterDescriptor) {
@@ -183,13 +196,13 @@ private fun QualifierReceiver.resolveReferenceTarget(
 
     val declarationDescriptor = descriptor
     if (declarationDescriptor is ClassifierDescriptor)
-        context.symbolUsageValidator.validateTypeUsage(declarationDescriptor, context.trace, referenceExpression)
+        symbolUsageValidator.validateTypeUsage(declarationDescriptor, context.trace, referenceExpression)
 
     if (isCallableWithReceiver && classifier is ClassDescriptor && classifier.hasClassObjectType) {
         val companionObjectDescriptor = classifier.getCompanionObjectDescriptor()
         if (companionObjectDescriptor != null) {
             context.trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, referenceExpression, classifier)
-            context.symbolUsageValidator.validateTypeUsage(companionObjectDescriptor, context.trace, referenceExpression)
+            symbolUsageValidator.validateTypeUsage(companionObjectDescriptor, context.trace, referenceExpression)
             return companionObjectDescriptor
         }
     }

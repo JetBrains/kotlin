@@ -79,17 +79,14 @@ public class CallResolver {
     private GenericCandidateResolver genericCandidateResolver;
     private CallCompleter callCompleter;
     @NotNull private final TaskPrioritizer taskPrioritizer;
-    @NotNull private final AdditionalCheckerProvider additionalCheckerProvider;
-    
+
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
     public CallResolver(
-            @NotNull TaskPrioritizer taskPrioritizer,
-            @NotNull AdditionalCheckerProvider additionalCheckerProvider
+            @NotNull TaskPrioritizer taskPrioritizer
     ) {
         this.taskPrioritizer = taskPrioritizer;
-        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     // component dependency cycle
@@ -264,8 +261,8 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        additionalCheckerProvider.getCallChecker(), additionalCheckerProvider.getSymbolUsageValidator(),
-                        additionalCheckerProvider.getTypeChecker(), isAnnotationContext)
+                        CallChecker.DoNothing.INSTANCE$, isAnnotationContext
+                )
         );
     }
 
@@ -345,7 +342,7 @@ public class CallResolver {
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                callChecker, additionalCheckerProvider.getSymbolUsageValidator(), additionalCheckerProvider.getTypeChecker(), false);
+                callChecker, false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

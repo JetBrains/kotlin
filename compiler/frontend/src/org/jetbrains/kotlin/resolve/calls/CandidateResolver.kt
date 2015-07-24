@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedT
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getErasedReceiverType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnExpressionWithBothReceivers
 import org.jetbrains.kotlin.resolve.calls.callUtil.isExplicitSafeCall
+import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
@@ -63,7 +64,9 @@ import java.util.ArrayList
 public class CandidateResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val genericCandidateResolver: GenericCandidateResolver,
-        private val reflectionTypes: ReflectionTypes
+        private val reflectionTypes: ReflectionTypes,
+        private val modifiersChecker: ModifiersChecker,
+        private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>
 ){
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
@@ -123,7 +126,7 @@ public class CandidateResolver(
             for (projection in jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection))
-                    ModifiersChecker.checkIncompatibleVarianceModifiers(projection.getModifierList(), trace)
+                    modifiersChecker.withTrace(trace).checkIncompatibleVarianceModifiers(projection.getModifierList())
                 }
                 val type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), scope, trace,
@@ -462,7 +465,7 @@ public class CandidateResolver(
             tracing.unnecessarySafeCall(trace, receiverArgumentType)
         }
 
-        additionalTypeChecker.checkReceiver(receiverParameter, receiverArgument, safeAccess, this)
+        additionalTypeCheckers.forEach { it.checkReceiver(receiverParameter, receiverArgument, safeAccess, this) }
 
         return SUCCESS
     }

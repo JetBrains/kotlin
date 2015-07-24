@@ -41,10 +41,14 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.*;
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
 import javax.inject.Inject;
@@ -61,10 +65,19 @@ public class CallExpressionResolver {
 
     private final CallResolver callResolver;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
+    private final SymbolUsageValidator symbolUsageValidator;
+    private final DataFlowAnalyzer dataFlowAnalyzer;
 
-    public CallExpressionResolver(@NotNull CallResolver callResolver, @NotNull ConstantExpressionEvaluator constantExpressionEvaluator) {
+    public CallExpressionResolver(
+            @NotNull CallResolver callResolver,
+            @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
+            @NotNull SymbolUsageValidator symbolUsageValidator,
+            @NotNull DataFlowAnalyzer dataFlowAnalyzer
+    ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+        this.symbolUsageValidator = symbolUsageValidator;
+        this.dataFlowAnalyzer = dataFlowAnalyzer;
     }
 
     private ExpressionTypingServices expressionTypingServices;
@@ -120,7 +133,7 @@ public class CallExpressionResolver {
         if (qualifier != null) {
             result[0] = true;
             if (!isLHSOfDot) {
-                resolveAsStandaloneExpression(qualifier, context);
+                resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
             }
             return null;
         }
@@ -175,7 +188,7 @@ public class CallExpressionResolver {
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
         if (context.contextDependency == INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo.getType(), callExpression, context);
+            dataFlowAnalyzer.checkType(typeInfo.getType(), callExpression, context);
         }
         return typeInfo;
     }
@@ -372,7 +385,7 @@ public class CallExpressionResolver {
 
         CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
         if (value != null && value.getIsPure()) {
-            return ExpressionTypingUtils.createCompileTimeConstantTypeInfo(value, expression, context);
+            return dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, context);
         }
 
         JetTypeInfo typeInfo;
@@ -417,12 +430,12 @@ public class CallExpressionResolver {
             }
         }
         if (context.contextDependency == INDEPENDENT) {
-            DataFlowUtils.checkType(typeInfo.getType(), expression, context);
+            dataFlowAnalyzer.checkType(typeInfo.getType(), expression, context);
         }
         return typeInfo;
     }
 
-    private static void resolveDeferredReceiverInQualifiedExpression(
+    private void resolveDeferredReceiverInQualifiedExpression(
             @Nullable QualifierReceiver qualifierReceiver,
             @NotNull JetQualifiedExpression qualifiedExpression,
             @NotNull ExpressionTypingContext context
@@ -433,7 +446,7 @@ public class CallExpressionResolver {
         DeclarationDescriptor selectorDescriptor =
                 calleeExpression instanceof JetReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression) : null;
-        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor);
+        ReceiversPackage.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, symbolUsageValidator, selectorDescriptor);
     }
 
     private static void checkNestedClassAccess(

@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -53,7 +53,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 context,
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                KotlinJvmCheckerProvider(context.module), DynamicTypesSettings()
+                JvmPlatform
         )
 
         context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
@@ -81,7 +81,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                         val classDescriptor = getDescriptor(jetClassOrObject, resolveSession) as ClassDescriptor
                         addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor()!!, parameter)
                     }
-                    else ->  super.visitParameter(parameter)
+                    else -> super.visitParameter(parameter)
                 }
             }
 
@@ -129,7 +129,10 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
         })
 
-        val renderer = DescriptorRenderer.withOptions { nameShortness = NameShortness.FULLY_QUALIFIED }
+        val renderer = DescriptorRenderer.withOptions {
+            nameShortness = NameShortness.FULLY_QUALIFIED
+            modifiers = DescriptorRendererModifier.ALL
+        }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(psiFile.getText())

@@ -7,4 +7,4 @@ class A {
     fun get(i: Int) = 1
 }
 
-// EXISTS: get(int)
+// EXISTS: get(Int)

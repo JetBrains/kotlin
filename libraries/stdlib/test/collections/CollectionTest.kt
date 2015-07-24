@@ -47,6 +47,18 @@ class CollectionTest {
         }
     }
 
+    test fun listOfNotNull() {
+        val l1: List<Int> = listOfNotNull(null)
+        assertTrue(l1.isEmpty())
+
+        val s: String? = "value"
+        val l2: List<String> = listOfNotNull(s)
+        assertEquals(s, l2.single())
+
+        val l3: List<String> = listOfNotNull("value1", null, "value2")
+        assertEquals(listOf("value1", "value2"), l3)
+    }
+
     test fun filterIntoSet() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(hashSetOf<String>()) { it.startsWith("f") }
@@ -621,6 +633,19 @@ class CollectionTest {
         assertEquals(e, 5)
     }
 
+    test fun unzipList() {
+        val list = listOf(1 to 'a', 2 to 'b', 3 to 'c')
+        val (ints, chars) = list.unzip()
+        assertEquals(listOf(1, 2, 3), ints)
+        assertEquals(listOf('a', 'b', 'c'), chars)
+    }
+
+    test fun unzipArray() {
+        val array = arrayOf(1 to 'a', 2 to 'b', 3 to 'c')
+        val (ints, chars) = array.unzip()
+        assertEquals(listOf(1, 2, 3), ints)
+        assertEquals(listOf('a', 'b', 'c'), chars)
+    }
 
     test fun specialLists() {
         compare(arrayListOf<Int>(), listOf<Int>()) { listBehavior() }

@@ -138,6 +138,13 @@ public fun ShortArray.asList(): List<Short> {
 }
 
 /**
+ * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator].
+ */
+public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
+    return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
+}
+
+/**
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size()): Int {
@@ -338,144 +345,135 @@ public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<out T> {
-    return Arrays.copyOfRange(this, from, to)
+public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<out T> {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
-public fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
-    return Arrays.copyOfRange(this, from, to)
+public fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 platformName("mutableCopyOfRange")
-public fun <T> Array<T>.copyOfRange(from: Int, to: Int): Array<T> {
-    return Arrays.copyOfRange(this, from, to)
+public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun BooleanArray.fill(element: Boolean): BooleanArray {
-    Arrays.fill(this, element)
-    return this
+public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ByteArray.fill(element: Byte): ByteArray {
-    Arrays.fill(this, element)
-    return this
+public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun CharArray.fill(element: Char): CharArray {
-    Arrays.fill(this, element)
-    return this
+public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun DoubleArray.fill(element: Double): DoubleArray {
-    Arrays.fill(this, element)
-    return this
+public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun FloatArray.fill(element: Float): FloatArray {
-    Arrays.fill(this, element)
-    return this
+public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun IntArray.fill(element: Int): IntArray {
-    Arrays.fill(this, element)
-    return this
+public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun LongArray.fill(element: Long): LongArray {
-    Arrays.fill(this, element)
-    return this
+public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun ShortArray.fill(element: Short): ShortArray {
-    Arrays.fill(this, element)
-    return this
+public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
  * Fills original array with the provided value.
  */
-public fun <T> Array<T>.fill(element: T): Array<T> {
-    Arrays.fill(this, element)
-    return this
+public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+    Arrays.fill(this, fromIndex, toIndex, element)
 }
 
 /**
@@ -901,5 +899,85 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  */
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    val result = arrayOfNulls<Boolean>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Boolean>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    val result = arrayOfNulls<Byte>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Byte>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    val result = arrayOfNulls<Char>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Char>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    val result = arrayOfNulls<Double>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Double>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    val result = arrayOfNulls<Float>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Float>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    val result = arrayOfNulls<Int>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Int>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    val result = arrayOfNulls<Long>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Long>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    val result = arrayOfNulls<Short>(size())
+    for (index in indices)
+        result[index] = this[index]
+    return result as Array<Short>
 }
 

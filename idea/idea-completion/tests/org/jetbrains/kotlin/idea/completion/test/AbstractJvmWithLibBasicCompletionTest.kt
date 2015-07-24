@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractJvmWithLibBasicCompletionTest : JetFixtureCompletionBaseTestCase() {
     private val TEST_PATH = COMPLETION_TEST_DATA_BASE_PATH + "/basic/custom"
@@ -33,7 +32,7 @@ public abstract class AbstractJvmWithLibBasicCompletionTest : JetFixtureCompleti
         return JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
     }
 
-    override fun getPlatform() = TargetPlatform.JVM
+    override fun getPlatform() = JvmPlatform
 
     override fun complete(invocationCount: Int) = myFixture.complete(CompletionType.BASIC, invocationCount)
 }

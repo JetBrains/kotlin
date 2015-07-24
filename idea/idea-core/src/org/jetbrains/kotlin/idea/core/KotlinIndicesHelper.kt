@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList

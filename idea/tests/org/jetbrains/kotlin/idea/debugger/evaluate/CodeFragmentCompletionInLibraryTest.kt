@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -26,11 +25,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
-import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
@@ -69,7 +68,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
     private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
         setupFixtureByCodeFragment(fragmentText)
         val directives = completionDirectives.map { "//$it" }.joinToString(separator = "\n")
-        testCompletion(directives, TargetPlatform.JVM, {
+        testCompletion(directives, JvmPlatform, {
             myFixture.complete(CompletionType.BASIC)
         })
     }

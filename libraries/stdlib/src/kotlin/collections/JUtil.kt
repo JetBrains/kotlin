@@ -85,6 +85,12 @@ public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(Hash
 /** Returns a new [LinkedHashSet] with the given elements. */
 public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
 
+/** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
+public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
+
+/** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
+public fun <T : Any> listOfNotNull(vararg values: T?): List<T> = values.filterNotNull()
+
 /**
  * Returns an [IntRange] of the valid indices for this collection.
  */
@@ -150,3 +156,109 @@ private fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
             is Collection -> if (this.safeToConvertToSet()) toHashSet() else this
             else -> toHashSet()
         }
+
+/**
+ * Searches this list or its range for the provided [element] index using binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the Comparable natural ordering of its elements.
+ *
+ * If the list contains multiple elements equal to the specified object, there is no guarantee which one will be found.
+ */
+public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size()): Int {
+    rangeCheck(size(), fromIndex, toIndex)
+
+    var low = fromIndex
+    var high = toIndex - 1
+
+    while (low <= high) {
+        val mid = (low + high).ushr(1) // safe from overflows
+        val midVal = get(mid)
+        val cmp = compareValues(midVal, element)
+
+        if (cmp < 0)
+            low = mid + 1
+        else if (cmp > 0)
+            high = mid - 1
+        else
+            return mid // key found
+    }
+    return -(low + 1)  // key not found
+}
+
+/**
+ * Searches this list or its range for the provided [element] index using binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the specified [comparator].
+ *
+ * If the list contains multiple elements equal to the specified object, there is no guarantee which one will be found.
+ */
+public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
+    rangeCheck(size(), fromIndex, toIndex)
+
+    var low = fromIndex
+    var high = toIndex - 1
+
+    while (low <= high) {
+        val mid = (low + high).ushr(1) // safe from overflows
+        val midVal = get(mid)
+        val cmp = comparator.compare(midVal, element)
+
+        if (cmp < 0)
+            low = mid + 1
+        else if (cmp > 0)
+            high = mid - 1
+        else
+            return mid // key found
+    }
+    return -(low + 1)  // key not found
+}
+
+/**
+ * Searches this list or its range for an index of an element with the provided [key] using binary search algorithm.
+ * The list is expected to be sorted into ascending order according to the Comparable natural ordering of keys of its elements.
+ *
+ * If the list contains multiple elements with the specified [key], there is no guarantee which one will be found.
+ */
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size(), inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> K?): Int =
+        binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
+
+// do not introduce this overload --- too rare
+//public fun <T, K> List<T>.binarySearchBy(key: K, comparator: Comparator<K>, fromIndex: Int = 0, toIndex: Int = size(), selector: (T) -> K): Int =
+//        binarySearch(fromIndex, toIndex) { comparator.compare(selector(it), key) }
+
+/**
+ * Searches this list or its range for an index of an element for which [comparison] function returns zero.
+ * The list is expected to be sorted into ascending order according to the provided [comparison].
+ *
+ * @param comparison function that compares an element of the list with the element being searched.
+ */
+public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size(), comparison: (T) -> Int): Int {
+    rangeCheck(size(), fromIndex, toIndex)
+
+    var low = fromIndex
+    var high = toIndex - 1
+
+    while (low <= high) {
+        val mid = (low + high).ushr(1) // safe from overflows
+        val midVal = get(mid)
+        val cmp = comparison(midVal)
+
+        if (cmp < 0)
+            low = mid + 1
+        else if (cmp > 0)
+            high = mid - 1
+        else
+            return mid // key found
+    }
+    return -(low + 1)  // key not found
+}
+
+/**
+ * Checks that `from` and `to` are in
+ * the range of [0..size] and throws an appropriate exception, if they aren't.
+ */
+private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
+    when {
+        fromIndex > toIndex -> throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex)")
+        fromIndex < 0 -> throw IndexOutOfBoundsException("fromIndex ($fromIndex) is less than zero.")
+        toIndex > size -> throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+    }
+}

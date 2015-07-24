@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -102,8 +102,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
         WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
-        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
-        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
+        DataFlowInfo thenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
+        DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
 
         if (elseBranch == null) {
             if (thenBranch != null) {
@@ -114,7 +114,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                        ? result.replaceJumpOutPossible(true).replaceJumpFlowInfo(conditionDataFlowInfo)
                        : result;
             }
-            return TypeInfoFactoryPackage.createTypeInfo(DataFlowUtils.checkImplicitCast(
+            return TypeInfoFactoryPackage.createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(
                                                                  components.builtIns.getUnitType(), ifExpression,
                                                                  contextWithExpectedType, isStatement
                                                          ),
@@ -168,7 +168,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetType resultType = resolvedCall.getResultingDescriptor().getReturnType();
         // If break or continue was possible, take condition check info as the jump info
         return TypeInfoFactoryPackage
-                .createTypeInfo(DataFlowUtils.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement),
+                .createTypeInfo(components.dataFlowAnalyzer.checkImplicitCast(resultType, ifExpression, contextWithExpectedType, isStatement),
                                 resultDataFlowInfo, loopBreakContinuePossible, conditionDataFlowInfo);
     }
 
@@ -193,12 +193,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         } else {
             dataFlowInfo = typeInfo.getDataFlowInfo().or(otherInfo);
         }
-        return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(typeInfo.replaceType(components.builtIns.getUnitType()),
-                                                                       ifExpression,
-                                                                       context),
-                                               ifExpression,
-                                               context,
-                                               isStatement).replaceDataFlowInfo(dataFlowInfo);
+        return components.dataFlowAnalyzer.checkImplicitCast(
+                components.dataFlowAnalyzer.checkType(
+                        typeInfo.replaceType(components.builtIns.getUnitType()),
+                        ifExpression,
+                        context
+                ),
+                ifExpression,
+                context,
+                isStatement
+        ).replaceDataFlowInfo(dataFlowInfo);
     }
 
     @Override
@@ -207,7 +211,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+        if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(
                 INDEPENDENT);
@@ -223,7 +227,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression body = expression.getBody();
         JetTypeInfo bodyTypeInfo;
-        DataFlowInfo conditionInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
+        DataFlowInfo conditionInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
@@ -236,7 +240,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         // Condition is false at this point only if there is no jumps outside
         if (!containsJumpOutOfLoop(expression, context)) {
-            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(dataFlowInfo);
+            dataFlowInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(dataFlowInfo);
         }
 
         // Special case: while (true)
@@ -248,7 +252,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             // but without affecting changing variables
             dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
-        return DataFlowUtils
+        return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
                 .replaceDataFlowInfo(dataFlowInfo);
     }
@@ -298,7 +302,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+        if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
@@ -338,7 +342,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo;
         // Without jumps out, condition is entered and false, with jumps out, we know nothing about it
         if (!containsJumpOutOfLoop(expression, context)) {
-            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
+            dataFlowInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
         }
         else {
             dataFlowInfo = context.dataFlowInfo;
@@ -353,7 +357,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             // but without affecting changing variables
             dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
         }
-        return DataFlowUtils
+        return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
                 .replaceDataFlowInfo(dataFlowInfo);
     }
@@ -364,7 +368,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
+        if (!isStatement) return components.dataFlowAnalyzer.illegalStatementType(expression, contextWithExpectedType, facade);
 
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
@@ -416,7 +420,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = loopRangeInfo;
         }
 
-        return DataFlowUtils
+        return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
                 .replaceDataFlowInfo(loopRangeInfo.getDataFlowInfo());
     }
@@ -426,7 +430,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType expectedParameterType,
             ExpressionTypingContext context
     ) {
-        DescriptorResolver.checkParameterHasNoValOrVar(context.trace, loopParameter, VAL_OR_VAR_ON_LOOP_PARAMETER);
+        components.modifiersChecker.withTrace(context.trace).checkParameterHasNoValOrVar(loopParameter, VAL_OR_VAR_ON_LOOP_PARAMETER);
 
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
@@ -468,13 +472,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
-                DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
-                DescriptorResolver.checkParameterHasNoModifier(context.trace, catchParameter);
+                ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
+                modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
+                modifiersChecking.checkParameterHasNoModifier(catchParameter);
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
                 JetType throwableType = components.builtIns.getThrowable().getDefaultType();
-                DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
+                components.dataFlowAnalyzer.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
@@ -512,7 +517,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             facade.getTypeInfo(thrownExpression, context
                     .replaceExpectedType(throwableType).replaceScope(context.scope).replaceContextDependency(INDEPENDENT));
         }
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression);
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression);
     }
 
     @Override
@@ -585,7 +590,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(RETURN_TYPE_MISMATCH.on(expression, expectedType));
             }
         }
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(resultType, context, expression);
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression);
     }
 
     private static boolean isClassInitializer(@NotNull Pair<FunctionDescriptor, PsiElement> containingFunInfo) {
@@ -596,14 +601,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
                 replaceJumpOutPossible(true);
     }
 
     @Override
     public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
         LabelResolver.INSTANCE.resolveControlLabel(expression, context);
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(components.builtIns.getNothingType(), context, expression).
                 replaceJumpOutPossible(true);
     }
 

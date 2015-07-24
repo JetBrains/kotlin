@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -53,7 +52,7 @@ public class LocalClassifierAnalyzer(
         private val funcionDescriptorResolver: FunctionDescriptorResolver,
         private val typeResolver: TypeResolver,
         private val annotationResolver: AnnotationResolver,
-        private val additionalCheckerProvider: AdditionalCheckerProvider,
+        private val platform: TargetPlatform,
         private val dynamicTypesSettings: DynamicTypesSettings
 ) {
     fun processClassOrObject(
@@ -67,8 +66,7 @@ public class LocalClassifierAnalyzer(
         val container = createContainerForLazyLocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,
-                additionalCheckerProvider,
-                dynamicTypesSettings,
+                platform,
                 LocalClassDescriptorHolder(
                         scope,
                         classOrObject,

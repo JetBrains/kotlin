@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
@@ -58,6 +59,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                                         options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                                         options.setVerbose(true);
                                         options.setPrettyFunctionTypes(false);
+                                        options.setModifiers(DescriptorRendererModifier.ALL);
                                         return Unit.INSTANCE$;
                                     }
                                 }

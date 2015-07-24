@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.NameShortness;
-import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy;
+import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -59,6 +56,7 @@ public class RecursiveDescriptorComparator {
                     options.setIncludePropertyConstant(true);
                     options.setNameShortness(NameShortness.FULLY_QUALIFIED);
                     options.setVerbose(true);
+                    options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE$;
                 }
             }

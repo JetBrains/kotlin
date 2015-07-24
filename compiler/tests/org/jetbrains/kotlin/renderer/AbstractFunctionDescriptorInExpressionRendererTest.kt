@@ -22,7 +22,10 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
@@ -50,7 +53,11 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
             }
         })
 
-        val renderer = DescriptorRenderer.withOptions { nameShortness = NameShortness.FULLY_QUALIFIED; verbose = true }
+        val renderer = DescriptorRenderer.withOptions {
+            nameShortness = NameShortness.FULLY_QUALIFIED
+            modifiers = DescriptorRendererModifier.ALL
+            verbose = true
+        }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(file.getText())

@@ -422,7 +422,7 @@
         id="kotlinJavaSafeDeleteDelegate"
         language="jet"
         implementationClass="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinJavaSafeDeleteDelegate"/>
-    <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler"/>
+    <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler"/>
     <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.JetPositionManagerFactory"/>
     <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
     <debuggerEditorTextProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider"/>

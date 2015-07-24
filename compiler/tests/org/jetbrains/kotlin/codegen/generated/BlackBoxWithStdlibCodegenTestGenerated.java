@@ -2466,6 +2466,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("openRange.kt")
+            public void testOpenRange() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/openRange.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("progressionDownToMinValue.kt")
             public void testProgressionDownToMinValue() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/progressionDownToMinValue.kt");
@@ -2646,6 +2652,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("oneElementRange.kt")
             public void testOneElementRange() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/oneElementRange.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("openRange.kt")
+            public void testOpenRange() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/openRange.kt");
                 doTestWithStdlib(fileName);
             }
 

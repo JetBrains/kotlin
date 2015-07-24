@@ -29,17 +29,13 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import org.jetbrains.kotlin.idea.project.TargetPlatform.JS
-import org.jetbrains.kotlin.idea.project.TargetPlatform.JVM
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.utils.keysToMap
@@ -80,7 +76,7 @@ public class KotlinCacheService(val project: Project) {
         CachedValueProvider.Result.create(moduleResolverProvider, allDependencies)
     }
 
-    private val globalCachesPerPlatform = listOf(JVM, JS).keysToMap { platform -> GlobalCache(platform) }
+    private val globalCachesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalCache(platform) }
 
     private inner class GlobalCache(platform: TargetPlatform) {
         val librariesCache = KotlinResolveCache(

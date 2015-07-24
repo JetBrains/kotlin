@@ -21,7 +21,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
 
 public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "js maven";
@@ -61,6 +62,6 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return TargetPlatform.JS;
+        return JsPlatform.INSTANCE$;
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -37,16 +38,20 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.expressions.DataFlowUtils
+import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.ArrayList
 
 public class CallCompleter(
-        val argumentTypeResolver: ArgumentTypeResolver,
-        val candidateResolver: CandidateResolver,
-        val builtIns: KotlinBuiltIns
+        private val argumentTypeResolver: ArgumentTypeResolver,
+        private val candidateResolver: CandidateResolver,
+        private val symbolUsageValidator: SymbolUsageValidator,
+        private val dataFlowAnalyzer: DataFlowAnalyzer,
+        private val callCheckers: Iterable<CallChecker>,
+        private val builtIns: KotlinBuiltIns
 ) {
     fun <D : CallableDescriptor> completeCall(
             context: BasicCallResolutionContext,
@@ -70,12 +75,16 @@ public class CallCompleter(
         }
 
         if (resolvedCall != null) {
-            context.callChecker.check(resolvedCall, context)
+            context.performContextDependentCallChecks(resolvedCall)
+            for (callChecker in callCheckers) {
+                callChecker.check(resolvedCall, context)
+            }
+
             val element = if (resolvedCall is VariableAsFunctionResolvedCall)
                 resolvedCall.variableCall.getCall().getCalleeExpression()
             else
                 resolvedCall.getCall().getCalleeExpression()
-            context.symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
+            symbolUsageValidator.validateCall(resolvedCall.getResultingDescriptor(), context.trace, element!!)
         }
 
         if (results.isSingleResult() && results.getResultingCall().getStatus().isSuccess()) {
@@ -258,7 +267,7 @@ public class CallCompleter(
             argumentTypeResolver.getCallableReferenceTypeInfo(expression, callableReferenceArgument, context, RESOLVE_FUNCTION_ARGUMENTS)
         }
 
-        DataFlowUtils.checkType(updatedType, deparenthesized, context)
+        dataFlowAnalyzer.checkType(updatedType, deparenthesized, context)
     }
 
     private fun completeCallForArgument(

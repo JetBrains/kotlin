@@ -30,27 +30,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 //TODO: this code should be moved into debugger which should set correct context for its code fragment
 private fun JetExpression.correctContextForExpression(): JetExpression {
-    when (this) {
-        is JetBlockExpression -> {
-            return this.getStatements().lastOrNull() ?: this
-        }
-        is JetFunctionLiteral -> {
-            return this.getBodyExpression()?.getStatements()?.lastOrNull() ?: this
-        }
+    return when (this) {
+        is JetProperty -> this.getDelegateExpressionOrInitializer()
+        is JetFunctionLiteral -> this.getBodyExpression()?.getStatements()?.lastOrNull()
+        is JetDeclarationWithBody -> this.getBodyExpression()
+        is JetBlockExpression -> this.getStatements().lastOrNull()
         else -> {
-            val previousExpression = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
-            if (previousExpression is JetExpression) {
-                return previousExpression
-            }
-            else {
-                val parentExpression = this.parents.firstIsInstanceOrNull<JetExpression>()
-                if (parentExpression is JetExpression) {
-                    return parentExpression
-                }
-            }
+            this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
+                    ?: this.parents.firstIsInstanceOrNull<JetExpression>()
         }
-    }
-    return this
+    } ?: this
 }
 
 public fun JetCodeFragment.getScopeAndDataFlowForAnalyzeFragment(

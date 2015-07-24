@@ -1,14 +1,18 @@
 package foo
 
+public fun <T> List<T>.some(): T = this[0]
+public fun String.some(): Char = this[0]
+public val <T> List<T>.some: T get() = this[1]
+public val String.some: Char get() = this[1]
+
 fun box(): String {
 
     val data = listOf("foo", "bar")
 
-    assertEquals("bar", data.last())
-    assertEquals("bar", data.last)
-
-    assertEquals("foo", data.first)
-    assertEquals("foo", data.first())
+    assertEquals("foo", data.some())
+    assertEquals("bar", data.some)
+    assertEquals('f', "foo".some())
+    assertEquals('a', "bar".some)
 
     return "OK"
 }

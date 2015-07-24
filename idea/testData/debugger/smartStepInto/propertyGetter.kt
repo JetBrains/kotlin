@@ -15,4 +15,4 @@ val d: Int
         return 1
     }
 
-// EXISTS: getC(), getD()
+// EXISTS: getter for c: Int, getter for d: Int

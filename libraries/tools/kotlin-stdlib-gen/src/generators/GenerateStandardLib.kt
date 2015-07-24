@@ -28,7 +28,6 @@ fun main(args: Array<String>) {
     generateCollectionsAPI(outDir)
     generateCollectionsJsAPI(jsCoreDir)
 
-    generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")
 }
 
 fun List<GenericFunction>.writeTo(file: File, builder: GenericFunction.() -> String) {

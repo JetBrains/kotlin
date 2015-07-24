@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
@@ -56,8 +54,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
-            @NotNull SymbolUsageValidator symbolUsageValidator,
-            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             @NotNull ReceiverValue explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
@@ -66,7 +62,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             boolean insideSafeCallChain
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, isAnnotationContext, 
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext,
               collectAllCandidates, insideSafeCallChain);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
@@ -84,7 +80,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
-                context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
+                context.callChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
                 candidateResolveMode, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
@@ -95,7 +91,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
-                context.dataFlowInfoForArguments, context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker, context.statementFilter,
+                context.dataFlowInfoForArguments, context.callChecker, context.statementFilter,
                 ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
@@ -113,7 +109,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter,
+                resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter,
                 explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 }

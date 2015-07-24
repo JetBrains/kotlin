@@ -20,6 +20,20 @@ public class RangeTest {
         assertFalse(9000 in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue(1.toShort() in range)
+        assertTrue(1.toByte() in range)
+        assertTrue(1.toLong() in range)
+        assertTrue(1.toFloat() in range)
+        assertTrue(1.toDouble() in range)
+
+        assertFalse(Long.MAX_VALUE in range)
+
+        val openRange = 1 until 10
+        assertTrue(9 in openRange)
+        assertFalse(10 in openRange)
+
+        assertTrue(fails { 1 until Int.MIN_VALUE } is IllegalArgumentException)
     }
 
     test fun byteRange() {
@@ -36,8 +50,24 @@ public class RangeTest {
 
         assertFalse(10.toByte() in range)
         assertFalse(111.toByte() in range)
-        
+
         assertFalse(range.isEmpty())
+
+
+        assertTrue(1.toShort() in range)
+        assertTrue(1.toInt() in range)
+        assertTrue(1.toLong() in range)
+        assertTrue(1.toFloat() in range)
+        assertTrue(1.toDouble() in range)
+
+        assertFalse(Long.MAX_VALUE in range)
+
+        val openRange = 1.toByte() until 10.toByte()
+        assertTrue(9.toByte() in openRange)
+        assertFalse(10.toByte() in openRange)
+
+        assertTrue(fails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
+
     }
 
     test fun shortRange() {
@@ -56,6 +86,20 @@ public class RangeTest {
         assertFalse(239.toShort() in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue(1.toByte() in range)
+        assertTrue(1.toInt() in range)
+        assertTrue(1.toLong() in range)
+        assertTrue(1.toFloat() in range)
+        assertTrue(1.toDouble() in range)
+
+        assertFalse(Long.MAX_VALUE in range)
+
+        val openRange = 1.toShort() until 10.toShort()
+        assertTrue(9.toShort() in openRange)
+        assertFalse(10.toShort() in openRange)
+
+        assertTrue(fails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
     }
 
     test fun longRange() {
@@ -74,6 +118,21 @@ public class RangeTest {
         assertFalse(10000000L in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue(1.toByte() in range)
+        assertTrue(1.toShort() in range)
+        assertTrue(1.toInt() in range)
+        assertTrue(1.toFloat() in range)
+        assertTrue(1.toDouble() in range)
+
+        assertFalse(Double.MAX_VALUE in range)
+
+        val openRange = 1L until 10L
+        assertTrue(9L in openRange)
+        assertFalse(10L in openRange)
+
+        assertTrue(fails { 0L until Long.MIN_VALUE } is IllegalArgumentException)
+
     }
 
     test fun charRange() {
@@ -92,6 +151,12 @@ public class RangeTest {
         assertFalse('\u1000' in range)
         
         assertFalse(range.isEmpty())
+
+        val openRange = 'A' until 'Z'
+        assertTrue('Y' in openRange)
+        assertFalse('Z' in openRange)
+
+        assertTrue(fails { 'A' until '\u0000' } is IllegalArgumentException)
     }
 
     test fun doubleRange() {
@@ -112,6 +177,12 @@ public class RangeTest {
         assertFalse(1e200 in range)
 
         assertFalse(range.isEmpty())
+
+        assertTrue(1.toByte() in range)
+        assertTrue(1.toShort() in range)
+        assertTrue(1.toInt() in range)
+        assertTrue(1.toLong() in range)
+        assertTrue(1.toFloat() in range)
     }
 
     test fun floatRange() {
@@ -132,6 +203,14 @@ public class RangeTest {
         assertFalse(1e30f in range)
 
         assertFalse(range.isEmpty())
+
+        assertTrue(1.toByte() in range)
+        assertTrue(1.toShort() in range)
+        assertTrue(1.toInt() in range)
+        assertTrue(1.toLong() in range)
+        assertTrue(1.toDouble() in range)
+
+        assertFalse(Double.MAX_VALUE in range)
     }
 
     test fun isEmpty() {

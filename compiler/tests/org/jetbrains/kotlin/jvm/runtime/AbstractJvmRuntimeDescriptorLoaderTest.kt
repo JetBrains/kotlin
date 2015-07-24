@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuratio
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
-import java.lang.annotation.Retention
 import java.net.URLClassLoader
 import java.util.regex.Pattern
 
@@ -60,6 +60,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             includePropertyConstant = false
             verbose = true
             renderDefaultAnnotationArguments = true
+            modifiers = DescriptorRendererModifier.ALL
         }
     }
 

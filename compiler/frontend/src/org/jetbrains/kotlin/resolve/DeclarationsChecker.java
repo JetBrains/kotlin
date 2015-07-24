@@ -45,7 +45,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembe
 
 public class DeclarationsChecker {
     @NotNull private final BindingTrace trace;
-    @NotNull private final ModifiersChecker modifiersChecker;
+    @NotNull private final ModifiersChecker.ModifiersCheckingProcedure modifiersChecker;
     @NotNull private final DescriptorResolver descriptorResolver;
 
     public DeclarationsChecker(
@@ -54,7 +54,7 @@ public class DeclarationsChecker {
             @NotNull BindingTrace trace
     ) {
         this.descriptorResolver = descriptorResolver;
-        this.modifiersChecker = modifiersChecker;
+        this.modifiersChecker = modifiersChecker.withTrace(trace);
         this.trace = trace;
     }
 
@@ -143,7 +143,7 @@ public class DeclarationsChecker {
         }
         AnnotationTargetChecker.INSTANCE$.check(packageDirective, trace, null);
 
-        ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
+        modifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
     }
 
     private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {
@@ -532,7 +532,7 @@ public class DeclarationsChecker {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
         if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetModifierKeywordToken, ASTNode> nodes = ModifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
+            Map<JetModifierKeywordToken, ASTNode> nodes = modifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
             if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {

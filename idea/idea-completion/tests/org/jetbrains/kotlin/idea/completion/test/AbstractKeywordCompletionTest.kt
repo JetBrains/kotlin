@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
-import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = TargetPlatform.JVM
+    override fun getPlatform() = JvmPlatform
 
     override fun complete(invocationCount: Int): Array<LookupElement>? {
         val items = myFixture.complete(CompletionType.BASIC) ?: return null

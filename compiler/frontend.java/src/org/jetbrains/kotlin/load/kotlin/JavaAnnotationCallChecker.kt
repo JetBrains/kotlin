@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.annotation.Target
 
 public class JavaAnnotationCallChecker : CallChecker {
-    override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val resultingDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
         if (resultingDescriptor !is JavaConstructorDescriptor ||
             resultingDescriptor.getContainingDeclaration().getKind() != ClassKind.ANNOTATION_CLASS) return

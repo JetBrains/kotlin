@@ -23,7 +23,10 @@ import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.util.PsiFormatUtilBase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
+import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
@@ -39,19 +42,21 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
 
         val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 
-        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { renderTarget(it) }
+        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.getPresentation() }
 
         val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
 
         for (actualTargetName in actual) {
             assert(actualTargetName in expected) {
-                "Unexpected step into target was found: $actualTargetName\n${renderTableWithResults(expected, actual)}"
+                "Unexpected step into target was found: $actualTargetName\n${renderTableWithResults(expected, actual)}" +
+                "\n // EXISTS: ${actual.joinToString()}"
             }
         }
 
         for (expectedTargetName in expected) {
             assert(expectedTargetName in actual) {
-                "Missed step into target: $expectedTargetName\n${renderTableWithResults(expected, actual)}"
+                "Missed step into target: $expectedTargetName\n${renderTableWithResults(expected, actual)}" +
+                "\n // EXISTS: ${actual.joinToString()}"
             }
         }
     }
@@ -60,8 +65,8 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         val sb = StringBuilder()
 
         val maxExtStrSize = (expected.maxBy { it.length() }?.length() ?: 0) + 5
-        val longerList = if (expected.size() < actual.size()) actual else expected
-        val shorterList = if (expected.size() < actual.size()) expected else actual
+        val longerList = (if (expected.size() < actual.size()) actual else expected).sort()
+        val shorterList = (if (expected.size() < actual.size()) expected else actual).sort()
         for ((i, element) in longerList.withIndex()) {
             sb.append(element)
             sb.append(" ".repeat(maxExtStrSize - element.length()))
@@ -72,33 +77,9 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
         return sb.toString()
     }
 
-    private fun renderTarget(target: SmartStepTarget): String {
-        val sb = StringBuilder()
-
-        val label = target.getLabel()
-        if (label != null) {
-            sb.append(label)
-        }
-        when (target) {
-            is MethodSmartStepTarget -> {
-                sb.append(PsiFormatUtil.formatMethod(
-                        target.getMethod(),
-                        PsiSubstitutor.EMPTY,
-                        PsiFormatUtilBase.SHOW_NAME or PsiFormatUtilBase.SHOW_PARAMETERS,
-                        PsiFormatUtilBase.SHOW_TYPE,
-                        999
-                ))
-            }
-            else -> {
-                sb.append("Renderer for ${target.javaClass} should be implemented")
-            }
-        }
-        return sb.toString()
-    }
-
     override fun getTestDataPath(): String? {
         return PluginTestCaseBase.getTestDataPathBase() + "/debugger/smartStepInto"
     }
 
-    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
+    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

@@ -214,72 +214,72 @@ public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<T> {
-    return (this: dynamic).slice(from, to)
+public inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
-    return (this: dynamic).slice(from, to)
+public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
-    return (this: dynamic).slice(from, to)
+public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
-    return (this: dynamic).slice(from, to)
+public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
-    return (this: dynamic).slice(from, to)
+public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
-    return (this: dynamic).slice(from, to)
+public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
-    return (this: dynamic).slice(from, to)
+public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
-    return (this: dynamic).slice(from, to)
+public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
  * Returns new array which is a copy of range of original array.
  */
 suppress("NOTHING_TO_INLINE")
-public inline fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
-    return (this: dynamic).slice(from, to)
+public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return (this: dynamic).slice(fromIndex, toIndex)
 }
 
 /**
@@ -487,5 +487,61 @@ public inline fun LongArray.plus(element: Long): LongArray {
 suppress("NOTHING_TO_INLINE")
 public inline fun ShortArray.plus(element: Short): ShortArray {
     return (this: dynamic).concat(arrayOf(element))
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    return copyOf() as Array<Boolean>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    return copyOf() as Array<Byte>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    return copyOf() as Array<Char>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    return copyOf() as Array<Double>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    return copyOf() as Array<Float>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    return copyOf() as Array<Int>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    return copyOf() as Array<Long>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    return copyOf() as Array<Short>
 }
 

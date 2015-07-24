@@ -31,17 +31,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
-import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
-import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.context.SimpleResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker

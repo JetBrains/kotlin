@@ -27,8 +27,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -39,9 +42,7 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createCheckedTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
-import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -103,17 +104,16 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope, context.dataFlowInfo, context.trace
         )
 
-        ModifiersChecker.create(context.trace, components.additionalCheckerProvider)
-                .checkModifiersForLocalDeclaration(function, functionDescriptor)
+        components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         if (!function.hasBody()) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
 
         if (isStatement) {
-            return createTypeInfo(DataFlowUtils.checkStatementType(function, context), context)
+            return createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)
         }
         else {
-            return createCheckedTypeInfo(createFunctionType(functionDescriptor), context, function)
+            return components.dataFlowAnalyzer.createCheckedTypeInfo(createFunctionType(functionDescriptor), context, function)
         }
     }
 
@@ -152,7 +152,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             return createTypeInfo(resultType, context)
         }
 
-        return createCheckedTypeInfo(resultType, context, expression)
+        return components.dataFlowAnalyzer.createCheckedTypeInfo(resultType, context, expression)
     }
 
     private fun createFunctionLiteralDescriptor(

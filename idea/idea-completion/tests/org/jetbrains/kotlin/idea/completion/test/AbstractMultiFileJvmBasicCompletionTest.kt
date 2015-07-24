@@ -16,16 +16,15 @@
 
 package org.jetbrains.kotlin.idea.completion.test
 
-import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.test.AstAccessControl
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
         val shouldFail = testPath.contains("NoSpecifiedType")
         AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(getFile().getText(), TargetPlatform.JVM, { invocationCount ->
+            testCompletion(getFile().getText(), JvmPlatform, { invocationCount ->
                 complete(invocationCount)
                 myItems
             }, 0)

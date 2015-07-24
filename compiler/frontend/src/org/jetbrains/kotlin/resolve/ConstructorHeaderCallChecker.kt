@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasImplicitThisOrSupe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 
 
-public class ConstructorHeaderCallChecker(constructor: ConstructorDescriptor, private val wrapped: CallChecker) : CallChecker {
+public class ConstructorHeaderCallChecker(constructor: ConstructorDescriptor) : CallChecker {
     private val containingClass = constructor.getContainingDeclaration()
 
-    override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (resolvedCall.getStatus().isSuccess() &&
             resolvedCall.hasImplicitThisOrSuperDispatchReceiver(context.trace.getBindingContext()) &&
             containingClass == resolvedCall.getResultingDescriptor().getOwnerForEffectiveDispatchReceiverParameter()
@@ -49,8 +49,6 @@ public class ConstructorHeaderCallChecker(constructor: ConstructorDescriptor, pr
                 }
             }
         }
-
-        wrapped.check(resolvedCall, context)
     }
 
     private fun reportError(context: BasicCallResolutionContext, resolvedCall: ResolvedCall<*>) {

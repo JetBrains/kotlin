@@ -44,10 +44,17 @@ enum class PrimitiveType {
 
     companion object {
         val defaultPrimitives = PrimitiveType.values().toSet()
-        val numericPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Double, PrimitiveType.Float)
+        val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
+        val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
+
+        val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
+
+        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
     }
 }
 
+fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
+fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 
 
 class GenericFunction(val signature: String, val keyword: String = "fun") : Comparable<GenericFunction> {

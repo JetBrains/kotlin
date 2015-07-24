@@ -101,6 +101,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("funWithExpressionBody.kt")
+    public void testFunWithExpressionBody() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/funWithExpressionBody.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/if.kt");
@@ -113,9 +119,21 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inlinedFunLiteral.kt")
+    public void testInlinedFunLiteral() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/inlinedFunLiteral.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("invoke.kt")
     public void testInvoke() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/invoke.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("libraryFun.kt")
+    public void testLibraryFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/libraryFun.kt");
         doTest(fileName);
     }
 
@@ -152,6 +170,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
     @TestMetadata("propertyGetter.kt")
     public void testPropertyGetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/propertyGetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("renderer.kt")
+    public void testRenderer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/renderer.kt");
         doTest(fileName);
     }
 

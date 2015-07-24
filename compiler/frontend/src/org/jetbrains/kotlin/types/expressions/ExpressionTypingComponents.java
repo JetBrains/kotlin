@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -38,7 +39,6 @@ public class ExpressionTypingComponents {
     /*package*/ ControlStructureTypingUtils controlStructureTypingUtils;
     /*package*/ ForLoopConventionsChecker forLoopConventionsChecker;
     /*package*/ ReflectionTypes reflectionTypes;
-    /*package*/ AdditionalCheckerProvider additionalCheckerProvider;
     /*package*/ SymbolUsageValidator symbolUsageValidator;
     /*package*/ DynamicTypesSettings dynamicTypesSettings;
     /*package*/ KotlinBuiltIns builtIns;
@@ -51,6 +51,9 @@ public class ExpressionTypingComponents {
     /*package*/ ValueParameterResolver valueParameterResolver;
     /*package*/ MultiDeclarationResolver multiDeclarationResolver;
     /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
+    /*package*/ ModifiersChecker modifiersChecker;
+    /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
+    /*package*/ Iterable<? extends CallChecker> callCheckers;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -85,11 +88,6 @@ public class ExpressionTypingComponents {
     @Inject
     public void setReflectionTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
-    }
-
-    @Inject
-    public void setAdditionalCheckerProvider(AdditionalCheckerProvider additionalCheckerProvider) {
-        this.additionalCheckerProvider = additionalCheckerProvider;
     }
 
     @Inject
@@ -152,13 +150,23 @@ public class ExpressionTypingComponents {
         return forLoopConventionsChecker;
     }
 
-    @NotNull
-    public AdditionalCheckerProvider getAdditionalCheckerProvider() {
-        return additionalCheckerProvider;
-    }
-
     @Inject
     public void setConstantExpressionEvaluator(@NotNull ConstantExpressionEvaluator constantExpressionEvaluator) {
         this.constantExpressionEvaluator = constantExpressionEvaluator;
+    }
+
+    @Inject
+    public void setModifiersChecker(@NotNull ModifiersChecker modifiersChecker) {
+        this.modifiersChecker = modifiersChecker;
+    }
+
+    @Inject
+    public void setDataFlowAnalyzer(@NotNull DataFlowAnalyzer dataFlowAnalyzer) {
+        this.dataFlowAnalyzer = dataFlowAnalyzer;
+    }
+
+    @Inject
+    public void setCallCheckers(@NotNull Iterable<? extends CallChecker> callCheckers) {
+        this.callCheckers = callCheckers;
     }
 }

@@ -50,13 +50,13 @@ fun specialJVM(): List<GenericFunction> {
     }
 
 
-    templates add f("copyOfRange(from: Int, to: Int)") {
+    templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
         only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
         annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOfRange")"""}
         body {
-            "return Arrays.copyOfRange(this, from, to)"
+            "return Arrays.copyOfRange(this, fromIndex, toIndex)"
         }
     }
 
@@ -83,14 +83,13 @@ fun specialJVM(): List<GenericFunction> {
         annotations(InvariantArraysOfObjects) { """platformName("mutableCopyOf")"""}
     }
 
-    templates add f("fill(element: T)") {
+    templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size())") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
-        returns { "SELF" }
+        returns { "Unit" }
         body {
             """
-            Arrays.fill(this, element)
-            return this
+            Arrays.fill(this, fromIndex, toIndex, element)
             """
         }
     }
@@ -102,6 +101,15 @@ fun specialJVM(): List<GenericFunction> {
         returns("Int")
         body {
             "return Arrays.binarySearch(this, fromIndex, toIndex, element)"
+        }
+    }
+
+    templates add f("binarySearch(element: T, comparator: Comparator<T>, fromIndex: Int = 0, toIndex: Int = size())") {
+        only(ArraysOfObjects)
+        doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator]." }
+        returns("Int")
+        body {
+            "return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)"
         }
     }
 
@@ -212,6 +220,24 @@ fun specialJVM(): List<GenericFunction> {
                 override fun indexOf(o: Any?): Int = this@asList.indexOf(o as T)
                 override fun lastIndexOf(o: Any?): Int = this@asList.lastIndexOf(o as T)
             }
+            """
+        }
+    }
+
+    templates add f("toTypedArray()") {
+        only(ArraysOfPrimitives)
+        returns("Array<T>")
+        doc {
+            """
+            Returns a *typed* object array containing all of the elements of this primitive array.
+            """
+        }
+        body {
+            """
+            val result = arrayOfNulls<T>(size())
+            for (index in indices)
+                result[index] = this[index]
+            return result as Array<T>
             """
         }
     }

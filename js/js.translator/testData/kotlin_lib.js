@@ -178,7 +178,8 @@
         return new Kotlin.Progression(from, to, -1);
     };
 
-    Kotlin.Exception = Error;
+    Kotlin.Throwable = Error;
+
 
     function createClassNowWithMessage(base) {
         return Kotlin.createClassNow(base,
@@ -189,6 +190,8 @@
                );
     }
 
+    Kotlin.Error = createClassNowWithMessage(Kotlin.Throwable);
+    Kotlin.Exception = createClassNowWithMessage(Kotlin.Throwable);
     Kotlin.RuntimeException = createClassNowWithMessage(Kotlin.Exception);
     Kotlin.NullPointerException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.NoSuchElementException = createClassNowWithMessage(Kotlin.RuntimeException);
@@ -386,7 +389,7 @@
         },
         clear: function () {
             // TODO: implement with mutable iterator
-            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+            throw new Kotlin.NotImplementedError("Not implemented yet, see KT-7809");
         },
         containsAll_4fm7v2$: function (c) {
             var it = c.iterator();
@@ -464,7 +467,7 @@
         },
         addAll_9cca64$: function (index, collection) {
             // TODO: implement
-            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+            throw new Kotlin.NotImplementedError("Not implemented yet, see KT-7809");
         },
         remove_za3rmp$: function (o) {
             var index = this.indexOf_za3rmp$(o);
@@ -476,7 +479,7 @@
         },
         clear: function () {
             // TODO: implement with remove range
-            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+            throw new Kotlin.NotImplementedError("Not implemented yet, see KT-7809");
         },
         contains_za3rmp$: function (o) {
             return this.indexOf_za3rmp$(o) !== -1;

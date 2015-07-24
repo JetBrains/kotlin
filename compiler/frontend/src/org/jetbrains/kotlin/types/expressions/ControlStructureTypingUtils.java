@@ -60,9 +60,14 @@ public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
 
     private final CallResolver callResolver;
+    private final DataFlowAnalyzer dataFlowAnalyzer;
 
-    public ControlStructureTypingUtils(@NotNull CallResolver callResolver) {
+    public ControlStructureTypingUtils(
+            @NotNull CallResolver callResolver,
+            @NotNull DataFlowAnalyzer dataFlowAnalyzer
+    ) {
         this.callResolver = callResolver;
+        this.dataFlowAnalyzer = dataFlowAnalyzer;
     }
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
@@ -245,7 +250,7 @@ public class ControlStructureTypingUtils {
     }
 
     @NotNull
-    /*package*/ static TracingStrategy createTracingForSpecialConstruction(
+    /*package*/ TracingStrategy createTracingForSpecialConstruction(
             final @NotNull Call call,
             @NotNull String constructionName,
             final @NotNull ExpressionTypingContext context
@@ -272,7 +277,7 @@ public class ControlStructureTypingUtils {
                 if (typeInfo == null) return false;
 
                 Ref<Boolean> hasError = Ref.create();
-                DataFlowUtils.checkType(
+                dataFlowAnalyzer.checkType(
                         typeInfo.getType(),
                         expression,
                         context

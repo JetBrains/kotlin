@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.test.AstAccessControl
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTestCase() {
     override fun setUp() {
@@ -30,7 +29,7 @@ public abstract class AbstractMultiFileSmartCompletionTest : KotlinCompletionTes
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
         AstAccessControl.testWithControlledAccessToAst(false, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(getFile().getText(), TargetPlatform.JVM, { invocationCount ->
+            testCompletion(getFile().getText(), JvmPlatform, { invocationCount ->
                 complete(invocationCount)
                 myItems
             }, 1)

@@ -5,4 +5,4 @@ fun foo() {
 fun f1(i: Int) = 1
 fun f2() {}
 
-// EXISTS: f1(int), f2()
+// EXISTS: f1(Int), f2()

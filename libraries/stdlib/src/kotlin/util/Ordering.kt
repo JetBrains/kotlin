@@ -26,7 +26,7 @@ import java.util.Comparator
  */
 public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
     require(functions.size() > 0)
-    if (a identityEquals b) return 0
+    if (a === b) return 0
     if (a == null) return -1
     if (b == null) return 1
     for (fn in functions) {
@@ -39,10 +39,30 @@ public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comp
 }
 
 /**
+ * Compares two values using the specified [selector] function to calculate the result of the comparison.
+ * The function is applied to the given values [a] and [b] and return [Comparable] objects.
+ * The result of comparison of these [Comparable] instances is returned.
+ */
+public inline fun <T: Any> compareValuesBy(a: T?, b: T?, selector: (T) -> Comparable<*>?): Int {
+    if (a === b) return 0
+    if (a == null) return -1
+    if (b == null) return 1
+    return compareValues(selector(a), selector(b))
+}
+
+// Not so useful without type inference for receiver of expression
+// compareValuesWith(v1, v2, compareBy { it.prop1 } thenByDescending { it.prop2 })
+///**
+// * Compares two values using the specified [comparator].
+// */
+//@suppress("NOTHING_TO_INLINE")
+//public inline fun <T> compareValuesWith(a: T, b: T, comparator: Comparator<T>): Int = comparator.compare(a, b)
+
+/**
  * Compares two nullable [Comparable] values. Null is considered less than any value.
  */
 public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
-    if (a identityEquals b) return 0
+    if (a === b) return 0
     if (a == null) return -1
     if (b == null) return 1
 
@@ -70,7 +90,7 @@ public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T
 /**
  * Creates a comparator using the function to transform value to a [Comparable] instance for comparison.
  */
-inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValues(comparable(a), comparable(b))
     }
@@ -79,7 +99,7 @@ inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) co
 /**
  * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison.
  */
-inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValues(comparable(b), comparable(a))
     }
@@ -89,7 +109,7 @@ inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_
  * Creates a comparator using the primary comparator and
  * the function to transform value to a [Comparable] instance for comparison.
  */
-inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenBy.compare(a, b)
@@ -102,7 +122,7 @@ inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL
  * Creates a descending comparator using the primary comparator and
  * the function to transform value to a [Comparable] instance for comparison.
  */
-inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
+inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenByDescending.compare(a, b)

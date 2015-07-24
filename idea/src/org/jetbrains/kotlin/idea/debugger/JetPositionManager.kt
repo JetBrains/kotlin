@@ -228,7 +228,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     }
 
     public fun classNameForPosition(sourcePosition: SourcePosition): String? {
-        val psiElement = sourcePosition.getElementAt()
+        val psiElement = runReadAction { sourcePosition.getElementAt() }
         if (psiElement == null) {
             return null
         }

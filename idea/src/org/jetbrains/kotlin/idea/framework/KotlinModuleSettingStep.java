@@ -35,7 +35,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.project.TargetPlatform;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -98,15 +100,15 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
 
     @NotNull
     protected String getLibraryLabelText() {
-        if (targetPlatform == TargetPlatform.JVM) return "\u001BKotlin runtime:";
-        if (targetPlatform == TargetPlatform.JS) return "\u001BKotlin JS library:";
+        if (targetPlatform == JvmPlatform.INSTANCE$) return "\u001BKotlin runtime:";
+        if (targetPlatform == JsPlatform.INSTANCE$) return "\u001BKotlin JS library:";
         throw new IllegalStateException("Only JS and JVM target are supported");
     }
 
     @NotNull
     protected CustomLibraryDescription getCustomLibraryDescription(@Nullable Project project) {
-        if (targetPlatform == TargetPlatform.JVM) return new JavaRuntimeLibraryDescription(project);
-        if (targetPlatform == TargetPlatform.JS) return new JSLibraryStdDescription(project);
+        if (targetPlatform == JvmPlatform.INSTANCE$) return new JavaRuntimeLibraryDescription(project);
+        if (targetPlatform == JsPlatform.INSTANCE$) return new JSLibraryStdDescription(project);
         throw new IllegalStateException("Only JS and JVM target are supported");
     }
 

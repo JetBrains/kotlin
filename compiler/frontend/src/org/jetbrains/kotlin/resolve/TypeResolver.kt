@@ -49,7 +49,8 @@ public class TypeResolver(
         private val flexibleTypeCapabilitiesProvider: FlexibleTypeCapabilitiesProvider,
         private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
-        private val dynamicTypesSettings: DynamicTypesSettings
+        private val dynamicTypesSettings: DynamicTypesSettings,
+        private val modifiersChecker: ModifiersChecker
 ) {
 
     public open class FlexibleTypeCapabilitiesProvider {
@@ -268,9 +269,9 @@ public class TypeResolver(
         return argumentElements.mapIndexed { i, argumentElement ->
 
             val projectionKind = argumentElement.getProjectionKind()
-            ModifiersChecker.checkIncompatibleVarianceModifiers(argumentElement.getModifierList(), c.trace)
+            modifiersChecker.withTrace(c.trace).checkIncompatibleVarianceModifiers(argumentElement.getModifierList())
             if (projectionKind == JetProjectionKind.STAR) {
-                ModifiersChecker.reportIllegalModifiers(argumentElement.getModifierList(), listOf(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD), c.trace)
+                modifiersChecker.withTrace(c.trace).reportIllegalModifiers(argumentElement.getModifierList(), listOf(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD))
 
                 val parameters = constructor.getParameters()
                 if (parameters.size() > i) {

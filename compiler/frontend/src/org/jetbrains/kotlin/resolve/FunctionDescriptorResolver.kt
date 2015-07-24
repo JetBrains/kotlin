@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl.create
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -47,12 +49,13 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.ArrayList
 
 class FunctionDescriptorResolver(
-        val typeResolver: TypeResolver,
-        val descriptorResolver: DescriptorResolver,
-        val annotationResolver: AnnotationResolver,
-        val storageManager: StorageManager,
-        val expressionTypingServices: ExpressionTypingServices,
-        val builtIns: KotlinBuiltIns
+        private val typeResolver: TypeResolver,
+        private val descriptorResolver: DescriptorResolver,
+        private val annotationResolver: AnnotationResolver,
+        private val storageManager: StorageManager,
+        private val expressionTypingServices: ExpressionTypingServices,
+        private val builtIns: KotlinBuiltIns,
+        private val modifiersChecker: ModifiersChecker
 ) {
     public fun resolveFunctionDescriptor(
             containingDescriptor: DeclarationDescriptor,
@@ -336,11 +339,13 @@ class FunctionDescriptorResolver(
 
             if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary()) {
                 val isConstructor = functionDescriptor is ConstructorDescriptor
-                DescriptorResolver.checkParameterHasNoValOrVar(
-                        trace, valueParameter,
-                        if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
-                )
-                DescriptorResolver.checkParameterHasNoModifier(trace, valueParameter)
+                with (modifiersChecker.withTrace(trace)) {
+                    checkParameterHasNoValOrVar(
+                            valueParameter,
+                            if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
+                    )
+                    checkParameterHasNoModifier(valueParameter)
+                }
             }
             else {
                 checkConstructorParameterHasNoModifier(trace, valueParameter)
@@ -357,7 +362,7 @@ class FunctionDescriptorResolver(
     private fun checkConstructorParameterHasNoModifier(trace: BindingTrace, parameter: JetParameter) {
         // If is not a property, then it must have no modifier
         if (!parameter.hasValOrVar()) {
-            DescriptorResolver.checkParameterHasNoModifier(trace, parameter)
+            modifiersChecker.withTrace(trace).checkParameterHasNoModifier(parameter)
         }
     }
 }

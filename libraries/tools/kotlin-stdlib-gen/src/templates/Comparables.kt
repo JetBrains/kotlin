@@ -44,7 +44,7 @@ fun comparables(): List<GenericFunction> {
         }
     }
 
-    templates add f("coerceIn(range: TRange)") {
+    templates add f("coerceIn(range: Range<T>)") {
         only(Primitives, Generic)
         only(numericPrimitives)
         returns("SELF")

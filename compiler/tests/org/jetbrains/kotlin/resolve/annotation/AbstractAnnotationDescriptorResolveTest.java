@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -57,6 +58,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setVerbose(true);
                     options.setNameShortness(NameShortness.SHORT);
+                    options.setModifiers(DescriptorRendererModifier.ALL);
                     return Unit.INSTANCE$;
                 }
             }

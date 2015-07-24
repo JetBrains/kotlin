@@ -17,14 +17,11 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.project.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractCompiledKotlinInJavaCompletionTest : JetFixtureCompletionBaseTestCase() {
-    override fun getPlatform() = TargetPlatform.JVM
+    override fun getPlatform() = JvmPlatform
 
     override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib", false)
 

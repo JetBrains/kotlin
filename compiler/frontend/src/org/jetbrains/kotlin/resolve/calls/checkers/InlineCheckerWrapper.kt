@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference
 public class InlineCheckerWrapper : CallChecker {
     private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
 
-    override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (context.isAnnotationContext) return
 
         var parentDescriptor: DeclarationDescriptor? = context.scope.getContainingDeclaration()

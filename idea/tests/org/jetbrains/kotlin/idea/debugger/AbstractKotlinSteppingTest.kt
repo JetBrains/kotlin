@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.actions.MethodSmartStepTarget
+import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
+import com.intellij.debugger.engine.MethodFilter
+import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
+import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
@@ -59,6 +61,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
                 it.startsWith("// STEP_OUT") -> repeat("// STEP_OUT: ") { stepOut() }
                 it.startsWith("// SMART_STEP_INTO") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
                 it.startsWith("// RESUME") -> repeat("// RESUME: ") { resume(this) }
+                it.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
             }
         }
 
@@ -85,17 +88,23 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         finish()
     }
 
-    private fun SuspendContextImpl.smartStepInto() {
-        this.smartStepInto(false)
+    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int = 0) {
+        this.smartStepInto(chooseFromList, false)
     }
 
-    private fun SuspendContextImpl.smartStepInto(ignoreFilters: Boolean) {
-        createSmartStepIntoFilters().forEach {
-            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
+    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
+        val filters = createSmartStepIntoFilters()
+        if (chooseFromList == 0) {
+            filters.forEach {
+                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
+            }
+        }
+        else {
+            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList)))
         }
     }
 
-    private fun createSmartStepIntoFilters(): List<BasicStepMethodFilter> {
+    private fun createSmartStepIntoFilters(): List<MethodFilter> {
         val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
         val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
 
@@ -109,13 +118,15 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
             val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
 
-            stepTargets.filterIsInstance<MethodSmartStepTarget>().map {
+            stepTargets.filterIsInstance<SmartStepTarget>().map {
                 stepTarget ->
                 when (stepTarget) {
-                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget)
-                    else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!)
+                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
+                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    else -> null
                 }
             }
-        }
+        }.filterNotNull()
     }
 }

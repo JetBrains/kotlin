@@ -21,7 +21,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -47,14 +50,14 @@ public class TargetPlatformDetector {
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
         if (ProjectStructureUtil.isJsKotlinModule(module)) {
-            return TargetPlatform.JS;
+            return JsPlatform.INSTANCE$;
         }
-        return TargetPlatform.JVM;
+        return JvmPlatform.INSTANCE$;
     }
 
     @NotNull
     public static TargetPlatform getDefaultPlatform() {
         LOG.info("Using default platform");
-        return TargetPlatform.JVM;
+        return JvmPlatform.INSTANCE$;
     }
 }

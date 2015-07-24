@@ -21,12 +21,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.JetType;
 
 public class BasicCallResolutionContext extends CallResolutionContext<BasicCallResolutionContext> {
@@ -41,15 +40,13 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
-            @NotNull SymbolUsageValidator symbolUsageValidator,
-            @NotNull AdditionalTypeChecker additionalTypeChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
             boolean collectAllCandidates,
             boolean insideSafeCallChain
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
     @NotNull
@@ -62,13 +59,11 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull CallChecker callChecker,
-            @NotNull SymbolUsageValidator symbolUsageValidator,
-            @NotNull AdditionalTypeChecker additionalTypeChecker,
             boolean isAnnotationContext
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-             new ResolutionResultsCacheImpl(), null,
-             callChecker, symbolUsageValidator, additionalTypeChecker, StatementFilter.NONE, isAnnotationContext, false, false);
+                                              new ResolutionResultsCacheImpl(), null,
+                                              callChecker, StatementFilter.NONE, isAnnotationContext, false, false);
     }
 
     @NotNull
@@ -79,7 +74,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
-                context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker,
+                context.callChecker,
                 context.statementFilter, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
@@ -104,13 +99,17 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
     }
 
     @NotNull
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, symbolUsageValidator, additionalTypeChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideCallChain);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideCallChain);
+    }
+
+    public void performContextDependentCallChecks(@NotNull ResolvedCall<?> resolvedCall) {
+        callChecker.check(resolvedCall, this);
     }
 }

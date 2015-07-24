@@ -17,19 +17,22 @@
 package org.jetbrains.kotlin.idea.project
 
 import org.jetbrains.kotlin.analyzer.AnalyzerFacade
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModule
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public object AnalyzerFacadeProvider {
     //NOTE: it's convenient that JS backend doesn't have platform parameters (for now)
     // otherwise we would be forced to add casts on the call site of setupResolverForProject
     public fun getAnalyzerFacade(targetPlatform: TargetPlatform): AnalyzerFacade<out ResolverForModule, JvmPlatformParameters> {
         return when (targetPlatform) {
-            TargetPlatform.JVM -> JvmAnalyzerFacade
-            TargetPlatform.JS -> JsAnalyzerFacade
-            else -> throw IllegalArgumentException("Unsupported platfrom: $targetPlatform")
+            JvmPlatform -> JvmAnalyzerFacade
+            JsPlatform -> JsAnalyzerFacade
+            else -> throw IllegalArgumentException("Unsupported platform: $targetPlatform")
         }
     }
 }

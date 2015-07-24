@@ -77,6 +77,12 @@ public class FunctionParameterInfoTestGenerated extends AbstractFunctionParamete
         doTest(fileName);
     }
 
+    @TestMetadata("NoAnnotations.kt")
+    public void testNoAnnotations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NoAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NotAccessible.kt")
     public void testNotAccessible() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/parameterInfo/functionParameterInfo/NotAccessible.kt");

@@ -254,7 +254,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: Range<T>): T {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Byte.coerceIn(range: ByteRange): Byte {
+public fun Byte.coerceIn(range: Range<Byte>): Byte {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }
@@ -263,7 +263,7 @@ public fun Byte.coerceIn(range: ByteRange): Byte {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Double.coerceIn(range: DoubleRange): Double {
+public fun Double.coerceIn(range: Range<Double>): Double {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }
@@ -272,7 +272,7 @@ public fun Double.coerceIn(range: DoubleRange): Double {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Float.coerceIn(range: FloatRange): Float {
+public fun Float.coerceIn(range: Range<Float>): Float {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }
@@ -281,7 +281,7 @@ public fun Float.coerceIn(range: FloatRange): Float {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Int.coerceIn(range: IntRange): Int {
+public fun Int.coerceIn(range: Range<Int>): Int {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }
@@ -290,7 +290,7 @@ public fun Int.coerceIn(range: IntRange): Int {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Long.coerceIn(range: LongRange): Long {
+public fun Long.coerceIn(range: Range<Long>): Long {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }
@@ -299,7 +299,7 @@ public fun Long.coerceIn(range: LongRange): Long {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Short.coerceIn(range: ShortRange): Short {
+public fun Short.coerceIn(range: Range<Short>): Short {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
 }

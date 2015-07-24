@@ -61,12 +61,6 @@ import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
-    private static final Set<JetModifierKeywordToken> MODIFIERS_ILLEGAL_ON_PARAMETERS;
-    static {
-        MODIFIERS_ILLEGAL_ON_PARAMETERS = Sets.newHashSet();
-        MODIFIERS_ILLEGAL_ON_PARAMETERS.addAll(Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
-        MODIFIERS_ILLEGAL_ON_PARAMETERS.remove(JetTokens.VARARG_KEYWORD);
-    }
 
     @NotNull private final TypeResolver typeResolver;
     @NotNull private final AnnotationResolver annotationResolver;
@@ -1163,24 +1157,6 @@ public class DescriptorResolver {
     @Nullable
     public static ClassDescriptor getContainingClass(@NotNull JetScope scope) {
         return getParentOfType(scope.getContainingDeclaration(), ClassDescriptor.class, false);
-    }
-
-    public static void checkParameterHasNoValOrVar(
-            @NotNull BindingTrace trace,
-            @NotNull JetParameter parameter,
-            @NotNull DiagnosticFactory1<PsiElement, JetKeywordToken> diagnosticFactory
-    ) {
-        PsiElement valOrVar = parameter.getValOrVarKeyword();
-        if (valOrVar != null) {
-            trace.report(diagnosticFactory.on(valOrVar, ((JetKeywordToken) valOrVar.getNode().getElementType())));
-        }
-    }
-
-    public static void checkParameterHasNoModifier(
-            @NotNull BindingTrace trace,
-            @NotNull JetParameter parameter
-    ) {
-        ModifiersChecker.reportIllegalModifiers(parameter.getModifierList(), MODIFIERS_ILLEGAL_ON_PARAMETERS, trace);
     }
 
     public static void resolvePackageHeader(
