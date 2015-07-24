@@ -1,0 +1,5 @@
+interface I
+
+fun f(): I {
+    return object : I { }
+}

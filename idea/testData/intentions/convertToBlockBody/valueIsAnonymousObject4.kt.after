@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+interface I
+
+fun f(): List<I> {
+    return listOf(object : I { })
+}

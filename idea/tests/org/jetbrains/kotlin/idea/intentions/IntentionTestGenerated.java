@@ -3810,6 +3810,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/setter.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("valueIsAnonymousObject.kt")
+        public void testValueIsAnonymousObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueIsAnonymousObject2.kt")
+        public void testValueIsAnonymousObject2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueIsAnonymousObject3.kt")
+        public void testValueIsAnonymousObject3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valueIsAnonymousObject4.kt")
+        public void testValueIsAnonymousObject4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/valueIsAnonymousObject4.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertToConcatenatedString")
