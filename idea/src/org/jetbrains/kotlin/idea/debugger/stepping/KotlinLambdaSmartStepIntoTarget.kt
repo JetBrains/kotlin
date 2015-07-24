@@ -34,8 +34,6 @@ public class KotlinLambdaSmartStepTarget(
         highlightElement: JetFunctionLiteralExpression,
         lines: Range<Int>
 ): SmartStepTarget(label, highlightElement, true, lines) {
-    override fun getIcon() = JetIcons.LAMBDA
-
     fun getLambda() = getHighlightElement() as JetFunctionLiteralExpression
 
     companion object {

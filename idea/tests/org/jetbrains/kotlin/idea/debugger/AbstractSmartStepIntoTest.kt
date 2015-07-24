@@ -42,9 +42,10 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
 
         val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 
-        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.getPresentation() }
+        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it: SmartStepTarget -> it.getLabel() ?: "" }
 
-        val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
+        val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ")
+                .map { it.replace("+++", ",") }
 
         for (actualTargetName in actual) {
             assert(actualTargetName in expected) {
