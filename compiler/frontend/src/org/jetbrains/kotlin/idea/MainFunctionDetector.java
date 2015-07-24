@@ -84,7 +84,7 @@ public class MainFunctionDetector {
         if (!KotlinBuiltIns.isString(typeArgument)) {
             return false;
         }
-        if (typeArguments.get(0).getProjectionKind() != Variance.INVARIANT) {
+        if (typeArguments.get(0).getProjectionKind() == Variance.IN_VARIANCE) {
             return false;
         }
 
