@@ -1,13 +1,7 @@
 package test
 
-class ClassAndPartClash {
+class ClassAndPartClash
+class ClassAndPartClash_
+class ClassAndPartClashKt
 
-}
-
-class ClassAndPartClash_ {
-
-}
-
-fun z () {
-
-}
+fun z () {}

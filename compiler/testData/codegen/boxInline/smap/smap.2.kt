@@ -22,7 +22,7 @@ inline fun html(init: () -> Unit) {
 //*S Kotlin
 //*F
 //+ 1 smap.2.kt
-//builders/BuildersPackage
+//builders/Smap_2Kt
 //*L
 //1#1,28:1
 //*E

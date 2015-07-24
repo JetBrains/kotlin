@@ -12,9 +12,9 @@ fun box(): String {
 //*S Kotlin
 //*F
 //+ 1 inlineComponent.1.kt
-//_DefaultPackage
+//InlineComponent_1Kt
 //+ 2 inlineComponent.2.kt
-//zzz/ZzzPackage
+//zzz/InlineComponent_2Kt
 //*L
 //1#1,21:1
 //5#2,3:22

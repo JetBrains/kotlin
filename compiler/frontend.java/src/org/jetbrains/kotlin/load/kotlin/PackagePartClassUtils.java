@@ -45,8 +45,12 @@ public class PackagePartClassUtils {
     }
 
     @NotNull
-    private static String replaceSpecialSymbols(@NotNull String str) {
-        return str.replace('.', '_');
+    private static String getSanitizedIdentifier(@NotNull String str) {
+        str = str.replaceAll("[^\\p{L}\\p{Digit}]", "_");
+        if (!Character.isJavaIdentifierStart(str.charAt(0))) {
+            str = "_" + str;
+        }
+        return str;
     }
 
     @NotNull
@@ -65,20 +69,10 @@ public class PackagePartClassUtils {
             if ('a' <= c && c <= 'z') {
                 fileName = Character.toUpperCase(fileName.charAt(0)) + fileName.substring(1);
             }
+            fileName += "Kt";
         }
 
-        if (jetFile != null) {
-            for (PsiElement child : jetFile.getDeclarations()) {
-                if (child instanceof JetClassOrObject) {
-                    if (fileName.equalsIgnoreCase(((JetClassOrObject) child).getName())) {
-                        fileName += "_";
-                        break;
-                    }
-                }
-            }
-        }
-
-        return facadeFqName.parent().child(Name.identifier(replaceSpecialSymbols(fileName)));
+        return facadeFqName.parent().child(Name.identifier(getSanitizedIdentifier(fileName)));
     }
 
     @NotNull

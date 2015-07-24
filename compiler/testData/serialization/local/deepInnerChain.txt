@@ -1,7 +1,7 @@
 local final inner class Deepest
 
 public constructor Deepest()
-internal final fun deep(): `_DefaultPackage$deepInnerChain$*$main$Local$Inner$prop$1$foo$1$DeepLocal`
-internal final fun deepest(): `_DefaultPackage$deepInnerChain$*$main$Local$Inner$prop$1$foo$1$DeepLocal`.Deepest?
-internal final fun inner(): `_DefaultPackage$deepInnerChain$*$main$Local`.Inner
-internal final fun local(): `_DefaultPackage$deepInnerChain$*$main$Local`
+internal final fun deep(): `DeepInnerChainKt$main$Local$Inner$prop$1$foo$1$DeepLocal`
+internal final fun deepest(): `DeepInnerChainKt$main$Local$Inner$prop$1$foo$1$DeepLocal`.Deepest?
+internal final fun inner(): `DeepInnerChainKt$main$Local`.Inner
+internal final fun local(): `DeepInnerChainKt$main$Local`

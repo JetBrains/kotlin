@@ -8,7 +8,7 @@ fun box(): String {
     if (enclosingMethod?.getName() != "invoke") return "method: $enclosingMethod"
 
     val enclosingClass = objectInLambda.javaClass.getEnclosingClass()!!.getName()
-    if (!enclosingClass.startsWith("_DefaultPackage\$") || !enclosingClass.endsWith("\$box\$objectInLambda\$1")) return "enclosing class: $enclosingClass"
+    if (enclosingClass != "ObjectInLambdaKt\$box\$objectInLambda\$1") return "enclosing class: $enclosingClass"
 
     val declaringClass = objectInLambda.javaClass.getDeclaringClass()
     if (declaringClass != null) return "anonymous object has a declaring class"

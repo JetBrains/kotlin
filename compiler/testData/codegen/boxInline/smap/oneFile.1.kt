@@ -16,7 +16,7 @@ inline fun test(p: () -> String): String {
 //*S Kotlin
 //*F
 //+ 1 oneFile.1.kt
-//_DefaultPackage
+//OneFile_1Kt
 //*L
 //1#1,22:1
 //*E
