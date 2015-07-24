@@ -8,9 +8,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-api/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-impl/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-serialization/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </SOURCES>
   </library>
 </component>
