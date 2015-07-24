@@ -36,6 +36,9 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
+    </component>
   </project-components>
 
  <application-components>
@@ -310,7 +313,7 @@
     <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.JetTypeDeclarationProvider"/>
 
     <completion.contributor language="jet"
-                            id="JetCompletionContributor"
+                            id="KotlinCompletionContributor"
                             order="first"
                             implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionContributor"/>
     <completion.contributor language="jet"
