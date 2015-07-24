@@ -84,7 +84,8 @@ public class JavaToKotlinConverter(
         private val project: Project,
         private val settings: ConverterSettings,
         private val referenceSearcher: ReferenceSearcher,
-        private val resolverForConverter: ResolverForConverter
+        private val resolverForConverter: ResolverForConverter,
+        private val docCommentConverter: DocCommentConverter
 ) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
@@ -142,7 +143,7 @@ public class JavaToKotlinConverter(
 
 
             val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
-                Converter.create(inputElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector).convert()
+                Converter.create(inputElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, docCommentConverter, usageProcessingCollector).convert()
             }.toArrayList()
 
             val results = processor.processItems(0.25, intermediateResults.withIndex()) { pair ->

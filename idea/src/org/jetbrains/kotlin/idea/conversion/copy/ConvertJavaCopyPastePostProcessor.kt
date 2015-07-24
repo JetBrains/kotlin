@@ -160,7 +160,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 project,
                 ConverterSettings.defaultSettings,
                 IdeaReferenceSearcher,
-                IdeaResolverForConverter
+                IdeaResolverForConverter,
+                IdeaDocCommentConverter
         )
 
         val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()

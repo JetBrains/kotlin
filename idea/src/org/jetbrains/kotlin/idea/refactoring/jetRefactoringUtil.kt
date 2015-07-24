@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.*
@@ -572,7 +573,8 @@ fun PsiExpression.j2k(): JetExpression? {
     val j2kConverter = JavaToKotlinConverter(project,
                                              ConverterSettings.defaultSettings,
                                              IdeaReferenceSearcher,
-                                             IdeaResolverForConverter)
+                                             IdeaResolverForConverter,
+                                             IdeaDocCommentConverter)
     val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
     return JetPsiFactory(getProject()).createExpression(text)
 }

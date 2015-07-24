@@ -53,7 +53,7 @@ fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix:
 
 class ElementCreationStackTraceRequiredException : RuntimeException()
 
-class CodeBuilder(private val topElement: PsiElement?) {
+class CodeBuilder(private val topElement: PsiElement?, private var docConverter: DocCommentConverter) {
     private val builder = StringBuilder()
     private var endOfLineCommentAtEnd = false
 
@@ -70,7 +70,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private fun appendCommentOrWhiteSpace(element: PsiElement) {
         if (element is PsiDocComment) {
-            append(DocCommentConverter.convertDocComment(element), false)
+            append(docConverter.convertDocComment(element), false)
         }
         else {
             append(element.getText()!!, element.isEndOfLineComment())

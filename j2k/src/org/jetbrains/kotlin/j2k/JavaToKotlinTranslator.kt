@@ -16,34 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.core.JavaCoreApplicationEnvironment
-import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
-import java.net.URLClassLoader
-import com.intellij.codeInsight.NullableNotNullManager
-import com.intellij.psi.PsiModifierListOwner
-import com.intellij.openapi.extensions.Extensions
-import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.psi.augment.PsiAugmentProvider
-import com.intellij.codeInsight.runner.JavaMainMethodProvider
-import com.intellij.codeInsight.ContainerProvider
-import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
-import com.intellij.psi.stubs.BinaryFileStubBuilders
-import com.intellij.psi.FileContextProvider
-import com.intellij.psi.meta.MetaDataContributor
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
-import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.psi.PsiElementFinder
-import com.intellij.openapi.extensions.ExtensionsArea
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 
 public object JavaToKotlinTranslator {
     private fun createFile(text: String, project: Project): PsiFile? {
@@ -68,7 +45,7 @@ public object JavaToKotlinTranslator {
     public fun generateKotlinCode(javaCode: String, project: Project): String {
         val file = createFile(javaCode, project)
         if (file is PsiJavaFile) {
-            val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, EmptyReferenceSearcher, EmptyResolverForConverter)
+            val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, EmptyReferenceSearcher, EmptyResolverForConverter, EmptyDocCommentConverter)
             return prettify(converter.elementsToKotlin(listOf(file)).results.single()!!.text) //TODO: imports
         }
         return ""

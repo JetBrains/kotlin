@@ -29,8 +29,16 @@ import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import java.util.Stack
 
-object DocCommentConverter {
-    fun convertDocComment(docComment: PsiDocComment): String {
+interface DocCommentConverter {
+    fun convertDocComment(docComment: PsiDocComment): String
+}
+
+object EmptyDocCommentConverter: DocCommentConverter {
+    override fun convertDocComment(docComment: PsiDocComment) = docComment.text
+}
+
+object IdeaDocCommentConverter : DocCommentConverter {
+    override fun convertDocComment(docComment: PsiDocComment): String {
         val html = StringBuilder {
             appendJavadocElements(docComment.getDescriptionElements())
 

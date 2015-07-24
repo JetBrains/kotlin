@@ -41,6 +41,7 @@ class Converter private constructor(
         val inConversionScope: (PsiElement) -> Boolean,
         val referenceSearcher: ReferenceSearcher,
         val resolverForConverter: ResolverForConverter,
+        private val docCommentConverter: DocCommentConverter,
         private val commonState: Converter.CommonState,
         private val personalState: Converter.PersonalState
 ) {
@@ -63,17 +64,17 @@ class Converter private constructor(
     companion object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, inConversionScope: (PsiElement) -> Boolean,
                           referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter,
-                          usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
+                          docCommentConverter: DocCommentConverter, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
             return Converter(elementToConvert, settings, inConversionScope,
                              CachingReferenceSearcher(referenceSearcher),
-                             resolverForConverter, CommonState(usageProcessingsCollector), PersonalState(null))
+                             resolverForConverter, docCommentConverter, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, commonState, state)
+            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, docCommentConverter, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
@@ -97,7 +98,7 @@ class Converter private constructor(
                 { usageProcessings ->
                     unfoldDeferredElements(usageProcessings)
 
-                    val builder = CodeBuilder(elementToConvert)
+                    val builder = CodeBuilder(elementToConvert, docCommentConverter)
                     builder.append(element)
                     Result(builder.resultText, builder.importsToAdd)
                 },
