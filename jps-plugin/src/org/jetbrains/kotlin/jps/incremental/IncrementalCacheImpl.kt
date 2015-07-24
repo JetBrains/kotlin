@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.visibility
@@ -106,6 +107,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         val SOURCE_TO_CLASSES = "source-to-classes.tab"
         val CLASS_TO_SOURCES = "class-to-sources.tab"
         val DIRTY_OUTPUT_CLASSES = "dirty-output-classes.tab"
+        val DIRTY_INLINE_FUNCTIONS = "dirty-inline-functions.tab"
         val HAS_INLINE_TO = "has-inline-to.tab"
 
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
@@ -119,6 +121,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private val sourceToClassesMap = SourceToClassesMap()
     private val classToSourcesMap = ClassToSourcesMap()
     private val dirtyOutputClassesMap = DirtyOutputClassesMap()
+    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap()
     private val hasInlineTo = OneToManyPathsMapping(File(baseDir, HAS_INLINE_TO))
 
     private val maps = listOf(protoMap, constantsMap, inlineFunctionsMap, packagePartMap, sourceToClassesMap, dirtyOutputClassesMap)
@@ -253,6 +256,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             inlineFunctionsMap.remove(className)
         }
         dirtyOutputClassesMap.clean()
+        dirtyInlineFunctionsMap.clean()
         return recompilationDecision
     }
 
@@ -550,7 +554,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 InlineFunctionsMapExternalizer
         )
 
-        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long>? {
+        private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
@@ -579,31 +583,44 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
             }, 0)
 
-            return if (result.isEmpty()) null else result
+            return result
         }
 
         public fun process(className: JvmClassName, bytes: ByteArray): Boolean {
             return put(className, getInlineFunctionsMap(bytes))
         }
 
-        private fun put(className: JvmClassName, inlineFunctionsMap: Map<String, Long>?): Boolean {
-            val key = className.getInternalName()
+        private fun put(className: JvmClassName, newMap: Map<String, Long>): Boolean {
+            val internalName = className.internalName
+            val oldMap = storage[internalName] ?: emptyMap()
 
-            val oldMap = storage[key]
-            if (oldMap == inlineFunctionsMap) {
-                return false
+            val changed = hashSetOf<String>()
+            val allFunctions = oldMap.keySet() + newMap.keySet()
+
+            for (fn in allFunctions) {
+                val oldHash = oldMap[fn]
+                val newHash = newMap[fn]
+
+                if (oldHash != newHash) {
+                    changed.add(fn)
+                }
             }
-            if (inlineFunctionsMap != null) {
-                storage.put(key, inlineFunctionsMap)
+
+            when {
+                newMap.isNotEmpty() -> storage.put(internalName, newMap)
+                else -> storage.remove(internalName)
             }
-            else {
-                storage.remove(key)
+
+            if (changed.isNotEmpty()) {
+                dirtyInlineFunctionsMap.put(className, changed.toList())
+                return true
             }
-            return true
+
+            return false
         }
 
         public fun remove(className: JvmClassName) {
-            put(className, null)
+            storage.remove(className.internalName)
         }
 
         override fun dumpValue(value: Map<String, Long>): String {
@@ -733,6 +750,24 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
 
         override fun dumpValue(value: Boolean) = ""
+    }
+
+    private inner class DirtyInlineFunctionsMap : BasicMap<List<String>>() {
+        override fun createMap(): PersistentHashMap<String, List<String>> = PersistentHashMap(
+                File(baseDir, DIRTY_INLINE_FUNCTIONS),
+                EnumeratorStringDescriptor(),
+                StringListExternalizer
+        )
+
+        public fun getEntries(): Map<JvmClassName, List<String>> =
+            storage.allKeysWithExistingMapping
+                   .toMap(JvmClassName::byInternalName) { storage[it] }
+
+        public fun put(className: JvmClassName, changedFunctions: List<String>) {
+            storage.put(className.internalName, changedFunctions)
+        }
+
+        override fun dumpValue(value: List<String>) = value.toString()
     }
 
     enum class RecompilationDecision {
