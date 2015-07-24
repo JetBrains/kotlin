@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.idea.core.codeInsight.DescriptorClassMember;
 import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.kotlin.idea.core.codeInsight.OverrideImplementMethodsHandler;
+import org.jetbrains.kotlin.idea.core.codeInsight.OverrideMethodsHandler;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.JetClassOrObject;

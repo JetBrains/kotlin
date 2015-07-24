@@ -440,7 +440,7 @@
     <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinBreakpointHandlerFactory"/>
 
     <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler"/>
-    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
+    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.codeInsight.OverrideMethodsHandler"/>
 
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JSFrameworkType"/>

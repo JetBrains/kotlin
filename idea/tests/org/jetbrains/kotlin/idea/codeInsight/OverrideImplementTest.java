@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
+import org.jetbrains.kotlin.idea.core.codeInsight.OverrideMethodsHandler;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 public final class OverrideImplementTest extends AbstractOverrideImplementTest {
