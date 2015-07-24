@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
+import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
+import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Method
 import java.lang.reflect.Constructor
@@ -158,9 +160,10 @@ class LazyOperationsLog(
                 val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
                 val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
-                val text = when (typeProto.getConstructor().getKind()) {
-                    ProtoBuf.Type.Constructor.Kind.CLASS -> context.nameResolver.getFqName(typeProto.getConstructor().getId()).asString()
-                    ProtoBuf.Type.Constructor.Kind.TYPE_PARAMETER -> {
+                val typeConstructorData = typeProto.getTypeConstructorData()
+                val text = when (typeConstructorData.kind) {
+                    TypeConstructorKind.CLASS -> context.nameResolver.getFqName(typeConstructorData.id).asString()
+                    TypeConstructorKind.TYPE_PARAMETER -> {
                         val classifier = (o as JetType).getConstructor().getDeclarationDescriptor()!!
                         "" + classifier.getName() + " in " + DescriptorUtils.getFqName(classifier.getContainingDeclaration())
                     }

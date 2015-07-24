@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.TypeConstructorKind
+import org.jetbrains.kotlin.serialization.deserialization.getTypeConstructorData
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
@@ -54,13 +56,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 if (type.getNullable()) KotlinPlaceHolderStubImpl<JetNullableType>(typeReference, JetStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
-        when (type.getConstructor().getKind()) {
-            Type.Constructor.Kind.CLASS -> {
+        val typeConstructorData = type.getTypeConstructorData()
+        when (typeConstructorData.kind) {
+            TypeConstructorKind.CLASS -> {
                 createClassReferenceTypeStub(effectiveParent, type, annotations)
             }
-            Type.Constructor.Kind.TYPE_PARAMETER -> {
+            TypeConstructorKind.TYPE_PARAMETER -> {
                 createTypeAnnotationStubs(effectiveParent, annotations)
-                val typeParameterName = c.typeParameters[type.getConstructor().getId()]
+                val typeParameterName = c.typeParameters[typeConstructorData.id]
                 createStubForTypeName(ClassId.topLevel(FqName.topLevel(typeParameterName)), effectiveParent)
             }
         }
@@ -237,11 +240,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun Type.isDefaultUpperBound(): Boolean {
-        val constructor = getConstructor()
-        if (constructor.getKind() != Type.Constructor.Kind.CLASS) {
+        val typeConstructorData = getTypeConstructorData()
+        if (typeConstructorData.kind != TypeConstructorKind.CLASS) {
             return false
         }
-        val classId = c.nameResolver.getClassId(constructor.getId())
-        return KotlinBuiltIns.isAny(classId.asSingleFqName().toUnsafe()) && this.getNullable()
+        val classId = c.nameResolver.getClassId(typeConstructorData.id)
+        return KotlinBuiltIns.isAny(classId.asSingleFqName().toUnsafe()) && this.nullable
     }
 }
