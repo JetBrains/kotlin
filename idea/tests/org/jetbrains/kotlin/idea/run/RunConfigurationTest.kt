@@ -22,10 +22,7 @@ import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.RunManagerEx
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.configurations.JavaCommandLine
-import com.intellij.execution.configurations.JavaParameters
-import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.RunProfile
+import com.intellij.execution.configurations.*
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
@@ -38,6 +35,8 @@ import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
@@ -46,10 +45,10 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntime
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.junit.Assert
 import java.io.File
 import java.util.ArrayList
@@ -62,12 +61,58 @@ class RunConfigurationTest: CodeInsightTestCase() {
 
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().getBaseDir()!!)
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, PluginTestCaseBase.mockJdk())
 
         val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
 
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.srcOutputDir))
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.testOutputDir))
+
+        fun functionVisitor(function: JetNamedFunction) {
+            val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }?.filter { it.isNotBlank() }?.toList() ?: emptyList()
+            if (options.isNotEmpty()) {
+                val assertIsMain = "yes" in options
+                val assertIsNotMain = "no" in options
+
+                val bindingContext = function.analyze(BodyResolveMode.FULL)
+                val isMainFunction = MainFunctionDetector(bindingContext).isMain(function)
+
+                if (assertIsMain) {
+                    Assert.assertTrue("The function ${function.fqName?.asString()} should be main", isMainFunction)
+                }
+                if (assertIsNotMain) {
+                    Assert.assertFalse("The function ${function.fqName?.asString()} should NOT be main", isMainFunction)
+                }
+
+                if (isMainFunction) {
+                    createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
+
+                    Assert.assertNotNull("Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
+                                      KotlinRunConfigurationProducer.getEntryPointContainer(function))
+                } else {
+                    try {
+                        createConfigurationFromMain(function.fqName?.asString()!!).checkConfiguration()
+                        Assert.fail("configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()")
+                    } catch (expected: Throwable) {
+                    }
+
+                    Assert.assertNull("Kotlin configuration producer shouldN'T produce configuration for ${function.fqName?.asString()}",
+                                      KotlinRunConfigurationProducer.getEntryPointContainer(function))
+                }
+            }
+        }
+
+        createResult.srcDir.children.filter { it.extension == "kt" }.forEach {
+            val psiFile = PsiManager.getInstance(createResult.module.project).findFile(it)
+            if (psiFile is JetFile) {
+                psiFile.acceptChildren(object : JetVisitorVoid() {
+                    override fun visitNamedFunction(function: JetNamedFunction) {
+                        functionVisitor(function)
+                    }
+                })
+            }
+        }
     }
 
     fun testDependencyModuleClasspath() {

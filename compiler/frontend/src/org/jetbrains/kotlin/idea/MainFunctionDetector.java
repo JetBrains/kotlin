@@ -29,12 +29,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.Variance;
 
 import java.util.Collection;
 import java.util.List;
-
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class MainFunctionDetector {
     private final NotNullFunction<JetNamedFunction, FunctionDescriptor> getFunctionDescriptor;
@@ -63,9 +61,15 @@ public class MainFunctionDetector {
     }
 
     public boolean isMain(@NotNull JetNamedFunction function) {
-        if (!"main".equals(function.getName())) return false;
+        if (!"main".equals(function.getName()) && function.getAnnotationEntries().isEmpty()) {
+            return false;
+        }
 
         FunctionDescriptor functionDescriptor = getFunctionDescriptor.fun(function);
+        if (!getJVMFunctionName(functionDescriptor).equals("main")) {
+            return false;
+        }
+
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
         if (parameters.size() != 1) return false;
 
@@ -77,7 +81,12 @@ public class MainFunctionDetector {
         if (typeArguments.size() != 1) return false;
 
         JetType typeArgument = typeArguments.get(0).getType();
-        if (!JetTypeChecker.DEFAULT.equalTypes(typeArgument, getBuiltIns(functionDescriptor).getStringType())) return false;
+        if (!KotlinBuiltIns.isString(typeArgument)) {
+            return false;
+        }
+        if (typeArguments.get(0).getProjectionKind() == Variance.IN_VARIANCE) {
+            return false;
+        }
 
         if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return true;
 
@@ -109,5 +118,15 @@ public class MainFunctionDetector {
             }
         }
         return null;
+    }
+
+    @NotNull
+    private static String getJVMFunctionName(FunctionDescriptor functionDescriptor) {
+        String platformName = DescriptorUtils.getPlatformName(functionDescriptor);
+        if (platformName != null) {
+            return platformName;
+        }
+
+        return functionDescriptor.getName().asString();
     }
 }

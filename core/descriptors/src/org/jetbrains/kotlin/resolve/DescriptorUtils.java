@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotated;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -28,6 +30,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -545,6 +549,20 @@ public class DescriptorUtils {
         getSubPackagesFqNames(packageView, result);
 
         return result;
+    }
+
+    @Nullable
+    public static String getPlatformName(@NotNull Annotated descriptor) {
+        AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
+        if (platformNameAnnotation == null) return null;
+
+        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = platformNameAnnotation.getAllValueArguments();
+        if (arguments.isEmpty()) return null;
+
+        ConstantValue<?> name = arguments.values().iterator().next();
+        if (!(name instanceof StringValue)) return null;
+
+        return ((StringValue) name).getValue();
     }
 
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {
