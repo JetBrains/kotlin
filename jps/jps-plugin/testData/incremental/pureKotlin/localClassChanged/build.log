@@ -1,6 +1,6 @@
 Cleaning output files:
-out/production/module/test/A$foo$X.class
-out/production/module/test/A.class
+out/production/module/test/AKt$foo$X.class
+out/production/module/test/AKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:

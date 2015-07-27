@@ -1,6 +1,6 @@
 Cleaning output files:
 out/production/module/B.class
-out/production/module/Usage.class
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
@@ -17,9 +17,9 @@ src/usage.kt
 End of files
 Cleaning output files:
 out/production/module/A.class
-out/production/module/Usage.class
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
-out/production/module/new/LikePart.class
+out/production/module/new/LikePartKt.class
 out/production/module/new/NewPackage.class
 End of files
 Compiling files:

@@ -1,9 +1,9 @@
 Cleaning output files:
-out/production/module/Other.class
+out/production/module/OtherKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Cleaning output files:
-out/production/module/Usage.class
+out/production/module/UsageKt.class
 End of files
 Compiling files:
 src/usage.kt
@@ -13,7 +13,7 @@ Expecting an expression
 
 
 Cleaning output files:
-out/production/module/Fun.class
+out/production/module/FunKt.class
 End of files
 Compiling files:
 src/fun.kt
