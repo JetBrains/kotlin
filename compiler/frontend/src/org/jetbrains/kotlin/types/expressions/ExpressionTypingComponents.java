@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.types.TypeIntersector;
 
 import javax.inject.Inject;
 
@@ -54,6 +55,7 @@ public class ExpressionTypingComponents {
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
     /*package*/ Iterable<CallChecker> callCheckers;
+    /*package*/ TypeIntersector typeIntersector;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -168,5 +170,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCallCheckers(@NotNull Iterable<CallChecker> callCheckers) {
         this.callCheckers = callCheckers;
+    }
+
+    @Inject
+    public void setTypeIntersector(@NotNull TypeIntersector typeIntersector) {
+        this.typeIntersector = typeIntersector;
     }
 }

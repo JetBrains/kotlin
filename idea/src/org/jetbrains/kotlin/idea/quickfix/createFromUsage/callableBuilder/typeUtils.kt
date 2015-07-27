@@ -196,7 +196,7 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
     }
-    val theType = TypeIntersector.intersect(JetTypeChecker.DEFAULT, expectedTypes)
+    val theType = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, expectedTypes)
     if (theType != null) {
         return arrayOf(theType)
     }

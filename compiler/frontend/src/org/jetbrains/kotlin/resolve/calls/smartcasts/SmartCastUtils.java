@@ -22,6 +22,7 @@ import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -152,7 +153,7 @@ public class SmartCastUtils {
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeIntersector.intersect(JetTypeChecker.DEFAULT, subTypes);
+        JetType intersection = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }

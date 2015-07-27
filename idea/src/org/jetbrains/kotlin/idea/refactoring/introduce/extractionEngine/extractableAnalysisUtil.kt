@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -519,7 +520,7 @@ private class MutableParameter(
 
     private val defaultType: JetType by lazy {
         writable = false
-        TypeIntersector.intersect(JetTypeChecker.DEFAULT, defaultTypes)!!
+        TypeIntersector.intersectTypes(originalDescriptor.builtIns, JetTypeChecker.DEFAULT, defaultTypes)!!
     }
 
     private val parameterTypeCandidates: List<JetType> by lazy {

@@ -36,14 +36,31 @@ import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.regi
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 
 public class TypeIntersector {
-    public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
+
+    private final KotlinBuiltIns builtIns;
+
+    public TypeIntersector(@NotNull KotlinBuiltIns builtIns) {
+        this.builtIns = builtIns;
+    }
+
+    public boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
         return intersect(JetTypeChecker.DEFAULT, new LinkedHashSet<JetType>(Arrays.asList(typeA, typeB))) == null;
     }
 
+    //TODO: usages of this method should be removed
     @Nullable
-    public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
+    public static JetType intersectTypes(
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull JetTypeChecker typeChecker,
+            @NotNull Set<JetType> types
+    ) {
+        return new TypeIntersector(builtIns).intersect(typeChecker, types);
+    }
+
+    @Nullable
+    public JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
         if (types.isEmpty()) {
-            return KotlinBuiltIns.getInstance().getNullableAnyType();
+            return builtIns.getNullableAnyType();
         }
 
         if (types.size() == 1) {
@@ -64,7 +81,7 @@ public class TypeIntersector {
         }
 
         if (nothingTypePresent) {
-            return allNullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
+            return allNullable ? builtIns.getNullableNothingType() : builtIns.getNothingType();
         }
 
         if (nullabilityStripped.isEmpty()) {

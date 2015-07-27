@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -134,7 +135,7 @@ public class TypeBoundsImpl(
         }
 
         val upperBounds = filterBounds(bounds, TypeBounds.BoundKind.UPPER_BOUND, values)
-        val intersectionOfUpperBounds = TypeIntersector.intersect(JetTypeChecker.DEFAULT, upperBounds)
+        val intersectionOfUpperBounds = TypeIntersector(typeVariable.builtIns).intersect(JetTypeChecker.DEFAULT, upperBounds)
         if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
             if (tryPossibleAnswer(bounds, intersectionOfUpperBounds)) {
                 return setOf(intersectionOfUpperBounds)

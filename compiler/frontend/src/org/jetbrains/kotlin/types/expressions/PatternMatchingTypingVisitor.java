@@ -44,7 +44,6 @@ import java.util.Set;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.types.TypeIntersector.isIntersectionEmpty;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
@@ -338,7 +337,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     /*
      * (a: SubjectType) is Type
      */
-    private static void checkTypeCompatibility(
+    private void checkTypeCompatibility(
             @NotNull ExpressionTypingContext context,
             @Nullable JetType type,
             @NotNull JetType subjectType,
@@ -348,7 +347,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (type == null) {
             return;
         }
-        if (isIntersectionEmpty(type, subjectType)) {
+        if (components.typeIntersector.isIntersectionEmpty(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
             return;
         }
