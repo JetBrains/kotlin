@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
-import java.util.LinkedHashSet
 
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
@@ -67,6 +66,9 @@ public open class ChainedScope(
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes, name) }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name): Collection<FunctionDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionFunctions(receiverTypes, name) }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes) }

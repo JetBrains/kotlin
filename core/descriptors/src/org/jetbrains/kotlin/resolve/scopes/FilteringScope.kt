@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
@@ -38,6 +39,8 @@ public class FilteringScope(private val workerScope: JetScope, private val predi
     override fun getProperties(name: Name, location: UsageLocation) = workerScope.getProperties(name, location).filter(predicate)
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverTypes, name).filter(predicate)
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name): Collection<FunctionDescriptor> = workerScope.getSyntheticExtensionFunctions(receiverTypes, name).filter(predicate)
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = workerScope.getSyntheticExtensionProperties(receiverTypes).filter(predicate)
 
