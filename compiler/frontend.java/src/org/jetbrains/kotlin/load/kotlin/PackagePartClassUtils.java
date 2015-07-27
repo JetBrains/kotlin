@@ -59,15 +59,25 @@ public class PackagePartClassUtils {
         return getPackagePartFqName(facadeFqName, file, null);
     }
 
+    private static char toUpperAscii(char ch) {
+        if ('a' <= ch && ch <= 'z') {
+            return (char) (ch - 32);
+        }
+        else {
+            return ch;
+        }
+    }
+
     @NotNull
     public static FqName getPackagePartFqName(@NotNull FqName facadeFqName, @NotNull VirtualFile file, @Nullable JetFile jetFile) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         if (!fileName.isEmpty()) {
             char c = fileName.charAt(0);
-            //!Character.isUpperCase also handles non-latin characters
+            // Character.isUpperCase also handles non-latin characters - this is not what we want in some locales.
+            // Use "ASCII capitalization".
             if ('a' <= c && c <= 'z') {
-                fileName = Character.toUpperCase(fileName.charAt(0)) + fileName.substring(1);
+                fileName = toUpperAscii(c) + fileName.substring(1);
             }
             fileName += "Kt";
         }
