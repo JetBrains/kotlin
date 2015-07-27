@@ -29,14 +29,14 @@ public inline fun <reified T> StorageComponentContainer.useImpl() {
     registerSingleton(javaClass<T>())
 }
 
-public inline fun <reified T> StorageComponentContainer.get(): T {
-    return resolve(javaClass<T>(), unknownContext)!!.getValue() as T
+public inline fun <reified T> ComponentProvider.get(): T {
+    return resolve(javaClass<T>())!!.getValue() as T
 }
 
 public fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
-public inline fun <reified T> StorageComponentContainer.get(thisRef: Any?, desc: PropertyMetadata): T {
+public inline fun <reified T> ComponentProvider.get(thisRef: Any?, desc: PropertyMetadata): T {
     return resolve(javaClass<T>())!!.getValue() as T
 }

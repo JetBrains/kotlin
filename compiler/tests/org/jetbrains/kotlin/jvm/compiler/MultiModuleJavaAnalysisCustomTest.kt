@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
@@ -64,7 +64,8 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
                     javaClass ->
                     val moduleName = javaClass.getName().asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
-                }
+                },
+                CompilerEnvironment
         )
 
         performChecks(resolverForProject, modules)
@@ -101,7 +102,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         return modules.values().toList()
     }
 
-    private fun performChecks(resolverForProject: ResolverForProject<TestModule, JvmResolverForModule>, modules: List<TestModule>) {
+    private fun performChecks(resolverForProject: ResolverForProject<TestModule>, modules: List<TestModule>) {
         modules.forEach {
             module ->
             val moduleDescriptor = resolverForProject.descriptorForModule(module)

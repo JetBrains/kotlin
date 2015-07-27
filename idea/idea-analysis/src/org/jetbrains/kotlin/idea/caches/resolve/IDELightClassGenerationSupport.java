@@ -40,12 +40,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.*;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper;
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
@@ -60,6 +56,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.io.IOException;
@@ -93,7 +90,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         Collections.sort(sortedFiles, scopeFileComparator);
 
         JetFile file = sortedFiles.get(0);
-        ResolveSessionForBodies session = KotlinCacheService.getInstance(file.getProject()).getLazyResolveSession(file);
+        ResolveSession session = KotlinCacheService.getInstance(file.getProject()).getLazyResolveSession(file);
         forceResolvePackageDeclarations(files, session);
         return new LightClassConstructionContext(session.getBindingContext(), session.getModuleDescriptor());
     }
@@ -101,24 +98,26 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        ResolveSessionForBodies session = KotlinCacheService.getInstance(classOrObject.getProject()).getLazyResolveSession(classOrObject);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(classOrObject);
 
+        ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(classOrObject);
+        BindingContext bindingContext = resolutionFacade.analyze(classOrObject, BodyResolveMode.FULL);
         if (classOrObject.isLocal()) {
-            BindingContext bindingContext = session.resolveToElement(classOrObject, BodyResolveMode.FULL);
             ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
+
 
             if (descriptor == null) {
                 LOG.warn("No class descriptor in context for class: " + PsiUtilPackage.getElementTextWithContext(classOrObject));
-                return new LightClassConstructionContext(bindingContext, session.getModuleDescriptor());
+                return new LightClassConstructionContext(bindingContext, moduleDescriptor);
             }
 
             ForceResolveUtil.forceResolveAllContents(descriptor);
 
-            return new LightClassConstructionContext(bindingContext, session.getModuleDescriptor());
+            return new LightClassConstructionContext(bindingContext, moduleDescriptor);
         }
 
-        ForceResolveUtil.forceResolveAllContents(session.getClassDescriptor(classOrObject));
-        return new LightClassConstructionContext(session.getBindingContext(), session.getModuleDescriptor());
+        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject));
+        return new LightClassConstructionContext(bindingContext, moduleDescriptor);
     }
 
     private static void forceResolvePackageDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {

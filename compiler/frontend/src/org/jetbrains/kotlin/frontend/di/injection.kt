@@ -101,7 +101,7 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<LocalLazyDeclarationResolver>()
 }
 
-private fun createContainerForLazyResolve(
+public fun createContainerForLazyResolve(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,

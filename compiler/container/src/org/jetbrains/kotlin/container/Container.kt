@@ -28,12 +28,17 @@ public interface ComponentContainer {
     fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext
 }
 
+public interface ComponentProvider {
+    public fun resolve(request: Type): ValueDescriptor?
+    public fun <T> create(request: Class<T>): T
+}
+
 object DynamicComponentDescriptor : ValueDescriptor {
     override fun getValue(): Any = throw UnsupportedOperationException()
     override fun toString(): String = "Dynamic"
 }
 
-public class StorageComponentContainer(id: String) : ComponentContainer, Closeable {
+public class StorageComponentContainer(id: String) : ComponentContainer, ComponentProvider, Closeable {
     public val unknownContext: ComponentResolveContext by lazy { ComponentResolveContext(this, DynamicComponentDescriptor) }
     val componentStorage = ComponentStorage(id)
 
@@ -54,8 +59,12 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Closeab
 
     override fun close() = componentStorage.dispose()
 
-    jvmOverloads public fun resolve(request: Type, context: ValueResolveContext = unknownContext): ValueDescriptor? {
+    public fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         return componentStorage.resolve(request, context) ?: resolveIterable(request, context)
+    }
+
+    override fun resolve(request: Type): ValueDescriptor? {
+        return resolve(request, unknownContext)
     }
 
     private fun resolveIterable(request: Type, context: ValueResolveContext): ValueDescriptor? {
@@ -85,6 +94,12 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Closeab
     public fun registerDescriptors(descriptors: List<ComponentDescriptor>): StorageComponentContainer {
         componentStorage.registerDescriptors(unknownContext, descriptors)
         return this
+    }
+
+    override fun <T> create(request: Class<T>): T {
+        val constructorBinding = request.bindToConstructor(unknownContext)
+        val args = constructorBinding.argumentDescriptors.map { it.getValue() }.toTypedArray()
+        return constructorBinding.constructor.newInstance(*args) as T
     }
 }
 

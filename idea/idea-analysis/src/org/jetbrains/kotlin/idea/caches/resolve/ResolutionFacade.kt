@@ -44,6 +44,14 @@ public interface ResolutionFacade {
 
     public fun <T> get(extension: CacheExtension<T>): T
 
+    public fun <T> getFrontendService(element: JetElement, serviceClass: Class<T>): T
+
+    public fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
+
+    public fun <T> getIdeService(element: JetElement, serviceClass: Class<T>): T
+
+    public fun <T> getIdeService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
+
     companion object {
         //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )
         // this scope can't be used to search for kotlin declarations in index in order to resolve in that case
@@ -56,3 +64,15 @@ public interface ResolutionFacade {
         }
     }
 }
+
+public inline fun <reified T> ResolutionFacade.getService(element: JetElement): T
+        = this.getFrontendService(element, javaClass<T>())
+
+public inline fun <reified T> ResolutionFacade.getService(moduleDescriptor: ModuleDescriptor): T
+        = this.getFrontendService(moduleDescriptor, javaClass<T>())
+
+public inline fun <reified T> ResolutionFacade.ideService(element: JetElement): T
+        = this.getIdeService(element, javaClass<T>())
+
+public inline fun <reified T> ResolutionFacade.ideService(moduleDescriptor: ModuleDescriptor): T
+        = this.getIdeService(moduleDescriptor, javaClass<T>())

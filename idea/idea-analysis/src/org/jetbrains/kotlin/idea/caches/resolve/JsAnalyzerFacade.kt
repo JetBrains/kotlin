@@ -20,12 +20,12 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleParameters
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
+import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -34,15 +34,9 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-public class JsResolverForModule(
-        override val lazyResolveSession: ResolveSession,
-        override val packageFragmentProvider: PackageFragmentProvider
-) : ResolverForModule
-
-public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAnalysisParameters> {
+public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters> {
 
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
@@ -51,16 +45,16 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
             moduleContent: ModuleContent,
             platformParameters: PlatformAnalysisParameters,
             targetEnvironment: TargetEnvironment,
-            resolverForProject: ResolverForProject<M, JsResolverForModule>
-    ): JsResolverForModule {
+            resolverForProject: ResolverForProject<M>
+    ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
                 project, moduleContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
-        val resolveSession = createLazyResolveSession(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment)
-        var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
+        val container = createContainerForLazyResolve(moduleContext, declarationProviderFactory, BindingTraceContext(), JsPlatform, targetEnvironment)
+        var packageFragmentProvider = container.get<ResolveSession>().getPackageFragmentProvider()
 
         if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {
             val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
@@ -74,7 +68,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
             }
         }
 
-        return JsResolverForModule(resolveSession, packageFragmentProvider)
+        return ResolverForModule(packageFragmentProvider, container)
     }
 
     override val moduleParameters: ModuleParameters
