@@ -23,8 +23,8 @@ fun foo(i: Int) {}
 fun l(f: () -> Unit) {}
 
 // PRINT_FRAME
- frame    = main():12, EvSkipLambda {evSkipLambda}
-   static   = static = evSkipLambda.EvSkipLambda
+ frame    = main():12, EvSkipLambdaKt {evSkipLambda}
+   static   = static = evSkipLambda.EvSkipLambdaKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipLambda.kt, 7)
    local    = a1: evSkipLambda.A = {evSkipLambda.A@uniqueID} (sp = evSkipLambda.kt, 8)
      field    = prop: int = 1 (sp = evSkipLambda.kt, 4)

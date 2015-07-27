@@ -1,5 +1,5 @@
 package test
 
 fun bar() {
-    foo();   // test/B
+    foo();   // test/BKt
 }

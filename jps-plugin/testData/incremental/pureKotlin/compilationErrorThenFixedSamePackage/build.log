@@ -1,5 +1,5 @@
 Cleaning output files:
-out/production/module/Usage.class
+out/production/module/UsageKt.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
@@ -10,7 +10,7 @@ Expecting an expression
 
 
 Cleaning output files:
-out/production/module/Fun.class
+out/production/module/FunKt.class
 End of files
 Compiling files:
 src/fun.kt

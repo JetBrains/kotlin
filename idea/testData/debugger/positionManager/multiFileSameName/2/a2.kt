@@ -1,5 +1,5 @@
 package test
 
 fun bar() {
-    "" // test/A2
+    "" // test/A2Kt
 }

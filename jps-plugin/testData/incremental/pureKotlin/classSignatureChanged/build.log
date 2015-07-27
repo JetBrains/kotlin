@@ -6,7 +6,7 @@ src/class.kt
 End of files
 Cleaning output files:
 out/production/module/test/TestPackage.class
-out/production/module/test/Usage.class
+out/production/module/test/UsageKt.class
 End of files
 Compiling files:
 src/usage.kt

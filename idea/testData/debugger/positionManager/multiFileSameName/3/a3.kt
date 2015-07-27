@@ -1,5 +1,5 @@
 package test
 
 fun baz() {
-    "" // test/A3
+    "" // test/A3Kt
 }

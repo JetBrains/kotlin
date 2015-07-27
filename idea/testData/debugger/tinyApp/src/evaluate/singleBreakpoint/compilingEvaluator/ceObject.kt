@@ -16,4 +16,4 @@ interface T {
 // RESULT: 1: I
 
 // EXPRESSION: object: T {}
-// RESULT: instance of packageForDebugger.DebugFile$myFun$1(id=ID): LpackageForDebugger/DebugFile$myFun$1;
+// RESULT: instance of packageForDebugger.DebugFileKt$myFun$1(id=ID): LpackageForDebugger/DebugFileKt$myFun$1;

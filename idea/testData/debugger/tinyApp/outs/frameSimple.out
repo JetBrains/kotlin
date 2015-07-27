@@ -32,8 +32,8 @@ class MyClass
 
 // EXPRESSION: val1 + topVal1
 // RESULT: 2: I
- frame    = main():9, FrameSimple {frameSimple}
-   static   = static = frameSimple.FrameSimple
+ frame    = main():9, FrameSimpleKt {frameSimple}
+   static   = static = frameSimple.FrameSimpleKt
      field    = topVal1: int = 1 (sp = null)
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSimple.kt, 5)
    local    = val1: int = 1 (sp = frameSimple.kt, 6)

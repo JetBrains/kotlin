@@ -1,7 +1,7 @@
 Cleaning output files:
-out/production/module/test/B.class
+out/production/module/test/BKt.class
 out/production/module/test/TestPackage.class
-out/production/module/test/Usage.class
+out/production/module/test/UsageKt.class
 End of files
 Compiling files:
 src/b.kt
