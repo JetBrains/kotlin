@@ -20,15 +20,15 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.overrideImplement.DescriptorClassMember
+import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.psi.JetProperty
 
-fun PsiClass.collectProperties(): Array<DescriptorClassMember> {
+fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
     if (this is KotlinLightClassForPackage) {
-        val result = arrayListOf<DescriptorClassMember>()
+        val result = arrayListOf<DescriptorMemberChooserObject>()
         this.files.forEach {
             it.getDeclarations().filterIsInstance<JetProperty>().forEach {
-                result.add(DescriptorClassMember(it, it.resolveToDescriptor()))
+                result.add(DescriptorMemberChooserObject(it, it.resolveToDescriptor()))
             }
         }
         return result.toTypedArray()
@@ -37,7 +37,7 @@ fun PsiClass.collectProperties(): Array<DescriptorClassMember> {
         val origin = this.getOrigin()
         if (origin != null) {
             return origin.getDeclarations().filterIsInstance<JetProperty>().map {
-                DescriptorClassMember(it, it.resolveToDescriptor())
+                DescriptorMemberChooserObject(it, it.resolveToDescriptor())
             }.toTypedArray()
         }
     }

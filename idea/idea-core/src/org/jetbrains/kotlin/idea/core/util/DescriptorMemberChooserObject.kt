@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.overrideImplement
+package org.jetbrains.kotlin.idea.core.util
 
 import com.intellij.codeInsight.generation.ClassMemberWithElement
 import com.intellij.codeInsight.generation.MemberChooserObject
 import com.intellij.codeInsight.generation.PsiElementMemberChooserObject
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
@@ -41,16 +38,10 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import javax.swing.Icon
 
-class OverrideMemberChooserObject(
-        project: Project,
-        val member: CallableMemberDescriptor,
-        val immediateSuper: CallableMemberDescriptor
-) : DescriptorClassMember(DescriptorToSourceUtilsIde.getAnyDeclaration(project, member)!!, member)
-
-public open class DescriptorClassMember(
+public open class DescriptorMemberChooserObject(
         psiElement: PsiElement,
         public val descriptor: DeclarationDescriptor
-) : PsiElementMemberChooserObject(psiElement, DescriptorClassMember.getText(descriptor), DescriptorClassMember.getIcon(psiElement, descriptor)), ClassMemberWithElement {
+) : PsiElementMemberChooserObject(psiElement, DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(psiElement, descriptor)), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
@@ -65,11 +56,11 @@ public open class DescriptorClassMember(
 
         return when (declaration) {
             is JetFile -> PsiElementMemberChooserObject(declaration, declaration.name)
-            else -> DescriptorClassMember(declaration, parent)
+            else -> DescriptorMemberChooserObject(declaration, parent)
         }
     }
 
-    override fun equals(other: Any?) = this === other || other is DescriptorClassMember && descriptor == other.descriptor
+    override fun equals(other: Any?) = this === other || other is DescriptorMemberChooserObject && descriptor == other.descriptor
 
     override fun hashCode() = descriptor.hashCode()
 
