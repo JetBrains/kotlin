@@ -299,7 +299,7 @@ public class CommonSupertypes {
             return new TypeProjectionImpl(projectionKind, findCommonSupertype(outs, recursionDepth + 1, maxDepth));
         }
         if (ins != null) {
-            JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, ins);
+            JetType intersection = TypeIntersector.intersect(JetTypeChecker.DEFAULT, ins);
             if (intersection == null) {
                 return new TypeProjectionImpl(OUT_VARIANCE, findCommonSupertype(parameterDescriptor.getUpperBounds(), recursionDepth + 1, maxDepth));
             }

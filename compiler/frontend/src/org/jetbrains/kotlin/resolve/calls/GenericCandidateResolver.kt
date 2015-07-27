@@ -41,12 +41,9 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TY
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.TypeUtils.makeConstantSubstitutor
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
@@ -191,7 +188,7 @@ class GenericCandidateResolver(
         val possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
-        return TypeUtils.intersect(JetTypeChecker.DEFAULT, possibleTypes)
+        return TypeIntersector.intersect(JetTypeChecker.DEFAULT, possibleTypes)
     }
 
     public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(

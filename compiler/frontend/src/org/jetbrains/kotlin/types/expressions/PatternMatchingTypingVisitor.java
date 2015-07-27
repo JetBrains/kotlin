@@ -44,8 +44,8 @@ import java.util.Set;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.kotlin.types.TypeIntersector.isIntersectionEmpty;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.isIntersectionEmpty;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
 public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {

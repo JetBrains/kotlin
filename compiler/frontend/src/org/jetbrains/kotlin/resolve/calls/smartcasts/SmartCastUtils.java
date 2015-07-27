@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeIntersector;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
@@ -151,7 +152,7 @@ public class SmartCastUtils {
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, subTypes);
+        JetType intersection = TypeIntersector.intersect(JetTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }

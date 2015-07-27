@@ -519,7 +519,7 @@ private class MutableParameter(
 
     private val defaultType: JetType by lazy {
         writable = false
-        TypeUtils.intersect(JetTypeChecker.DEFAULT, defaultTypes)!!
+        TypeIntersector.intersect(JetTypeChecker.DEFAULT, defaultTypes)!!
     }
 
     private val parameterTypeCandidates: List<JetType> by lazy {

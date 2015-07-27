@@ -17,28 +17,21 @@
 package org.jetbrains.kotlin.types;
 
 import kotlin.KotlinPackage;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.utils.DFS;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.*;
-
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.registerTypeVariables;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 
 public class TypeUtils {
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
@@ -163,173 +156,6 @@ public class TypeUtils {
             return makeNullable(type);
         }
         return type;
-    }
-
-    public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
-        return intersect(JetTypeChecker.DEFAULT, new LinkedHashSet<JetType>(Arrays.asList(typeA, typeB))) == null;
-    }
-
-    @Nullable
-    public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
-        if (types.isEmpty()) {
-            return KotlinBuiltIns.getInstance().getNullableAnyType();
-        }
-
-        if (types.size() == 1) {
-            return types.iterator().next();
-        }
-
-        // Intersection of T1..Tn is an intersection of their non-null versions,
-        //   made nullable is they all were nullable
-        boolean allNullable = true;
-        boolean nothingTypePresent = false;
-        List<JetType> nullabilityStripped = new ArrayList<JetType>(types.size());
-        for (JetType type : types) {
-            if (type.isError()) continue;
-
-            nothingTypePresent |= KotlinBuiltIns.isNothingOrNullableNothing(type);
-            allNullable &= type.isMarkedNullable();
-            nullabilityStripped.add(makeNotNullable(type));
-        }
-
-        if (nothingTypePresent) {
-            return allNullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
-        }
-
-        if (nullabilityStripped.isEmpty()) {
-            // All types were errors
-            return ErrorUtils.createErrorType("Intersection of errors types: " + types);
-        }
-
-        // Now we remove types that have subtypes in the list
-        List<JetType> resultingTypes = new ArrayList<JetType>();
-        outer:
-        for (JetType type : nullabilityStripped) {
-            if (!canHaveSubtypes(typeChecker, type)) {
-                for (JetType other : nullabilityStripped) {
-                    // It makes sense to check for subtyping (other <: type), despite that
-                    // type is not supposed to be open, for there're enums
-                    if (!TypeUnifier.mayBeEqual(type, other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
-                        return null;
-                    }
-                }
-                return makeNullableAsSpecified(type, allNullable);
-            }
-            else {
-                for (JetType other : nullabilityStripped) {
-                    if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
-                        continue outer;
-                    }
-
-                }
-            }
-
-            // Don't add type if it is already present, to avoid trivial type intersections in result
-            for (JetType other : resultingTypes) {
-                if (typeChecker.equalTypes(other, type)) {
-                    continue outer;
-                }
-            }
-            resultingTypes.add(type);
-        }
-
-        if (resultingTypes.isEmpty()) {
-            // If we ended up here, it means that all types from `nullabilityStripped` were excluded by the code above
-            // most likely, this is because they are all semantically interchangeable (e.g. List<Foo>! and List<Foo>),
-            // in that case, we can safely select the best representative out of that set and return it
-            // TODO: maybe return the most specific among the types that are subtypes to all others in the `nullabilityStripped`?
-            // TODO: e.g. among {Int, Int?, Int!}, return `Int` (now it returns `Int!`).
-            JetType bestRepresentative = TypesPackage.singleBestRepresentative(nullabilityStripped);
-            if (bestRepresentative == null) {
-                throw new AssertionError("Empty intersection for types " + types);
-            }
-            return makeNullableAsSpecified(bestRepresentative, allNullable);
-        }
-
-        if (resultingTypes.size() == 1) {
-            return makeNullableAsSpecified(resultingTypes.get(0), allNullable);
-        }
-
-        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.EMPTY, resultingTypes);
-
-        JetScope[] scopes = new JetScope[resultingTypes.size()];
-        int i = 0;
-        for (JetType type : resultingTypes) {
-            scopes[i] = type.getMemberScope();
-            i++;
-        }
-
-        return JetTypeImpl.create(
-                Annotations.EMPTY,
-                constructor,
-                allNullable,
-                Collections.<TypeProjection>emptyList(),
-                new IntersectionScope(constructor, scopes)
-        );
-    }
-
-    // TODO : check intersectibility, don't use a chanied scope
-    public static class IntersectionScope extends ChainedScope {
-        public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull JetScope[] scopes) {
-            super(null, "member scope for intersection type " + constructor, scopes);
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            throw new UnsupportedOperationException("Should not call getContainingDeclaration on intersection scope " + this);
-        }
-    }
-
-    private static class TypeUnifier {
-        private static class TypeParameterUsage {
-            private final TypeParameterDescriptor typeParameterDescriptor;
-            private final Variance howTheTypeParameterIsUsed;
-
-            public TypeParameterUsage(TypeParameterDescriptor typeParameterDescriptor, Variance howTheTypeParameterIsUsed) {
-                this.typeParameterDescriptor = typeParameterDescriptor;
-                this.howTheTypeParameterIsUsed = howTheTypeParameterIsUsed;
-            }
-        }
-
-        public static boolean mayBeEqual(@NotNull JetType type, @NotNull JetType other) {
-            return unify(type, other);
-        }
-
-        private static boolean unify(JetType withParameters, JetType expected) {
-            // T -> how T is used
-            final Map<TypeParameterDescriptor, Variance> parameters = new HashMap<TypeParameterDescriptor, Variance>();
-            Function1<TypeParameterUsage, Unit> processor = new Function1<TypeParameterUsage, Unit>() {
-                @Override
-                public Unit invoke(TypeParameterUsage parameterUsage) {
-                    Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
-                    if (howTheTypeIsUsedBefore == null) {
-                        howTheTypeIsUsedBefore = Variance.INVARIANT;
-                    }
-                    parameters.put(parameterUsage.typeParameterDescriptor,
-                                   parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
-                    return Unit.INSTANCE$;
-                }
-            };
-            processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
-            processAllTypeParameters(expected, Variance.INVARIANT, processor);
-            ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            registerTypeVariables(constraintSystem, parameters);
-            constraintSystem.addSubtypeConstraint(withParameters, expected, SPECIAL.position());
-
-            return constraintSystem.getStatus().isSuccessful();
-        }
-
-        private static void processAllTypeParameters(JetType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {
-            ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof TypeParameterDescriptor) {
-                result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
-            }
-            for (TypeProjection projection : type.getArguments()) {
-                if (projection.isStarProjection()) continue;
-                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
-            }
-        }
     }
 
     public static boolean canHaveSubtypes(JetTypeChecker typeChecker, @NotNull JetType type) {

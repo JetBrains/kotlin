@@ -16,36 +16,32 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.codeInsight.daemon.quickFix.CreateClassOrPackageFix
-import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.psi.PsiPackage
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
+import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
