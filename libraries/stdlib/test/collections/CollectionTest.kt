@@ -469,18 +469,6 @@ class CollectionTest {
         assertTrue(IterableWrapper(hashSetOf(45, 14, 13)).contains(14))
     }
 
-    test fun sortForMutableIterable() {
-        val list: MutableIterable<Int> = arrayListOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
-    test fun sortForIterable() {
-        val list: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
     test fun min() {
         expect(null, { listOf<Int>().min() })
         expect(1, { listOf(1).min() })
@@ -571,28 +559,28 @@ class CollectionTest {
         expect(listOf(1)) { listOf(1) take 10 }
     }
 
-    test fun sortBy() {
-        expect(listOf("two" to 2, "three" to 3)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.second }
-        }
-        expect(listOf("three" to 3, "two" to 2)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.first }
-        }
-        expect(listOf("two" to 2, "three" to 3)) {
-            listOf("three" to 3, "two" to 2).sortBy { it.first.length() }
+    test fun sorted() {
+        assertEquals(listOf(1, 3, 7), listOf(3, 7, 1).sorted())
+        assertEquals(listOf(7, 3, 1), listOf(3, 7, 1).sortedDescending())
+    }
+
+    test fun sortedBy() {
+        assertEquals(listOf("two" to 2, "three" to 3), listOf("three" to 3, "two" to 2).sortedBy { it.second })
+        assertEquals(listOf("three" to 3, "two" to 2), listOf("three" to 3, "two" to 2).sortedBy { it.first })
+        assertEquals(listOf("three", "two"), listOf("two", "three").sortedDescendingBy { it.length() })
+    }
+
+    test fun sortedNullableBy() {
+        fun String.nullIfEmpty() = if (isEmpty()) null else this
+        listOf(null, "").let {
+            expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
+            expect(listOf("", null)) { it.sortedDescendingBy { it.orEmpty() }}
+            expect(listOf("", null)) { it.sortedDescendingBy { it?.nullIfEmpty() }}
         }
     }
 
-    test fun sortFunctionShouldReturnSortedCopyForList() {
-        val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
-    test fun sortFunctionShouldReturnSortedCopyForIterable() {
-        val list: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 2, 3)) { list.sort() }
-        expect(listOf(2, 3, 1)) { list }
+    test fun sortedWith() {
+        expect(listOf("BAD", "dad", "cat")) { listOf("cat", "dad", "BAD").sortedWith(compareBy { it.toUpperCase().reverse() }) }
     }
 
     test fun decomposeFirst() {
@@ -669,5 +657,19 @@ class CollectionTest {
         // we need toString() inside pattern because of KT-8666
         assertEquals("[1, a, null, ${Long.MAX_VALUE.toString()}]", listOf(1, "a", null, Long.MAX_VALUE).toString())
     }
+}
+
+fun <T> Iterable<T>.assertSorted(isInOrder: (T, T) -> Boolean): Unit { this.iterator().assertSorted(isInOrder) }
+fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
+    if (!hasNext()) return
+    var index = 0
+    var prev = next()
+    while (hasNext()) {
+        index += 1
+        val next = next()
+        assertTrue(isInOrder(prev, next), "Not in order at position $index, element[${index-1}]: $prev, element[$index]: $next")
+        prev = next
+    }
+    return
 }
 

@@ -313,6 +313,30 @@ public class SequenceTest {
         assertEquals(listOf('a', 'b', 'c'), chars)
     }
 
+    test fun sorted() {
+        sequenceOf(3, 7, 5).let {
+            it.sorted().iterator().assertSorted { a, b -> a <= b }
+            it.sortedDescending().iterator().assertSorted { a, b -> a >= b }
+        }
+    }
+
+    test fun sortedBy() {
+        sequenceOf("it", "greater", "less").let {
+            it.sortedBy { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } <= 0 }
+            it.sortedDescendingBy { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } >= 0 }
+        }
+
+        sequenceOf('a', 'd', 'c', null).let {
+            it.sortedBy {it}.iterator().assertSorted { a, b -> compareValues(a, b) <= 0 }
+            it.sortedDescendingBy {it}.iterator().assertSorted { a, b ->  compareValues(a, b) >= 0 }
+        }
+    }
+
+    test fun sortedWith() {
+        val comparator = compareBy { s: String -> s.reverse() }
+        assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
+    }
+
     /*
     test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
