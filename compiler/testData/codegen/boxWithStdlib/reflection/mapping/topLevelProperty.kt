@@ -8,7 +8,8 @@ fun box(): String {
 
     assert(p.javaField != null, "Fail p field")
     val field = p.javaField!!
-    assert(field.getDeclaringClass().getName() contains "_DefaultPackage\$", "Fail field not in package part: ${field.getDeclaringClass()}")
+    val className = field.getDeclaringClass().getName()
+    assertEquals("TopLevelPropertyKt", className)
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!

@@ -8,5 +8,5 @@ fun test2() {
    prop
 }
 
-// 1 a/APackage\.test1 \(\)V
-// 1 a/APackage\.getProp \(\)I
+// 1 a/APackage.test1 \(\)V
+// 1 a/APackage.getProp \(\)I
