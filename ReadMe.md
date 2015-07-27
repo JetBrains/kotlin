@@ -8,7 +8,7 @@ Welcome to [Kotlin](http://kotlinlang.org/)! Some handy links:
 
  * [Kotlin Site](http://kotlinlang.org/)
  * [Getting Started Guide](http://kotlinlang.org/docs/tutorials/getting-started.html)
- * [Web Demo](http://kotlin-demo.jetbrains.com/)
+ * [Try Kotlin](http://try.kotlinlang.org/)
  * [API](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html)
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
  * [Forum](http://devnet.jetbrains.net/community/kotlin?view=discussions)
