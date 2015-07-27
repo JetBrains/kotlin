@@ -27,7 +27,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator {
     public static final String NAME = "gradle";
 
-    private static final String APPLY_KOTLIN = "apply plugin: 'kotlin'";
+    public static final String APPLY_KOTLIN = "apply plugin: 'kotlin'";
 
     @NotNull
     @Override
