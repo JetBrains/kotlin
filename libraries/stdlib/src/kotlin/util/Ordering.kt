@@ -92,7 +92,7 @@ public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T
  */
 inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
-        public override fun compare(a: T, b: T): Int = compareValues(comparable(a), comparable(b))
+        public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, comparable)
     }
 }
 
@@ -101,7 +101,7 @@ inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) co
  */
 inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
-        public override fun compare(a: T, b: T): Int = compareValues(comparable(b), comparable(a))
+        public override fun compare(a: T, b: T): Int = compareValuesBy(b, a, comparable)
     }
 }
 
@@ -113,7 +113,7 @@ inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenBy.compare(a, b)
-            return if (previousCompare != 0) previousCompare else compareValues(comparable(a), comparable(b))
+            return if (previousCompare != 0) previousCompare else compareValuesBy(a, b, comparable)
         }
     }
 }
@@ -126,7 +126,7 @@ inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenByDescending.compare(a, b)
-            return if (previousCompare != 0) previousCompare else compareValues(comparable(b), comparable(a))
+            return if (previousCompare != 0) previousCompare else compareValuesBy(b, a, comparable)
         }
     }
 }
