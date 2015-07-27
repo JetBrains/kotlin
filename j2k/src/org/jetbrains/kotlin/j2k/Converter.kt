@@ -62,8 +62,8 @@ class Converter private constructor(
     public val referenceSearcher: CachingReferenceSearcher = CachingReferenceSearcher(services.referenceSearcher)
 
     companion object {
-        public fun create(elementToConvert: PsiElement, settings: ConverterSettings, inConversionScope: (PsiElement) -> Boolean,
-                          services: JavaToKotlinConverterServices, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
+        public fun create(elementToConvert: PsiElement, settings: ConverterSettings, services: JavaToKotlinConverterServices,
+                          inConversionScope: (PsiElement) -> Boolean, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
             return Converter(elementToConvert, settings, inConversionScope,
                              services, CommonState(usageProcessingsCollector), PersonalState(null))
         }

@@ -138,7 +138,7 @@ public class JavaToKotlinConverter(
 
 
             val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
-                Converter.create(inputElement, settings, ::inConversionScope, services, usageProcessingCollector).convert()
+                Converter.create(inputElement, settings, services, ::inConversionScope, usageProcessingCollector).convert()
             }.toArrayList()
 
             val results = processor.processItems(0.25, intermediateResults.withIndex()) { pair ->
