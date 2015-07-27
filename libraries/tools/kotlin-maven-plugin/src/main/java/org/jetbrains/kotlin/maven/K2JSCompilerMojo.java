@@ -75,7 +75,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.metaInfo = metaInfo;
 
         List<String> libraries = getKotlinJavascriptLibraryFiles();
-        LOG.debug("libraryFiles: " + libraries);
+        getLog().debug("libraryFiles: " + libraries);
         arguments.libraryFiles = ArrayUtil.toStringArray(libraries);
 
         arguments.sourceMap = sourceMap;
@@ -86,7 +86,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             collector.add(new File(outputFile).getParent());
         }
         if (metaInfo) {
-            String metaFile = KotlinPackage.substringBeforeLast(outputFile, JavaScript.DOT_EXTENSION, outputFile) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
+            String output = com.google.common.base.Objects.firstNonNull(outputFile, ""); // fqname here because of J8 compatibility issues
+            String metaFile = KotlinPackage.substringBeforeLast(output, JavaScript.DOT_EXTENSION, output) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
             collector.add(new File(metaFile).getParent());
         }
     }
@@ -107,7 +108,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
                     libraries.add(file.getAbsolutePath());
                 }
                 else {
-                    LOG.warn("artifact " + artifact + " is not a Kotlin Javascript Library");
+                    getLog().warn("artifact " + artifact + " is not a Kotlin Javascript Library");
                 }
             }
         }
@@ -117,7 +118,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
                 libraries.add(file);
             }
             else {
-                LOG.warn("JS output directory missing: " + file);
+                getLog().warn("JS output directory missing: " + file);
             }
         }
 

@@ -85,14 +85,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        LOG.info("Classes directory is " + output);
+        getLog().info("Classes directory is " + output);
         arguments.destination = output;
 
         // don't include runtime, it should be in maven dependencies
         arguments.noStdlib = true;
 
         if (module != null) {
-            LOG.info("Compiling Kotlin module " + module);
+            getLog().info("Compiling Kotlin module " + module);
             arguments.module = module;
         }
 
@@ -100,16 +100,16 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
-            LOG.info("Classpath: " + classPathString);
+            getLog().info("Classpath: " + classPathString);
             arguments.classpath = classPathString;
         }
 
-        LOG.info("Classes directory is " + output);
+        getLog().info("Classes directory is " + output);
         arguments.destination = output;
 
         arguments.noJdkAnnotations = true;
-        arguments.annotations = getFullAnnotationsPath(LOG, annotationPaths);
-        LOG.info("Using kotlin annotations from " + arguments.annotations);
+        arguments.annotations = getFullAnnotationsPath(getLog(), annotationPaths);
+        getLog().info("Using kotlin annotations from " + arguments.annotations);
 
         try {
             Args.parse(arguments, ArrayUtil.toStringArray(args));
@@ -119,7 +119,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         }
 
         if (arguments.noOptimize) {
-            LOG.info("Optimization is turned off");
+            getLog().info("Optimization is turned off");
         }
     }
 
