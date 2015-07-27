@@ -18,16 +18,18 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.codeInsight.generation.ClassMemberWithElement
 import com.intellij.codeInsight.generation.MemberChooserObject
-import com.intellij.codeInsight.generation.MemberChooserObjectBase
 import com.intellij.codeInsight.generation.PsiElementMemberChooserObject
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
@@ -39,10 +41,16 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import javax.swing.Icon
 
-public class DescriptorClassMember(
-        private val psiElement: PsiElement,
+class OverrideMemberChooserObject(
+        project: Project,
+        val member: CallableMemberDescriptor,
+        val immediateSuper: CallableMemberDescriptor
+) : DescriptorClassMember(DescriptorToSourceUtilsIde.getAnyDeclaration(project, member)!!, member)
+
+public open class DescriptorClassMember(
+        psiElement: PsiElement,
         public val descriptor: DeclarationDescriptor
-) : MemberChooserObjectBase(DescriptorClassMember.getText(descriptor), DescriptorClassMember.getIcon(psiElement, descriptor)), ClassMemberWithElement {
+) : PsiElementMemberChooserObject(psiElement, DescriptorClassMember.getText(descriptor), DescriptorClassMember.getIcon(psiElement, descriptor)), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")

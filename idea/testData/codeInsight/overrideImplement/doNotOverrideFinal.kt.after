@@ -1,0 +1,36 @@
+open class A {
+    fun a(){}
+    fun b(){}
+}
+
+interface I {
+    fun b()
+}
+
+abstract class B : A() {
+    open fun f(){}
+    abstract fun g()
+    fun h(){}
+}
+
+class C : B(), I {
+    override fun equals(other: Any?): Boolean {
+        <selection><caret>return super<B>.equals(other)</selection>
+    }
+
+    override fun f() {
+        super<B>.f()
+    }
+
+    override fun g() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun hashCode(): Int {
+        return super<B>.hashCode()
+    }
+
+    override fun toString(): String {
+        return super<B>.toString()
+    }
+}

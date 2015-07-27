@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
 import com.intellij.lang.LanguageCodeInsightActionHandler
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -29,7 +28,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -41,14 +39,14 @@ import java.util.ArrayList
 
 public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActionHandler {
 
-    public fun collectMethodsToGenerate(classOrObject: JetClassOrObject): Set<CallableMemberDescriptor> {
+    public fun collectMethodsToGenerate(classOrObject: JetClassOrObject): Collection<OverrideMemberChooserObject> {
         val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
-        return collectMethodsToGenerate(descriptor)
+        return collectMethodsToGenerate(descriptor, classOrObject.project)
     }
 
-    protected abstract fun collectMethodsToGenerate(descriptor: ClassDescriptor): Set<CallableMemberDescriptor>
+    protected abstract fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject>
 
-    private fun showOverrideImplementChooser(project: Project, members: Array<DescriptorClassMember>): MemberChooser<DescriptorClassMember>? {
+    private fun showOverrideImplementChooser(project: Project, members: Array<OverrideMemberChooserObject>): MemberChooser<OverrideMemberChooserObject>? {
         val chooser = MemberChooser(members, true, true, project)
         chooser.title = getChooserTitle()
         chooser.show()
@@ -71,15 +69,13 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()!!
 
-        val missingImplementations = collectMethodsToGenerate(classOrObject)
-        if (missingImplementations.isEmpty() && !implementAll) {
+        val members = collectMethodsToGenerate(classOrObject)
+        if (members.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint())
             return
         }
 
-        val members = membersFromDescriptors(file as JetFile, missingImplementations)
-
-        val selectedElements: List<DescriptorClassMember> = if (implementAll) {
+        val selectedElements = if (implementAll) {
             members
         }
         else {
@@ -108,23 +104,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
         }
 
-        private val LOG = Logger.getInstance(javaClass<OverrideImplementMethodsHandler>().canonicalName)
-
-        public fun membersFromDescriptors(file: JetFile, missingImplementations: Iterable<CallableMemberDescriptor>): List<DescriptorClassMember> {
-            val members = ArrayList<DescriptorClassMember>()
-            for (memberDescriptor in missingImplementations) {
-                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, memberDescriptor)
-                if (declaration == null) {
-                    LOG.error("Can not find declaration for descriptor $memberDescriptor")
-                }
-                else {
-                    members.add(DescriptorClassMember(declaration, memberDescriptor))
-                }
-            }
-            return members
-        }
-
-        public fun generateMethods(editor: Editor, classOrObject: JetClassOrObject, selectedElements: List<DescriptorClassMember>) {
+        public fun generateMethods(editor: Editor, classOrObject: JetClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             runWriteAction {
                 val body = classOrObject.getOrCreateBody()
 
@@ -203,16 +183,15 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             return whiteSpace
         }
 
-        private fun generateOverridingMembers(selectedElements: List<DescriptorClassMember>,
+        private fun generateOverridingMembers(selectedElements: Collection<OverrideMemberChooserObject>,
                                               classOrObject: JetClassOrObject): List<JetElement> {
             val overridingMembers = ArrayList<JetElement>()
             for (selectedElement in selectedElements) {
-                val descriptor = selectedElement.descriptor
-                if (descriptor is SimpleFunctionDescriptor) {
-                    overridingMembers.add(overrideFunction(classOrObject, descriptor))
-                }
-                else if (descriptor is PropertyDescriptor) {
-                    overridingMembers.add(overrideProperty(classOrObject, descriptor))
+                val descriptor = selectedElement.immediateSuper
+                when (descriptor) {
+                    is SimpleFunctionDescriptor -> overridingMembers.add(overrideFunction(classOrObject, descriptor))
+                    is PropertyDescriptor -> overridingMembers.add(overrideProperty(classOrObject, descriptor))
+                    else -> error("Unknown member to override: $descriptor")
                 }
             }
             return overridingMembers

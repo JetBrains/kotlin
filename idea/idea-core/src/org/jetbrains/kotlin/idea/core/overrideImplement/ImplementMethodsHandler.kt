@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class ImplementMethodsHandler : OverrideImplementMethodsHandler(), IntentionAction {
-    override fun collectMethodsToGenerate(descriptor: ClassDescriptor) = OverrideResolver.getMissingImplementations(descriptor)
+    override fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
+        return OverrideResolver.getMissingImplementations(descriptor)
+                .map { OverrideMemberChooserObject(project, it, it) }
+    }
 
     override fun getChooserTitle() = "Implement Members"
 

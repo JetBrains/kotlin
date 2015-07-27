@@ -198,4 +198,16 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testVarArgs() {
         doOverrideFileTest();
     }
+
+    public void testDoNotOverrideFinal() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testSuperPreference() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testAmbiguousSuper() {
+        doMultiOverrideFileTest();
+    }
 }

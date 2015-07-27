@@ -16,53 +16,61 @@
 
 package org.jetbrains.kotlin.idea.core.overrideImplement
 
-import com.google.common.collect.LinkedHashMultimap
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.OverrideResolver
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import java.util.ArrayList
+import java.util.LinkedHashMap
 
 public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
-    override fun collectMethodsToGenerate(descriptor: ClassDescriptor): Set<CallableMemberDescriptor> {
-        val superMethods = collectSuperMethods(descriptor)
-        for (member in descriptor.defaultType.memberScope.getAllDescriptors()) {
-            if (member is CallableMemberDescriptor) {
-                if (member.kind == CallableMemberDescriptor.Kind.DECLARATION) {
-                    superMethods.removeAll(member.overriddenDescriptors)
+    override fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
+        val result = ArrayList<OverrideMemberChooserObject>()
+        for (member in descriptor.unsubstitutedMemberScope.getAllDescriptors()) {
+            if (member is CallableMemberDescriptor && !member.isReal()) {
+                val overridden = member.overriddenDescriptors
+                if (overridden.any { it.modality == Modality.FINAL }) continue
+
+                val realSuperToImmediates = LinkedHashMap<CallableMemberDescriptor, MutableCollection<CallableMemberDescriptor>>()
+                for (immediateSuper in overridden) {
+                    for (realSuper in toRealSupers(immediateSuper)) {
+                        realSuperToImmediates.getOrPut(realSuper) { ArrayList(1) }.add(immediateSuper)
+                    }
+                }
+
+                val realSupers = realSuperToImmediates.keySet()
+                val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
+                val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
+                    nonAbstractRealSupers
+                }
+                else {
+                    listOf(realSupers.first())
+                }
+
+                for (realSuper in realSupersToUse) {
+                    val immediateSupers = realSuperToImmediates[realSuper]!!
+                    assert(immediateSupers.isNotEmpty())
+
+                    val immediateSuperToUse = if (immediateSupers.size() == 1) {
+                        immediateSupers.single()
+                    }
+                    else {
+                        immediateSupers.singleOrNull { (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.CLASS } ?: immediateSupers.first()
+                    }
+                    result.add(OverrideMemberChooserObject(project, realSuper, immediateSuperToUse))
                 }
             }
         }
-
-        return superMethods
-                .filter { it.modality.isOverridable && !isOrOverridesSynthesized(it) }
-                .toSet()
+        return result
     }
 
-    private fun collectSuperMethods(classDescriptor: ClassDescriptor): MutableSet<CallableMemberDescriptor> {
-        val inheritedFunctionsSet = classDescriptor.typeConstructor.supertypes
-                .flatMap { it.memberScope.getAllDescriptors() }
-                .filterIsInstance<CallableMemberDescriptor>()
-                .toSet()
+    private fun CallableMemberDescriptor.isReal() = kind == CallableMemberDescriptor.Kind.DECLARATION
 
-        // Only those actually inherited
-        val filteredMembers = OverrideResolver.filterOutOverridden(inheritedFunctionsSet)
-
-        // Group members with "the same" signature
-        val factoredMembers = LinkedHashMultimap.create<CallableMemberDescriptor, CallableMemberDescriptor>()
-        for (one in filteredMembers) {
-            if (factoredMembers.values().contains(one)) continue
-            for (another in filteredMembers) {
-                //                if (one == another) continue;
-                factoredMembers.put(one, one)
-                if (OverridingUtil.DEFAULT.isOverridableBy(one, another).result == OVERRIDABLE || OverridingUtil.DEFAULT.isOverridableBy(another, one).result == OVERRIDABLE) {
-                    factoredMembers.put(one, another)
-                }
-            }
-        }
-
-        return factoredMembers.keySet()
+    private fun toRealSupers(immediateSuper: CallableMemberDescriptor): Collection<CallableMemberDescriptor> {
+        val overridden = immediateSuper.overriddenDescriptors
+        if (overridden.isEmpty()) return listOf(immediateSuper)
+        return overridden.flatMap { toRealSupers(it) }.toSet()
     }
 
     override fun getChooserTitle() = "Override Members"
