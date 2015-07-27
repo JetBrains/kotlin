@@ -375,7 +375,7 @@ class TypeConverter(val converter: Converter) {
         override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
             if (owner is KotlinLightElement<*, *>) {
                 val jetDeclaration = owner.getOrigin() as? JetCallableDeclaration ?: return Mutability.Default
-                val descriptor = converter.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
+                val descriptor = converter.services.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
                 val type = descriptor.getReturnType() ?: return Mutability.Default
                 val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return Mutability.Default
                 return if (DescriptorUtils.getFqName(classDescriptor).asString() in mutableKotlinClasses)

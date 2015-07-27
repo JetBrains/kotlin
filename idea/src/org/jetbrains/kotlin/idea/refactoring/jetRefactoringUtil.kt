@@ -63,12 +63,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.IdeaDocCommentConverter
-import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -77,10 +75,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
+import java.lang.annotation.Retention
 import java.util.ArrayList
 import java.util.Collections
 import javax.swing.Icon
-import java.lang.annotation.Retention
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -572,9 +570,7 @@ fun PsiExpression.j2k(): JetExpression? {
     val project = getProject()
     val j2kConverter = JavaToKotlinConverter(project,
                                              ConverterSettings.defaultSettings,
-                                             IdeaReferenceSearcher,
-                                             IdeaResolverForConverter,
-                                             IdeaDocCommentConverter)
+                                             IdeaJavaToKotlinServices)
     val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
     return JetPsiFactory(getProject()).createExpression(text)
 }

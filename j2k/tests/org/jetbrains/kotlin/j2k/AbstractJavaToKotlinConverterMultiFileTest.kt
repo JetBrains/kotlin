@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
@@ -54,7 +55,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
             assert(psiFile is PsiJavaFile || psiFile is JetFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter, EmptyDocCommentConverter)
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
         val (results, externalCodeProcessor) = converter.filesToKotlin(psiFilesToConvert, J2kPostProcessor(formatCode = true))
 
         val process = externalCodeProcessor?.prepareWriteOperation(EmptyProgressIndicator())

@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.ide.util.DelegatingProgressIndicator
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -83,9 +80,7 @@ public enum class ParseContext {
 public class JavaToKotlinConverter(
         private val project: Project,
         private val settings: ConverterSettings,
-        private val referenceSearcher: ReferenceSearcher,
-        private val resolverForConverter: ResolverForConverter,
-        private val docCommentConverter: DocCommentConverter
+        private val services: JavaToKotlinConverterServices
 ) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
@@ -143,7 +138,7 @@ public class JavaToKotlinConverter(
 
 
             val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
-                Converter.create(inputElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, docCommentConverter, usageProcessingCollector).convert()
+                Converter.create(inputElement, settings, ::inConversionScope, services, usageProcessingCollector).convert()
             }.toArrayList()
 
             val results = processor.processItems(0.25, intermediateResults.withIndex()) { pair ->
@@ -209,7 +204,7 @@ public class JavaToKotlinConverter(
                             {
                                 val searchJava = processings.any { it.javaCodeProcessor != null }
                                 val searchKotlin = processings.any { it.kotlinCodeProcessor != null }
-                                referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
+                                services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
                                         .filterNot { inConversionScope(it.getElement()) }
                                         .mapTo(refs) { ReferenceInfo(it, psiElement, it.getElement().getContainingFile(), processings) }
                             },
@@ -334,5 +329,64 @@ public class JavaToKotlinConverter(
 
         override fun setText2(text: String?) {
         }
+    }
+
+    // Copied from com.intellij.ide.util.DelegatingProgressIndicator
+    private open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgressIndicator {
+        protected val delegate: ProgressIndicator
+
+        public constructor(indicator: ProgressIndicator) {
+            delegate = indicator
+        }
+
+        public constructor() {
+            val indicator = ProgressManager.getInstance().progressIndicator
+            delegate = indicator ?: EmptyProgressIndicator()
+        }
+
+        override fun start() = delegate.start()
+        override fun stop() = delegate.stop()
+        override fun isRunning() = delegate.isRunning
+        override fun cancel() = delegate.cancel()
+        override fun isCanceled() = delegate.isCanceled
+
+        override fun setText(text: String?) {
+            delegate.text = text
+        }
+
+        override fun getText() = delegate.text
+
+        override fun setText2(text: String?) {
+            delegate.text2 = text
+        }
+
+        override fun getText2() = delegate.text2
+        override fun getFraction() = delegate.fraction
+
+        override fun setFraction(fraction: Double) {
+            delegate.fraction = fraction
+        }
+
+        override fun pushState() = delegate.pushState()
+        override fun popState() = delegate.popState()
+        override fun startNonCancelableSection() = delegate.startNonCancelableSection()
+        override fun finishNonCancelableSection() = delegate.finishNonCancelableSection()
+        override fun isModal() = delegate.isModal
+        override fun getModalityState() = delegate.modalityState
+
+        override fun setModalityProgress(modalityProgress: ProgressIndicator) {
+            delegate.setModalityProgress(modalityProgress)
+        }
+
+        override fun isIndeterminate() = delegate.isIndeterminate
+
+        override fun setIndeterminate(indeterminate: Boolean) {
+            delegate.isIndeterminate = indeterminate
+        }
+
+        override fun checkCanceled() = delegate.checkCanceled()
+        override fun getOriginalProgressIndicator() = delegate
+        override fun isPopupWasShown() = delegate.isPopupWasShown
+        override fun isShowing() = delegate.isShowing
     }
 }

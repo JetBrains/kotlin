@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -159,9 +160,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val converter = JavaToKotlinConverter(
                 project,
                 ConverterSettings.defaultSettings,
-                IdeaReferenceSearcher,
-                IdeaResolverForConverter,
-                IdeaDocCommentConverter
+                IdeaJavaToKotlinServices
         )
 
         val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()

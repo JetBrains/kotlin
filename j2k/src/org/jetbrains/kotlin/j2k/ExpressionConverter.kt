@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.codeInsight.generation.GenerateEqualsHelper
+
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.KotlinLightField
@@ -139,7 +141,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 if (!psiClass.hasModifierProperty(PsiModifier.FINAL)) return false
                 if (psiClass.isEnum()) return true
 
-                val equalsSignature = GenerateEqualsHelper.getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
+                val equalsSignature = getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
                 val equalsMethod = MethodSignatureUtil.findMethodBySignature(psiClass, equalsSignature, true)
                 if (equalsMethod != null && equalsMethod.getContainingClass()?.getQualifiedName() != CommonClassNames.JAVA_LANG_OBJECT) return false
 
@@ -149,6 +151,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             else -> return false
         }
 
+    }
+
+    private fun getEqualsSignature(project: Project, scope: GlobalSearchScope): MethodSignature {
+        val javaLangObject = PsiType.getJavaLangObject(PsiManager.getInstance(project), scope)
+        return MethodSignatureUtil.createMethodSignature("equals", arrayOf<PsiType>(javaLangObject), PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY)
     }
 
     private val NON_NULL_OPERAND_OPS = setOf(

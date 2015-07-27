@@ -39,9 +39,7 @@ class Converter private constructor(
         private val elementToConvert: PsiElement,
         val settings: ConverterSettings,
         val inConversionScope: (PsiElement) -> Boolean,
-        val referenceSearcher: ReferenceSearcher,
-        val resolverForConverter: ResolverForConverter,
-        private val docCommentConverter: DocCommentConverter,
+        val services: JavaToKotlinConverterServices,
         private val commonState: Converter.CommonState,
         private val personalState: Converter.PersonalState
 ) {
@@ -61,20 +59,20 @@ class Converter private constructor(
 
     public val specialContext: PsiElement? = personalState.specialContext
 
+    public val referenceSearcher: CachingReferenceSearcher = CachingReferenceSearcher(services.referenceSearcher)
+
     companion object {
         public fun create(elementToConvert: PsiElement, settings: ConverterSettings, inConversionScope: (PsiElement) -> Boolean,
-                          referenceSearcher: ReferenceSearcher, resolverForConverter: ResolverForConverter,
-                          docCommentConverter: DocCommentConverter, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
+                          services: JavaToKotlinConverterServices, usageProcessingsCollector: (UsageProcessing) -> Unit): Converter {
             return Converter(elementToConvert, settings, inConversionScope,
-                             CachingReferenceSearcher(referenceSearcher),
-                             resolverForConverter, docCommentConverter, CommonState(usageProcessingsCollector), PersonalState(null))
+                             services, CommonState(usageProcessingsCollector), PersonalState(null))
         }
     }
 
     public fun withSpecialContext(context: PsiElement): Converter = withState(PersonalState(context))
 
     private fun withState(state: PersonalState): Converter
-            = Converter(elementToConvert, settings, inConversionScope, referenceSearcher, resolverForConverter, docCommentConverter, commonState, state)
+            = Converter(elementToConvert, settings, inConversionScope, services, commonState, state)
 
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
@@ -98,7 +96,7 @@ class Converter private constructor(
                 { usageProcessings ->
                     unfoldDeferredElements(usageProcessings)
 
-                    val builder = CodeBuilder(elementToConvert, docCommentConverter)
+                    val builder = CodeBuilder(elementToConvert, services.docCommentConverter)
                     builder.append(element)
                     Result(builder.resultText, builder.importsToAdd)
                 },
@@ -322,14 +320,14 @@ class Converter private constructor(
             addUsageProcessing(FieldToPropertyProcessing(field, correction?.name ?: field.getName()!!, propertyType.isNullable))
 
             return Property(name,
-                  annotations,
-                  modifiers,
-                  propertyType,
-                  deferredElement { codeConverter -> codeConverter.convertExpression(field.getInitializer(), field.getType()) },
-                  isVal,
-                  typeToDeclare != null,
-                  shouldGenerateDefaultInitializer(referenceSearcher, field),
-                  if (correction != null) correction.setterAccess else modifiers.accessModifier()
+                            annotations,
+                            modifiers,
+                            propertyType,
+                            deferredElement { codeConverter -> codeConverter.convertExpression(field.getInitializer(), field.getType()) },
+                            isVal,
+                            typeToDeclare != null,
+                            shouldGenerateDefaultInitializer(referenceSearcher, field),
+                            if (correction != null) correction.setterAccess else modifiers.accessModifier()
             ).assignPrototype(field)
         }
     }
