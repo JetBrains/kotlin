@@ -29,8 +29,8 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: O.obMyFun()
 // RESULT: 1: I
- frame    = invoke():6, FrameObject$main$1 {frameObject}
-   this     = this = {frameObject.FrameObject$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+ frame    = invoke():6, FrameObjectKt$main$1 {frameObject}
+   this     = this = {frameObject.FrameObjectKt$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -1,5 +1,5 @@
 package test
 
 fun foo() {
-    ""   // test/Package
+    ""   // test/PackageKt
 }

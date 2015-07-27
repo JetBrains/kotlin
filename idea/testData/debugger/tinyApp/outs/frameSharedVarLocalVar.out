@@ -21,8 +21,8 @@ inline fun foo(f: () -> Unit) {
 
 // EXPRESSION: var1
 // RESULT: 1: I
- frame    = main():7, FrameSharedVarLocalVar {frameSharedVarLocalVar}
-   static   = static = frameSharedVarLocalVar.FrameSharedVarLocalVar
+ frame    = main():7, FrameSharedVarLocalVarKt {frameSharedVarLocalVar}
+   static   = static = frameSharedVarLocalVar.FrameSharedVarLocalVarKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameSharedVarLocalVar.kt, 3)
    local    = var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1 (sp = frameSharedVarLocalVar.kt, 4)
      field    = element: int = 1 (sp = Ref.!EXT!)

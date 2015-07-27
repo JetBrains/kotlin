@@ -1,5 +1,5 @@
 Cleaning output files:
-out/production/module/test/A.class
+out/production/module/test/AKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:
@@ -8,13 +8,13 @@ End of files
 
 
 Cleaning output files:
-out/production/module/test/B.class
+out/production/module/test/BKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 End of files
 Cleaning output files:
-out/production/module/test/A.class
+out/production/module/test/AKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:

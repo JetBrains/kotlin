@@ -21,8 +21,8 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: var1
 // RESULT: 1: I
- frame    = invoke():7, FrameSharedVar$main$1 {frameSharedVar}
-   this     = this = {frameSharedVar.FrameSharedVar$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+ frame    = invoke():7, FrameSharedVarKt$main$1 {frameSharedVar}
+   this     = this = {frameSharedVar.FrameSharedVarKt$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
      field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1 (sp = null)
        field    = element: int = 1 (sp = Ref.!EXT!)
      field    = arity: int = 0 (sp = Lambda.!EXT!)

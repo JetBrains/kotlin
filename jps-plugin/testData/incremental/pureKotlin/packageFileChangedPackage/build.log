@@ -1,14 +1,14 @@
 Cleaning output files:
-out/production/module/test/B.class
+out/production/module/test/BKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:
 src/b.kt
 End of files
 Cleaning output files:
-out/production/module/newName/B.class
+out/production/module/newName/BKt.class
 out/production/module/newName/NewNamePackage.class
-out/production/module/test/A.class
+out/production/module/test/AKt.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:

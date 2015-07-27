@@ -15,8 +15,8 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
- frame    = main():10, EvFinalProperty {evFinalProperty}
-   static   = static = evFinalProperty.EvFinalProperty
+ frame    = main():10, EvFinalPropertyKt {evFinalProperty}
+   static   = static = evFinalProperty.EvFinalPropertyKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evFinalProperty.kt, 7)
    local    = a: evFinalProperty.A = {evFinalProperty.A@uniqueID} (sp = evFinalProperty.kt, 8)
      field    = prop: int = 1 (sp = evFinalProperty.kt, 4)

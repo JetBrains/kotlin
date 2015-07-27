@@ -21,8 +21,8 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: val1
 // RESULT: Cannot find local variable: name = val1
- frame    = invoke():7, FrameLambdaNotUsed$main$1 {frameLambdaNotUsed}
-   this     = this = {frameLambdaNotUsed.FrameLambdaNotUsed$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+ frame    = invoke():7, FrameLambdaNotUsedKt$main$1 {frameLambdaNotUsed}
+   this     = this = {frameLambdaNotUsed.FrameLambdaNotUsedKt$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

@@ -1,5 +1,5 @@
 package test
 
 fun quux() {
-    "" // test/A4
+    "" // test/A4Kt
 }

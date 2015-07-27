@@ -1,21 +1,21 @@
 Cleaning output files:
 out/production/module1/inline/InlinePackage.class
-out/production/module1/inline/Module1_inline.class
+out/production/module1/inline/Module1_inlineKt.class
 End of files
 Compiling files:
 module1/src/module1_inline.kt
 End of files
 Cleaning output files:
 out/production/module1/inline/InlinePackage.class
-out/production/module1/inline/Module1_inline.class
-out/production/module1/inline/Module1_other.class
+out/production/module1/inline/Module1_inlineKt.class
+out/production/module1/inline/Module1_otherKt.class
 End of files
 Compiling files:
 module1/src/module1_inline.kt
 module1/src/module1_other.kt
 End of files
 Cleaning output files:
-out/production/module2/usage/Module2_usage.class
+out/production/module2/usage/Module2_usageKt.class
 out/production/module2/usage/UsagePackage.class
 End of files
 Compiling files:

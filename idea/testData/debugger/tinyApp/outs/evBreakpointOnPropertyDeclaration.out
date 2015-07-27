@@ -20,8 +20,8 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
- frame    = main():14, EvBreakpointOnPropertyDeclaration {evBreakpointOnPropertyDeclaration}
-   static   = static = evBreakpointOnPropertyDeclaration.EvBreakpointOnPropertyDeclaration
+ frame    = main():14, EvBreakpointOnPropertyDeclarationKt {evBreakpointOnPropertyDeclaration}
+   static   = static = evBreakpointOnPropertyDeclaration.EvBreakpointOnPropertyDeclarationKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 7)
    local    = a1: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 8)
      field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)

@@ -26,8 +26,8 @@ class MyDelegateThrowsException {
 }
 
 // PRINT_FRAME
- frame    = main():8, DelegatedPropertyInClass {delegatedPropertyInClass}
-   static   = static = delegatedPropertyInClass.DelegatedPropertyInClass
+ frame    = main():8, DelegatedPropertyInClassKt {delegatedPropertyInClass}
+   static   = static = delegatedPropertyInClass.DelegatedPropertyInClassKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 5)
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 12)

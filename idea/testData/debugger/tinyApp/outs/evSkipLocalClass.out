@@ -24,8 +24,8 @@ fun main(args: Array<String>) {
 fun foo(i: Int) {}
 
 // PRINT_FRAME
- frame    = main():12, EvSkipLocalClass {evSkipLocalClass}
-   static   = static = evSkipLocalClass.EvSkipLocalClass
+ frame    = main():12, EvSkipLocalClassKt {evSkipLocalClass}
+   static   = static = evSkipLocalClass.EvSkipLocalClassKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipLocalClass.kt, 7)
    local    = a1: evSkipLocalClass.A = {evSkipLocalClass.A@uniqueID} (sp = evSkipLocalClass.kt, 8)
      field    = prop: int = 1 (sp = evSkipLocalClass.kt, 4)

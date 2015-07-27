@@ -15,8 +15,8 @@ class A {
 }
 
 // PRINT_FRAME
- frame    = main():6, ToStringRenderer {toStringRenderer}
-   static   = static = toStringRenderer.ToStringRenderer
+ frame    = main():6, ToStringRendererKt {toStringRenderer}
+   static   = static = toStringRenderer.ToStringRendererKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)
    local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA (sp = toStringRenderer.kt, 4)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

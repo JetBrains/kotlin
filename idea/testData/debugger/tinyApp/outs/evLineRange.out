@@ -24,8 +24,8 @@ fun main(args: Array<String>) {
 fun foo(i: Int) {}
 
 // PRINT_FRAME
- frame    = main():15, EvLineRange {evLineRange}
-   static   = static = evLineRange.EvLineRange
+ frame    = main():15, EvLineRangeKt {evLineRange}
+   static   = static = evLineRange.EvLineRangeKt
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evLineRange.kt, 7)
    local    = a1: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 8)
      field    = prop: int = 1 (sp = evLineRange.kt, 4)

@@ -1,7 +1,7 @@
 Cleaning output files:
 out/production/module/bar/BarPackage.class
-out/production/module/bar/C.class
-out/production/module/foo/B.class
+out/production/module/bar/CKt.class
+out/production/module/foo/BKt.class
 out/production/module/foo/FooPackage.class
 End of files
 Compiling files:
@@ -9,10 +9,10 @@ src/b.kt
 src/c.kt
 End of files
 Cleaning output files:
-out/production/module/bar/B.class
+out/production/module/bar/BKt.class
 out/production/module/bar/BarPackage.class
-out/production/module/foo/A.class
-out/production/module/foo/C.class
+out/production/module/foo/AKt.class
+out/production/module/foo/CKt.class
 out/production/module/foo/FooPackage.class
 End of files
 Compiling files:

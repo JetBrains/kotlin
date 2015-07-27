@@ -1,3 +1,3 @@
 package prop
 
-val foo: Int = 5   // prop/TopLevelPropertyInitializer
+val foo: Int = 5   // prop/TopLevelPropertyInitializerKt
