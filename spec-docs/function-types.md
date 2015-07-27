@@ -2,11 +2,8 @@
 
 ## Goals
 
-* Get rid of 23 hardwired physical function classes. The problem with them is,
-reflection introduces a few kinds of functions but each of them should be invokable as a normal function as well, and so
-we get `{top-level, member, extension, member-extension, local, ...} * 23` = **a lot** of physical classes in the runtime.
-* Make extension functions coercible to normal functions (with an extra parameter).
-At the moment it's not possible to do `listOfStrings.map(String::length)`
+* Get rid of 23 hardwired physical function classes. One of the problems with them is that they should be effectively duplicated in reflection which means a lot of physical classes in the runtime.
+* Make extension functions coercible to normal functions (with an extra parameter), so that it's possible to do `listOfStrings.map(String::length)`
 * Allow functions with more than 23 parameters, theoretically any number of parameters (in practice 255 on JVM).
 * At the same time, allow to implement Kotlin functions easily from Java: `new Function2() { ... }` and overriding `invoke` only would be the best.
 Enabling SAM conversions on Java 8 would also be terrific.
@@ -26,7 +23,7 @@ Kotlin lambdas are translated to subclasses of this abstract class, passing the 
 
 ## Extension functions
 
-Extension function type `T.(P) -> R` is now just a shorthand for `[kotlin.extension] Function2<T, P, R>`.
+Extension function type `T.(P) -> R` is now just a shorthand for `@kotlin.extension Function2<T, P, R>`.
 `kotlin.extension` is a **type annotation** defined in built-ins.
 So effectively functions and extension functions now have the same type,
 how can we make extension function expressions support extension function call syntax?
@@ -82,49 +79,46 @@ and the rest of this article will deal only with usual functions.
 
 ## Function0, Function1, ... types
 
-The arity of the functional trait that the type checker can create in theory **is not limited** to any number,
+The arity of the functional interface that the type checker can create in theory **is not limited** to any number,
 but in practice should be limited to 255 on JVM.
 
-These traits are named `kotlin.Function0<R>`, `kotlin.Function1<P0, R>`, ..., `kotlin.Function42<P0, P1, ..., P41, R>`, ...
+These interfaces are named `kotlin.Function0<R>`, `kotlin.Function1<P0, R>`, ..., `kotlin.Function42<P0, P1, ..., P41, R>`, ...
 They are *fictitious*, which means they have no sources and no runtime representation.
 Type checker creates the corresponding descriptors on demand, IDE creates corresponding source files on demand as well.
 Each of them inherits from `kotlin.Function` (described below) and contains a single
 `fun invoke()` with the corresponding number of parameters and return type.
 
-> TODO: investigate exactly what changes in IDE should be done and if they are possible at all.
-
 On JVM function types are erased to the physical classes defined in package `kotlin.jvm.internal`:
 `Function0`, `Function1`, ..., `Function22` and `FunctionN` for 23+ parameters.
 
-## Function trait
+## Function interface
 
-There's also an empty trait `kotlin.Function<R>` for cases when e.g. you're storing functions with different/unknown arity
-in a collection to invoke them reflectively somewhere else.
+There's also an empty interface `kotlin.Function<R>` which is a supertype for all functions.
 
 ``` kotlin
 package kotlin
 
-trait Function<out R>
+interface Function<out R>
 ```
 
-It's a physical trait, declared in platform-agnostic built-ins, and present in `kotlin-runtime.jar` for example.
+It's a physical interface, declared in platform-agnostic built-ins, and present in `kotlin-runtime.jar` for example.
 However its declaration is **empty** and should be empty because every physical JVM function class `Function0`, `Function1`, ...
 inherits from it (and adds `invoke()`), and we don't want to override anything besides `invoke()` when doing it from Java code.
 
 ## Functions with 0..22 parameters at runtime
 
-There are 23 function traits in `kotlin.jvm.functions`: `Function0`, `Function1`, ..., `Function22`.
+There are 23 function interfaces in `kotlin.jvm.functions`: `Function0`, `Function1`, ..., `Function22`.
 Here's `Function1` declaration, for example:
 
 ``` kotlin
 package kotlin.jvm.functions
 
-trait Function1<in P1, out R> : kotlin.Function<R> {
+interface Function1<in P1, out R> : kotlin.Function<R> {
     fun invoke(p1: P1): R
 }
 ```
 
-These traits are supposed to be inherited from by Java classes when passing lambdas to Kotlin.
+These interfaces are supposed to be inherited from by Java classes when passing lambdas to Kotlin.
 They shouldn't be used from Kotlin however, because normally you would use a function type there,
 most of the time even without mentioning built-in function classes: `(P1, P2, P3) -> R`.
 
@@ -184,12 +178,12 @@ object : FunctionImpl(), Function1<String, Int> {
 
 ## Functions with more than 22 parameters at runtime
 
-To support functions with many parameters there's a special trait in JVM runtime:
+To support functions with many parameters there's a special interface in JVM runtime:
 
 ``` kotlin
 package kotlin.jvm.functions
 
-trait FunctionN<out R> : kotlin.Function<R> {
+interface FunctionN<out R> : kotlin.Function<R> {
     val arity: Int
     fun invokeVararg(vararg p: Any?): R
 }
@@ -206,7 +200,7 @@ package kotlin.jvm.functions
 annotation class arity(val value: Int)
 ```
 
-A lambda type with 42 parameters on JVM is translated to `[arity(42)] FunctionN`.
+A lambda type with 42 parameters on JVM is translated to `@arity(42) FunctionN`.
 A lambda is compiled to an anonymous class which overrides `invokeVararg()` instead of `invoke()`:
 
 ``` kotlin
@@ -220,7 +214,7 @@ object : FunctionImpl() {
 
 > Note that `Function0`..`Function22` are provided primarily for **Java interoperability** and as an **optimization** for frequently used functions.
 > We can change the number of functions easily from 23 to something else if we want to.
-> For example, for `KFunction`, `KMemberFunction`, ... this number will be zero,
+> For example, for `KFunction` this number will be zero,
 > since there's no point in implementing a hypothetical `KFunction5` from Java.
 
 So when a large function is passed from Java to Kotlin, the object will need to inherit from `FunctionN`:
@@ -241,9 +235,9 @@ So when a large function is passed from Java to Kotlin, the object will need to 
     }
 ```
 
-> Note that `[arity(N)] FunctionN<R>` coming from Java code will be treated as `(Any?, Any?, ..., Any?) -> R`,
+> Note that `@arity(N) FunctionN<R>` coming from Java code will be treated as `(Any?, Any?, ..., Any?) -> R`,
 > where the number of parameters is `N`.
-> If there's no `arity` annotation on the type `FunctionN<R>`, it won't be loaded as a function type,
+> If there's no `@arity` annotation on the type `FunctionN<R>`, it won't be loaded as a function type,
 > but rather as just a classifier type with an argument.
 
 
@@ -255,8 +249,8 @@ provided by extensions in **platform-agnostic** built-ins.
 ``` kotlin
 package kotlin
 
-intrinsic val Function<*>.arity: Int
-intrinsic fun <R> Function<R>.invokeVararg(vararg p: Any?): R
+@intrinsic val Function<*>.arity: Int
+@intrinsic fun <R> Function<R>.invokeVararg(vararg p: Any?): R
 ```
 
 But they don't have any implementation there.
@@ -280,7 +274,7 @@ fun Function<*>.calculateArity(): Int {
 }
 ```
 
-## `is`/`as` hack
+## `is`/`as`
 
 The newly introduced `FunctionImpl` class inherits from all the `Function0`, `Function1`, ..., `FunctionN`.
 This means that `anyLambda is Function2<*, *, *>` will be true for any Kotlin lambda.
@@ -302,7 +296,7 @@ Also we should issue warnings on `is Array<Function2<*, *, *>>` (or `as`), since
 
 ## How this will help reflection
 
-The saddest part of this story is that all `K*Function*` interfaces should be hacked identically to functions.
+`KFunction*` interfaces should be synthesized at compile-time identically to functions.
 The compiler should resolve `KFunctionN` for any `N`, IDEs should synthesize sources when needed,
 `is`/`as` should be handled similarly etc.
 
@@ -312,14 +306,14 @@ A great aid was that the contents of each `Function` were trivial and easy to du
 which is not the case at all for `KFunction`s: they also contain code related to reflection.
 
 So for reflection there will be:
-* **fictitious** interfaces `KFunction0`, `KFunction1`, ..., `KMemberFunction0`, ..., `KExtensionFunction0`, ..., `KMemberFunction42`, ... (defined in `kotlin.reflect`)
-* **physical** interfaces `KFunction`, `KMemberFunction`, ... (defined in `kotlin.reflect`)
-* **physical** JVM runtime implementation classes `KFunctionImpl`, `KMemberFunctionImpl`, ... (defined in `kotlin.reflect.jvm.internal`)
+* **fictitious** interfaces `KFunction0`, `KFunction1`, ..., `KFunction42`, ... (defined in `kotlin.reflect`)
+* **physical** interface `KFunction` (defined in `kotlin.reflect`)
+* **physical** JVM runtime implementation class `KFunctionImpl` (defined in `kotlin.reflect.jvm.internal`)
 
 ``` kotlin
 package kotlin.reflect
 
-trait KFunction<out R> : Function<R> {
+interface KFunction<out R> : Function<R> {
     fun invokeVararg(vararg p: Any?): R
     ... // Reflection-specific declarations
 }
