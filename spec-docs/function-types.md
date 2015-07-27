@@ -26,53 +26,20 @@ Kotlin lambdas are translated to subclasses of this abstract class, passing the 
 Extension function type `T.(P) -> R` is now just a shorthand for `@kotlin.extension Function2<T, P, R>`.
 `kotlin.extension` is a **type annotation** defined in built-ins.
 So effectively functions and extension functions now have the same type,
-how can we make extension function expressions support extension function call syntax?
+which means that everything which takes a function will work with an extension function and vice versa.
 
-We introduce the following convention: expression `foo` of type `Foo` can be used as an extension function
-(i.e. `object.foo(arguments)`) if and only if there is a function `invokeExtension`
-with the corresponding parameters available on the type `Foo`.
-This function may be declared in class `Foo` or somewhere as an extension to `Foo`.
+To prevent unpleasant ambiguities, we introduce additional restrictions:
+* A value of an extension function type cannot be **called** as a function, and a value of a non-extension
+function type cannot be called as an extension. This requires an additional diagnostic which is only fired
+when a call is resolved to the `invoke` with the wrong extension-ness.
+* If an extension function **literal** argument has some shape (its parameters are written out explicitly
+in the code and it's evident that there is or there isn't a receiver parameter), this shape must exactly match
+the extension-ness of the corresponding parameter. You can't pass an extension function **literal**
+where a function is expected and vice versa. The same holds for function expressions.
+If you really want to do that, change the shape or use the `as` operator.
 
-> Note that at the moment a less convenient convention is used: there must be a **member extension**
-> function `invoke` in the class which you want to be used as an extension function.
-> This means you can't add "extension-function-ness" to a foreign class,
-> since you'd need to declare a function with two receivers.
-> The new approach will solve this problem.
-
-We declare `invokeExtension` to be available on all extension functions:
-
-``` kotlin
-package kotlin
-
-...
-fun <T, R> (T.() -> R).invokeExtension(): R = this()
-fun <T, P1, R> (T.(P1) -> R).invokeExtension(p1: P1): R = this(p1)
-...
-```
-
-So now an expression type-checked to an "extension function type" can be used with the desired syntax.
-But, since a function type and a corresponding extension function type effectively have the same classifier (e.g. `Function7`),
-they are coercible to each other and therefore our `invokeExtension` will be applicable to the usual
-functions as well, which is something we don't want to happen! Example:
-
-``` kotlin
-val lengthHacked: (String) -> Int = { it.length }
-
-fun test() = "".lengthHacked()  // <-- bad! The declared function accepts a single non-receiver argument
-                                // and is not designed to be invoked as an extension
-```
-
-And here we introduce the following **restriction**: given a call `object.foo(arguments)`,
-if `foo` is resolved **exactly** to the built-in extension function `invokeExtension`,
-then the call *will not compile* unless the receiver type is annotated with `[extension]`.
-So `invokeExtension` will yield an error when used on a normal (not extension) function.
-
-To make your class invokable as an extension you only need to declare `invokeExtension`.
-Declaring `invoke` (and maybe overriding it from the needed function class) will only make your class invokable *as a usual function*.
-Inheriting from a function type thus makes sense if you want your class to behave like a simple function.
-Inheriting from an extension function type however makes no sense and should be prohibited / frowned upon.
-In a broad sense, providing type annotations on supertypes (which is what inheriting from an extension function is)
-maybe should be diagnosed in the compiler (maybe not, more knowledge needed).
+So basically you can now safely coerce values between function and extension function types,
+but still should invoke them in the format which you specified in their type (with or without `@extension`).
 
 With this we'll get rid of classes `ExtensionFunction0`, `ExtensionFunction1`, ...
 and the rest of this article will deal only with usual functions.
