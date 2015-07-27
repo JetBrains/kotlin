@@ -305,10 +305,14 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         maps.forEach { it.close () }
     }
 
-    private abstract class BasicMap<V> {
-        protected var storage: PersistentHashMap<String, V> = createMap()
+    private inner abstract class BasicMap<V>(
+            private val storageName: String,
+            private val valueExternalizer: DataExternalizer<V>
+    ) {
+        protected open val keyDescriptor: KeyDescriptor<String>
+            get() = EnumeratorStringDescriptor()
 
-        protected abstract fun createMap(): PersistentHashMap<String, V>
+        protected var storage: PersistentHashMap<String, V> = createMap()
 
         public fun contains(key: String): Boolean = storage.containsMapping(key)
 
@@ -361,14 +365,12 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
 
         protected abstract fun dumpValue(value: V): String
+
+        private fun createMap(): PersistentHashMap<String, V> =
+                PersistentHashMap(File(baseDir, storageName), keyDescriptor, valueExternalizer)
     }
 
-    private inner class ProtoMap : BasicMap<ByteArray>() {
-        override fun createMap(): PersistentHashMap<String, ByteArray> = PersistentHashMap(
-                File(baseDir, PROTO_MAP),
-                EnumeratorStringDescriptor(),
-                ByteArrayExternalizer
-        )
+    private inner class ProtoMap : BasicMap<ByteArray>(PROTO_MAP, ByteArrayExternalizer) {
 
         public fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): Boolean {
             val key = className.getInternalName()
@@ -445,13 +447,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    private inner class ConstantsMap : BasicMap<Map<String, Any>>() {
-        override fun createMap(): PersistentHashMap<String, Map<String, Any>> = PersistentHashMap(
-                File(baseDir, CONSTANTS_MAP),
-                EnumeratorStringDescriptor(),
-                ConstantsMapExternalizer
-        )
-
+    private inner class ConstantsMap : BasicMap<Map<String, Any>>(CONSTANTS_MAP, ConstantsMapExternalizer) {
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
@@ -554,13 +550,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    private inner class InlineFunctionsMap : BasicMap<Map<String, Long>>() {
-        override fun createMap(): PersistentHashMap<String, Map<String, Long>> = PersistentHashMap(
-                File(baseDir, INLINE_FUNCTIONS),
-                EnumeratorStringDescriptor(),
-                StringToLongMapExternalizer
-        )
-
+    private inner class InlineFunctionsMap : BasicMap<Map<String, Long>>(INLINE_FUNCTIONS, StringToLongMapExternalizer) {
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
@@ -634,13 +624,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
-    private inner class PackagePartMap : BasicMap<Boolean>() {
-        override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
-                File(baseDir, PACKAGE_PARTS),
-                EnumeratorStringDescriptor(),
-                BooleanDataDescriptor.INSTANCE
-        )
-
+    private inner class PackagePartMap : BasicMap<Boolean>(PACKAGE_PARTS, BooleanDataDescriptor.INSTANCE) {
         public fun addPackagePart(className: JvmClassName) {
             storage.put(className.getInternalName(), true)
         }
@@ -656,12 +640,9 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class SourceToClassesMap : BasicMap<List<String>>() {
-        override fun createMap(): PersistentHashMap<String, List<String>> = PersistentHashMap(
-                File(baseDir, SOURCE_TO_CLASSES),
-                PathStringDescriptor.INSTANCE,
-                StringListExternalizer
-        )
+    private inner class SourceToClassesMap : BasicMap<List<String>>(SOURCE_TO_CLASSES, StringListExternalizer) {
+        override val keyDescriptor: KeyDescriptor<String>
+            get() = PathStringDescriptor.INSTANCE
 
         public fun clearOutputsForSource(sourceFile: File) {
             storage.remove(sourceFile.getAbsolutePath())
@@ -678,13 +659,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: List<String>) = value.toString()
     }
 
-    private inner class ClassToSourcesMap : BasicMap<Collection<String>>() {
-        override fun createMap(): PersistentHashMap<String, Collection<String>> = PersistentHashMap(
-                File(baseDir, CLASS_TO_SOURCES),
-                EnumeratorStringDescriptor(),
-                PathCollectionExternalizer
-        )
-
+    private inner class ClassToSourcesMap : BasicMap<Collection<String>>(CLASS_TO_SOURCES, PathCollectionExternalizer) {
         public fun get(className: JvmClassName): Collection<String> =
                 storage[className.internalName] ?: emptySet()
 
@@ -702,13 +677,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 value.dumpCollection()
     }
 
-    private inner class DirtyOutputClassesMap : BasicMap<Boolean>() {
-        override fun createMap(): PersistentHashMap<String, Boolean> = PersistentHashMap(
-                File(baseDir, DIRTY_OUTPUT_CLASSES),
-                EnumeratorStringDescriptor(),
-                BooleanDataDescriptor.INSTANCE
-        )
-
+    private inner class DirtyOutputClassesMap : BasicMap<Boolean>(DIRTY_OUTPUT_CLASSES, BooleanDataDescriptor.INSTANCE) {
         public fun markDirty(className: String) {
             storage.put(className, true)
         }
@@ -724,13 +693,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap : BasicMap<List<String>>() {
-        override fun createMap(): PersistentHashMap<String, List<String>> = PersistentHashMap(
-                File(baseDir, DIRTY_INLINE_FUNCTIONS),
-                EnumeratorStringDescriptor(),
-                StringListExternalizer
-        )
-
+    private inner class DirtyInlineFunctionsMap : BasicMap<List<String>>(DIRTY_INLINE_FUNCTIONS, StringListExternalizer) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
             storage.allKeysWithExistingMapping
                    .toMap(JvmClassName::byInternalName) { storage[it] }
@@ -751,15 +714,11 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap : BasicMap<Map<String, Collection<String>>>() {
+    private inner class InlineFunctionsFilesMap : BasicMap<Map<String, Collection<String>>>(HAS_INLINE_TO, StringToPathsMapExternalizer) {
+        override val keyDescriptor: KeyDescriptor<String>
+            get() = PathStringDescriptor()
 
         private val cache = THashMap<String, MutableMap<String, MutableCollection<String>>>(FileUtil.PATH_HASHING_STRATEGY)
-
-        override fun createMap(): PersistentHashMap<String, Map<String, Collection<String>>> = PersistentHashMap(
-                File(baseDir, HAS_INLINE_TO),
-                PathStringDescriptor(),
-                StringToPathsMapExternalizer
-        )
 
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val mapping = getMappingFromCache(sourcePath.normalizedPath)
