@@ -42,6 +42,10 @@ import java.util.*
 import java.util.regex.Pattern
 
 public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
+    override fun createEnvironment(): KotlinCoreEnvironment {
+        return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
+    }
+
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
         val integerVariableValues = PseudocodeIntegerVariablesDataCollector(pseudocode, bindingContext).integerVariablesValues
         val inPrefix = "    in: "
