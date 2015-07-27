@@ -828,8 +828,8 @@ class ArraysTest {
         fun String.nullIfEmpty() = if (isEmpty()) null else this
         arrayOf(null, "").let {
             expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
-            expect(listOf("", null)) { it.sortedDescendingBy { it.orEmpty() }}
-            expect(listOf("", null)) { it.sortedDescendingBy { it?.nullIfEmpty() }}
+            expect(listOf("", null)) { it.sortedByDescending { it.orEmpty() }}
+            expect(listOf("", null)) { it.sortedByDescending { it?.nullIfEmpty() }}
         }
     }
 

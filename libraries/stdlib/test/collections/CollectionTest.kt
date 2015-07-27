@@ -567,15 +567,15 @@ class CollectionTest {
     test fun sortedBy() {
         assertEquals(listOf("two" to 2, "three" to 3), listOf("three" to 3, "two" to 2).sortedBy { it.second })
         assertEquals(listOf("three" to 3, "two" to 2), listOf("three" to 3, "two" to 2).sortedBy { it.first })
-        assertEquals(listOf("three", "two"), listOf("two", "three").sortedDescendingBy { it.length() })
+        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length() })
     }
 
     test fun sortedNullableBy() {
         fun String.nullIfEmpty() = if (isEmpty()) null else this
         listOf(null, "").let {
             expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
-            expect(listOf("", null)) { it.sortedDescendingBy { it.orEmpty() }}
-            expect(listOf("", null)) { it.sortedDescendingBy { it?.nullIfEmpty() }}
+            expect(listOf("", null)) { it.sortedByDescending { it.orEmpty() }}
+            expect(listOf("", null)) { it.sortedByDescending { it?.nullIfEmpty() }}
         }
     }
 

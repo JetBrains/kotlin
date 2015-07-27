@@ -162,7 +162,7 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortedDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?)") {
+    templates add f("sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -316,8 +316,8 @@ fun ordering(): List<GenericFunction> {
             Returns a sorted list of all elements, in descending order by results of specified [order] function.
             """
         }
-        deprecate("This method may change its behavior soon. Use sortedDescendingBy() instead.")
-        deprecateReplacement("sortedDescendingBy(order)")
+        deprecate("This method may change its behavior soon. Use sortedByDescending() instead.")
+        deprecateReplacement("sortedByDescending(order)")
         returns("List<T>")
         typeParam("R : Comparable<R>")
         body {
