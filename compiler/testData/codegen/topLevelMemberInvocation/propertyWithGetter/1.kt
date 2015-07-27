@@ -5,5 +5,5 @@ val prop: Int = 0
         return $prop + 1
     }
 
-// 2 INVOKESTATIC a/APackage.+\.getProp \(\)I
-// 1 GETSTATIC a/APackage.+\.prop \: I
+// 2 INVOKESTATIC a/_1Kt.getProp \(\)I
+// 1 GETSTATIC a/_1Kt.prop \: I

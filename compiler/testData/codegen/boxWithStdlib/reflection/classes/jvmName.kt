@@ -30,11 +30,11 @@ fun box(): String {
 
     class Local
     val l = Local::class.jvmName
-    assertTrue(l != null && l.startsWith("_DefaultPackage\$") && "\$box\$" in l && l.endsWith("\$Local"))
+    assertTrue(l != null && l.startsWith("JvmNameKt\$") && "\$box\$" in l && l.endsWith("\$Local"))
 
     val obj = object {}
     val o = obj.javaClass.kotlin.jvmName
-    assertTrue(o != null && o.startsWith("_DefaultPackage\$") && "\$box\$" in o && o.endsWith("\$1"))
+    assertTrue(o != null && o.startsWith("JvmNameKt\$") && "\$box\$" in o && o.endsWith("\$1"))
 
     return "OK"
 }
