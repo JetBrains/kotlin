@@ -136,11 +136,13 @@ It inherits from all the physical function classes, unfortunately (more on that 
 ``` kotlin
 package kotlin.jvm.internal
 
-abstract class FunctionImpl(override val arity: Int) :
+abstract class FunctionImpl :
     Function<Any?>,
     Function0<Any?>, Function1<Any?, Any?>, ..., ..., Function22<...>,
     FunctionN   // See the next section on FunctionN
 {
+    abstract val arity: Int
+    
     override fun invoke(): Any? {
         // Default implementations of all "invoke"s invoke "invokeVararg"
         // This is needed for KFunctionImpl (see below)
@@ -172,7 +174,9 @@ Each lambda is compiled to an anonymous class which inherits from `FunctionImpl`
 
 // is translated to
 
-object : FunctionImpl(1), Function1<String, Int> {
+object : FunctionImpl(), Function1<String, Int> {
+    override val arity: Int = 1
+
     /* bridge */ fun invoke(p1: Any?): Any? = ...
     override fun invoke(p1: String): Int = p1.length
 }
@@ -206,7 +210,9 @@ A lambda type with 42 parameters on JVM is translated to `[arity(42)] FunctionN`
 A lambda is compiled to an anonymous class which overrides `invokeVararg()` instead of `invoke()`:
 
 ``` kotlin
-object : FunctionImpl(42) {
+object : FunctionImpl() {
+    override val arity: Int = 42
+
     override fun invokeVararg(vararg p: Any?): Any? { ... /* code */ }
     // TODO: maybe assert that p's size is 42 in the beginning of invokeVararg?
 }
@@ -322,8 +328,10 @@ trait KFunction<out R> : Function<R> {
 ``` kotlin
 package kotlin.reflect.jvm.internal
 
-open class KFunctionImpl(name, owner, arity, ...) : KFunction<Any?>, FunctionImpl(arity) {
+open class KFunctionImpl(name, owner, ...) : KFunction<Any?>, FunctionImpl() {
     ... // Reflection-specific code
+    
+    override val arity: Int get() = descriptor.valueParameters.size() + ... /* receivers */
     
     // Remember that each "invoke" delegates to "invokeVararg" with assertion by default.
     // We're overriding only "invokeVararg" here and magically a callable reference
@@ -333,10 +341,3 @@ open class KFunctionImpl(name, owner, arity, ...) : KFunction<Any?>, FunctionImp
     }
 }
 ```
-
-> TODO: a performance problem: we pass arity to `FunctionImpl`'s constructor,
-> which may involve a lot of the eager computation (finding the method in a Class).
-> Maybe make `arity` an abstract property in `FunctionImpl`, create a subclass `Lambda` with a concrete field for lambdas,
-> and for `KFunction`s just implement it lazily
-
-
