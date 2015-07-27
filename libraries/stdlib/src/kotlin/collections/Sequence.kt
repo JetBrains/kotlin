@@ -48,6 +48,15 @@ public fun <T> sequenceOf(progression: Progression<T>): Sequence<T> = object : S
 }
 
 /**
+ * Returns an [Iterable] instance that wraps the original sequence.
+ */
+public fun <T> Sequence<T>.asIterable(): Iterable<T> {
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
+}
+
+/**
  * Returns an empty sequence.
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
