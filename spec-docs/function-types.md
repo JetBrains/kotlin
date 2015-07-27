@@ -99,39 +99,47 @@ most of the time even without mentioning built-in function classes: `(P1, P2, P3
 There's also `FunctionImpl` abstract class at runtime which helps in implementing `arity` and vararg-invocation.
 It inherits from all the physical function classes, unfortunately (more on that later).
 
-``` kotlin
-package kotlin.jvm.internal
+``` java
+package kotlin.jvm.internal;
 
-abstract class FunctionImpl :
-    Function<Any?>,
-    Function0<Any?>, Function1<Any?, Any?>, ..., ..., Function22<...>,
+// This class is implemented in Java because supertypes need to be raw classes
+// for reflection to pick up correct generic signatures for inheritors
+public abstract class FunctionImpl implements
+    Function0, Function1, ..., ..., Function22,
     FunctionN   // See the next section on FunctionN
 {
-    abstract val arity: Int
+    public abstract int getArity();
     
-    override fun invoke(): Any? {
+    @Override
+    public Object invoke() {
         // Default implementations of all "invoke"s invoke "invokeVararg"
         // This is needed for KFunctionImpl (see below)
-        assert(arity == 0)
-        return invokeVararg()
+        assert getArity() == 0;
+        return invokeVararg();
     }
     
-    override fun invoke(p1: Any?): Any? {
-        assert(arity == 1)
-        return invokeVararg(p1)
+    @Override
+    public Object invoke(Object p1) {
+        assert getArity() == 1;
+        return invokeVararg(p1);
     }
     
     ...
-    override fun invoke(p1: Any?, ..., p22: Any?) { ... }
+    @Override
+    public Object invoke(Object p1, ..., Object p22) { ... }
+
+    @Override    
+    public Object invokeVararg(Object... args) {
+        throw new UnsupportedOperationException();
+    }
     
-    override fun invokeVararg(vararg p: Any?): Any? = throw UnsupportedOperationException()
-    
-    override fun toString() = ... // Some calculation involving generic runtime signatures
+    @Override
+    public String toString() {
+        // Some calculation involving generic runtime signatures
+        ...
+    }
 }
 ```
-
-> TODO: sadly, this class needs to be implemented in Java because supertypes need to be **raw** classes
-> for reflection to pick up correct generic signatures for inheritors
 
 Each lambda is compiled to an anonymous class which inherits from `FunctionImpl` and implements the corresponding `invoke`:
 
@@ -141,7 +149,7 @@ Each lambda is compiled to an anonymous class which inherits from `FunctionImpl`
 // is translated to
 
 object : FunctionImpl(), Function1<String, Int> {
-    override val arity: Int = 1
+    override fun getArity(): Int = 1
 
     /* bridge */ fun invoke(p1: Any?): Any? = ...
     override fun invoke(p1: String): Int = p1.length
@@ -177,7 +185,7 @@ A lambda is compiled to an anonymous class which overrides `invokeVararg()` inst
 
 ``` kotlin
 object : FunctionImpl() {
-    override val arity: Int = 42
+    override fun getArity(): Int = 42
 
     override fun invokeVararg(vararg p: Any?): Any? { ... /* code */ }
     // TODO: maybe assert that p's size is 42 in the beginning of invokeVararg?
