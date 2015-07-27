@@ -100,7 +100,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @NotNull
-    public JetCallableDefinitionUsage getBaseFunction() {
+    public JetCallableDefinitionUsage<?> getBaseFunction() {
         return baseFunction;
     }
 
