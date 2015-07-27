@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
@@ -142,10 +145,17 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     public fun shouldDisableAutoPopup(): Boolean {
-        return when (completionKind) {
-            CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> !shouldCompleteParameterNameAndType()
-            else -> false
+        if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
+            if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
+                return true
+            }
+
+            if (!shouldCompleteParameterNameAndType()) {
+                return true
+            }
         }
+
+        return false
     }
 
     override fun doComplete() {
@@ -157,19 +167,24 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
             })
             collector.restartCompletionOnPrefixChange(prefixPattern)
-        }
 
-        if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
-            collector.suppressItemSelectionByCharsOnTyping = true
+            collector.addLookupElementPostProcessor { lookupElement ->
+                lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
+                if (parameters.isAutoPopup) {
+                    lookupElement.putUserData(LookupCancelWatcher.DO_NOT_REPEAT_AUTO_POPUP_AT, position.startOffset)
+                }
+                lookupElement
+            }
+
+            parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
+            flushToResultSet()
+
+            parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilter)
+            flushToResultSet()
         }
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
-            parameterNameAndTypeCompletion?.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
-            flushToResultSet()
-
-            parameterNameAndTypeCompletion?.addFromImportedClasses(position, bindingContext, isVisibleFilter)
-            flushToResultSet()
-
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc

@@ -32,9 +32,10 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     companion object {
-        public val ACCEPT_OPENING_BRACE: Key<Unit> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+        public val ACCEPT_OPENING_BRACE: Key<Unit> = Key("KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE")
 
         public val SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING: Key<Unit> = Key("KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING")
+        public val HIDE_LOOKUP_ON_COLON: Key<Unit> = Key("KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON")
 
         public val JUST_TYPING_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.JUST_TYPING_PREFIX")
     }
@@ -59,8 +60,11 @@ public class KotlinCompletionCharFilter() : CharFilter() {
             return Result.HIDE_LOOKUP
         }
 
-        if (c == ':' /* used in '::xxx'*/) {
-            return CharFilter.Result.ADD_TO_PREFIX
+        if (c == ':') {
+            return when {
+                currentItem?.getUserData(HIDE_LOOKUP_ON_COLON) != null -> Result.HIDE_LOOKUP
+                else -> CharFilter.Result.ADD_TO_PREFIX /* used in '::xxx'*/
+            }
         }
 
         if (!lookup.isSelectionTouched()) {
