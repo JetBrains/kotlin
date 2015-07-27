@@ -38,20 +38,20 @@
     </component>
   </project-components>
 
- <application-components>
-   <component>
-     <implementation-class>org.jetbrains.kotlin.idea.PluginStartupComponent</implementation-class>
-   </component>
+  <application-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.PluginStartupComponent</implementation-class>
+    </component>
 
-   <component>
-     <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
-   </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
+    </component>
 
-   <component>
-       <interface-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</interface-class>
-       <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</implementation-class>
-   </component>
- </application-components>
+    <component>
+      <interface-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</interface-class>
+      <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</implementation-class>
+    </component>
+  </application-components>
 
   <module-components>
     <component>
@@ -97,7 +97,7 @@
     </action>
 
     <action id="ShowKotlinBytecode" class="org.jetbrains.kotlin.idea.actions.ShowKotlinBytecodeAction"
-        text="Show Kotlin Bytecode">
+            text="Show Kotlin Bytecode">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
@@ -108,14 +108,14 @@
 
     <action id="IntroduceProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.IntroducePropertyAction"
             text="P_roperty..." use-shortcut-of="IntroduceField">
-        <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
     <action id="IntroduceLambdaParameter"
             class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.IntroduceLambdaParameterAction"
             text="La_mbda Parameter...">
-        <keyboard-shortcut keymap="$default" first-keystroke="control shift P"/>
-        <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceParameter"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="control shift P"/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceParameter"/>
     </action>
 
     <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
@@ -125,12 +125,12 @@
     </action>
 
     <action id="CheckPartialBodyResolve" class="org.jetbrains.kotlin.idea.actions.internal.CheckPartialBodyResolveAction"
-          text="Check Partial Body Resolve">
+            text="Check Partial Body Resolve">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
     <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-          text="Find Implicit Nothing Calls">
+            text="Find Implicit Nothing Calls">
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
@@ -146,6 +146,18 @@
             text="Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
+    </action>
+
+    <!-- Kotlin Console REPL-->
+    <action id="KotlinConsoleREPL" class="org.jetbrains.kotlin.console.actions.RunKotlinConsoleAction"
+            text="Kotlin console...">
+      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+    </action>
+
+    <action id="KotlinShellExecute" class="com.intellij.openapi.actionSystem.EmptyAction"
+            text="Execute Kotlin Code"
+            description="Execute Kotlin code in console">
+      <keyboard-shortcut first-keystroke="control ENTER" keymap="$default"/>
     </action>
   </actions>
 
@@ -166,7 +178,7 @@
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
-                        serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.util.ImportInsertHelperImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
@@ -184,7 +196,7 @@
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDELightClassGenerationSupport"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
-                      serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
+                    serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"
                     serviceImplementation="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"/>
@@ -237,6 +249,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ClsJavaStubByVirtualFileCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ClsJavaStubByVirtualFileCache"/>
+      
+    <projectService serviceInterface="org.jetbrains.kotlin.console.KotlinConsoleKeeper"
+                    serviceImplementation="org.jetbrains.kotlin.console.KotlinConsoleKeeper"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -920,13 +935,13 @@
     </intentionAction>
 
     <intentionAction>
-        <className>org.jetbrains.kotlin.idea.intentions.ConvertFunctionToPropertyIntention</className>
-        <category>Kotlin</category>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertFunctionToPropertyIntention</className>
+      <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-        <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyToFunctionIntention</className>
-        <category>Kotlin</category>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyToFunctionIntention</className>
+      <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
@@ -989,20 +1004,20 @@
       <category>Kotlin</category>
     </intentionAction>
 
-      <intentionAction>
-          <className>org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention</className>
-          <category>Kotlin</category>
-      </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
-      <intentionAction>
-          <className>org.jetbrains.kotlin.idea.intentions.RemoveArgumentNameIntention</className>
-          <category>Kotlin</category>
-      </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveArgumentNameIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
-      <intentionAction>
-          <className>org.jetbrains.kotlin.idea.intentions.IterateExpressionIntention</className>
-          <category>Kotlin</category>
-      </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.IterateExpressionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention</className>
@@ -1014,91 +1029,91 @@
                      groupName="Kotlin"
                      enabledByDefault="true"
                      level="INFO"
-        />
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
-                       displayName="Convert string concatenation to string template"
-                       groupName="Kotlin"
-                       enabledByDefault="true"
-                       level="INFO"
-          />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
+                     displayName="Convert string concatenation to string template"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="INFO"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"
                      enabledByDefault="false"
                      level="WEAK WARNING"
-        />
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
-        displayName="If-Then foldable to '?:'"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+                     displayName="If-Then foldable to '?:'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessInspection"
-        displayName="If-Then foldable to '?.'"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+                     displayName="If-Then foldable to '?.'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection"
-        displayName="If-Null return/break/... foldable to '?:'"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection"
+                     displayName="If-Null return/break/... foldable to '?:'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
-        displayName="Type arguments are unnecessary"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
+                     displayName="Type arguments are unnecessary"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
-        displayName="Supertype qualification is unnecessary"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
+                     displayName="Supertype qualification is unnecessary"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionInspection"
-        displayName="Simplify negated binary expression"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+                     displayName="Simplify negated binary expression"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignmentInspection"
-        displayName="Replace with operator-assignment"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+                     displayName="Replace with operator-assignment"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectInspection"
-        displayName="Introduce argument to 'when'"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WEAK WARNING"
-        />
+                     displayName="Introduce argument to 'when'"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
-                       displayName="Remove redundant curly braces in string template"
-                       groupName="Kotlin"
-                       enabledByDefault="true"
-                       level="WEAK WARNING"
-          />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
+                     displayName="Remove redundant curly braces in string template"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
-                       displayName="Simplify boolean expression with constants"
-                       groupName="Kotlin"
-                       enabledByDefault="true"
-                       level="WEAK WARNING"
-          />
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
+                     displayName="Simplify boolean expression with constants"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
                      displayName="Use property access syntax"
@@ -1109,18 +1124,18 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
-        displayName="Unused symbol"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
+                     displayName="Unused symbol"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
-        displayName="Unused receiver parameter"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
+                     displayName="Unused receiver parameter"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedImportInspection"
                      displayName="Unused import directive"
@@ -1137,26 +1152,26 @@
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
-        displayName="Unresolved reference in KDoc"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
+                     displayName="Unresolved reference in KDoc"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
-        displayName="Package name does not match containing directory"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"
-        />
+                     displayName="Package name does not match containing directory"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="WARNING"
+    />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCleanupInspection"
-        shortName="KotlinDeprecation"
-        displayName="Usage of redundant or deprecated syntax or deprecated symbols"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        cleanupTool="true"
-        level="WARNING"/>
+                     shortName="KotlinDeprecation"
+                     displayName="Usage of redundant or deprecated syntax or deprecated symbols"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
                      displayName="Index is unused"
@@ -1188,8 +1203,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
-      <xi:include href="extensions/kotlin2jvm.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
-      <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+    <xi:include href="extensions/kotlin2jvm.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
+    <xi:include href="extensions/kotlin2js.xml" xpointer="xpointer(/idea-plugin/extensions/*)"/>
     <quickFixContributor implementation="org.jetbrains.kotlin.idea.quickfix.QuickFixRegistrar"/>
   </extensions>
 

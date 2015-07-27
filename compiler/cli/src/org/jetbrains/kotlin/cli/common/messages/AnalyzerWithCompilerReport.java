@@ -242,6 +242,36 @@ public final class AnalyzerWithCompilerReport {
         return new SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof);
     }
 
+    public static SyntaxErrorReport reportSyntaxErrorsWithDiagnostics(@NotNull final PsiElement file, @NotNull final MessageCollector messageCollector,
+            @NotNull final List<Diagnostic> diagnostics) {
+        class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
+            boolean hasErrors = false;
+            boolean allErrorsAtEof = true;
+
+            private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
+                MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
+                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
+                if (element.getTextRange().getStartOffset() != file.getTextRange().getEndOffset()) {
+                    allErrorsAtEof = false;
+                }
+                hasErrors = true;
+
+                diagnostics.add(diagnostic);
+            }
+
+            @Override
+            public void visitErrorElement(PsiErrorElement element) {
+                String description = element.getErrorDescription();
+                reportDiagnostic(element, SYNTAX_ERROR_FACTORY, StringUtil.isEmpty(description) ? "Syntax error" : description);
+            }
+        }
+        ErrorReportingVisitor visitor = new ErrorReportingVisitor();
+
+        file.accept(visitor);
+
+        return new SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof);
+    }
+
     @Nullable
     public AnalysisResult getAnalysisResult() {
         return analysisResult;

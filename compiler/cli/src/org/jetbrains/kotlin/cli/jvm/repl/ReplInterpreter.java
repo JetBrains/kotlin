@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetParserDefinition;
@@ -65,18 +68,30 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
@@ -101,6 +116,8 @@ public class ReplInterpreter {
     private final LazyTopDownAnalyzerForTopLevel topDownAnalyzer;
     private final ResolveSession resolveSession;
     private final ScriptMutableDeclarationProviderFactory scriptDeclarationFactory;
+
+    private boolean ideMode;
 
     public ReplInterpreter(@NotNull Disposable disposable, @NotNull CompilerConfiguration configuration) {
         KotlinCoreEnvironment environment =
@@ -159,10 +176,19 @@ public class ReplInterpreter {
         c.getScripts().clear();
     }
 
+    public void setIdeMode(boolean ideMode) {
+        this.ideMode = ideMode;
+    }
+
     public enum LineResultType {
         SUCCESS,
         ERROR,
         INCOMPLETE,
+    }
+
+    private enum ErrorType {
+        CODE_ERROR,
+        THROWABLE
     }
 
     public static class LineResult {
@@ -208,14 +234,75 @@ public class ReplInterpreter {
             return new LineResult(value, unit, null, LineResultType.SUCCESS);
         }
 
-        public static LineResult error(@NotNull String errorText) {
+        public static LineResult error(@NotNull String errorText, boolean ideMode,
+                @NotNull ErrorType errType, @Nullable Collection<Diagnostic> diagnostics
+        ) {
             if (errorText.isEmpty()) {
                 errorText = "<unknown error>";
             }
-            else if (!errorText.endsWith("\n")) {
+
+            String[] lines = errorTextToLinesWithPreprocessing(errorText);
+
+            if (ideMode && errType == ErrorType.CODE_ERROR) {
+                assert diagnostics != null : "diagnostics should not be null in not-throwable case";
+                errorText = convertLinesToXML(lines, diagnostics);
+            }
+            else {
+                errorText = StringUtil.join(lines, "\n");
+            }
+
+            if (!errorText.endsWith("\n")) {
                 errorText += "\n";
             }
+
             return new LineResult(null, false, errorText, LineResultType.ERROR);
+        }
+
+        private static String[] errorTextToLinesWithPreprocessing(@NotNull String errorText) {
+            // cut "/line_i.kts:row:column" prefix and capitalize "error:" and "warning:"
+            String[] lines = errorText.split("\\n");
+            for (int i = 0; i < lines.length; i++) {
+                if (lines[i].contains("error:")) {
+                    int pos = lines[i].indexOf("error:");
+                    lines[i] = "E" + lines[i].substring(pos + 1);
+                }
+                else if (lines[i].contains("warning:")) {
+                    int pos = lines[i].indexOf("warning:");
+                    lines[i] = "W" + lines[i].substring(pos + 1);
+                }
+            }
+            return lines;
+        }
+
+        private static String convertLinesToXML(@NotNull String[] lines, @NotNull Collection<Diagnostic> diagnostics) {
+            try {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                Document errorReport = docBuilder.newDocument();
+
+                Element rootElement = errorReport.createElement("report");
+                errorReport.appendChild(rootElement);
+
+                Iterator<Diagnostic> di = diagnostics.iterator();
+                for (String s : lines) {
+                    if (s.startsWith("Error:") || s.startsWith("Warning:")) {
+                        TextRange errorRange = di.hasNext() ? di.next().getTextRanges().get(0) : TextRange.EMPTY_RANGE;
+
+                        Element reportEntry = errorReport.createElement("reportEntry");
+                        reportEntry.setAttribute("rangeStart", String.valueOf(errorRange.getStartOffset()));
+                        reportEntry.setAttribute("rangeEnd", String.valueOf(errorRange.getEndOffset()));
+                        reportEntry.appendChild(errorReport.createTextNode(StringUtil.escapeXml(s)));
+
+                        rootElement.appendChild(reportEntry);
+                    }
+                }
+
+                DOMImplementationLS domImplementation = (DOMImplementationLS) errorReport.getImplementation();
+                LSSerializer lsSerializer = domImplementation.createLSSerializer();
+                return lsSerializer.writeToString(errorReport);
+            } catch (ParserConfigurationException e) {
+                throw UtilsPackage.rethrow(e);
+            }
         }
 
         public static LineResult incomplete() {
@@ -242,9 +329,10 @@ public class ReplInterpreter {
         assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
 
         ReplMessageCollectorWrapper errorCollector = new ReplMessageCollectorWrapper();
+        List<Diagnostic> syntaxDiagnostics = new ArrayList<Diagnostic>();
 
         AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport =
-                AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector.getMessageCollector());
+                AnalyzerWithCompilerReport.reportSyntaxErrorsWithDiagnostics(psiFile, errorCollector.getMessageCollector(), syntaxDiagnostics);
 
         if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
             previousIncompleteLines.add(line);
@@ -254,7 +342,7 @@ public class ReplInterpreter {
         previousIncompleteLines.clear();
 
         if (syntaxErrorReport.isHasErrors()) {
-            return LineResult.error(errorCollector.getString());
+            return LineResult.error(errorCollector.getString(), ideMode, ErrorType.CODE_ERROR, syntaxDiagnostics);
         }
 
         prepareForTheNextReplLine(topDownAnalysisContext);
@@ -265,7 +353,7 @@ public class ReplInterpreter {
 
         ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorCollector);
         if (scriptDescriptor == null) {
-            return LineResult.error(errorCollector.getString());
+            return LineResult.error(errorCollector.getString(), ideMode, ErrorType.CODE_ERROR, trace.getBindingContext().getDiagnostics().all());
         }
 
         List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
@@ -303,7 +391,7 @@ public class ReplInterpreter {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                return LineResult.error(renderStackTrace(e.getCause()));
+                return LineResult.error(renderStackTrace(e.getCause()), ideMode, ErrorType.THROWABLE, null);
             }
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);

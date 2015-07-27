@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.cli.jvm.repl;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +38,9 @@ public class ReplFromTerminal {
     private ReplInterpreter replInterpreter;
     private Throwable replInitializationFailed;
     private final Object waitRepl = new Object();
+
+    private final boolean ideMode;
+    private ReplSystemOutWrapper replWriter;
 
     private final ConsoleReader consoleReader;
 
@@ -56,8 +62,24 @@ public class ReplFromTerminal {
             }
         }.start();
 
+        String replIdeMode = System.getProperty("repl.ideMode");
+        ideMode = replIdeMode != null && replIdeMode.equals("true");
+
         try {
-            consoleReader = new ConsoleReader("kotlin", System.in, System.out, null);
+            OutputStream outStream = System.out;
+            if (ideMode) {
+                // consoleReader duplicates his input in his output stream;
+                // to prevent such behaviour we redirect his output to dummy output stream
+                VirtualFile consoleOutputRedirect = new LightVirtualFile("kotlinConsoleReplRedirect");
+                outStream = consoleOutputRedirect.getOutputStream(null);
+
+                // wrapper is required to escape every input;
+                // if user calls [System.setOut(...)] then undefined behaviour
+                replWriter = new ReplSystemOutWrapper(System.out);
+                System.setOut(replWriter);
+            }
+
+            consoleReader = new ConsoleReader("kotlin", System.in, outStream, null);
             consoleReader.setHistoryEnabled(true);
             consoleReader.setExpandEvents(false);
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
@@ -65,6 +87,8 @@ public class ReplFromTerminal {
         catch (Exception e) {
             throw UtilsPackage.rethrow(e);
         }
+
+        getReplInterpreter().setIdeMode(ideMode);
     }
 
     private ReplInterpreter getReplInterpreter() {
@@ -122,7 +146,9 @@ public class ReplFromTerminal {
     @NotNull
     private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
-            String line = consoleReader.readLine(next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ");
+            String prompt = getPrompt(next);
+            String line = consoleReader.readLine(prompt);
+
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
             }
@@ -145,6 +171,15 @@ public class ReplFromTerminal {
         }
     }
 
+    private String getPrompt(@NotNull WhatNextAfterOneLine next) {
+        String prompt = null;
+        // consoleReader always print prompt; in [ideMode] we don't allow it
+        if (!ideMode) {
+            prompt = next == WhatNextAfterOneLine.INCOMPLETE ? "... " : ">>> ";
+        }
+        return prompt;
+    }
+
     @NotNull
     private ReplInterpreter.LineResultType eval(@NotNull String line) {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
@@ -156,7 +191,11 @@ public class ReplFromTerminal {
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.ERROR) {
-            System.out.print(lineResult.getErrorText());
+            if (ideMode) {
+                replWriter.printlnWithEscaping(lineResult.getErrorText(), EscapeType.REPORT);
+            } else {
+                System.out.print(lineResult.getErrorText());
+            }
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);

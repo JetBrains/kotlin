@@ -46,6 +46,7 @@
           <element id="module-output" name="container" />
           <element id="module-output" name="rmi-interface" />
           <element id="module-output" name="kotlinr" />
+          <element id="module-output" name="idea-repl" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
