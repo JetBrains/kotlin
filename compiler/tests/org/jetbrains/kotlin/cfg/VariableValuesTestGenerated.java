@@ -47,6 +47,18 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ComparisonInConditions.kt")
+    public void testComparisonInConditions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/ComparisonInConditions.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("For.kt")
+    public void testFor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/For.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("If.kt")
     public void testIf() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/If.kt");
