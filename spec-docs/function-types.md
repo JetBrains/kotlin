@@ -298,7 +298,7 @@ callable reference, and the latter allows you to use reflection features on the 
 fun foo(s: String) {}
 
 fun test() {
+    ::foo.invoke("")  // ok, calls Function1.invoke
     ::foo.name        // ok, calls KFunction.name
-    ::foo.invoke("")  // ok, calls Function2.invoke
 }
 ```
