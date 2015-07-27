@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 public interface CallableDescriptorCollector<D : CallableDescriptor> {
 
@@ -138,13 +139,16 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         if (localVariable != null) {
             return setOf(localVariable)
         }
-        return (scope.getProperties(name).filter { it.getExtensionReceiverParameter() == null } + getFakeDescriptorForObject(scope, name))
-                .filterNotNull()
+        val properties = scope.getProperties(name).filter { it.extensionReceiverParameter == null }
+        val fakeDescriptor = getFakeDescriptorForObject(scope, name)
+        return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 
     override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
-        val memberScope = receiver.getMemberScope()
-        return (memberScope.getProperties(name) + getFakeDescriptorForObject(memberScope, name)).filterNotNull()
+        val memberScope = receiver.memberScope
+        val properties = memberScope.getProperties(name)
+        val fakeDescriptor = getFakeDescriptorForObject(memberScope, name)
+        return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 
     override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
@@ -153,7 +157,7 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
 
     override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<VariableDescriptor> {
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
-        return (listOf(scope.getLocalVariable(name)) + scope.getProperties(name) + scope.getSyntheticExtensionProperties(receiverTypes, name)).filterNotNull()
+        return scope.getLocalVariable(name).singletonOrEmptyList() + scope.getProperties(name) + scope.getSyntheticExtensionProperties(receiverTypes, name)
     }
 
     override fun toString() = "VARIABLES"
