@@ -264,7 +264,7 @@ Also we should issue warnings on `is Array<Function2<*, *, *>>` (or `as`), since
 ## How this will help reflection
 
 `KFunction*` interfaces should be synthesized at compile-time identically to functions.
-The compiler should resolve `KFunctionN` for any `N`, IDEs should synthesize sources when needed,
+The compiler should resolve `KFunction{N}` for any `N`, IDEs should synthesize sources when needed,
 `is`/`as` should be handled similarly etc.
 
 However, we **won't introduce multitudes of `KFunction`s at runtime**.
@@ -277,28 +277,15 @@ So for reflection there will be:
 * **physical** interface `KFunction` (defined in `kotlin.reflect`)
 * **physical** JVM runtime implementation class `KFunctionImpl` (defined in `kotlin.reflect.jvm.internal`)
 
-``` kotlin
-package kotlin.reflect
-
-interface KFunction<out R> : Function<R> {
-    fun invokeVararg(vararg p: Any?): R
-    ... // Reflection-specific declarations
-}
-```
+As an example, `KFunction1` is a fictitious interface (in much the same manner that `Function1` is)
+which inherits from `Function1` and `KFunction`. The former lets you call a type-safe `invoke` on a
+callable reference, and the latter allows you to use reflection features on the callable reference.
 
 ``` kotlin
-package kotlin.reflect.jvm.internal
+fun foo(s: String) {}
 
-open class KFunctionImpl(name, owner, ...) : KFunction<Any?>, FunctionImpl() {
-    ... // Reflection-specific code
-    
-    override val arity: Int get() = descriptor.valueParameters.size() + ... /* receivers */
-    
-    // Remember that each "invoke" delegates to "invokeVararg" with assertion by default.
-    // We're overriding only "invokeVararg" here and magically a callable reference
-    // will start to work as the needed Function* class
-    override fun invokeVararg(vararg p: Any?): Any? {
-        owner.getMethod(name, ...).invoke(p)  // Java reflection
-    }
+fun test() {
+    ::foo.name        // ok, calls KFunction.name
+    ::foo.invoke("")  // ok, calls Function2.invoke
 }
 ```
