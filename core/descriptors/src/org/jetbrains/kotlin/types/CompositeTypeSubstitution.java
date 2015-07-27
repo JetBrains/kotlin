@@ -26,7 +26,7 @@ public class CompositeTypeSubstitution extends TypeSubstitution {
     }
 
     @Override
-    public TypeProjection get(TypeConstructor key) {
+    public TypeProjection get(@NotNull JetType key) {
         for (TypeSubstitution substitution : inner) {
             TypeProjection value = substitution.get(key);
             if (value != null) return value;

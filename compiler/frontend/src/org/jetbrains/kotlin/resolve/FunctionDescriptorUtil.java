@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class FunctionDescriptorUtil {
     private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
 
         @Override
-        public TypeProjection get(TypeConstructor key) {
+        public TypeProjection get(@NotNull JetType key) {
             return null;
         }
 
@@ -49,23 +50,13 @@ public class FunctionDescriptorUtil {
     private FunctionDescriptorUtil() {
     }
 
-    public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(
+    public static TypeSubstitution createSubstitution(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull List<JetType> typeArguments
     ) {
-        if (functionDescriptor.getTypeParameters().isEmpty()) return Collections.emptyMap();
+        if (functionDescriptor.getTypeParameters().isEmpty()) return TypeSubstitution.getEMPTY();
 
-        Map<TypeConstructor, TypeProjection> result = new HashMap<TypeConstructor, TypeProjection>();
-
-        List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
-        assert typeArguments.size() >= typeParameters.size() :
-                "Insufficient number of type arguments.\nType arguments: " + typeArguments + "\nType parameters: " + typeParameters;
-        for (int i = 0; i < typeParameters.size(); i++) {
-            TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-            JetType typeArgument = typeArguments.get(i);
-            result.put(typeParameterDescriptor.getTypeConstructor(), new TypeProjectionImpl(typeArgument));
-        }
-        return result;
+        return new IndexedParametersSubstitution(functionDescriptor.getTypeParameters(), TypeUtilPackage.defaultProjections(typeArguments));
     }
 
     @NotNull

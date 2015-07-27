@@ -141,6 +141,7 @@ public class JavaResolverUtils {
             typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),
                                         new TypeProjectionImpl(originalToAltTypeParameter.getValue().getDefaultType()));
         }
+        // TODO: Use IndexedParametersSubstitution here instead of map creation
         return TypeSubstitutor.create(typeSubstitutionContext);
     }
 }

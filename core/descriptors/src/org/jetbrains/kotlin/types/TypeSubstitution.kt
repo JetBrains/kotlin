@@ -16,20 +16,77 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import kotlin.platform.platformStatic
 
 public abstract class TypeSubstitution {
     companion object {
         platformStatic public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
-            override fun get(key: TypeConstructor) = null
+            override fun get(key: JetType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
         }
     }
 
-    public abstract fun get(key: TypeConstructor): TypeProjection?
+    public abstract fun get(key: JetType): TypeProjection?
 
     public open fun isEmpty(): Boolean = false
 
     public open fun approximateCapturedTypes(): Boolean = false
+
+    public fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
+}
+
+public abstract class TypeConstructorSubstitution : TypeSubstitution() {
+    override fun get(key: JetType) = get(key.constructor)
+
+    public abstract fun get(key: TypeConstructor): TypeProjection?
+
+    companion object {
+        platformStatic
+        public fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
+            object : TypeConstructorSubstitution() {
+                override fun get(key: TypeConstructor) = map[key]
+                override fun isEmpty() = map.isEmpty()
+            }
+
+        platformStatic
+        public fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
+            object : TypeConstructorSubstitution() {
+                override fun get(key: TypeConstructor) = map[key.declarationDescriptor]
+                override fun isEmpty() = map.isEmpty()
+            }
+    }
+}
+
+public class IndexedParametersSubstitution(
+    private val parameters: Array<TypeParameterDescriptor>,
+    private val arguments: Array<TypeProjection>
+) : TypeSubstitution() {
+    init {
+        assert(parameters.size() <= arguments.size()) {
+            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size()}, args=${arguments.size()}"
+        }
+    }
+
+    constructor(
+            typeConstructor: TypeConstructor, argumentsList: List<TypeProjection>
+    ) : this(typeConstructor.parameters, argumentsList)
+
+    constructor(
+            parameters: List<TypeParameterDescriptor>, argumentsList: List<TypeProjection>
+    ) : this(parameters.toTypedArray(), argumentsList.toTypedArray())
+
+    override fun isEmpty(): Boolean = arguments.isEmpty()
+
+    override fun get(key: JetType): TypeProjection? {
+        val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
+        val index = parameter.index
+
+        if (index < parameters.size() && parameters[index].typeConstructor == parameter.typeConstructor) {
+            return arguments[index]
+        }
+
+        return null
+    }
 }

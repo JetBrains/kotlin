@@ -35,35 +35,11 @@ public class DescriptorSubstitutor {
     @NotNull
     public static TypeSubstitutor substituteTypeParameters(
             @ReadOnly @NotNull List<TypeParameterDescriptor> typeParameters,
-            @NotNull final TypeSubstitutor originalSubstitutor,
+            @NotNull TypeSubstitution originalSubstitution,
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
-        final Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
-        TypeSubstitutor substitutor = TypeSubstitutor.create(new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                if (originalSubstitutor.inRange(key)) {
-                    return originalSubstitutor.getSubstitution().get(key);
-                }
-                return mutableSubstitution.get(key);
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return originalSubstitutor.isEmpty() && mutableSubstitution.isEmpty();
-            }
-
-            @Override
-            public boolean approximateCapturedTypes() {
-                return originalSubstitutor.getSubstitution().approximateCapturedTypes();
-            }
-
-            @Override
-            public String toString() {
-                return "DescriptorSubstitutor.substituteTypeParameters(" + mutableSubstitution + " / " + originalSubstitutor.getSubstitution() + ")";
-            }
-        });
+        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
 
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> substitutedMap =
                 new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
@@ -84,6 +60,10 @@ public class DescriptorSubstitutor {
             substitutedMap.put(descriptor, substituted);
             result.add(substituted);
         }
+
+        TypeSubstitutor substitutor = TypeSubstitutor.create(
+                originalSubstitution, TypeConstructorSubstitution.createByConstructorsMap(mutableSubstitution)
+        );
 
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);

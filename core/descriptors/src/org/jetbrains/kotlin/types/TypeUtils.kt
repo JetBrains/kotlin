@@ -131,4 +131,6 @@ fun JetType.getNestedArguments(): List<TypeProjection> {
 
 fun JetType.containsError() = ErrorUtils.containsErrorType(this)
 
+public fun List<JetType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+
 public fun JetType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())

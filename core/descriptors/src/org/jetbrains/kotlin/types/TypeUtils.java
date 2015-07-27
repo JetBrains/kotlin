@@ -714,9 +714,9 @@ public class TypeUtils {
         }
         final TypeProjection projection = new TypeProjectionImpl(type);
 
-        return TypeSubstitutor.create(new TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeConstructorSubstitution() {
             @Override
-            public TypeProjection get(TypeConstructor key) {
+            public TypeProjection get(@NotNull TypeConstructor key) {
                 if (constructors.contains(key)) {
                     return projection;
                 }
@@ -726,34 +726,6 @@ public class TypeUtils {
             @Override
             public boolean isEmpty() {
                 return false;
-            }
-        });
-    }
-
-    @NotNull
-    public static TypeSubstitutor makeSubstitutorForTypeParametersMap(
-           @NotNull final Map<TypeParameterDescriptor, TypeProjection> substitutionContext
-    ) {
-        return TypeSubstitutor.create(new TypeSubstitution() {
-            @Nullable
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
-                if (declarationDescriptor instanceof TypeParameterDescriptor) {
-                    TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
-                    return substitutionContext.get(descriptor);
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return substitutionContext.isEmpty();
-            }
-
-            @Override
-            public String toString() {
-                return substitutionContext.toString();
             }
         });
     }

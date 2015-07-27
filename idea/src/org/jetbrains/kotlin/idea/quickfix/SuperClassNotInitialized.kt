@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.ArrayList
@@ -66,8 +67,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         if (classOrObjectDeclaration is JetClass) {
             val superType = classDescriptor.getTypeConstructor().getSupertypes().firstOrNull { it.getConstructor().getDeclarationDescriptor() == superClass }
             if (superType != null) {
-                val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
-                val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
+                val substitutor = IndexedParametersSubstitution(superClass.typeConstructor, superType.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
                         .filter { it.getValueParameters().isNotEmpty() }

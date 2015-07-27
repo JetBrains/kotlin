@@ -38,7 +38,7 @@ public fun TypeParameterDescriptor.starProjectionType(): JetType {
     val classDescriptor = this.getContainingDeclaration() as ClassDescriptor
     val typeParameters = classDescriptor.getTypeConstructor().getParameters().map { it.getTypeConstructor() }
     return TypeSubstitutor.create(
-            object : TypeSubstitution() {
+            object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) =
                         if (key in typeParameters)
                             TypeUtils.makeStarProjection(key.getDeclarationDescriptor() as TypeParameterDescriptor)

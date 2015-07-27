@@ -271,7 +271,7 @@ class JavaSyntheticExtensionsScope(storageManager: StorageManager) : JetScope by
         init {
             val classTypeParams = ownerClass.typeConstructor.parameters
             val typeParameters = ArrayList<TypeParameterDescriptor>(classTypeParams.size())
-            val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(classTypeParams, TypeSubstitutor.EMPTY, this, typeParameters)
+            val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(classTypeParams, TypeSubstitution.EMPTY, this, typeParameters)
 
             val propertyType = typeSubstitutor.safeSubstitute(type, Variance.INVARIANT)
             val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)

@@ -50,7 +50,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 List<TypeParameterDescriptor> originalTypeParameters = original.getTypeConstructor().getParameters();
                 typeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
                 newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(
-                        originalTypeParameters, originalSubstitutor, this, typeParameters
+                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeParameters
                 );
             }
         }

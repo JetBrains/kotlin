@@ -645,16 +645,12 @@ public class OverrideResolver {
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
         if (subTypeParameters.size() != superTypeParameters.size()) return null;
 
-        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMapWithExpectedSize(superTypeParameters.size());
+        ArrayList<TypeProjection> arguments = new ArrayList<TypeProjection>(subTypeParameters.size());
         for (int i = 0; i < superTypeParameters.size(); i++) {
-            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
-            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-            substitutionContext.put(
-                    superTypeParameter.getTypeConstructor(),
-                    new TypeProjectionImpl(subTypeParameter.getDefaultType())
-            );
+            arguments.add(new TypeProjectionImpl(subTypeParameters.get(i).getDefaultType()));
         }
-        return TypeSubstitutor.create(substitutionContext);
+
+        return new IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor();
     }
 
     public static boolean isPropertyTypeOkForOverride(
