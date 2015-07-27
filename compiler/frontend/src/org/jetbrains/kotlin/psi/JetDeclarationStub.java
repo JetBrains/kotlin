@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 
-abstract class JetDeclarationStub<T extends StubElement> extends JetModifierListOwnerStub<T> implements JetDeclaration {
+abstract class JetDeclarationStub<T extends StubElement<?>> extends JetModifierListOwnerStub<T> implements JetDeclaration {
     public JetDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

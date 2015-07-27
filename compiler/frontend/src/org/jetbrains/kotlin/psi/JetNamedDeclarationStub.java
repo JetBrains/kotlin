@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
-abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends JetDeclarationStub<T> implements JetNamedDeclaration {
+abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends JetDeclarationStub<T> implements JetNamedDeclaration {
     public JetNamedDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
