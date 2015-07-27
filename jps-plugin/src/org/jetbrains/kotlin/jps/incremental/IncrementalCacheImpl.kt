@@ -492,18 +492,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             put(className, null)
         }
 
-        override fun dumpValue(value: Map<String, Any>): String {
-            return StringBuilder {
-                append("{")
-                for (key in value.keySet().sort()) {
-                    if (length() != 1) {
-                        append(", ")
-                    }
-                    append("$key -> ${value[key]}")
-                }
-                append("}")
-            }.toString()
-        }
+        override fun dumpValue(value: Map<String, Any>): String =
+                value.dumpMap(Any::toString)
     }
 
     private object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
@@ -640,18 +630,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: Map<String, Long>): String {
-            return StringBuilder {
-                append("{")
-                for (key in value.keySet().sort()) {
-                    if (length() != 1) {
-                        append(", ")
-                    }
-                    append("$key -> ${java.lang.Long.toHexString(value[key]!!)}")
-                }
-                append("}")
-            }.toString()
-        }
+        override fun dumpValue(value: Map<String, Long>): String =
+                value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
     private inner class PackagePartMap : BasicMap<Boolean>() {
@@ -719,7 +699,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
 
         override fun dumpValue(value: Collection<String>): String =
-                value.join(", ")
+                value.dumpCollection()
     }
 
     private inner class DirtyOutputClassesMap : BasicMap<Boolean>() {
@@ -759,7 +739,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             storage.put(className.internalName, changedFunctions)
         }
 
-        override fun dumpValue(value: List<String>) = value.toString()
+        override fun dumpValue(value: List<String>) =
+                value.dumpCollection()
     }
 
     /**
@@ -807,9 +788,8 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             super.flush(memoryCachesOnly)
         }
 
-        // TODO: fix
         override fun dumpValue(value: Map<String, Collection<String>>) =
-                value.toString()
+                value.dumpMap { it.dumpCollection() }
 
         private fun getMappingFromCache(sourcePath: String): MutableMap<String, MutableCollection<String>> {
             val cachedValue = cache[sourcePath]
@@ -971,3 +951,21 @@ private val File.normalizedPath: String
 private val String.normalizedPath: String
     get() = FileUtil.toSystemIndependentName(this)
 
+TestOnly
+private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
+        StringBuilder {
+            append("{")
+            for (key in keySet().sort()) {
+                if (length() != 1) {
+                    append(", ")
+                }
+
+                val value = get(key)?.let(dumpValue) ?: "null"
+                append("$key -> $value")
+            }
+            append("}")
+        }.toString()
+
+TestOnly
+public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
+        "[${sort().map(Any::toString).join(", ")}]"
