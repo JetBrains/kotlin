@@ -52,8 +52,13 @@ but in practice should be limited to 255 on JVM.
 These interfaces are named `kotlin.Function0<R>`, `kotlin.Function1<P0, R>`, ..., `kotlin.Function42<P0, P1, ..., P41, R>`, ...
 They are *fictitious*, which means they have no sources and no runtime representation.
 Type checker creates the corresponding descriptors on demand, IDE creates corresponding source files on demand as well.
-Each of them inherits from `kotlin.Function` (described below) and contains a single
-`fun invoke()` with the corresponding number of parameters and return type.
+Each of them inherits from `kotlin.Function` (described below) and contains only two functions,
+both of which should be synthetically produced by the compiler:
+* (declaration) `invoke` with no receiver, with the corresponding number of parameters and return type.
+* (synthesized) `invoke` with first type parameter as the extension receiver type, and the rest as parameters and return type.
+
+Call resolution should use the annotations on the type of the value the call is performed on
+to select the correct `invoke` and to report the diagnostic if the `invoke` is illegal (see the previous block).
 
 On JVM function types are erased to the physical classes defined in package `kotlin.jvm.internal`:
 `Function0`, `Function1`, ..., `Function22` and `FunctionN` for 23+ parameters.
