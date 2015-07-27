@@ -28,8 +28,6 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, 
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    override val name: String get() = descriptor.getName().asString()
-
     override val getter by ReflectProperties.lazy { Getter(this) }
 
     // TODO: consider optimizing this, not to do complex checks on every access

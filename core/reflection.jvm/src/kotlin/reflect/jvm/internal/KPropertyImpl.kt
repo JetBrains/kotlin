@@ -34,6 +34,8 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val descriptor: PropertyDescriptor
 
+    override val name: String get() = descriptor.name.asString()
+
     interface Accessor<out R> : KProperty.Accessor<R> {
         override val property: KPropertyImpl<R>
     }

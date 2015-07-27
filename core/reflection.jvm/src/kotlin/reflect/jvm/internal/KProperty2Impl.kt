@@ -27,8 +27,6 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty<R>, KProperty2<
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    override val name: String get() = descriptor.getName().asString()
-
     override val getter by ReflectProperties.lazy { Getter(this) }
 
     override val javaGetter: Method get() = super.javaGetter!!
