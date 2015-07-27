@@ -2799,6 +2799,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("memberOfGenericClass.kt")
+            public void testMemberOfGenericClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/memberOfGenericClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("platformStatic.kt")
             public void testPlatformStatic() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/platformStatic.kt");
