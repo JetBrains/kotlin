@@ -114,15 +114,19 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
-    private val protoMap = ProtoMap()
-    private val constantsMap = ConstantsMap()
-    private val inlineFunctionsMap = InlineFunctionsMap()
-    private val packagePartMap = PackagePartMap()
-    private val sourceToClassesMap = SourceToClassesMap()
-    private val classToSourcesMap = ClassToSourcesMap()
-    private val dirtyOutputClassesMap = DirtyOutputClassesMap()
-    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap()
-    private val hasInlineTo = InlineFunctionsFilesMap()
+
+    private val String.storageFile: File
+        get() = File(baseDir, this)
+
+    private val protoMap = ProtoMap(PROTO_MAP.storageFile)
+    private val constantsMap = ConstantsMap(CONSTANTS_MAP.storageFile)
+    private val inlineFunctionsMap = InlineFunctionsMap(INLINE_FUNCTIONS.storageFile)
+    private val packagePartMap = PackagePartMap(PACKAGE_PARTS.storageFile)
+    private val sourceToClassesMap = SourceToClassesMap(SOURCE_TO_CLASSES.storageFile)
+    private val classToSourcesMap = ClassToSourcesMap(CLASS_TO_SOURCES.storageFile)
+    private val dirtyOutputClassesMap = DirtyOutputClassesMap(DIRTY_OUTPUT_CLASSES.storageFile)
+    private val dirtyInlineFunctionsMap = DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile)
+    private val hasInlineTo = InlineFunctionsFilesMap(HAS_INLINE_TO.storageFile)
 
     private val maps = listOf(protoMap,
                               constantsMap,
@@ -306,7 +310,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 
     private inner abstract class BasicMap<V>(
-            private val storageName: String,
+            private val storageFile: File,
             private val valueExternalizer: DataExternalizer<V>
     ) {
         protected open val keyDescriptor: KeyDescriptor<String>
@@ -367,10 +371,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         protected abstract fun dumpValue(value: V): String
 
         private fun createMap(): PersistentHashMap<String, V> =
-                PersistentHashMap(File(baseDir, storageName), keyDescriptor, valueExternalizer)
+                PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
     }
 
-    private inner class ProtoMap : BasicMap<ByteArray>(PROTO_MAP, ByteArrayExternalizer) {
+    private inner class ProtoMap(storageFile: File) : BasicMap<ByteArray>(storageFile, ByteArrayExternalizer) {
 
         public fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): Boolean {
             val key = className.getInternalName()
@@ -447,7 +451,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    private inner class ConstantsMap : BasicMap<Map<String, Any>>(CONSTANTS_MAP, ConstantsMapExternalizer) {
+    private inner class ConstantsMap(storageFile: File) : BasicMap<Map<String, Any>>(storageFile, ConstantsMapExternalizer) {
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
@@ -550,7 +554,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
     }
 
-    private inner class InlineFunctionsMap : BasicMap<Map<String, Long>>(INLINE_FUNCTIONS, StringToLongMapExternalizer) {
+    private inner class InlineFunctionsMap(storageFile: File) : BasicMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
@@ -624,7 +628,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 value.dumpMap { java.lang.Long.toHexString(it) }
     }
 
-    private inner class PackagePartMap : BasicMap<Boolean>(PACKAGE_PARTS, BooleanDataDescriptor.INSTANCE) {
+    private inner class PackagePartMap(storageFile: File) : BasicMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun addPackagePart(className: JvmClassName) {
             storage.put(className.getInternalName(), true)
         }
@@ -640,7 +644,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class SourceToClassesMap : BasicMap<List<String>>(SOURCE_TO_CLASSES, StringListExternalizer) {
+    private inner class SourceToClassesMap(storageFile: File) : BasicMap<List<String>>(storageFile, StringListExternalizer) {
         override val keyDescriptor: KeyDescriptor<String>
             get() = PathStringDescriptor.INSTANCE
 
@@ -659,7 +663,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: List<String>) = value.toString()
     }
 
-    private inner class ClassToSourcesMap : BasicMap<Collection<String>>(CLASS_TO_SOURCES, PathCollectionExternalizer) {
+    private inner class ClassToSourcesMap(storageFile: File) : BasicMap<Collection<String>>(storageFile, PathCollectionExternalizer) {
         public fun get(className: JvmClassName): Collection<String> =
                 storage[className.internalName] ?: emptySet()
 
@@ -677,7 +681,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 value.dumpCollection()
     }
 
-    private inner class DirtyOutputClassesMap : BasicMap<Boolean>(DIRTY_OUTPUT_CLASSES, BooleanDataDescriptor.INSTANCE) {
+    private inner class DirtyOutputClassesMap(storageFile: File) : BasicMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
         public fun markDirty(className: String) {
             storage.put(className, true)
         }
@@ -693,7 +697,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap : BasicMap<List<String>>(DIRTY_INLINE_FUNCTIONS, StringListExternalizer) {
+    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicMap<List<String>>(storageFile, StringListExternalizer) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
             storage.allKeysWithExistingMapping
                    .toMap(JvmClassName::byInternalName) { storage[it] }
@@ -714,7 +718,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap : BasicMap<Map<String, Collection<String>>>(HAS_INLINE_TO, StringToPathsMapExternalizer) {
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<Map<String, Collection<String>>>(storageFile, StringToPathsMapExternalizer) {
         override val keyDescriptor: KeyDescriptor<String>
             get() = PathStringDescriptor()
 
