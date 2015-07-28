@@ -23,20 +23,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class IntrinsicMethods {
     public static final String INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics";
+
+    private static final FqName KOTLIN_JVM = new FqName("kotlin.jvm");
+    /* package */ static final FqNameUnsafe RECEIVER_PARAMETER_FQ_NAME = new FqNameUnsafe("T");
 
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
@@ -57,19 +57,21 @@ public class IntrinsicMethods {
     private static final ToString TO_STRING = new ToString();
     private static final Clone CLONE = new Clone();
 
-    private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
     public IntrinsicMethods() {
-        namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
-        namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
-        namedMethods.put("kotlin.KClass.java.property", new KClassJavaProperty());
-        namedMethods.put("kotlin.jvm.internal.unsafe.monitorEnter", MonitorInstruction.MONITOR_ENTER);
-        namedMethods.put("kotlin.jvm.internal.unsafe.monitorExit", MonitorInstruction.MONITOR_EXIT);
-        namedMethods.put("kotlin.jvm.isArrayOf", new IsArrayOf());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "javaClass", 0, new JavaClassFunction());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, new JavaClassProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
+        intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorEnter", 1, MonitorInstruction.MONITOR_ENTER);
+        intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorExit", 1, MonitorInstruction.MONITOR_EXIT);
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.array, "isArrayOf", 0, new IsArrayOf());
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new JavaClassArray());
+
+        // TODO: drop when deprecated kotlin.javaClass property is gone
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, new JavaClassProperty());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -180,16 +182,6 @@ public class IntrinsicMethods {
 
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
-        IntrinsicMethod intrinsicMethod = intrinsicsMap.getIntrinsic(descriptor);
-        if (intrinsicMethod != null) {
-            return intrinsicMethod;
-        }
-
-        String value = CompileTimeConstantUtils.getIntrinsicAnnotationArgument(descriptor);
-        if (value != null) {
-            return namedMethods.get(value);
-        }
-
-        return null;
+        return intrinsicsMap.getIntrinsic(descriptor);
     }
 }

@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:kotlin.jvm.JvmName("JvmClassMappingKt")
-@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+@file:JvmName("JvmClassMappingKt")
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UNCHECKED_CAST")
 
 package kotlin.jvm
 
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
-import kotlin.jvm.internal.Intrinsic
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 
 /**
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
-@Suppress("UNCHECKED_CAST")
-@Intrinsic("kotlin.KClass.java.property")
 public val <T : Any> KClass<T>.java: Class<T>
     @JvmName("getJavaClass")
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
@@ -35,7 +32,6 @@ public val <T : Any> KClass<T>.java: Class<T>
 /**
  * Returns a Java [Class] instance representing the primitive type corresponding to the given [KClass] if it exists.
  */
-@Suppress("UNCHECKED_CAST")
 public val <T : Any> KClass<T>.javaPrimitiveType: Class<T>?
     get() {
         val thisJClass = (this as ClassBasedDeclarationContainer).jClass
@@ -58,7 +54,6 @@ public val <T : Any> KClass<T>.javaPrimitiveType: Class<T>?
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  * In case of primitive types it returns corresponding wrapper classes.
  */
-@Suppress("UNCHECKED_CAST", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 public val <T : Any> KClass<T>.javaObjectType: Class<T>
     get() {
         val thisJClass = (this as ClassBasedDeclarationContainer).jClass
@@ -80,7 +75,6 @@ public val <T : Any> KClass<T>.javaObjectType: Class<T>
 /**
  * Returns a [KClass] instance corresponding to the given Java [Class] instance.
  */
-@Suppress("UNCHECKED_CAST")
 public val <T : Any> Class<T>.kotlin: KClass<T>
     @JvmName("getKotlinClass")
     get() = Reflection.createKotlinClass(this) as KClass<T>
@@ -89,8 +83,6 @@ public val <T : Any> Class<T>.kotlin: KClass<T>
 /**
  * Returns the runtime Java class of this object.
  */
-@Suppress("UNCHECKED_CAST")
-@Intrinsic("kotlin.javaClass.property")
 public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
@@ -102,7 +94,6 @@ public val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
 /**
  * Checks if array can contain element of type [T].
  */
-@Intrinsic("kotlin.jvm.isArrayOf")
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
         T::class.java.isAssignableFrom(this.javaClass.componentType)
@@ -110,6 +101,5 @@ public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
 /**
  * Returns a [KClass] instance corresponding to the annotation type of this annotation.
  */
-@Suppress("UNCHECKED_CAST")
 public val <T : Annotation> T.annotationClass: KClass<out T>
     get() = (this as java.lang.annotation.Annotation).annotationType().kotlin as KClass<out T>

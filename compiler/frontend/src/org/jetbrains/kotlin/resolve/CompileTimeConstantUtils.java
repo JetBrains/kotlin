@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -105,19 +101,6 @@ public class CompileTimeConstantUtils {
             }
         }
         return false;
-    }
-
-    @Nullable
-    public static String getIntrinsicAnnotationArgument(@NotNull Annotated annotatedDescriptor) {
-        AnnotationDescriptor intrinsicAnnotation =
-                annotatedDescriptor.getAnnotations().findAnnotation(new FqName("kotlin.jvm.internal.Intrinsic"));
-        if (intrinsicAnnotation == null) return null;
-
-        Collection<ConstantValue<?>> values = intrinsicAnnotation.getAllValueArguments().values();
-        if (values.isEmpty()) return null;
-
-        Object value = values.iterator().next().getValue();
-        return value instanceof String ? (String) value : null;
     }
 
     public static boolean isArrayMethodCall(@NotNull ResolvedCall<?> resolvedCall) {

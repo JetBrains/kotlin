@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -111,6 +108,10 @@ class IntrinsicsMap {
 
         ClassifierDescriptor classifier = receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         if (classifier == null) return null;
+
+        if (classifier instanceof TypeParameterDescriptor) {
+            return IntrinsicMethods.RECEIVER_PARAMETER_FQ_NAME;
+        }
 
         return DescriptorUtils.getFqName(classifier);
     }
