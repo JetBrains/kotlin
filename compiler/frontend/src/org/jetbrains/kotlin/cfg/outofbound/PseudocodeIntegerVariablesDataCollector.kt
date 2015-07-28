@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-import java.lang.Boolean
+import java.lang.Boolean as JavaBoolean
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -61,11 +61,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private val arrayOfFunctionName: String = "arrayOf"
     private val arrayConstructorName: String = "Array"
     private val intArrayConstructorName = "IntArray"
-    private val arrayGetFunctionName = "get"
-    private val arraySetFunctionName = "set"
 
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
-    public val integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -91,7 +88,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return lexicalScopeVariableInfo
     }
 
-    private  fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
+    public fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
         return pseudocode.collectData(
                 TraversalOrder.FORWARD,
                 /* mergeDataWithLocalDeclarations */ true,
@@ -294,8 +291,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is CallInstruction -> {
                 when {
                     isArrayCreation(instruction) -> processArrayCreation(instruction, updatedData)
-                    isArrayGetCall(instruction), isArraySetCall(instruction) ->
-                        checkOutOfBoundAccess(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
                         processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
@@ -317,7 +312,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                                 ?: throw Exception("Variable descriptor is null")
+                                 ?: return
         val variableType = variableDescriptor.getType()
         when {
             KotlinBuiltIns.isInt(variableType) ->
@@ -331,7 +326,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         // process literal occurrence (all literals are stored to fake variables by read instruction)
         val node = element.getNode()
         val nodeType = node.getElementType() as? JetNodeType
-                       ?: throw Exception("Node's elementType has wrong type for JetConstantExpression")
+                       ?: return
         val fakeVariable = instruction.outputValue
         val valueAsText = node.getText()
         when (nodeType) {
@@ -340,7 +335,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues(literalValue))
             }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
-                val booleanValue = Boolean.parseBoolean(valueAsText)
+                val booleanValue = JavaBoolean.parseBoolean(valueAsText)
                 updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.create(booleanValue))
             }
         }
@@ -348,7 +343,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun processVariableReference(instruction: ReadValueInstruction, updatedData: ValuesData) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                                 ?: throw Exception("Variable descriptor is null")
+                                 ?: return
         val newFakeVariable = instruction.outputValue
         val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
                 variableDescriptor, { updatedData.boolVarsToValues.getOrElse(
@@ -368,10 +363,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processAssignmentToVariable(instruction: WriteValueInstruction, updatedData: ValuesData) {
         // process assignment to variable
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                                 ?: throw Exception("Variable descriptor is null")
+                                 ?: return
         val fakeVariable = instruction.rValue
         val targetType = tryGetTargetDescriptor(instruction.target)?.getReturnType()
-                         ?: throw Exception("Cannot define target type in assignment")
+                         ?: return
         when {
             KotlinBuiltIns.isInt(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
@@ -405,7 +400,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun isArrayCreation(instruction: CallInstruction): kotlin.Boolean {
+    private fun isArrayCreation(instruction: CallInstruction): Boolean {
         // todo: change to annotations checking
         return instruction.resolvedCall
                 .getCandidateDescriptor()
@@ -424,7 +419,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun tryExtractArraySize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
         if(instruction.element is JetCallExpression) {
-            val calledName = getCalledName(instruction.element)
+            val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             return when(calledName) {
                 arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
                 arrayConstructorName, intArrayConstructorName -> {
@@ -440,47 +435,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return null
     }
 
-    private fun isArrayGetCall(instruction: CallInstruction): kotlin.Boolean {
-        val isGetFunctionCall = instruction.element is JetCallExpression &&
-                                getCalledName(instruction.element)?.let { it == arrayGetFunctionName } ?: false
-        val isGetOperation = (isGetFunctionCall || instruction.element is JetArrayAccessExpression) &&
-                             instruction.inputValues.size() == 2
-        val receiverIsArray = KotlinBuiltIns.isArray(instruction.resolvedCall.getDispatchReceiver().getType())
-        return isGetOperation && receiverIsArray
-    }
-
-    private fun isArraySetCall(instruction: CallInstruction): kotlin.Boolean {
-        val isSetFunctionCall = instruction.element is JetCallExpression &&
-                                getCalledName(instruction.element)?.let { it == arraySetFunctionName } ?: false
-        val isSetThroughAccessOperation = instruction.element is JetBinaryExpression &&
-                                          instruction.element.getLeft() is JetArrayAccessExpression
-        val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
-                             instruction.inputValues.size() == 3
-        val receiverIsArray = KotlinBuiltIns.isArray(instruction.resolvedCall.getDispatchReceiver().getType())
-        return isSetOperation && receiverIsArray
-    }
-
-    private fun getCalledName(callExpression: JetCallExpression) =
-            callExpression.getCalleeExpression()?.getNode()?.getText()
-
-    private fun checkOutOfBoundAccess(instruction: Instruction, updatedData: ValuesData) {
-        val arraySizeVariable = instruction.inputValues[0]
-        val accessPositionVariable = instruction.inputValues[1]
-        val arraySizes = updatedData.intFakeVarsToValues[arraySizeVariable]
-        val accessPositions = updatedData.intFakeVarsToValues[accessPositionVariable]
-        if (arraySizes != null && accessPositions != null &&
-            arraySizes.isDefined && accessPositions.isDefined) {
-            val sizes = arraySizes.getAvailableValues().sort()
-            val positions = accessPositions.getAvailableValues().sort()
-            if (sizes.first() <= positions.last()) {
-                // out of bound exception can be produced here
-                // todo: generate warning
-            }
-        }
-    }
-
     private fun processBinaryOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
-        assert(instruction.inputValues.size() == 2,
+        assert(instruction.inputValues.size() >= 2,
                "Binary expression instruction is supposed to have two input values")
         val leftOperandVariable = instruction.inputValues[0]
         val rightOperandVariable = instruction.inputValues[1]
