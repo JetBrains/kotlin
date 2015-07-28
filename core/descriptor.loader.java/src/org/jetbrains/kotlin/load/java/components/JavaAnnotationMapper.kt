@@ -49,6 +49,8 @@ public object JavaAnnotationMapper {
     private val javaTargetFqName = FqName(javaClass<Target>().canonicalName)
     private val javaRetentionFqName = FqName(javaClass<Retention>().canonicalName)
     private val javaDeprecatedFqName = FqName(javaClass<Deprecated>().canonicalName)
+    // Java8-specific thing
+    private val javaRepeatableFqName = FqName("java.lang.annotation.Repeatable")
 
     public fun mapJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
@@ -66,7 +68,8 @@ public object JavaAnnotationMapper {
     public val javaToKotlinNameMap: Map<FqName, FqName> =
             mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
                   javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation,
-                  javaDeprecatedFqName to KotlinBuiltIns.FQ_NAMES.deprecated)
+                  javaDeprecatedFqName to KotlinBuiltIns.FQ_NAMES.deprecated,
+                  javaRepeatableFqName to KotlinBuiltIns.FQ_NAMES.annotation)
 }
 
 abstract class AbstractJavaAnnotationDescriptor(

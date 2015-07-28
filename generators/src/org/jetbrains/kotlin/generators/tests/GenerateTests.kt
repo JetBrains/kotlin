@@ -320,6 +320,9 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJava8CodegenTestGenerated") {
             model("codegen/java8/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
         }
+        testClass(javaClass<AbstractJetDiagnosticsWithFullJdkTest>(), "JetDiagnosticsWithJava8TestGenerated") {
+            model("diagnostics/testsWithJava8")
+        }
     }
 
 
