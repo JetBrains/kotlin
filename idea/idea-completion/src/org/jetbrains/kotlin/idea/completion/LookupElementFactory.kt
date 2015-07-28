@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -40,7 +39,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import javax.swing.Icon
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.nullability
 
 public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
     override val psiElement: PsiElement? get() = null
@@ -255,6 +255,7 @@ public class LookupElementFactory(
 
         if (descriptor is CallableDescriptor) {
             val original = descriptor.original
+            val extensionReceiver = original.extensionReceiverParameter
             when {
                 original is SyntheticJavaPropertyDescriptor -> {
                     var from = original.getMethod.getName().asString() + "()"
@@ -262,9 +263,8 @@ public class LookupElementFactory(
                     element = element.appendTailText(" (from $from)", true)
                 }
 
-                descriptor.getExtensionReceiverParameter() != null -> {
-                    val originalReceiver = descriptor.getOriginal().getExtensionReceiverParameter()!!
-                    val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(originalReceiver.getType())
+                extensionReceiver != null -> {
+                    val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
                     element = element.appendTailText(" for $receiverPresentation", true)
 
                     val container = descriptor.getContainingDeclaration()
@@ -286,6 +286,16 @@ public class LookupElementFactory(
                         element = element.appendTailText(" (${container.fqName})", true)
                     }
                 }
+            }
+        }
+
+        if (descriptor is PropertyDescriptor) {
+            val getterName = JvmAbi.getterName(name)
+            if (getterName != name) {
+                element = element.withLookupString(getterName)
+            }
+            if (descriptor.isVar) {
+                element = element.withLookupString(JvmAbi.setterName(name))
             }
         }
 

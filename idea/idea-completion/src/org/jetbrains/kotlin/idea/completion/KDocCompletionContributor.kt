@@ -86,7 +86,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
 
     private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor) {
         val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
-        scope.getDescriptors(nameFilter = prefixMatcher.asNameFilter()).forEach {
+        scope.getDescriptors(nameFilter = descriptorNameFilter).forEach {
             val element = lookupElementFactory.createLookupElement(it, false)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {

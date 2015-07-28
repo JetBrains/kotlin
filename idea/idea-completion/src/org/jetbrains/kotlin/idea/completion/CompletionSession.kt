@@ -42,14 +42,17 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class CompletionSessionConfiguration(
@@ -119,6 +122,18 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             kotlinIdentifierStartPattern)
 
     protected val prefixMatcher: PrefixMatcher = CamelHumpMatcher(prefix)
+
+    protected val descriptorNameFilter: (Name) -> Boolean = run {
+        val nameFilter = prefixMatcher.asNameFilter()
+        val getOrSetPrefix = listOf("get", "set").firstOrNull { prefix.startsWith(it) }
+        if (getOrSetPrefix != null)
+            nameFilter or prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asNameFilter()
+        else
+            nameFilter
+    }
+
+    private fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
+            = { this(it) || otherFilter(it) }
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
@@ -207,7 +222,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             referenceVariantsHelper.getReferenceVariants(
                     nameExpression!!,
                     descriptorKindFilter!!,
-                    prefixMatcher.asNameFilter(),
+                    descriptorNameFilter,
                     filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters
             ).excludeNonInitializedVariable(nameExpression)
         }
@@ -231,7 +246,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
         val restrictedKindFilter = descriptorKindFilter!!.restrictedToKinds(DescriptorKindFilter.FUNCTIONS_MASK or DescriptorKindFilter.VARIABLES_MASK) // optimization
-        val descriptors = referenceVariantsHelper.getReferenceVariants(nameExpression!!, restrictedKindFilter, prefixMatcher.asNameFilter(), useRuntimeReceiverType = true)
+        val descriptors = referenceVariantsHelper.getReferenceVariants(nameExpression!!, restrictedKindFilter, descriptorNameFilter, useRuntimeReceiverType = true)
         return descriptors.filter { descriptor ->
             referenceVariants.none { comparePossiblyOverridingDescriptors(project, it, descriptor) }
         }

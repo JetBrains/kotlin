@@ -253,6 +253,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("GetPrefixForProperties.kt")
+        public void testGetPrefixForProperties() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/GetPrefixForProperties.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("HigherOrderFunction1.kt")
         public void testHigherOrderFunction1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/HigherOrderFunction1.kt");
@@ -769,6 +775,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SetPrefixForProperties.kt")
+        public void testSetPrefixForProperties() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SetPrefixForProperties.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShortClassNamesInTypePosition.kt")
         public void testShortClassNamesInTypePosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ShortClassNamesInTypePosition.kt");
@@ -1224,12 +1236,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("NoMemberExtensionsFromCompanionObject.kt")
             public void testNoMemberExtensionsFromCompanionObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/NoMemberExtensionsFromCompanionObject.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("ShowGetMethodWhenNothingElseMatch.kt")
-            public void testShowGetMethodWhenNothingElseMatch() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ShowGetMethodWhenNothingElseMatch.kt");
                 doTest(fileName);
             }
 
