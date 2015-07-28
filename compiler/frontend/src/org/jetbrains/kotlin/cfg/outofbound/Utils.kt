@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
+import org.jetbrains.kotlin.psi.JetCallExpression
+
 public object MapUtils {
     public fun mapToString<K, V, C : Comparable<C>>(
             map: Map<K,V>,
@@ -31,4 +33,9 @@ public object MapUtils {
         }
         return "{$mapAsString}"
     }
+}
+
+public object JetExpressionUtils {
+    public fun tryGetCalledName(callExpression: JetCallExpression): String? =
+            callExpression.getCalleeExpression()?.getNode()?.getText()
 }
