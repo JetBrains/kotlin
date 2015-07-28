@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
@@ -51,15 +51,18 @@ public class DataFlowAnalyzer {
     private final Iterable<AdditionalTypeChecker> additionalTypeCheckers;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
     private final KotlinBuiltIns builtIns;
+    private final SmartCastManager smartCastManager;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
-            @NotNull KotlinBuiltIns builtIns
+            @NotNull KotlinBuiltIns builtIns,
+            @NotNull SmartCastManager smartCastManager
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.builtIns = builtIns;
+        this.smartCastManager = smartCastManager;
     }
 
     @NotNull
@@ -218,7 +221,7 @@ public class DataFlowAnalyzer {
 
         for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, c.expectedType)) {
-                SmartCastUtils.recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), false);
+                smartCastManager.recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), false);
                 return possibleType;
             }
         }

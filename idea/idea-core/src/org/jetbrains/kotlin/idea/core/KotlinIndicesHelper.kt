@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -114,7 +114,7 @@ public class KotlinIndicesHelper(
     private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
         val result = HashSet<String>()
         for (receiverValue in receiverValues) {
-            for (type in SmartCastUtils.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
+            for (type in SmartCastManager().getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
                 result.addTypeNames(type)
             }
         }
