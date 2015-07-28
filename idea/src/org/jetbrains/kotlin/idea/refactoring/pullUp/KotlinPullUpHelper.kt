@@ -509,98 +509,104 @@ class KotlinPullUpHelper(
         addAfter(JetPsiFactory(this).createWhiteSpace(), getModifierList())
     }
 
+    private fun moveSuperInterface(member: JetClass) {
+        val psiFactory = JetPsiFactory(member)
+
+        val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
+
+        val currentSpecifier =
+                data.sourceClass.getDelegationSpecifiers()
+                        .filterIsInstance<JetDelegatorToSuperClass>()
+                        .firstOrNull {
+                            val referencedType = data.sourceClassContext[BindingContext.TYPE, it.getTypeReference()]
+                            referencedType?.getConstructor()?.getDeclarationDescriptor() == classDescriptor
+                        } ?: return
+        data.sourceClass.removeDelegationSpecifier(currentSpecifier)
+
+        if (!DescriptorUtils.isSubclass(data.targetClassDescriptor, classDescriptor)) {
+            val referencedType = data.sourceClassContext[BindingContext.TYPE, currentSpecifier.getTypeReference()]!!
+            val typeInTargetClass = data.sourceToTargetClassSubstitutor.substitute(referencedType, Variance.INVARIANT)
+            if (typeInTargetClass != null && !typeInTargetClass.isError) {
+                val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
+                data.targetClass.addDelegationSpecifier(psiFactory.createDelegatorToSuperClass(renderedType)).addToShorteningWaitSet()
+            }
+        }
+
+        return
+    }
+
     override fun move(info: MemberInfoBase<PsiMember>, substitutor: PsiSubstitutor) {
         val member = info.getMember().namedUnwrappedElement as? JetNamedDeclaration ?: return
 
         if (member is JetClass && info.getOverrides() != null)  {
-            val psiFactory = JetPsiFactory(member)
-
-            val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
-
-            val currentSpecifier =
-                    data.sourceClass.getDelegationSpecifiers()
-                            .filterIsInstance<JetDelegatorToSuperClass>()
-                            .firstOrNull {
-                                val referencedType = data.sourceClassContext[BindingContext.TYPE, it.getTypeReference()]
-                                referencedType?.getConstructor()?.getDeclarationDescriptor() == classDescriptor
-                            } ?: return
-
-            data.sourceClass.removeDelegationSpecifier(currentSpecifier)
-
-            if (!DescriptorUtils.isSubclass(data.targetClassDescriptor, classDescriptor)) {
-                val referencedType = data.sourceClassContext[BindingContext.TYPE, currentSpecifier.getTypeReference()]!!
-                val typeInTargetClass = data.sourceToTargetClassSubstitutor.substitute(referencedType, Variance.INVARIANT)
-                if (typeInTargetClass != null && !typeInTargetClass.isError) {
-                    val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
-                    data.targetClass.addDelegationSpecifier(psiFactory.createDelegatorToSuperClass(renderedType)).addToShorteningWaitSet()
-                }
-            }
-
-
+            moveSuperInterface(member)
             return
         }
 
         val markedElements = markElements(member)
         val memberCopy = member.copy() as JetNamedDeclaration
 
-        try {
-            var movedMember: JetNamedDeclaration
-            when (member) {
-                is JetCallableDeclaration -> {
-                    val clashingSuper = fixOverrideAndGetClashingSuper(member, memberCopy as JetCallableDeclaration)
+        fun moveClassMember(member: JetClassOrObject, memberCopy: JetClassOrObject): JetClassOrObject {
+            if (data.targetClass.isInterface()) {
+                memberCopy.removeModifier(JetTokens.INNER_KEYWORD)
+            }
+            val movedMember = addMemberToTarget(memberCopy) as JetClassOrObject
+            member.delete()
+            return movedMember
+        }
 
-                    val originalIsAbstract = member.hasModifier(JetTokens.ABSTRACT_KEYWORD)
-                    val toAbstract = when {
-                        info.isToAbstract() -> true
-                        !data.targetClass.isInterface() -> false
-                        member is JetProperty -> member.mustBeAbstractInInterface()
-                        else -> false
-                    }
-                    if (toAbstract) {
-                        if (!originalIsAbstract) {
-                            makeAbstract(member, memberCopy)
-                        }
+        fun moveCallableMember(member: JetCallableDeclaration, memberCopy: JetCallableDeclaration): JetCallableDeclaration {
+            val movedMember: JetCallableDeclaration
+            val clashingSuper = fixOverrideAndGetClashingSuper(member, memberCopy)
 
-                        movedMember = doAddCallableMember(memberCopy, clashingSuper)
-                        if (member.getTypeReference() == null) {
-                            movedMember.getTypeReference()?.addToShorteningWaitSet()
-                        }
-                        if (originalIsAbstract) {
-                            member.delete()
-                        }
-                        else if (!member.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
-                            member.addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
-                        }
-                    }
-                    else {
-                        movedMember = doAddCallableMember(memberCopy, clashingSuper)
-                        member.delete()
-                    }
-
-                    if (originalIsAbstract && data.targetClass.isInterface()) {
-                        movedMember.removeModifier(JetTokens.ABSTRACT_KEYWORD)
-                    }
-
-                    if (!data.targetClass.isInterface()
-                        && !data.targetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)
-                        && (movedMember.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
-                        data.targetClass.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
-                    }
+            val originalIsAbstract = member.hasModifier(JetTokens.ABSTRACT_KEYWORD)
+            val toAbstract = when {
+                info.isToAbstract() -> true
+                !data.targetClass.isInterface() -> false
+                member is JetProperty -> member.mustBeAbstractInInterface()
+                else -> false
+            }
+            if (toAbstract) {
+                if (!originalIsAbstract) {
+                    makeAbstract(member, memberCopy)
                 }
 
-                is JetClassOrObject -> {
-                    if (data.targetClass.isInterface()) {
-                        memberCopy.removeModifier(JetTokens.INNER_KEYWORD)
-                    }
-                    movedMember = addMemberToTarget(memberCopy) as JetClassOrObject
+                movedMember = doAddCallableMember(memberCopy, clashingSuper)
+                if (member.getTypeReference() == null) {
+                    movedMember.getTypeReference()?.addToShorteningWaitSet()
+                }
+                if (originalIsAbstract) {
                     member.delete()
                 }
+                else if (!member.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+                    member.addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
+                }
+            }
+            else {
+                movedMember = doAddCallableMember(memberCopy, clashingSuper)
+                member.delete()
+            }
 
+            if (originalIsAbstract && data.targetClass.isInterface()) {
+                movedMember.removeModifier(JetTokens.ABSTRACT_KEYWORD)
+            }
+
+            if (!data.targetClass.isInterface()
+                && !data.targetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)
+                && (movedMember.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
+                data.targetClass.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+            }
+            return movedMember
+        }
+
+        try {
+            val movedMember = when (member) {
+                is JetCallableDeclaration -> moveCallableMember(member, memberCopy as JetCallableDeclaration)
+                is JetClassOrObject -> moveClassMember(member, memberCopy as JetClassOrObject)
                 else -> return
             }
 
             processMarkedElements(movedMember)
-
             addMovedMember(movedMember)
         }
         finally {
