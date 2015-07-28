@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
+import org.jetbrains.kotlin.cfg.outofbound.OutOfBoundChecker;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodePackage;
@@ -81,6 +82,8 @@ public class JetFlowInformationProvider {
     private final BindingTrace trace;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
+    private final OutOfBoundChecker outOfBoundChecker;
+
     private JetFlowInformationProvider(
             @NotNull JetElement declaration,
             @NotNull BindingTrace trace,
@@ -89,6 +92,7 @@ public class JetFlowInformationProvider {
         this.subroutine = declaration;
         this.trace = trace;
         this.pseudocode = pseudocode;
+        this.outOfBoundChecker = new OutOfBoundChecker(pseudocode, trace);
     }
 
     public JetFlowInformationProvider(
@@ -127,6 +131,8 @@ public class JetFlowInformationProvider {
         markUnusedExpressions();
 
         markWhenWithoutElse();
+
+        outOfBoundChecker.checkOutOfBoundErrors();
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
