@@ -540,6 +540,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<JetElement> OUT_OF_BOUND_ACCESS = DiagnosticFactory0.create(WARNING);
+
     // Nullability
 
     DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
