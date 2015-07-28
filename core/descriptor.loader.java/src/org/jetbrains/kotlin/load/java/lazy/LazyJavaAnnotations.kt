@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.lazy.descriptors.resolveAnnotation
@@ -29,19 +30,19 @@ class LazyJavaAnnotations(
         private val annotationOwner: JavaAnnotationOwner
 ) : Annotations {
     private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
-        annotation: JavaAnnotation ->
-        JavaAnnotationMapper.mapJavaAnnotation(annotation, c) ?: c.resolveAnnotation(annotation)
+        annotation: JavaAnnotation -> JavaAnnotationMapper.mapOrResolveJavaAnnotation(annotation, c)
     }
 
     override fun findAnnotation(fqName: FqName) =
             annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
-            ?: JavaAnnotationMapper.kotlinToJavaNameMap[fqName]?.let { annotationOwner.findAnnotation(it)?.let(annotationDescriptors) }
+            ?: JavaAnnotationMapper.findMappedJavaAnnotation(fqName, annotationOwner, c)
 
     override fun findExternalAnnotation(fqName: FqName) =
             c.externalAnnotationResolver.findExternalAnnotation(annotationOwner, fqName)?.let(annotationDescriptors)
 
     override fun iterator() =
-            annotationOwner.annotations.asSequence().map(annotationDescriptors).filterNotNull().iterator()
+            (annotationOwner.annotations.asSequence().map(annotationDescriptors)
+             + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.annotation, annotationOwner, c)).filterNotNull().iterator()
 
     override fun isEmpty() = !iterator().hasNext()
 }

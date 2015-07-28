@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.lazy.descriptors.resolveAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaArrayAnnotationArgument
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
@@ -47,17 +50,39 @@ public object JavaAnnotationMapper {
     // Java8-specific thing
     private val javaRepeatableFqName = FqName("java.lang.annotation.Repeatable")
 
-    public fun mapJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
+    public fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
                 ClassId.topLevel(javaTargetFqName) -> JavaTargetAnnotationDescriptor(annotation, c)
-                ClassId.topLevel(javaRetentionFqName) -> JavaRetentionAnnotationDescriptor(annotation, c)
                 ClassId.topLevel(javaDeprecatedFqName) -> JavaDeprecatedAnnotationDescriptor(annotation, c)
-                else -> null
+                ClassId.topLevel(javaRetentionFqName) -> null
+                else -> c.resolveAnnotation(annotation)
             }
 
-    public val kotlinToJavaNameMap: Map<FqName, FqName> =
+    public fun findMappedJavaAnnotation(kotlinName: FqName,
+                                        annotationOwner: JavaAnnotationOwner,
+                                        c: LazyJavaResolverContext
+    ): AnnotationDescriptor? {
+        if (kotlinName == KotlinBuiltIns.FQ_NAMES.annotation) {
+            // Construct kotlin.annotation.annotation from Retention & Repeatable
+            val retentionAnnotation = annotationOwner.findAnnotation(javaRetentionFqName)
+            val repeatableAnnotation = annotationOwner.findAnnotation(javaRepeatableFqName)
+            return if (retentionAnnotation != null || repeatableAnnotation != null) {
+                JavaRetentionRepeatableAnnotationDescriptor(retentionAnnotation, repeatableAnnotation != null, c)
+            }
+            else {
+                null
+            }
+        }
+        return kotlinToJavaNameMap[kotlinName]?.let {
+            annotationOwner.findAnnotation(it)?.let {
+                mapOrResolveJavaAnnotation(it, c)
+            }
+        }
+    }
+
+    // kotlin.annotation.annotation is treated separately
+    private val kotlinToJavaNameMap: Map<FqName, FqName> =
             mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName,
-                  KotlinBuiltIns.FQ_NAMES.annotation to javaRetentionFqName,
                   KotlinBuiltIns.FQ_NAMES.deprecated to javaDeprecatedFqName)
 
     public val javaToKotlinNameMap: Map<FqName, FqName> =
@@ -68,7 +93,7 @@ public object JavaAnnotationMapper {
 }
 
 abstract class AbstractJavaAnnotationDescriptor(
-        annotation: JavaAnnotation,
+        annotation: JavaAnnotation?,
         private val kotlinAnnotationClassDescriptor: ClassDescriptor
 ): AnnotationDescriptor {
     override fun getType() = kotlinAnnotationClassDescriptor.defaultType
@@ -76,7 +101,7 @@ abstract class AbstractJavaAnnotationDescriptor(
     protected val valueParameters: List<ValueParameterDescriptor>
             get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters
 
-    protected val firstArgument: JavaAnnotationArgument? = annotation.arguments.firstOrNull()
+    protected val firstArgument: JavaAnnotationArgument? = annotation?.arguments?.firstOrNull()
 }
 
 class JavaDeprecatedAnnotationDescriptor(
@@ -94,20 +119,26 @@ class JavaDeprecatedAnnotationDescriptor(
     override fun getAllValueArguments() = valueArguments()
 }
 
-class JavaRetentionAnnotationDescriptor(
-        annotation: JavaAnnotation,
+class JavaRetentionRepeatableAnnotationDescriptor(
+        retentionAnnotation: JavaAnnotation?,
+        repeatable: Boolean,
         c: LazyJavaResolverContext
-): AbstractJavaAnnotationDescriptor(annotation, c.module.builtIns.annotationAnnotation) {
+): AbstractJavaAnnotationDescriptor(retentionAnnotation, c.module.builtIns.annotationAnnotation) {
 
     private val valueArguments = c.storageManager.createLazyValue {
-        val targetArgument = when (firstArgument) {
+        val retentionArgument = when (firstArgument) {
             is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument, c.module.builtIns)
-            else -> return@createLazyValue emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
+            else -> null
         }
-        val parameterDescriptor = valueParameters.firstOrNull {
+        val retentionParameterDescriptor = valueParameters.first {
             it.name == JvmAnnotationNames.RETENTION_ANNOTATION_PARAMETER_NAME
         }
-        parameterDescriptor?.let { mapOf(it to targetArgument) } ?: emptyMap()
+        val repeatableArgument = if (repeatable) BooleanValue(true, c.module.builtIns) else null
+        val repeatableParameterDescriptor = valueParameters.first {
+            it.name == JvmAnnotationNames.REPEATABLE_ANNOTATION_PARAMETER_NAME
+        }
+        (retentionArgument?.let { mapOf(retentionParameterDescriptor to it) } ?: emptyMap()) +
+        (repeatableArgument?.let { mapOf(repeatableParameterDescriptor to it) } ?: emptyMap())
     }
 
     override fun getAllValueArguments() = valueArguments()

@@ -48,5 +48,23 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/deprecatedRepeatable.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("javaRepeatable.kt")
+        public void testJavaRepeatable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaRepeatableRetention.kt")
+        public void testJavaRepeatableRetention() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatableRetention.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaUnrepeatable.kt")
+        public void testJavaUnrepeatable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaUnrepeatable.kt");
+            doTest(fileName);
+        }
     }
 }

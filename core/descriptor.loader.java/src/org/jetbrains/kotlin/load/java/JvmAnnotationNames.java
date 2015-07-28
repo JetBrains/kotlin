@@ -40,6 +40,7 @@ public final class JvmAnnotationNames {
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
     public static final Name RETENTION_ANNOTATION_PARAMETER_NAME = Name.identifier("retention");
+    public static final Name REPEATABLE_ANNOTATION_PARAMETER_NAME = Name.identifier("repeatable");
 
     public static final FqName TARGET_ANNOTATION = new FqName("java.lang.annotation.Target");
     public static final FqName RETENTION_ANNOTATION = new FqName("java.lang.annotation.Retention");
