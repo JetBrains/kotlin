@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getService
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -146,7 +147,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             var receiverTypes = receiversData.receivers.flatMap { receiverValue ->
                 val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
                 if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
-                    SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
+                    resolutionFacade.getService<SmartCastManager>(file)
+                            .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
                 }
                 else {
                     listOf(receiverValue.type)
