@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.*
+import com.intellij.util.io.BooleanDataDescriptor
+import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
+import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
@@ -48,9 +52,11 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.visibility
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.*
-import java.io.*
+import java.io.DataInput
+import java.io.DataInputStream
+import java.io.DataOutput
+import java.io.File
 import java.security.MessageDigest
 import java.util.*
 
@@ -307,71 +313,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     public override fun close() {
         maps.forEach { it.close () }
-    }
-
-    private inner abstract class BasicMap<V>(
-            private val storageFile: File,
-            private val valueExternalizer: DataExternalizer<V>
-    ) {
-        protected open val keyDescriptor: KeyDescriptor<String>
-            get() = EnumeratorStringDescriptor()
-
-        protected var storage: PersistentHashMap<String, V> = createMap()
-
-        public fun contains(key: String): Boolean = storage.containsMapping(key)
-
-        public open fun clean() {
-            try {
-                storage.close()
-            }
-            catch (ignored: IOException) {
-            }
-
-            PersistentHashMap.deleteFilesStartingWith(storage.getBaseFile()!!)
-            try {
-                storage = createMap()
-            }
-            catch (ignored: IOException) {
-            }
-        }
-
-        public open fun flush(memoryCachesOnly: Boolean) {
-            if (memoryCachesOnly) {
-                if (storage.isDirty()) {
-                    storage.dropMemoryCaches()
-                }
-            }
-            else {
-                storage.force()
-            }
-        }
-
-        public fun close() {
-            storage.close()
-        }
-
-        TestOnly
-        public fun dump(): String {
-            return with(StringBuilder()) {
-                with(Printer(this)) {
-                    println(this@BasicMap.javaClass.getSimpleName())
-                    pushIndent()
-
-                    for (key in storage.getAllKeysWithExistingMapping().sort()) {
-                        println("$key -> ${dumpValue(storage[key])}")
-                    }
-
-                    popIndent()
-                }
-
-                this
-            }.toString()
-        }
-
-        protected abstract fun dumpValue(value: V): String
-
-        private fun createMap(): PersistentHashMap<String, V> =
-                PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
     }
 
     private inner class ProtoMap(storageFile: File) : BasicMap<ByteArray>(storageFile, ByteArrayExternalizer) {
