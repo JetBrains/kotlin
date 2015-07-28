@@ -100,14 +100,15 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         val functions = scope.getFunctions(name)
-        val (extensions, nonExtensions) = functions.partition { it.getExtensionReceiverParameter() != null }
+        val (extensions, nonExtensions) = functions.partition { it.extensionReceiverParameter != null }
+        val syntheticExtensions = scope.getSyntheticExtensionFunctions(receiverTypes, name)
 
         if (name == OperatorConventions.INVOKE) {
             // Create synthesized "invoke" extensions for each non-extension "invoke" found in the scope
-            return extensions + createSynthesizedInvokes(nonExtensions)
+            return extensions + createSynthesizedInvokes(nonExtensions) + syntheticExtensions
         }
 
-        return extensions
+        return extensions + syntheticExtensions
     }
 
     private fun getConstructors(

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
+import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 
 public class SamCodegenUtil {
     @Nullable
@@ -28,6 +29,10 @@ public class SamCodegenUtil {
         FunctionDescriptor original = fun.getOriginal();
         if (original instanceof SamAdapterDescriptor<?>) {
             return ((SamAdapterDescriptor<?>) original).getOriginForSam();
+        }
+
+        if (original instanceof SamAdapterExtensionFunctionDescriptor) {
+            return ((SamAdapterExtensionFunctionDescriptor) original).getOriginalFunction();
         }
 
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

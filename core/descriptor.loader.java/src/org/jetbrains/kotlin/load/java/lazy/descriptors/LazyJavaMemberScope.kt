@@ -83,7 +83,9 @@ public abstract class LazyJavaMemberScope(
         for (method in memberIndex().findMethodsByName(name)) {
             val descriptor = resolveMethodToFunctionDescriptor(method, true)
             result.add(descriptor)
-            result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
+            if (method.isStatic) {
+                result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
+            }
         }
 
         computeNonDeclaredFunctions(result, name)

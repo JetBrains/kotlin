@@ -4,13 +4,11 @@ public interface InheritedOverridden {
 
     public open class Sub : test.InheritedOverridden.Super {
         public constructor Sub()
-        public final override /*1*/ /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
         public open override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 
     public open class Super {
         public constructor Super()
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
         public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 }

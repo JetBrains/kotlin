@@ -2,12 +2,11 @@ package test
 
 public final class Sub : test.Super {
     public constructor Sub()
-    internal open override /*1*/ fun foo(/*0*/ r: (() -> kotlin.Unit)?): kotlin.Unit
+    internal open fun foo(/*0*/ r: (() -> kotlin.Unit)?): kotlin.Unit
     public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
 }
 
 public open class Super {
     public constructor Super()
-    public/*package*/ final /*synthesized*/ fun foo(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
 }

@@ -1,11 +1,11 @@
 package
 
-internal final class K : p.J.C {
-    public constructor K()
+internal fun foo(/*0*/ javaClass: JavaClass): kotlin.String
+
+public open class JavaClass {
+    public constructor JavaClass()
+    public open fun </*0*/ T : kotlin.Any!> doSomething(/*0*/ t: T!, /*1*/ i: I<T!>!): T!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    invisible_fake open override /*1*/ /*fake_override*/ fun sam(/*0*/ sam: p.J.Sam!): kotlin.Unit
-    internal final fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    internal final fun dynamic.test(): kotlin.Unit
 }

@@ -40,7 +40,6 @@ internal final class Test : java.lang.Thread {
     public final override /*1*/ /*fake_override*/ fun getThreadGroup(): [ERROR : Unresolved java classifier: ThreadGroup]!
     public open override /*1*/ /*fake_override*/ fun getUncaughtExceptionHandler(): java.lang.Thread.UncaughtExceptionHandler!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    invisible_fake final override /*1*/ /*fake_override*/ fun init(/*0*/ p0: [ERROR : Unresolved java classifier: ThreadGroup]!, /*1*/ p1: (() -> kotlin.Unit)!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Long): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun init(/*0*/ p0: [ERROR : Unresolved java classifier: ThreadGroup]!, /*1*/ p1: java.lang.Runnable!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Long): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun interrupt(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun interrupt0(): kotlin.Unit
@@ -60,7 +59,6 @@ internal final class Test : java.lang.Thread {
     invisible_fake open override /*1*/ /*fake_override*/ fun setNativeName(/*0*/ p0: kotlin.String!): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun setPriority(/*0*/ p0: kotlin.Int): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun setPriority0(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public final override /*1*/ /*fake_override*/ fun setUncaughtExceptionHandler(/*0*/ p0: ((java.lang.Thread!, kotlin.Throwable!) -> kotlin.Unit)!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun setUncaughtExceptionHandler(/*0*/ p0: java.lang.Thread.UncaughtExceptionHandler!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun start(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun start0(): kotlin.Unit

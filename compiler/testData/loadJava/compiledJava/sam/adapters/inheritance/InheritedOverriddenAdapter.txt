@@ -4,13 +4,12 @@ public interface InheritedOverriddenAdapter {
 
     public open class Sub : test.InheritedOverriddenAdapter.Super {
         public constructor Sub()
-        public open override /*1*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
+        public open fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 
     public open class Super {
         public constructor Super()
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
         public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 }

@@ -4,17 +4,14 @@ public /*synthesized*/ fun A(/*0*/ function: (java.lang.Runnable!) -> kotlin.Uni
 
 public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final /*synthesized*/ fun foo(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public abstract fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface B : A {
-    public final /*synthesized*/ fun bar(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public abstract fun bar(/*0*/ r: java.lang.Runnable!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun foo(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -22,10 +19,8 @@ public interface B : A {
 
 internal final class C : B {
     public constructor C()
-    public final override /*1*/ /*fake_override*/ fun bar(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public open override /*1*/ fun bar(/*0*/ r: java.lang.Runnable?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun foo(/*0*/ r: (() -> kotlin.Unit)!): kotlin.Unit
     public open override /*1*/ fun foo(/*0*/ r: java.lang.Runnable?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

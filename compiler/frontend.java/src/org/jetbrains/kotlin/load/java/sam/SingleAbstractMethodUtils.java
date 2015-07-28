@@ -239,30 +239,40 @@ public class SingleAbstractMethodUtils {
         JetType returnTypeUnsubstituted = original.getReturnType();
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
 
-        JetType returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+        TypeSubstitutor substitutor = typeParameters.substitutor;
+        JetType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
-                                        ", substitutor = " + typeParameters.substitutor;
+                                        ", substitutor = " + substitutor;
 
 
+        List<ValueParameterDescriptor> valueParameters = createValueParametersForSamAdapter(original, adapter, substitutor);
+
+        initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
+
+        return adapter;
+    }
+
+    public static List<ValueParameterDescriptor> createValueParametersForSamAdapter(
+            @NotNull FunctionDescriptor original,
+            @NotNull FunctionDescriptor samAdapter,
+            @NotNull TypeSubstitutor substitutor
+    ) {
         List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
         for (ValueParameterDescriptor originalParam : originalValueParameters) {
             JetType originalType = originalParam.getType();
             JetType functionType = getFunctionTypeForSamType(originalType, false);
             JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
-            JetType newType = typeParameters.substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
-            assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
+            JetType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
+            assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
-                    adapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
+                    samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
                     originalParam.getName(), newType, false, null, SourceElement.NO_SOURCE
             );
             valueParameters.add(newParam);
         }
-
-        initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
-
-        return adapter;
+        return valueParameters;
     }
 
     @NotNull

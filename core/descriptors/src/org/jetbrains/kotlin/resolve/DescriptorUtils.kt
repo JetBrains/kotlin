@@ -164,3 +164,9 @@ public fun Annotated.getAnnotationRetention(): KotlinRetention? {
     }?.getValue() as? EnumValue ?: return null
     return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }
+
+public val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor>
+    get() = sequence(this, { it.containingDeclaration })
+
+public val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
+    get() = parentsWithSelf.drop(1)

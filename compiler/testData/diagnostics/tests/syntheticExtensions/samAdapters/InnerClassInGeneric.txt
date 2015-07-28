@@ -1,0 +1,20 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Unit
+
+public open class JavaClass</*0*/ T : kotlin.Any!> {
+    public constructor JavaClass</*0*/ T : kotlin.Any!>()
+    public open fun </*0*/ X : kotlin.Any!> createInner(): JavaClass.Inner<X!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Inner</*0*/ X : kotlin.Any!> {
+        public constructor Inner</*0*/ X : kotlin.Any!>()
+        public open fun doSomething(/*0*/ t: T!, /*1*/ x: X!, /*2*/ runnable: java.lang.Runnable!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

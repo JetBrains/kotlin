@@ -335,9 +335,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun getModalExclusionType(): [ERROR : Unresolved java classifier: ModalExclusionType]!
         public open override /*1*/ /*fake_override*/ fun getMostRecentFocusOwner(): java.awt.Component!
         invisible_fake open override /*1*/ /*fake_override*/ fun getMouseEventTarget(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean): java.awt.Component!
-        invisible_fake final override /*1*/ /*fake_override*/ fun getMouseEventTarget(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean, /*3*/ p3: ((java.awt.Component!) -> kotlin.Boolean)!, /*4*/ p4: kotlin.Boolean): java.awt.Component!
         invisible_fake open override /*1*/ /*fake_override*/ fun getMouseEventTarget(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean, /*3*/ p3: java.awt.Container.EventTargetFilter!, /*4*/ p4: kotlin.Boolean): java.awt.Component!
-        invisible_fake final override /*1*/ /*fake_override*/ fun getMouseEventTargetImpl(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean, /*3*/ p3: ((java.awt.Component!) -> kotlin.Boolean)!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: kotlin.Boolean): java.awt.Component!
         invisible_fake open override /*1*/ /*fake_override*/ fun getMouseEventTargetImpl(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Boolean, /*3*/ p3: java.awt.Container.EventTargetFilter!, /*4*/ p4: kotlin.Boolean, /*5*/ p5: kotlin.Boolean): java.awt.Component!
         public open override /*1*/ /*fake_override*/ fun getMouseListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: MouseListener]!>!
         public open override /*1*/ /*fake_override*/ fun getMouseMotionListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: MouseMotionListener]!>!
