@@ -84,6 +84,7 @@ private class KotlinResolveCache(
     }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
+        assert(elements.isNotEmpty(), "elements collection should not be empty")
         val slruCache = synchronized(analysisResults) {
             analysisResults.getValue()!!
         }

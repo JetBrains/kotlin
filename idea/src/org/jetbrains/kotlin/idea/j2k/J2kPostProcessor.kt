@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.j2k
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -52,6 +51,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         else {
             file.elementsInRange(range).filterIsInstance<JetElement>()
         }
+        if (elements.isEmpty()) return BindingContext.EMPTY
         return file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext
     }
 
