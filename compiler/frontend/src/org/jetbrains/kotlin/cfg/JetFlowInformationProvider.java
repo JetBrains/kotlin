@@ -656,9 +656,14 @@ public class JetFlowInformationProvider {
                                 else if (element instanceof JetParameter) {
                                     PsiElement owner = element.getParent().getParent();
                                     if (owner instanceof JetPrimaryConstructor) {
-                                        if (!((JetParameter) element).hasValOrVar() &&
-                                            !((JetPrimaryConstructor) owner).getContainingClassOrObject().isAnnotation()) {
-                                            report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
+                                        if (!((JetParameter) element).hasValOrVar()) {
+                                            JetClassOrObject containingClass = ((JetPrimaryConstructor) owner).getContainingClassOrObject();
+                                            DeclarationDescriptor containingClassDescriptor = trace.get(
+                                                    BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass
+                                            );
+                                            if (!DescriptorUtils.isAnnotationClass(containingClassDescriptor)) {
+                                                report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
+                                            }
                                         }
                                     }
                                     else if (owner instanceof JetFunction) {

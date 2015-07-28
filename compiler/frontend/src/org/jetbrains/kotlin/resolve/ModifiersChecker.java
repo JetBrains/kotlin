@@ -170,16 +170,6 @@ public class ModifiersChecker {
         return modifierList != null && modifierList.hasModifier(INNER_KEYWORD);
     }
 
-    @NotNull
-    public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
-        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) {
-            // should be be accessible where containing class is accessible by default
-            return Visibilities.PUBLIC;
-        }
-        return Visibilities.INTERNAL;
-    }
-
-
     public class ModifiersCheckingProcedure {
 
         @NotNull

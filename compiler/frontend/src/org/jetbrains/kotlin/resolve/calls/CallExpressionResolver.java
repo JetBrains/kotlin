@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
@@ -226,7 +227,7 @@ public class CallExpressionResolver {
             if (functionDescriptor instanceof ConstructorDescriptor) {
                 DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
                 if (DescriptorUtils.isAnnotationClass(containingDescriptor)
-                    && !canInstantiateAnnotationClass(callExpression)) {
+                    && !canInstantiateAnnotationClass(callExpression, context.trace)) {
                     context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression));
                 }
                 if (DescriptorUtils.isEnumClass(containingDescriptor)) {
@@ -273,7 +274,7 @@ public class CallExpressionResolver {
         return TypeInfoFactoryPackage.noTypeInfo(context);
     }
 
-    private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression) {
+    private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression, @NotNull BindingTrace trace) {
         //noinspection unchecked
         PsiElement parent = PsiTreeUtil.getParentOfType(expression, JetValueArgument.class, JetParameter.class);
         if (parent instanceof JetValueArgument) {
@@ -282,7 +283,8 @@ public class CallExpressionResolver {
         else if (parent instanceof JetParameter) {
             JetClass jetClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
             if (jetClass != null) {
-                return jetClass.isAnnotation();
+                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
+                return DescriptorUtils.isAnnotationClass(descriptor);
             }
         }
         return false;

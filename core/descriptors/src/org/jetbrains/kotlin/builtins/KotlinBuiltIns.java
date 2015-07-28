@@ -997,6 +997,11 @@ public class KotlinBuiltIns {
         return FQ_NAMES.array.equals(getFqName(descriptor));
     }
 
+    public static boolean isAnnotation(@NotNull ClassDescriptor descriptor) {
+        return DescriptorUtils.getFqName(descriptor) == FQ_NAMES.annotation.toUnsafe()
+               || containsAnnotation(descriptor, FQ_NAMES.annotation);
+    }
+
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.cloneable.equals(getFqName(descriptor));
     }

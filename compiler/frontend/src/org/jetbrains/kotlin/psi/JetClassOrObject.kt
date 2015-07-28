@@ -108,7 +108,7 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor methods instead, e.g. getKind()")
+    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
     public fun isAnnotation(): Boolean = getBuiltInAnnotationEntry() != null
 
     public fun getBuiltInAnnotationEntry(): JetAnnotationEntry? = getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString())

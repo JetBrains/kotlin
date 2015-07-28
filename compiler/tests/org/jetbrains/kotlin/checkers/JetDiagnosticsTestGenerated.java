@@ -669,6 +669,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotationIdentifier.kt")
+            public void testAnnotationIdentifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotationIdentifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("annotationInheritance.kt")
             public void testAnnotationInheritance() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationInheritance.kt");
