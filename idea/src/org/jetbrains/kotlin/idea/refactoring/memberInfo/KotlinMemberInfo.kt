@@ -23,13 +23,21 @@ import com.intellij.refactoring.util.classMembers.MemberInfo
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 
 public class KotlinMemberInfo(member: JetNamedDeclaration, val isSuperClass: Boolean = false) : MemberInfoBase<JetNamedDeclaration>(member) {
+    companion object {
+        private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+            modifiers = DescriptorRendererModifier.INNER.singletonOrEmptySet()
+        }
+    }
+
     init {
         val memberDescriptor = member.resolveToDescriptor()
         isStatic = member.getParent() is JetFile
@@ -45,7 +53,10 @@ public class KotlinMemberInfo(member: JetNamedDeclaration, val isSuperClass: Boo
             }
         }
         else {
-            displayName = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(memberDescriptor)
+            displayName = RENDERER.render(memberDescriptor)
+            if (memberDescriptor is MemberDescriptor && memberDescriptor.getModality() == Modality.ABSTRACT) {
+                displayName = "abstract $displayName"
+            }
 
             val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.getOverriddenDescriptors() ?: emptySet()
             if (overriddenDescriptors.isNotEmpty()) {
