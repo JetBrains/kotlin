@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.mapToIndex
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
@@ -66,23 +65,7 @@ data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: Clas
     }
 }
 
-fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescriptor? {
-    val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(javaClass)
-    return resolveBinaryClass(kotlinJvmBinaryClass)?.kClass
-}
-
-fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupResult {
-    val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
-    val binaryClassResult = resolveBinaryClass(kotlinClass)
-    if (binaryClassResult != null) return binaryClassResult
-
-    val javaClass = finder.findClass(classId)
-    if (javaClass != null) return JavaClassLookupResult(javaClass)
-
-    return JavaClassLookupResult.EMPTY
-}
-
-private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {
+fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {
     if (kotlinClass == null) return null
 
     val header = kotlinClass.getClassHeader()
