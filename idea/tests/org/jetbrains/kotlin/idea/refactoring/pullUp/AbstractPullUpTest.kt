@@ -17,23 +17,21 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.google.gson.JsonParser
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
-import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
 import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
@@ -56,37 +54,37 @@ public abstract class AbstractPullUpTest : JetLightCodeInsightFixtureTestCase() 
         val afterFile = File("$path.after")
         val conflictFile = File("$path.messages")
 
-        fixture.setTestDataPath("${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}")
+        fixture.testDataPath = "${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
 
         val mainFileName = mainFile.getName()
         val file = fixture.configureByFile(mainFileName) as JetFile
 
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
+        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
         try {
             for ((element, info) in file.findElementsByCommentPrefix("// INFO: ")) {
-                val parsedInfo = JsonParser().parse(info).getAsJsonObject()
-                element.elementInfo = ElementInfo(parsedInfo["checked"]?.getAsBoolean() ?: false,
-                                                  parsedInfo["toAbstract"]?.getAsBoolean() ?: false)
+                val parsedInfo = JsonParser().parse(info).asJsonObject
+                element.elementInfo = ElementInfo(parsedInfo["checked"]?.asBoolean ?: false,
+                                                  parsedInfo["toAbstract"]?.asBoolean ?: false)
             }
-            val targetClassName = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// TARGET_CLASS: ")
+            val targetClassName = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// TARGET_CLASS: ")
 
             val helper = object: KotlinPullUpHandler.TestHelper {
                 override fun adjustMembers(members: List<KotlinMemberInfo>): List<KotlinMemberInfo> {
                     members.forEach {
-                        val info = it.getMember().elementInfo
-                        it.setChecked(info.checked)
-                        it.setToAbstract(info.toAbstract)
+                        val info = it.member.elementInfo
+                        it.isChecked = info.checked
+                        it.isToAbstract = info.toAbstract
                     }
-                    return members.filter { it.isChecked() }
+                    return members.filter { it.isChecked }
                 }
 
                 override fun chooseSuperClass(superClasses: List<JetClass>): JetClass {
                     if (targetClassName != null) {
-                        return superClasses.single { it.getFqName()?.asString() ?: it.getName() == targetClassName }
+                        return superClasses.single { it.fqName?.asString() ?: it.name == targetClassName }
                     }
                     return superClasses.first()
                 }
@@ -96,11 +94,11 @@ public abstract class AbstractPullUpTest : JetLightCodeInsightFixtureTestCase() 
             }
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
-            JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
+            JetTestUtils.assertEqualsToFile(afterFile, file.text!!)
         }
         catch(e: Exception) {
             val message = when (e) {
-                is BaseRefactoringProcessor.ConflictsInTestsException -> e.getMessages().sort().joinToString("\n")
+                is BaseRefactoringProcessor.ConflictsInTestsException -> e.messages.sort().joinToString("\n")
                 is CommonRefactoringUtil.RefactoringErrorHintException -> e.getMessage()!!
                 else -> throw e
             }

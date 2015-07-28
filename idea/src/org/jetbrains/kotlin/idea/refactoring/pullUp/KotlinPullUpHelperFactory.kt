@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class KotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun PullUpData.toKotlinPullUpData(): KotlinPullUpData? {
-        if (!getSourceClass().isInheritor(getTargetClass(), true)) return null
-        val sourceClass = getSourceClass().unwrapped as? JetClassOrObject ?: return null
-        val targetClass = getTargetClass().unwrapped as? JetClass ?: return null
-        val membersToMove = getMembersToMove()
+        if (!sourceClass.isInheritor(targetClass, true)) return null
+        val sourceClass = sourceClass.unwrapped as? JetClassOrObject ?: return null
+        val targetClass = targetClass.unwrapped as? JetClass ?: return null
+        val membersToMove = membersToMove
                 .map { it.namedUnwrappedElement as? JetNamedDeclaration }
                 .filterNotNull()
                 .sortBy { it.startOffset }

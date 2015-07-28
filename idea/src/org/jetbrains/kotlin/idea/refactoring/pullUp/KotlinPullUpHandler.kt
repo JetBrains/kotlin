@@ -75,11 +75,11 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        val offset = editor.getCaretModel().getOffset()
-        editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
+        val offset = editor.caretModel.offset
+        editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
         val target = (file.findElementAt(offset) ?: return).parentsWithSelf.firstOrNull {
-            it is JetClassOrObject || ((it is JetNamedFunction || it is JetProperty) && it.getParent() is JetClassBody)
+            it is JetClassOrObject || ((it is JetNamedFunction || it is JetProperty) && it.parent is JetClassBody)
         }
 
         if (target == null) {
@@ -119,11 +119,11 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
         }
 
         val classDescriptor = classOrObject.resolveToDescriptor() as ClassDescriptor
-        val superClasses = classDescriptor.getDefaultType()
+        val superClasses = classDescriptor.defaultType
                 .supertypes()
                 .asSequence()
                 .map {
-                    val descriptor = it.getConstructor().getDeclarationDescriptor()
+                    val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                     if (declaration is JetClass && declaration.canRefactor()) declaration else null
                 }
@@ -144,7 +144,7 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
         val memberInfoStorage = KotlinMemberInfoStorage(classOrObject)
         val members = memberInfoStorage.getClassMemberInfos(classOrObject)
 
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
             val helper = dataContext?.getData(PULLUP_TEST_HELPER_KEY) as TestHelper
             val selectedMembers = helper.adjustMembers(members)
             val targetClass = helper.chooseSuperClass(superClasses)
@@ -153,8 +153,8 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
             }
         }
         else {
-            val manager = classOrObject.getManager()
-            members.filter { manager.areElementsEquivalent(it.getMember(), member) }.forEach { it.setChecked(true) }
+            val manager = classOrObject.manager
+            members.filter { manager.areElementsEquivalent(it.member, member) }.forEach { it.isChecked = true }
 
             KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
         }
@@ -164,7 +164,7 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
         return elements.mapTo(HashSet<PsiElement>()) {
             when (it) {
                 is JetNamedFunction, is JetProperty ->
-                    (it.getParent() as? JetClassBody)?.getParent() as? JetClassOrObject
+                    (it.parent as? JetClassBody)?.parent as? JetClassOrObject
                 is JetClassOrObject -> it
                 else -> null
             } ?: return false

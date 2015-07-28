@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
@@ -30,18 +27,12 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -57,11 +48,11 @@ fun checkConflicts(project: Project,
                    onAccept: () -> Unit) {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val pullUpData = KotlinPullUpData(sourceClass, targetClass, memberInfos.map { it.getMember() })
+    val pullUpData = KotlinPullUpData(sourceClass, targetClass, memberInfos.map { it.member })
 
     with(pullUpData) {
         for (memberInfo in memberInfos) {
-            val member = memberInfo.getMember()
+            val member = memberInfo.member
             val memberDescriptor = resolutionFacade.resolveToDescriptor(member)
 
             checkClashWithSuperDeclaration(member, memberDescriptor, conflicts)
@@ -101,7 +92,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
         conflicts: MultiMap<PsiElement, String>) {
     if (memberDescriptor is CallableMemberDescriptor) {
         val clashingSuper = getClashingMemberInTargetClass(memberDescriptor)
-        if (clashingSuper != null && clashingSuper.getModality() != Modality.ABSTRACT) {
+        if (clashingSuper != null && clashingSuper.modality != Modality.ABSTRACT) {
             val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
             conflicts.putValue(member, message.capitalize())
         }
@@ -115,7 +106,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
     if (memberDescriptor is CallableDescriptor && !member.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
         val memberDescriptorInTargetClass = memberDescriptor.substitute(sourceToTargetClassSubstitutor)
         if (memberDescriptorInTargetClass != null) {
-            HierarchySearchRequest<PsiElement>(targetClass, targetClass.getUseScope())
+            HierarchySearchRequest<PsiElement>(targetClass, targetClass.useScope)
                     .searchInheritors()
                     .asSequence()
                     .filterNot { it.unwrapped == sourceClass || it.unwrapped == targetClass }
@@ -123,13 +114,13 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
                     .filterNotNull()
                     .forEach {
                         val subClassDescriptor = resolutionFacade.resolveToDescriptor(it) as ClassDescriptor
-                        val substitutor = getTypeSubstitutor(targetClassDescriptor.getDefaultType(),
-                                                             subClassDescriptor.getDefaultType()) ?: TypeSubstitutor.EMPTY
+                        val substitutor = getTypeSubstitutor(targetClassDescriptor.defaultType,
+                                                             subClassDescriptor.defaultType) ?: TypeSubstitutor.EMPTY
                         val memberDescriptorInSubClass =
                                 memberDescriptorInTargetClass.substitute(substitutor) as? CallableMemberDescriptor
                         val clashingMemberDescriptor =
                                 memberDescriptorInSubClass?.let { subClassDescriptor.findCallableMemberBySignature(it) } ?: return
-                        val clashingMember = clashingMemberDescriptor.getSource().getPsi() ?: return
+                        val clashingMember = clashingMemberDescriptor.source.getPsi() ?: return
 
                         val message = memberDescriptor.renderForConflicts() +
                                       " in super class would clash with existing member of " +
@@ -144,7 +135,7 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
         member: JetNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
-    if (targetClass.isInterface() && memberDescriptor is ClassDescriptor && memberDescriptor.isInner()) {
+    if (targetClass.isInterface() && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
         val message = "${memberDescriptor.renderForConflicts()} is an inner class. It can not be moved to the interface"
         conflicts.putValue(member, message.capitalize())
     }
@@ -156,7 +147,7 @@ private fun KotlinPullUpData.checkVisibility(
         conflicts: MultiMap<PsiElement, String>
 ) {
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
-        val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi() ?: return
+        val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
             && !Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, targetDescriptor, targetClassDescriptor)) {
             val message = RefactoringBundle.message(
@@ -168,22 +159,22 @@ private fun KotlinPullUpData.checkVisibility(
         }
     }
 
-    val member = memberInfo.getMember()
+    val member = memberInfo.member
     val childrenToCheck = member.allChildren.toArrayList()
-    if (memberInfo.isToAbstract() && member is JetCallableDeclaration) {
+    if (memberInfo.isToAbstract && member is JetCallableDeclaration) {
         when (member) {
-            is JetNamedFunction -> childrenToCheck.remove(member.getBodyExpression())
+            is JetNamedFunction -> childrenToCheck.remove(member.bodyExpression)
             is JetProperty -> {
-                childrenToCheck.remove(member.getInitializer())
-                childrenToCheck.remove(member.getDelegateExpression())
-                childrenToCheck.removeAll(member.getAccessors())
+                childrenToCheck.remove(member.initializer)
+                childrenToCheck.remove(member.delegateExpression)
+                childrenToCheck.removeAll(member.accessors)
             }
         }
 
-        if (member.getTypeReference() == null) {
-            (memberDescriptor as CallableDescriptor).getReturnType()?.let { returnType ->
+        if (member.typeReference == null) {
+            (memberDescriptor as CallableDescriptor).returnType?.let { returnType ->
                 val typeInTargetClass = sourceToTargetClassSubstitutor.substitute(returnType, Variance.INVARIANT)
-                val descriptorToCheck = typeInTargetClass?.getConstructor()?.getDeclarationDescriptor() as? ClassDescriptor
+                val descriptorToCheck = typeInTargetClass?.constructor?.declarationDescriptor as? ClassDescriptor
                 if (descriptorToCheck != null) {
                     reportConflictIfAny(descriptorToCheck)
                 }
@@ -198,7 +189,7 @@ private fun KotlinPullUpData.checkVisibility(
                         super.visitReferenceExpression(expression)
 
                         val context = resolutionFacade.analyze(expression)
-                        expression.getReferences()
+                        expression.references
                                 .flatMap { (it as? JetReference)?.resolveToDescriptors(context) ?: emptyList() }
                                 .forEach(::reportConflictIfAny)
 

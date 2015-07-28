@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.icons.AllIcons
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable
-import com.intellij.refactoring.ui.MemberSelectionTable
 import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.idea.JetIconProvider
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -38,13 +35,13 @@ public class KotlinMemberSelectionTable(
     override fun getAbstractColumnValue(memberInfo: KotlinMemberInfo): Any? {
         if (memberInfo.isStatic()) return null
 
-        val member = memberInfo.getMember()
+        val member = memberInfo.member
         if (member !is JetNamedFunction && member !is JetProperty) return null
 
         if (member.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return it }
         }
-        if (myMemberInfoModel.isAbstractEnabled(memberInfo)) return memberInfo.isToAbstract()
+        if (myMemberInfoModel.isAbstractEnabled(memberInfo)) return memberInfo.isToAbstract
         return myMemberInfoModel.isAbstractWhenDisabled(memberInfo)
     }
 
@@ -53,24 +50,24 @@ public class KotlinMemberSelectionTable(
 
         if (memberInfo.isStatic()) return false
 
-        val member = memberInfo.getMember()
+        val member = memberInfo.member
         if (member !is JetNamedFunction && member !is JetProperty) return false
 
         if (member.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return false }
         }
 
-        return memberInfo.isChecked() && myMemberInfoModel.isAbstractEnabled(memberInfo)
+        return memberInfo.isChecked && myMemberInfoModel.isAbstractEnabled(memberInfo)
     }
 
     override fun setVisibilityIcon(memberInfo: KotlinMemberInfo, icon: RowIcon) {
-        icon.setIcon(JetIconProvider.getVisibilityIcon(memberInfo.getMember().getModifierList()), 1);
+        icon.setIcon(JetIconProvider.getVisibilityIcon(memberInfo.member.modifierList), 1);
     }
 
     override fun getOverrideIcon(memberInfo: KotlinMemberInfo): Icon? {
         val defaultIcon = AbstractMemberSelectionTable.EMPTY_OVERRIDE_ICON
 
-        val member = memberInfo.getMember()
+        val member = memberInfo.member
         if (member !is JetNamedFunction && member !is JetProperty) return defaultIcon
 
         return when (memberInfo.getOverrides()) {

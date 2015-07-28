@@ -19,4 +19,4 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 import org.jetbrains.kotlin.psi.JetProperty
 
 fun JetProperty.mustBeAbstractInInterface() =
-        hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && getAccessors().isEmpty())
+        hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())

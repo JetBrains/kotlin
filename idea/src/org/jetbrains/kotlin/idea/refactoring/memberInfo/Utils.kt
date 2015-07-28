@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import org.jetbrains.kotlin.psi.JetClassOrObject
 
-public fun JetClassOrObject.qualifiedNameForRendering(): String = getFqName()?.asString() ?: getName() ?: "[Anonymous]"
+public fun JetClassOrObject.qualifiedNameForRendering(): String = fqName?.asString() ?: name ?: "[Anonymous]"

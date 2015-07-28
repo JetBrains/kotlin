@@ -16,21 +16,22 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
-import com.intellij.refactoring.memberPullUp.PullUpData
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.*
+import java.util.LinkedHashMap
 
 class KotlinPullUpData(val sourceClass: JetClassOrObject,
                        val targetClass: JetClass,
@@ -46,7 +47,7 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
     val targetClassDescriptor = resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
 
     val typeParametersInSourceClassContext by lazy {
-        sourceClassDescriptor.getTypeConstructor().getParameters() + sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
+        sourceClassDescriptor.typeConstructor.parameters + sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
                 .getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filterIsInstance<TypeParameterDescriptor>()
     }
@@ -55,17 +56,17 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
         val substitution = LinkedHashMap<TypeConstructor, TypeProjection>()
 
         typeParametersInSourceClassContext.forEach {
-            substitution[it.getTypeConstructor()] = TypeProjectionImpl(it.getUpperBoundsAsType())
+            substitution[it.typeConstructor] = TypeProjectionImpl(it.upperBoundsAsType)
         }
 
-        val superClassSubstitution = getTypeSubstitution(targetClassDescriptor.getDefaultType(), sourceClassDescriptor.getDefaultType())
+        val superClassSubstitution = getTypeSubstitution(targetClassDescriptor.defaultType, sourceClassDescriptor.defaultType)
                                      ?: emptyMap<TypeConstructor, TypeProjection>()
         for ((typeConstructor, typeProjection) in superClassSubstitution) {
-            val subClassTypeParameter = typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+            val subClassTypeParameter = typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
                                         ?: continue
-            val superClassTypeParameter = typeConstructor.getDeclarationDescriptor()
+            val superClassTypeParameter = typeConstructor.declarationDescriptor
                                           ?: continue
-            substitution[subClassTypeParameter.getTypeConstructor()] = TypeProjectionImpl(superClassTypeParameter.getDefaultType())
+            substitution[subClassTypeParameter.typeConstructor] = TypeProjectionImpl(superClassTypeParameter.defaultType)
         }
 
         TypeSubstitutor.create(substitution)

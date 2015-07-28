@@ -29,7 +29,7 @@ public class KotlinMemberSelectionPanel(title: String,
     private val table = createMemberSelectionTable(memberInfo, abstractColumnHeader)
 
     init {
-        setLayout(BorderLayout())
+        layout = BorderLayout()
 
         val scrollPane = ScrollPaneFactory.createScrollPane(table)
         add(SeparatorFactory.createSeparator(title, table), BorderLayout.NORTH)

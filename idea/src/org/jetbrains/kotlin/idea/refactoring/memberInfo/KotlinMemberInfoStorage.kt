@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
 import com.intellij.refactoring.classMembers.AbstractMemberInfoStorage
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -39,11 +37,11 @@ public class KotlinMemberInfoStorage(
     override fun memberConflict(member1: JetNamedDeclaration, member: JetNamedDeclaration): Boolean {
         val descriptor1 = member1.resolveToDescriptor()
         val descriptor = member.resolveToDescriptor()
-        if (descriptor1.getName() != descriptor.getName()) return false
+        if (descriptor1.name != descriptor.name) return false
 
         return when {
             descriptor1 is FunctionDescriptor && descriptor is FunctionDescriptor -> {
-                !OverloadUtil.isOverloadable(descriptor1, descriptor).isSuccess()
+                !OverloadUtil.isOverloadable(descriptor1, descriptor).isSuccess
             }
             descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor,
             descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true
@@ -53,9 +51,9 @@ public class KotlinMemberInfoStorage(
 
     override fun buildSubClassesMap(aClass: JetClassOrObject) {
         val classDescriptor = aClass.resolveToDescriptor() as ClassDescriptor
-        val classType = classDescriptor.getDefaultType()
+        val classType = classDescriptor.defaultType
         for (supertype in classType.immediateSupertypes()) {
-            val superClass = supertype.getConstructor().getDeclarationDescriptor()?.getSource()?.getPsi() as? JetClassOrObject
+            val superClass = supertype.constructor.declarationDescriptor?.source?.getPsi() as? JetClassOrObject
                              ?: continue
             getSubclasses(superClass).add(aClass)
             buildSubClassesMap(superClass)
@@ -70,7 +68,7 @@ public class KotlinMemberInfoStorage(
 
     override fun extractClassMembers(aClass: JetClassOrObject, temp: ArrayList<KotlinMemberInfo>) {
         val context = aClass.analyze()
-        aClass.getDeclarations()
+        aClass.declarations
                 .filter { it is JetNamedDeclaration
                           && it !is JetConstructor<*>
                           && !(it is JetObjectDeclaration && it.isCompanion())
@@ -79,9 +77,9 @@ public class KotlinMemberInfoStorage(
         aClass.getDelegationSpecifiers()
                 .filterIsInstance<JetDelegatorToSuperClass>()
                 .map {
-                    val type = context[BindingContext.TYPE, it.getTypeReference()]
-                    val classDescriptor = type?.getConstructor()?.getDeclarationDescriptor() as? ClassDescriptor
-                    classDescriptor?.getSource()?.getPsi() as? JetClass
+                    val type = context[BindingContext.TYPE, it.typeReference]
+                    val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
+                    classDescriptor?.source?.getPsi() as? JetClass
                 }
                 .filter { it != null && it.isInterface() }
                 .mapTo(temp) { KotlinMemberInfo(it!!, true) }

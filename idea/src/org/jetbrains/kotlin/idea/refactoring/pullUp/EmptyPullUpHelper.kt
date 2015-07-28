@@ -21,17 +21,7 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.refactoring.classMembers.MemberInfoBase
-import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
-import com.intellij.refactoring.memberPullUp.PullUpHelperFactory
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import java.util.LinkedHashSet
 
 object EmptyPullUpHelper : PullUpHelper<MemberInfoBase<PsiMember>> {

@@ -40,34 +40,34 @@ public class KotlinMemberInfo(member: JetNamedDeclaration, val isSuperClass: Boo
 
     init {
         val memberDescriptor = member.resolveToDescriptor()
-        isStatic = member.getParent() is JetFile
+        isStatic = member.parent is JetFile
 
         if (member is JetClass && isSuperClass) {
             if (member.isInterface()) {
-                displayName = RefactoringBundle.message("member.info.implements.0", member.getName())
+                displayName = RefactoringBundle.message("member.info.implements.0", member.name)
                 overrides = false
             }
             else {
-                displayName = RefactoringBundle.message("member.info.extends.0", member.getName())
+                displayName = RefactoringBundle.message("member.info.extends.0", member.name)
                 overrides = true
             }
         }
         else {
             displayName = RENDERER.render(memberDescriptor)
-            if (memberDescriptor is MemberDescriptor && memberDescriptor.getModality() == Modality.ABSTRACT) {
+            if (memberDescriptor is MemberDescriptor && memberDescriptor.modality == Modality.ABSTRACT) {
                 displayName = "abstract $displayName"
             }
 
-            val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.getOverriddenDescriptors() ?: emptySet()
+            val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.overriddenDescriptors ?: emptySet()
             if (overriddenDescriptors.isNotEmpty()) {
-                overrides = overriddenDescriptors.any { it.getModality() != Modality.ABSTRACT }
+                overrides = overriddenDescriptors.any { it.modality != Modality.ABSTRACT }
             }
         }
     }
 }
 
 public fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
-    val declaration = getMember()
+    val declaration = member
     val psiMember: PsiMember? = when (declaration) {
         is JetNamedFunction, is JetProperty -> declaration.getRepresentativeLightMethod()
         is JetClassOrObject -> declaration.toLightClass()
@@ -76,6 +76,6 @@ public fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
     if (psiMember == null) return null
 
     val info = MemberInfo(psiMember, isSuperClass, null)
-    info.setToAbstract(isToAbstract())
+    info.isToAbstract = isToAbstract
     return info
 }
