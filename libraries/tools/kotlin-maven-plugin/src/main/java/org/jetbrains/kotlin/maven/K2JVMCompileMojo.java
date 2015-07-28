@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.maven;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.sampullara.cli.Args;
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -85,7 +87,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        getLog().info("Classes directory is " + output);
         arguments.destination = output;
 
         // don't include runtime, it should be in maven dependencies
@@ -96,7 +97,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             arguments.module = module;
         }
 
-        ArrayList<String> classpathList = new ArrayList<String>(classpath);
+        List<String> classpathList = filterClassPath(classpath);
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
@@ -121,6 +122,15 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (arguments.noOptimize) {
             getLog().info("Optimization is turned off");
         }
+    }
+
+    protected List<String> filterClassPath(List<String> classpath) {
+        return KotlinPackage.filter(classpath, new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String s) {
+                return new File(s).exists() || new File(project.getBasedir(), s).exists();
+            }
+        });
     }
 
     protected String getFullAnnotationsPath(Log log, List<String> annotations) {
