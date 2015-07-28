@@ -118,79 +118,36 @@ object KDocRenderer {
     public fun MarkdownNode.toHtml(): String {
         val sb = StringBuilder()
         visit { node, processChildren ->
+            fun wrapChildren(tag: String, newline: Boolean = false) {
+                sb.append("<$tag>")
+                if (newline) sb.appendln()
+                processChildren()
+                sb.append("</$tag>")
+                if (newline) sb.appendln()
+            }
+
             val nodeType = node.type
             val nodeText = node.text
             when (nodeType) {
-                MarkdownElementTypes.UNORDERED_LIST -> {
-                    sb.appendln("<ul>")
-                    processChildren()
-                    sb.appendln("</ul>")
-                }
-                MarkdownElementTypes.ORDERED_LIST -> {
-                    sb.appendln("<ol>")
-                    processChildren()
-                    sb.appendln("</ol>")
-                }
-                MarkdownElementTypes.LIST_ITEM -> {
-                    sb.append("<li>")
-                    processChildren()
-                    sb.appendln("</li>")
-                }
-                MarkdownElementTypes.EMPH -> {
-                    sb.append("<em>")
-                    processChildren()
-                    sb.append("</em>")
-                }
-                MarkdownElementTypes.STRONG -> {
-                    sb.append("<strong>")
-                    processChildren()
-                    sb.append("</strong>")
-                }
-                MarkdownElementTypes.ATX_1 -> {
-                    sb.append("<h1>")
-                    processChildren()
-                    sb.append("</h1>")
-                }
-                MarkdownElementTypes.ATX_2 -> {
-                    sb.append("<h2>")
-                    processChildren()
-                    sb.append("</h2>")
-                }
-                MarkdownElementTypes.ATX_3 -> {
-                    sb.append("<h3>")
-                    processChildren()
-                    sb.append("</h3>")
-                }
-                MarkdownElementTypes.ATX_4 -> {
-                    sb.append("<h4>")
-                    processChildren()
-                    sb.append("</h4>")
-                }
-                MarkdownElementTypes.ATX_5 -> {
-                    sb.append("<h5>")
-                    processChildren()
-                    sb.append("</h5>")
-                }
-                MarkdownElementTypes.ATX_6 -> {
-                    sb.append("<h6>")
-                    processChildren()
-                    sb.append("</h6>")
-                }
-                MarkdownElementTypes.BLOCK_QUOTE -> {
-                    sb.append("<blockquote>")
-                    processChildren()
-                    sb.append("</blockquote>")
-                }
+                MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
+                MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
+                MarkdownElementTypes.LIST_ITEM -> wrapChildren("li")
+                MarkdownElementTypes.EMPH -> wrapChildren("em")
+                MarkdownElementTypes.STRONG -> wrapChildren("strong")
+                MarkdownElementTypes.ATX_1 -> wrapChildren("h1")
+                MarkdownElementTypes.ATX_2 -> wrapChildren("h2")
+                MarkdownElementTypes.ATX_3 -> wrapChildren("h3")
+                MarkdownElementTypes.ATX_4 -> wrapChildren("h4")
+                MarkdownElementTypes.ATX_5 -> wrapChildren("h5")
+                MarkdownElementTypes.ATX_6 -> wrapChildren("h6")
+                MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
                 MarkdownElementTypes.PARAGRAPH -> {
-                    sb.append("<p>")
-                    processChildren()
-                    sb.appendln("</p>")
+                    while (sb.length() > 0 && sb[sb.length() - 1] == ' ') {
+                        sb.deleteCharAt(sb.length() - 1)
+                    }
+                    wrapChildren("p", newline = true)
                 }
-                MarkdownElementTypes.CODE_SPAN -> {
-                    sb.append("<code>")
-                    processChildren()
-                    sb.append("</code>")
-                }
+                MarkdownElementTypes.CODE_SPAN -> wrapChildren("code")
                 MarkdownElementTypes.CODE_BLOCK -> {
                     sb.append("<pre><code>")
                     processChildren()
@@ -218,12 +175,16 @@ object KDocRenderer {
                 MarkdownTokenTypes.TEXT,
                 MarkdownTokenTypes.WHITE_SPACE,
                 MarkdownTokenTypes.COLON,
+                MarkdownTokenTypes.SINGLE_QUOTE,
                 MarkdownTokenTypes.DOUBLE_QUOTE,
                 MarkdownTokenTypes.LPAREN,
                 MarkdownTokenTypes.RPAREN,
                 MarkdownTokenTypes.LBRACKET,
                 MarkdownTokenTypes.RBRACKET -> {
                     sb.append(nodeText)
+                }
+                MarkdownTokenTypes.EOL -> {
+                    sb.append(" ")
                 }
                 MarkdownTokenTypes.GT -> sb.append("&gt;")
                 MarkdownTokenTypes.LT -> sb.append("&lt;")
