@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
-import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.impl.light.LightField
@@ -31,30 +30,25 @@ import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.asAssignment
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.ArrayList
 import java.util.Comparator
 import java.util.LinkedHashMap
@@ -64,12 +58,6 @@ class KotlinPullUpHelper(
         private val javaData: PullUpData,
         private val data: KotlinPullUpData
 ) : PullUpHelper<MemberInfoBase<PsiMember>> {
-    companion object {
-        private var JetElement.newFqName: FqName? by CopyableUserDataProperty(Key.create("NEW_FQ_NAME"))
-        private var JetElement.replaceWithTargetThis: Boolean? by CopyableUserDataProperty(Key.create("REPLACE_WITH_TARGET_THIS"))
-        private var JetElement.newTypeText: String? by CopyableUserDataProperty(Key.create("NEW_TYPE_TEXT"))
-    }
-
     private fun JetExpression.isMovable(): Boolean {
         return accept(
                 object: JetVisitor<Boolean, Nothing?>() {
@@ -334,184 +322,13 @@ class KotlinPullUpHelper(
         return clashingSuperDescriptor.source.getPsi() as? JetCallableDeclaration
     }
 
-    private fun makeAbstract(sourceMember: JetCallableDeclaration, targetMember: JetCallableDeclaration) {
-        if (!data.isInterfaceTarget) {
-            targetMember.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
-        }
-
-        if (sourceMember.typeReference == null) {
-            var type = (data.memberDescriptors[sourceMember] as CallableMemberDescriptor).returnType
-            if (type == null || type.isError) {
-                type = KotlinBuiltIns.getInstance().nullableAnyType
-            }
-            else {
-                type = data.sourceToTargetClassSubstitutor.substitute(type, Variance.INVARIANT)
-                       ?: KotlinBuiltIns.getInstance().nullableAnyType
-            }
-
-            if (sourceMember is JetProperty || !type.isUnit()) {
-                val typeRef = JetPsiFactory(sourceMember).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-                targetMember.setTypeReference(typeRef)
-            }
-        }
-
-        val deleteFrom = when (sourceMember) {
-            is JetProperty -> {
-                targetMember as JetProperty
-                val accessors = targetMember.accessors
-                targetMember.equalsToken ?: targetMember.delegate ?: accessors.firstOrNull()
-            }
-
-            is JetNamedFunction -> {
-                targetMember as JetNamedFunction
-                targetMember.equalsToken ?: targetMember.bodyExpression
-            }
-
-            else -> null
-        }
-
-        if (deleteFrom != null) {
-            targetMember.deleteChildRange(deleteFrom, targetMember.lastChild)
-        }
-    }
-
-    private fun markElements(member: JetNamedDeclaration): List<JetElement> {
-        val affectedElements = ArrayList<JetElement>()
-
-        member.accept(
-                object: JetVisitorVoid() {
-                    private fun visitSuperOrThis(expression: JetInstanceExpressionWithLabel) {
-                        val referenceTarget = data.sourceClassContext[BindingContext.REFERENCE_TARGET, expression.instanceReference]
-                        if (referenceTarget == data.targetClassDescriptor) {
-                            expression.replaceWithTargetThis = true
-                            affectedElements.add(expression)
-                        }
-                    }
-
-                    override fun visitElement(element: PsiElement) {
-                        element.allChildren.forEach { it.accept(this) }
-                    }
-
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        val resolvedCall = expression.getResolvedCall(data.sourceClassContext) ?: return
-                        var receiver = resolvedCall.getExplicitReceiverValue()
-                        if (!receiver.exists()) {
-                            receiver = resolvedCall.extensionReceiver
-                        }
-                        if (!receiver.exists()) {
-                            receiver = resolvedCall.dispatchReceiver
-                        }
-                        if (!receiver.exists()) return
-
-                        val implicitThis = receiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: return
-                        if (implicitThis.isCompanionObject
-                            && DescriptorUtils.isAncestor(data.sourceClassDescriptor, implicitThis, true)) {
-                            val qualifierFqName = implicitThis.importableFqName ?: return
-
-                            expression.newFqName = FqName("${qualifierFqName.asString()}.${expression.getReferencedName()}")
-                            affectedElements.add(expression)
-                        }
-                    }
-
-                    override fun visitThisExpression(expression: JetThisExpression) {
-                        visitSuperOrThis(expression)
-                    }
-
-                    override fun visitSuperExpression(expression: JetSuperExpression) {
-                        visitSuperOrThis(expression)
-                    }
-
-                    override fun visitTypeReference(typeReference: JetTypeReference) {
-                        val oldType = data.sourceClassContext[BindingContext.TYPE, typeReference] ?: return
-                        val newType = data.sourceToTargetClassSubstitutor.substitute(oldType, Variance.INVARIANT) ?: return
-                        typeReference.newTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(newType)
-                        affectedElements.add(typeReference)
-                    }
-                }
-        )
-
-        return affectedElements
-    }
-
-    private fun processMarkedElements(member: JetNamedDeclaration) {
-        val psiFactory = JetPsiFactory(member)
-        val targetThis = psiFactory.createExpression("this@${data.targetClassDescriptor.name.asString()}")
-        val shorteningOptionsForThis = ShortenReferences.Options(removeThisLabels = true, removeThis = true)
-
-        member.accept(
-                object: JetVisitorVoid() {
-                    private fun visitSuperOrThis(expression: JetInstanceExpressionWithLabel) {
-                        expression.replaceWithTargetThis?.let {
-                            expression.replaceWithTargetThis = null
-
-                            val newThisExpression = expression.replace(targetThis) as JetExpression
-                            newThisExpression.getQualifiedExpressionForReceiverOrThis().addToShorteningWaitSet(shorteningOptionsForThis)
-                        }
-                    }
-
-                    override fun visitElement(element: PsiElement) {
-                        for (it in element.allChildren.toList()) {
-                            it.accept(this)
-                        }
-                    }
-
-                    override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                        expression.newFqName?.let {
-                            expression.newFqName = null
-
-                            expression.mainReference.bindToFqName(it)
-                        }
-                    }
-
-                    override fun visitThisExpression(expression: JetThisExpression) {
-                        visitSuperOrThis(expression)
-                    }
-
-                    override fun visitSuperExpression(expression: JetSuperExpression) {
-                        visitSuperOrThis(expression)
-                    }
-
-                    override fun visitTypeReference(typeReference: JetTypeReference) {
-                        typeReference.newTypeText?.let {
-                            typeReference.newTypeText = null
-
-                            (typeReference.replace(psiFactory.createType(it)) as JetElement).addToShorteningWaitSet()
-                        }
-                    }
-                }
-        )
-    }
-
-    private fun clearMarking(markedElements: List<JetElement>) {
-        markedElements.forEach {
-            it.newFqName = null
-            it.newTypeText = null
-            it.replaceWithTargetThis = null
-        }
-    }
-
     private fun moveSuperInterface(member: JetClass, substitutor: PsiSubstitutor) {
         val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
-        val currentSpecifier =
-                data.sourceClass.getDelegationSpecifiers()
-                        .filterIsInstance<JetDelegatorToSuperClass>()
-                        .firstOrNull {
-                            val referencedType = data.sourceClassContext[BindingContext.TYPE, it.typeReference]
-                            referencedType?.constructor?.declarationDescriptor == classDescriptor
-                        } ?: return
+        val currentSpecifier = data.sourceClass.getDelegatorToSuperClassByDescriptor(classDescriptor, data.sourceClassContext) ?: return
         when (data.targetClass) {
             is JetClass -> {
                 data.sourceClass.removeDelegationSpecifier(currentSpecifier)
-
-                if (DescriptorUtils.isSubclass(data.targetClassDescriptor, classDescriptor)) return
-
-                val referencedType = data.sourceClassContext[BindingContext.TYPE, currentSpecifier.typeReference]!!
-                val typeInTargetClass = data.sourceToTargetClassSubstitutor.substitute(referencedType, Variance.INVARIANT)
-                if (!(typeInTargetClass != null && !typeInTargetClass.isError)) return
-
-                val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
-                val newSpecifier = JetPsiFactory(member).createDelegatorToSuperClass(renderedType)
-                data.targetClass.addDelegationSpecifier(newSpecifier).addToShorteningWaitSet()
+                addDelegatorToSuperClass(currentSpecifier, data.targetClass, data.targetClassDescriptor, data.sourceClassContext, data.sourceToTargetClassSubstitutor)
             }
 
             is PsiClass -> {
@@ -601,7 +418,7 @@ class KotlinPullUpHelper(
             return
         }
 
-        val markedElements = markElements(member)
+        val markedElements = markElements(member, data.sourceClassContext, data.sourceClassDescriptor, data.targetClassDescriptor)
         val memberCopy = member.copy() as JetNamedDeclaration
 
         fun moveClassOrObject(member: JetClassOrObject, memberCopy: JetClassOrObject): JetClassOrObject {
@@ -629,7 +446,7 @@ class KotlinPullUpHelper(
             }
             if (toAbstract) {
                 if (!originalIsAbstract) {
-                    makeAbstract(member, memberCopy)
+                    makeAbstract(memberCopy, data.memberDescriptors[member] as CallableMemberDescriptor, data.sourceToTargetClassSubstitutor, data.targetClass)
                 }
 
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, data.targetClass)
@@ -661,7 +478,7 @@ class KotlinPullUpHelper(
                 else -> return
             }
 
-            processMarkedElements(movedMember)
+            applyMarking(movedMember, data.sourceToTargetClassSubstitutor, data.targetClassDescriptor)
             addMovedMember(movedMember)
         }
         finally {

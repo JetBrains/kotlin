@@ -17,10 +17,20 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 fun JetProperty.mustBeAbstractInInterface() =
         hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())
@@ -74,4 +84,76 @@ fun JetClass.makeAbstract() {
     if (!isInterface()) {
         addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
     }
+}
+
+fun JetClassOrObject.getDelegatorToSuperClassByDescriptor(
+        descriptor: ClassDescriptor,
+        context: BindingContext
+): JetDelegatorToSuperClass? {
+    return getDelegationSpecifiers()
+            .filterIsInstance<JetDelegatorToSuperClass>()
+            .firstOrNull {
+                val referencedType = context[BindingContext.TYPE, it.typeReference]
+                referencedType?.constructor?.declarationDescriptor == descriptor
+            }
+}
+
+fun makeAbstract(member: JetCallableDeclaration,
+                 originalMemberDescriptor: CallableMemberDescriptor,
+                 substitutor: TypeSubstitutor,
+                 targetClass: JetClass) {
+    if (!targetClass.isInterface()) {
+        member.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+    }
+
+    if (member.typeReference == null) {
+        var type = originalMemberDescriptor.returnType
+        if (type == null || type.isError) {
+            type = KotlinBuiltIns.getInstance().nullableAnyType
+        }
+        else {
+            type = substitutor.substitute(type, Variance.INVARIANT) ?: KotlinBuiltIns.getInstance().nullableAnyType
+        }
+
+        if (member is JetProperty || !type.isUnit()) {
+            val typeRef = JetPsiFactory(targetClass).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+            member.setTypeReference(typeRef)
+        }
+    }
+
+    val deleteFrom = when (member) {
+        is JetProperty -> {
+            member.equalsToken ?: member.delegate ?: member.accessors.firstOrNull()
+        }
+
+        is JetNamedFunction -> {
+            member.equalsToken ?: member.bodyExpression
+        }
+
+        else -> null
+    }
+
+    if (deleteFrom != null) {
+        member.deleteChildRange(deleteFrom, member.lastChild)
+    }
+}
+
+fun addDelegatorToSuperClass(
+        delegator: JetDelegatorToSuperClass,
+        targetClass: JetClassOrObject,
+        targetClassDescriptor: ClassDescriptor,
+        context: BindingContext,
+        substitutor: TypeSubstitutor
+) {
+    val referencedType = context[BindingContext.TYPE, delegator.typeReference]!!
+    val referencedClass = referencedType.constructor.declarationDescriptor as? ClassDescriptor ?: return
+
+    if (targetClassDescriptor == referencedClass || DescriptorUtils.isDirectSubclass(targetClassDescriptor, referencedClass)) return
+
+    val typeInTargetClass = substitutor.substitute(referencedType, Variance.INVARIANT)
+    if (!(typeInTargetClass != null && !typeInTargetClass.isError)) return
+
+    val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
+    val newSpecifier = JetPsiFactory(targetClass).createDelegatorToSuperClass(renderedType)
+    targetClass.addDelegationSpecifier(newSpecifier).addToShorteningWaitSet()
 }
