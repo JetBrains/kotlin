@@ -375,7 +375,7 @@ public class MethodInliner {
         node = prepareNode(node, finallyDeepShift);
 
         try {
-            MandatoryMethodTransformer.INSTANCE$.transform("fake", node);
+            new MandatoryMethodTransformer().transform("fake", node);
         }
         catch (Throwable e) {
             throw wrapException(e, node, "couldn't inline method call");

@@ -20,136 +20,144 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.*
 
-public object LabelNormalizationMethodTransformer : MethodTransformer() {
-    val newLabelNodes = hashMapOf<LabelNode, LabelNode>()
-    val removedLabelNodes = hashSetOf<LabelNode>()
-
+public class LabelNormalizationMethodTransformer : MethodTransformer() {
     public override fun transform(internalClassName: String, methodNode: MethodNode) {
-        newLabelNodes.clear()
-        removedLabelNodes.clear()
-
-        with(methodNode.instructions) {
-            insertBefore(getFirst(), LabelNode(Label()))
-            insert(getLast(), LabelNode(Label()))
-        }
-
-        rewriteLabelInsns(methodNode)
-        if (removedLabelNodes.isEmpty()) return
-
-        rewriteInsns(methodNode)
-        rewriteTryCatchBlocks(methodNode)
-        rewriteLocalVars(methodNode)
+        TransformerForMethod(methodNode).transform()
     }
 
-    private fun rewriteLabelInsns(methodNode: MethodNode) {
-        var prevLabelNode: LabelNode? = null
-        var thisNode = methodNode.instructions.getFirst()
-        while (thisNode != null) {
-            if (thisNode is LabelNode) {
-                if (prevLabelNode != null) {
-                    newLabelNodes[thisNode] = prevLabelNode
-                    removedLabelNodes.add(thisNode)
-                    thisNode = methodNode.instructions.removeNodeGetNext(thisNode)
+    private class TransformerForMethod(val methodNode: MethodNode) {
+        val instructions = methodNode.instructions
+        val newLabelNodes = hashMapOf<Label, LabelNode>()
+
+        public fun transform() {
+            if (rewriteLabelInstructions()) {
+                rewriteNonLabelInstructions()
+                rewriteTryCatchBlocks()
+                rewriteLocalVars()
+            }
+        }
+
+        private fun rewriteLabelInstructions(): Boolean {
+            var removedAnyLabels = false
+            var thisNode = instructions.first
+            while (thisNode != null) {
+                if (thisNode is LabelNode) {
+                    val prevNode = thisNode.previous
+                    if (prevNode is LabelNode) {
+                        newLabelNodes[thisNode.label] = prevNode
+                        removedAnyLabels = true
+                        thisNode = instructions.removeNodeGetNext(thisNode)
+                    }
+                    else {
+                        newLabelNodes[thisNode.label] = thisNode
+                        thisNode = thisNode.next
+                    }
                 }
                 else {
-                    prevLabelNode = thisNode
-                    newLabelNodes[thisNode] = thisNode
-                    thisNode = thisNode.getNext()
+                    thisNode = thisNode.next
                 }
             }
-            else {
-                prevLabelNode = null
-                thisNode = thisNode.getNext()
+            return removedAnyLabels
+        }
+
+        private fun rewriteNonLabelInstructions() {
+            var thisNode = instructions.first
+            while (thisNode != null) {
+                thisNode = when (thisNode) {
+                    is JumpInsnNode ->
+                        rewriteJumpInsn(thisNode)
+                    is LineNumberNode ->
+                        rewriteLineNumberNode(thisNode)
+                    is LookupSwitchInsnNode ->
+                        rewriteLookupSwitchInsn(thisNode)
+                    is TableSwitchInsnNode ->
+                        rewriteTableSwitchInsn(thisNode)
+                    is FrameNode ->
+                        rewriteFrameNode(thisNode)
+                    else ->
+                        thisNode.next
+                }
             }
         }
-    }
 
-    private fun rewriteInsns(methodNode: MethodNode) {
-        var thisNode = methodNode.instructions.getFirst()
-        while (thisNode != null) {
-            thisNode = when (thisNode) {
-                is JumpInsnNode ->
-                    rewriteJumpInsn(methodNode, thisNode)
-                is LineNumberNode ->
-                    rewriteLineNumberNode(methodNode, thisNode)
-                is LookupSwitchInsnNode ->
-                    rewriteLookupSwitchInsn(methodNode, thisNode)
-                is TableSwitchInsnNode ->
-                    rewriteTableSwitchInsn(methodNode, thisNode)
-                is FrameNode ->
-                    rewriteFrameNode(methodNode, thisNode)
-                else ->
-                    thisNode.getNext()
-            }
-        }
-    }
+        private fun rewriteLineNumberNode(oldLineNode: LineNumberNode): AbstractInsnNode? =
+                instructions.replaceNodeGetNext(oldLineNode, oldLineNode.rewriteLabels())
 
-    private fun rewriteLineNumberNode(methodNode: MethodNode, oldLineNode: LineNumberNode): AbstractInsnNode? {
-        if (isRemoved(oldLineNode.start)) {
-            val newLineNode = oldLineNode.clone(newLabelNodes)
-            return methodNode.instructions.replaceNodeGetNext(oldLineNode, newLineNode)
-        }
-        else {
-            return oldLineNode.getNext()
-        }
-    }
+        private fun rewriteJumpInsn(oldJumpNode: JumpInsnNode): AbstractInsnNode? =
+                instructions.replaceNodeGetNext(oldJumpNode, oldJumpNode.rewriteLabels())
 
-    private fun rewriteJumpInsn(methodNode: MethodNode, oldJumpNode: JumpInsnNode): AbstractInsnNode? {
-        if (isRemoved(oldJumpNode.label)) {
-            val newJumpNode = oldJumpNode.clone(newLabelNodes)
-            return methodNode.instructions.replaceNodeGetNext(oldJumpNode, newJumpNode)
-        }
-        else {
-            return oldJumpNode.getNext()
-        }
-    }
+        private fun rewriteLookupSwitchInsn(oldSwitchNode: LookupSwitchInsnNode): AbstractInsnNode? =
+                instructions.replaceNodeGetNext(oldSwitchNode, oldSwitchNode.rewriteLabels())
 
-    private fun rewriteLookupSwitchInsn(methodNode: MethodNode, oldSwitchNode: LookupSwitchInsnNode): AbstractInsnNode? =
-            methodNode.instructions.replaceNodeGetNext(oldSwitchNode, oldSwitchNode.clone(newLabelNodes))
+        private fun rewriteTableSwitchInsn(oldSwitchNode: TableSwitchInsnNode): AbstractInsnNode? =
+                instructions.replaceNodeGetNext(oldSwitchNode, oldSwitchNode.rewriteLabels())
 
-    private fun rewriteTableSwitchInsn(methodNode: MethodNode, oldSwitchNode: TableSwitchInsnNode): AbstractInsnNode? =
-            methodNode.instructions.replaceNodeGetNext(oldSwitchNode, oldSwitchNode.clone(newLabelNodes))
+        private fun rewriteFrameNode(oldFrameNode: FrameNode): AbstractInsnNode? =
+                instructions.replaceNodeGetNext(oldFrameNode, oldFrameNode.rewriteLabels())
 
-    private fun rewriteFrameNode(methodNode: MethodNode, oldFrameNode: FrameNode): AbstractInsnNode? =
-            methodNode.instructions.replaceNodeGetNext(oldFrameNode, oldFrameNode.clone(newLabelNodes))
-
-    private fun rewriteTryCatchBlocks(methodNode: MethodNode) {
-        methodNode.tryCatchBlocks = methodNode.tryCatchBlocks.map { oldTcb ->
-            if (isRemoved(oldTcb.start) || isRemoved(oldTcb.end) || isRemoved(oldTcb.handler)) {
+        private fun rewriteTryCatchBlocks() {
+            methodNode.tryCatchBlocks = methodNode.tryCatchBlocks.map { oldTcb ->
                 val newTcb = TryCatchBlockNode(getNew(oldTcb.start), getNew(oldTcb.end), getNew(oldTcb.handler), oldTcb.type)
                 newTcb.visibleTypeAnnotations = oldTcb.visibleTypeAnnotations
                 newTcb.invisibleTypeAnnotations = oldTcb.invisibleTypeAnnotations
                 newTcb
             }
-            else {
-                oldTcb
+        }
+
+        private fun rewriteLocalVars() {
+            methodNode.localVariables = methodNode.localVariables.map { oldVar ->
+                LocalVariableNode(
+                        oldVar.name,
+                        oldVar.desc,
+                        oldVar.signature,
+                        getNew(oldVar.start),
+                        getNew(oldVar.end),
+                        oldVar.index
+                )
             }
         }
-    }
 
-    private fun rewriteLocalVars(methodNode: MethodNode) {
-        methodNode.localVariables = methodNode.localVariables.map { oldVar ->
-            if (isRemoved(oldVar.start) || isRemoved(oldVar.end)) {
-                LocalVariableNode(oldVar.name, oldVar.desc, oldVar.signature, getNew(oldVar.start), getNew(oldVar.end), oldVar.index)
-            }
-            else {
-                oldVar
-            }
+        private fun LineNumberNode.rewriteLabels(): AbstractInsnNode =
+                LineNumberNode(line, getNewOrOld(start))
+
+        private fun JumpInsnNode.rewriteLabels(): AbstractInsnNode =
+                JumpInsnNode(opcode, getNew(label))
+
+        private fun LookupSwitchInsnNode.rewriteLabels(): AbstractInsnNode {
+            val switchNode = LookupSwitchInsnNode(getNew(dflt), keys.toIntArray(), emptyArray())
+            switchNode.labels = labels.map { getNew(it) }
+            return switchNode
         }
-    }
 
-    private fun isRemoved(labelNode: LabelNode): Boolean = removedLabelNodes.contains(labelNode)
-    private fun getNew(oldLabelNode: LabelNode): LabelNode = newLabelNodes[oldLabelNode]!!
+        private fun TableSwitchInsnNode.rewriteLabels(): AbstractInsnNode {
+            val switchNode = TableSwitchInsnNode(min, max, getNew(dflt))
+            switchNode.labels = labels.map { getNew(it) }
+            return switchNode
+        }
+
+        private fun FrameNode.rewriteLabels(): AbstractInsnNode {
+            val frameNode = FrameNode(type, 0, emptyArray(), 0, emptyArray())
+            frameNode.local = local.map { if (it is LabelNode) getNewOrOld(it) else it }
+            frameNode.stack = stack.map { if (it is LabelNode) getNewOrOld(it) else it }
+            return frameNode
+        }
+
+        private fun getNew(oldLabelNode: LabelNode): LabelNode =
+                newLabelNodes[oldLabelNode.label]!!
+
+        private fun getNewOrOld(oldLabelNode: LabelNode): LabelNode =
+                newLabelNodes[oldLabelNode.label] ?: oldLabelNode
+    }
 }
 
 private fun InsnList.replaceNodeGetNext(oldNode: AbstractInsnNode, newNode: AbstractInsnNode): AbstractInsnNode? {
     insertBefore(oldNode, newNode)
     remove(oldNode)
-    return newNode.getNext()
+    return newNode.next
 }
 
 private fun InsnList.removeNodeGetNext(oldNode: AbstractInsnNode): AbstractInsnNode? {
-    val next = oldNode.getNext()
+    val next = oldNode.next
     remove(oldNode)
     return next
 }
