@@ -41,10 +41,12 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import java.lang.Boolean
@@ -56,6 +58,12 @@ import kotlin.properties.Delegates
 // merge functionality in this two files
 
 public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
+    private val arrayOfFunctionName: String = "arrayOf"
+    private val arrayConstructorName: String = "Array"
+    private val intArrayConstructorName = "IntArray"
+    private val arrayGetFunctionName = "get"
+    private val arraySetFunctionName = "set"
+
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
     public val integerVariablesValues: Map<Instruction, Edges<ValuesData>> = collectVariableValuesData()
 
@@ -110,7 +118,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val filteredIntFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intFakeVarsToValues)
         val filteredBoolVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolVarsToValues)
         val filteredBoolFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolFakeVarsToValues)
-        return ValuesData(HashMap(filteredIntVars), HashMap(filteredIntFakeVars), HashMap(filteredBoolVars), HashMap(filteredBoolFakeVars))
+        val filteredArrayVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.arraysToSizes)
+        return ValuesData(
+                HashMap(filteredIntVars),
+                HashMap(filteredIntFakeVars),
+                HashMap(filteredBoolVars),
+                HashMap(filteredBoolFakeVars),
+                HashMap(filteredArrayVars)
+        )
     }
 
     // this function is fully copied from PseudocodeVariableDataCollector
@@ -236,13 +251,15 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val unitedIntFakeVariables = headData.intFakeVarsToValues
         val unitedBoolVariables = headData.boolVarsToValues
         val unitedBoolFakeVariables = headData.boolFakeVarsToValues
+        val unitedArrayVariables = headData.arraysToSizes
         for (data in tailData) {
             mergeCorrespondingVariables(unitedIntVariables, data.intVarsToValues)
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
             unitedBoolVariables.putAll(data.boolVarsToValues) // TODO: this is stub, makes no sense
             unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
+            mergeCorrespondingVariables(unitedArrayVariables, data.arraysToSizes)
         }
-        return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables)
+        return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables, unitedArrayVariables)
     }
 
     private fun mergeCorrespondingVariables<K>(
@@ -275,8 +292,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
-                if (instruction.element is JetBinaryExpression) {
-                    processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                when {
+                    isArrayCreation(instruction) -> processArrayCreation(instruction, updatedData)
+                    isArrayGetCall(instruction), isArraySetCall(instruction) ->
+                        checkOutOfBoundAccess(instruction, updatedData)
+                    instruction.element is JetBinaryExpression ->
+                        processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
@@ -330,7 +351,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                  ?: throw Exception("Variable descriptor is null")
         val newFakeVariable = instruction.outputValue
         val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
-                variableDescriptor, { updatedData.boolVarsToValues[variableDescriptor] })
+                variableDescriptor, { updatedData.boolVarsToValues.getOrElse(
+                variableDescriptor, { updatedData.arraysToSizes[variableDescriptor] }) })
         when (referencedVariableValue) {
             is IntegerVariableValues ->
                 // we have the information about value, so it is definitely of integer type
@@ -364,6 +386,95 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         variableDescriptor,
                         valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
                 )
+            }
+            KotlinBuiltIns.isArray(targetType) -> {
+                val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
+                updatedData.arraysToSizes.put(
+                        variableDescriptor,
+                        valuesToAssign?.let { it.copy() } ?: IntegerVariableValues.createUndefined()
+                )
+            }
+        }
+    }
+
+    private fun tryGetTargetDescriptor(target: AccessTarget): CallableDescriptor? {
+        return when(target) {
+            is AccessTarget.Declaration -> target.descriptor
+            is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
+            else -> null
+        }
+    }
+
+    private fun isArrayCreation(instruction: CallInstruction): kotlin.Boolean {
+        // todo: change to annotations checking
+        return instruction.resolvedCall
+                .getCandidateDescriptor()
+                .getReturnType()
+                ?.let { KotlinBuiltIns.isArray(it) }
+               ?: false
+    }
+
+    private fun processArrayCreation(instruction: CallInstruction, updatedData: ValuesData) {
+        val arraySize = tryExtractArraySize(instruction, updatedData)
+        val arraySizeVariable = instruction.outputValue
+        if (arraySizeVariable != null && arraySize != null) {
+            updatedData.intFakeVarsToValues[arraySizeVariable] = arraySize
+        }
+    }
+
+    private fun tryExtractArraySize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
+        if(instruction.element is JetCallExpression) {
+            val calledName = getCalledName(instruction.element)
+            return when(calledName) {
+                arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
+                arrayConstructorName, intArrayConstructorName -> {
+                    // there are other kinds of array constructors (for example, ByteArray)
+                    // and they will be added later
+                    assert(instruction.inputValues.size() >= 1,
+                           "Array creation calls are expected to have at least one argument")
+                    valuesData.intFakeVarsToValues[instruction.inputValues[0]]
+                }
+                else -> null
+            }
+        }
+        return null
+    }
+
+    private fun isArrayGetCall(instruction: CallInstruction): kotlin.Boolean {
+        val isGetFunctionCall = instruction.element is JetCallExpression &&
+                                getCalledName(instruction.element)?.let { it == arrayGetFunctionName } ?: false
+        val isGetOperation = (isGetFunctionCall || instruction.element is JetArrayAccessExpression) &&
+                             instruction.inputValues.size() == 2
+        val receiverIsArray = KotlinBuiltIns.isArray(instruction.resolvedCall.getDispatchReceiver().getType())
+        return isGetOperation && receiverIsArray
+    }
+
+    private fun isArraySetCall(instruction: CallInstruction): kotlin.Boolean {
+        val isSetFunctionCall = instruction.element is JetCallExpression &&
+                                getCalledName(instruction.element)?.let { it == arraySetFunctionName } ?: false
+        val isSetThroughAccessOperation = instruction.element is JetBinaryExpression &&
+                                          instruction.element.getLeft() is JetArrayAccessExpression
+        val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
+                             instruction.inputValues.size() == 3
+        val receiverIsArray = KotlinBuiltIns.isArray(instruction.resolvedCall.getDispatchReceiver().getType())
+        return isSetOperation && receiverIsArray
+    }
+
+    private fun getCalledName(callExpression: JetCallExpression) =
+            callExpression.getCalleeExpression()?.getNode()?.getText()
+
+    private fun checkOutOfBoundAccess(instruction: Instruction, updatedData: ValuesData) {
+        val arraySizeVariable = instruction.inputValues[0]
+        val accessPositionVariable = instruction.inputValues[1]
+        val arraySizes = updatedData.intFakeVarsToValues[arraySizeVariable]
+        val accessPositions = updatedData.intFakeVarsToValues[accessPositionVariable]
+        if (arraySizes != null && accessPositions != null &&
+            arraySizes.isDefined && accessPositions.isDefined) {
+            val sizes = arraySizes.getAvailableValues().sort()
+            val positions = accessPositions.getAvailableValues().sort()
+            if (sizes.first() <= positions.last()) {
+                // out of bound exception can be produced here
+                // todo: generate warning
             }
         }
     }
@@ -402,14 +513,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetTokens.LT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
                 x.less(y, leftOperandDescriptor, updatedData)
             }
-        }
-    }
-
-    private fun tryGetTargetDescriptor(target: AccessTarget): CallableDescriptor? {
-        return when(target) {
-            is AccessTarget.Declaration -> target.descriptor
-            is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
-            else -> null
         }
     }
 }

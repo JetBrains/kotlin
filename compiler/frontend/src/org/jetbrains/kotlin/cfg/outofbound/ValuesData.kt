@@ -24,7 +24,8 @@ public data class ValuesData(
         val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
         val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
         val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
-        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap()
+        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap(),
+        val arraysToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
 ) {
     override fun toString(): String {
         val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
@@ -43,7 +44,8 @@ public data class ValuesData(
                 copyIntsMap(intVarsToValues),
                 copyIntsMap(intFakeVarsToValues),
                 HashMap(boolVarsToValues),
-                HashMap(boolFakeVarsToValues)
+                HashMap(boolFakeVarsToValues),
+                copyIntsMap(arraysToSizes)
         )
     }
 }
