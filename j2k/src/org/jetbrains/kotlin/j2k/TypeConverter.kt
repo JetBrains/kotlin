@@ -16,28 +16,21 @@
 
 package org.jetbrains.kotlin.j2k
 
-import org.jetbrains.kotlin.j2k.ast.Type
-import org.jetbrains.kotlin.j2k.ast.Nullability
-import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.ast.assignPrototype
-import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
-import org.jetbrains.kotlin.j2k.ast.assignNoPrototype
-import org.jetbrains.kotlin.j2k.ast.ErrorType
 import com.intellij.codeInsight.NullableNotNullManager
-import org.jetbrains.kotlin.j2k.ast.ArrayType
-import org.jetbrains.kotlin.j2k.ast.ClassType
-import org.jetbrains.kotlin.j2k.ast.ReferenceElement
-import org.jetbrains.kotlin.j2k.ast.Identifier
-import java.util.HashMap
-import org.jetbrains.kotlin.j2k.ast.Mutability
-import java.util.HashSet
+import com.intellij.psi.*
+import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.TypeUtils
+import java.util.HashMap
+import java.util.HashSet
 
 class TypeConverter(val converter: Converter) {
+    private val typesBeingConverted = HashSet<PsiType>()
+
     public fun convertType(
             type: PsiType?,
             nullability: Nullability = Nullability.Default,
@@ -46,7 +39,14 @@ class TypeConverter(val converter: Converter) {
     ): Type {
         if (type == null) return ErrorType().assignNoPrototype()
 
+        if (!typesBeingConverted.add(type)) { // recursion in conversion
+            return ErrorType().assignNoPrototype()
+        }
+
         val result = type.accept<Type>(TypeVisitor(converter, type, mutability, inAnnotationType))!!.assignNoPrototype()
+
+        typesBeingConverted.remove(type)
+
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()

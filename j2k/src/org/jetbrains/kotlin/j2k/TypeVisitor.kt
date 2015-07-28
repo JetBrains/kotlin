@@ -106,7 +106,7 @@ class TypeVisitor(
             if (targetClass != null) {
                 return targetClass.getTypeParameters().map {
                     val superType = it.getSuperTypes().first() // there must be at least one super type always
-                    ClassType(constructReferenceElement(superType, mutability), Nullability.Default, converter.settings).assignNoPrototype()
+                    typeConverter.convertType(superType, Nullability.Default, mutability, inAnnotationType).assignNoPrototype()
                 }
             }
         }
