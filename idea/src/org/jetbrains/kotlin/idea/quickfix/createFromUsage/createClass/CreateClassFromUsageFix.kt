@@ -43,7 +43,7 @@ enum class ClassKind(val keyword: String, val description: String) {
     ENUM_CLASS("enum class", "enum"),
     ENUM_ENTRY("", "enum constant"),
     ANNOTATION_CLASS("annotation class", "annotation"),
-    TRAIT("interface", "interface"),
+    INTERFACE("interface", "interface"),
     OBJECT("object", "object"),
     DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
@@ -119,7 +119,7 @@ public class CreateClassFromUsageFix<E : JetElement>(
 
             val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(
-                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == TRAIT
+                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == INTERFACE
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
             project.executeCommand(text) { builder.build() }

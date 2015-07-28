@@ -38,12 +38,12 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
         val typeRefParent = element.parent?.parent
         if (typeRefParent is JetConstructorCalleeExpression) return Collections.emptyList()
 
-        val traitExpected = typeRefParent is JetDelegatorToSuperClass
+        val interfaceExpected = typeRefParent is JetDelegatorToSuperClass
 
         val isQualifier = (element.parent as? JetUserType)?.let { it.qualifier == element } ?: false
 
         return when {
-            traitExpected -> Collections.singletonList(ClassKind.TRAIT)
+            interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
             else -> ClassKind.values().filter {
                 val noTypeArguments = element.typeArgumentsAsTypes.isEmpty()
                 when (it) {

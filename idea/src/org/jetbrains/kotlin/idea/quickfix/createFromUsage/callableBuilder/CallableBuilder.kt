@@ -487,7 +487,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                     val openMod = if (open) "open " else ""
                                     val innerMod = if (inner) "inner " else ""
                                     val typeParamList = when (kind) {
-                                        ClassKind.PLAIN_CLASS, ClassKind.TRAIT -> "<>"
+                                        ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
                                         else -> ""
                                     }
                                     psiFactory.createDeclaration<JetClassOrObject>(
