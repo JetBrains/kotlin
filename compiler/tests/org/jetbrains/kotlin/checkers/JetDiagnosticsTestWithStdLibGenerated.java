@@ -667,6 +667,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("invalidFqName.kt")
+        public void testInvalidFqName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/invalidFqName.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("maps.kt")
         public void testMaps() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/maps.kt");
