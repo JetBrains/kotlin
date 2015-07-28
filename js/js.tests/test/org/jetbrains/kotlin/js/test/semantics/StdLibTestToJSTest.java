@@ -39,6 +39,7 @@ public class StdLibTestToJSTest extends StdLibQUnitTestSupport {
                           "dom/DomTest.kt",
                           "collections/SequenceTest.kt",
                           "collections/IterableTests.kt",
+                          "collections/ArraysTest.kt",
                           "language/RangeTest.kt",
                           "language/RangeIterationTest.kt"
         );
