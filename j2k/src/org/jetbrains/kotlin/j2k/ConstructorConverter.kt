@@ -209,12 +209,12 @@ class ConstructorConverter(
                             Modifiers(listOf()).with(fieldCorrection.access).assignNoPrototype()
                         else
                             converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS }
-                        Parameter(name,
-                                  type,
-                                  if (field.isVal(converter.referenceSearcher)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
+                        FunctionParameter(name,
+                                          type,
+                                          if (field.isVal(converter.referenceSearcher)) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,
                                   converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
-                                  accessModifiers,
-                                  default)
+                                          accessModifiers,
+                                          default)
                                 .assignPrototypes(
                                         PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
                                         PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)

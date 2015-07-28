@@ -236,15 +236,15 @@ class Converter private constructor(
         val annotationMethods = psiClass.getMethods().filterIsInstance<PsiAnnotationMethod>()
         val (methodsNamedValue, otherMethods) = annotationMethods.partition { it.getName() == "value" }
 
-        fun createParameter(type: Type, method: PsiAnnotationMethod): Parameter {
+        fun createParameter(type: Type, method: PsiAnnotationMethod): FunctionParameter {
             type.assignPrototype(method.getReturnTypeElement(), CommentsAndSpacesInheritance.NO_SPACES)
 
-            return Parameter(method.declarationIdentifier(),
-                      type,
-                      Parameter.VarValModifier.Val,
-                      convertAnnotations(method),
-                      paramModifiers,
-                      annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, CommentsAndSpacesInheritance.NO_SPACES)
+            return FunctionParameter(method.declarationIdentifier(),
+                                     type,
+                                     FunctionParameter.VarValModifier.Val,
+                                     convertAnnotations(method),
+                                     paramModifiers,
+                                     annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, CommentsAndSpacesInheritance.NO_SPACES)
         }
 
         fun convertType(psiType: PsiType?): Type {
@@ -427,7 +427,7 @@ class Converter private constructor(
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
 
-        if (function.parameterList.parameters.any { it.defaultValue != null } && !function.modifiers.isPrivate) {
+        if (function.parameterList.parameters.any { it is FunctionParameter && it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(
                     listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
                                       listOf(),
@@ -535,17 +535,17 @@ class Converter private constructor(
     public fun convertParameter(
             parameter: PsiParameter,
             nullability: Nullability = Nullability.Default,
-            varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
+            varValModifier: FunctionParameter.VarValModifier = FunctionParameter.VarValModifier.None,
             modifiers: Modifiers = Modifiers.Empty,
             defaultValue: DeferredElement<Expression>? = null
-    ): Parameter {
+    ): FunctionParameter {
         var type = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> type = type.toNotNullType()
             Nullability.Nullable -> type = type.toNullableType()
         }
-        return Parameter(parameter.declarationIdentifier(), type, varValModifier,
-                         convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance.LINE_BREAKS)
+        return FunctionParameter(parameter.declarationIdentifier(), type, varValModifier,
+                                 convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance.LINE_BREAKS)
     }
 
     public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {

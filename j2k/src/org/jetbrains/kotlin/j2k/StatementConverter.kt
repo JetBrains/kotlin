@@ -204,11 +204,11 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
                 listOf(parameterType)
             for (t in types) {
                 var convertedType = codeConverter.typeConverter.convertType(t, Nullability.NotNull)
-                val convertedParameter = Parameter(parameter.declarationIdentifier(),
-                                                   convertedType,
-                                                   Parameter.VarValModifier.None,
-                                                   annotations,
-                                                   Modifiers.Empty).assignPrototype(parameter)
+                val convertedParameter = FunctionParameter(parameter.declarationIdentifier(),
+                                                           convertedType,
+                                                           FunctionParameter.VarValModifier.None,
+                                                           annotations,
+                                                           Modifiers.Empty).assignPrototype(parameter)
                 catches.add(CatchStatement(convertedParameter, blockConverted).assignNoPrototype())
             }
         }

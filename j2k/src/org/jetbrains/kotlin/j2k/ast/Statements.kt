@@ -133,7 +133,7 @@ class ThrowStatement(val expression: Expression) : Expression() {
     }
 }
 
-class CatchStatement(val variable: Parameter, val block: Block) : Statement() {
+class CatchStatement(val variable: FunctionParameter, val block: Block) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
         builder append "catch (" append variable append ") " append block
     }
