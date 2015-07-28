@@ -42,6 +42,30 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
     }.filterNotNull()
 }
 
+public fun PsiField.isVal(searcher: ReferenceSearcher): Boolean {
+    if (hasModifierProperty(PsiModifier.FINAL)) return true
+    if (!hasModifierProperty(PsiModifier.PRIVATE)) return false
+    val containingClass = getContainingClass() ?: return false
+    val writes = searcher.findVariableUsages(this, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+    if (writes.size() == 0) return true
+    if (writes.size() > 1) return false
+    val write = writes.single()
+    val parent = write.getParent()
+    if (parent is PsiAssignmentExpression &&
+        parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
+        write.isQualifierEmptyOrThis()) {
+        val constructor = write.getContainingConstructor()
+        return constructor != null &&
+               constructor.getContainingClass() == containingClass &&
+               parent.getParent() is PsiExpressionStatement &&
+               parent.getParent()?.getParent() == constructor.getBody()
+    }
+    return false
+}
+
+public fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
+        = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
+
 public object EmptyReferenceSearcher: ReferenceSearcher {
     override fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference> = emptyList()
     override fun hasInheritors(`class`: PsiClass) = false

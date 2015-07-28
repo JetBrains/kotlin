@@ -311,7 +311,7 @@ class Converter private constructor(
                     .assignPrototype(field, CommentsAndSpacesInheritance.LINE_BREAKS)
         }
         else {
-            val isVal = isVal(referenceSearcher, field)
+            val isVal = field.isVal(referenceSearcher)
             val typeToDeclare = variableTypeToDeclare(field,
                                                       settings.specifyFieldTypeByDefault || modifiers.isPublic || modifiers.isProtected,
                                                       isVal && modifiers.isPrivate)
