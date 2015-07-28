@@ -22,7 +22,7 @@ State state = new File(basedir, "build.log").readLines().inject(new State()) { a
     } else if (line.startsWith("[INFO] Downloaded:") || line.startsWith("[INFO] Downloading:")) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
-        def filtered = removePaths(line, basedir).replace("\\", "/").replaceAll(/[0-9]+\s*ms/, "LLL ms").trim().replaceAll(/^\[[A-Z]+\]$/, "")
+        def filtered = removePaths(line, basedir).replace("\\", "/").replaceAll(/[0-9]+\s*ms/, "LLL ms").trim().replaceAll(/^\[[A-Z]+\]$/, "").replaceAll(/version [0-9\.]+/, "version @snapshot@")
         if (filtered != "") {
             acc.lines << filtered
         }
