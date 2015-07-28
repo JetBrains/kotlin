@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
@@ -68,23 +66,6 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
         super.put(wrapSlice(slice), key, new TrackableValue<V>(value, trackWithStackTraces));
-    }
-
-    @Override
-    public <K, V> V remove(RemovableSlice<K, V> slice, K key) {
-        return super.remove(wrapSlice(slice), key).value;
-    }
-
-    @Override
-    public void clear() {
-        super.clear();
-    }
-
-    @Override
-    @NotNull
-    @TestOnly
-    public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-        return super.getSliceContents(slice);
     }
 
     private static class TrackableValue<V> {
@@ -136,7 +117,9 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
     }
 
-    private class SliceWithStackTrace<K, V> extends AbstractWritableSlice<K, TrackableValue<V>> implements RemovableSlice<K, TrackableValue<V>> {
+    private class SliceWithStackTrace<K, V>
+            extends AbstractWritableSlice<K, TrackableValue<V>>
+            implements WritableSlice<K, TrackableValue<V>> {
 
         private final ReadOnlySlice<K, V> delegate;
 

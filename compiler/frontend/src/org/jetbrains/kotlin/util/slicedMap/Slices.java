@@ -86,17 +86,17 @@ public class Slices {
             return this;
         }
 
-        public RemovableSlice<K, V> build() {
-            BasicRemovableSlice<K, V> result = doBuild();
+        public WritableSlice<K, V> build() {
+            BasicWritableSlice<K, V> result = doBuild();
             if (debugName != null) {
                 result.setDebugName(debugName);
             }
             return result;
         }
 
-        private BasicRemovableSlice<K, V> doBuild() {
+        private BasicWritableSlice<K, V> doBuild() {
             if (furtherLookupSlices != null) {
-                return new BasicRemovableSlice<K, V>(rewritePolicy) {
+                return new BasicWritableSlice<K, V>(rewritePolicy) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
@@ -112,21 +112,11 @@ public class Slices {
                     }
                 };
             }
-            return new BasicRemovableSlice<K, V>(rewritePolicy);
+            return new BasicWritableSlice<K, V>(rewritePolicy);
         }
     }
 
-    public static class BasicRemovableSlice<K, V> extends BasicWritableSlice<K, V> implements RemovableSlice<K, V> {
-        protected BasicRemovableSlice(RewritePolicy rewritePolicy) {
-            super(rewritePolicy);
-        }
-
-        protected BasicRemovableSlice(RewritePolicy rewritePolicy, boolean isCollective) {
-            super(rewritePolicy, isCollective);
-        }
-    }
-
-    public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
+    public static class SetSlice<K> extends BasicWritableSlice<K, Boolean> {
 
         protected SetSlice(RewritePolicy rewritePolicy) {
             this(rewritePolicy, false);
