@@ -17,6 +17,7 @@
 package kotlin
 
 import java.util.Comparator
+import kotlin.platform.platformName
 
 /**
  * Compares two values using the specified sequence of functions to calculate the result of the comparison.
@@ -24,6 +25,7 @@ import java.util.Comparator
  * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
  * compare as equal, the result of that comparison is returned.
  */
+deprecated("Use selector functions accepting nullable T as a receiver.")
 public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comparable<*>?): Int {
     require(functions.size() > 0)
     if (a === b) return 0
@@ -39,14 +41,30 @@ public fun <T : Any> compareValuesBy(a: T?, b: T?, vararg functions: (T) -> Comp
 }
 
 /**
+ * Compares two values using the specified sequence of functions to calculate the result of the comparison.
+ * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
+ * objects. As soon as the [Comparable] instances returned by a function for [a] and [b] values do not
+ * compare as equal, the result of that comparison is returned.
+ */
+// TODO: Remove platformName after M13
+platformName("compareValuesByNullable")
+public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
+    require(selectors.size() > 0)
+    for (fn in selectors) {
+        val v1 = fn(a)
+        val v2 = fn(b)
+        val diff = compareValues(v1, v2)
+        if (diff != 0) return diff
+    }
+    return 0
+}
+
+/**
  * Compares two values using the specified [selector] function to calculate the result of the comparison.
  * The function is applied to the given values [a] and [b] and return [Comparable] objects.
  * The result of comparison of these [Comparable] instances is returned.
  */
-public inline fun <T: Any> compareValuesBy(a: T?, b: T?, selector: (T) -> Comparable<*>?): Int {
-    if (a === b) return 0
-    if (a == null) return -1
-    if (b == null) return 1
+public inline fun <T> compareValuesBy(a: T, b: T, selector: (T) -> Comparable<*>?): Int {
     return compareValues(selector(a), selector(b))
 }
 
@@ -148,6 +166,37 @@ inline public fun <T> Comparator<T>.thenComparator(inlineOptions(InlineOption.ON
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenComparator.compare(a, b)
             return if (previousCompare != 0) previousCompare else comparison(a, b)
+        }
+    }
+}
+
+// Not so useful without type inference for receiver of expression
+/**
+ * Extends the given comparator of non-nullable values to a comparator of nullable values
+ * considering null value less than any other value.
+ */
+public fun <T: Any> Comparator<T>.nullsFirst(): Comparator<T?> {
+    return object: Comparator<T?> {
+        override fun compare(a: T?, b: T?): Int {
+            if (a === b) return 0
+            if (a == null) return -1
+            if (b == null) return 1
+            return this@nullsFirst.compare(a, b)
+        }
+    }
+}
+
+/**
+ * Extends the given comparator of non-nullable values to a comparator of nullable values
+ * considering null value greater than any other value.
+ */
+public fun <T: Any> Comparator<T>.nullsLast(): Comparator<T?> {
+    return object: Comparator<T?> {
+        override fun compare(a: T?, b: T?): Int {
+            if (a === b) return 0
+            if (a == null) return 1
+            if (b == null) return -1
+            return this@nullsLast.compare(a, b)
         }
     }
 }

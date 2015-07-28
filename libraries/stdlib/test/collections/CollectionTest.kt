@@ -573,9 +573,12 @@ class CollectionTest {
     test fun sortedNullableBy() {
         fun String.nullIfEmpty() = if (isEmpty()) null else this
         listOf(null, "").let {
-            expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
-            expect(listOf("", null)) { it.sortedByDescending { it.orEmpty() }}
-            expect(listOf("", null)) { it.sortedByDescending { it?.nullIfEmpty() }}
+//            expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
+//            expect(listOf("", null)) { it.sortedByDescending { it.orEmpty() }}
+//            expect(listOf("", null)) { it.sortedByDescending { it?.nullIfEmpty() }}
+            expect(listOf(null, "")) { it.sortedWith(compareBy<String> { it }.nullsFirst()) }
+            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it }.nullsLast()) }
+            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it.nullIfEmpty() }.nullsLast() ) }
         }
     }
 
