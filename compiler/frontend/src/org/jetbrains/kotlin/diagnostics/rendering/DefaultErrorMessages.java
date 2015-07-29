@@ -608,7 +608,7 @@ public class DefaultErrorMessages {
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
         MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
 
-        MAP.put(OUT_OF_BOUND_ACCESS, "OutOfBoundsException can be produced here");
+        MAP.put(OUT_OF_BOUND_ACCESS, "Control flow has a path with array size = ''{0}'' and access index = ''{1}'' that leads to OutOfBoundsException", TO_STRING, TO_STRING);
 
         //Inline
         MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

@@ -95,8 +95,11 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
             arraySizes.isDefined && accessPositions.isDefined) {
             val sizes = arraySizes.getValues().sort()
             val positions = accessPositions.getValues().sort()
-            if (positions.first() < 0 || sizes.first() <= positions.last()) {
-                report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element), ctxt)
+            if (sizes.first() <= positions.last()) {
+                report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.last()), ctxt)
+            }
+            else if (positions.first() < 0) {
+                report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.first()), ctxt)
             }
         }
     }
