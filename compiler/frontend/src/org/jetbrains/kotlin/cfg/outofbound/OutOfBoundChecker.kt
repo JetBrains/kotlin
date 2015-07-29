@@ -54,7 +54,7 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
         val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
         pseudocode.traverse(TraversalOrder.FORWARD, outOfBoundAnalysisData, { instruction, inData: ValuesData, outData: ValuesData ->
             val ctxt = VariableContext(instruction, reportedDiagnosticMap)
-            if(instruction is CallInstruction &&
+            if (instruction is CallInstruction &&
                (isArrayGetCall(instruction) || isArraySetCall(instruction))) {
                 checkOutOfBoundAccess(instruction, inData, ctxt)
             }

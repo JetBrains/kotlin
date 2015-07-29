@@ -28,7 +28,7 @@ public object MapUtils {
         val mapAsString = map.toList().toSortedListBy { keyToComparable(it.first) }.fold("") { acc, keyValue ->
             "$acc${keyToString(keyValue.first)}:${valueToString(keyValue.second)},"
         }
-        if(!mapAsString.isEmpty()) {
+        if (!mapAsString.isEmpty()) {
             return "{${mapAsString.take(mapAsString.length() - 1)}}"
         }
         return "{$mapAsString}"
