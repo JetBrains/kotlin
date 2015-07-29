@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
-import java.util.*
+import java.util.ArrayDeque
 
 class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), table) {
     private val codeTokens = TokenSet.orSet(
@@ -45,37 +45,42 @@ class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), 
             JetTokens.RBRACKET, JetTokens.SEMICOLON, JetTokens.COMMA, JetTokens.DOT
     )
 
-    private val previousTokens = LinkedList<IElementType>()
+    private val MAX_PREV_TOKENS = 2
+    private val previousTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
 
     override fun advance() {
-        fun isMultiDeclarationPosition(): Boolean {
-            return previousTokens.firstOrNull() == JetTokens.VAL_KEYWORD
-                   || previousTokens.firstOrNull() == JetTokens.VAR_KEYWORD
-                   || previousTokens.size() == 2 && previousTokens[0] == JetTokens.LPAR && previousTokens[1] == JetTokens.FOR_KEYWORD
-        }
-
-        val tokenType = myDelegate.getTokenType()
+        val tokenType = myDelegate.tokenType
 
         when (tokenType) {
             in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+
             JetTokens.LPAR -> if (isMultiDeclarationPosition()) addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+
             in JetTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
+
             in commentTokens -> {
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
                 advanceTodoItemCountsInToken()
             }
+
             !in skipTokens -> scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT.toInt(), false, false)
         }
 
         if (tokenType != TokenType.WHITE_SPACE) {
-            previousTokens.addFirst(tokenType)
-
-            if (previousTokens.size() > 2) {
+            if (previousTokens.size() == MAX_PREV_TOKENS) {
                 previousTokens.removeLast()
             }
+            previousTokens.addFirst(tokenType)
+
         }
 
         myDelegate.advance()
+    }
+
+    private fun isMultiDeclarationPosition(): Boolean {
+        val first = previousTokens.peekFirst()
+        if (first == JetTokens.VAL_KEYWORD || first == JetTokens.VAR_KEYWORD) return true
+        return first == JetTokens.LPAR && previousTokens.elementAtOrNull(1) == JetTokens.FOR_KEYWORD
     }
 }
 
