@@ -39,8 +39,7 @@ private fun comparableVersionStr(version: String) =
                 ?.drop(1)?.take(2)
                 // checking if two subexpression groups are found and length of each is >0 and <4
                 ?.let { if (it.all { (it?.value?.length() ?: 0).let { it > 0 && it < 4 }}) it else null }
-                ?.map { "%3s".format(it?.value ?: 0).replace(' ', '0') }
-                ?.joinToString(".")
+                ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
 
 class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long) : BuildAdapter() {
@@ -80,7 +79,7 @@ class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long
 
         // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
         // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-        getUsedMemoryKb().let { log.kotlinDebug("[PERF] Used memory after build: $it kb (${"%+d".format(it-startMemory)} kb)") }
+        getUsedMemoryKb().let { log.kotlinDebug("[PERF] Used memory after build: $it kb (${"%+d".format(it - startMemory)} kb)") }
     }
 }
 
@@ -93,11 +92,8 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
 
         log.kotlinDebug("compiler services cleanup")
 
-        // \todo remove ZipFileCache cleanup after switching to recent idea libs
+        // TODO: remove ZipFileCache cleanup after switching to recent idea libs
         stopZipFileCache()
-        // currently unused since LowMemoryWatcher usages are (hopefully) all removed
-        // \todo doublecheck and remove LowMemoryWatcher cleanup code
-        //stopLowMemoryWatcher()
         stopJobScheduler()
 
         pluginClassLoader = null
@@ -106,11 +102,6 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
     private fun stopZipFileCache() {
         callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
         log.kotlinDebug("ZipFileCache finished successfully")
-    }
-
-    private fun stopLowMemoryWatcher() {
-        callVoidStaticMethod("com.intellij.openapi.util.LowMemoryWatcher", "stopAll")
-        log.kotlinDebug("LowMemoryWatcher finished successfully")
     }
 
     private fun stopJobScheduler() {
