@@ -96,7 +96,8 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
+                @NotNull UsageLocation location
         ) {
             return ERROR_PROPERTY_GROUP;
         }
@@ -104,7 +105,8 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
+                @NotNull UsageLocation location
         ) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
@@ -228,7 +230,8 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
+                @NotNull UsageLocation location
         ) {
             throw new IllegalStateException();
         }
@@ -236,7 +239,8 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name
+                @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
+                @NotNull UsageLocation location
         ) {
             throw new IllegalStateException();
         }
