@@ -15,14 +15,15 @@ import java.lang.reflect.Method
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.net.URLClassLoader
 
+// \todo simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
+
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
+
     val log = Logging.getLogger(this.javaClass)
 
-    companion object {
-        var pluginClassLoader: ClassLoader? = null
-    }
-
     public override fun apply(project: Project) {
+
+        val startMemory = getUsedMemoryKb()
 
         val sourceBuildScript = findSourceBuildScript(project)
         if (sourceBuildScript == null) {
@@ -34,49 +35,13 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
-        if (pluginClassLoader == null)
-            pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
-        else
-            log.kotlinDebug("Reusing classloader from previous run")
-        val plugin = getPlugin(pluginClassLoader!!, sourceBuildScript)
+        val plugin = getPlugin(this.javaClass.getClassLoader(), sourceBuildScript)
         plugin.apply(project)
 
-//        project.getGradle().addBuildListener(FinishBuildListener(pluginClassLoader))
+        project.getGradle().addBuildListener(FinishBuildListener(this.javaClass.getClassLoader(), startMemory))
     }
 
     protected abstract fun getPlugin(pluginClassLoader: ClassLoader, scriptHandler: ScriptHandler): Plugin<Project>
-
-    private fun createPluginClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): URLClassLoader {
-        val kotlinPluginDependencies: List<URL> = getPluginDependencies(projectVersion, sourceBuildScript)
-        log.kotlinDebug("Load plugin in regular URL classloader")
-        val kotlinPluginClassloader = URLClassLoader(kotlinPluginDependencies.toTypedArray(), this.javaClass.getClassLoader())
-
-        return kotlinPluginClassloader
-    }
-
-    private fun createPluginIsolatedClassLoader(projectVersion: String, sourceBuildScript: ScriptHandler): ParentLastURLClassLoader {
-        val kotlinPluginDependencies: List<URL> = getPluginDependencies(projectVersion, sourceBuildScript)
-        log.kotlinDebug("Load plugin in parent-last URL classloader")
-        val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
-        log.kotlinDebug("Class loader created")
-
-        return kotlinPluginClassloader
-    }
-
-    private fun getPluginDependencies(projectVersion: String, sourceBuildScript: ScriptHandler): List<URL> {
-        val dependencyHandler: DependencyHandler = sourceBuildScript.getDependencies()
-        val configurationsContainer: ConfigurationContainer = sourceBuildScript.getConfigurations()
-
-        log.kotlinDebug("Creating configuration and dependency")
-        val kotlinPluginCoreCoordinates = "org.jetbrains.kotlin:kotlin-gradle-plugin-core:" + projectVersion
-        val dependency = dependencyHandler.create(kotlinPluginCoreCoordinates)
-        val configuration = configurationsContainer.detachedConfiguration(dependency)
-
-        log.kotlinDebug("Resolving [" + kotlinPluginCoreCoordinates + "]")
-        val kotlinPluginDependencies: List<URL> = configuration.getResolvedConfiguration().getFiles({ true })!!.map { it.toURI().toURL() }
-        log.kotlinDebug("Resolved files: [" + kotlinPluginDependencies.toString() + "]")
-        return kotlinPluginDependencies
-    }
 
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
         log.kotlinDebug("Looking for proper script handler")
@@ -111,4 +76,3 @@ open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
 fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
 }
-

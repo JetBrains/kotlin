@@ -91,7 +91,7 @@ messages/**)
 
 # for gradle plugin and other server tools
 -keep class com.intellij.openapi.util.io.ZipFileCache { public *; }
--keep class com.intellij.openapi.util.LowMemoryWatcher { public *; }
+#-keep class com.intellij.openapi.util.LowMemoryWatcher { public *; }
 
 # for j2k
 -keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }

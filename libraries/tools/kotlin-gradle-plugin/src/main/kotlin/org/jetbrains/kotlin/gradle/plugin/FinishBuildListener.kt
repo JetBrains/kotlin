@@ -18,64 +18,89 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import java.lang.ref.Reference
 import java.util.concurrent.ScheduledExecutorService
+import kotlin.text.MatchGroup
 
-class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : BuildAdapter() {
+internal fun getUsedMemoryKb(): Long {
+    System.gc()
+    val rt = Runtime.getRuntime()
+    return (rt.totalMemory() - rt.freeMemory()) / 1024
+}
+
+
+private fun comparableVersionStr(version: String) =
+        "(\\d+)\\.(\\d+).*"
+                .toRegex()
+                .match(version)
+                ?.groups
+                ?.drop(1)?.take(2)
+                // checking if two subexpression groups are found and length of each is >0 and <4
+                ?.let { if (it.all { (it?.value?.length() ?: 0).let { it > 0 && it < 4 }}) it else null }
+                ?.map { "%3s".format(it?.value ?: 0).replace(' ', '0') }
+                ?.joinToString(".")
+
+
+class FinishBuildListener(pluginClassLoader: ClassLoader?, val startMemory: Long) : BuildAdapter() {
     val log = Logging.getLogger(this.javaClass)
 
     private var threadTracker: ThreadTracker? = ThreadTracker()
 
+    private val cleanup = CompilerServicesCleanup(pluginClassLoader)
+
     override fun buildFinished(result: BuildResult?) {
         log.kotlinDebug("Build finished listener")
 
-        stopZipFileCache()
-        stopLowMemoryWatcher()
-        stopJobScheduler()
-
-		// TODO: Try to clean up thread locals without this ugly hack
-		// TODO: Further investigation of PermGen leak (KT-6451)
-        removeThreadLocals()
-
-        pluginClassLoader = null
-        result?.getGradle()?.removeListener(this)
-
-        threadTracker?.checkThreadLeak(result?.getGradle())
-        threadTracker = null
-    }
-
-    public fun removeThreadLocals() {
-        try {
-            log.kotlinDebug("Remove ChildURLClassLoader thread locals")
-
-            val thread = Thread.currentThread()
-            val threadLocalsField = javaClass<Thread>().getDeclaredField("threadLocals")
-            threadLocalsField.setAccessible(true)
-
-            val threadLocalMapClass = Class.forName("java.lang.ThreadLocal\$ThreadLocalMap")
-            val tableField = threadLocalMapClass.getDeclaredField("table")
-            tableField.setAccessible(true)
-
-            val referentField = javaClass<Reference<Any>>().getDeclaredField("referent")
-            referentField.setAccessible(true)
-
-            val table = tableField[threadLocalsField[thread]] as Array<*>
-
-            for (entry in table) {
-                if (entry != null) {
-                    val threadLocal = referentField[entry] as ThreadLocal<*>?
-                    val classLoader = threadLocal?.javaClass?.getClassLoader()
-                    if (classLoader is ParentLastURLClassLoader.ChildURLClassLoader) {
-                        threadLocal?.remove()
-                    }
+        val gradle = result?.getGradle()
+        if (gradle != null) {
+            // making cleanup only on recognized versions of gradle and if version < 2.4
+            // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
+            // this strategy may lead to memory leaks, but prevent crashes due to destroyed JobScheduler
+            // the reason for the strategy is the following:
+            // gradle < 2.4 has problems with plugin reuse in the daemon: new calls to the plugin are made with a new classloader
+            // for every new build. With statically initialized daemons like JobScheduler that leads to big leaks of classloaders and classes,
+            // therefore to reduce leaks JobScheduler (and deprecated ZipFileCache for now) should be stopped)
+            // It should be noted that because of this behavior there are no benefits of using daemon in these versions.
+            // Starting from 2.4 gradle using cached classloaders, that leads to effective class reusing in the daemon, but
+            // in that case premature stopping of the static daemons may lead to crashes.
+            comparableVersionStr(gradle.getGradleVersion())?.let {
+                log.kotlinDebug("detected gradle version $it")
+                if (it < comparableVersionStr("2.4")!!) {
+                    cleanup()
+                    // checking thread leaks only then cleaning up
+                    threadTracker?.checkThreadLeak(gradle)
                 }
             }
 
-            log.kotlinDebug("Removing ChildURLClassLoader thread locals finished successfully")
-        } catch (e: Throwable) {
-            log.kotlinDebug("Exception during thread locals remove: " + e)
+            threadTracker = null
+            gradle.removeListener(this)
         }
+
+        // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
+        // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
+        getUsedMemoryKb().let { log.kotlinDebug("[PERF] Used memory after build: $it kb (${"%+d".format(it-startMemory)} kb)") }
+    }
+}
+
+
+class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
+    val log = Logging.getLogger(this.javaClass)
+
+    fun invoke() {
+        assert(pluginClassLoader != null)
+
+        log.kotlinDebug("compiler services cleanup")
+
+        // \todo remove ZipFileCache cleanup after switching to recent idea libs
+        stopZipFileCache()
+        // currently unused since LowMemoryWatcher usages are (hopefully) all removed
+        // \todo doublecheck and remove LowMemoryWatcher cleanup code
+        //stopLowMemoryWatcher()
+        stopJobScheduler()
+
+        pluginClassLoader = null
     }
 
     private fun stopZipFileCache() {
