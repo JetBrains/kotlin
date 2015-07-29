@@ -158,6 +158,9 @@ public class IntegerVariableValues() {
         return createUndefined()
     }
 
+    public fun minus(): IntegerVariableValues =
+            createFromCollection(availableValues.map { -1 * it })
+
     // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
     public fun less(
             other: IntegerVariableValues,
