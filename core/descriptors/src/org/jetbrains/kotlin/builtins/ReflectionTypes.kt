@@ -114,22 +114,17 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        private val PROPERTY_CLASS_NAMES = hashSetOf(
-                "KProperty", "KMutableProperty",
-                "KProperty0", "KMutableProperty0",
-                "KProperty1", "KMutableProperty1",
-                "KProperty2", "KMutableProperty2"
-        )
+        private val KCALLABLE_CLASS_NAME = "KCallable"
 
         public fun isCallableType(type: JetType): Boolean =
                 KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) ||
-                isPropertyType(type)
+                isCallableReflectionType(type)
 
-        public fun isPropertyType(type: JetType): Boolean =
-                isExactPropertyType(type) ||
-                type.getConstructor().getSupertypes().any { isPropertyType(it) }
+        public fun isCallableReflectionType(type: JetType): Boolean =
+                isExactCallableReflectionType(type) ||
+                type.constructor.getSupertypes().any { isCallableReflectionType(it) }
 
-        public fun isExactPropertyType(type: JetType): Boolean {
+        public fun isExactCallableReflectionType(type: JetType): Boolean {
             val descriptor = type.getConstructor().getDeclarationDescriptor()
             if (descriptor is ClassDescriptor) {
                 val fqName = DescriptorUtils.getFqName(descriptor)
@@ -137,7 +132,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
                 if (parentName != KOTLIN_REFLECT_FQ_NAME.asString())
                     return false
                 val shortName = fqName.shortName().asString()
-                return PROPERTY_CLASS_NAMES.contains(shortName)
+                return KCALLABLE_CLASS_NAME == shortName
             }
             return false
         }
