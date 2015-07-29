@@ -10,6 +10,7 @@ public final class DebugExtOptionsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.skipInComparison);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
+    registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
   }
   public static final int SKIP_IN_COMPARISON_FIELD_NUMBER = 50000;
   /**
@@ -44,6 +45,17 @@ public final class DebugExtOptionsProtoBuf {
           .newFileScopedGeneratedExtension(
         java.lang.Boolean.class,
         null);
+  public static final int STRING_ID_IN_TABLE_FIELD_NUMBER = 50003;
+  /**
+   * <code>extend .google.protobuf.FieldOptions { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      com.google.protobuf.DescriptorProtos.FieldOptions,
+      java.lang.Boolean> stringIdInTable = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -60,8 +72,9 @@ public final class DebugExtOptionsProtoBuf {
       ".FieldOptions\030\320\206\003 \001(\010:9\n\020name_id_in_tabl" +
       "e\022\035.google.protobuf.FieldOptions\030\321\206\003 \001(\010" +
       ":<\n\023fq_name_id_in_table\022\035.google.protobu" +
-      "f.FieldOptions\030\322\206\003 \001(\010B\034B\027DebugExtOption" +
-      "sProtoBuf\210\001\000"
+      "f.FieldOptions\030\322\206\003 \001(\010:;\n\022string_id_in_t" +
+      "able\022\035.google.protobuf.FieldOptions\030\323\206\003 " +
+      "\001(\010B\034B\027DebugExtOptionsProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -71,6 +84,7 @@ public final class DebugExtOptionsProtoBuf {
           skipInComparison.internalInit(descriptor.getExtensions().get(0));
           nameIdInTable.internalInit(descriptor.getExtensions().get(1));
           fqNameIdInTable.internalInit(descriptor.getExtensions().get(2));
+          stringIdInTable.internalInit(descriptor.getExtensions().get(3));
           return null;
         }
       };

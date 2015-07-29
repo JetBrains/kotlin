@@ -70,7 +70,7 @@ class GenerateProtoBufCompare {
         p.println("open class ProtoCompareGenerated(private val oldNameResolver: NameResolver, private val newNameResolver: NameResolver) {")
         p.pushIndent()
 
-        p.println("private val nameIdMap: MutableMap<Int, Int> = hashMapOf()")
+        p.println("private val stringIdMap: MutableMap<Int, Int> = hashMapOf()")
         p.println("private val fqNameIdMap: MutableMap<Int, Int> = hashMapOf()")
         p.println()
 
@@ -101,14 +101,17 @@ class GenerateProtoBufCompare {
 
     fun generatePredefined(p: Printer) {
         p.println()
-        p.println("fun checkNameIdEquals(old: Int, new: Int): Boolean {")
-        p.println("    nameIdMap.get(old)?.let { return it == new }")
+        p.println("fun checkStringIdEquals(old: Int, new: Int): Boolean {")
+        p.println("    stringIdMap.get(old)?.let { return it == new }")
         p.println()
-        p.println("    val oldValue = oldNameResolver.getName(old).asString()")
-        p.println("    val newValue = newNameResolver.getName(new).asString()")
+        p.println("    val oldValue = oldNameResolver.stringTable.getString(old)")
+        p.println("    val newValue = newNameResolver.stringTable.getString(new)")
         p.println()
-        p.println("    return if (oldValue == newValue) { nameIdMap[old] = new; true } else false")
+        p.println("    return if (oldValue == newValue) { stringIdMap[old] = new; true } else false")
         p.println("}")
+
+        p.println()
+        p.println("fun checkNameIdEquals(old: Int, new: Int): Boolean  = checkStringIdEquals(old, new)")
 
         p.println()
         p.println("fun checkFqNameIdEquals(old: Int, new: Int): Boolean {")
@@ -225,6 +228,8 @@ class GenerateProtoBufCompare {
 
     private fun Printer.printlnIfWithComparison(field: Descriptors.FieldDescriptor, expr: String, withIndent: Boolean = false) {
         val line = when {
+            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ->
+                "if (!checkStringIdEquals(old.$expr, new.$expr)) return false"
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
                 "if (!checkNameIdEquals(old.$expr, new.$expr)) return false"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->

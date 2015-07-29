@@ -3838,12 +3838,12 @@ public final class DebugJvmProtoBuf {
       "\rPrimitiveType\022\010\n\004VOID\020\000\022\013\n\007BOOLEAN\020\001\022\010\n",
       "\004CHAR\020\002\022\010\n\004BYTE\020\003\022\t\n\005SHORT\020\004\022\007\n\003INT\020\005\022\t\n" +
       "\005FLOAT\020\006\022\010\n\004LONG\020\007\022\n\n\006DOUBLE\020\010\"\267\001\n\022JvmMe" +
-      "thodSignature\022\022\n\004name\030\001 \002(\005B\004\210\265\030\001\022D\n\013ret" +
+      "thodSignature\022\022\n\004name\030\001 \002(\005B\004\230\265\030\001\022D\n\013ret" +
       "urn_type\030\002 \002(\0132/.org.jetbrains.kotlin.se" +
       "rialization.jvm.JvmType\022G\n\016parameter_typ" +
       "e\030\003 \003(\0132/.org.jetbrains.kotlin.serializa" +
       "tion.jvm.JvmType\"\211\001\n\021JvmFieldSignature\022\022" +
-      "\n\004name\030\001 \002(\005B\004\210\265\030\001\022=\n\004type\030\002 \002(\0132/.org.j" +
+      "\n\004name\030\001 \002(\005B\004\230\265\030\001\022=\n\004type\030\002 \002(\0132/.org.j" +
       "etbrains.kotlin.serialization.jvm.JvmTyp" +
       "e\022!\n\022is_static_in_outer\030\003 \001(\010:\005false\"\316\002\n",
       "\024JvmPropertySignature\022H\n\005field\030\001 \001(\01329.o" +
@@ -3911,8 +3911,8 @@ public final class DebugJvmProtoBuf {
           com.google.protobuf.ExtensionRegistry registry =
             com.google.protobuf.ExtensionRegistry.newInstance();
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           return registry;
         }

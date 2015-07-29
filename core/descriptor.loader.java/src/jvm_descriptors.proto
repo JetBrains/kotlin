@@ -47,13 +47,13 @@ message JvmType {
 }
 
 message JvmMethodSignature {
-  required int32 name = 1 [(name_id_in_table) = true];
+  required int32 name = 1 [(string_id_in_table) = true];
   required JvmType return_type = 2;
   repeated JvmType parameter_type = 3;
 }
 
 message JvmFieldSignature {
-  required int32 name = 1 [(name_id_in_table) = true];
+  required int32 name = 1 [(string_id_in_table) = true];
   required JvmType type = 2;
 
   // True iff this field is a backing field for a companion object and is really present as a static

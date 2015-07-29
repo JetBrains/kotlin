@@ -17280,7 +17280,7 @@ public final class DebugProtoBuf {
       ".kotlin.serialization.Annotation.Argumen",
       "t.Value.Type\022\021\n\tint_value\030\002 \001(\022\022\023\n\013float" +
       "_value\030\003 \001(\002\022\024\n\014double_value\030\004 \001(\001\022\032\n\014st" +
-      "ring_value\030\005 \001(\005B\004\210\265\030\001\022\026\n\010class_id\030\006 \001(\005" +
+      "ring_value\030\005 \001(\005B\004\230\265\030\001\022\026\n\010class_id\030\006 \001(\005" +
       "B\004\220\265\030\001\022\033\n\renum_value_id\030\007 \001(\005B\004\210\265\030\001\022B\n\na" +
       "nnotation\030\010 \001(\0132..org.jetbrains.kotlin.s" +
       "erialization.Annotation\022T\n\rarray_element" +
@@ -17295,7 +17295,7 @@ public final class DebugProtoBuf {
       "\030\002 \003(\01321.org.jetbrains.kotlin.serializat" +
       "ion.Type.Argument\022\027\n\010nullable\030\003 \001(\010:\005fal" +
       "se\022+\n\035flexible_type_capabilities_id\030\004 \001(" +
-      "\005B\004\210\265\030\001\022F\n\024flexible_upper_bound\030\005 \001(\0132(." +
+      "\005B\004\230\265\030\001\022F\n\024flexible_upper_bound\030\005 \001(\0132(." +
       "org.jetbrains.kotlin.serialization.Type\022" +
       "$\n\026constructor_class_name\030\006 \001(\005B\004\220\265\030\001\022\"\n",
       "\032constructor_type_parameter\030\007 \001(\005\032\234\001\n\013Co" +
@@ -17458,10 +17458,10 @@ public final class DebugProtoBuf {
             com.google.protobuf.ExtensionRegistry.newInstance();
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
-          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.skipInComparison);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.skipInComparison);
