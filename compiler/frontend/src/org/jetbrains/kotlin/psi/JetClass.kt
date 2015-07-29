@@ -79,7 +79,7 @@ public open class JetClass : JetClassOrObject {
         return false
     }
 
-    private fun getQualifiedName(): String? {
+    protected fun getQualifiedName(): String? {
         val stub = getStub()
         if (stub != null) {
             val fqName = stub.getFqName()

@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiEnumConstant;
+import com.intellij.psi.PsiField;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -78,5 +83,23 @@ public class JetEnumEntry extends JetClass {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitEnumEntry(this, data);
+    }
+
+    @Override
+    public boolean isEquivalentTo(@Nullable PsiElement another) {
+        if (another instanceof PsiEnumConstant) {
+            PsiEnumConstant enumConstant = (PsiEnumConstant) another;
+            PsiClass containingClass = enumConstant.getContainingClass();
+            if (containingClass != null) {
+                String containingClassQName = containingClass.getQualifiedName();
+                if (containingClassQName != null && enumConstant.getName() != null) {
+                    String theirFQName = containingClassQName + "." + enumConstant.getName();
+                    if (theirFQName.equals(getQualifiedName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.isEquivalentTo(another);
     }
 }
