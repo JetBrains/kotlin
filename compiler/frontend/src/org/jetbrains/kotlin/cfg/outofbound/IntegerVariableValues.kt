@@ -127,14 +127,10 @@ public class IntegerVariableValues() {
     public fun times(others: IntegerVariableValues): IntegerVariableValues =
         applyEachToEach(others) { x, y -> x * y }
     public fun div(others: IntegerVariableValues): IntegerVariableValues =
-        applyEachToEach(others) { x, y ->
-            if (y == 0) {
-                throw Exception("IntegerVariableValues - division by zero detected")
-            }
-            else {
-                x / y
-            }
-        }
+        applyEachToEach(
+                createFromCollection(others.availableValues.filter { it != 0 }),
+                { x, y -> x / y }
+        )
     public fun rangeTo(others: IntegerVariableValues): IntegerVariableValues {
         if (this.isDefined && others.isDefined) {
             val minOfLeftOperand = availableValues.min() as Int
