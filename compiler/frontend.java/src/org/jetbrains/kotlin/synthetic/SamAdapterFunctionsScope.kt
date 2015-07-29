@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -46,8 +47,10 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
         if (function.visibility == Visibilities.PRIVATE || function.visibility == Visibilities.PRIVATE_TO_THIS || function.visibility == Visibilities.INVISIBLE_FAKE) return null
         if (!function.hasJavaOriginInHierarchy()) return null //TODO: should we go into base at all?
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
-        val returnType = function.returnType ?: return null
-        return MyFunctionDescriptor(function, returnType)
+        if (function.returnType == null) return null
+        //TODO: it's a temporary hack while original returns a function with platform types
+        val enhancedFunction = function.enhanceSignature()
+        return MyFunctionDescriptor(enhancedFunction)
     }
 
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name): Collection<FunctionDescriptor> {
@@ -71,8 +74,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     private class MyFunctionDescriptor(
-            override val originalFunction: FunctionDescriptor,
-            originalReturnType: JetType
+            override val originalFunction: FunctionDescriptor
     ) : SamAdapterExtensionFunctionDescriptor, SimpleFunctionDescriptorImpl(
             DescriptorUtils.getContainingModule(originalFunction),
             null,
@@ -94,7 +96,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
             val typeParameters = ArrayList<TypeParameterDescriptor>(typeParamsSum.size())
             val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(typeParamsSum, TypeSubstitution.EMPTY, this, typeParameters)
 
-            val returnType = typeSubstitutor.safeSubstitute(originalReturnType, Variance.OUT_VARIANCE)
+            val returnType = typeSubstitutor.safeSubstitute(originalFunction.returnType!!, Variance.OUT_VARIANCE)
             val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
             val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(originalFunction, this, typeSubstitutor)
             initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, Visibilities.PUBLIC)

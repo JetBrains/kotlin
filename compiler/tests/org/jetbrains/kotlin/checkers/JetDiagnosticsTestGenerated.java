@@ -14384,6 +14384,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("TypeAnnotation.kt")
+                public void testTypeAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/TypeAnnotation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("TypeParameterReceiver.kt")
                 public void testTypeParameterReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/TypeParameterReceiver.kt");
@@ -14426,6 +14432,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("NoNamedArgsAllowed.kt")
                 public void testNoNamedArgsAllowed() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/NoNamedArgsAllowed.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ParameterTypeAnnotation.kt")
+                public void testParameterTypeAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/ParameterTypeAnnotation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("PassNull.kt")
+                public void testPassNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/PassNull.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("ReturnTypeAnnotation.kt")
+                public void testReturnTypeAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/ReturnTypeAnnotation.kt");
                     doTest(fileName);
                 }
 

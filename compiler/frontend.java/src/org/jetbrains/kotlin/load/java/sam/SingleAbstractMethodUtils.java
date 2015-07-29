@@ -100,14 +100,14 @@ public class SingleAbstractMethodUtils {
 
                 if (substitute == null) return null;
 
-                JetType fixedProjections = fixProjections(substitute);
-                if (fixedProjections == null) return null;
+                JetType type = fixProjections(substitute);
+                if (type == null) return null;
 
-                if (JvmPackage.getPLATFORM_TYPES() && !isSamConstructor) {
-                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
+                if (JvmPackage.getPLATFORM_TYPES() && !isSamConstructor && TypesPackage.isNullabilityFlexible(samType)) {
+                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
                 }
 
-                return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isMarkedNullable());
+                return TypeUtils.makeNullableAsSpecified(type, !isSamConstructor && samType.isMarkedNullable());
             }
         }
         return null;

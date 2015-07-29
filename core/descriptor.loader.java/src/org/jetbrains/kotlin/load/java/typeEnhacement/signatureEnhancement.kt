@@ -16,23 +16,17 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhacement
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.load.java.typeEnhacement.computeIndexedQualifiersForOverride
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.types.JetType
 
 public fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
     return platformSignatures.map {
-        it.enhance()
+        it.enhanceSignature()
     }
 }
 
-private fun <D : CallableMemberDescriptor> D.enhance(): D {
+public fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     // TODO type parameters
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments
