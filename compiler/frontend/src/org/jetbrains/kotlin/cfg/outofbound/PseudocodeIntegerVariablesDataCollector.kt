@@ -321,6 +321,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
+            KotlinBuiltIns.isArray(variableType) ->
+                updatedData.arraysToSizes.put(variableDescriptor, IntegerVariableValues())
         }
     }
 
