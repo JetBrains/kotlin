@@ -11,3 +11,10 @@ fun operationsWithUnknown(a: Int, b: Int) {
     var c = a + 1
     c = a / b
 }
+
+fun divisionByZero() {
+    val a = 0
+    val b = 3
+    val c = b / a
+    42
+}
