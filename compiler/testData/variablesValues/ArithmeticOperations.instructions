@@ -9,55 +9,55 @@ fun operations() {
 }
 ---------------------
 L0:
-  1 <START>                                                                                              in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{}                                  BOOLS{} ARRS{}
-  2 mark({ val a = 0 + 1 val b = a + 2 val c = b - a var d = c * b d = (d + 12 / 5) * 11 d = d * 2 })    in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{}                                  BOOLS{} ARRS{}
-    v(val a = 0 + 1)                                                                                     in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{a:-}                               BOOLS{} ARRS{}
-    r(0) -> <v0>                                                                                         in: INTS{a:-}                              BOOLS{} ARRS{}    out: INTS{a:-}                               BOOLS{} ARRS{}
-    r(1) -> <v1>                                                                                         in: INTS{a:-}                              BOOLS{} ARRS{}    out: INTS{a:-}                               BOOLS{} ARRS{}
-    mark(0 + 1)                                                                                          in: INTS{a:-}                              BOOLS{} ARRS{}    out: INTS{a:-}                               BOOLS{} ARRS{}
-    call(0 + 1, plus|<v0>, <v1>) -> <v2>                                                                 in: INTS{a:-}                              BOOLS{} ARRS{}    out: INTS{a:-}                               BOOLS{} ARRS{}
-    w(a|<v2>)                                                                                            in: INTS{a:-}                              BOOLS{} ARRS{}    out: INTS{a:[1][]}                           BOOLS{} ARRS{}
-    v(val b = a + 2)                                                                                     in: INTS{a:[1][]}                          BOOLS{} ARRS{}    out: INTS{a:[1][],b:-}                       BOOLS{} ARRS{}
-    r(a) -> <v3>                                                                                         in: INTS{a:[1][],b:-}                      BOOLS{} ARRS{}    out: INTS{a:[1][],b:-}                       BOOLS{} ARRS{}
-    r(2) -> <v4>                                                                                         in: INTS{a:[1][],b:-}                      BOOLS{} ARRS{}    out: INTS{a:[1][],b:-}                       BOOLS{} ARRS{}
-    mark(a + 2)                                                                                          in: INTS{a:[1][],b:-}                      BOOLS{} ARRS{}    out: INTS{a:[1][],b:-}                       BOOLS{} ARRS{}
-    call(a + 2, plus|<v3>, <v4>) -> <v5>                                                                 in: INTS{a:[1][],b:-}                      BOOLS{} ARRS{}    out: INTS{a:[1][],b:-}                       BOOLS{} ARRS{}
-    w(b|<v5>)                                                                                            in: INTS{a:[1][],b:-}                      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][]}                   BOOLS{} ARRS{}
-    v(val c = b - a)                                                                                     in: INTS{a:[1][],b:[3][]}                  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:-}               BOOLS{} ARRS{}
-    r(b) -> <v6>                                                                                         in: INTS{a:[1][],b:[3][],c:-}              BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:-}               BOOLS{} ARRS{}
-    r(a) -> <v7>                                                                                         in: INTS{a:[1][],b:[3][],c:-}              BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:-}               BOOLS{} ARRS{}
-    mark(b - a)                                                                                          in: INTS{a:[1][],b:[3][],c:-}              BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:-}               BOOLS{} ARRS{}
-    call(b - a, minus|<v6>, <v7>) -> <v8>                                                                in: INTS{a:[1][],b:[3][],c:-}              BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:-}               BOOLS{} ARRS{}
-    w(c|<v8>)                                                                                            in: INTS{a:[1][],b:[3][],c:-}              BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][]}           BOOLS{} ARRS{}
-    v(var d = c * b)                                                                                     in: INTS{a:[1][],b:[3][],c:[2][]}          BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:-}       BOOLS{} ARRS{}
-    r(c) -> <v9>                                                                                         in: INTS{a:[1][],b:[3][],c:[2][],d:-}      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:-}       BOOLS{} ARRS{}
-    r(b) -> <v10>                                                                                        in: INTS{a:[1][],b:[3][],c:[2][],d:-}      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:-}       BOOLS{} ARRS{}
-    mark(c * b)                                                                                          in: INTS{a:[1][],b:[3][],c:[2][],d:-}      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:-}       BOOLS{} ARRS{}
-    call(c * b, times|<v9>, <v10>) -> <v11>                                                              in: INTS{a:[1][],b:[3][],c:[2][],d:-}      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:-}       BOOLS{} ARRS{}
-    w(d|<v11>)                                                                                           in: INTS{a:[1][],b:[3][],c:[2][],d:-}      BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    mark((d + 12 / 5))                                                                                   in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    r(d) -> <v12>                                                                                        in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    r(12) -> <v13>                                                                                       in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    r(5) -> <v14>                                                                                        in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    mark(12 / 5)                                                                                         in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    call(12 / 5, div|<v13>, <v14>) -> <v15>                                                              in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    mark(d + 12 / 5)                                                                                     in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    call(d + 12 / 5, plus|<v12>, <v15>) -> <v16>                                                         in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    r(11) -> <v17>                                                                                       in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    mark((d + 12 / 5) * 11)                                                                              in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    call((d + 12 / 5) * 11, times|<v16>, <v17>) -> <v18>                                                 in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}   BOOLS{} ARRS{}
-    w(d|<v18>)                                                                                           in: INTS{a:[1][],b:[3][],c:[2][],d:[6][]}  BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[88][]}  BOOLS{} ARRS{}
-    r(d) -> <v19>                                                                                        in: INTS{a:[1][],b:[3][],c:[2][],d:[88][]} BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[88][]}  BOOLS{} ARRS{}
-    r(2) -> <v20>                                                                                        in: INTS{a:[1][],b:[3][],c:[2][],d:[88][]} BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[88][]}  BOOLS{} ARRS{}
-    mark(d * 2)                                                                                          in: INTS{a:[1][],b:[3][],c:[2][],d:[88][]} BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[88][]}  BOOLS{} ARRS{}
-    call(d * 2, times|<v19>, <v20>) -> <v21>                                                             in: INTS{a:[1][],b:[3][],c:[2][],d:[88][]} BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[88][]}  BOOLS{} ARRS{}
-    w(d|<v21>)                                                                                           in: INTS{a:[1][],b:[3][],c:[2][],d:[88][]} BOOLS{} ARRS{}    out: INTS{a:[1][],b:[3][],c:[2][],d:[176][]} BOOLS{} ARRS{}
+  1 <START>                                                                                              in: INTS{}                         BOOLS{} ARRS{}    out: INTS{}                          BOOLS{} ARRS{}
+  2 mark({ val a = 0 + 1 val b = a + 2 val c = b - a var d = c * b d = (d + 12 / 5) * 11 d = d * 2 })    in: INTS{}                         BOOLS{} ARRS{}    out: INTS{}                          BOOLS{} ARRS{}
+    v(val a = 0 + 1)                                                                                     in: INTS{}                         BOOLS{} ARRS{}    out: INTS{a:-}                       BOOLS{} ARRS{}
+    r(0) -> <v0>                                                                                         in: INTS{a:-}                      BOOLS{} ARRS{}    out: INTS{a:-}                       BOOLS{} ARRS{}
+    r(1) -> <v1>                                                                                         in: INTS{a:-}                      BOOLS{} ARRS{}    out: INTS{a:-}                       BOOLS{} ARRS{}
+    mark(0 + 1)                                                                                          in: INTS{a:-}                      BOOLS{} ARRS{}    out: INTS{a:-}                       BOOLS{} ARRS{}
+    call(0 + 1, plus|<v0>, <v1>) -> <v2>                                                                 in: INTS{a:-}                      BOOLS{} ARRS{}    out: INTS{a:-}                       BOOLS{} ARRS{}
+    w(a|<v2>)                                                                                            in: INTS{a:-}                      BOOLS{} ARRS{}    out: INTS{a:[1]}                     BOOLS{} ARRS{}
+    v(val b = a + 2)                                                                                     in: INTS{a:[1]}                    BOOLS{} ARRS{}    out: INTS{a:[1],b:-}                 BOOLS{} ARRS{}
+    r(a) -> <v3>                                                                                         in: INTS{a:[1],b:-}                BOOLS{} ARRS{}    out: INTS{a:[1],b:-}                 BOOLS{} ARRS{}
+    r(2) -> <v4>                                                                                         in: INTS{a:[1],b:-}                BOOLS{} ARRS{}    out: INTS{a:[1],b:-}                 BOOLS{} ARRS{}
+    mark(a + 2)                                                                                          in: INTS{a:[1],b:-}                BOOLS{} ARRS{}    out: INTS{a:[1],b:-}                 BOOLS{} ARRS{}
+    call(a + 2, plus|<v3>, <v4>) -> <v5>                                                                 in: INTS{a:[1],b:-}                BOOLS{} ARRS{}    out: INTS{a:[1],b:-}                 BOOLS{} ARRS{}
+    w(b|<v5>)                                                                                            in: INTS{a:[1],b:-}                BOOLS{} ARRS{}    out: INTS{a:[1],b:[3]}               BOOLS{} ARRS{}
+    v(val c = b - a)                                                                                     in: INTS{a:[1],b:[3]}              BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:-}           BOOLS{} ARRS{}
+    r(b) -> <v6>                                                                                         in: INTS{a:[1],b:[3],c:-}          BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:-}           BOOLS{} ARRS{}
+    r(a) -> <v7>                                                                                         in: INTS{a:[1],b:[3],c:-}          BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:-}           BOOLS{} ARRS{}
+    mark(b - a)                                                                                          in: INTS{a:[1],b:[3],c:-}          BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:-}           BOOLS{} ARRS{}
+    call(b - a, minus|<v6>, <v7>) -> <v8>                                                                in: INTS{a:[1],b:[3],c:-}          BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:-}           BOOLS{} ARRS{}
+    w(c|<v8>)                                                                                            in: INTS{a:[1],b:[3],c:-}          BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2]}         BOOLS{} ARRS{}
+    v(var d = c * b)                                                                                     in: INTS{a:[1],b:[3],c:[2]}        BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:-}     BOOLS{} ARRS{}
+    r(c) -> <v9>                                                                                         in: INTS{a:[1],b:[3],c:[2],d:-}    BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:-}     BOOLS{} ARRS{}
+    r(b) -> <v10>                                                                                        in: INTS{a:[1],b:[3],c:[2],d:-}    BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:-}     BOOLS{} ARRS{}
+    mark(c * b)                                                                                          in: INTS{a:[1],b:[3],c:[2],d:-}    BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:-}     BOOLS{} ARRS{}
+    call(c * b, times|<v9>, <v10>) -> <v11>                                                              in: INTS{a:[1],b:[3],c:[2],d:-}    BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:-}     BOOLS{} ARRS{}
+    w(d|<v11>)                                                                                           in: INTS{a:[1],b:[3],c:[2],d:-}    BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    mark((d + 12 / 5))                                                                                   in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    r(d) -> <v12>                                                                                        in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    r(12) -> <v13>                                                                                       in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    r(5) -> <v14>                                                                                        in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    mark(12 / 5)                                                                                         in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    call(12 / 5, div|<v13>, <v14>) -> <v15>                                                              in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    mark(d + 12 / 5)                                                                                     in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    call(d + 12 / 5, plus|<v12>, <v15>) -> <v16>                                                         in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    r(11) -> <v17>                                                                                       in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    mark((d + 12 / 5) * 11)                                                                              in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    call((d + 12 / 5) * 11, times|<v16>, <v17>) -> <v18>                                                 in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[6]}   BOOLS{} ARRS{}
+    w(d|<v18>)                                                                                           in: INTS{a:[1],b:[3],c:[2],d:[6]}  BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[88]}  BOOLS{} ARRS{}
+    r(d) -> <v19>                                                                                        in: INTS{a:[1],b:[3],c:[2],d:[88]} BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[88]}  BOOLS{} ARRS{}
+    r(2) -> <v20>                                                                                        in: INTS{a:[1],b:[3],c:[2],d:[88]} BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[88]}  BOOLS{} ARRS{}
+    mark(d * 2)                                                                                          in: INTS{a:[1],b:[3],c:[2],d:[88]} BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[88]}  BOOLS{} ARRS{}
+    call(d * 2, times|<v19>, <v20>) -> <v21>                                                             in: INTS{a:[1],b:[3],c:[2],d:[88]} BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[88]}  BOOLS{} ARRS{}
+    w(d|<v21>)                                                                                           in: INTS{a:[1],b:[3],c:[2],d:[88]} BOOLS{} ARRS{}    out: INTS{a:[1],b:[3],c:[2],d:[176]} BOOLS{} ARRS{}
 L1:
-  1 <END>                                                                                                in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{}                                  BOOLS{} ARRS{}
+  1 <END>                                                                                                in: INTS{}                         BOOLS{} ARRS{}    out: INTS{}                          BOOLS{} ARRS{}
 error:
-    <ERROR>                                                                                              in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{}                                  BOOLS{} ARRS{}
+    <ERROR>                                                                                              in: INTS{}                         BOOLS{} ARRS{}    out: INTS{}                          BOOLS{} ARRS{}
 sink:
-    <SINK>                                                                                               in: INTS{}                                 BOOLS{} ARRS{}    out: INTS{}                                  BOOLS{} ARRS{}
+    <SINK>                                                                                               in: INTS{}                         BOOLS{} ARRS{}    out: INTS{}                          BOOLS{} ARRS{}
 =====================
 == operationsWithUnknown ==
 fun operationsWithUnknown(a: Int, b: Int) {
@@ -101,25 +101,25 @@ fun divisionByZero() {
 }
 ---------------------
 L0:
-  1 <START>                                           in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
-  2 mark({ val a = 0 val b = 3 val c = b / a 42 })    in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
-    v(val a = 0)                                      in: INTS{}                    BOOLS{} ARRS{}    out: INTS{a:-}                 BOOLS{} ARRS{}
-    r(0) -> <v0>                                      in: INTS{a:-}                 BOOLS{} ARRS{}    out: INTS{a:-}                 BOOLS{} ARRS{}
-    w(a|<v0>)                                         in: INTS{a:-}                 BOOLS{} ARRS{}    out: INTS{a:[0][]}             BOOLS{} ARRS{}
-    v(val b = 3)                                      in: INTS{a:[0][]}             BOOLS{} ARRS{}    out: INTS{a:[0][],b:-}         BOOLS{} ARRS{}
-    r(3) -> <v1>                                      in: INTS{a:[0][],b:-}         BOOLS{} ARRS{}    out: INTS{a:[0][],b:-}         BOOLS{} ARRS{}
-    w(b|<v1>)                                         in: INTS{a:[0][],b:-}         BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][]}     BOOLS{} ARRS{}
-    v(val c = b / a)                                  in: INTS{a:[0][],b:[3][]}     BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
-    r(b) -> <v2>                                      in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
-    r(a) -> <v3>                                      in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
-    mark(b / a)                                       in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
-    call(b / a, div|<v2>, <v3>) -> <v4>               in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
-    w(c|<v4>)                                         in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}
-    r(42) -> <v5>                                     in: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}
+  1 <START>                                           in: INTS{}                BOOLS{} ARRS{}    out: INTS{}                BOOLS{} ARRS{}
+  2 mark({ val a = 0 val b = 3 val c = b / a 42 })    in: INTS{}                BOOLS{} ARRS{}    out: INTS{}                BOOLS{} ARRS{}
+    v(val a = 0)                                      in: INTS{}                BOOLS{} ARRS{}    out: INTS{a:-}             BOOLS{} ARRS{}
+    r(0) -> <v0>                                      in: INTS{a:-}             BOOLS{} ARRS{}    out: INTS{a:-}             BOOLS{} ARRS{}
+    w(a|<v0>)                                         in: INTS{a:-}             BOOLS{} ARRS{}    out: INTS{a:[0]}           BOOLS{} ARRS{}
+    v(val b = 3)                                      in: INTS{a:[0]}           BOOLS{} ARRS{}    out: INTS{a:[0],b:-}       BOOLS{} ARRS{}
+    r(3) -> <v1>                                      in: INTS{a:[0],b:-}       BOOLS{} ARRS{}    out: INTS{a:[0],b:-}       BOOLS{} ARRS{}
+    w(b|<v1>)                                         in: INTS{a:[0],b:-}       BOOLS{} ARRS{}    out: INTS{a:[0],b:[3]}     BOOLS{} ARRS{}
+    v(val c = b / a)                                  in: INTS{a:[0],b:[3]}     BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}
+    r(b) -> <v2>                                      in: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}
+    r(a) -> <v3>                                      in: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}
+    mark(b / a)                                       in: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}
+    call(b / a, div|<v2>, <v3>) -> <v4>               in: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}
+    w(c|<v4>)                                         in: INTS{a:[0],b:[3],c:-} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:?} BOOLS{} ARRS{}
+    r(42) -> <v5>                                     in: INTS{a:[0],b:[3],c:?} BOOLS{} ARRS{}    out: INTS{a:[0],b:[3],c:?} BOOLS{} ARRS{}
 L1:
-  1 <END>                                             in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+  1 <END>                                             in: INTS{}                BOOLS{} ARRS{}    out: INTS{}                BOOLS{} ARRS{}
 error:
-    <ERROR>                                           in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+    <ERROR>                                           in: INTS{}                BOOLS{} ARRS{}    out: INTS{}                BOOLS{} ARRS{}
 sink:
-    <SINK>                                            in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+    <SINK>                                            in: INTS{}                BOOLS{} ARRS{}    out: INTS{}                BOOLS{} ARRS{}
 =====================
