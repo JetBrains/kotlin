@@ -93,7 +93,6 @@ class GenerateProtoBufCompare {
 
         repeatedFields.forEach { generateHelperMethodForRepeatedField(it, p) }
 
-        p.println()
         generatePredefined(p)
 
         p.popIndent()
@@ -103,7 +102,6 @@ class GenerateProtoBufCompare {
     }
 
     fun generatePredefined(p: Printer) {
-        p.println()
         p.println("fun checkStringIdEquals(old: Int, new: Int): Boolean {")
         p.println("    stringIdMap.get(old)?.let { return it == new }")
         p.println()

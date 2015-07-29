@@ -503,8 +503,6 @@ open class ProtoCompareGenerated(private val oldNameResolver: NameResolver, priv
         return true
     }
 
-
-
     fun checkStringIdEquals(old: Int, new: Int): Boolean {
         stringIdMap.get(old)?.let { return it == new }
 
