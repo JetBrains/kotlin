@@ -43,9 +43,9 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("javarepeatable.kt")
-        public void testJavarepeatable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javarepeatable.kt");
+        @TestMetadata("deprecatedRepeatable.kt")
+        public void testDeprecatedRepeatable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/deprecatedRepeatable.kt");
             doTest(fileName);
         }
     }
