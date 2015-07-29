@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
@@ -236,5 +237,12 @@ public class JvmCodegenUtil {
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         return InlineUtil.canBeInlineArgument(declaration) &&
                InlineUtil.isInlinedArgument((JetFunction) declaration, bindingContext, false);
+    }
+
+    public static boolean shouldUseJavaClassForClassLiteral(@NotNull ClassifierDescriptor descriptor) {
+        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+        return descriptor instanceof JavaClassDescriptor ||
+               module == module.getBuiltIns().getBuiltInsModule() ||
+               DescriptorUtils.isAnnotationClass(descriptor);
     }
 }

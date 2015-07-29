@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 
@@ -28,6 +29,7 @@ import kotlin.reflect.jvm.internal.*
 /**
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
+@Intrinsic("kotlin.KClass.java.property")
 public val <T> KClass<T>.java: Class<T>
     get() = (this as KClassImpl<T>).jClass
 

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicPropertyGetter;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.jvm.bindingContextSlices.BindingContextSlicesPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -1981,10 +1980,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
-            if (intrinsic instanceof JavaClassProperty) {
+            if (intrinsic instanceof IntrinsicPropertyGetter) {
                 //TODO: intrinsic properties (see intermediateValueForProperty)
                 Type returnType = typeMapper.mapType(memberDescriptor);
-                return ((JavaClassProperty) intrinsic).generate(returnType, receiver);
+                StackValue intrinsicResult = ((IntrinsicPropertyGetter) intrinsic).generate(resolvedCall, this, returnType, receiver);
+                if (intrinsicResult != null) return intrinsicResult;
             }
         }
 
@@ -2498,15 +2498,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             TypeParameterDescriptor key = entry.getKey();
             if (!key.isReified()) continue;
 
-            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(entry.getValue());
+            JetType type = entry.getValue();
+            TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
             if (parameterDescriptor == null) {
                 // type is not generic
                 BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type type = typeMapper.mapTypeParameter(entry.getValue(), signatureWriter);
+                Type asmType = typeMapper.mapTypeParameter(type, signatureWriter);
 
                 mappings.addParameterMappingToType(
                         key.getName().getIdentifier(),
                         type,
+                        asmType,
                         signatureWriter.toString()
                 );
             }
@@ -2813,12 +2815,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             public Unit invoke(InstructionAdapter v) {
                 Type classAsmType = typeMapper.mapType(type);
                 ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-                //noinspection ConstantConditions
-                ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-                // Instantiate annotation classes as foreign due to bug in JDK 6 and 7:
-                // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6857918
-                if (descriptor instanceof JavaClassDescriptor || module == module.getBuiltIns().getBuiltInsModule() ||
-                        DescriptorUtils.isAnnotationClass(descriptor)) {
+                if (descriptor instanceof TypeParameterDescriptor) {
+                    TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
+                    if (typeParameterDescriptor.isReified()) {
+                        // Emit reified type parameters as Kotlin classes.
+                        // ReifiedTypeInliner will rewrite the following GETSTATIC to proper bytecode instructions
+                        // if the class literal for actual type should be emitted with wrapped Java class.
+                        v.visitLdcInsn(typeParameterDescriptor.getName().asString());
+                        v.invokestatic(
+                                IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.CLASS_LITERAL_MARKER_METHOD_NAME,
+                                Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
+                        );
+                        v.getstatic(classAsmType.getInternalName(), JvmAbi.KOTLIN_CLASS_FIELD_NAME, K_CLASS_TYPE.getDescriptor());
+                    }
+                    else {
+                        throw new AssertionError("Non-reified type parameter under ::class should be rejected by type checker: " +
+                                                 typeParameterDescriptor.getName().asString());
+                    }
+                }
+                else if (shouldUseJavaClassForClassLiteral(descriptor)) {
                     putJavaLangClassInstance(v, classAsmType);
                     wrapJavaClassIntoKClass(v);
                 }
