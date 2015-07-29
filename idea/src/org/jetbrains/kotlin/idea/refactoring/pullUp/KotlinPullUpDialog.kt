@@ -21,21 +21,18 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiComment
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
-import com.intellij.refactoring.memberPullUp.PullUpDialogBase
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
 import org.jetbrains.kotlin.psi.*
-import java.awt.event.ItemEvent
-import javax.swing.JComboBox
 
 public class KotlinPullUpDialog(
         project: Project,
         private val classOrObject: JetClassOrObject,
         superClasses: List<JetClass>,
         memberInfoStorage: KotlinMemberInfoStorage
-) : PullUpDialogBase<KotlinMemberInfoStorage, KotlinMemberInfo, JetNamedDeclaration, JetClassOrObject>(
+) : KotlinPullUpDialogBase(
         project, classOrObject, superClasses, memberInfoStorage, PULL_MEMBERS_UP
 ) {
     init {
@@ -81,18 +78,6 @@ public class KotlinPullUpDialog(
     override fun getDimensionServiceKey() = "#" + javaClass.getName()
 
     override fun getSuperClass() = super.getSuperClass() as? JetClass
-
-    override fun initClassCombo(classCombo: JComboBox) {
-        classCombo.setRenderer(JetClassOrObjectCellRenderer())
-        classCombo.addItemListener { event ->
-            if (event.getStateChange() == ItemEvent.SELECTED) {
-                myMemberSelectionPanel?.getTable()?.let {
-                    it.setMemberInfos(myMemberInfos)
-                    it.fireExternalDataChange()
-                }
-            }
-        }
-    }
 
     override fun createMemberInfoModel() = MemberInfoModelImpl()
 
