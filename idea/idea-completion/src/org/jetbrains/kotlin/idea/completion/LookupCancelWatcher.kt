@@ -67,7 +67,7 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
     private var lastReminiscence: Reminiscence? = null
 
     companion object {
-        fun getInstance(project: Project): LookupCancelWatcher = ServiceManager.getService(project, javaClass())
+        fun getInstance(project: Project): LookupCancelWatcher = project.getComponent(javaClass<LookupCancelWatcher>())!!
 
         val DO_NOT_REPEAT_AUTO_POPUP_AT = Key<Int>("LookupCancelWatcher.DO_NOT_REPEAT_AUTO_POPUP_AT")
     }
