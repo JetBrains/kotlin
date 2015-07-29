@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-import java.lang.Boolean as JavaBoolean
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -265,8 +264,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     ) {
         val targetMapKeys = HashSet(targetVariablesMap.keySet())
         for (key in targetMapKeys) {
-            val values1 = targetVariablesMap[key] ?: throw Exception("No corresponding element in map")
-            val values2 = variablesToConsume[key] ?: throw Exception("No corresponding element in map")
+            val values1 = targetVariablesMap[key] as IntegerVariableValues
+            assert(variablesToConsume.containsKey(key), "No corresponding element in map")
+            val values2 = variablesToConsume[key] as IntegerVariableValues
             if (values1.isUndefined || values2.isUndefined) {
                 values1.setUndefined()
             }
@@ -303,9 +303,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
                     val rangeValuesFakeVariable = instruction.inputValues[0]
                     val rangeValues = updatedData.intFakeVarsToValues[rangeValuesFakeVariable]
-                                      ?: throw Exception("Range values are not computed")
-                    val target = instruction.outputValue
-                    updatedData.intFakeVarsToValues.put(target, rangeValues)
+                    rangeValues?.let {
+                        val target = instruction.outputValue
+                        updatedData.intFakeVarsToValues.put(target, it)
+                    }
                 }
             }
         }
@@ -335,11 +336,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val valueAsText = node.getText()
         when (nodeType) {
             JetNodeTypes.INTEGER_CONSTANT -> {
-                val literalValue = Integer.parseInt(valueAsText)
+                val literalValue = valueAsText.toInt()
                 updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues(literalValue))
             }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
-                val booleanValue = JavaBoolean.parseBoolean(valueAsText)
+                val booleanValue = valueAsText.toBoolean()
                 updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.create(booleanValue))
             }
         }
