@@ -15,7 +15,7 @@ import java.lang.reflect.Method
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.net.URLClassLoader
 
-// \todo simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
+// TODO: simplify: the complicated structure is a leftover from dynamic loading of plugin core, could be significantly simplified now
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
