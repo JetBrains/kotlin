@@ -3,5 +3,4 @@
  */
 class <caret>Some
 
-//INFO: <b>internal</b> <b>final</b> <b>class</b> Some <i>defined in</i> root package<br/><p>Usefull comment
-//INFO: </p>
+//INFO: <b>internal</b> <b>final</b> <b>class</b> Some <i>defined in</i> root package<p>Usefull comment</p>

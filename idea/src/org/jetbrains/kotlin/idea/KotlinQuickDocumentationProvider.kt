@@ -130,7 +130,13 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             }
             val comment = KDocFinder.findKDoc(declarationDescriptor)
             if (comment != null) {
-                renderedDecl = renderedDecl + "<br/>" + KDocRenderer.renderKDoc(comment)
+                val renderedComment = KDocRenderer.renderKDoc(comment)
+                if (renderedComment.startsWith("<p>")) {
+                    renderedDecl += renderedComment
+                }
+                else {
+                    renderedDecl = "$renderedDecl<br/>$renderedComment"
+                }
             }
 
             return renderedDecl

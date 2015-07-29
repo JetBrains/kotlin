@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 object KDocRenderer {
     fun renderKDoc(docComment: KDocTag): String {
         val content = docComment.getContent()
-        val result = StringBuilder("<p>")
-        result.append(markdownToHtml(content))
+        val result = StringBuilder()
+        result.append(markdownToHtml(content, allowSingleParagraph = true))
         if (docComment is KDocSection) {
             result.append("\n")
             val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
@@ -47,7 +47,6 @@ object KDocRenderer {
 
             renderSeeAlso(docComment, result)
         }
-        result.append("</p>")
         return result.toString()
     }
 
@@ -85,13 +84,13 @@ object KDocRenderer {
         }
     }
 
-    fun markdownToHtml(markdown: String): String {
+    fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
         val markdownTree = MarkdownParser(CommonMarkMarkerProcessor.Factory).buildMarkdownTreeFromString(markdown)
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.filter { it.type != MarkdownTokenTypes.EOL }.singleOrNull()
-        if (maybeSingleParagraph != null) {
+        if (maybeSingleParagraph != null && !allowSingleParagraph) {
             return maybeSingleParagraph.children.map { it.toHtml() }.join("")
         } else {
             return markdownNode.toHtml()
@@ -120,7 +119,6 @@ object KDocRenderer {
         visit { node, processChildren ->
             fun wrapChildren(tag: String, newline: Boolean = false) {
                 sb.append("<$tag>")
-                if (newline) sb.appendln()
                 processChildren()
                 sb.append("</$tag>")
                 if (newline) sb.appendln()
@@ -142,13 +140,13 @@ object KDocRenderer {
                 MarkdownElementTypes.ATX_6 -> wrapChildren("h6")
                 MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
                 MarkdownElementTypes.PARAGRAPH -> {
-                    sb.trimTrailing()
+                    sb.trimEnd()
                     wrapChildren("p", newline = true)
                 }
                 MarkdownElementTypes.CODE_SPAN -> wrapChildren("code")
                 MarkdownElementTypes.CODE_BLOCK,
                 MarkdownElementTypes.CODE_FENCE -> {
-                    sb.trimTrailing()
+                    sb.trimEnd()
                     sb.append("<pre><code>")
                     processChildren()
                     sb.append("</code><pre>")
@@ -168,7 +166,7 @@ object KDocRenderer {
                     val label = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text
                     val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     if (label != null && destination != null) {
-                        sb.append("a href=\"${destination}\">${label.htmlEscape()}</a>")
+                        sb.append("<a href=\"$destination\">${label.htmlEscape()}</a>")
                     }
                     else {
                         sb.append(node.text)
@@ -202,10 +200,10 @@ object KDocRenderer {
                 }
             }
         }
-        return sb.toString()
+        return sb.toString().trimEnd()
     }
 
-    fun StringBuilder.trimTrailing() {
+    fun StringBuilder.trimEnd() {
         while (length() > 0 && this[length() - 1] == ' ') {
             deleteCharAt(length() - 1)
         }
