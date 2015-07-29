@@ -24,3 +24,9 @@ fun unknownVariables(a: Int) {
     var b = s.length()
     42
 }
+
+fun negativeAndPositiveNumbers() {
+    val a = +1
+    val b = -1
+    42
+}
