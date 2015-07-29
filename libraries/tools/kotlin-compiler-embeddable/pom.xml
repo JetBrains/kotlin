@@ -21,6 +21,29 @@
 
     <description>the Kotlin compiler embeddable</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-compiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
 
@@ -67,25 +90,75 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.1</version>
                 <executions>
                     <execution>
-                        <id>copy-jar</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <tasks>
-                                <copy file="${kotlin-dist}/kotlin-compiler-embeddable.jar"
-                                      tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
-                                      overwrite="true" verbose="true"/>
-                            </tasks>
-                        </configuration>
+                        <phase>package</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:kotlin-runtlime</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                    <artifact>*:kotlin-reflect</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                    <artifact>*:kotlin-stdlib</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.com.google</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.sampullara</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.com.sampullara</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jdom</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.jdom</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.fusesource</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.fusesource</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.picocontainer</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.picocontainer</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>jline</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.jline</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>gnu</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.gnu</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javax.inject</pattern>
+                                    <shadedPattern>org.jetbrains.kotlin.relocated.javax.inject</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
