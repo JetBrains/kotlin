@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -76,7 +74,7 @@ fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {
     if (isOverride) return true
 
     val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-    return descriptor !is DeclarationDescriptorWithVisibility || !descriptor.getVisibility().isPublicAPI()
+    return descriptor !is DeclarationDescriptorWithVisibility || !descriptor.getVisibility().isPublicAPI
 }
 
 // returns assignment which replaces initializer

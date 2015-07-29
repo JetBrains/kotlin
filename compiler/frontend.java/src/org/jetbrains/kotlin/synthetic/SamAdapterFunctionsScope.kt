@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DescriptorSubstitutor
 import org.jetbrains.kotlin.types.JetType
@@ -45,7 +46,6 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     private fun extensionForFunctionNotCached(function: FunctionDescriptor): FunctionDescriptor? {
-        //TODO!
         if (function.visibility == Visibilities.PRIVATE || function.visibility == Visibilities.PRIVATE_TO_THIS || function.visibility == Visibilities.INVISIBLE_FAKE) return null
         if (!function.hasJavaOriginInHierarchy()) return null //TODO: should we go into base at all?
         if (!SingleAbstractMethodUtils.isSamAdapterNecessary(function)) return null
@@ -110,7 +110,27 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
             val returnType = typeSubstitutor.safeSubstitute(originalFunction.returnType!!, Variance.OUT_VARIANCE)
             val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
             val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(originalFunction, this, typeSubstitutor)
-            initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, Visibilities.PUBLIC)
+
+            val originalVisibility = originalFunction.visibility
+            val visibility = when (originalVisibility) {
+                Visibilities.PUBLIC -> Visibilities.PUBLIC
+
+                else -> object : Visibility(originalVisibility.name, originalVisibility.isPublicAPI) {
+                    override fun isVisible(receiver: ReceiverValue, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor)
+                            = originalVisibility.isVisible(receiver, originalFunction, from)
+
+                    override fun mustCheckInImports()
+                            = throw UnsupportedOperationException("Should never be called for this visibility")
+
+                    override fun normalize()
+                            = originalVisibility.normalize()
+
+                    override val displayName: String
+                        get() = originalVisibility.displayName + " for synthetic extension"
+                }
+            }
+
+            initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, visibility)
         }
 
         override fun hasStableParameterNames() = originalFunction.hasStableParameterNames()

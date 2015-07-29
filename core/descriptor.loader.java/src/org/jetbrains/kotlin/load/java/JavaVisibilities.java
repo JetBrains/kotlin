@@ -27,7 +27,7 @@ public class JavaVisibilities {
 
     public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return areInSamePackage(what, from);
         }
 
@@ -43,8 +43,9 @@ public class JavaVisibilities {
             return -1;
         }
 
+        @NotNull
         @Override
-        public String toString() {
+        public String getDisplayName() {
             return "public/*package*/";
         }
 
@@ -57,7 +58,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", true) {
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }
@@ -80,8 +81,9 @@ public class JavaVisibilities {
             return false;
         }
 
+        @NotNull
         @Override
-        public String toString() {
+        public String getDisplayName() {
             return "protected/*protected static*/";
         }
 
@@ -94,7 +96,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", true) {
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }
@@ -124,8 +126,9 @@ public class JavaVisibilities {
             return -1;
         }
 
+        @NotNull
         @Override
-        public String toString() {
+        public String getDisplayName() {
             return "protected/*protected and package*/";
         }
 

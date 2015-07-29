@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -896,7 +893,7 @@ public class DescriptorResolver {
         boolean definedInClass = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class) != null;
         boolean isLocal = DescriptorUtils.isLocal(descriptor);
         Visibility visibility = descriptor.getVisibility();
-        boolean transformNeeded = !isLocal && !visibility.isPublicAPI()
+        boolean transformNeeded = !isLocal && !visibility.getIsPublicAPI()
                                   && !(definedInClass && Visibilities.isPrivate(visibility));
         if (transformNeeded) {
             if (type.getConstructor().getSupertypes().size() == 1) {

@@ -183,7 +183,7 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
         if (descriptor is FunctionDescriptor && descriptor.getModality() == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
         }
-        else if ((!descriptor.getVisibility().isPublicAPI() && descriptor.getVisibility() != Visibilities.INTERNAL) ||
+        else if ((!descriptor.getVisibility().isPublicAPI && descriptor.getVisibility() != Visibilities.INTERNAL) ||
                  DescriptorUtils.isLocal(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
         }

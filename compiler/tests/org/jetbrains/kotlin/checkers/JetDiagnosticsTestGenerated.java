@@ -14435,6 +14435,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("PackageLocal.kt")
+                public void testPackageLocal() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/PackageLocal.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ParameterTypeAnnotation.kt")
                 public void testParameterTypeAnnotation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/ParameterTypeAnnotation.kt");
@@ -14444,6 +14450,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("PassNull.kt")
                 public void testPassNull() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/PassNull.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("Private.kt")
+                public void testPrivate() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/Private.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("Protected.kt")
+                public void testProtected() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/samAdapters/Protected.kt");
                     doTest(fileName);
                 }
 
