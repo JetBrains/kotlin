@@ -18,14 +18,17 @@ package org.jetbrains.kotlin.cfg
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cfg.outofbound.MapUtils
 import org.jetbrains.kotlin.cfg.outofbound.OutOfBoundChecker
 import org.jetbrains.kotlin.cfg.outofbound.PseudocodeIntegerVariablesDataCollector
 import org.jetbrains.kotlin.cfg.outofbound.ValuesData
+import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -48,50 +51,58 @@ public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
 
     override fun dumpInstructions(pseudocode: PseudocodeImpl, out: StringBuilder, bindingContext: BindingContext) {
         val integerVariableValues = PseudocodeIntegerVariablesDataCollector(pseudocode, bindingContext).collectVariableValuesData()
+        if(integerVariableValues.isEmpty()) {
+            return
+        }
         val inPrefix = "    in: "
         val outPrefix = "   out: "
 
         val inValuesData = integerVariableValues.mapValues { it.value.incoming }
         val outValuesData = integerVariableValues.mapValues { it.value.outgoing }
-        val inDumpData = dumpValues(inValuesData)
-        val outDumpData = dumpValues(outValuesData)
+        val inDumpData = dumpCollectedData(inValuesData)
+        val outDumpData = dumpCollectedData(outValuesData)
 
         dumpInstructions(pseudocode, out, { instruction, next, prev ->
-            val inValues = inDumpData.data[instruction]
-            val outValues = outDumpData.data[instruction]
+            val inInstructionDump = inDumpData.data[instruction]
+            val outInstructionDump = outDumpData.data[instruction]
             inPrefix +
-            "%1$-${inDumpData.intsColumnWidth}s ".format(inValues?.get(0)) +
-            "%1$-${inDumpData.fakeIntsColumnWidth}s ".format(inValues?.get(1)) +
-            "%1$-${inDumpData.boolsColumnWidth}s ".format(inValues?.get(2)) +
-            "%1$-${inDumpData.fakeBoolsColumnWidth}s ".format(inValues?.get(3)) +
+            "%1$-${inDumpData.intsColumnWidth}s ".format(inInstructionDump?.intVariablesDataString) +
+            "%1$-${inDumpData.boolsColumnWidth}s ".format(inInstructionDump?.boolVariablesDataString) +
+            "%1$-${inDumpData.arraysColumnWidth}s ".format(inInstructionDump?.arrayVariablesDataString) +
             outPrefix +
-            "%1$-${outDumpData.intsColumnWidth}s ".format(outValues?.get(0)) +
-            "%1$-${outDumpData.fakeIntsColumnWidth}s ".format(outValues?.get(1)) +
-            "%1$-${outDumpData.boolsColumnWidth}s ".format(outValues?.get(2)) +
-            "%1$-${outDumpData.fakeBoolsColumnWidth}s ".format(outValues?.get(3))
+            "%1$-${outDumpData.intsColumnWidth}s ".format(outInstructionDump?.intVariablesDataString) +
+            "%1$-${outDumpData.boolsColumnWidth}s ".format(outInstructionDump?.boolVariablesDataString) +
+            "%1$-${outDumpData.arraysColumnWidth}s ".format(outInstructionDump?.arrayVariablesDataString)
         })
     }
 
-    private data class DumpData(
-            val data: Map<Instruction, List<String>>,
-            val intsColumnWidth: Int,
-            val fakeIntsColumnWidth: Int,
-            val boolsColumnWidth: Int,
-            val fakeBoolsColumnWidth: Int
+    private data class CollectedDataStrings(
+            val intVariablesDataString: String,
+            val boolVariablesDataString: String,
+            val arrayVariablesDataString: String
     )
 
-    private fun dumpValues(dataMap: Map<Instruction, ValuesData>): DumpData {
+    private data class DumpData(
+            val data: Map<Instruction, CollectedDataStrings>,
+            val intsColumnWidth: Int,
+            val boolsColumnWidth: Int,
+            val arraysColumnWidth: Int
+    )
+
+    private fun dumpCollectedData(dataMap: Map<Instruction, ValuesData>): DumpData {
+        val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
         val data = dataMap.mapValues {
-            val res = it.value.toString().split("|")
-            assert(res.size() == 4, "ValuesData has incorrect values format")
-            res
-        } // todo: why \\s is not recognized as any whitespace?
+            CollectedDataStrings(
+                    "INTS${MapUtils.mapToString(it.value.intVarsToValues, descriptorToString, descriptorToString)}",
+                    "BOOLS${MapUtils.mapToString(it.value.boolVarsToValues, descriptorToString, descriptorToString)}",
+                    "ARRS${MapUtils.mapToString(it.value.arraysToSizes, descriptorToString, descriptorToString)}"
+            )
+        }
         return DumpData(
                 data = data,
-                intsColumnWidth = data.map { it.value[0].length() }.max() as Int,
-                fakeIntsColumnWidth = data.map { it.value[1].length() }.max() as Int,
-                boolsColumnWidth = data.map { it.value[2].length() }.max() as Int,
-                fakeBoolsColumnWidth = data.map { it.value[3].length() }.max() as Int
+                intsColumnWidth = data.map { it.value.intVariablesDataString.length() }.max() as Int,
+                boolsColumnWidth = data.map { it.value.boolVariablesDataString.length() }.max() as Int,
+                arraysColumnWidth = data.map { it.value.arrayVariablesDataString.length() }.max() as Int
         )
     }
 }
