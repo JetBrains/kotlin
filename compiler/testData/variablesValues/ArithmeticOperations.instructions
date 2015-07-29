@@ -92,3 +92,34 @@ error:
 sink:
     <SINK>                                     in: INTS{}            BOOLS{} ARRS{}    out: INTS{}            BOOLS{} ARRS{}
 =====================
+== divisionByZero ==
+fun divisionByZero() {
+    val a = 0
+    val b = 3
+    val c = b / a
+    42
+}
+---------------------
+L0:
+  1 <START>                                           in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+  2 mark({ val a = 0 val b = 3 val c = b / a 42 })    in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+    v(val a = 0)                                      in: INTS{}                    BOOLS{} ARRS{}    out: INTS{a:-}                 BOOLS{} ARRS{}
+    r(0) -> <v0>                                      in: INTS{a:-}                 BOOLS{} ARRS{}    out: INTS{a:-}                 BOOLS{} ARRS{}
+    w(a|<v0>)                                         in: INTS{a:-}                 BOOLS{} ARRS{}    out: INTS{a:[0][]}             BOOLS{} ARRS{}
+    v(val b = 3)                                      in: INTS{a:[0][]}             BOOLS{} ARRS{}    out: INTS{a:[0][],b:-}         BOOLS{} ARRS{}
+    r(3) -> <v1>                                      in: INTS{a:[0][],b:-}         BOOLS{} ARRS{}    out: INTS{a:[0][],b:-}         BOOLS{} ARRS{}
+    w(b|<v1>)                                         in: INTS{a:[0][],b:-}         BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][]}     BOOLS{} ARRS{}
+    v(val c = b / a)                                  in: INTS{a:[0][],b:[3][]}     BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
+    r(b) -> <v2>                                      in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
+    r(a) -> <v3>                                      in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
+    mark(b / a)                                       in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
+    call(b / a, div|<v2>, <v3>) -> <v4>               in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}
+    w(c|<v4>)                                         in: INTS{a:[0][],b:[3][],c:-} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}
+    r(42) -> <v5>                                     in: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}    out: INTS{a:[0][],b:[3][],c:?} BOOLS{} ARRS{}
+L1:
+  1 <END>                                             in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+error:
+    <ERROR>                                           in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+sink:
+    <SINK>                                            in: INTS{}                    BOOLS{} ARRS{}    out: INTS{}                    BOOLS{} ARRS{}
+=====================
