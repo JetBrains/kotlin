@@ -32,7 +32,7 @@ class AnnotationConverter(private val converter: Converter) {
             + NullableNotNullManager.getInstance(converter.project).getNullables()
             + listOf(CommonClassNames.JAVA_LANG_OVERRIDE, javaClass<ElementType>().name)).toSet()
 
-    public fun isImportRequired(annotationName: String): Boolean {
+    public fun isImportNotRequired(annotationName: String): Boolean {
         return annotationName in annotationsToRemove || annotationName == javaClass<Target>().name
     }
 
