@@ -94,7 +94,6 @@ import static org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys.ANNOTATIO
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.test.ConfigurationKind.ALL;
-import static org.jetbrains.kotlin.test.ConfigurationKind.JDK_AND_ANNOTATIONS;
 
 public class JetTestUtils {
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
@@ -459,13 +458,17 @@ public class JetTestUtils {
         else {
             addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
         }
-        if (configurationKind == ALL) {
+
+        if (configurationKind.getWithRuntime()) {
             addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
+        }
+        if (configurationKind.getWithReflection()) {
             addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());
         }
+
         addJvmClasspathRoots(configuration, classpath);
 
-        if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
+        if (configurationKind.getWithJdkAnnotations()) {
             if (jdkKind == TestJdkKind.ANDROID_API) {
                 configuration.add(ANNOTATIONS_PATH_KEY, getAndroidSdkAnnotationsJar());
             }

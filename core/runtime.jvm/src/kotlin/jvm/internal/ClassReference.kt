@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.test;
+package kotlin.jvm.internal
 
-public enum ConfigurationKind {
-    JDK_ONLY,            // Java runtime classes
-    JDK_AND_ANNOTATIONS, // Java runtime classes with Kotlin's external annotations
-    ALL,                 // Java runtime classes with Kotlin's external annotations and Kotlin stdlib
+import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+
+public class ClassReference(override val jClass: Class<*>) : KClass<Any>, DeclarationContainerImpl {
+    override val simpleName: String?
+        get() = error()
+
+    override val qualifiedName: String?
+        get() = error()
+
+    override val members: Collection<KCallable<*>>
+        get() = error()
+
+    override val constructors: Collection<KFunction<Any>>
+        get() = error()
+
+    private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
 }
