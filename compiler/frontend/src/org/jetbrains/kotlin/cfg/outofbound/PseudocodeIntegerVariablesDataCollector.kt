@@ -100,8 +100,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
         val updatedEdgeData = edgeData.copy()
         val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
-        makeVariablesUnavailableIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
-        makeVariablesAvailableIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+        removeUnavailableValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
         return filteredEdgeData
     }
 
@@ -165,7 +164,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun makeVariablesUnavailableIfNeeded(
+    private fun removeUnavailableValuesIfNeeded(
             previousInstruction: Instruction,
             currentInstruction: Instruction,
             edgeData: ValuesData
@@ -181,16 +180,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             if (beforePreviousInstruction.nextOnFalse == previousInstruction) {
                                 // We are in "else" block and condition evaluated to "true"
                                 // so this block will not be processed. For now to indicate this
-                                // we will make all variables completely unavailable
-                                edgeData.intVarsToValues.forEach { it.value.makeAllValuesUnavailable(currentInstruction.lexicalScope) }
+                                // we will make all variables undefined
+                                edgeData.intVarsToValues.forEach { it.value.setUndefined() }
                             }
                         }
                         is BooleanVariableValue.False -> {
                             if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
                                 // We are in "then" block and condition evaluated to "false"
                                 // so this block will not be processed. For now to indicate this
-                                // we will make all variables completely unavailable
-                                edgeData.intVarsToValues.forEach { it.value.makeAllValuesUnavailable(currentInstruction.lexicalScope) }
+                                // we will make all variables undefined
+                                edgeData.intVarsToValues.forEach { it.value.setUndefined() }
                             }
                         }
                         is BooleanVariableValue.Undefined -> {
@@ -198,7 +197,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                 // We are in "then" block and need to apply onTrue restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onTrueRestrictions) {
                                     edgeData.intVarsToValues[variable]
-                                            ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
+                                            ?.leaveOnlyValuesInSet(unrestrictedValues, currentInstruction.lexicalScope)
                                 }
                             }
                             else {
@@ -206,24 +205,13 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                 // We are in "else" block and need to apply onFalse restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onFalseRestrictions) {
                                     edgeData.intVarsToValues[variable]
-                                            ?.leaveOnlyPassedValuesAvailable(unrestrictedValues, currentInstruction.lexicalScope)
+                                            ?.leaveOnlyValuesInSet(unrestrictedValues, currentInstruction.lexicalScope)
                                 }
                             }
                         }
                     }
                 }
             }
-        }
-    }
-
-    private fun makeVariablesAvailableIfNeeded(
-            previousInstruction: Instruction,
-            currentInstruction: Instruction,
-            edgeData: ValuesData
-    ) {
-        if (previousInstruction.lexicalScope.depth > currentInstruction.lexicalScope.depth) {
-            edgeData.intVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
-            edgeData.intFakeVarsToValues.values().forEach { it.tryMakeValuesAvailable(currentInstruction.lexicalScope) }
         }
     }
 
@@ -267,8 +255,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             val values1 = targetVariablesMap[key] as IntegerVariableValues
             assert(variablesToConsume.containsKey(key), "No corresponding element in map")
             val values2 = variablesToConsume[key] as IntegerVariableValues
-            if (values1.isUndefined || values2.isUndefined) {
-                values1.setUndefined()
+            if (values1.isUndefined) {
+                targetVariablesMap[key] = values2
             }
             else {
                 values1.addAll(values2)

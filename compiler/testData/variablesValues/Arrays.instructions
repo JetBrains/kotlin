@@ -7,31 +7,31 @@ fun simpleArray() {
 }
 ---------------------
 L0:
-  1 <START>                                                                                   in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
-  2 mark({ val arr1 = Array(3, { x -> x }) val arr2: Array<Int> arr2 = arrayOf(1, 2) 42 })    in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
-    v(val arr1 = Array(3, { x -> x }))                                                        in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{arr1:-}
-    r(3) -> <v0>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    mark({ x -> x })                                                                          in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    jmp?(L2)                                                                                  in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    d({ x -> x })                                                                             in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
+  1 <START>                                                                                   in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
+  2 mark({ val arr1 = Array(3, { x -> x }) val arr2: Array<Int> arr2 = arrayOf(1, 2) 42 })    in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
+    v(val arr1 = Array(3, { x -> x }))                                                        in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{arr1:-}
+    r(3) -> <v0>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    mark({ x -> x })                                                                          in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    jmp?(L2)                                                                                  in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    d({ x -> x })                                                                             in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
 L2 [after local declaration]:
-    r({ x -> x }) -> <v1>                                                                     in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    mark(Array(3, { x -> x }))                                                                in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    call(Array(3, { x -> x }), Array|<v0>, <v1>) -> <v2>                                      in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:-}
-    w(arr1|<v2>)                                                                              in: INTS{}    BOOLS{} ARRS{arr1:-}                   out: INTS{}    BOOLS{} ARRS{arr1:[3][]}
-    v(val arr2: Array<Int>)                                                                   in: INTS{}    BOOLS{} ARRS{arr1:[3][]}               out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}
-    r(1) -> <v3>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}        out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}
-    r(2) -> <v4>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}        out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}
-    mark(arrayOf(1, 2))                                                                       in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}        out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}
-    call(arrayOf(1, 2), arrayOf|<v3>, <v4>) -> <v5>                                           in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}        out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}
-    w(arr2|<v5>)                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:-}        out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:[2][]}
-    r(42) -> <v6>                                                                             in: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:[2][]}    out: INTS{}    BOOLS{} ARRS{arr1:[3][],arr2:[2][]}
+    r({ x -> x }) -> <v1>                                                                     in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    mark(Array(3, { x -> x }))                                                                in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    call(Array(3, { x -> x }), Array|<v0>, <v1>) -> <v2>                                      in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:-}
+    w(arr1|<v2>)                                                                              in: INTS{}    BOOLS{} ARRS{arr1:-}               out: INTS{}    BOOLS{} ARRS{arr1:[3]}
+    v(val arr2: Array<Int>)                                                                   in: INTS{}    BOOLS{} ARRS{arr1:[3]}             out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}
+    r(1) -> <v3>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}      out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}
+    r(2) -> <v4>                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}      out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}
+    mark(arrayOf(1, 2))                                                                       in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}      out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}
+    call(arrayOf(1, 2), arrayOf|<v3>, <v4>) -> <v5>                                           in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}      out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}
+    w(arr2|<v5>)                                                                              in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:-}      out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:[2]}
+    r(42) -> <v6>                                                                             in: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:[2]}    out: INTS{}    BOOLS{} ARRS{arr1:[3],arr2:[2]}
 L1:
-  1 <END>                                                                                     in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
+  1 <END>                                                                                     in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
 error:
-    <ERROR>                                                                                   in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
+    <ERROR>                                                                                   in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
 sink:
-    <SINK>                                                                                    in: INTS{}    BOOLS{} ARRS{}                         out: INTS{}    BOOLS{} ARRS{}
+    <SINK>                                                                                    in: INTS{}    BOOLS{} ARRS{}                     out: INTS{}    BOOLS{} ARRS{}
 =====================
 == anonymous_0 ==
 { x -> x }
