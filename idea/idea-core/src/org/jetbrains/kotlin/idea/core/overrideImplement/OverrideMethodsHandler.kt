@@ -28,7 +28,8 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
     override fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
         for (member in descriptor.unsubstitutedMemberScope.getAllDescriptors()) {
-            if (member is CallableMemberDescriptor && !member.isReal()) {
+            if (member is CallableMemberDescriptor
+                && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
                 val overridden = member.overriddenDescriptors
                 if (overridden.any { it.modality == Modality.FINAL }) continue
 
@@ -65,11 +66,12 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
         return result
     }
 
-    private fun CallableMemberDescriptor.isReal() = kind == CallableMemberDescriptor.Kind.DECLARATION
-
     private fun toRealSupers(immediateSuper: CallableMemberDescriptor): Collection<CallableMemberDescriptor> {
+        if (immediateSuper.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return listOf(immediateSuper)
+        }
         val overridden = immediateSuper.overriddenDescriptors
-        if (overridden.isEmpty()) return listOf(immediateSuper)
+        assert(overridden.isNotEmpty())
         return overridden.flatMap { toRealSupers(it) }.toSet()
     }
 
