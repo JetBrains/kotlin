@@ -1,3 +1,3 @@
 fun <A, B> foo() {
-    <selection>foo<I<caret>nt, B>()</selection>
+    foo<selection><I<caret>nt, B></selection>()
 }
