@@ -33,7 +33,11 @@ public class ClassDeserializer(private val components: DeserializationComponents
         val classId = key.classId
         components.fictitiousClassDescriptorFactory.createClass(classId)?.let { return it }
 
-        val classData = key.classData ?: components.classDataFinder.findClassData(classId) ?: return null
+        var classData = key.classData ?: run {
+            val classDataProvider = components.classDataFinder.findClassData(classId)
+            classDataProvider?.classData
+        } ?: return null
+
         val outerContext = if (classId.isNestedClass()) {
             val outerClass = deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor ?: return null
 

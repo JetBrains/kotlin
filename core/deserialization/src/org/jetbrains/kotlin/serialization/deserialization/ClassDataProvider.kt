@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization;
+package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.serialization.ClassData
 
-public interface ClassDataFinder {
-    @Nullable
-    ClassDataProvider findClassData(@NotNull ClassId classId);
-}
+public class ClassDataProvider(
+        public val classData: ClassData,
+        public val sourceElement: SourceElement = SourceElement.NO_SOURCE
+)

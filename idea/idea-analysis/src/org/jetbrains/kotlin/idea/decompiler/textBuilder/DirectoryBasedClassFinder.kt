@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -71,14 +71,16 @@ class DirectoryBasedDataFinder(
         val classFinder: DirectoryBasedClassFinder,
         val log: Logger
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassData? {
+    override fun findClassData(classId: ClassId): ClassDataProvider? {
         val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val data = binaryClass.getClassHeader().annotationData
         if (data == null) {
             log.error("Annotation data missing for ${binaryClass.getClassId()}")
             return null
         }
-        return JvmProtoBufUtil.readClassDataFrom(data)
+
+        val classData = JvmProtoBufUtil.readClassDataFrom(data)
+        return ClassDataProvider(classData)
     }
 }
 
@@ -86,11 +88,12 @@ class DirectoryBasedKotlinJavaScriptDataFinder(
         val classFinder: DirectoryBasedKotlinJavaScriptMetaFileFinder,
         val log: Logger
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassData? {
+    override fun findClassData(classId: ClassId): ClassDataProvider? {
         val file = classFinder.findKotlinJavascriptMetaFile(classId) ?: return null
 
         val content = file.contentsToByteArray(false)
-        return content.toClassData(classFinder.nameResolver)
+        val classData = content.toClassData(classFinder.nameResolver)
+        return ClassDataProvider(classData)
     }
 }
 

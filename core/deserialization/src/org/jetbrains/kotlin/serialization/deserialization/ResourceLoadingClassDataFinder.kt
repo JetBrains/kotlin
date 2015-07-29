@@ -28,15 +28,16 @@ public open class ResourceLoadingClassDataFinder(
         private val serializedResourcePaths: SerializedResourcePaths,
         private val loadResource: (path: String) -> InputStream?
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassData? {
+    override fun findClassData(classId: ClassId): ClassDataProvider? {
         val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull()
                                       as? DeserializedPackageFragment ?: return null
 
         val stream = loadResource(serializedResourcePaths.getClassMetadataPath(classId)) ?: return null
 
-        return ClassData(
+        val classData = ClassData(
                 packageFragment.nameResolver,
                 ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.extensionRegistry)
         )
+        return ClassDataProvider(classData)
     }
 }
