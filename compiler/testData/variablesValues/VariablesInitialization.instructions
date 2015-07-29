@@ -105,3 +105,31 @@ error:
 sink:
     <SINK>                                        in: I{}        FI{} B{} FB{}    out: I{}        FI{}            B{} FB{}
 =====================
+== negativeAndPositiveNumbers ==
+fun negativeAndPositiveNumbers() {
+    val a = +1
+    val b = -1
+    42
+}
+---------------------
+L0:
+  1 <START>                               in: I{}                 FI{}                                             B{} FB{}    out: I{}                 FI{}                                                         B{} FB{}
+  2 mark({ val a = +1 val b = -1 42 })    in: I{}                 FI{}                                             B{} FB{}    out: I{}                 FI{}                                                         B{} FB{}
+    v(val a = +1)                         in: I{}                 FI{}                                             B{} FB{}    out: I{a:-}              FI{}                                                         B{} FB{}
+    r(1) -> <v0>                          in: I{a:-}              FI{}                                             B{} FB{}    out: I{a:-}              FI{<v0>:[1][]}                                               B{} FB{}
+    mark(+1)                              in: I{a:-}              FI{<v0>:[1][]}                                   B{} FB{}    out: I{a:-}              FI{<v0>:[1][]}                                               B{} FB{}
+    call(+1, plus|<v0>) -> <v1>           in: I{a:-}              FI{<v0>:[1][]}                                   B{} FB{}    out: I{a:-}              FI{<v0>:[1][],<v1>:[1][]}                                    B{} FB{}
+    w(a|<v1>)                             in: I{a:-}              FI{<v0>:[1][],<v1>:[1][]}                        B{} FB{}    out: I{a:[1][]}          FI{<v0>:[1][],<v1>:[1][]}                                    B{} FB{}
+    v(val b = -1)                         in: I{a:[1][]}          FI{<v0>:[1][],<v1>:[1][]}                        B{} FB{}    out: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][]}                                    B{} FB{}
+    r(1) -> <v2>                          in: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][]}                        B{} FB{}    out: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][]}                         B{} FB{}
+    mark(-1)                              in: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][]}             B{} FB{}    out: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][]}                         B{} FB{}
+    call(-1, minus|<v2>) -> <v3>          in: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][]}             B{} FB{}    out: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][],<v3>:[-1][]}             B{} FB{}
+    w(b|<v3>)                             in: I{a:[1][],b:-}      FI{<v0>:[1][],<v1>:[1][],<v2>:[1][],<v3>:[-1][]} B{} FB{}    out: I{a:[1][],b:[-1][]} FI{<v0>:[1][],<v1>:[1][],<v2>:[1][],<v3>:[-1][]}             B{} FB{}
+    r(42) -> <v4>                         in: I{a:[1][],b:[-1][]} FI{<v0>:[1][],<v1>:[1][],<v2>:[1][],<v3>:[-1][]} B{} FB{}    out: I{a:[1][],b:[-1][]} FI{<v0>:[1][],<v1>:[1][],<v2>:[1][],<v3>:[-1][],<v4>:[42][]} B{} FB{}
+L1:
+  1 <END>                                 in: I{}                 FI{}                                             B{} FB{}    out: I{}                 FI{}                                                         B{} FB{}
+error:
+    <ERROR>                               in: I{}                 FI{}                                             B{} FB{}    out: I{}                 FI{}                                                         B{} FB{}
+sink:
+    <SINK>                                in: I{}                 FI{}                                             B{} FB{}    out: I{}                 FI{}                                                         B{} FB{}
+=====================

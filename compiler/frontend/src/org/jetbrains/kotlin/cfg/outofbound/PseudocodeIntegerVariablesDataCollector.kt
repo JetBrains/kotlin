@@ -293,6 +293,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     isArrayCreation(instruction) -> processArrayCreation(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
                         processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                    instruction.element is JetPrefixExpression ->
+                        processUnaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
@@ -469,6 +471,19 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetTokens.LT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
                 x.less(y, leftOperandDescriptor, updatedData)
             }
+        }
+    }
+
+    private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
+        assert(instruction.inputValues.size() > 0, "Prefix operation is expected to have at least one input value")
+        val operandVariable = instruction.inputValues[0]
+        val operandValues = updatedData.intFakeVarsToValues[operandVariable]
+                            ?: return
+        val resultVariable = instruction.outputValue
+                             ?: return
+        when(operationToken) {
+            JetTokens.MINUS -> updatedData.intFakeVarsToValues[resultVariable] = -operandValues
+            JetTokens.PLUS -> updatedData.intFakeVarsToValues[resultVariable] = operandValues.copy()
         }
     }
 }
