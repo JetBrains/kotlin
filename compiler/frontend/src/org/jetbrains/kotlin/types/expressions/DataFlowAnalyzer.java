@@ -48,12 +48,12 @@ import static org.jetbrains.kotlin.types.TypeUtils.*;
 
 public class DataFlowAnalyzer {
 
-    private final Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers;
+    private final Iterable<AdditionalTypeChecker> additionalTypeCheckers;
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
     private final KotlinBuiltIns builtIns;
 
     public DataFlowAnalyzer(
-            @NotNull Iterable<? extends AdditionalTypeChecker> additionalTypeCheckers,
+            @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull KotlinBuiltIns builtIns
     ) {

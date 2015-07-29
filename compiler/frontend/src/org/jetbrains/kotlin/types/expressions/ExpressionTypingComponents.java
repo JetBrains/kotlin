@@ -53,7 +53,7 @@ public class ExpressionTypingComponents {
     /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
-    /*package*/ Iterable<? extends CallChecker> callCheckers;
+    /*package*/ Iterable<CallChecker> callCheckers;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -166,7 +166,7 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setCallCheckers(@NotNull Iterable<? extends CallChecker> callCheckers) {
+    public void setCallCheckers(@NotNull Iterable<CallChecker> callCheckers) {
         this.callCheckers = callCheckers;
     }
 }

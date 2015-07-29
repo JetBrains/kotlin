@@ -472,9 +472,9 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    private final Iterable<? extends DeclarationChecker> declarationCheckers;
+    private final Iterable<DeclarationChecker> declarationCheckers;
 
-    public ModifiersChecker(@NotNull Iterable<? extends DeclarationChecker> declarationCheckers) {
+    public ModifiersChecker(@NotNull Iterable<DeclarationChecker> declarationCheckers) {
         this.declarationCheckers = declarationCheckers;
     }
 
