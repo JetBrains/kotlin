@@ -138,7 +138,7 @@ class ForConverter(
                     block.generateCode(builder)
                 }
                 else {
-                    val call = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block))
+                    val call = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block)), listOf(), false)
                     call.generateCode(builder)
                 }
             }

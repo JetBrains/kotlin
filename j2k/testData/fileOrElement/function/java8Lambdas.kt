@@ -18,29 +18,29 @@ public class Java8Class {
     }
 
     public fun foo() {
-        foo0({ "42" })
-        foo0({ "42" })
-        foo0({
+        foo0 { "42" }
+        foo0 { "42" }
+        foo0 {
             helper()
             "42"
-        })
+        }
 
-        foo1({ i -> "42" })
-        foo1({ i -> "42" })
-        foo1({ i: Int ->
+        foo1 { i -> "42" }
+        foo1 { i -> "42" }
+        foo1 { i: Int ->
             helper()
             if (i > 1) {
                 return@foo1 "42"
             }
 
             "43"
-        })
+        }
 
-        foo2({ i, j -> "42" })
-        foo2({ i: Int, j: Int ->
+        foo2 { i, j -> "42" }
+        foo2 { i: Int, j: Int ->
             helper()
             "42"
-        })
+        }
 
         val f = { i: Int, k: Int ->
             helper()
@@ -68,19 +68,19 @@ public class Java8Class {
 
         val runnable = { }
 
-        foo1({ i: Int ->
+        foo1 { i: Int ->
             if (i > 1) {
                 return@foo1 "42"
             }
 
-            foo0({
+            foo0 {
                 if (true) {
                     return@foo0 "42"
                 }
                 "43"
-            })
+            }
 
             "43"
-        })
+        }
     }
 }

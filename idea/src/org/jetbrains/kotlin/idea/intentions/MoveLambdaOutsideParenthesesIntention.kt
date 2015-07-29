@@ -59,4 +59,8 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         element.moveFunctionLiteralOutsideParentheses()
     }
+
+    fun applyTo(element: JetCallExpression) {
+        element.moveFunctionLiteralOutsideParentheses()
+    }
 }

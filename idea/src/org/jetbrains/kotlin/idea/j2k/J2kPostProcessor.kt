@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
-import org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention
-import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
@@ -170,6 +167,18 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                 }
                 else {
                     super.visitBinaryExpression(expression)
+                }
+            }
+
+            override fun visitCallExpression(expression: JetCallExpression) {
+                super.visitCallExpression(expression)
+
+                val literalArgument = expression.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
+                if (literalArgument != null) {
+                    val intention = MoveLambdaOutsideParenthesesIntention()
+                    if (intention.isApplicableTo(expression, literalArgument.textOffset)) {
+                        intention.applyTo(expression)
+                    }
                 }
             }
         })

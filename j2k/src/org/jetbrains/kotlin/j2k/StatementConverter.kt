@@ -64,14 +64,14 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             else {
                 val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
                 val lambda = LambdaExpression(null, block.assignNoPrototype())
-                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, lambda)
+                result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
             }
         }
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
         val block = codeConverter.convertBlock(statement.getCodeBlock())
-        result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block).assignNoPrototype())
+        result = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block).assignNoPrototype()), listOf(), false)
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -225,7 +225,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
             val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
             val lambda = LambdaExpression(parameterList, block)
-            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
+            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(lambda), listOf(), false)
             expression.assignNoPrototype()
             block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
