@@ -2242,6 +2242,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("java8Lambdas.java")
+        public void testJava8Lambdas() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8Lambdas.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaksBetweenParameters.java")
         public void testLineBreaksBetweenParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");

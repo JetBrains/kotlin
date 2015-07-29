@@ -43,9 +43,13 @@ class LabeledStatement(val name: Identifier, val statement: Element) : Statement
     }
 }
 
-class ReturnStatement(val expression: Expression) : Statement() {
+class ReturnStatement(val expression: Expression, val label: Identifier? = null) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder append "return " append expression
+        builder append "return"
+        if (label != null) {
+            builder append "@" append label
+        }
+        builder append " " append expression
     }
 }
 

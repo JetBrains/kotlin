@@ -222,7 +222,9 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         var block = converterForBody.convertBlock(tryBlock)
         var expression: Expression = Expression.Empty
         for (variable in resourceVariables.reverse()) {
-            val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
+            val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
+            val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
+            val lambda = LambdaExpression(parameterList, block)
             expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
             expression.assignNoPrototype()
             block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
@@ -252,6 +254,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             codeConverter.convertExpression(returnValue, methodReturnType)
         else
             codeConverter.convertExpression(returnValue)
+
         result = ReturnStatement(expression)
     }
 

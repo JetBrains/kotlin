@@ -124,7 +124,7 @@ class PolyadicExpression(val expressions: List<Expression>, val token: String) :
     }
 }
 
-class LambdaExpression(val arguments: String?, val block: Block) : Expression() {
+class LambdaExpression(val parameterList: ParameterList?, val block: Block) : Expression() {
     init {
         assignPrototypesFrom(block)
     }
@@ -132,8 +132,8 @@ class LambdaExpression(val arguments: String?, val block: Block) : Expression() 
     override fun generateCode(builder: CodeBuilder) {
         builder append block.lBrace append " "
 
-        if (arguments != null) {
-            builder.append(arguments)
+        if (parameterList != null && !parameterList.parameters.isEmpty()) {
+            builder.append(parameterList)
                     .append("->")
                     .append(if (block.statements.size() > 1) "\n" else " ")
                     .append(block.statements, "\n")

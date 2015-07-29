@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.*
 
-abstract class Parameter(val identifier: Identifier,
-                         val type: Type?): Element()
+abstract class Parameter(val identifier: Identifier, val type: Type?) : Element()
 
 class FunctionParameter(identifier: Identifier,
                         type: Type,
                         val varVal: FunctionParameter.VarValModifier,
                         val annotations: Annotations,
                         val modifiers: Modifiers,
-                        val defaultValue: DeferredElement<Expression>? = null) : Parameter(identifier, type) {
+                        val defaultValue: DeferredElement<Expression>? = null
+): Parameter(identifier, type) {
     public enum class VarValModifier {
         None,
         Val,
@@ -49,6 +49,16 @@ class FunctionParameter(identifier: Identifier,
 
         if (defaultValue != null) {
             builder append " = " append defaultValue
+        }
+    }
+}
+
+class LambdaParameter(identifier: Identifier, type: Type?) : Parameter(identifier, type) {
+    override fun generateCode(builder: CodeBuilder) {
+        builder append identifier
+
+        if (type != null) {
+            builder append ":" append type
         }
     }
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -534,6 +535,50 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             JavaTokenType.PLUSPLUS -> "++"
             JavaTokenType.MINUSMINUS -> "--"
             else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
+        }
+    }
+
+    override fun visitLambdaExpression(expression: PsiLambdaExpression) {
+        val parameters = expression.parameterList
+        val convertedParameters = ParameterList(parameters.parameters.map {
+            val paramName = Identifier(it.name!!).assignNoPrototype()
+            val paramType = if (it.typeElement != null) converter.typeConverter.convertType(it.type) else null
+            LambdaParameter(paramName, paramType).assignPrototype(it)
+        }).assignPrototype(parameters)
+
+        val body = expression.body
+        when (body) {
+            is PsiExpression -> {
+                val convertedBody = codeConverter.convertExpression(body).assignPrototype(body)
+                result = LambdaExpression(convertedParameters, Block(listOf(convertedBody), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()))
+            }
+            is PsiCodeBlock -> {
+                val convertedBlock = codeConverter.withSpecialStatementConverter(object: SpecialStatementConverter {
+                    override fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement? {
+                        if (statement !is PsiReturnStatement) return null
+
+                        val returnValue = statement.returnValue
+                        val methodReturnType = codeConverter.methodReturnType
+                        val expressionForReturn = if (returnValue != null && methodReturnType != null)
+                            codeConverter.convertExpression(returnValue, methodReturnType)
+                        else
+                            codeConverter.convertExpression(returnValue)
+
+                        if (body.statements.lastOrNull() == statement) {
+                            return expressionForReturn
+                        }
+
+                        val callExpression = expression.getParentOfType<PsiMethodCallExpression>(false)
+                        if (callExpression != null) {
+                            return ReturnStatement(expressionForReturn, Identifier(callExpression.methodExpression.text).assignNoPrototype())
+                        }
+
+                        return ReturnStatement(expressionForReturn)
+                    }
+
+                }).convertBlock(body).assignPrototype(body)
+                result = LambdaExpression(convertedParameters, convertedBlock)
+            }
         }
     }
 
