@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.scopes.receivers
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import java.util.*
 import kotlin.properties.Delegates
-import kotlin.reflect.jvm.internal.impl.resolve.scopes.receivers.ReceiverValue
 
 public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
     private val arrayGetFunctionName = "get"
