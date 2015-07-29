@@ -582,6 +582,10 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
     }
 
+    override fun visitExpression(expression: PsiExpression) {
+        result = DummyStringExpression(expression.text)
+    }
+
     companion object {
         private val needQualifierNameSet = setOf("java.lang.Byte", "java.lang.Double", "java.lang.Float", "java.lang.Long", "java.lang.Short")
     }
