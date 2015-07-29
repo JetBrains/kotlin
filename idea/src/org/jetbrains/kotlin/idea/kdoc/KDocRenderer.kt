@@ -90,7 +90,7 @@ object KDocRenderer {
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
-        val maybeSingleParagraph = markdownNode.children.filter { it.type == MarkdownElementTypes.PARAGRAPH }.singleOrNull()
+        val maybeSingleParagraph = markdownNode.children.filter { it.type != MarkdownTokenTypes.EOL }.singleOrNull()
         if (maybeSingleParagraph != null) {
             return maybeSingleParagraph.children.map { it.toHtml() }.join("")
         } else {
@@ -142,13 +142,13 @@ object KDocRenderer {
                 MarkdownElementTypes.ATX_6 -> wrapChildren("h6")
                 MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
                 MarkdownElementTypes.PARAGRAPH -> {
-                    while (sb.length() > 0 && sb[sb.length() - 1] == ' ') {
-                        sb.deleteCharAt(sb.length() - 1)
-                    }
+                    sb.trimTrailing()
                     wrapChildren("p", newline = true)
                 }
                 MarkdownElementTypes.CODE_SPAN -> wrapChildren("code")
-                MarkdownElementTypes.CODE_BLOCK -> {
+                MarkdownElementTypes.CODE_BLOCK,
+                MarkdownElementTypes.CODE_FENCE -> {
+                    sb.trimTrailing()
                     sb.append("<pre><code>")
                     processChildren()
                     sb.append("</code><pre>")
@@ -159,7 +159,8 @@ object KDocRenderer {
                     if (label != null) {
                         val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text ?: label
                         DocumentationManagerUtil.createHyperlink(sb, label, linkText, true)
-                    } else {
+                    }
+                    else {
                         sb.append(node.text)
                     }
                 }
@@ -168,11 +169,13 @@ object KDocRenderer {
                     val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     if (label != null && destination != null) {
                         sb.append("a href=\"${destination}\">${label.htmlEscape()}</a>")
-                    } else {
+                    }
+                    else {
                         sb.append(node.text)
                     }
                 }
                 MarkdownTokenTypes.TEXT,
+                MarkdownTokenTypes.CODE,
                 MarkdownTokenTypes.WHITE_SPACE,
                 MarkdownTokenTypes.COLON,
                 MarkdownTokenTypes.SINGLE_QUOTE,
@@ -184,7 +187,13 @@ object KDocRenderer {
                     sb.append(nodeText)
                 }
                 MarkdownTokenTypes.EOL -> {
-                    sb.append(" ")
+                    val parentType = node.parent?.type
+                    if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
+                        sb.append("\n")
+                    }
+                    else {
+                        sb.append(" ")
+                    }
                 }
                 MarkdownTokenTypes.GT -> sb.append("&gt;")
                 MarkdownTokenTypes.LT -> sb.append("&lt;")
@@ -194,6 +203,12 @@ object KDocRenderer {
             }
         }
         return sb.toString()
+    }
+
+    fun StringBuilder.trimTrailing() {
+        while (length() > 0 && this[length() - 1] == ' ') {
+            deleteCharAt(length() - 1)
+        }
     }
 
     fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

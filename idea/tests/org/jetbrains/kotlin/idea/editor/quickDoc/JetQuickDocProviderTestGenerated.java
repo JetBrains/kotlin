@@ -125,6 +125,12 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageWithCodeBlock.kt")
+    public void testOnMethodUsageWithCodeBlock() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithCodeBlock.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsageWithMarkdown.kt")
     public void testOnMethodUsageWithMarkdown() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithMarkdown.kt");
