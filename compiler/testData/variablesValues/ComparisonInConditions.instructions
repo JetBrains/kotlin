@@ -1,6 +1,6 @@
 == simpleLess ==
 fun simpleLess() {
-    val a = 1
+    var a = 1
     if(a < 2) {
         a = 3
     }
@@ -12,8 +12,8 @@ fun simpleLess() {
 ---------------------
 L0:
   1 <START>                                                               in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
-  2 mark({ val a = 1 if(a < 2) { a = 3 } else { val b = a } 42 })         in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
-    v(val a = 1)                                                          in: INTS{}        BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+  2 mark({ var a = 1 if(a < 2) { a = 3 } else { val b = a } 42 })         in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+    v(var a = 1)                                                          in: INTS{}        BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
     r(1) -> <v0>                                                          in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
     w(a|<v0>)                                                             in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:[1]}   BOOLS{} ARRS{}
     mark(if(a < 2) { a = 3 } else { val b = a })                          in: INTS{a:[1]}   BOOLS{} ARRS{}    out: INTS{a:[1]}   BOOLS{} ARRS{}
@@ -177,7 +177,7 @@ sink:
 =====================
 == falseAlarmOnAlwaysTrue ==
 fun falseAlarmOnAlwaysTrue() {
-    val a = 1
+    var a = 1
     if(a < 2) {
         a = 3
     }
@@ -186,8 +186,8 @@ fun falseAlarmOnAlwaysTrue() {
 ---------------------
 L0:
   1 <START>                                       in: INTS{}         BOOLS{} ARRS{}    out: INTS{}         BOOLS{} ARRS{}
-  2 mark({ val a = 1 if(a < 2) { a = 3 } 42 })    in: INTS{}         BOOLS{} ARRS{}    out: INTS{}         BOOLS{} ARRS{}
-    v(val a = 1)                                  in: INTS{}         BOOLS{} ARRS{}    out: INTS{a:-}      BOOLS{} ARRS{}
+  2 mark({ var a = 1 if(a < 2) { a = 3 } 42 })    in: INTS{}         BOOLS{} ARRS{}    out: INTS{}         BOOLS{} ARRS{}
+    v(var a = 1)                                  in: INTS{}         BOOLS{} ARRS{}    out: INTS{a:-}      BOOLS{} ARRS{}
     r(1) -> <v0>                                  in: INTS{a:-}      BOOLS{} ARRS{}    out: INTS{a:-}      BOOLS{} ARRS{}
     w(a|<v0>)                                     in: INTS{a:-}      BOOLS{} ARRS{}    out: INTS{a:[1]}    BOOLS{} ARRS{}
     mark(if(a < 2) { a = 3 })                     in: INTS{a:[1]}    BOOLS{} ARRS{}    out: INTS{a:[1]}    BOOLS{} ARRS{}
