@@ -16,6 +16,8 @@
 
 package collections
 
+import test.collections.behaviors.listBehavior
+import test.collections.compare
 import kotlin.asReversed
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,6 +25,15 @@ import kotlin.test.assertTrue
 import org.junit.Test as test
 
 class ReversedViewsTest {
+
+    test fun testBehavior() {
+        val original = listOf(2L, 3L, Long.MAX_VALUE)
+        val reversed = original.reverse()
+        compare(reversed, original.asReversed()) {
+            listBehavior()
+        }
+    }
+
     test fun testSimple() {
         assertEquals(listOf(3, 2, 1), listOf(1, 2, 3).asReversed())
         assertEquals(listOf(3, 2, 1), listOf(1, 2, 3).asReversed().toList())
