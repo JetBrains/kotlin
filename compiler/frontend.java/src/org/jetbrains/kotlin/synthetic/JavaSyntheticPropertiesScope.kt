@@ -116,7 +116,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
 
         return descriptor.valueParameters.isEmpty()
                && descriptor.typeParameters.isEmpty()
-               && descriptor.visibility == Visibilities.PUBLIC //TODO: what about protected and package-local?
+               && descriptor.visibility.isVisibleOutside()
     }
 
     private fun isGoodSetMethod(descriptor: FunctionDescriptor, getMethod: FunctionDescriptor): Boolean {
@@ -133,7 +133,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
         return parameter.varargElementType == null
                && descriptor.typeParameters.isEmpty()
                && descriptor.returnType?.let { it.isUnit() } ?: false
-               && descriptor.visibility == Visibilities.PUBLIC
+               && descriptor.visibility.isVisibleOutside()
     }
 
     private fun FunctionDescriptor.findOverridden(condition: (FunctionDescriptor) -> Boolean): FunctionDescriptor? {
@@ -251,15 +251,15 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             name: Name,
             type: JetType
     ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
-            DescriptorUtils.getContainingModule(ownerClass)/* TODO:is it ok? */,
+            DescriptorUtils.getContainingModule(ownerClass),
             null,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            syntheticExtensionVisibility(getMethod),
             setMethod != null,
             name,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE/*TODO?*/
+            SourceElement.NO_SOURCE
     ) {
         init {
             val classTypeParams = ownerClass.typeConstructor.parameters
@@ -273,24 +273,24 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
             val getter = PropertyGetterDescriptorImpl(this,
                                                       Annotations.EMPTY,
                                                       Modality.FINAL,
-                                                      Visibilities.PUBLIC,
+                                                      visibility,
                                                       false,
                                                       false,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                       null,
-                                                      SourceElement.NO_SOURCE/*TODO*/)
+                                                      SourceElement.NO_SOURCE)
             getter.initialize(null)
 
             val setter = if (setMethod != null)
                 PropertySetterDescriptorImpl(this,
                                              Annotations.EMPTY,
                                              Modality.FINAL,
-                                             Visibilities.PUBLIC,
+                                             syntheticExtensionVisibility(setMethod),
                                              false,
                                              false,
                                              CallableMemberDescriptor.Kind.SYNTHESIZED,
                                              null,
-                                             SourceElement.NO_SOURCE/*TODO*/)
+                                             SourceElement.NO_SOURCE)
             else
                 null
             setter?.initializeDefault()

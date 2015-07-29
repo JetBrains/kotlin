@@ -1,10 +1,14 @@
 // FILE: KotlinFile.kt
+package k
+
+import JavaClass
+
 fun foo(javaClass: JavaClass) {
     javaClass.somethingPublic
-    javaClass.<!UNRESOLVED_REFERENCE!>somethingProtected<!>
+    javaClass.<!INVISIBLE_MEMBER!>somethingProtected<!>
     javaClass.<!UNRESOLVED_REFERENCE!>somethingPrivate<!>
-    javaClass.<!UNRESOLVED_REFERENCE!>somethingPackage<!>
-    <!VAL_REASSIGNMENT!>javaClass.somethingPublic<!> = 1
+    javaClass.<!INVISIBLE_MEMBER!>somethingPackage<!>
+    <!INVISIBLE_SETTER!>javaClass.somethingPublic<!> = 1
 }
 
 // FILE: JavaClass.java

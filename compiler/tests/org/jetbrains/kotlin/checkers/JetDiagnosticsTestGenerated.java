@@ -14366,6 +14366,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("SetterHasHigherAccess.kt")
+                public void testSetterHasHigherAccess() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SetterHasHigherAccess.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("SetterOnly.kt")
                 public void testSetterOnly() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SetterOnly.kt");
