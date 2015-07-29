@@ -705,6 +705,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                 doTestAgainstJava(fileName);
             }
 
+            @TestMetadata("protectedFromBase.kt")
+            public void testProtectedFromBase() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/protectedFromBase.kt");
+                doTestAgainstJava(fileName);
+            }
+
             @TestMetadata("severalSamParameters.kt")
             public void testSeveralSamParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/severalSamParameters.kt");

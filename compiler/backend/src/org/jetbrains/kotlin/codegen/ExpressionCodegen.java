@@ -2329,6 +2329,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        FunctionDescriptor originalIfSamAdapter = SamCodegenUtil.getOriginalIfSamAdapter(descriptor);
+        if (originalIfSamAdapter != null) {
+            descriptor = originalIfSamAdapter;
+        }
         // $default method is not private, so you need no accessor to call it
         return usesDefaultArguments(resolvedCall) ? descriptor : context.accessibleFunctionDescriptor(descriptor);
     }
