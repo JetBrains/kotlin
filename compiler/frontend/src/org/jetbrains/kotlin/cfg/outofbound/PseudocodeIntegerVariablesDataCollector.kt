@@ -264,7 +264,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
         val targetMapKeys = HashSet(targetVariablesMap.keySet())
-        for(key in targetMapKeys) {
+        for (key in targetMapKeys) {
             val values1 = targetVariablesMap[key] ?: throw Exception("No corresponding element in map")
             val values2 = variablesToConsume[key] ?: throw Exception("No corresponding element in map")
             if (values1.isUndefined || values2.isUndefined) {
@@ -420,9 +420,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun tryExtractArraySize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
-        if(instruction.element is JetCallExpression) {
+        if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
-            return when(calledName) {
+            return when (calledName) {
                 arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
                 arrayConstructorName, intArrayConstructorName -> {
                     // there are other kinds of array constructors (for example, ByteArray)
@@ -481,7 +481,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             ?: return
         val resultVariable = instruction.outputValue
                              ?: return
-        when(operationToken) {
+        when (operationToken) {
             JetTokens.MINUS -> updatedData.intFakeVarsToValues[resultVariable] = -operandValues
             JetTokens.PLUS -> updatedData.intFakeVarsToValues[resultVariable] = operandValues.copy()
         }
