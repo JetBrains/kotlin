@@ -32,6 +32,8 @@ To prevent unpleasant ambiguities, we introduce additional restrictions:
 * A value of an extension function type cannot be **called** as a function, and a value of a non-extension
 function type cannot be called as an extension. This requires an additional diagnostic which is only fired
 when a call is resolved to the `invoke` with the wrong extension-ness.
+(Note that this restriction is likely to be lifted, so that extension functions can be called as functions,
+but not the other way around.)
 * Shape of a function **literal** argument or a function expression must exactly match
 the extension-ness of the corresponding parameter. You can't pass an extension function **literal**
 or an extension function expression where a function is expected and vice versa.
