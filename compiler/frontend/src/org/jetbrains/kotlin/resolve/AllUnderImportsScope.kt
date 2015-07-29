@@ -66,6 +66,10 @@ class AllUnderImportsScope : JetScope {
         return scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
     }
 
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+        return scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes) }
+    }
+
     override fun getPackage(name: Name): PackageViewDescriptor? = null // packages are not imported by all under imports
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null

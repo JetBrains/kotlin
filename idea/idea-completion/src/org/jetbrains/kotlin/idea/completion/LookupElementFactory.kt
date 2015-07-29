@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -262,6 +263,9 @@ public class LookupElementFactory(
                     original.setMethod?.let { from += "/" + it.getName().asString() + "()" }
                     element = element.appendTailText(" (from $from)", true)
                 }
+
+                // no need to show them as extensions
+                original is SamAdapterExtensionFunctionDescriptor -> {}
 
                 extensionReceiver != null -> {
                     val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)

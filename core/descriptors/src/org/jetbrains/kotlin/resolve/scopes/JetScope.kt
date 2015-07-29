@@ -39,6 +39,7 @@ public interface JetScope {
     public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
 
     public fun getContainingDeclaration(): DeclarationDescriptor
 

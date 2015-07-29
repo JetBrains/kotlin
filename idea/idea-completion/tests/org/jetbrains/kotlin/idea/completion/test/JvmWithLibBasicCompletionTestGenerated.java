@@ -47,6 +47,12 @@ public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBa
         doTest(fileName);
     }
 
+    @TestMetadata("SAMAdapters.kt")
+    public void testSAMAdapters() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/custom/SAMAdapters.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelNonImportedExtFun.kt")
     public void testTopLevelNonImportedExtFun() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/custom/TopLevelNonImportedExtFun.kt");

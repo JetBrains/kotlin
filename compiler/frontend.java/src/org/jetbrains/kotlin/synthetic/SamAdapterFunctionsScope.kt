@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DescriptorSubstitutor
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitution
 import org.jetbrains.kotlin.types.Variance
 import java.util.ArrayList
+import java.util.LinkedHashSet
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
     val originalFunction: FunctionDescriptor
@@ -70,6 +72,15 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
             result == null -> emptyList()
             result.size() > 1 -> result.toSet()
             else -> result
+        }
+    }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+        return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
+            type.memberScope.getDescriptors(DescriptorKindFilter.FUNCTIONS)
+                    .filterIsInstance<FunctionDescriptor>()
+                    .map { extensionForFunction(it.original) }
+                    .filterNotNull()
         }
     }
 

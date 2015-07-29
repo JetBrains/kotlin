@@ -73,6 +73,9 @@ public open class ChainedScope(
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes) }
 
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
+            = getFromAllScopes { it.getSyntheticExtensionFunctions(receiverTypes) }
+
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
             val result = ArrayList<ReceiverParameterDescriptor>()

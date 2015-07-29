@@ -279,6 +279,17 @@ class LazyImportScope(
         }
     }
 
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
+        return importResolver.storageManager.compute {
+            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { import ->
+                importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionFunctions(receiverTypes)
+            }
+        }
+    }
+
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {

@@ -42,7 +42,8 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
+import java.util.HashSet
+import java.util.LinkedHashSet
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
@@ -185,9 +186,21 @@ public class ReferenceVariantsHelper(
         }
 
         if (!kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) {
-            for (extension in resolutionScope.getSyntheticExtensionProperties(receiverTypes)) {
-                if (nameFilter(extension.getName()) && kindFilter.accepts(extension)) {
+            fun processExtension(extension: CallableDescriptor) {
+                if (nameFilter(extension.name) && kindFilter.accepts(extension)) {
                     addAll(extension.substituteExtensionIfCallable(receiverValue, callType, context, dataFlowInfo, containingDeclaration))
+                }
+            }
+
+            if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
+                for (extension in resolutionScope.getSyntheticExtensionProperties(receiverTypes)) {
+                    processExtension(extension)
+                }
+            }
+
+            if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
+                for (extension in resolutionScope.getSyntheticExtensionFunctions(receiverTypes)) {
+                    processExtension(extension)
                 }
             }
         }

@@ -769,6 +769,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SAMAdaptersStatic.kt")
+        public void testSAMAdaptersStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SAMAdaptersStatic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SafeCallAfterNullable.kt")
         public void testSafeCallAfterNullable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SafeCallAfterNullable.kt");

@@ -36,6 +36,7 @@ public abstract class JetScopeImpl : JetScope {
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name): Collection<FunctionDescriptor> = emptyList()
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = emptyList()
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> = emptyList()
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = emptyList()
 
