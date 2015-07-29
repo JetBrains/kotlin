@@ -4322,6 +4322,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("visibilityModiferOverrideJavaRuntime.kt")
+        public void testVisibilityModiferOverrideJavaRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/visibilityModiferOverrideJavaRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("visibilityModiferParameter.kt")
         public void testVisibilityModiferParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/visibilityModiferParameter.kt");

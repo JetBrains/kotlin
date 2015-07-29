@@ -32,16 +32,12 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetModifierListOwner;
 import org.jetbrains.kotlin.psi.JetParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierListOwner> {
-    public static final JetModifierKeywordToken[] VISIBILITY_TOKENS =
-            new JetModifierKeywordToken[] {JetTokens.PUBLIC_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD};
-
     public ChangeVisibilityModifierFix(@NotNull JetModifierListOwner element) {
         super(element);
     }

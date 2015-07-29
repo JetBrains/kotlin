@@ -73,20 +73,21 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static JetModifierKeywordToken getVisibilityToken(@NotNull Visibility visibility) {
-        if (visibility == Visibilities.PUBLIC) {
+        Visibility normalized = visibility.normalize();
+        if (normalized == Visibilities.PUBLIC) {
             return JetTokens.PUBLIC_KEYWORD;
         }
-        else if (visibility == Visibilities.PROTECTED) {
+        else if (normalized == Visibilities.PROTECTED) {
             return JetTokens.PROTECTED_KEYWORD;
         }
-        else if (visibility == Visibilities.INTERNAL) {
+        else if (normalized == Visibilities.INTERNAL) {
             return JetTokens.INTERNAL_KEYWORD;
         }
-        else if (Visibilities.isPrivate(visibility)) {
+        else if (Visibilities.isPrivate(normalized)) {
             return JetTokens.PRIVATE_KEYWORD;
         }
 
-        throw new IllegalArgumentException("Unexpected visibility '" + visibility + "'");
+        throw new IllegalArgumentException("Unexpected visibility '" + normalized + "'");
     }
 
     @NotNull
