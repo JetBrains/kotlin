@@ -56,7 +56,7 @@ public final class JetDescriptorIconProvider {
     private static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
             DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility) descriptor;
-            Visibility visibility = descriptorWithVisibility.getVisibility();
+            Visibility visibility = descriptorWithVisibility.getVisibility().normalize();
             if (visibility == Visibilities.PUBLIC) {
                 return PlatformIcons.PUBLIC_ICON;
             }
