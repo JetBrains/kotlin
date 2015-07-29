@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
+import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.types.Flexibility;
@@ -187,7 +187,7 @@ public abstract class AnnotationCodegen {
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
-        Set<KotlinTarget> targets = AnnotationTargetChecker.INSTANCE$.possibleTargetSet(classDescriptor);
+        Set<KotlinTarget> targets = AnnotationChecker.INSTANCE$.possibleTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
             javaTargets = getJavaTargetList(classDescriptor);

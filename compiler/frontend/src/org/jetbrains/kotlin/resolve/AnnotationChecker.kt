@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import kotlin.annotation
 
-public object AnnotationTargetChecker {
+public object AnnotationChecker {
 
     public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
