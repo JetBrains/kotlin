@@ -1,5 +1,5 @@
 fun simpleLess() {
-    val a = 1
+    var a = 1
     if(a < 2) {
         a = 3
     }
@@ -37,7 +37,7 @@ fun complexLess(cond1: Boolean, cond2: Boolean) {
 }
 
 fun falseAlarmOnAlwaysTrue() {
-    val a = 1
+    var a = 1
     if(a < 2) {
         a = 3
     }
