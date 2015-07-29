@@ -64,7 +64,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
         val classId = ClassId(packageFragment.fqName, name)
 
         val kotlinClass = c.resolveBinaryClass(c.kotlinClassFinder.findKotlinClass(classId))
-        if (kotlinClass != null) return kotlinClass.kClass
+        if (kotlinClass != null) return kotlinClass.descriptor
 
         val javaClass = c.finder.findClass(classId)
         if (javaClass != null) {

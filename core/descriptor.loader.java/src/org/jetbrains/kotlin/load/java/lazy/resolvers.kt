@@ -59,28 +59,28 @@ class LazyJavaTypeParameterResolver(
     }
 }
 
-data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null) {
+data class KotlinClassLookupResult(val descriptor: ClassDescriptor?) {
     companion object {
-        val EMPTY = JavaClassLookupResult()
+        val EMPTY = KotlinClassLookupResult(null)
     }
 }
 
-fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {
+fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult? {
     if (kotlinClass == null) return null
 
-    val header = kotlinClass.getClassHeader()
+    val header = kotlinClass.classHeader
     if (!header.isCompatibleAbiVersion) {
-        errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.version)
+        errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
     }
     else if (header.kind == KotlinClassHeader.Kind.CLASS) {
         val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
         if (descriptor != null) {
-            return JavaClassLookupResult(kClass = descriptor)
+            return KotlinClassLookupResult(descriptor)
         }
     }
     else {
         // This is a package or trait-impl or something like that
-        return JavaClassLookupResult.EMPTY
+        return KotlinClassLookupResult.EMPTY
     }
 
     return null
