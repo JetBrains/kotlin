@@ -2,8 +2,8 @@
 
 ## Goals
 
-* Get rid of 23 hardwired physical function classes. One of the problems with them is that they should be effectively duplicated in reflection which means a lot of physical classes in the runtime.
-* Make extension functions coercible to normal functions (with an extra parameter), so that it's possible to do `listOfStrings.map(String::length)`
+* Get rid of 23 hardwired physical function classes. One of the problems with them is that they should be effectively duplicated in reflection which means a lot of physical classes in kotlin-runtime.jar.
+* Make extension functions assignable to normal functions (and vice versa), so that it's possible to do `listOfStrings.map(String::length)`
 * Allow functions with more than 23 parameters, theoretically any number of parameters (in practice 255 on JVM).
 * At the same time, allow to implement Kotlin functions easily from Java: `new Function2() { ... }` and overriding `invoke` only would be the best.
 Enabling SAM conversions on Java 8 would also be terrific.
@@ -15,7 +15,7 @@ Enabling SAM conversions on Java 8 would also be terrific.
 * On JVM, introduce `Function0`..`Function22`, which are optimized in a certain way,
 and `FunctionN` for functions with 23+ parameters.
 When passing a lambda to Kotlin from Java, one will need to implement one of these interfaces.
-* Also on JVM (under the hood) add abstract `FunctionImpl` which implements all of `Fun0`..`Fun22` and `FunN`
+* Also on JVM (under the hood) add abstract `FunctionImpl` which implements all of `Function0`..`Function22` and `FunctionN`
 (throwing exceptions), and which knows its arity.
 Kotlin lambdas are translated to subclasses of this abstract class, passing the correct arity to the super constructor.
 * Provide a way to get arity of an arbitrary `Function` object (pretty straightforward).
@@ -32,11 +32,10 @@ To prevent unpleasant ambiguities, we introduce additional restrictions:
 * A value of an extension function type cannot be **called** as a function, and a value of a non-extension
 function type cannot be called as an extension. This requires an additional diagnostic which is only fired
 when a call is resolved to the `invoke` with the wrong extension-ness.
-* If an extension function **literal** argument has some shape (its parameters are written out explicitly
-in the code and it's evident that there is or there isn't a receiver parameter), this shape must exactly match
+* Shape of a function **literal** argument or a function expression must exactly match
 the extension-ness of the corresponding parameter. You can't pass an extension function **literal**
-where a function is expected and vice versa. The same holds for function expressions.
-If you really want to do that, change the shape or use the `as` operator.
+or an extension function expression where a function is expected and vice versa.
+If you really want to do that, change the shape, assign literal to a variable or use the `as` operator.
 
 So basically you can now safely coerce values between function and extension function types,
 but still should invoke them in the format which you specified in their type (with or without `@extension`).
