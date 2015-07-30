@@ -60,4 +60,8 @@ class ListSpecificTest {
         assertEquals(3, list.size())
         assertEquals("beverage,location,name", list.join(","))
     }
+
+    Test fun testNullToString() {
+        assertEquals("[null]", listOf<String?>(null).toString())
+    }
 }
