@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
@@ -753,25 +753,55 @@ public class InlineCodegen extends CallGenerator {
         String sourceFile = getFilePath(sourceDescriptor);
         String targetFile = getFilePath(targetDescriptor);
 
-        if (sourceFile != null && targetFile != null) {
-            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
-            InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
-            inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
+        if (sourceFile == null) {
+            DeclarationDescriptor containingDeclaration = sourceDescriptor.getContainingDeclaration();
+
+            if (containingDeclaration instanceof DeclarationDescriptorWithSource) {
+                DeclarationDescriptorWithSource withSource = (DeclarationDescriptorWithSource) containingDeclaration;
+                sourceFile = getFilePath(withSource);
+            }
         }
+
+        assert sourceFile != null: "No source file for inline fun: " + jvmSignature;
+        assert targetFile != null: "No target file for inline fun: " + jvmSignature;
+
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+        InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
+        inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }
 
     @Nullable
-    private static String getFilePath(@NotNull FunctionDescriptor descriptor) {
+    private static String getFilePath(@NotNull DeclarationDescriptorWithSource descriptor) {
         SourceElement source = descriptor.getSource();
-        if (!(source instanceof PsiSourceElement)) return null;
+        VirtualFile file = null;
 
-        PsiElement psi = ((PsiSourceElement) source).getPsi();
-        if (psi == null) return null;
+        if (source instanceof PsiSourceElement) {
+            file = getFile((PsiSourceElement) source);
+        } else if (source instanceof KotlinJvmBinarySourceElement) {
+            file = getFile((KotlinJvmBinarySourceElement) source);
+        }
 
-        VirtualFile file = psi.getContainingFile().getVirtualFile();
         if (file == null) return null;
 
         return file.getCanonicalPath();
+    }
+
+    @Nullable
+    private static VirtualFile getFile(@NotNull PsiSourceElement sourceElement) {
+        PsiElement psi = sourceElement.getPsi();
+        if (psi == null) return null;
+
+        return psi.getContainingFile().getVirtualFile();
+    }
+
+    @Nullable
+    private static VirtualFile getFile(@NotNull KotlinJvmBinarySourceElement sourceElement) {
+        KotlinJvmBinaryClass binaryClass = sourceElement.getBinaryClass();
+        if (binaryClass instanceof VirtualFileKotlinClass) {
+            return ((VirtualFileKotlinClass) binaryClass).getFile();
+        }
+
+        return null;
     }
 
 }
