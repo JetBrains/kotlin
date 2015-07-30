@@ -51,3 +51,71 @@ error:
 sink:
     <SINK>                                in: INTS{}    BOOLS{} ARRS{}    out: INTS{}    BOOLS{} ARRS{}
 =====================
+== arrayWithTwoPossibleSizes ==
+fun arrayWithTwoPossibleSizes(cond: Boolean) {
+    val arr: Array<Boolean>
+    if (cond) {
+        arr = Array(11, { x -> true })
+    }
+    else {
+        arr = arrayOf(false, false)
+    }
+    42
+}
+---------------------
+L0:
+  1 <START>                                                                                                                   in: INTS{}    BOOLS{}           ARRS{}               out: INTS{}    BOOLS{}           ARRS{}
+    v(cond: Boolean)                                                                                                          in: INTS{}    BOOLS{}           ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{}
+    magic[FAKE_INITIALIZER](cond: Boolean) -> <v0>                                                                            in: INTS{}    BOOLS{cond:U{}{}} ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{}
+    w(cond|<v0>)                                                                                                              in: INTS{}    BOOLS{cond:U{}{}} ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{}
+  2 mark({ val arr: Array<Boolean> if (cond) { arr = Array(11, { x -> true }) } else { arr = arrayOf(false, false) } 42 })    in: INTS{}    BOOLS{cond:U{}{}} ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{}
+    v(val arr: Array<Boolean>)                                                                                                in: INTS{}    BOOLS{cond:U{}{}} ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    mark(if (cond) { arr = Array(11, { x -> true }) } else { arr = arrayOf(false, false) })                                   in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    r(cond) -> <v1>                                                                                                           in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    jf(L2|<v1>)                                                                                                               in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+  3 mark({ arr = Array(11, { x -> true }) })                                                                                  in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    r(11) -> <v2>                                                                                                             in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    mark({ x -> true })                                                                                                       in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    jmp?(L3)                                                                                                                  in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    d({ x -> true })                                                                                                          in: INTS{}    BOOLS{}           ARRS{}               out: INTS{}    BOOLS{}           ARRS{}
+L3 [after local declaration]:
+    r({ x -> true }) -> <v3>                                                                                                  in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    mark(Array(11, { x -> true }))                                                                                            in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    call(Array(11, { x -> true }), Array|<v2>, <v3>) -> <v4>                                                                  in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    w(arr|<v4>)                                                                                                               in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[11]}
+  2 jmp(L6)                                                                                                                   in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[11]}       out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[11]}
+L2 [else branch]:
+  3 mark({ arr = arrayOf(false, false) })                                                                                     in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    r(false) -> <v6>                                                                                                          in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    r(false) -> <v7>                                                                                                          in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    mark(arrayOf(false, false))                                                                                               in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    call(arrayOf(false, false), arrayOf|<v6>, <v7>) -> <v8>                                                                   in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}
+    w(arr|<v8>)                                                                                                               in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:-}          out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[2]}
+L6 ['if' expression result]:
+  2 merge(if (cond) { arr = Array(11, { x -> true }) } else { arr = arrayOf(false, false) }|!<v5>, !<v9>) -> <v10>            in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[2, 11]}    out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[2, 11]}
+    r(42) -> <v11>                                                                                                            in: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[2, 11]}    out: INTS{}    BOOLS{cond:U{}{}} ARRS{arr:[2, 11]}
+L1:
+  1 <END>                                                                                                                     in: INTS{}    BOOLS{cond:U{}{}} ARRS{}               out: INTS{}    BOOLS{cond:U{}{}} ARRS{}
+error:
+    <ERROR>                                                                                                                   in: INTS{}    BOOLS{}           ARRS{}               out: INTS{}    BOOLS{}           ARRS{}
+sink:
+    <SINK>                                                                                                                    in: INTS{}    BOOLS{}           ARRS{}               out: INTS{}    BOOLS{}           ARRS{}
+=====================
+== anonymous_1 ==
+{ x -> true }
+---------------------
+L4:
+  4 <START>                               in: INTS{}    BOOLS{} ARRS{}    out: INTS{}    BOOLS{} ARRS{}
+    v(x)                                  in: INTS{}    BOOLS{} ARRS{}    out: INTS{x:-} BOOLS{} ARRS{}
+    magic[FAKE_INITIALIZER](x) -> <v0>    in: INTS{x:-} BOOLS{} ARRS{}    out: INTS{x:-} BOOLS{} ARRS{}
+    w(x|<v0>)                             in: INTS{x:-} BOOLS{} ARRS{}    out: INTS{x:?} BOOLS{} ARRS{}
+  5 mark(true)                            in: INTS{x:?} BOOLS{} ARRS{}    out: INTS{x:?} BOOLS{} ARRS{}
+    r(true) -> <v1>                       in: INTS{x:?} BOOLS{} ARRS{}    out: INTS{x:?} BOOLS{} ARRS{}
+  4 ret(*|<v1>) L5                        in: INTS{x:?} BOOLS{} ARRS{}    out: INTS{x:?} BOOLS{} ARRS{}
+L5:
+    <END>                                 in: INTS{x:?} BOOLS{} ARRS{}    out: INTS{x:?} BOOLS{} ARRS{}
+error:
+    <ERROR>                               in: INTS{}    BOOLS{} ARRS{}    out: INTS{}    BOOLS{} ARRS{}
+sink:
+    <SINK>                                in: INTS{}    BOOLS{} ARRS{}    out: INTS{}    BOOLS{} ARRS{}
+=====================
