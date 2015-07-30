@@ -490,7 +490,12 @@
     </target>
 
     <target name="compiler">
-        <taskdef resource="proguard/ant/task.properties" classpath="${dependencies.dir}/proguard.jar"/>
+        <taskdef resource="proguard/ant/task.properties">
+            <classpath>
+                <pathelement path="${dependencies.dir}/proguard.jar"/>
+                <pathelement path="${dependencies.dir}/proguard-anttask.jar"/>
+            </classpath>
+        </taskdef>
 
         <cleandir dir="${output}/classes/compiler"/>
 

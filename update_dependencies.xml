@@ -149,18 +149,6 @@
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
 
-        <!-- ProGuard -->
-        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard/5.1/proguard5.1.zip"
-             dest="dependencies/download/proguard5.1.zip" usetimestamp="true"/>
-
-        <delete file="dependencies/proguard.jar" failonerror="false"/>
-        <unzip src="dependencies/download/proguard5.1.zip" dest="dependencies">
-            <patternset>
-                <include name="proguard5.1/lib/proguard.jar"/>
-            </patternset>
-            <mapper type="flatten"/>
-        </unzip>
-
         <!-- ant contrib -->
         <get src="http://heanet.dl.sourceforge.net/project/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip"
              dest="dependencies/download/ant-contrib-1.0b3-bin.zip" usetimestamp="true"/>
@@ -172,6 +160,10 @@
             </patternset>
             <mapper type="merge" to="ant-contrib.jar"/>
         </unzip>
+
+        <!-- ProGuard -->
+        <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.1" target.jar.name.base="proguard" src="false"/>
+        <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.1" target.jar.name.base="proguard-anttask" src="false"/>
 
         <!-- JarJar -->
         <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="dependencies/download/jarjar-1.4.jar" usetimestamp="true"/>
