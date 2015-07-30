@@ -52,7 +52,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ResolveElementCache(
         private val resolveSession: ResolveSession,
-        private val project: Project
+        private val project: Project,
+        private val targetPlatform: TargetPlatform
 ) : BodyResolveCache {
     private class CachedFullResolve(val bindingContext: BindingContext, resolveElement: JetElement) {
         private val modificationStamp: Long? = modificationStamp(resolveElement)
@@ -104,8 +105,6 @@ public class ResolveElementCache(
             },
             false)
 
-
-    private fun getTargetPlatform(file: JetFile): TargetPlatform = TargetPlatformDetector.getPlatform(file)
 
     private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
         return object : ProbablyNothingCallableNames {
@@ -520,7 +519,7 @@ public class ResolveElementCache(
         return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(module),
                 trace,
-                getTargetPlatform(file),
+                targetPlatform,
                 statementFilter
         ).get<BodyResolver>()
     }
