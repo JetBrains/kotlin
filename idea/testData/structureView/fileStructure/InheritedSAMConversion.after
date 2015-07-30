@@ -1,6 +1,6 @@
 -InheritedSAMConversion.kt
  -KotlinTest
   equals(Any?): Boolean location=→Any
-  foo((() -> Unit)!): Unit
+  foo(TestSAM.SamClass!): Unit location=→TestSAM
   hashCode(): Int location=→Any
   toString(): String location=→Any
