@@ -33,6 +33,6 @@ public class JavaClassDataFinder(
         }
         val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
         val classData = JvmProtoBufUtil.readClassDataFrom(data)
-        return ClassDataProvider(classData)
+        return ClassDataProvider(classData, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass))
     }
 }

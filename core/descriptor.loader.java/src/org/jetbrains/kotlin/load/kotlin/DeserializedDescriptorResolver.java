@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.PackageData;
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
@@ -55,9 +57,10 @@ public final class DeserializedDescriptorResolver {
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
-            return components.getClassDeserializer().deserializeClass(
-                    kotlinClass.getClassId(), JvmProtoBufUtil.readClassDataFrom(data)
-            );
+            ClassData classData = JvmProtoBufUtil.readClassDataFrom(data);
+            KotlinJvmBinarySourceElement sourceElement = new KotlinJvmBinarySourceElement(kotlinClass);
+            ClassDataProvider classDataProvider = new ClassDataProvider(classData, sourceElement);
+            return components.getClassDeserializer().deserializeClass(kotlinClass.getClassId(), classDataProvider);
         }
         return null;
     }

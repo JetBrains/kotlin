@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 public class ClassDeserializer(private val components: DeserializationComponents) {
@@ -26,17 +25,16 @@ public class ClassDeserializer(private val components: DeserializationComponents
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
     // Additional ClassData parameter is needed to avoid calling ClassDataFinder#findClassData() if it is already computed at call site
-    public fun deserializeClass(classId: ClassId, classData: ClassData? = null): ClassDescriptor? =
-            classes(ClassKey(classId, classData))
+    public fun deserializeClass(classId: ClassId, classDataProvider: ClassDataProvider? = null): ClassDescriptor? =
+            classes(ClassKey(classId, classDataProvider))
 
     private fun createClass(key: ClassKey): ClassDescriptor? {
         val classId = key.classId
         components.fictitiousClassDescriptorFactory.createClass(classId)?.let { return it }
-
-        var classData = key.classData ?: run {
-            val classDataProvider = components.classDataFinder.findClassData(classId)
-            classDataProvider?.classData
-        } ?: return null
+        val classDataProvider = key.classDataProvider
+                                ?: components.classDataFinder.findClassData(classId)
+                                ?: return null
+        val classData = classDataProvider.classData
 
         val outerContext = if (classId.isNestedClass()) {
             val outerClass = deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor ?: return null
@@ -59,11 +57,12 @@ public class ClassDeserializer(private val components: DeserializationComponents
             components.createContext(fragment, classData.getNameResolver())
         }
 
-        return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver())
+        return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver(),
+                                           classDataProvider.sourceElement)
     }
 
-    private data class ClassKey(val classId: ClassId, classData: ClassData?) {
+    private data class ClassKey(val classId: ClassId, classDataProvider: ClassDataProvider?) {
         // This property is not declared in the constructor because it shouldn't participate in equals/hashCode
-        val classData: ClassData? = classData
+        val classDataProvider: ClassDataProvider? = classDataProvider
     }
 }
