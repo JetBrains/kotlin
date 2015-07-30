@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.visibility
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.serialization.deserialization.visibility
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.*
 import java.io.*
@@ -329,53 +329,6 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
         override fun dumpValue(value: ByteArray): String {
             return java.lang.Long.toHexString(value.md5())
-        }
-
-        private fun isOpenPartNotChanged(oldData: ByteArray, newData: ByteArray, isPackageFacade: Boolean): Boolean {
-            if (isPackageFacade) {
-                return isPackageFacadeOpenPartNotChanged(oldData, newData)
-            }
-            else {
-                return isClassOpenPartNotChanged(oldData, newData)
-            }
-        }
-
-        private fun isPackageFacadeOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
-            val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData)
-            val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData)
-
-            val compareObject = ProtoCompareGenerated(oldPackageData.nameResolver, newPackageData.nameResolver)
-            return compareObject.checkEquals(oldPackageData.packageProto, newPackageData.packageProto)
-        }
-
-        private fun isClassOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
-            val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData)
-            val newClassData = JvmProtoBufUtil.readClassDataFrom(newData)
-
-            val compareObject = object : ProtoCompareGenerated(oldClassData.nameResolver, newClassData.nameResolver) {
-                override fun checkEqualsClassMember(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
-                        checkEquals(old.memberList, new.memberList)
-
-                override fun checkEqualsClassSecondaryConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
-                        checkEquals(old.secondaryConstructorList, new.secondaryConstructorList)
-
-                private fun checkEquals(oldList: List<ProtoBuf.Callable>, newList: List<ProtoBuf.Callable>): Boolean {
-                    val oldListFiltered = oldList.filter { !it.isPrivate() }
-                    val newListFiltered = newList.filter { !it.isPrivate() }
-
-                    if (oldListFiltered.size() != newListFiltered.size()) return false
-
-                    for (i in oldListFiltered.indices) {
-                        if (!checkEquals(oldListFiltered[i], newListFiltered[i])) return false
-                    }
-
-                    return true
-                }
-
-                private fun ProtoBuf.Callable.isPrivate(): Boolean = Visibilities.isPrivate(visibility(Flags.VISIBILITY.get(flags)))
-            }
-
-            return compareObject.checkEquals(oldClassData.classProto, newClassData.classProto)
         }
     }
 
@@ -691,6 +644,53 @@ private val storageProvider = object : StorageProvider<IncrementalCacheImpl>() {
 public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
 
 public fun BuildDataManager.getKotlinCache(target: BuildTarget<*>): IncrementalCacheImpl = getStorage(target, storageProvider)
+
+public fun isClassOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
+    val oldClassData = JvmProtoBufUtil.readClassDataFrom(oldData)
+    val newClassData = JvmProtoBufUtil.readClassDataFrom(newData)
+
+    val compareObject = object : ProtoCompareGenerated(oldClassData.nameResolver, newClassData.nameResolver) {
+        override fun checkEqualsClassMember(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
+                checkEquals(old.memberList, new.memberList)
+
+        override fun checkEqualsClassSecondaryConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean =
+                checkEquals(old.secondaryConstructorList, new.secondaryConstructorList)
+
+        private fun checkEquals(oldList: List<ProtoBuf.Callable>, newList: List<ProtoBuf.Callable>): Boolean {
+            val oldListFiltered = oldList.filter { !it.isPrivate() }
+            val newListFiltered = newList.filter { !it.isPrivate() }
+
+            if (oldListFiltered.size() != newListFiltered.size()) return false
+
+            for (i in oldListFiltered.indices) {
+                if (!checkEquals(oldListFiltered[i], newListFiltered[i])) return false
+            }
+
+            return true
+        }
+
+        private fun ProtoBuf.Callable.isPrivate(): Boolean = Visibilities.isPrivate(visibility(Flags.VISIBILITY.get(flags)))
+    }
+
+    return compareObject.checkEquals(oldClassData.classProto, newClassData.classProto)
+}
+
+private fun isOpenPartNotChanged(oldData: ByteArray, newData: ByteArray, isPackageFacade: Boolean): Boolean {
+    if (isPackageFacade) {
+        return isPackageFacadeOpenPartNotChanged(oldData, newData)
+    }
+    else {
+        return isClassOpenPartNotChanged(oldData, newData)
+    }
+}
+
+private fun isPackageFacadeOpenPartNotChanged(oldData: ByteArray, newData: ByteArray): Boolean {
+    val oldPackageData = JvmProtoBufUtil.readPackageDataFrom(oldData)
+    val newPackageData = JvmProtoBufUtil.readPackageDataFrom(newData)
+
+    val compareObject = ProtoCompareGenerated(oldPackageData.nameResolver, newPackageData.nameResolver)
+    return compareObject.checkEquals(oldPackageData.packageProto, newPackageData.packageProto)
+}
 
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!
