@@ -66,6 +66,7 @@ fun main(args: Array<String>) {
             execProtoc(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
+        GenerateProtoBufCompare.generate()
     }
     catch (e: Throwable) {
         e.printStackTrace()
