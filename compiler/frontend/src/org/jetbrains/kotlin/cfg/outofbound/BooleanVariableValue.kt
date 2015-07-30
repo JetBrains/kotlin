@@ -68,7 +68,7 @@ public interface BooleanVariableValue {
                 when(other) {
                     True -> this.copy()
                     False -> False
-                    is Undefined -> mergeIntersectingCorrespondingValues(other)
+                    is Undefined -> mergeCorrespondingValuesWithIntersection(other)
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
                         BooleanVariableValue.undefinedWithNoRestrictions
@@ -79,7 +79,7 @@ public interface BooleanVariableValue {
                 when(other) {
                     True -> True
                     False -> this.copy()
-                    is Undefined -> mergeIntersectingCorrespondingValues(other)
+                    is Undefined -> mergeCorrespondingValuesWithUnion(other)
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
                         BooleanVariableValue.undefinedWithNoRestrictions
@@ -89,8 +89,13 @@ public interface BooleanVariableValue {
         override fun not(other: BooleanVariableValue): BooleanVariableValue =
                 Undefined(onFalseRestrictions, onTrueRestrictions)
 
-        private fun mergeIntersectingCorrespondingValues(other: Undefined): Undefined {
-            val mergeValues: (Set<Int>, Set<Int>) -> Set<Int> = { value1, value2 -> value1.intersect(value2) }
+        private fun mergeCorrespondingValuesWithIntersection(other: Undefined): Undefined =
+                mergeCorrespondingValues(other) { value1, value2 -> value1.intersect(value2) }
+
+        private fun mergeCorrespondingValuesWithUnion(other: Undefined) =
+                mergeCorrespondingValues(other) { value1, value2 -> value1.union(value2) }
+
+        private fun mergeCorrespondingValues(other: Undefined, mergeValues: (Set<Int>, Set<Int>) -> Set<Int>): Undefined {
             val onTrueIntersected = MapUtils.mergeMaps(onTrueRestrictions, other.onTrueRestrictions, mergeValues)
             val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeValues)
             return Undefined(onTrueIntersected, onFalseIntersected)
