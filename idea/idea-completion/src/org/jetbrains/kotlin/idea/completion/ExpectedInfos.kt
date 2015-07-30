@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getService
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -244,7 +245,7 @@ class ExpectedInfos(
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val callResolver = resolutionFacade.getService<CallResolver>(moduleDescriptor)
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = LinkedHashSet<ExpectedInfo>()

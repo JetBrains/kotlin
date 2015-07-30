@@ -21,11 +21,14 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.getService
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -44,7 +47,8 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
             val callExpression = element.getParent() as? JetCallExpression ?: return false
             if (callExpression.getTypeArguments().isEmpty()) return false
 
-            val context = callExpression.analyze(BodyResolveMode.PARTIAL)
+            val resolutionFacade = callExpression.getResolutionFacade()
+            val context = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
             val calleeExpression = callExpression.getCalleeExpression() ?: return false
             val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
             val originalCall = callExpression.getResolvedCall(context) ?: return false
@@ -68,8 +72,8 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
                 TypeUtils.NO_EXPECTED_TYPE
             }
             val dataFlow = context.getDataFlowInfo(callExpression)
-            val container = createContainerForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
-            val resolutionResults = container.callResolver.resolveFunctionCall(
+            val callResolver = resolutionFacade.getService<CallResolver>(callExpression)
+            val resolutionResults = callResolver.resolveFunctionCall(
                     BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
             if (!resolutionResults.isSingleResult()) {
                 return false
