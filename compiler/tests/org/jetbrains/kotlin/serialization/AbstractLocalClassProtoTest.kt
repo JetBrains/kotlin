@@ -20,6 +20,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -53,7 +54,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project)
+        val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
         val container = createContainerForTopDownAnalyzerForJvm(

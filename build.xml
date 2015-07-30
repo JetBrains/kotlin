@@ -646,6 +646,7 @@
 
     <macrodef name="new-kotlinc">
         <attribute name="output"/>
+        <attribute name="moduleName"/>
         <element name="src"/>
         <element name="class-path"/>
 
@@ -680,6 +681,8 @@
                 <arg value="-no-stdlib"/>
                 <arg value="-classpath"/>
                 <arg value="${toString:classpath.path}"/>
+                <arg value="-module-name"/>
+                <arg value="@{moduleName}"/>
             </java>
 
             <javac2 srcdir="${toString:src.dirset}" destdir="@{output}" debug="true" debuglevel="lines,vars,source"
@@ -695,7 +698,7 @@
     </macrodef>
 
     <target name="builtins">
-        <new-kotlinc output="${output}/classes/builtins">
+        <new-kotlinc output="${output}/classes/builtins" moduleName="builtins">
             <src>
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
@@ -708,7 +711,7 @@
     </target>
 
     <target name="stdlib">
-        <new-kotlinc output="${output}/classes/stdlib">
+        <new-kotlinc output="${output}/classes/stdlib" moduleName="stdlib">
             <src>
                 <include name="libraries/stdlib/src"/>
             </src>
@@ -719,7 +722,7 @@
     </target>
 
     <target name="core">
-        <new-kotlinc output="${output}/classes/core">
+        <new-kotlinc output="${output}/classes/core" moduleName="core">
             <src>
                 <include name="core/descriptor.loader.java/src"/>
                 <include name="core/descriptors/src"/>
@@ -737,7 +740,7 @@
     </target>
 
     <target name="reflection">
-        <new-kotlinc output="${output}/classes/reflection">
+        <new-kotlinc output="${output}/classes/reflection" moduleName="reflection">
             <src>
                 <include name="core/reflection.jvm/src"/>
             </src>

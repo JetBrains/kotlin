@@ -52,7 +52,7 @@ public class LazyResolveTestUtil {
 
     @NotNull
     public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test");
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations

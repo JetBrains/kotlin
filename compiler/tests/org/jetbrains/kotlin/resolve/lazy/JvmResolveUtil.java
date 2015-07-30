@@ -67,7 +67,7 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "java-integration-test");
 
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 

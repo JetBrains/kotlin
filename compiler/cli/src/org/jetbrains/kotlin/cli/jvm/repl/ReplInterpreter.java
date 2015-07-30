@@ -78,6 +78,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getJvmClasspathRoots;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -106,7 +107,7 @@ public class ReplInterpreter {
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, getModuleName(environment));
         this.module = moduleContext.getModule();
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
