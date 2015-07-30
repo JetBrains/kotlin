@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
+import org.jetbrains.kotlin.load.kotlin.PackageFacades;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -83,6 +84,8 @@ public class PackageCodegen {
     private final PackageFragmentDescriptor compiledPackageFragment;
     private final List<DeserializedCallableMemberDescriptor> previouslyCompiledCallables;
 
+    private final PackageFacades facades;
+
     public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull FqName fqName) {
         this.state = state;
         this.files = files;
@@ -117,6 +120,7 @@ public class PackageCodegen {
                 return v;
             }
         });
+        facades = new PackageFacades(fqName.asString().replaceAll("\\.", "/"));
     }
 
     // Returns null if file has callables in several files
@@ -329,7 +333,10 @@ public class PackageCodegen {
             }
         }
 
+
         if (!generatePackagePart || !state.getGenerateDeclaredClassFilter().shouldGeneratePackagePart(file)) return null;
+
+        facades.getParts().add(packagePartType.getInternalName());
 
         ClassBuilder builder = state.getFactory().newVisitor(PackagePart(file, packageFragment), packagePartType, file);
 
@@ -411,5 +418,9 @@ public class PackageCodegen {
 
     public void done() {
         v.done();
+    }
+
+    public PackageFacades getFacades() {
+        return facades;
     }
 }
