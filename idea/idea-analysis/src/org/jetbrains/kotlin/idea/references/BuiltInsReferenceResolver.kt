@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.google.common.collect.Sets
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.context.*
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.frontend.di.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -59,19 +60,15 @@ import java.util.HashSet
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
-public class BuiltInsReferenceResolver(project: Project) : AbstractProjectComponent(project) {
+public class BuiltInsReferenceResolver(val project: Project, val startupManager: StartupManager) {
 
     volatile private var moduleDescriptor: ModuleDescriptor? = null
     volatile public var builtInsSources: Set<JetFile>? = null
         private set
     volatile private var builtinsPackageFragment: PackageFragmentDescriptor? = null
 
-    override fun initComponent() {
-        StartupManager.getInstance(myProject).registerPostStartupActivity(object : Runnable {
-            override fun run() {
-                initialize()
-            }
-        })
+    init {
+        startupManager.runWhenProjectIsInitialized { initialize() }
     }
 
     private fun initialize() {
@@ -79,43 +76,39 @@ public class BuiltInsReferenceResolver(project: Project) : AbstractProjectCompon
 
         val jetBuiltInsFiles = getJetBuiltInsFiles()
 
-        val initializeRunnable = object : Runnable {
-            override fun run() {
-                val newModuleContext = ContextForNewModule(myProject, Name.special("<built-ins resolver module>"), ModuleParameters.Empty)
-                newModuleContext.setDependencies(newModuleContext.module)
+        val initializeRunnable = { ->
+            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), ModuleParameters.Empty)
+            newModuleContext.setDependencies(newModuleContext.module)
 
-                val declarationFactory = FileBasedDeclarationProviderFactory(newModuleContext.storageManager, jetBuiltInsFiles)
+            val declarationFactory = FileBasedDeclarationProviderFactory(newModuleContext.storageManager, jetBuiltInsFiles)
 
-                val resolveSession = createLazyResolveSession(
-                        newModuleContext,
-                        declarationFactory, BindingTraceContext(),
-                        TargetPlatform.Default)
+            val resolveSession = createLazyResolveSession(
+                    newModuleContext,
+                    declarationFactory, BindingTraceContext(),
+                    TargetPlatform.Default)
 
-                newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider())
+            newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 
-                if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                    // Use lazy initialization in tests
-                    resolveSession.forceResolveAll()
-                }
-
-                val packageView = newModuleContext.module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-                val fragments = packageView.fragments
-
-                this@BuiltInsReferenceResolver.moduleDescriptor = newModuleContext.module
-                builtinsPackageFragment = fragments.single()
-                builtInsSources = Sets.newHashSet(jetBuiltInsFiles)
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                // Use lazy initialization in tests
+                resolveSession.forceResolveAll()
             }
+
+            val packageView = newModuleContext.module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+            val fragments = packageView.fragments
+
+            this@BuiltInsReferenceResolver.moduleDescriptor = newModuleContext.module
+            builtinsPackageFragment = fragments.single()
+            builtInsSources = jetBuiltInsFiles
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-            initializeRunnable.run()
+            initializeRunnable()
         }
         else {
-            ApplicationManager.getApplication().executeOnPooledThread(object : Runnable {
-                override fun run() {
-                    ApplicationManager.getApplication().runReadAction(initializeRunnable)
-                }
-            })
+            ApplicationManager.getApplication().executeOnPooledThread {
+                runReadAction { initializeRunnable() }
+            }
         }
     }
 
@@ -128,18 +121,17 @@ public class BuiltInsReferenceResolver(project: Project) : AbstractProjectCompon
             // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
             // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
             try {
-                builtIns.addAll(getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL()))
+                return builtIns + getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
             }
             catch (e: MalformedURLException) {
                 throw rethrow(e)
             }
-
         }
 
         return builtIns
     }
 
-    private fun getBuiltInSourceFiles(url: URL): MutableSet<JetFile> {
+    private fun getBuiltInSourceFiles(url: URL): Set<JetFile> {
         val fromUrl = VfsUtilCore.convertFromUrl(url)
         val vf = VirtualFileManager.getInstance().findFileByUrl(fromUrl)
         assert(vf != null) { "Virtual file not found by URL: $url" }
@@ -149,13 +141,9 @@ public class BuiltInsReferenceResolver(project: Project) : AbstractProjectCompon
         vf.refresh(false, true)
         PathUtil.getLocalFile(vf).refresh(false, true)
 
-        val psiDirectory = PsiManager.getInstance(myProject).findDirectory(vf)
+        val psiDirectory = PsiManager.getInstance(project).findDirectory(vf)
         assert(psiDirectory != null) { "No PsiDirectory for $vf" }
-        return HashSet(ContainerUtil.mapNotNull(psiDirectory!!.getFiles(), object : Function<PsiFile, JetFile> {
-            override fun `fun`(file: PsiFile): JetFile? {
-                return if (file is JetFile) file else null
-            }
-        }))
+        return psiDirectory!!.getFiles().filterIsInstance<JetFile>().toHashSet()
     }
 
     private fun findCurrentDescriptorForMember(originalDescriptor: MemberDescriptor): DeclarationDescriptor? {
@@ -172,33 +160,28 @@ public class BuiltInsReferenceResolver(project: Project) : AbstractProjectCompon
         else {
             descriptors = memberScope.getAllDescriptors()
         }
-        for (member in descriptors) {
-            if (renderedOriginal == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(member)) {
-                return member
-            }
-        }
-        return null
+
+        return descriptors.firstOrNull { renderedOriginal == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
     }
 
-    private fun findCurrentDescriptor(originalDescriptor: DeclarationDescriptor): DeclarationDescriptor? {
-        if (originalDescriptor is ClassDescriptor) {
-            return if (isFromBuiltinModule(originalDescriptor))
+    private fun findCurrentDescriptor(originalDescriptor: DeclarationDescriptor): DeclarationDescriptor? = when(originalDescriptor) {
+        is ClassDescriptor -> {
+            if (isFromBuiltinModule(originalDescriptor))
                 moduleDescriptor!!.findClassAcrossModuleDependencies(originalDescriptor.classId)
             else
                 null
         }
-        else if (originalDescriptor is PackageFragmentDescriptor) {
-            return if (isFromBuiltinModule(originalDescriptor) && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == originalDescriptor.fqName)
+
+        is PackageFragmentDescriptor -> {
+            if (isFromBuiltinModule(originalDescriptor) && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == originalDescriptor.fqName)
                 builtinsPackageFragment
             else
                 null
         }
-        else if (originalDescriptor is MemberDescriptor) {
-            return findCurrentDescriptorForMember(originalDescriptor)
-        }
-        else {
-            return null
-        }
+
+        is MemberDescriptor -> findCurrentDescriptorForMember(originalDescriptor)
+
+        else -> null
     }
 
     public fun resolveBuiltInSymbol(declarationDescriptor: DeclarationDescriptor): PsiElement? {
@@ -216,27 +199,22 @@ public class BuiltInsReferenceResolver(project: Project) : AbstractProjectCompon
     companion object {
         private val BUILT_INS_COMPILABLE_SRC_DIR = File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString())
 
+        public fun getInstance(project: Project): BuiltInsReferenceResolver =
+            ServiceManager.getService(project, javaClass<BuiltInsReferenceResolver>())
+
         private fun isFromBuiltinModule(originalDescriptor: DeclarationDescriptor): Boolean {
             // TODO This is optimization only
             // It should be rewritten by checking declarationDescriptor.getSource(), when the latter returns something non-trivial for builtins.
             return KotlinBuiltIns.getInstance().getBuiltInsModule() == DescriptorUtils.getContainingModule(originalDescriptor)
         }
 
-        public fun isFromBuiltIns(element: PsiElement): Boolean {
-            //noinspection SuspiciousMethodCalls
-            return element.getProject().getComponent(javaClass<BuiltInsReferenceResolver>())!!.builtInsSources!!.contains(element.getContainingFile())
-        }
+        public fun isFromBuiltIns(element: PsiElement): Boolean =
+                getInstance(element.project).builtInsSources!!.contains(element.getContainingFile())
 
-        private fun getMemberScope(parent: DeclarationDescriptor?): JetScope? {
-            if (parent is ClassDescriptor) {
-                return parent.getDefaultType().getMemberScope()
-            }
-            else if (parent is PackageFragmentDescriptor) {
-                return parent.getMemberScope()
-            }
-            else {
-                return null
-            }
+        private fun getMemberScope(parent: DeclarationDescriptor?): JetScope? = when(parent) {
+            is ClassDescriptor -> parent.getDefaultType().getMemberScope()
+            is PackageFragmentDescriptor -> parent.getMemberScope()
+            else -> null
         }
     }
 }

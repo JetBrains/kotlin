@@ -22,9 +22,6 @@
       <implementation-class>org.jetbrains.kotlin.idea.compiler.JetCompilerManager</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
@@ -232,6 +229,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"
+                    serviceImplementation="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
