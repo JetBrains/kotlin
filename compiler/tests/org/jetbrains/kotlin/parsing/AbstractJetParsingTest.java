@@ -62,7 +62,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
             if (!methodName.startsWith("get") && !methodName.startsWith("find") ||
                 methodName.equals("getReference") ||
                 methodName.equals("getReferences") ||
-                methodName.equals("getUseScope") ||
+                methodName.startsWith("getUseScope") ||
                 methodName.equals("getPresentation")) {
                 continue;
             }
