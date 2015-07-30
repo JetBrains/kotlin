@@ -102,10 +102,6 @@
                             <goal>install</goal>
                             <goal>run</goal>
                         </goals>
-
-                        <configuration>
-                            <postBuildHookScript>verify</postBuildHookScript>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

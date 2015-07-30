@@ -15,14 +15,20 @@ def removePaths(String path, File basedir) {
 }
 
 def pattern = Pattern.compile(/\[INFO\] --- ([^:]+):.*:\S+ \([^)]+\) @ test-project ---/)
-State state = new File(basedir, "build.log").readLines().inject(new State()) { acc, line ->
+State state = new File(basedir, "build.log").readLines().collect { it.replaceAll("\\u001b[^m]*m", "") }.inject(new State()) { acc, line ->
     def m = pattern.matcher(line)
     if (m.find()) {
         acc.currentPlugin = m.group(1)
     } else if (line.startsWith("[INFO] Downloaded:") || line.startsWith("[INFO] Downloading:") || line.startsWith("Downloaded:") || line.startsWith("Downloading:")) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
-        def filtered = removePaths(line, basedir).replace("\\", "/").replaceAll(/[0-9]+\s*ms/, "LLL ms").trim().replaceAll(/^\[[A-Z]+\]$/, "").replaceAll(/version [0-9\.]+/, "version @snapshot@")
+        def filtered = removePaths(line, basedir).
+                replace("\\", "/").
+                replaceAll(/[0-9]+\s*ms/, "LLL ms").
+                trim().
+                replaceAll(/^\[[A-Z]+\]$/, "").
+                replaceAll(/version [0-9\.]+/, "version @snapshot@")
+
         if (filtered != "") {
             acc.lines << filtered
         }
