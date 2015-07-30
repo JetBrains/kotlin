@@ -1,0 +1,11 @@
+private only changes in test/ClassWithGetterAndSetterForPrivateVarChanged: OK
+private only changes in test/ClassWithGetterForPrivateValChanged: OK
+private only changes in test/ClassWithPrivateFunAdded: OK
+private only changes in test/ClassWithPrivateFunRemoved: OK
+private only changes in test/ClassWithPrivateFunSignatureChanged: OK
+private only changes in test/ClassWithPrivateValAdded: OK
+private only changes in test/ClassWithPrivateValRemoved: OK
+private only changes in test/ClassWithPrivateValSignatureChanged: OK
+private only changes in test/ClassWithPrivateVarAdded: OK
+private only changes in test/ClassWithPrivateVarRemoved: OK
+private only changes in test/ClassWithPrivateVarSignatureChanged: OK
