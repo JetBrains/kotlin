@@ -459,6 +459,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x / y }
             JetTokens.RANGE ->
                 performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x .. y }
+            JetTokens.EQEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
+                x.eq(y, leftOperandDescriptor, updatedData)
+            }
+            JetTokens.EXCLEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
+                x.notEq(y, leftOperandDescriptor, updatedData)
+            }
             JetTokens.LT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
                 x.lessThan(y, leftOperandDescriptor, updatedData)
             }
