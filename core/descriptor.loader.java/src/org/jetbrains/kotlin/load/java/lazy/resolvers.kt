@@ -59,29 +59,28 @@ class LazyJavaTypeParameterResolver(
     }
 }
 
-data class KotlinClassLookupResult(val descriptor: ClassDescriptor?) {
-    companion object {
-        val EMPTY = KotlinClassLookupResult(null)
-    }
+sealed class KotlinClassLookupResult {
+    class Found(val descriptor: ClassDescriptor): KotlinClassLookupResult()
+    object NotFound : KotlinClassLookupResult()
+    object SyntheticClass : KotlinClassLookupResult()
 }
 
-fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult? {
-    if (kotlinClass == null) return null
+fun LazyJavaResolverContext.resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
+    if (kotlinClass == null) return KotlinClassLookupResult.NotFound
 
     val header = kotlinClass.classHeader
-    if (!header.isCompatibleAbiVersion) {
-        errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
-    }
-    else if (header.kind == KotlinClassHeader.Kind.CLASS) {
-        val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
-        if (descriptor != null) {
-            return KotlinClassLookupResult(descriptor)
+    return when {
+        !header.isCompatibleAbiVersion -> {
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
+            KotlinClassLookupResult.NotFound
+        }
+        header.kind == KotlinClassHeader.Kind.CLASS -> {
+            val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
+            if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+        }
+        else -> {
+            // This is a package or trait-impl or something like that
+            KotlinClassLookupResult.SyntheticClass
         }
     }
-    else {
-        // This is a package or trait-impl or something like that
-        return KotlinClassLookupResult.EMPTY
-    }
-
-    return null
 }

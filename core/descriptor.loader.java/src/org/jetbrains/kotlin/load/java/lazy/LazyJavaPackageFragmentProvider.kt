@@ -77,8 +77,11 @@ public class LazyJavaPackageFragmentProvider(
             }
             val outerClass = javaClass.getOuterClass()
             if (outerClass == null) {
-                return c.resolveBinaryClass(c.kotlinClassFinder.findKotlinClass(javaClass))?.descriptor
-                       ?: topLevelClasses(javaClass)
+                val kotlinResult = c.resolveKotlinBinaryClass(c.kotlinClassFinder.findKotlinClass(javaClass))
+                return when (kotlinResult) {
+                    is KotlinClassLookupResult.Found -> kotlinResult.descriptor
+                    else -> topLevelClasses(javaClass)
+                }
             }
             val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
             return outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
