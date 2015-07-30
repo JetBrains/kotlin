@@ -32,6 +32,7 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.NamePackage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
@@ -117,7 +118,10 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         findClassesAndObjects(qualifiedName, scope, answer);
 
-        if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {
+        if (PackagePartClassUtils.isFacadeClassFqName(qualifiedName)) {
+            answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
+        }
+        else if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {
             answer.addAll(lightClassGenerationSupport.getPackageClasses(qualifiedName.parent(), scope));
         }
 
