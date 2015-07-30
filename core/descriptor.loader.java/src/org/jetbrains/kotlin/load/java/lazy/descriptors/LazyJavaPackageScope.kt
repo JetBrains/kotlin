@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public class LazyPackageFragmentScopeForJavaPackage(
+public class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
         private val jPackage: JavaPackage,
         containingDeclaration: LazyJavaPackageFragment

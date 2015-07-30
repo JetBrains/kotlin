@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
-public abstract class LazyJavaMemberScope(
+public abstract class LazyJavaScope(
         protected val c: LazyJavaResolverContext,
         private val containingDeclaration: DeclarationDescriptor
 ) : JetScopeImpl() {

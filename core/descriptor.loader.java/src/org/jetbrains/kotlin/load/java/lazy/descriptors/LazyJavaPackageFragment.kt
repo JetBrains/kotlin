@@ -25,7 +25,7 @@ class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
-    private val scope by lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
+    private val scope by lazy { LazyJavaPackageScope(c, jPackage, this) }
 
     private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         javaClass: JavaClass ->
