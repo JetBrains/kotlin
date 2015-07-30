@@ -17,27 +17,19 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.context.*
-import org.jetbrains.kotlin.context.MutableModuleContext
+import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.frontend.di.*
+import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -46,19 +38,14 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.DynamicTypesSettings
-import org.jetbrains.kotlin.utils.*
-
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.HashSet
-
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
 public class BuiltInsReferenceResolver(val project: Project, val startupManager: StartupManager) {
 
@@ -120,12 +107,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             // (it's simply the "kotlin" directory in kotlin-plugin.jar)
             // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
             // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
-            try {
-                return builtIns + getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
-            }
-            catch (e: MalformedURLException) {
-                throw rethrow(e)
-            }
+            return builtIns + getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
         }
 
         return builtIns
@@ -147,33 +129,25 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     }
 
     private fun findCurrentDescriptorForMember(originalDescriptor: MemberDescriptor): DeclarationDescriptor? {
-        if (!isFromBuiltinModule(originalDescriptor)) return null
-
         val containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration())
         val memberScope = getMemberScope(containingDeclaration) ?: return null
 
         val renderedOriginal = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(originalDescriptor)
-        val descriptors: Collection<DeclarationDescriptor>
-        if (originalDescriptor is ConstructorDescriptor && containingDeclaration is ClassDescriptor) {
-            descriptors = containingDeclaration.getConstructors()
+        val descriptors = if (originalDescriptor is ConstructorDescriptor && containingDeclaration is ClassDescriptor) {
+            containingDeclaration.getConstructors()
         }
         else {
-            descriptors = memberScope.getAllDescriptors()
+            memberScope.getAllDescriptors()
         }
 
         return descriptors.firstOrNull { renderedOriginal == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
     }
 
     private fun findCurrentDescriptor(originalDescriptor: DeclarationDescriptor): DeclarationDescriptor? = when(originalDescriptor) {
-        is ClassDescriptor -> {
-            if (isFromBuiltinModule(originalDescriptor))
-                moduleDescriptor!!.findClassAcrossModuleDependencies(originalDescriptor.classId)
-            else
-                null
-        }
+        is ClassDescriptor -> moduleDescriptor!!.findClassAcrossModuleDependencies(originalDescriptor.classId)
 
         is PackageFragmentDescriptor -> {
-            if (isFromBuiltinModule(originalDescriptor) && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == originalDescriptor.fqName)
+            if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME == originalDescriptor.fqName)
                 builtinsPackageFragment
             else
                 null
@@ -182,18 +156,6 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         is MemberDescriptor -> findCurrentDescriptorForMember(originalDescriptor)
 
         else -> null
-    }
-
-    public fun resolveBuiltInSymbol(declarationDescriptor: DeclarationDescriptor): PsiElement? {
-        if (moduleDescriptor == null) {
-            return null
-        }
-
-        val descriptor = findCurrentDescriptor(declarationDescriptor)
-        if (descriptor != null) {
-            return DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
-        }
-        return null
     }
 
     companion object {
@@ -206,6 +168,23 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             // TODO This is optimization only
             // It should be rewritten by checking declarationDescriptor.getSource(), when the latter returns something non-trivial for builtins.
             return KotlinBuiltIns.getInstance().getBuiltInsModule() == DescriptorUtils.getContainingModule(originalDescriptor)
+        }
+
+        public fun resolveBuiltInSymbol(project: Project, declarationDescriptor: DeclarationDescriptor): PsiElement? {
+            if (!isFromBuiltinModule(declarationDescriptor)) {
+                return null
+            }
+
+            val resolver = getInstance(project)
+            if (resolver.moduleDescriptor == null) {
+                return null
+            }
+
+            val descriptor = resolver.findCurrentDescriptor(declarationDescriptor)
+            if (descriptor != null) {
+                return DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
+            }
+            return null
         }
 
         public fun isFromBuiltIns(element: PsiElement): Boolean =

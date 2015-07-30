@@ -52,13 +52,8 @@ public object DescriptorToSourceUtilsIde {
             // therefore we put both source declaration and decompiled declaration to stream, and afterwards we filter it in getAllDeclarations
             sequenceOfLazyValues(
                     { DescriptorToSourceUtils.getSourceFromDescriptor(effectiveReferenced)  },
-                    { findBuiltinDeclaration(project, effectiveReferenced) ?: DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, effectiveReferenced) }
+                    { BuiltInsReferenceResolver.resolveBuiltInSymbol(project, effectiveReferenced) ?: DecompiledNavigationUtils.getDeclarationFromDecompiledClassFile(project, effectiveReferenced) }
             )
         }.filterNotNull()
-    }
-
-    private fun findBuiltinDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
-        val libraryReferenceResolver = BuiltInsReferenceResolver.getInstance(project)
-        return libraryReferenceResolver.resolveBuiltInSymbol(descriptor)
     }
 }
