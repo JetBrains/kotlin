@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.resolve.constants.BooleanValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 
 public object AnnotationChecker {
+
+    public var additionalChecker: AdditionalAnnotationChecker? = null
 
     public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: ClassDescriptor? = null) {
         if (annotated is JetTypeParameter) return // TODO: support type parameter annotations
@@ -64,24 +66,17 @@ public object AnnotationChecker {
         }
     }
 
-    private fun isRepeatable(classDescriptor: ClassDescriptor): Boolean {
-        val annotationEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return false
-        val repeatableArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
-            "repeatable" == it.key.name.asString()
-        }?.getValue() as? BooleanValue ?: return false
-        return repeatableArgumentValue.value
-    }
-
     private fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
         val entryTypes: MutableSet<JetType> = hashSetOf()
         for (entry in entries) {
             checkAnnotationEntry(entry, actualTargets, trace)
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
-            if (!entryTypes.add(descriptor.type) && !isRepeatable(classDescriptor)) {
+            if (!entryTypes.add(descriptor.type) && !classDescriptor.isRepeatableAnnotation()) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry));
             }
         }
+        additionalChecker?.checkEntries(entries, actualTargets, trace)
     }
 
     public fun possibleTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
@@ -135,4 +130,8 @@ public object AnnotationChecker {
         if (annotated is JetTypeParameter) return listOf(KotlinTarget.TYPE_PARAMETER)
         return listOf()
     }
+}
+
+public interface AdditionalAnnotationChecker {
+    public fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
 }

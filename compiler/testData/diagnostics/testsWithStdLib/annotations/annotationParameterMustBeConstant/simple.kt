@@ -1,4 +1,4 @@
-annotation(repeatable = true) class Ann(val i: Int)
+annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class Ann(val i: Int)
 annotation class AnnIA(val ia: IntArray)
 annotation class AnnSA(val sa: Array<String>)
 

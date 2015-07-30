@@ -20,4 +20,4 @@ val BAZ = "baz"
 val N = 0
 
 target(AnnotationTarget.FILE)
-annotation(repeatable = true) class myAnnotation(val i: Int, val s: String)
+annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class myAnnotation(val i: Int, val s: String)

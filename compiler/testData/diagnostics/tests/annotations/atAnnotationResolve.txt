@@ -10,7 +10,7 @@ Ann(x = 1) Ann(x = 2) Ann(x = 3) private final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(repeatable = true) internal final class Ann : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASSIFIER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.EXPRESSION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.SOURCE) internal final class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ x: kotlin.Int = ...)
     internal final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

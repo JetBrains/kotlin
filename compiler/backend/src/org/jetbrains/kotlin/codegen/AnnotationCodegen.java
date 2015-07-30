@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.types.Flexibility;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -407,20 +407,9 @@ public abstract class AnnotationCodegen {
 
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
-        AnnotationDescriptor kotlinAnnotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
-        if (kotlinAnnotation != null) {
-            for (Map.Entry<ValueParameterDescriptor, ConstantValue<?>> argument : kotlinAnnotation.getAllValueArguments().entrySet()) {
-                if ("retention".equals(argument.getKey().getName().asString()) && argument.getValue() instanceof EnumValue) {
-                    ClassDescriptor enumEntry = ((EnumValue) argument.getValue()).getValue();
-                    JetType classObjectType = getClassObjectType(enumEntry);
-                    if (classObjectType != null) {
-                        if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                            KotlinRetention retention = KotlinRetention.valueOf(enumEntry.getName().asString());
-                            return annotationRetentionMap.get(retention);
-                        }
-                    }
-                }
-            }
+        KotlinRetention retention = DescriptorUtilPackage.getAnnotationRetention(descriptor);
+        if (retention != null) {
+            return annotationRetentionMap.get(retention);
         }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {

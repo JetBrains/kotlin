@@ -21,10 +21,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
 import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.BooleanValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
@@ -139,4 +143,20 @@ public fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): D
         return getContainingDeclaration()
     }
     return getDispatchReceiverParameter()?.getContainingDeclaration()
+}
+
+public fun Annotated.isRepeatableAnnotation(): Boolean {
+    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return false
+    val repeatableArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
+        "repeatable" == it.key.name.asString()
+    }?.getValue() as? BooleanValue ?: return false     // not repeatable by default
+    return repeatableArgumentValue.value
+}
+
+public fun Annotated.getAnnotationRetention(): KotlinRetention? {
+    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return null
+    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
+        "retention" == it.key.name.asString()
+    }?.getValue() as? EnumValue ?: return null
+    return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }

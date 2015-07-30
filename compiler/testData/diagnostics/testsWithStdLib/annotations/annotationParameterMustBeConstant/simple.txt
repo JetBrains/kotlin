@@ -6,7 +6,7 @@ internal val ia: kotlin.IntArray
 internal val sa: kotlin.Array<kotlin.String>
 internal fun foo(): kotlin.Int
 
-kotlin.annotation.annotation(repeatable = true) internal final class Ann : kotlin.Annotation {
+kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.SOURCE) internal final class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ i: kotlin.Int)
     internal final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

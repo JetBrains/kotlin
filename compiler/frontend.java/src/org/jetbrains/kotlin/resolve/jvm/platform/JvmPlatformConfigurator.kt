@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.jvm.RuntimeAssertionsTypeChecker
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
+import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.ReflectionAPICallChecker
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.TraitDefaultMethodCallChecker
@@ -75,13 +79,31 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
                 JavaNullabilityWarningsChecker(),
                 RuntimeAssertionsTypeChecker
         ),
-        additionalSymbolUsageValidators = listOf()
+
+        additionalSymbolUsageValidators = listOf(),
+
+        additionalAnnotationChecker = RepeatableAnnotationChecker
 ) {
 
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
 
         container.useImpl<ReflectionAPICallChecker>()
+    }
+}
+
+public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
+    override fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
+        val entryTypes: MutableSet<JetType> = hashSetOf()
+        for (entry in entries) {
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
+            val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
+            if (!entryTypes.add(descriptor.type)
+                && classDescriptor.isRepeatableAnnotation()
+                && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
+                trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry));
+            }
+        }
     }
 }
 

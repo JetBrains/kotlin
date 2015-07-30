@@ -48,7 +48,8 @@ public open class PlatformConfigurator(
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
-        additionalSymbolUsageValidators: List<SymbolUsageValidator>
+        additionalSymbolUsageValidators: List<SymbolUsageValidator>,
+        private val additionalAnnotationChecker: AdditionalAnnotationChecker? = null
 ) {
 
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
@@ -64,5 +65,6 @@ public open class PlatformConfigurator(
             typeCheckers.forEach { useInstance(it) }
             useInstance(symbolUsageValidator)
         }
+        AnnotationChecker.additionalChecker = additionalAnnotationChecker
     }
 }

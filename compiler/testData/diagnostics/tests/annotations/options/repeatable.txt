@@ -2,6 +2,13 @@ package
 
 repann() repann() internal fun foo(/*0*/ repann() repann() x: kotlin.Int): kotlin.Int
 
+binrepann() binrepann() internal final class BinaryAnnotated {
+    public constructor BinaryAnnotated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 repann() repann() internal final class DoubleAnnotated {
     public constructor DoubleAnnotated()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -18,6 +25,13 @@ repann2(f = true) repann2(f = false) repann2(f = false) repann2(f = true) intern
 
 repann1(x = 1) repann1(x = 2) repann1(x = 3) internal final class TripleAnnotated {
     public constructor TripleAnnotated()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.BINARY) internal final class binrepann : kotlin.Annotation {
+    public constructor binrepann()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

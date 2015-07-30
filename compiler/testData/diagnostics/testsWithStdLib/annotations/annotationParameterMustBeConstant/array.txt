@@ -6,7 +6,7 @@ internal val i3: kotlin.Int
 internal val iAnn: Ann
 internal fun foo(): kotlin.Int
 
-kotlin.annotation.annotation(repeatable = true) internal final class Ann : kotlin.Annotation {
+kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.SOURCE) internal final class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ i: kotlin.IntArray)
     internal final val i: kotlin.IntArray
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -14,7 +14,7 @@ kotlin.annotation.annotation(repeatable = true) internal final class Ann : kotli
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.annotation.annotation(repeatable = true) internal final class AnnAnn : kotlin.Annotation {
+kotlin.annotation.annotation(repeatable = true, retention = AnnotationRetention.SOURCE) internal final class AnnAnn : kotlin.Annotation {
     public constructor AnnAnn(/*0*/ i: kotlin.Array<Ann>)
     internal final val i: kotlin.Array<Ann>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
