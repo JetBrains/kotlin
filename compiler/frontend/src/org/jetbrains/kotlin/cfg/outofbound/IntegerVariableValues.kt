@@ -128,37 +128,64 @@ public class IntegerVariableValues() {
             createFromCollection(values.map { -1 * it })
 
     // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
+    public fun eq(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData
+    ): BooleanVariableValue.Undefined =
+            applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
+                thisVarDescriptor?.let {
+                    val thisValues = HashSet(values)
+                    val onTrueValues = if (thisValues.contains(valueToCompareWith)) setOf(valueToCompareWith) else setOf()
+                    thisValues.remove(valueToCompareWith)
+                    BooleanVariableValue.Undefined(mapOf(it to onTrueValues), mapOf(it to thisValues))
+                } ?: undefinedWithFullRestrictions(valuesData)
+            }
+
+    public fun notEq(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData
+    ): BooleanVariableValue.Undefined {
+        val eqRes = eq(other, thisVarDescriptor, valuesData)
+        return BooleanVariableValue.Undefined(eqRes.onFalseRestrictions, eqRes.onTrueRestrictions)
+    }
+
     public fun lessThan(
             other: IntegerVariableValues,
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData
     ): BooleanVariableValue.Undefined =
-            comparison(other, thisVarDescriptor, valuesData,
-                       { array, value -> array.indexOfFirst { it >= value } },
-                       { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
-                           mapOf(varDescriptor to valuesWithLessIndices) to mapOf(varDescriptor to valuesWithGreaterOrEqIndices)
-                       }
-            )
+            applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
+                comparison(valueToCompareWith, thisVarDescriptor, valuesData,
+                           { array, value -> array.indexOfFirst { it >= value } },
+                           { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                               mapOf(varDescriptor to valuesWithLessIndices) to mapOf(varDescriptor to valuesWithGreaterOrEqIndices)
+                           }
+                )
+    }
 
     public fun greaterThan(
             other: IntegerVariableValues,
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData
     ): BooleanVariableValue.Undefined =
-            comparison(other, thisVarDescriptor, valuesData,
-                       { array, value -> array.indexOfFirst { it > value } },
-                       { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
-                           mapOf(varDescriptor to valuesWithGreaterOrEqIndices) to mapOf(varDescriptor to valuesWithLessIndices)
-                       }
-            )
+            applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
+                comparison(valueToCompareWith, thisVarDescriptor, valuesData,
+                           { array, value -> array.indexOfFirst { it > value } },
+                           { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                               mapOf(varDescriptor to valuesWithGreaterOrEqIndices) to mapOf(varDescriptor to valuesWithLessIndices)
+                           }
+                )
+    }
 
     public fun greaterOrEq(
             other: IntegerVariableValues,
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData
     ): BooleanVariableValue.Undefined {
-        val lessThenRes = lessThan(other, thisVarDescriptor, valuesData)
-        return BooleanVariableValue.Undefined(lessThenRes.onFalseRestrictions, lessThenRes.onTrueRestrictions)
+        val lessThanRes = lessThan(other, thisVarDescriptor, valuesData)
+        return BooleanVariableValue.Undefined(lessThanRes.onFalseRestrictions, lessThanRes.onTrueRestrictions)
     }
 
     public fun lessOrEq(
@@ -166,25 +193,17 @@ public class IntegerVariableValues() {
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData
     ): BooleanVariableValue.Undefined {
-        val greaterThenRes = greaterThan(other, thisVarDescriptor, valuesData)
-        return BooleanVariableValue.Undefined(greaterThenRes.onFalseRestrictions, greaterThenRes.onTrueRestrictions)
+        val greaterThanRes = greaterThan(other, thisVarDescriptor, valuesData)
+        return BooleanVariableValue.Undefined(greaterThanRes.onFalseRestrictions, greaterThanRes.onTrueRestrictions)
     }
 
     private fun comparison(
-            other: IntegerVariableValues,
+            otherValue: Int,
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData,
             findIndex: (IntArray, Int) -> Int,
             createRestrictions: (VariableDescriptor, Set<Int>, Set<Int>) -> Pair<Map<VariableDescriptor, Set<Int>>, Map<VariableDescriptor, Set<Int>>>
     ): BooleanVariableValue.Undefined {
-        if (!this.isDefined) {
-            return BooleanVariableValue.undefinedWithNoRestrictions
-        }
-        if (!other.isDefined || other.values.size() > 1) {
-            // the second check means that in expression "x 'operator' y" only one element set is supported for "y"
-            return undefinedWithFullRestrictions(valuesData)
-        }
-        val otherValue = other.values.single()
         val thisArray = values.toIntArray()
         thisArray.sort()
         return thisVarDescriptor?.let {
@@ -195,6 +214,21 @@ public class IntegerVariableValues() {
             val (onTrueRestrictions, onFalseRestrictions) = createRestrictions(it, valuesWithLessIndices, valuesWithGreaterOrEqIndices)
             BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
         } ?: undefinedWithFullRestrictions(valuesData)
+    }
+
+    private fun applyComparisonIfArgsAreAppropriate(
+            other: IntegerVariableValues,
+            valuesData: ValuesData,
+            comparison: (Int) -> BooleanVariableValue.Undefined
+    ): BooleanVariableValue.Undefined {
+        if (!this.isDefined) {
+            return BooleanVariableValue.undefinedWithNoRestrictions
+        }
+        if (!other.isDefined || other.values.size() > 1) {
+            // the second check means that in expression "x 'operator' y" only one element set is supported for "y"
+            return undefinedWithFullRestrictions(valuesData)
+        }
+        return comparison(other.values.single())
     }
 
     private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {

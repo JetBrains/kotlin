@@ -1,3 +1,25 @@
+fun simpleEq() {
+    val a = 1
+    if(a == 1) {
+        42
+    }
+    else {
+        43
+    }
+    44
+}
+
+fun simpleNotEq() {
+    val a = 1
+    if(a != 1) {
+        42
+    }
+    else {
+        43
+    }
+    44
+}
+
 fun simpleLt() {
     val a = 1
     if (a < 2) {
