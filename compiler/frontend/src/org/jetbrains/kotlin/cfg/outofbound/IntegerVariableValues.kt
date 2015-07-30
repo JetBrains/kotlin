@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.google.common.collect.UnmodifiableListIterator
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.outofbound.ValuesData
 import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
@@ -127,34 +128,71 @@ public class IntegerVariableValues() {
             createFromCollection(values.map { -1 * it })
 
     // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
-    public fun less(
+    public fun lessThan(
             other: IntegerVariableValues,
             thisVarDescriptor: VariableDescriptor?,
             valuesData: ValuesData
-    ): BooleanVariableValue {
+    ): BooleanVariableValue.Undefined =
+            comparison(other, thisVarDescriptor, valuesData,
+                       { array, value -> array.indexOfFirst { it >= value } },
+                       { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                           mapOf(varDescriptor to valuesWithLessIndices) to mapOf(varDescriptor to valuesWithGreaterOrEqIndices)
+                       }
+            )
+
+    public fun greaterThan(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData
+    ): BooleanVariableValue.Undefined =
+            comparison(other, thisVarDescriptor, valuesData,
+                       { array, value -> array.indexOfFirst { it > value } },
+                       { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                           mapOf(varDescriptor to valuesWithGreaterOrEqIndices) to mapOf(varDescriptor to valuesWithLessIndices)
+                       }
+            )
+
+    public fun greaterOrEq(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData
+    ): BooleanVariableValue.Undefined {
+        val lessThenRes = lessThan(other, thisVarDescriptor, valuesData)
+        return BooleanVariableValue.Undefined(lessThenRes.onFalseRestrictions, lessThenRes.onTrueRestrictions)
+    }
+
+    public fun lessOrEq(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData
+    ): BooleanVariableValue.Undefined {
+        val greaterThenRes = greaterThan(other, thisVarDescriptor, valuesData)
+        return BooleanVariableValue.Undefined(greaterThenRes.onFalseRestrictions, greaterThenRes.onTrueRestrictions)
+    }
+
+    private fun comparison(
+            other: IntegerVariableValues,
+            thisVarDescriptor: VariableDescriptor?,
+            valuesData: ValuesData,
+            findIndex: (IntArray, Int) -> Int,
+            createRestrictions: (VariableDescriptor, Set<Int>, Set<Int>) -> Pair<Map<VariableDescriptor, Set<Int>>, Map<VariableDescriptor, Set<Int>>>
+    ): BooleanVariableValue.Undefined {
         if (!this.isDefined) {
             return BooleanVariableValue.undefinedWithNoRestrictions
         }
-        if (!other.isDefined) {
-            return thisVarDescriptor?.let {
-                val restrictions = mapOf(it to setOf<Int>())
-                BooleanVariableValue.Undefined(restrictions, restrictions)
-            } ?: undefinedWithFullRestrictions(valuesData)
-        }
-        if (other.values.size() > 1) {
-            // this check means that in expression "x < y" only one element set is supported for "y"
+        if (!other.isDefined || other.values.size() > 1) {
+            // the second check means that in expression "x 'operator' y" only one element set is supported for "y"
             return undefinedWithFullRestrictions(valuesData)
         }
         val otherValue = other.values.single()
         val thisArray = values.toIntArray()
         thisArray.sort()
         return thisVarDescriptor?.let {
-            val foundIndex = thisArray.indexOfFirst { x -> x >= otherValue }
+            val foundIndex = findIndex(thisArray, otherValue)
             val bound = if (foundIndex < 0) thisArray.size() else foundIndex
-            val lessValuesInThis = thisArray.copyOfRange(0, bound).toSet()
-            val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toSet()
-            val onTrueRestrictions = mapOf(it to lessValuesInThis)
-            val onFalseRestrictions = mapOf(it to greaterOrEqValuesInThis)
+            val valuesWithLessIndices = thisArray.copyOfRange(0, bound).toSet()
+            val valuesWithGreaterOrEqIndices = thisArray.copyOfRange(bound, thisArray.size()).toSet()
+            val (onTrueRestrictions, onFalseRestrictions) = createRestrictions(it, valuesWithLessIndices, valuesWithGreaterOrEqIndices)
             BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
         } ?: undefinedWithFullRestrictions(valuesData)
     }
