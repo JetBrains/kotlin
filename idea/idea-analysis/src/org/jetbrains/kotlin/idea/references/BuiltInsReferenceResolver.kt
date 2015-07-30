@@ -63,7 +63,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
 
         val jetBuiltInsFiles = getJetBuiltInsFiles()
 
-        val initializeRunnable = { ->
+        runReadAction {
             val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), ModuleParameters.Empty)
             newModuleContext.setDependencies(newModuleContext.module)
 
@@ -87,15 +87,6 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             this@BuiltInsReferenceResolver.moduleDescriptor = newModuleContext.module
             builtinsPackageFragment = fragments.single()
             builtInsSources = jetBuiltInsFiles
-        }
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            initializeRunnable()
-        }
-        else {
-            ApplicationManager.getApplication().executeOnPooledThread {
-                runReadAction { initializeRunnable() }
-            }
         }
     }
 
