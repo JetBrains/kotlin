@@ -145,13 +145,17 @@ public fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): D
     return getDispatchReceiverParameter()?.getContainingDeclaration()
 }
 
-public fun Annotated.isRepeatableAnnotation(): Boolean {
-    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return false
+private fun Annotated.isAnnotationPropertyTrue(name: String, defaultValue: Boolean = false): Boolean {
+    val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return defaultValue
     val repeatableArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
-        "repeatable" == it.key.name.asString()
-    }?.getValue() as? BooleanValue ?: return false     // not repeatable by default
+        name == it.key.name.asString()
+    }?.getValue() as? BooleanValue ?: return defaultValue
     return repeatableArgumentValue.value
 }
+
+public fun Annotated.isRepeatableAnnotation(): Boolean = isAnnotationPropertyTrue("repeatable")
+
+public fun Annotated.isDocumentedAnnotation(): Boolean = isAnnotationPropertyTrue("mustBeDocumented")
 
 public fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation) ?: return null

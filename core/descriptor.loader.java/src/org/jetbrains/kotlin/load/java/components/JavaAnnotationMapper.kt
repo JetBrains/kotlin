@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.ErrorUtils
+import java.lang.annotation.Documented
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
 import java.util.EnumSet
@@ -40,6 +41,7 @@ public object JavaAnnotationMapper {
     private val javaTargetFqName = FqName(javaClass<Target>().canonicalName)
     private val javaRetentionFqName = FqName(javaClass<Retention>().canonicalName)
     private val javaDeprecatedFqName = FqName(javaClass<Deprecated>().canonicalName)
+    private val javaDocumentedFqName = FqName(javaClass<Documented>().canonicalName)
     // Java8-specific thing
     private val javaRepeatableFqName = FqName("java.lang.annotation.Repeatable")
 
@@ -59,8 +61,10 @@ public object JavaAnnotationMapper {
             // Construct kotlin.annotation.annotation from Retention & Repeatable
             val retentionAnnotation = annotationOwner.findAnnotation(javaRetentionFqName)
             val repeatableAnnotation = annotationOwner.findAnnotation(javaRepeatableFqName)
-            return if (retentionAnnotation != null || repeatableAnnotation != null) {
-                JavaRetentionRepeatableAnnotationDescriptor(retentionAnnotation, repeatableAnnotation != null, c)
+            val documentedAnnotation = annotationOwner.findAnnotation(javaDocumentedFqName)
+            return if (retentionAnnotation != null || repeatableAnnotation != null || documentedAnnotation != null) {
+                JavaRetentionRepeatableAnnotationDescriptor(retentionAnnotation, repeatableAnnotation != null,
+                                                            documentedAnnotation != null, c)
             }
             else {
                 null
@@ -82,7 +86,8 @@ public object JavaAnnotationMapper {
             mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
                   javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation,
                   javaDeprecatedFqName to KotlinBuiltIns.FQ_NAMES.deprecated,
-                  javaRepeatableFqName to KotlinBuiltIns.FQ_NAMES.annotation)
+                  javaRepeatableFqName to KotlinBuiltIns.FQ_NAMES.annotation,
+                  javaDocumentedFqName to KotlinBuiltIns.FQ_NAMES.annotation)
 }
 
 abstract class AbstractJavaAnnotationDescriptor(
@@ -120,6 +125,7 @@ class JavaDeprecatedAnnotationDescriptor(
 class JavaRetentionRepeatableAnnotationDescriptor(
         retentionAnnotation: JavaAnnotation?,
         repeatable: Boolean,
+        documented: Boolean,
         c: LazyJavaResolverContext
 ): AbstractJavaAnnotationDescriptor(c, retentionAnnotation, c.module.builtIns.annotationAnnotation) {
 
@@ -135,8 +141,13 @@ class JavaRetentionRepeatableAnnotationDescriptor(
         val repeatableParameterDescriptor = valueParameters.first {
             it.name == JvmAnnotationNames.REPEATABLE_ANNOTATION_PARAMETER_NAME
         }
+        val documentedArgument = if (documented) BooleanValue(true, c.module.builtIns) else null
+        val documentedParameterDescriptor = valueParameters.first {
+            it.name == JvmAnnotationNames.DOCUMENTED_ANNOTATION_PARAMETER_NAME
+        }
         (retentionArgument?.let { mapOf(retentionParameterDescriptor to it) } ?: emptyMap()) +
-        (repeatableArgument?.let { mapOf(repeatableParameterDescriptor to it) } ?: emptyMap())
+        (repeatableArgument?.let { mapOf(repeatableParameterDescriptor to it) } ?: emptyMap()) +
+        (documentedArgument?.let { mapOf(documentedParameterDescriptor to it) } ?: emptyMap())
     }
 
     override fun getAllValueArguments() = valueArguments()

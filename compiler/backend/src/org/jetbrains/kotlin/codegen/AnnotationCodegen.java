@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
@@ -123,6 +120,7 @@ public abstract class AnnotationCodegen {
         if (annotated instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
             if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                generateDocumentedAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
                 generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
                 generateTargetAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
             }
@@ -215,6 +213,15 @@ public abstract class AnnotationCodegen {
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
         AnnotationVisitor visitor = visitAnnotation(descriptor, true);
         visitor.visitEnum("value", Type.getType(RetentionPolicy.class).getDescriptor(), policy.name());
+        visitor.visitEnd();
+    }
+
+    private void generateDocumentedAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+        boolean documented = DescriptorUtilPackage.isDocumentedAnnotation(classDescriptor);
+        if (!documented) return;
+        String descriptor = Type.getType(Documented.class).getDescriptor();
+        if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+        AnnotationVisitor visitor = visitAnnotation(descriptor, true);
         visitor.visitEnd();
     }
 
