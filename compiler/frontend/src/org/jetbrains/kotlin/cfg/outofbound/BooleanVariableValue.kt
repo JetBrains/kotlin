@@ -24,12 +24,33 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public interface BooleanVariableValue {
+    // Logic operators, (BoolVariableValue, BoolVariableValue) -> BoolVariableValue
+    public fun and(other: BooleanVariableValue): BooleanVariableValue
+    public fun or(other: BooleanVariableValue): BooleanVariableValue
+    public fun not(other: BooleanVariableValue): BooleanVariableValue
+
     public object True : BooleanVariableValue {
-        override fun toString(): String = "True"
+        override fun toString(): String = "T"
+
+        override fun and(other: BooleanVariableValue): BooleanVariableValue =
+            when (other) {
+                True -> True
+                else -> other.copy()
+            }
+
+        override fun or(other: BooleanVariableValue): BooleanVariableValue = True
+
+        override fun not(other: BooleanVariableValue): BooleanVariableValue = False
     }
 
     public object False : BooleanVariableValue {
-        override fun toString(): String = "False"
+        override fun toString(): String = "F"
+
+        override fun and(other: BooleanVariableValue): BooleanVariableValue = False
+
+        override fun or(other: BooleanVariableValue): BooleanVariableValue = other.copy()
+
+        override fun not(other: BooleanVariableValue): BooleanVariableValue = True
     }
 
     public data class Undefined (
@@ -38,9 +59,41 @@ public interface BooleanVariableValue {
     ): BooleanVariableValue {
         override fun toString(): String {
             val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
-            val ontTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString)
-            val ontFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString)
-            return "Undef:[onTrue:$ontTrue, onFalse:$ontFalse]"
+            val onTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString)
+            val onFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString)
+            return "U$onTrue$onFalse"
+        }
+
+        override fun and(other: BooleanVariableValue): BooleanVariableValue =
+                when(other) {
+                    True -> this.copy()
+                    False -> False
+                    is Undefined -> mergeIntersectingCorrespondingValues(other)
+                    else -> {
+                        assert(false, "Unexpected derived type of BooleanVariableValue")
+                        BooleanVariableValue.undefinedWithNoRestrictions
+                    }
+                }
+
+        override fun or(other: BooleanVariableValue): BooleanVariableValue =
+                when(other) {
+                    True -> True
+                    False -> this.copy()
+                    is Undefined -> mergeIntersectingCorrespondingValues(other)
+                    else -> {
+                        assert(false, "Unexpected derived type of BooleanVariableValue")
+                        BooleanVariableValue.undefinedWithNoRestrictions
+                    }
+                }
+
+        override fun not(other: BooleanVariableValue): BooleanVariableValue =
+                Undefined(onFalseRestrictions, onTrueRestrictions)
+
+        private fun mergeIntersectingCorrespondingValues(other: Undefined): Undefined {
+            val mergeValues: (Set<Int>, Set<Int>) -> Set<Int> = { value1, value2 -> value1.intersect(value2) }
+            val onTrueIntersected = MapUtils.mergeMaps(onTrueRestrictions, other.onTrueRestrictions, mergeValues)
+            val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeValues)
+            return Undefined(onTrueIntersected, onFalseIntersected)
         }
     }
 
