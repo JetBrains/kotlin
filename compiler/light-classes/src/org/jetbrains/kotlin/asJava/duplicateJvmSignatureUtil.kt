@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.*
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
         val project = file.getProject()
-        val cache = KotlinLightClassForPackage.FileStubCache.getInstance(project)
+        val cache = KotlinLightClassForFacade.FileStubCache.getInstance(project)
         return cache[file.getPackageFqName(), moduleScope].getValue()?.extraDiagnostics
     }
 

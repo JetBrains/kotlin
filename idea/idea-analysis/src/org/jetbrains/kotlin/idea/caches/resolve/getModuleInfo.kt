@@ -23,7 +23,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.roots.ModuleRootManager
@@ -116,7 +116,7 @@ private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleI
     }
     val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
-        is KotlinLightClassForPackage -> this.files.first()
+        is KotlinLightClassForFacade -> this.files.first()
         else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")
     }
     return element.getModuleInfo()

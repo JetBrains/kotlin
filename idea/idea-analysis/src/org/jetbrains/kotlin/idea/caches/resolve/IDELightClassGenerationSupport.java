@@ -279,8 +279,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
             IdeaModuleInfo moduleInfo = info.getModuleInfo();
             if (moduleInfo instanceof ModuleSourceInfo) {
-                KotlinLightClassForPackage lightClass =
-                        KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, moduleInfo.contentScope(), files);
+                KotlinLightClassForFacade lightClass =
+                        KotlinLightClassForFacade.Factory.createForPackageFacade(psiManager, packageFqName, moduleInfo.contentScope(), files);
                 if (lightClass == null) continue;
 
                 result.add(lightClass);

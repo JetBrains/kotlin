@@ -23,7 +23,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
@@ -76,7 +76,7 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
             if (element is KotlinLightClassForExplicitDeclaration) {
                 element.getOrigin()
             }
-            else if (element is KotlinLightClassForPackage) {
+            else if (element is KotlinLightClassForFacade) {
                 if (showErrors) {
                     CommonRefactoringUtil.showErrorHint(
                             element.project, editor,

@@ -37,11 +37,12 @@ import org.jetbrains.kotlin.psi.JetFile
 import javax.swing.*
 import org.jetbrains.kotlin.psi.JetClassOrObject
 
-public class KotlinLightClassForPackage private constructor(
+public class KotlinLightClassForFacade private constructor(
         manager: PsiManager,
-        private val packageFqName: FqName,
+        private val facadeClassFqName: FqName,
         private val searchScope: GlobalSearchScope,
-        files: Collection<JetFile>) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
+        files: Collection<JetFile>
+) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
 
     public class FileStubCache(private val project: Project) {
         private data class Key(val fqName: FqName, val searchScope: GlobalSearchScope)
@@ -72,17 +73,13 @@ public class KotlinLightClassForPackage private constructor(
         }
     }
 
-    init {
-        assert(!files.isEmpty()) { "No files for package " + packageFqName }
-    }
-
     public val files: Collection<JetFile> = files.toSet() // needed for hashCode
-
-    private val packageClassFqName: FqName =
-            PackageClassUtils.getPackageClassFqName(packageFqName)
 
     private val hashCode: Int =
             computeHashCode()
+
+    private val packageFqName: FqName =
+            facadeClassFqName.parent()
 
     private val lightClassDataCache: CachedValue<KotlinPackageLightClassData> =
             FileStubCache.getInstance(getProject()).get(packageFqName, searchScope)
@@ -99,7 +96,7 @@ public class KotlinLightClassForPackage private constructor(
 
     override fun getOrigin(): JetClassOrObject? = null
 
-    override fun getFqName(): FqName = packageClassFqName
+    override fun getFqName(): FqName = facadeClassFqName
 
     override fun getModifierList() = modifierList
 
@@ -156,19 +153,17 @@ public class KotlinLightClassForPackage private constructor(
 
     override fun findInnerClassByName(NonNls name: String, checkBases: Boolean) = null
 
-    override fun getName() = packageClassFqName.shortName().asString()
+    override fun getName() = facadeClassFqName.shortName().asString()
 
-    override fun getQualifiedName() = packageClassFqName.asString()
+    override fun getQualifiedName() = facadeClassFqName.asString()
 
     override fun isValid() = files.all { it.isValid() }
 
-    override fun copy() = KotlinLightClassForPackage(getManager(), packageFqName, searchScope, files)
+    override fun copy() = KotlinLightClassForFacade(getManager(), facadeClassFqName, searchScope, files)
 
     override fun getDelegate(): PsiClass {
-        val psiClass = LightClassUtil.findClass(packageClassFqName, lightClassDataCache.getValue().javaFileStub)
-        if (psiClass == null) {
-            throw IllegalStateException("Package class was not found " + packageFqName)
-        }
+        val psiClass = LightClassUtil.findClass(facadeClassFqName, lightClassDataCache.getValue().javaFileStub)
+                       ?: throw IllegalStateException("Facade class $facadeClassFqName not found")
         return psiClass
     }
 
@@ -185,7 +180,7 @@ public class KotlinLightClassForPackage private constructor(
     private fun computeHashCode(): Int {
         var result = getManager().hashCode()
         result = 31 * result + files.hashCode()
-        result = 31 * result + packageFqName.hashCode()
+        result = 31 * result + facadeClassFqName.hashCode()
         return result
     }
 
@@ -194,38 +189,41 @@ public class KotlinLightClassForPackage private constructor(
             return false
         }
 
-        val lightClass = other as KotlinLightClassForPackage
+        val lightClass = other as KotlinLightClassForFacade
         if (this === other) return true
 
         if (this.hashCode != lightClass.hashCode) return false
         if (getManager() != lightClass.getManager()) return false
         if (files != lightClass.files) return false
-        if (packageFqName != lightClass.packageFqName) return false
+        if (facadeClassFqName != lightClass.facadeClassFqName) return false
 
         return true
     }
 
     override fun toString(): String {
         try {
-            return javaClass<KotlinLightClassForPackage>().getSimpleName() + ":" + getQualifiedName()
+            return javaClass<KotlinLightClassForFacade>().getSimpleName() + ":" + getQualifiedName()
         }
         catch (e: Throwable) {
-            return javaClass<KotlinLightClassForPackage>().getSimpleName() + ":" + e.toString()
+            return javaClass<KotlinLightClassForFacade>().getSimpleName() + ":" + e.toString()
         }
     }
 
     companion object Factory {
-        public fun create(
+        public fun createForPackageFacade(
                 manager: PsiManager,
-                qualifiedName: FqName,
+                packageFqName: FqName,
                 searchScope: GlobalSearchScope,
                 files: Collection<JetFile> // this is redundant, but computing it multiple times is costly
-        ): KotlinLightClassForPackage? {
+        ): KotlinLightClassForFacade? {
             if (files.any { LightClassUtil.belongsToKotlinBuiltIns(it) }) {
                 return null
             }
 
-            return KotlinLightClassForPackage(manager, qualifiedName, searchScope, files)
+            assert(files.isNotEmpty()) { "No files for package $packageFqName" }
+
+            val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
+            return KotlinLightClassForFacade(manager, packageClassFqName, searchScope, files)
         }
     }
 }
