@@ -34,43 +34,23 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.types.*
 import java.util.HashMap
 
-public object HeuristicSignatures {
-    private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
-
-    init {
-        registerSignature("kotlin.Collection", "contains", "E")
-        registerSignature("kotlin.Collection", "containsAll", "kotlin.Collection<E>")
-        registerSignature("kotlin.MutableCollection", "remove", "E")
-        registerSignature("kotlin.MutableCollection", "removeAll", "kotlin.Collection<E>")
-        registerSignature("kotlin.MutableCollection", "retainAll", "kotlin.Collection<E>")
-        registerSignature("kotlin.List", "indexOf", "E")
-        registerSignature("kotlin.List", "lastIndexOf", "E")
-        registerSignature("kotlin.Map", "get", "K")
-        registerSignature("kotlin.Map", "containsKey", "K")
-        registerSignature("kotlin.Map", "containsValue", "V")
-        registerSignature("kotlin.MutableMap", "remove", "K")
-    }
-
-    private fun registerSignature(
-            classFqName: String,
-            name: String,
-            vararg parameterTypes: String) {
-        signatures[FqName(classFqName) to Name.identifier(name)] = parameterTypes.toList()
-    }
-
-    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor, moduleDescriptor: ModuleDescriptor, project: Project): JetType? {
+public class HeuristicSignatures(
+        private val moduleDescriptor: ModuleDescriptor,
+        private val project: Project
+) {
+    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): JetType? {
         val parameterIndex = function.getValueParameters().indexOf(parameter)
         assert(parameterIndex >= 0)
-        return correctedParameterType(function, parameterIndex, moduleDescriptor, project)
+        return correctedParameterType(function, parameterIndex)
     }
 
-    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int, moduleDescriptor: ModuleDescriptor, project: Project): JetType? {
+    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): JetType? {
         val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
 
         val superFunctions = function.getOverriddenDescriptors()
         if (superFunctions.isNotEmpty()) {
             for (superFunction in superFunctions) {
-                val correctedType = correctedParameterType(superFunction, parameterIndex, moduleDescriptor, project) ?: continue
+                val correctedType = correctedParameterType(superFunction, parameterIndex) ?: continue
                 val typeSubstitutor = SubstitutionUtils.buildDeepSubstitutor(ownerType)
                 return typeSubstitutor.safeSubstitute(correctedType, Variance.INVARIANT)
             }
@@ -84,14 +64,14 @@ public object HeuristicSignatures {
             val typeStr = parameterTypes[parameterIndex]
             val typeParameters = ownerClass.getTypeConstructor().getParameters()
 
-            val type = typeFromText(typeStr, typeParameters, moduleDescriptor, project)
+            val type = typeFromText(typeStr, typeParameters)
 
             val substitutor = IndexedParametersSubstitution(ownerClass.typeConstructor, ownerType.arguments).buildSubstitutor()
             return substitutor.substitute(type, Variance.INVARIANT)
         }
     }
 
-    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>, moduleDescriptor: ModuleDescriptor, project: Project): JetType {
+    private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): JetType {
         val typeRef = JetPsiFactory(project).createType(text)
         val container = createContainerForMacros(project, moduleDescriptor)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT)
@@ -106,5 +86,30 @@ public object HeuristicSignatures {
         private val paramsByName = params.map { it.getName() to it }.toMap()
 
         override fun getClassifier(name: Name, location: LookupLocation) = paramsByName[name]
+    }
+
+    companion object {
+        private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
+
+        init {
+            registerSignature("kotlin.Collection", "contains", "E")
+            registerSignature("kotlin.Collection", "containsAll", "kotlin.Collection<E>")
+            registerSignature("kotlin.MutableCollection", "remove", "E")
+            registerSignature("kotlin.MutableCollection", "removeAll", "kotlin.Collection<E>")
+            registerSignature("kotlin.MutableCollection", "retainAll", "kotlin.Collection<E>")
+            registerSignature("kotlin.List", "indexOf", "E")
+            registerSignature("kotlin.List", "lastIndexOf", "E")
+            registerSignature("kotlin.Map", "get", "K")
+            registerSignature("kotlin.Map", "containsKey", "K")
+            registerSignature("kotlin.Map", "containsValue", "V")
+            registerSignature("kotlin.MutableMap", "remove", "K")
+        }
+
+        private fun registerSignature(
+                classFqName: String,
+                name: String,
+                vararg parameterTypes: String) {
+            signatures[FqName(classFqName) to Name.identifier(name)] = parameterTypes.toList()
+        }
     }
 }
