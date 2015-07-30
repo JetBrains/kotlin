@@ -7,6 +7,7 @@
     <properties>
         <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
         <maven.version>3.0.4</maven.version>
+        <kotlin.relocated.package>org.jetbrains.kotlin.relocated</kotlin.relocated.package>
     </properties>
 
     <parent>
@@ -103,7 +104,7 @@
                             <createDependencyReducedPom>true</createDependencyReducedPom>
                             <filters>
                                 <filter>
-                                    <artifact>*:kotlin-runtlime</artifact>
+                                    <artifact>*:kotlin-runtime</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
                                     </excludes>
@@ -120,39 +121,39 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.google</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.com.google</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.com.google</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.sampullara</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.com.sampullara</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.com.sampullara</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.apache</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.org.apache</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.jdom</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.jdom</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.org.jdom</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.fusesource</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.fusesource</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.org.fusesource</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.picocontainer</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.org.picocontainer</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.org.picocontainer</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>jline</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.jline</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.jline</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>gnu</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.gnu</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.gnu</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>javax.inject</pattern>
-                                    <shadedPattern>org.jetbrains.kotlin.relocated.javax.inject</shadedPattern>
+                                    <shadedPattern>${kotlin.relocated.package}.javax.inject</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
