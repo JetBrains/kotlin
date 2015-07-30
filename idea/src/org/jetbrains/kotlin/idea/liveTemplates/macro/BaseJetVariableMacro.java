@@ -30,17 +30,19 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.core.IterableTypesDetection;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
 import org.jetbrains.kotlin.idea.util.UtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
@@ -62,15 +64,16 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        AnalysisResult analysisResult = ResolvePackage.analyzeAndGetResult(contextExpression);
+        ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(contextExpression);
 
-        BindingContext bindingContext = analysisResult.getBindingContext();
+        BindingContext bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL);
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {
             return null;
         }
 
-        IterableTypesDetector iterableTypesDetector = new IterableTypesDetector(project, analysisResult.getModuleDescriptor(), scope);
+        IterableTypesDetector detector =
+                resolutionFacade.getIdeService(contextExpression, IterableTypesDetection.class).createDetector(scope);
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
@@ -85,7 +88,7 @@ public abstract class BaseJetVariableMacro extends Macro {
                     continue;
                 }
 
-                if (isSuitable(variableDescriptor, project, iterableTypesDetector)) {
+                if (isSuitable(variableDescriptor, project, detector)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
