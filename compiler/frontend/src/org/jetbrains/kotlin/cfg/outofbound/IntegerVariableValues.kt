@@ -76,7 +76,7 @@ public class IntegerVariableValues() {
     public fun getValues(): List<Int> =
             Collections.unmodifiableList(values.toList())
 
-    public fun leaveOnlyValuesInSet(valuesToLeave: Set<Int>, sinceLexicalScope: LexicalScope) {
+    public fun leaveOnlyValuesInSet(valuesToLeave: Set<Int>) {
         val currentAvailableValues = LinkedList<Int>()
         currentAvailableValues.addAll(values)
         currentAvailableValues.forEach {
@@ -127,7 +127,7 @@ public class IntegerVariableValues() {
     public fun minus(): IntegerVariableValues =
             createFromCollection(values.map { -1 * it })
 
-    // special operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
+    // Comparison operators, (IntegerVariableValues, IntegerVariableValues) -> BoolVariableValue
     public fun eq(
             other: IntegerVariableValues,
             thisVarDescriptor: VariableDescriptor?,
