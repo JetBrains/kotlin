@@ -322,7 +322,8 @@ public class KotlinToJVMBytecodeCompiler {
                     @Override
                     public AnalysisResult invoke() {
                         BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject());
+                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
+                                                                                                                getModuleName(environment));
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                                 moduleContext,

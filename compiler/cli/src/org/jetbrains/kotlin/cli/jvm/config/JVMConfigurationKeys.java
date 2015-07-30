@@ -50,4 +50,8 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
             CompilerConfigurationKey.create("module id strings");
+
+    public static final CompilerConfigurationKey<String> MODULE_NAME =
+            CompilerConfigurationKey.create("module name");
+
 }

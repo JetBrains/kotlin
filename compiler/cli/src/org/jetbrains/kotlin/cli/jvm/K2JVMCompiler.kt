@@ -134,6 +134,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         else
             emptyList<AnalyzerScriptParameter>())
 
+        configuration.put(JVMConfigurationKeys.MODULE_NAME, arguments.moduleName ?: "main")
+
         putAdvancedOptions(configuration, arguments)
 
         messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION)

@@ -169,9 +169,9 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static MutableModuleContext createContextWithSealedModule(@NotNull Project project) {
+    public static MutableModuleContext createContextWithSealedModule(@NotNull Project project, @NotNull String moduleName) {
         MutableModuleContext context = ContextForNewModule(
-                project, Name.special("<shared-module>"), JVM_MODULE_PARAMETERS
+                project, Name.special("<" + moduleName + ">"), JVM_MODULE_PARAMETERS
         );
         context.setDependencies(context.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
         return context;

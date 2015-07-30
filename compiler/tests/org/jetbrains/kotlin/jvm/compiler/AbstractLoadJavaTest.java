@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.getModuleName;
 import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.JetTestUtils.*;
@@ -146,7 +147,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject());
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject(),
+                                                                                                getModuleName(environment));
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 moduleContext,

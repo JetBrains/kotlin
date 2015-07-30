@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.getModuleName
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -53,7 +54,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         val fileText = FileUtil.loadFile(File(path), true)
         val psiFile = JetPsiFactory(getProject()).createFile(fileText)
 
-        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject())
+        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject(), environment.getModuleName())
 
 
         val container = createContainerForLazyResolve(
