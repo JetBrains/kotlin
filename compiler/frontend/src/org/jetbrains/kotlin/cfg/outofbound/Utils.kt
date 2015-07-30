@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
+import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.psi.JetCallExpression
 
 public object MapUtils {
@@ -32,6 +33,19 @@ public object MapUtils {
             return "{${mapAsString.take(mapAsString.length() - 1)}}"
         }
         return "{$mapAsString}"
+    }
+
+    public fun mergeMaps<K, V>(
+            map1: Map<K, V>,
+            map2: Map<K, V>,
+            mergeCorrespondingValue: (V, V) -> V
+    ): Map<K, V> {
+        val resultMap = HashMap(map1)
+        for ((key2, value2) in map2) {
+            val value1 = resultMap[key2]
+            resultMap[key2] = value1?.let { mergeCorrespondingValue(it, value2) } ?: value2
+        }
+        return resultMap
     }
 }
 

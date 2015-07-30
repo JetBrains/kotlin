@@ -1,6 +1,6 @@
 fun simpleEq() {
     val a = 1
-    if(a == 1) {
+    if (a == 1) {
         42
     }
     else {
@@ -11,7 +11,7 @@ fun simpleEq() {
 
 fun simpleNotEq() {
     val a = 1
-    if(a != 1) {
+    if (a != 1) {
         42
     }
     else {

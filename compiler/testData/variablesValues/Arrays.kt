@@ -4,3 +4,15 @@ fun simpleArray() {
     arr2 = arrayOf(1, 2)
     42
 }
+
+
+fun arrayWithTwoPossibleSizes(cond: Boolean) {
+    val arr: Array<Boolean>
+    if (cond) {
+        arr = Array(11, { x -> true })
+    }
+    else {
+        arr = arrayOf(false, false)
+    }
+    42
+}
