@@ -42,11 +42,6 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
 
     private val commentTokens = TokenSet.orSet(JetTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
-    private val skipTokens = TokenSet.create(
-            TokenType.WHITE_SPACE, JetTokens.RPAR, JetTokens.LBRACE, JetTokens.RBRACE,
-            JetTokens.RBRACKET, JetTokens.SEMICOLON, JetTokens.COMMA, JetTokens.DOT
-    )
-
     private val MAX_PREV_TOKENS = 2
     private val prevTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
     private var prevTokenStart = -1
@@ -79,8 +74,6 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
                 advanceTodoItemCountsInToken()
             }
-
-            !in skipTokens -> scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT.toInt(), false, false)
         }
 
         if (tokenType != TokenType.WHITE_SPACE && tokenType !in commentTokens) {
