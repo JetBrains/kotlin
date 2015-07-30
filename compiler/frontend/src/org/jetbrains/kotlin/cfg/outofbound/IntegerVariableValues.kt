@@ -136,57 +136,27 @@ public class IntegerVariableValues() {
             return BooleanVariableValue.undefinedWithNoRestrictions
         }
         if (!other.isDefined) {
-            return undefinedWithFullRestrictions(valuesData)
+            return thisVarDescriptor?.let {
+                val restrictions = mapOf(it to setOf<Int>())
+                BooleanVariableValue.Undefined(restrictions, restrictions)
+            } ?: undefinedWithFullRestrictions(valuesData)
         }
         if (other.values.size() > 1) {
             // this check means that in expression "x < y" only one element set is supported for "y"
             return undefinedWithFullRestrictions(valuesData)
         }
         val otherValue = other.values.single()
-        return if (values.size() == 1) {
-            val thisValue = values.first()
-            when {
-                thisValue < otherValue -> BooleanVariableValue.True
-                else -> BooleanVariableValue.False
-            }
-        }
-        else {
-            val thisArray = values.toIntArray()
-            thisArray.sort()
-            when {
-                thisArray.last() < otherValue -> BooleanVariableValue.True
-                thisArray.last() == otherValue -> {
-                    thisVarDescriptor?.let {
-                        val withoutLast = thisArray.copyOf(thisArray.size() - 1).toSet()
-                        val onTrueRestrictions = mapOf(it to withoutLast)
-                        val onFalseRestrictions = mapOf(it to setOf(thisArray.last()))
-                        BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
-                    }
-                    ?: undefinedWithFullRestrictions(valuesData)
-                }
-                thisArray.last() > otherValue && otherValue > thisArray.first() -> {
-                    thisVarDescriptor?.let {
-                        val bound = thisArray.indexOfFirst { it >= otherValue }
-                        val lessValuesInThis = thisArray.copyOfRange(0, bound).toSet()
-                        val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toSet()
-                        val onTrueRestrictions = mapOf(it to lessValuesInThis)
-                        val onFalseRestrictions = mapOf(it to greaterOrEqValuesInThis)
-                        BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
-                    }
-                    ?: undefinedWithFullRestrictions(valuesData)
-                }
-                thisArray.first() == otherValue -> {
-                    thisVarDescriptor?.let {
-                        val withoutFirst = thisArray.copyOfRange(1, thisArray.size()).toSet()
-                        val onTrueRestrictions = mapOf(it to withoutFirst)
-                        val onFalseRestrictions = mapOf(it to setOf(thisArray.first()))
-                        BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
-                    }
-                    ?: undefinedWithFullRestrictions(valuesData)
-                }
-                else -> BooleanVariableValue.False
-            }
-        }
+        val thisArray = values.toIntArray()
+        thisArray.sort()
+        return thisVarDescriptor?.let {
+            val foundIndex = thisArray.indexOfFirst { x -> x >= otherValue }
+            val bound = if (foundIndex < 0) thisArray.size() else foundIndex
+            val lessValuesInThis = thisArray.copyOfRange(0, bound).toSet()
+            val greaterOrEqValuesInThis = thisArray.copyOfRange(bound, thisArray.size()).toSet()
+            val onTrueRestrictions = mapOf(it to lessValuesInThis)
+            val onFalseRestrictions = mapOf(it to greaterOrEqValuesInThis)
+            BooleanVariableValue.Undefined(onTrueRestrictions, onFalseRestrictions)
+        } ?: undefinedWithFullRestrictions(valuesData)
     }
 
     private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {
