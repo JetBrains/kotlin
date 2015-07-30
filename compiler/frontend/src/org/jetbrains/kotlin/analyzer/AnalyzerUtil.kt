@@ -54,16 +54,6 @@ public fun JetExpression.analyzeInContext(
     return trace.getBindingContext()
 }
 
-public fun JetExpression.computeTypeInContext(
-        scope: JetScope,
-        trace: BindingTrace = BindingTraceContext(),
-        dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule()
-): JetType {
-    return computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module).type.safeType(this)
-}
-
 public fun JetType?.safeType(expression: JetExpression): JetType {
     if (this != null) return this
 

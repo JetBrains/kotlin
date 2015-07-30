@@ -22,7 +22,6 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider
 import org.jetbrains.kotlin.container.get
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
+import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.FqName
@@ -45,15 +45,14 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ResolveElementCache(
         private val resolveSession: ResolveSession,
         private val project: Project,
-        private val targetPlatform: TargetPlatform
+        private val targetPlatform: TargetPlatform,
+        private val codeFragmentAnalyzer: CodeFragmentAnalyzer
 ) : BodyResolveCache {
     private class CachedFullResolve(val bindingContext: BindingContext, resolveElement: JetElement) {
         private val modificationStamp: Long? = modificationStamp(resolveElement)
@@ -343,19 +342,11 @@ public class ResolveElementCache(
     private fun codeFragmentAdditionalResolve(resolveSession: ResolveSession, codeFragment: JetCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
         val trace = createDelegatingTrace(codeFragment)
 
-        val codeFragmentExpression = codeFragment.getContentElement() as? JetExpression ?: return trace
-
-        val (scopeForContextElement, dataFlowInfoForContextElement) = codeFragment.getScopeAndDataFlowForAnalyzeFragment(resolveSession) {
-            val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
-                BodyResolveMode.PARTIAL_FOR_COMPLETION
-            else
-                bodyResolveMode
-
-            resolveToElement(it, contextResolveMode)
-        } ?: return trace
-
-        codeFragmentExpression.computeTypeInContext(scopeForContextElement, trace, dataFlowInfoForContextElement,
-                                                    TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor())
+        val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
+            BodyResolveMode.PARTIAL_FOR_COMPLETION
+        else
+            bodyResolveMode
+        codeFragmentAnalyzer.analyzeCodeFragment(codeFragment, trace, contextResolveMode)
 
         return trace
     }

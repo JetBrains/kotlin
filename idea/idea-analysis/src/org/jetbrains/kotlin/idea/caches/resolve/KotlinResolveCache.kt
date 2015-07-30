@@ -27,7 +27,6 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -37,15 +36,12 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
-import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
-import org.jetbrains.kotlin.types.TypeUtils
 import java.util.HashMap
 
 public interface CacheExtension<T> {
@@ -283,21 +279,12 @@ private object KotlinResolveDataProvider {
     }
 
     private fun analyzeExpressionCodeFragment(componentProvider: ComponentProvider, codeFragment: JetCodeFragment): BindingContext {
-        val codeFragmentExpression = codeFragment.getContentElement()
-        if (codeFragmentExpression !is JetExpression) return BindingContext.EMPTY
-        val resolveSession = componentProvider.get<ResolveSession>()
-
-        val (scopeForContextElement, dataFlowInfo) = codeFragment.getScopeAndDataFlowForAnalyzeFragment(resolveSession) {
-            componentProvider.get<ResolveElementCache>().resolveToElement(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
-        } ?: return BindingContext.EMPTY
-
-
-        return codeFragmentExpression.analyzeInContext(
-                scopeForContextElement,
-                BindingTraceContext(),
-                dataFlowInfo,
-                TypeUtils.NO_EXPECTED_TYPE,
-                resolveSession.getModuleDescriptor()
+        val trace = BindingTraceContext()
+        componentProvider.get<CodeFragmentAnalyzer>().analyzeCodeFragment(
+                codeFragment,
+                trace,
+                BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
         )
+        return trace.bindingContext
     }
 }
