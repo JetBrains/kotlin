@@ -320,6 +320,7 @@ public class TypeUtils {
                 result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {
+                if (projection.isStarProjection()) continue;
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
             }
         }
