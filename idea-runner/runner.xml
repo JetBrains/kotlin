@@ -1,4 +1,4 @@
-<project name="Idea Runner">
+<project name="Idea Runner" xmlns:if="ant:if">
     <property name="dependencies.dir" location="${basedir}/../dependencies"/>
     <property name="bootstrap.build.no.tests" value="false"/>
     <condition property="bootstrap.or.local.build" value="true">
@@ -13,28 +13,23 @@
     <property name="bootstrap.runtime" location="${dependencies.dir}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.reflect" location="${dependencies.dir}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar"/>
 
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
-
     <target name="force-enable-kotlin-plugin">
         <property name="disable_plugins.file.path" location="${basedir}/../ideaSDK/config-idea/disabled_plugins.txt"/>
         <available property="disable_plugins.found" file="${disable_plugins.file.path}"/>
 
-        <if>
-            <isset property="disable_plugins.found"/>
-            <then>
-                <!--suppress AntResolveInspection -->
-                <loadfile property="disabled_plugins.text" srcFile="${disable_plugins.file.path}">
-                    <filterchain>
-                        <linecontains negate="true">
-                            <contains value="org.jetbrains.kotlin"/>
-                        </linecontains>
-                    </filterchain>
-                </loadfile>
-                <property name="disabled_plugins.text" value=""/>
+        <sequential if:set="disable_plugins.found">
+            <!--suppress AntResolveInspection -->
+            <loadfile property="disabled_plugins.text" srcFile="${disable_plugins.file.path}">
+                <filterchain>
+                    <linecontains negate="true">
+                        <contains value="org.jetbrains.kotlin"/>
+                    </linecontains>
+                </filterchain>
+            </loadfile>
+            <property name="disabled_plugins.text" value=""/>
 
-                <echo file="${disable_plugins.file.path}" message="${disabled_plugins.text}"/>
-            </then>
-        </if>
+            <echo file="${disable_plugins.file.path}" message="${disabled_plugins.text}"/>
+        </sequential>
     </target>
 
     <target name="copy-runtime-for-idea-plugin">
