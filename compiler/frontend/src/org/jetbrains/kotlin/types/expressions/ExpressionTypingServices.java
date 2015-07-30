@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types.expressions;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -77,7 +76,8 @@ public class ExpressionTypingServices {
             @NotNull BindingTrace trace
     ) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
-        return AnalyzerPackage.safeType(type, expression);
+
+        return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
     }
 
     @NotNull

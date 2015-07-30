@@ -43,11 +43,11 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.analysis.AnalysisPackage;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
@@ -741,14 +741,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetSimpleNameExpression labelExpr = newExpr.getTargetLabel();
             if (labelExpr == null) continue;
 
-            BindingContext newContext =
-                    AnalyzerPackage.analyzeInContext(newExpr,
-                                                     scope,
-                                                     new BindingTraceContext(),
-                                                     DataFlowInfo.EMPTY,
-                                                     TypeUtils.NO_EXPECTED_TYPE,
-                                                     DescriptorUtils.getContainingModule(scope.getContainingDeclaration()),
-                                                     false);
+            BindingContext newContext = AnalysisPackage.analyzeInContext(newExpr, scope);
+
             if (newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                         originalExpr,
