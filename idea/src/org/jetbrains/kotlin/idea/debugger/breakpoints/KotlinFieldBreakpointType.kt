@@ -37,7 +37,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
@@ -130,7 +130,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
                 }
 
                 result = when (psiClass) {
-                    is KotlinLightClassForPackage -> {
+                    is KotlinLightClassForFacade -> {
                         psiClass.files.asSequence().map { createBreakpointIfPropertyExists(it, it, className, fieldName) }.filterNotNull().firstOrNull()
                     }
                     is KotlinLightClassForExplicitDeclaration -> {

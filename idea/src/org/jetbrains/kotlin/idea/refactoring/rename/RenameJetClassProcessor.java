@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.KotlinLightClass;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetConstructor;
@@ -68,7 +68,7 @@ public class RenameJetClassProcessor extends RenameKotlinPsiProcessor {
             if (element instanceof KotlinLightClassForExplicitDeclaration) {
                 return ((KotlinLightClassForExplicitDeclaration) element).getOrigin();
             }
-            else if (element instanceof KotlinLightClassForPackage) {
+            else if (element instanceof KotlinLightClassForFacade) {
                 if (showErrors) {
                     CommonRefactoringUtil.showErrorHint(
                             element.getProject(), editor,

@@ -60,8 +60,8 @@ public open class KotlinLightClassForExplicitDeclaration(
 
             var createWrapper = forceMethodWrapping
             // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
-            if (containingClass is KotlinLightClassForPackage) {
-                containingClass = object : LightClass(containingClass as KotlinLightClassForPackage, JetLanguage.INSTANCE) {
+            if (containingClass is KotlinLightClassForFacade) {
+                containingClass = object : LightClass(containingClass as KotlinLightClassForFacade, JetLanguage.INSTANCE) {
                     override fun getName(): String? {
                         return currentFileName
                     }

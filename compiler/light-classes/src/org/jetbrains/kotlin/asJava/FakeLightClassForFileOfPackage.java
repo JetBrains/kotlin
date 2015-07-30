@@ -32,17 +32,17 @@ import org.jetbrains.kotlin.psi.JetFile;
 /**
  * This class serves as a workaround for usages of {@link JavaElementFinder#findClasses} which eventually only need names of files
  * containing the class. When queried for a package class (e.g. test/TestPackage), {@code findClasses} along with a
- * {@link KotlinLightClassForPackage} would also return multiple instances of this class for each file present in the package. The client
+ * {@link KotlinLightClassForFacade} would also return multiple instances of this class for each file present in the package. The client
  * code can make use of every file in the package then, since {@code getContainingFile} of these instances will represent the whole package.
  * <p/>
  * See {@link LineBreakpoint#findClassCandidatesInSourceContent} for the primary usage this was introduced
  */
 public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
-    private final KotlinLightClassForPackage delegate;
+    private final KotlinLightClassForFacade delegate;
     private final JetFile file;
 
     public FakeLightClassForFileOfPackage(
-            @NotNull PsiManager manager, @NotNull KotlinLightClassForPackage delegate, @NotNull JetFile file
+            @NotNull PsiManager manager, @NotNull KotlinLightClassForFacade delegate, @NotNull JetFile file
     ) {
         super(manager);
         this.delegate = delegate;

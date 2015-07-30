@@ -36,7 +36,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.IdeaTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -198,8 +198,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         });
 
         for (PsiClass psiClass : psiClasses) {
-            if (psiClass instanceof KotlinLightClassForPackage) {
-                Collection<JetFile> files = ((KotlinLightClassForPackage) psiClass).getFiles();
+            if (psiClass instanceof KotlinLightClassForFacade) {
+                Collection<JetFile> files = ((KotlinLightClassForFacade) psiClass).getFiles();
                 for (JetFile jetFile : files) {
                     createBreakpoints(jetFile);
                 }

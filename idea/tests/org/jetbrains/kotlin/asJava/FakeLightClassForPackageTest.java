@@ -39,7 +39,7 @@ public class FakeLightClassForPackageTest extends JetLightCodeInsightFixtureTest
 
         assertEquals(3, classes.length);
 
-        assertInstanceOf(classes[0], KotlinLightClassForPackage.class);
+        assertInstanceOf(classes[0], KotlinLightClassForFacade.class);
 
         Set<JetFile> expectedFiles = Sets.newHashSet(
                 LightClassGenerationSupport.getInstance(getProject()).findFilesForPackage(new FqName("test"), searchScope)

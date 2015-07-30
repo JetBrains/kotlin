@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
 import org.jetbrains.kotlin.asJava.LightClassConstructionContext;
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -201,7 +201,8 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         if (filesWithCallables.isEmpty()) return Collections.emptyList();
 
         //noinspection RedundantTypeArguments
-        return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, scope, filesWithCallables));
+        return UtilsPackage.<PsiClass>emptyOrSingletonList(
+                KotlinLightClassForFacade.Factory.createForPackageFacade(psiManager, packageFqName, scope, filesWithCallables));
     }
 
     @Nullable
