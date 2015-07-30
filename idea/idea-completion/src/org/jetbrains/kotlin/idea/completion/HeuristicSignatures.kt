@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -36,7 +37,8 @@ import java.util.HashMap
 
 public class HeuristicSignatures(
         private val moduleDescriptor: ModuleDescriptor,
-        private val project: Project
+        private val project: Project,
+        private val typeResolver: TypeResolver
 ) {
     public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): JetType? {
         val parameterIndex = function.getValueParameters().indexOf(parameter)
@@ -73,11 +75,10 @@ public class HeuristicSignatures(
 
     private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): JetType {
         val typeRef = JetPsiFactory(project).createType(text)
-        val container = createContainerForMacros(project, moduleDescriptor)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT)
         val typeParametersScope = TypeParametersScope(typeParameters)
         val scope = ChainedScope(moduleDescriptor, "Root packages + type parameters", typeParametersScope, rootPackagesScope)
-        val type = container.typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
+        val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
         assert(!type.isError()) { "No type resolved from '$text'" }
         return type
     }
