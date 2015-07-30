@@ -303,7 +303,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 String oldParamName = oldParam.getName();
 
                 if (parameterInfo == newReceiverInfo || (oldParamName != null && !oldParamName.equals(parameterInfo.getName()))) {
-                    for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
+                    for (PsiReference reference : ChangeSignaturePackage.findParameterUsages(oldParam)) {
                         PsiElement element = reference.getElement();
 
                         if ((element instanceof JetSimpleNameExpression || element instanceof KDocName) &&

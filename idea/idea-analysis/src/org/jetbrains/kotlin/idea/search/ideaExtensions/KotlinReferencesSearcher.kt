@@ -61,13 +61,15 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             }
         }
 
+        val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
+
         words.forEach { word ->
-            queryParameters.getOptimizer().searchWord(word, queryParameters.getEffectiveSearchScope(),
+            queryParameters.getOptimizer().searchWord(word, effectiveSearchScope,
                                                       UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
                                                       resultProcessor)
         }
 
-        if (!(unwrappedElement is JetElement && isOnlyKotlinSearch(queryParameters.getEffectiveSearchScope()))) {
+        if (!(unwrappedElement is JetElement && isOnlyKotlinSearch(effectiveSearchScope))) {
             searchLightElements(queryParameters, element)
         }
     }

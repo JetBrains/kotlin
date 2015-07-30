@@ -87,7 +87,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                     override fun run(indicator: ProgressIndicator) {
                         val usages = runReadAction {
                             val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
-                            val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(psiElement, false)!!
+                            val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandlerNoQuestions(psiElement)
                             val processor = CommonProcessors.CollectProcessor<UsageInfo>()
                             val options = createFindUsagesOptions(psiElement, searchScope, project)
                             findUsagesHandler.processElementUsages(psiElement, processor, options)

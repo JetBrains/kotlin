@@ -121,9 +121,7 @@ public class JetRefactoringUtil {
         return markAsJava ? "[Java] " + description : description;
     }
 
-    @KotlinSignature(
-            "fun checkSuperMethods(declaration: JetDeclaration, ignore: Collection<PsiElement>?, actionStringKey: String): MutableList<out PsiElement>?")
-    @Nullable
+    @NotNull
     public static List<? extends PsiElement> checkSuperMethods(
             @NotNull JetDeclaration declaration,
             @Nullable Collection<PsiElement> ignore,

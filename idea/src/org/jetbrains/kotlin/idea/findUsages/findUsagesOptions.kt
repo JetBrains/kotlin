@@ -65,6 +65,18 @@ fun KotlinFunctionFindUsagesOptions.toJavaMethodOptions(project: Project): JavaM
     return javaOptions
 }
 
+fun KotlinPropertyFindUsagesOptions.toJavaVariableOptions(project: Project): JavaVariableFindUsagesOptions {
+    val javaOptions = JavaVariableFindUsagesOptions(project)
+    javaOptions.fastTrack = fastTrack
+    javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
+    javaOptions.isSkipImportStatements = isSkipImportStatements
+    javaOptions.isReadAccess = isReadAccess
+    javaOptions.isWriteAccess = isWriteAccess
+    javaOptions.isUsages = isUsages
+    javaOptions.searchScope = searchScope
+    return javaOptions
+}
+
 public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
     override var searchOverrides: Boolean = false
 }
