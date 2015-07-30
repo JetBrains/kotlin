@@ -24,22 +24,24 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
     private final Map<FqName, PackageCodegen> package2codegen = new HashMap<FqName, PackageCodegen>();
-    private final Map<String, ClassBuilderAndSourceFileList> generators = new LinkedHashMap<String, ClassBuilderAndSourceFileList>();
+    private final Map<String, OutAndSourceFileList> generators = new LinkedHashMap<String, OutAndSourceFileList>();
 
     private boolean isDone = false;
 
@@ -72,10 +74,39 @@ public class ClassFileFactory implements OutputFileCollection {
     void done() {
         if (!isDone) {
             isDone = true;
-            for (PackageCodegen codegen : package2codegen.values()) {
+            Collection<PackageCodegen> values = package2codegen.values();
+            for (PackageCodegen codegen : values) {
                 codegen.done();
             }
+
+            writeModuleMappings(values);
         }
+    }
+
+    private void writeModuleMappings(Collection<PackageCodegen> values) {
+        String outputFilePath = "META-INF/module.mapping";
+        final StringWriter moduleMapping = new StringWriter(1024);
+        for (PackageCodegen codegen : values) {
+            codegen.getFacades().serialize(moduleMapping);
+        }
+        state.getProgress().reportOutput(Collections.<File>emptyList(), new File(outputFilePath));
+        //TODO: source files?
+        generators.put(outputFilePath, new OutAndSourceFileList(Collections.<File>emptyList()) {
+            @Override
+            public byte[] asBytes(ClassBuilderFactory factory) {
+                try {
+                    return moduleMapping.toString().getBytes("UTF-8");
+                }
+                catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public String asText(ClassBuilderFactory factory) {
+                return moduleMapping.toString();
+            }
+        });
     }
 
     @NotNull
@@ -163,7 +194,7 @@ public class ClassFileFactory implements OutputFileCollection {
         @NotNull
         @Override
         public List<File> getSourceFiles() {
-            ClassBuilderAndSourceFileList pair = generators.get(relativeClassFilePath);
+            OutAndSourceFileList pair = generators.get(relativeClassFilePath);
             if (pair == null) {
                 throw new IllegalStateException("No record for binary file " + relativeClassFilePath);
             }
@@ -174,13 +205,13 @@ public class ClassFileFactory implements OutputFileCollection {
         @NotNull
         @Override
         public byte[] asByteArray() {
-            return builderFactory.asBytes(generators.get(relativeClassFilePath).classBuilder);
+            return generators.get(relativeClassFilePath).asBytes(builderFactory);
         }
 
         @NotNull
         @Override
         public String asText() {
-            return builderFactory.asText(generators.get(relativeClassFilePath).classBuilder);
+            return generators.get(relativeClassFilePath).asText(builderFactory);
         }
 
         @NotNull
@@ -190,14 +221,36 @@ public class ClassFileFactory implements OutputFileCollection {
         }
     }
 
-    private static final class ClassBuilderAndSourceFileList {
+    private static final class ClassBuilderAndSourceFileList extends OutAndSourceFileList {
         private final ClassBuilder classBuilder;
-        private final List<File> sourceFiles;
 
         private ClassBuilderAndSourceFileList(ClassBuilder classBuilder, List<File> sourceFiles) {
+            super(sourceFiles);
             this.classBuilder = classBuilder;
+        }
+
+        @Override
+        public byte[] asBytes(ClassBuilderFactory factory) {
+            return factory.asBytes(classBuilder);
+        }
+
+        @Override
+        public String asText(ClassBuilderFactory factory) {
+            return factory.asText(classBuilder);
+        }
+    }
+
+    private static abstract class OutAndSourceFileList {
+
+        protected final List<File> sourceFiles;
+
+        private OutAndSourceFileList(List<File> sourceFiles) {
             this.sourceFiles = sourceFiles;
         }
+
+        public abstract byte[] asBytes(ClassBuilderFactory factory);
+
+        public abstract String asText(ClassBuilderFactory factory);
     }
 
     public void removeInlinedClasses(Set<String> classNamesToRemove) {
