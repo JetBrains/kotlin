@@ -67,15 +67,15 @@ import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToD
 public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostics> implements CachedValueProvider<T> {
 
     @NotNull
-    public static KotlinJavaFileStubProvider<KotlinPackageLightClassData> createForPackageClass(
+    public static KotlinJavaFileStubProvider<KotlinFacadeLightClassData> createForPackageClass(
             @NotNull final Project project,
             @NotNull final FqName packageFqName,
             @NotNull final GlobalSearchScope searchScope
     ) {
-        return new KotlinJavaFileStubProvider<KotlinPackageLightClassData>(
+        return new KotlinJavaFileStubProvider<KotlinFacadeLightClassData>(
                 project,
                 false,
-                new StubGenerationStrategy<KotlinPackageLightClassData>() {
+                new StubGenerationStrategy<KotlinFacadeLightClassData>() {
                     @NotNull
                     @Override
                     public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
@@ -92,12 +92,12 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @NotNull
                     @Override
-                    public KotlinPackageLightClassData createLightClassData(
+                    public KotlinFacadeLightClassData createLightClassData(
                             PsiJavaFileStub javaFileStub,
                             BindingContext bindingContext,
                             Diagnostics extraDiagnostics
                     ) {
-                        return new KotlinPackageLightClassData(javaFileStub, extraDiagnostics);
+                        return new KotlinFacadeLightClassData(javaFileStub, extraDiagnostics);
                     }
 
                     @NotNull
@@ -148,6 +148,83 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     }
                 }
         );
+    }
+
+    @NotNull
+    public static CachedValueProvider<KotlinFacadeLightClassData> createForFacadeClass(
+            @NotNull final Project project,
+            @NotNull final FqName facadeFqName,
+            @NotNull final GlobalSearchScope searchScope
+    ) {
+        return new KotlinJavaFileStubProvider<KotlinFacadeLightClassData>(
+                project,
+                false,
+                new StubGenerationStrategy<KotlinFacadeLightClassData>() {
+                    @NotNull
+                    @Override
+                    public Collection<JetFile> getFiles() {
+                        return LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope);
+                    }
+
+                    @NotNull
+                    @Override
+                    public FqName getPackageFqName() {
+                        return facadeFqName.parent();
+                    }
+
+                    @NotNull
+                    @Override
+                    public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
+                        return LightClassGenerationSupport.getInstance(project).getContextForFacade(files);
+                    }
+
+                    @NotNull
+                    @Override
+                    public KotlinFacadeLightClassData createLightClassData(
+                            PsiJavaFileStub javaFileStub,
+                            BindingContext bindingContext,
+                            Diagnostics extraDiagnostics
+                    ) {
+                        return new KotlinFacadeLightClassData(javaFileStub, extraDiagnostics);
+                    }
+
+                    @Override
+                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
+                        return new GenerationState.GenerateClassFilter() {
+                            @Override
+                            public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                                return shouldGenerateClass(classOrObject);
+                            }
+
+                            @Override
+                            public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                                return JetPsiUtil.isLocal(classOrObject);
+                            }
+
+                            @Override
+                            public boolean shouldGeneratePackagePart(JetFile jetFile) {
+                                return true;
+                            }
+
+                            @Override
+                            public boolean shouldGenerateScript(JetScript script) {
+                                return false;
+                            }
+                        };
+                    }
+
+                    @Override
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                        PackageCodegen codegen = state.getFactory().forFacade(facadeFqName, files);
+                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
+                        state.getFactory().asList();
+                    }
+
+                    @Override
+                    public String toString() {
+                        return StubGenerationStrategy.class.getName() + " for facade class";
+                    }
+                });
     }
 
     @NotNull

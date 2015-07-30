@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.kotlin;
 
+import com.google.common.io.Files;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,10 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -45,8 +48,10 @@ public class PackagePartClassUtils {
     }
 
     @NotNull
-    private static String getSanitizedIdentifier(@NotNull String str) {
+    public static String getSanitizedClassNameBase(@NotNull String str) {
+        if (str.isEmpty()) return "__EMPTY__";
         str = str.replaceAll("[^\\p{L}\\p{Digit}]", "_");
+        str = toUpperAscii(str.charAt(0)) + str.substring(1);
         if (!Character.isJavaIdentifierStart(str.charAt(0))) {
             str = "_" + str;
         }
@@ -68,21 +73,16 @@ public class PackagePartClassUtils {
         }
     }
 
+    private static final String FACADE_CLASS_NAME_SUFFIX = "Kt";
+
     @NotNull
     public static FqName getPackagePartFqName(@NotNull FqName facadeFqName, @NotNull VirtualFile file, @Nullable JetFile jetFile) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
+        return facadeFqName.parent().child(Name.identifier(getSanitizedClassNameBase(fileName) + FACADE_CLASS_NAME_SUFFIX));
+    }
 
-        if (!fileName.isEmpty()) {
-            char c = fileName.charAt(0);
-            // Character.isUpperCase also handles non-latin characters - this is not what we want in some locales.
-            // Use "ASCII capitalization".
-            if ('a' <= c && c <= 'z') {
-                fileName = toUpperAscii(c) + fileName.substring(1);
-            }
-            fileName += "Kt";
-        }
-
-        return facadeFqName.parent().child(Name.identifier(getSanitizedIdentifier(fileName)));
+    public static boolean isFacadeClassFqName(@NotNull FqName classFqName) {
+        return classFqName.shortName().asString().endsWith(FACADE_CLASS_NAME_SUFFIX);
     }
 
     @NotNull
@@ -108,7 +108,7 @@ public class PackagePartClassUtils {
     }
 
     @NotNull
-    public static List<JetFile> getPackageFilesWithCallables(@NotNull Collection<JetFile> packageFiles) {
+    public static List<JetFile> getFilesWithCallables(@NotNull Collection<JetFile> packageFiles) {
         return ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
             @Override
             public boolean value(JetFile packageFile) {
@@ -126,4 +126,18 @@ public class PackagePartClassUtils {
         return false;
     }
 
+    @NotNull
+    public static List<JetFile> getFilesForFacade(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
+        // TODO Naive implementation. Replace it with "smarter" version.
+        assert isFacadeClassFqName(facadeFqName);
+        String facadeSimpleName = facadeFqName.shortName().asString();
+        final String expectedSanitizedName = facadeSimpleName.substring(0, facadeSimpleName.length() - 2);
+        return ContainerUtil.filter(getFilesWithCallables(files), new Condition<JetFile>() {
+            @Override
+            public boolean value(JetFile input) {
+                String sanitizedName = getSanitizedClassNameBase(Files.getNameWithoutExtension(input.getName()));
+                return expectedSanitizedName.equals(sanitizedName);
+            }
+        });
+    }
 }

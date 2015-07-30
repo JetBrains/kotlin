@@ -76,7 +76,7 @@ public class IncrementalPackageFragmentProvider(
 
         fqNamesToLoad = (
                 obsoletePackageParts.map { JvmClassName.byInternalName(it).getPackageFqName() }
-                + PackagePartClassUtils.getPackageFilesWithCallables(sourceFiles).map { it.getPackageFqName() }
+                + PackagePartClassUtils.getFilesWithCallables(sourceFiles).map { it.getPackageFqName() }
         ).toSet()
 
         fqNamesToLoad.forEach { createPackageFragment(it) }

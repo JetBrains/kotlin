@@ -206,8 +206,11 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FileStubCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FileStubCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$PackageFacadeStubCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$PackageFacadeStubCache"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"/>

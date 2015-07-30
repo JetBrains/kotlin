@@ -122,6 +122,18 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
+    public PackageCodegen forFacade(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
+        assert !isDone : "Already done!";
+        PackageCodegen codegen = package2codegen.get(facadeFqName);
+        if (codegen == null) {
+            codegen = new PackageCodegen(state, files, facadeFqName.parent());
+            package2codegen.put(facadeFqName, codegen);
+        }
+
+        return codegen;
+    }
+
+    @NotNull
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
         List<File> result = Lists.newArrayList();
         for (PsiFile psiFile : psiFiles) {

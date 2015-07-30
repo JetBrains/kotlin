@@ -101,7 +101,7 @@ public class PackageCodegen {
 
                 ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(
                         PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
-                        packageClassType, PackagePartClassUtils.getPackageFilesWithCallables(files)
+                        packageClassType, PackagePartClassUtils.getFilesWithCallables(files)
                 );
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
@@ -126,7 +126,7 @@ public class PackageCodegen {
             return null;
         }
 
-        List<JetFile> packageFilesWithCallables = PackagePartClassUtils.getPackageFilesWithCallables(packageFiles);
+        List<JetFile> packageFilesWithCallables = PackagePartClassUtils.getFilesWithCallables(packageFiles);
         return packageFilesWithCallables.size() == 1 ? packageFilesWithCallables.get(0) : null;
     }
 
