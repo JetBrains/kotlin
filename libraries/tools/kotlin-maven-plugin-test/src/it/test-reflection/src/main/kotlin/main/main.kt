@@ -16,6 +16,8 @@
 
 package main
 
+import kotlin.reflect.*
+
 fun topLevelFun() {}
 
 class A(val prop: String)
@@ -34,7 +36,7 @@ fun box(): String {
     if (ext.get(42) != 42) return "Fail ext: ${ext[42]}"
 
     val a = A::class
-    if (a.properties.size() != 1) return "Fail: ${a.properties}"
+    if (a.memberProperties.size() != 1) return "Fail: ${a.memberProperties}"
 
     val p = A::prop
     if (p.name != "prop") return "Fail name: ${p.name}"
