@@ -100,7 +100,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
         val updatedEdgeData = edgeData.copy()
         val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
-        removeUnavailableValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+        removeUnavailableValuesIfNeeded(previousInstruction, filteredEdgeData)
         return filteredEdgeData
     }
 
@@ -166,7 +166,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun removeUnavailableValuesIfNeeded(
             previousInstruction: Instruction,
-            currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
         if (previousInstruction is MarkInstruction && previousInstruction.previousInstructions.size() == 1) {
@@ -196,16 +195,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
                                 // We are in "then" block and need to apply onTrue restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onTrueRestrictions) {
-                                    edgeData.intVarsToValues[variable]
-                                            ?.leaveOnlyValuesInSet(unrestrictedValues, currentInstruction.lexicalScope)
+                                    edgeData.intVarsToValues[variable]?.leaveOnlyValuesInSet(unrestrictedValues)
                                 }
                             }
                             else {
                                 assert(beforePreviousInstruction.nextOnFalse == previousInstruction)
                                 // We are in "else" block and need to apply onFalse restrictions
                                 for ((variable, unrestrictedValues) in conditionBoolValue.onFalseRestrictions) {
-                                    edgeData.intVarsToValues[variable]
-                                            ?.leaveOnlyValuesInSet(unrestrictedValues, currentInstruction.lexicalScope)
+                                    edgeData.intVarsToValues[variable]?.leaveOnlyValuesInSet(unrestrictedValues)
                                 }
                             }
                         }
