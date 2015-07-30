@@ -26,6 +26,10 @@ import org.junit.Test as test
 
 class ReversedViewsTest {
 
+    test fun testNullToString() {
+        assertEquals("[null]", listOf<String?>(null).asReversed().toString())
+    }
+
     test fun testBehavior() {
         val original = listOf(2L, 3L, Long.MAX_VALUE)
         val reversed = original.reverse()
