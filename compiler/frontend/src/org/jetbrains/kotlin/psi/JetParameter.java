@@ -179,13 +179,24 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        PsiElement parent = getParent();
-        if (parent != null) {
-            PsiElement grandparent = parent.getParent();
-            if (grandparent instanceof JetFunction && !(grandparent instanceof JetFunctionLiteral)) {
-                return grandparent.getUseScope();
-            }
+        JetDeclaration function = getOwnerFunction();
+        if (function != null && !(function instanceof JetFunctionLiteral)) {
+            return function.getUseScope();
         }
         return super.getUseScope();
+    }
+
+    @NotNull
+    public SearchScope getUseScopeExceptNamedArguments() {
+        return super.getUseScope();
+    }
+
+    @Nullable
+    public JetFunction getOwnerFunction() {
+        PsiElement parent = getParent();
+        if (parent == null) return null;
+        PsiElement grandparent = parent.getParent();
+        if (!(grandparent instanceof JetFunction)) return null;
+        return (JetFunction) grandparent;
     }
 }

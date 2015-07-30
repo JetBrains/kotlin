@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -220,7 +219,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
             is JetClassOrObject -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
             is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
-            is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true)
+            is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true, namedArgumentUsages = false)
             else -> DefaultSearchHelper<JetNamedDeclaration>()
         }
 
