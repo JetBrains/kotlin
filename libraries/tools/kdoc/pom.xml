@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-compiler</artifactId>
+            <artifactId>kotlin-compiler-embeddable</artifactId>
             <version>${project.version}</version>
         </dependency>
 
