@@ -236,7 +236,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         for (data in tailData) {
             mergeCorrespondingIntegerVariables(unitedIntVariables, data.intVarsToValues)
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
-            mergeCorrespondingBooleanVariables(unitedBoolVariables, data.boolVarsToValues)
+            MapUtils.mergeMapsIntoFirst(unitedBoolVariables, data.boolVarsToValues) { value1, value2 -> value1.or(value2) }
             unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
             mergeCorrespondingIntegerVariables(unitedArrayVariables, data.arraysToSizes)
         }
@@ -247,27 +247,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             targetVariablesMap: MutableMap<K, IntegerVariableValues>,
             variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
-        for ((key2, values2) in variablesToConsume) {
-            val values1 = targetVariablesMap[key2]
-            if (values1 != null && values1.isDefined) {
-                values1.addAll(values2)
+        MapUtils.mergeMapsIntoFirst(targetVariablesMap, variablesToConsume) { value1, value2 ->
+            if (value1.isDefined) {
+                value1.addAll(value2)
+                value1
             }
-            else {
-                targetVariablesMap[key2] = values2
-            }
-        }
-    }
-
-    private fun mergeCorrespondingBooleanVariables<K>(
-            targetVariablesMap: MutableMap<K, BooleanVariableValue>,
-            variablesToConsume: MutableMap<K, BooleanVariableValue>
-    ) {
-        val targetMapKeys = HashSet(targetVariablesMap.keySet())
-        for (key in targetMapKeys) {
-            val value1 = targetVariablesMap[key] as BooleanVariableValue
-            assert(variablesToConsume.containsKey(key), "No corresponding element in map")
-            val value2 = variablesToConsume[key] as BooleanVariableValue
-            targetVariablesMap[key] = value1.or(value2)
+            else value2
         }
     }
 
