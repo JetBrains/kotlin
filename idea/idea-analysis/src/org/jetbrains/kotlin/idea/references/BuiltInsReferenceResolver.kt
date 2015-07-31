@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -86,17 +87,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     }
 
     private fun getJetBuiltInsFiles(): Set<JetFile> {
-        val builtIns = getBuiltInSourceFiles(LightClassUtil.getBuiltInsDirUrl())
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            // In production, the above URL is enough as it contains sources for both native and compilable built-ins
-            // (it's simply the "kotlin" directory in kotlin-plugin.jar)
-            // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
-            // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
-            return builtIns + getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
-        }
-
-        return builtIns
+        return getBuiltInsDirUrls().flatMapTo(hashSetOf<JetFile>()) { getBuiltInSourceFiles(it) }
     }
 
     private fun getBuiltInSourceFiles(url: URL): Set<JetFile> {
@@ -147,6 +138,8 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     companion object {
         private val BUILT_INS_COMPILABLE_SRC_DIR = File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString())
 
+        private val builtInDirUrls = getBuiltInsDirUrls().map { VfsUtilCore.toIdeaUrl(it.toString()) }
+
         public fun getInstance(project: Project): BuiltInsReferenceResolver =
             ServiceManager.getService(project, javaClass<BuiltInsReferenceResolver>())
 
@@ -173,13 +166,28 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             return null
         }
 
-        public fun isFromBuiltIns(element: PsiElement): Boolean =
-                getInstance(element.project).builtInsSources!!.contains(element.getContainingFile())
+        public fun isFromBuiltIns(element: PsiElement): Boolean {
+            val url = element.getContainingFile()?.getVirtualFile()?.getUrl()
+            return url != null && VfsUtilCore.isUnder(url, builtInDirUrls)
+        }
 
         private fun getMemberScope(parent: DeclarationDescriptor?): JetScope? = when(parent) {
             is ClassDescriptor -> parent.getDefaultType().getMemberScope()
             is PackageFragmentDescriptor -> parent.getMemberScope()
             else -> null
+        }
+
+        public fun getBuiltInsDirUrls(): Set<URL> {
+            val defaultBuiltIns = LightClassUtil.getBuiltInsDirUrl()
+            // In production, the above URL is enough as it contains sources for both native and compilable built-ins
+            // (it's simply the "kotlin" directory in kotlin-plugin.jar)
+            // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
+            // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
+
+            if (ApplicationManager.getApplication().isUnitTestMode) {
+                return setOf(defaultBuiltIns, BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL())
+            }
+            return setOf(defaultBuiltIns)
         }
     }
 }

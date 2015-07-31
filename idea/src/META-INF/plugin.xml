@@ -420,6 +420,8 @@
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetUsageTypeProvider"/>
+    <useScopeEnlarger implementation="org.jetbrains.kotlin.idea.findUsages.BuiltInsUseScopeEnlarger"/>
+
     <refactoring.safeDeleteProcessor
         id="kotlinProcessor"
         implementation="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinSafeDeleteProcessor"
