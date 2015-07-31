@@ -27,7 +27,7 @@ public interface BooleanVariableValue {
     // Logic operators, (BoolVariableValue, BoolVariableValue) -> BoolVariableValue
     public fun and(other: BooleanVariableValue): BooleanVariableValue
     public fun or(other: BooleanVariableValue): BooleanVariableValue
-    public fun not(other: BooleanVariableValue): BooleanVariableValue
+    public fun not(): BooleanVariableValue
 
     public object True : BooleanVariableValue {
         override fun toString(): String = "T"
@@ -40,7 +40,7 @@ public interface BooleanVariableValue {
 
         override fun or(other: BooleanVariableValue): BooleanVariableValue = True
 
-        override fun not(other: BooleanVariableValue): BooleanVariableValue = False
+        override fun not(): BooleanVariableValue = False
     }
 
     public object False : BooleanVariableValue {
@@ -50,7 +50,7 @@ public interface BooleanVariableValue {
 
         override fun or(other: BooleanVariableValue): BooleanVariableValue = other.copy()
 
-        override fun not(other: BooleanVariableValue): BooleanVariableValue = True
+        override fun not(): BooleanVariableValue = True
     }
 
     public data class Undefined (
@@ -59,8 +59,9 @@ public interface BooleanVariableValue {
     ): BooleanVariableValue {
         override fun toString(): String {
             val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
-            val onTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString)
-            val onFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString)
+            val setToString: (Set<Int>) -> String = { it.sort().toString() }
+            val onTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString, setToString)
+            val onFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString, setToString)
             return "U$onTrue$onFalse"
         }
 
@@ -68,7 +69,11 @@ public interface BooleanVariableValue {
                 when(other) {
                     True -> this.copy()
                     False -> False
-                    is Undefined -> mergeCorrespondingValuesWithIntersection(other)
+                    is Undefined -> mergeCorrespondingValues(
+                            other,
+                            { value1, value2 -> value1.intersect(value2) },
+                            { value1, value2 -> value1.union(value2) }
+                    )
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
                         BooleanVariableValue.undefinedWithNoRestrictions
@@ -79,25 +84,26 @@ public interface BooleanVariableValue {
                 when(other) {
                     True -> True
                     False -> this.copy()
-                    is Undefined -> mergeCorrespondingValuesWithUnion(other)
+                    is Undefined -> mergeCorrespondingValues(
+                            other,
+                            { value1, value2 -> value1.union(value2) },
+                            { value1, value2 -> value1.intersect(value2) }
+                    )
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
                         BooleanVariableValue.undefinedWithNoRestrictions
                     }
                 }
 
-        override fun not(other: BooleanVariableValue): BooleanVariableValue =
-                Undefined(onFalseRestrictions, onTrueRestrictions)
+        override fun not(): BooleanVariableValue = Undefined(onFalseRestrictions, onTrueRestrictions)
 
-        private fun mergeCorrespondingValuesWithIntersection(other: Undefined): Undefined =
-                mergeCorrespondingValues(other) { value1, value2 -> value1.intersect(value2) }
-
-        private fun mergeCorrespondingValuesWithUnion(other: Undefined) =
-                mergeCorrespondingValues(other) { value1, value2 -> value1.union(value2) }
-
-        private fun mergeCorrespondingValues(other: Undefined, mergeValues: (Set<Int>, Set<Int>) -> Set<Int>): Undefined {
-            val onTrueIntersected = MapUtils.mergeMaps(onTrueRestrictions, other.onTrueRestrictions, mergeValues)
-            val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeValues)
+        private fun mergeCorrespondingValues(
+                other: Undefined,
+                mergeOnTrueValues: (Set<Int>, Set<Int>) -> Set<Int>,
+                mergeOnFalseValues: (Set<Int>, Set<Int>) -> Set<Int>
+        ): Undefined {
+            val onTrueIntersected = MapUtils.mergeMaps(onTrueRestrictions, other.onTrueRestrictions, mergeOnTrueValues)
+            val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeOnFalseValues)
             return Undefined(onTrueIntersected, onFalseIntersected)
         }
     }
