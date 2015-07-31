@@ -66,7 +66,8 @@ fun main(args: Array<String>) {
             execProtoc(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
-        GenerateProtoBufCompare.generate()
+
+        println("Do not forget to run GenerateProtoBufCompare")
     }
     catch (e: Throwable) {
         e.printStackTrace()
@@ -81,20 +82,20 @@ fun main(args: Array<String>) {
 fun checkVersion() {
     val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, "--version"), null)
 
-    val version = processOutput.getStdout().trim()
+    val version = processOutput.stdout.trim()
     if (version.isEmpty()) {
-        throw AssertionError("Output is empty, stderr: " + processOutput.getStderr())
+        throw AssertionError("Output is empty, stderr: ${processOutput.stderr}")
     }
     if (version != "libprotoc 2.5.0") {
-        throw AssertionError("Expected protoc 2.5.0, but was: " + version)
+        throw AssertionError("Expected protoc 2.5.0, but was: $version")
     }
 }
 
 fun execProtoc(protoPath: String, outPath: String) {
     val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") + PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }, null)
-    print(processOutput.getStdout())
-    if (processOutput.getStderr().isNotEmpty()) {
-        throw AssertionError(processOutput.getStderr())
+    print(processOutput.stdout)
+    if (processOutput.stderr.isNotEmpty()) {
+        throw AssertionError(processOutput.stderr)
     }
 }
 
@@ -111,7 +112,6 @@ fun modifyForDebug(protoPath: ProtoPath): String {
             .replace("option java_outer_classname = \"${protoPath.className}\"",
                      "option java_outer_classname = \"${protoPath.debugClassName}\"") // give different name for class
             .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
-            //.replace(".proto\"", ".debug.proto\"") // for "import" statement in proto
     (listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS).forEach {
         val file = it.file
         val newFile = file.replace(".proto", ".debug.proto")
