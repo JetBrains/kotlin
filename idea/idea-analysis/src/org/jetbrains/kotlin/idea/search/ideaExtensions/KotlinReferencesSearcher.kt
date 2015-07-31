@@ -49,10 +49,15 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 
+        val refFilter: (PsiReference) -> Boolean = if (unwrappedElement is JetParameter)
+            ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
+        else
+            ({true})
+
         words.forEach { word ->
             queryParameters.optimizer.searchWord(word, effectiveSearchScope,
                                                  UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
-                                                 MyRequestResultProcessor(unwrappedElement) { !it.isNamedArgumentReference()/* they are processed later*/ })
+                                                 MyRequestResultProcessor(unwrappedElement, refFilter))
         }
 
         if (unwrappedElement is JetParameter) {
@@ -71,7 +76,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
 
         if (namedArgsScope is GlobalSearchScope) {
-            namedArgsScope = JetSourceFilterScope.kotlinSources(namedArgsScope, project)
+            namedArgsScope = JetSourceFilterScope.kotlinSourcesAndLibraries(namedArgsScope, project)
 
             val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
                     function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true)

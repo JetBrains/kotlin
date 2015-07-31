@@ -268,14 +268,14 @@ class PropertyUsagesSearchHelper(
 
             var scope = function.useScope and target.effectiveScope
             if (scope is GlobalSearchScope) {
-                scope = JetSourceFilterScope.kotlinSources(scope, element.project)
+                scope = JetSourceFilterScope.kotlinSourcesAndLibraries(scope, element.project)
             }
 
             val additionalFilter1 = AdditionalFileFilter(element.name!!, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT, true)
             val additionalFilter2 = AdditionalFileFilter(function.name!!, UsageSearchContext.IN_CODE, true)
             val namedArgsRequest = UsagesSearchRequestItem(target.withScope(scope),
                                                            listOf(element.name!!),
-                                                           (PsiReference::isNamedArgumentUsage).searchFilter,
+                                                           (PsiReference::isNamedArgumentUsage).searchFilter and makeFilter(target),
                                                            additionalFileFilters = listOf(additionalFilter1, additionalFilter2))
             return listOf(realUsagesRequest, namedArgsRequest)
         }
