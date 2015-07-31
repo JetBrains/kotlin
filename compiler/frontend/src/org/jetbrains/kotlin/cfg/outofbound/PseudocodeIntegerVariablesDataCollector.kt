@@ -342,10 +342,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val fakeVariable = instruction.outputValue
         val valueAsText = node.getText()
         when (nodeType) {
-            JetNodeTypes.INTEGER_CONSTANT -> {
-                val literalValue = valueAsText.toInt()
-                updatedData.intFakeVarsToValues.put(fakeVariable, IntegerVariableValues(literalValue))
-            }
+            JetNodeTypes.INTEGER_CONSTANT ->
+                try {
+                    val literalValue = valueAsText.toInt()
+                    updatedData.intFakeVarsToValues[fakeVariable] = IntegerVariableValues(literalValue)
+                } catch (e: NumberFormatException) { /* not an int literal, so we don't need to do anything with it */ }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
                 val booleanValue = valueAsText.toBoolean()
                 updatedData.boolFakeVarsToValues.put(fakeVariable, BooleanVariableValue.create(booleanValue))
