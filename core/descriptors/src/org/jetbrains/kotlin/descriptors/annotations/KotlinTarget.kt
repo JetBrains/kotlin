@@ -81,18 +81,25 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
 
         public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASSIFIER)
-            ClassKind.CLASS -> if (descriptor.isInner) {
-                listOf(INNER_CLASS, CLASSIFIER)
-            }
-            else if (DescriptorUtils.isLocal(descriptor)) {
-                listOf(LOCAL_CLASS, CLASSIFIER)
-            }
-            else {
-                listOf(CLASS, CLASSIFIER)
-            }
+            ClassKind.CLASS ->
+                if (descriptor.isInner) {
+                    listOf(INNER_CLASS, CLASSIFIER)
+                }
+                else if (DescriptorUtils.isLocal(descriptor)) {
+                    listOf(LOCAL_CLASS, CLASSIFIER)
+                }
+                else {
+                    listOf(CLASS, CLASSIFIER)
+                }
             ClassKind.OBJECT -> listOf(OBJECT, CLASSIFIER)
             ClassKind.INTERFACE -> listOf(INTERFACE, CLASSIFIER)
-            ClassKind.ENUM_CLASS -> listOf(ENUM_CLASS, CLASSIFIER)
+            ClassKind.ENUM_CLASS ->
+                if (DescriptorUtils.isLocal(descriptor)) {
+                    listOf(LOCAL_CLASS, CLASSIFIER)
+                }
+                else {
+                    listOf(ENUM_CLASS, CLASSIFIER)
+                }
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
     }

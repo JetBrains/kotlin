@@ -238,11 +238,6 @@ public class DeclarationsChecker {
 
             checkConstructorInTrait(aClass);
         }
-        else if (aClass.isEnum()) {
-            if (aClass.isLocal()) {
-                trace.report(LOCAL_ENUM_NOT_ALLOWED.on(aClass, classDescriptor));
-            }
-        }
         else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             checkAnnotationClassWithBody(aClass);
             checkValOnAnnotationParameter(aClass);
