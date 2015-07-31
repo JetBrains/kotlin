@@ -29,12 +29,10 @@ public data class ValuesData(
 ) {
     override fun toString(): String {
         val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
-        val pseudoValToString: (PseudoValue) -> String = { it.debugName }
         val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
-        val fakeInts = MapUtils.mapToString(intFakeVarsToValues, pseudoValToString, pseudoValToString)
         val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
-        val fakeBools = MapUtils.mapToString(boolFakeVarsToValues, pseudoValToString, pseudoValToString)
-        return "I$ints|FI$fakeInts|B$bools|FB$fakeBools"
+        val arrs = MapUtils.mapToString(arraysToSizes, descriptorToString, descriptorToString)
+        return "I$ints B$bools A$arrs "
     }
 
     public fun copy(): ValuesData {

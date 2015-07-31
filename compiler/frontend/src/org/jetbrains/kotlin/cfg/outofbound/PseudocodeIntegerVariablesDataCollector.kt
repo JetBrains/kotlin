@@ -247,16 +247,13 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             targetVariablesMap: MutableMap<K, IntegerVariableValues>,
             variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
-        val targetMapKeys = HashSet(targetVariablesMap.keySet())
-        for (key in targetMapKeys) {
-            val values1 = targetVariablesMap[key] as IntegerVariableValues
-            assert(variablesToConsume.containsKey(key), "No corresponding element in map")
-            val values2 = variablesToConsume[key] as IntegerVariableValues
-            if (values1.isUndefined) {
-                targetVariablesMap[key] = values2
+        for ((key2, values2) in variablesToConsume) {
+            val values1 = targetVariablesMap[key2]
+            if (values1 != null && values1.isDefined) {
+                values1.addAll(values2)
             }
             else {
-                values1.addAll(values2)
+                targetVariablesMap[key2] = values2
             }
         }
     }
