@@ -96,7 +96,7 @@ public class UsagesSearchRequestItem(
         val additionalFileFilters: Collection<AdditionalFileFilter> = emptyList()
 )
 
-public data class AdditionalFileFilter(
+public class AdditionalFileFilter(
         val word: String,
         val searchContext: Short,
         val caseSensitively: Boolean

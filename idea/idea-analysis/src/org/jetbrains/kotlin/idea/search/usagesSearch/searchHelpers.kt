@@ -251,8 +251,8 @@ class PropertyUsagesSearchHelper(
     override fun makeItemList(target: UsagesSearchTarget<JetNamedDeclaration>): List<UsagesSearchRequestItem> {
         val element = target.element
         if (element is JetParameter) {
-            val realUsagesScope = element.useScopeExceptNamedArguments
-            val realUsagesTarget = target.withScope(realUsagesScope and target.effectiveScope)
+            val realUsagesScope = element.useScope and target.effectiveScope
+            val realUsagesTarget = target.withScope(realUsagesScope)
             val realUsagesFilter = makeFilter(target) and !(PsiReference::isNamedArgumentUsage).searchFilter
             val realUsagesRequest = UsagesSearchRequestItem(realUsagesTarget, makeWordList(target), realUsagesFilter, makeAdditionalSearchDelegate(target.element))
 
@@ -266,7 +266,7 @@ class PropertyUsagesSearchHelper(
                 return listOf(realUsagesRequest)
             }
 
-            var scope = target.effectiveScope
+            var scope = function.useScope and target.effectiveScope
             if (scope is GlobalSearchScope) {
                 scope = JetSourceFilterScope.kotlinSources(scope, element.project)
             }
