@@ -5,3 +5,9 @@ fun simpleFor() {
     }
     42
 }
+
+fun simpleWhile() {
+    var a = 2
+    while (a < 2) {
+    }
+}
