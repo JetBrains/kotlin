@@ -62,6 +62,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private val intArrayConstructorName = "IntArray"
 
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
+    // The map below is used to define indices of instructions. To achieve O(1) operation time cost
+    // the map is created with capacity = instructions number (+ constant) and load factor = 1
+    private val instructionsToTheirIndices: HashMap<Instruction, Int> = createInstructionsToTheirIndicesMap()
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -87,6 +90,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return lexicalScopeVariableInfo
     }
 
+    // todo: improve implementation reducing traverses from 2 to 1
+    private fun createInstructionsToTheirIndicesMap(): HashMap<Instruction, Int> {
+        var instructionsNumber = 0
+        pseudocode.traverse(TraversalOrder.FORWARD, { i -> ++instructionsNumber })
+        val resultingMap = HashMap<Instruction, Int>(instructionsNumber + 5, 1f) // + 5 is chosen randomly
+        var index = 0
+        pseudocode.traverse(TraversalOrder.FORWARD, { instruction -> resultingMap[instruction] = index; ++index })
+        return resultingMap
+    }
+
     public fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
         return pseudocode.collectData(
                 TraversalOrder.FORWARD,
@@ -98,6 +111,17 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
+        assert(instructionsToTheirIndices.containsKey(previousInstruction), "Mapping from instructions to their indices is wrong")
+        assert(instructionsToTheirIndices.containsKey(currentInstruction), "Mapping from instructions to their indices is wrong")
+        val prevInstructionIndex = instructionsToTheirIndices[previousInstruction] as Int
+        val curInstructionIndex = instructionsToTheirIndices[currentInstruction] as Int
+        if (prevInstructionIndex > curInstructionIndex) {
+            // The edge we need to update leads from loop end to loop enter (for example, from while loop's body end
+            // to while loop's condition). After the first traversal of all the instructions list, this edge will contain
+            // the information that is computed after current instruction. In current implementation we don't process loop
+            // bodies multiple times, so to avoid this computation we destroy the information on this edge.
+            return ValuesData()
+        }
         val updatedEdgeData = edgeData.copy()
         val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
         removeUnavailableValuesIfNeeded(previousInstruction, filteredEdgeData)
