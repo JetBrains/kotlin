@@ -234,16 +234,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val unitedBoolFakeVariables = headData.boolFakeVarsToValues
         val unitedArrayVariables = headData.arraysToSizes
         for (data in tailData) {
-            mergeCorrespondingVariables(unitedIntVariables, data.intVarsToValues)
+            mergeCorrespondingIntegerVariables(unitedIntVariables, data.intVarsToValues)
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
-            unitedBoolVariables.putAll(data.boolVarsToValues) // TODO: this is stub, makes no sense
+            mergeCorrespondingBooleanVariables(unitedBoolVariables, data.boolVarsToValues)
             unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
-            mergeCorrespondingVariables(unitedArrayVariables, data.arraysToSizes)
+            mergeCorrespondingIntegerVariables(unitedArrayVariables, data.arraysToSizes)
         }
         return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables, unitedArrayVariables)
     }
 
-    private fun mergeCorrespondingVariables<K>(
+    private fun mergeCorrespondingIntegerVariables<K>(
             targetVariablesMap: MutableMap<K, IntegerVariableValues>,
             variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) {
@@ -258,6 +258,19 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             else {
                 values1.addAll(values2)
             }
+        }
+    }
+
+    private fun mergeCorrespondingBooleanVariables<K>(
+            targetVariablesMap: MutableMap<K, BooleanVariableValue>,
+            variablesToConsume: MutableMap<K, BooleanVariableValue>
+    ) {
+        val targetMapKeys = HashSet(targetVariablesMap.keySet())
+        for (key in targetMapKeys) {
+            val value1 = targetVariablesMap[key] as BooleanVariableValue
+            assert(variablesToConsume.containsKey(key), "No corresponding element in map")
+            val value2 = variablesToConsume[key] as BooleanVariableValue
+            targetVariablesMap[key] = value1.or(value2)
         }
     }
 
@@ -283,15 +296,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
             }
             is MagicInstruction -> {
-                if (instruction.kind == MagicKind.LOOP_RANGE_ITERATION) {
-                    // process range operator result storing in fake variable
-                    assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
-                    val rangeValuesFakeVariable = instruction.inputValues[0]
-                    val rangeValues = updatedData.intFakeVarsToValues[rangeValuesFakeVariable]
-                    rangeValues?.let {
-                        val target = instruction.outputValue
-                        updatedData.intFakeVarsToValues.put(target, it)
+                when(instruction.kind) {
+                    MagicKind.LOOP_RANGE_ITERATION -> {
+                        // process range operator result storing in fake variable
+                        assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
+                        val rangeValuesFakeVariable = instruction.inputValues[0]
+                        val rangeValues = updatedData.intFakeVarsToValues[rangeValuesFakeVariable]
+                        rangeValues?.let {
+                            val target = instruction.outputValue
+                            updatedData.intFakeVarsToValues.put(target, it)
+                        }
                     }
+                    MagicKind.AND, MagicKind.OR -> {
+                        // && and || operations are represented as MagicInstruction for some reason (not as CallInstruction)
+                        if (instruction.element is JetBinaryExpression) {
+                            processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                        }
+                    }
+                    else -> Unit
                 }
             }
         }
@@ -425,7 +447,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return null
     }
 
-    private fun processBinaryOperation(token: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
+    private fun processBinaryOperation(token: IElementType, instruction: OperationInstruction, updatedData: ValuesData) {
         assert(instruction.inputValues.size() >= 2,
                "Binary expression instruction is supposed to have two input values")
         val leftOperandVariable = instruction.inputValues[0]
@@ -435,58 +457,59 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         fun performOperation<Op, R>(
                 operandsMap: MutableMap<PseudoValue, Op>,
                 resultMap: MutableMap<PseudoValue, R>,
+                valueToUseIfNoOperands: R,
                 operation: (Op, Op) -> R
         ) {
             val leftOperandValues = operandsMap[leftOperandVariable]
             val rightOperandValues = operandsMap[rightOperandVariable]
             if (leftOperandValues != null && rightOperandValues != null) {
-                resultMap.put(resultVariable, operation(leftOperandValues, rightOperandValues))
+                resultMap[resultVariable] = operation(leftOperandValues, rightOperandValues)
+            }
+            else {
+                resultMap[resultVariable] = valueToUseIfNoOperands
             }
         }
+        fun intIntOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> IntegerVariableValues) =
+            performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues,
+                             IntegerVariableValues.createUndefined(), operation)
+        fun intBoolOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> BooleanVariableValue) =
+                performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues,
+                                 BooleanVariableValue.undefinedWithNoRestrictions, operation)
+        fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue) -> BooleanVariableValue) =
+                performOperation(updatedData.boolFakeVarsToValues, updatedData.boolFakeVarsToValues,
+                                 BooleanVariableValue.undefinedWithNoRestrictions, operation)
         val leftOperandDescriptor =
                 leftOperandVariable.createdAt?.let { PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) }
         when (token) {
-            JetTokens.PLUS ->
-                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x + y }
-            JetTokens.MINUS ->
-                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x - y }
-            JetTokens.MUL ->
-                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x * y }
-            JetTokens.DIV ->
-                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x / y }
-            JetTokens.RANGE ->
-                performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues) { x, y -> x .. y }
-            JetTokens.EQEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.eq(y, leftOperandDescriptor, updatedData)
-            }
-            JetTokens.EXCLEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.notEq(y, leftOperandDescriptor, updatedData)
-            }
-            JetTokens.LT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.lessThan(y, leftOperandDescriptor, updatedData)
-            }
-            JetTokens.GT -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.greaterThan(y, leftOperandDescriptor, updatedData)
-            }
-            JetTokens.LTEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.lessOrEq(y, leftOperandDescriptor, updatedData)
-            }
-            JetTokens.GTEQ -> performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues) { x, y ->
-                x.greaterOrEq(y, leftOperandDescriptor, updatedData)
-            }
+            JetTokens.PLUS -> intIntOperation { x, y -> x + y }
+            JetTokens.MINUS -> intIntOperation { x, y -> x - y }
+            JetTokens.MUL -> intIntOperation { x, y -> x * y }
+            JetTokens.DIV -> intIntOperation { x, y -> x / y }
+            JetTokens.RANGE -> intIntOperation { x, y -> x .. y }
+            JetTokens.EQEQ -> intBoolOperation { x, y -> x.eq(y, leftOperandDescriptor, updatedData) }
+            JetTokens.EXCLEQ -> intBoolOperation { x, y -> x.notEq(y, leftOperandDescriptor, updatedData) }
+            JetTokens.LT -> intBoolOperation { x, y ->  x.lessThan(y, leftOperandDescriptor, updatedData) }
+            JetTokens.GT -> intBoolOperation { x, y -> x.greaterThan(y, leftOperandDescriptor, updatedData) }
+            JetTokens.LTEQ -> intBoolOperation { x, y -> x.lessOrEq(y, leftOperandDescriptor, updatedData) }
+            JetTokens.GTEQ -> intBoolOperation { x, y -> x.greaterOrEq(y, leftOperandDescriptor, updatedData) }
+            JetTokens.OROR -> boolBoolOperation { x, y -> x.or(y) }
+            JetTokens.ANDAND -> boolBoolOperation { x, y -> x.and(y) }
         }
     }
 
     private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
         assert(instruction.inputValues.size() > 0, "Prefix operation is expected to have at least one input value")
         val operandVariable = instruction.inputValues[0]
-        val operandValues = updatedData.intFakeVarsToValues[operandVariable]
-                            ?: return
         val resultVariable = instruction.outputValue
                              ?: return
+        fun performOperation<V>(fakeVariablesMap: MutableMap<PseudoValue, V>, valueToUseIfNoOperands: V, operation: (V) -> V) {
+            val operandValues = fakeVariablesMap[operandVariable]
+            fakeVariablesMap[resultVariable] = operandValues?.let { operation(it) } ?: valueToUseIfNoOperands
+        }
         when (operationToken) {
-            JetTokens.MINUS -> updatedData.intFakeVarsToValues[resultVariable] = -operandValues
-            JetTokens.PLUS -> updatedData.intFakeVarsToValues[resultVariable] = operandValues.copy()
+            JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.createUndefined()) { -it }
+            JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.createUndefined()) { it.copy() }
+            JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.undefinedWithNoRestrictions) { !it }
         }
     }
 }
