@@ -39,9 +39,9 @@ public object ModifierCheckerCore {
 
     private val possibleTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
             ENUM_KEYWORD      to EnumSet.of(ENUM_CLASS),
-            ABSTRACT_KEYWORD  to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            OPEN_KEYWORD      to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            FINAL_KEYWORD     to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            ABSTRACT_KEYWORD  to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            OPEN_KEYWORD      to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
+            FINAL_KEYWORD     to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
             SEALED_KEYWORD    to EnumSet.of(CLASS, LOCAL_CLASS, INNER_CLASS),
             INNER_KEYWORD     to EnumSet.of(INNER_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
@@ -58,6 +58,13 @@ public object ModifierCheckerCore {
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
             DYNAMIC_KEYWORD   to emptySet(), // not really a modifier
             COMPANION_KEYWORD to EnumSet.of(OBJECT)
+    )
+
+    // NOTE: redundant targets must be possible!
+    private val redundantTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
+            ABSTRACT_KEYWORD  to EnumSet.of(INTERFACE),
+            OPEN_KEYWORD      to EnumSet.of(INTERFACE),
+            FINAL_KEYWORD     to EnumSet.of(ENUM_CLASS, OBJECT)
     )
 
     private val possibleParentTargetMap = mapOf<JetModifierKeywordToken, Set<KotlinTarget>>(
@@ -146,9 +153,15 @@ public object ModifierCheckerCore {
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
         val modifier = node.elementType as JetModifierKeywordToken
         val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in possibleTargets }) return true
-        trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
-        return false
+        if (!actualTargets.any { it in possibleTargets }) {
+            trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+            return false
+        }
+        val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
+        if (actualTargets.any { it in redundantTargets}) {
+            trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        }
+        return true
     }
 
     private fun checkParent(trace: BindingTrace, node: ASTNode, parentDescriptor: DeclarationDescriptor?): Boolean {
