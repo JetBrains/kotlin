@@ -1,0 +1,77 @@
+== simpleFor ==
+fun simpleFor() {
+    var a = 1
+    for(i in 1..3) {
+        a = i
+    }
+    42
+}
+---------------------
+L0:
+  1 <START>                                            in: INTS{}                        BOOLS{} ARRS{}    out: INTS{}                        BOOLS{} ARRS{}
+  2 mark({ var a = 1 for(i in 1..3) { a = i } 42 })    in: INTS{}                        BOOLS{} ARRS{}    out: INTS{}                        BOOLS{} ARRS{}
+    v(var a = 1)                                       in: INTS{}                        BOOLS{} ARRS{}    out: INTS{a:-}                     BOOLS{} ARRS{}
+    r(1) -> <v0>                                       in: INTS{a:-}                     BOOLS{} ARRS{}    out: INTS{a:-}                     BOOLS{} ARRS{}
+    w(a|<v0>)                                          in: INTS{a:-}                     BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+  3 r(1) -> <v1>                                       in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+    r(3) -> <v2>                                       in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+    mark(1..3)                                         in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+    call(1..3, rangeTo|<v1>, <v2>) -> <v3>             in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+    v(i)                                               in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1],i:-}               BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    jmp?(L3)                                           in: INTS{a:[1],i:-}               BOOLS{} ARRS{}    out: INTS{a:[1],i:-}               BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](1..3|<v3>) -> <v4>     in: INTS{a:[1],i:-}               BOOLS{} ARRS{}    out: INTS{a:[1],i:-}               BOOLS{} ARRS{}
+    w(i|<v4>)                                          in: INTS{a:[1],i:-}               BOOLS{} ARRS{}    out: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}
+    mark(for(i in 1..3) { a = i })                     in: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}    out: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}
+L4 [body entry point]:
+  4 mark({ a = i })                                    in: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}    out: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}
+    r(i) -> <v5>                                       in: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}    out: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}
+    w(a|<v5>)                                          in: INTS{a:[1],i:[1, 2, 3]}       BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3],i:[1, 2, 3]} BOOLS{} ARRS{}
+  3 jmp(L2)                                            in: INTS{a:[1, 2, 3],i:[1, 2, 3]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3],i:[1, 2, 3]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                        in: INTS{a:[1],i:-}               BOOLS{} ARRS{}    out: INTS{a:[1],i:-}               BOOLS{} ARRS{}
+  2 r(42) -> <v7>                                      in: INTS{a:[1]}                   BOOLS{} ARRS{}    out: INTS{a:[1]}                   BOOLS{} ARRS{}
+L1:
+  1 <END>                                              in: INTS{}                        BOOLS{} ARRS{}    out: INTS{}                        BOOLS{} ARRS{}
+error:
+    <ERROR>                                            in: INTS{}                        BOOLS{} ARRS{}    out: INTS{}                        BOOLS{} ARRS{}
+sink:
+    <SINK>                                             in: INTS{}                        BOOLS{} ARRS{}    out: INTS{}                        BOOLS{} ARRS{}
+=====================
+== simpleWhile ==
+fun simpleWhile() {
+    var a = 2
+    while (a < 2) {
+    }
+}
+---------------------
+L0:
+  1 <START>                                      in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+  2 mark({ var a = 2 while (a < 2) { } })        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+    v(var a = 2)                                 in: INTS{}      BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    r(2) -> <v0>                                 in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    w(a|<v0>)                                    in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(a) -> <v1>                                 in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    r(2) -> <v2>                                 in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    mark(a < 2)                                  in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    call(a < 2, compareTo|<v1>, <v2>) -> <v3>    in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    mark(while (a < 2) { })                      in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    jf(L3|<v3>)                                  in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L4 [body entry point]:
+  3 mark({ })                                    in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    read (Unit)                                  in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+  2 jmp(L2)                                      in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                  in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+error:
+    <ERROR>                                      in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+sink:
+    <SINK>                                       in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+=====================
