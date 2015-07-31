@@ -53,6 +53,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("BooleanVariables.kt")
+    public void testBooleanVariables() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/BooleanVariables.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ComparisonInConditions.kt")
     public void testComparisonInConditions() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/ComparisonInConditions.kt");
