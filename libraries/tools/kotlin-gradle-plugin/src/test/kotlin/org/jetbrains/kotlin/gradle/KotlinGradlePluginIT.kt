@@ -1,7 +1,8 @@
 package org.jetbrains.kotlin.gradle
 
-import org.junit.Test
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
+import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
 
@@ -32,6 +33,29 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE")
+        }
+    }
+
+    Test fun testKotlinOnlyDaemonMemory() {
+        val project = Project("kotlinProject", "2.4", minLogLevel = LogLevel.DEBUG)
+
+        project.stopDaemon {}
+
+        project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+            assertSuccessful()
+        }
+
+        for (i in 1..3)
+            project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                assertSuccessful()
+                val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(([+-]?\\d+) kb\\)".toRegex().match(output)
+                assert(matches != null && matches.groups.size() == 3, "Used memory after build is not reported by plugin")
+                val reportedGrowth = matches!!.groups.get(2)!!.value.toInt()
+                assert(reportedGrowth <= 1000, "Used memory growth $reportedGrowth > 1000")
+            }
+
+        project.stopDaemon {
+            assertSuccessful()
         }
     }
 
@@ -107,5 +131,4 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
         }
     }
-
 }
