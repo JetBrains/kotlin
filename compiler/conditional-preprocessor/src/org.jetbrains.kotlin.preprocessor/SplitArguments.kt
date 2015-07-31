@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.preprocessor
 
 import org.jetbrains.kotlin.psi.JetStringTemplateEntry
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 data class SplitArguments(val positional: List<ValueArgument>, val named: List<ValueArgument>)

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.preprocessor
 
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 interface Conditional {
 
@@ -58,4 +57,7 @@ fun JetAnnotated.parseConditionalAnnotations(): List<Conditional> =
             parser?.parse?.invoke(it.valueArguments.splitToPositionalAndNamed())
         }.filterNotNull()
 
+
+val JetAnnotationEntry.typeReferenceName: String? get() =
+        (typeReference?.typeElement as? JetUserType)?.referencedName
 
