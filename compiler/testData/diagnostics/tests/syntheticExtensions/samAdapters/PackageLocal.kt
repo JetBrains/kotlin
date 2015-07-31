@@ -1,10 +1,15 @@
-// FILE: KotlinFile.kt
+// FILE: KotlinFile1.kt
 package k
 
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
     javaClass.<!INVISIBLE_MEMBER!>doSomething<!> <!TYPE_MISMATCH!>{ }<!>
+}
+
+// FILE: KotlinFile2.kt
+fun foo(javaClass: JavaClass) {
+    javaClass.doSomething { }
 }
 
 // FILE: JavaClass.java

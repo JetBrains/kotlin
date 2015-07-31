@@ -1,7 +1,6 @@
 package
 
-internal fun bar(): kotlin.Unit
-internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Unit
+internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Int
 
 public open class JavaClass</*0*/ T : kotlin.Any!> {
     public constructor JavaClass</*0*/ T : kotlin.Any!>()
@@ -10,11 +9,13 @@ public open class JavaClass</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public open inner class Inner</*0*/ X : kotlin.Any!> {
-        public constructor Inner</*0*/ X : kotlin.Any!>()
-        public open fun doSomething(/*0*/ t: T!, /*1*/ x: X!, /*2*/ runnable: java.lang.Runnable!): kotlin.Unit
+    public interface Inner</*0*/ X : kotlin.Any!> {
+        public abstract fun doSomething(/*0*/ t: T!, /*1*/ x: X!, /*2*/ runnable: java.lang.Runnable!): T!
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+
+    // Static members
+    public final /*synthesized*/ fun </*0*/ X : kotlin.Any!> Inner(/*0*/ function: (T!, X!, java.lang.Runnable!) -> T!): JavaClass.Inner<X>
 }

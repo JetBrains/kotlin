@@ -1,0 +1,18 @@
+package
+
+internal final class Sub : Super {
+    public constructor Sub()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun foo(/*0*/ r: (() -> kotlin.Unit)?): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ open class Super {
+    public/*package*/ constructor Super()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(/*0*/ r: java.lang.Runnable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

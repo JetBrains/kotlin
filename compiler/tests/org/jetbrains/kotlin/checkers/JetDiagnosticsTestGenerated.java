@@ -8382,6 +8382,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("canDeclareIfSamAdapterIsInherited.kt")
+            public void testCanDeclareIfSamAdapterIsInherited() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/canDeclareIfSamAdapterIsInherited.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("computeIfAbsentConcurrent.kt")
             public void testComputeIfAbsentConcurrent() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/computeIfAbsentConcurrent.kt");

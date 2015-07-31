@@ -1,5 +1,7 @@
 package
 
+internal fun foo(/*0*/ javaClass: JavaClass): kotlin.Unit
+
 public open class JavaClass {
     public constructor JavaClass()
     public/*package*/ open fun doSomething(/*0*/ runnable: java.lang.Runnable!): kotlin.Unit

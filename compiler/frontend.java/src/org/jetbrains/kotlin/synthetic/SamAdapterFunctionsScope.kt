@@ -107,7 +107,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
             val typeParameters = ArrayList<TypeParameterDescriptor>(typeParamsSum.size())
             val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(typeParamsSum, TypeSubstitution.EMPTY, this, typeParameters)
 
-            val returnType = typeSubstitutor.safeSubstitute(originalFunction.returnType!!, Variance.OUT_VARIANCE)
+            val returnType = typeSubstitutor.safeSubstitute(originalFunction.returnType!!, Variance.INVARIANT)
             val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
             val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(originalFunction, this, typeSubstitutor)
 

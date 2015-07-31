@@ -86,7 +86,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    private static JetType getFunctionTypeForSamType(@NotNull JetType samType, boolean isSamConstructor) {
+    private static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
@@ -103,11 +103,11 @@ public class SingleAbstractMethodUtils {
                 JetType type = fixProjections(substitute);
                 if (type == null) return null;
 
-                if (JvmPackage.getPLATFORM_TYPES() && !isSamConstructor && TypesPackage.isNullabilityFlexible(samType)) {
+                if (JvmPackage.getPLATFORM_TYPES() && TypesPackage.isNullabilityFlexible(samType)) {
                     return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
                 }
 
-                return TypeUtils.makeNullableAsSpecified(type, !isSamConstructor && samType.isMarkedNullable());
+                return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());
             }
         }
         return null;
@@ -151,7 +151,7 @@ public class SingleAbstractMethodUtils {
 
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
-        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType(), true);
+        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
         assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + samInterface.getDefaultType();
         JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
@@ -177,7 +177,7 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamType(@NotNull JetType type) {
-        return getFunctionTypeForSamType(type, /* irrelevant */ false) != null;
+        return getFunctionTypeForSamType(type) != null;
     }
 
     public static boolean isSamAdapterNecessary(@NotNull FunctionDescriptor fun) {
@@ -240,7 +240,7 @@ public class SingleAbstractMethodUtils {
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
 
         TypeSubstitutor substitutor = typeParameters.substitutor;
-        JetType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+        JetType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.INVARIANT);
         assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
                                         ", substitutor = " + substitutor;
 
@@ -261,7 +261,7 @@ public class SingleAbstractMethodUtils {
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
         for (ValueParameterDescriptor originalParam : originalValueParameters) {
             JetType originalType = originalParam.getType();
-            JetType functionType = getFunctionTypeForSamType(originalType, false);
+            JetType functionType = getFunctionTypeForSamType(originalType);
             JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
             JetType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
