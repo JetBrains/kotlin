@@ -32,6 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -71,6 +72,13 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private volatile ModuleDescriptor moduleDescriptor;
     private volatile Set<JetFile> builtInsSources;
     private volatile PackageFragmentDescriptor builtinsPackageFragment;
+
+    private static final List<String> builtInDirUrls = KotlinPackage.map(getBuiltInsDirUrls(), new Function1<URL, String>() {
+        @Override
+        public String invoke(URL url) {
+            return VfsUtilCore.convertFromUrl(url);
+        }
+    });
 
     public BuiltInsReferenceResolver(Project project) {
         super(project);
@@ -146,22 +154,12 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @NotNull
     private Set<JetFile> getJetBuiltInsFiles() {
-        Set<JetFile> builtIns = getBuiltInSourceFiles(LightClassUtil.getBuiltInsDirUrl());
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            // In production, the above URL is enough as it contains sources for both native and compilable built-ins
-            // (it's simply the "kotlin" directory in kotlin-plugin.jar)
-            // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
-            // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
-            try {
-                builtIns.addAll(getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL()));
-            }
-            catch (MalformedURLException e) {
-                throw UtilsPackage.rethrow(e);
-            }
+        Set<JetFile> result = new HashSet<JetFile>();
+        for (URL url : getBuiltInsDirUrls()) {
+            result.addAll(getBuiltInSourceFiles(url));
         }
 
-        return builtIns;
+        return result;
     }
 
     @NotNull
@@ -250,8 +248,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     public static boolean isFromBuiltIns(@NotNull PsiElement element) {
-        //noinspection SuspiciousMethodCalls
-        return element.getProject().getComponent(BuiltInsReferenceResolver.class).builtInsSources.contains(element.getContainingFile());
+        String url = element.getContainingFile().getVirtualFile().getUrl();
+        return VfsUtilCore.isUnder(url, builtInDirUrls);
     }
 
     @Nullable
@@ -265,5 +263,24 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         else {
             return null;
         }
+    }
+
+    public static Set<URL> getBuiltInsDirUrls() {
+        URL defaultBuiltIns = LightClassUtil.getBuiltInsDirUrl();
+        // In production, the above URL is enough as it contains sources for both native and compilable built-ins
+        // (it's simply the "kotlin" directory in kotlin-plugin.jar)
+        // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
+        // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
+
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            try {
+                return KotlinPackage.setOf(defaultBuiltIns, BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL());
+            }
+            catch (MalformedURLException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+        }
+
+        return KotlinPackage.setOf(defaultBuiltIns);
     }
 }
