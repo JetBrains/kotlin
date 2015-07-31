@@ -47,6 +47,17 @@ public object MapUtils {
         }
         return resultMap
     }
+
+    public fun mergeMapsIntoFirst<K, V>(
+            map1: MutableMap<K, V>,
+            map2: Map<K, V>,
+            mergeCorrespondingValue: (V, V) -> V
+    ) {
+        for ((key2, value2) in map2) {
+            val value1 = map1[key2]
+            map1[key2] = value1?.let { mergeCorrespondingValue(it, value2) } ?: value2
+        }
+    }
 }
 
 public object JetExpressionUtils {
