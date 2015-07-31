@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.LocalDescriptorResolver
 
-public class LocalDescriptorResolverForIde(
+public class IdeaLocalDescriptorResolver(
         private val resolveElementCache: ResolveElementCache
 ): LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.resolve
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.project.IdeEnvironment
+import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.psi.JetClassInitializer
 import org.jetbrains.kotlin.psi.JetDeclaration
@@ -41,5 +41,5 @@ public abstract class AbstractAdditionalResolveDescriptorRendererTest : Abstract
     }
 
     override val targetEnvironment: TargetEnvironment
-        get() = IdeEnvironment
+        get() = IdeaEnvironment
 }

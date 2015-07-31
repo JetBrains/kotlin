@@ -26,7 +26,7 @@ public interface LocalDescriptorResolver {
     fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor
 }
 
-public class LocalDescriptorResolverForCompiler(
+public class CompilerLocalDescriptorResolver(
         private val lazyDeclarationResolver: LazyDeclarationResolver
 ) : LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor {

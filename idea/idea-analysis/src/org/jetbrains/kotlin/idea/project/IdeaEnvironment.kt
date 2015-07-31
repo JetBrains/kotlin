@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 
-public object IdeEnvironment : TargetEnvironment("Ide") {
+public object IdeaEnvironment : TargetEnvironment("Idea") {
     override fun configure(container: StorageComponentContainer) {
-        container.useImpl<LocalDescriptorResolverForIde>()
+        container.useImpl<ResolveElementCache>()
+        container.useImpl<IdeaLocalDescriptorResolver>()
     }
 }
