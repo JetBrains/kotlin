@@ -32,11 +32,11 @@ class GenerateProtoBufCompare {
 
         platformStatic
         fun main(args: Array<String>) {
-            generate()
+            generate(DEST_FILE)
         }
 
-        fun generate() {
-            GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, GenerateProtoBufCompare().generate())
+        fun generate(destFile: File) {
+            GeneratorsFileUtil.writeFileIfContentChanged(destFile, GenerateProtoBufCompare().generate())
         }
     }
 
