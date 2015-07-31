@@ -76,11 +76,6 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
 
             newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                // Use lazy initialization in tests
-                resolveSession.forceResolveAll()
-            }
-
             val packageView = newModuleContext.module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
             val fragments = packageView.fragments
 
