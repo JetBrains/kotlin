@@ -120,7 +120,6 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(ILLEGAL_MODIFIER, "Illegal modifier ''{0}''", TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
@@ -130,17 +129,7 @@ public class DefaultErrorMessages {
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
-        MAP.put(OPEN_MODIFIER_IN_TRAIT, "Modifier ''open'' is redundant in interface");
-        MAP.put(OPEN_MODIFIER_IN_SEALED, "Modifier ''open'' is not applicable for sealed class");
-        MAP.put(OPEN_MODIFIER_IN_ENUM, "Modifier ''open'' is not applicable for enum class");
-        MAP.put(ABSTRACT_MODIFIER_IN_ENUM, "Modifier ''abstract'' is not applicable for enum class");
-        MAP.put(ABSTRACT_MODIFIER_IN_SEALED, "Modifier ''abstract'' is redundant for sealed class");
-        MAP.put(SEALED_MODIFIER_IN_ENUM, "Modifier ''sealed'' is not applicable for enum class");
-        MAP.put(FINAL_MODIFIER_IN_SEALED, "Modifier ''final'' is not applicable for sealed class");
-        MAP.put(ILLEGAL_ENUM_ANNOTATION, "Annotation ''enum'' is only applicable for class");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
-        MAP.put(TRAIT_CAN_NOT_BE_FINAL, "Interface cannot be final");
-        MAP.put(TRAIT_CAN_NOT_BE_SEALED, "Interface cannot be sealed");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
                 "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
@@ -203,8 +192,6 @@ public class DefaultErrorMessages {
         MAP.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations");
         MAP.put(DELEGATED_PROPERTY_IN_TRAIT, "Delegated properties are not allowed in interfaces");
         MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
-
-        MAP.put(PACKAGE_MEMBER_CANNOT_BE_PROTECTED, "Package member cannot be protected");
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(BACKING_FIELD_IN_TRAIT, "Property in an interface cannot have a backing field");
@@ -276,7 +263,6 @@ public class DefaultErrorMessages {
         MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
-        MAP.put(COMPANION_OBJECT_NOT_ALLOWED, "A companion object is not allowed here");
 
         MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
@@ -340,9 +326,6 @@ public class DefaultErrorMessages {
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}'', use ''inner'' keyword to make the class inner", NAME);
         MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use ''inner'' keyword to make the class inner");
-
-        MAP.put(INNER_CLASS_IN_TRAIT, "Inner classes are not allowed in interfaces");
-        MAP.put(INNER_CLASS_IN_OBJECT, "Inner classes are not allowed in objects");
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);

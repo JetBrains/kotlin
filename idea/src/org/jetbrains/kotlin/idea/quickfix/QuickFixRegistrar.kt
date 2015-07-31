@@ -99,8 +99,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
         ABSTRACT_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
-        OPEN_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true))
-        TRAIT_CAN_NOT_BE_FINAL.registerFactory(removeFinalModifierFactory)
         DEPRECATED_TRAIT_KEYWORD.registerFactory(DeprecatedTraitSyntaxFix, DeprecatedTraitSyntaxFix.createWholeProjectFixFactory())
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
@@ -114,14 +112,9 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
-        ILLEGAL_MODIFIER.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
-
-        val removeInnerModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD)
-        INNER_CLASS_IN_TRAIT.registerFactory(removeInnerModifierFactory)
-        INNER_CLASS_IN_OBJECT.registerFactory(removeInnerModifierFactory)
 
         val changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory()
         INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.registerFactory(changeToBackingFieldFactory)
@@ -175,9 +168,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix.createFactory())
 
-        val removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD)
-        PACKAGE_MEMBER_CANNOT_BE_PROTECTED.registerFactory(removeProtectedModifierFactory)
-
         PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.registerActions(SpecifyTypeExplicitlyFix())
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
 
@@ -203,10 +193,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix.createFactory())
 
         PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix.createFactory())
-
-        OPEN_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD))
-        ABSTRACT_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD))
-        ILLEGAL_ENUM_ANNOTATION.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ENUM_KEYWORD))
 
         NESTED_CLASS_NOT_ALLOWED.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD))
 
