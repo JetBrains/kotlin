@@ -455,8 +455,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun processBinaryOperation(token: IElementType, instruction: OperationInstruction, updatedData: ValuesData) {
-        assert(instruction.inputValues.size() >= 2,
-               "Binary expression instruction is supposed to have two input values")
+        if(instruction.inputValues.size() < 2) {
+            // If the code under processing contains error (for example val a = x + 1, where variable x is undefined)
+            // the binary operation may have less than 2 arguments
+            return;
+        }
         val leftOperandVariable = instruction.inputValues[0]
         val rightOperandVariable = instruction.inputValues[1]
         val resultVariable = instruction.outputValue
