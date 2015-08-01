@@ -635,6 +635,21 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/outOfBoundAccessAnalysis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OutOfBoundAccessAnalysis extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInOutOfBoundAccessAnalysis() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/outOfBoundAccessAnalysis"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outOfBoundAccessAnalysis/basic.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
