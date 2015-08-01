@@ -1,0 +1,28 @@
+== operationsWithUndefinedArgument ==
+fun operationsWithUndefinedArgument() {
+    val a: Int = x + 1
+    val b: Int = -x
+}
+---------------------
+L0:
+  1 <START>                                         in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+  2 mark({ val a: Int = x + 1 val b: Int = -x })    in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+    v(val a: Int = x + 1)                           in: INTS{}        BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    magic[UNRESOLVED_CALL](x) -> <v0>               in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    r(1) -> <v1>                                    in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    magic[VALUE_CONSUMER](1|<v1>) -> <v2>           in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    mark(x + 1)                                     in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    call(x + 1, <ERROR FUNCTION>|<v0>) -> <v3>      in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:-}     BOOLS{} ARRS{}
+    w(a|<v3>)                                       in: INTS{a:-}     BOOLS{} ARRS{}    out: INTS{a:?}     BOOLS{} ARRS{}
+    v(val b: Int = -x)                              in: INTS{a:?}     BOOLS{} ARRS{}    out: INTS{a:?,b:-} BOOLS{} ARRS{}
+    magic[UNRESOLVED_CALL](x) -> <v4>               in: INTS{a:?,b:-} BOOLS{} ARRS{}    out: INTS{a:?,b:-} BOOLS{} ARRS{}
+    mark(-x)                                        in: INTS{a:?,b:-} BOOLS{} ARRS{}    out: INTS{a:?,b:-} BOOLS{} ARRS{}
+    call(-x, <ERROR FUNCTION>|<v4>) -> <v5>         in: INTS{a:?,b:-} BOOLS{} ARRS{}    out: INTS{a:?,b:-} BOOLS{} ARRS{}
+    w(b|<v5>)                                       in: INTS{a:?,b:-} BOOLS{} ARRS{}    out: INTS{a:?,b:?} BOOLS{} ARRS{}
+L1:
+  1 <END>                                           in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+error:
+    <ERROR>                                         in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+sink:
+    <SINK>                                          in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
+=====================
