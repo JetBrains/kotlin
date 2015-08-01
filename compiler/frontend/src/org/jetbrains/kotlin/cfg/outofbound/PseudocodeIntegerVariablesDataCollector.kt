@@ -305,9 +305,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 when(instruction.kind) {
                     MagicKind.LOOP_RANGE_ITERATION -> {
                         // process range operator result storing in fake variable
-                        assert(instruction.inputValues.size() == 1, "Loop range iteration is assumed to have 1 input value")
-                        val rangeValuesFakeVariable = instruction.inputValues[0]
-                        val rangeValues = updatedData.intFakeVarsToValues[rangeValuesFakeVariable]
+                        val rangeValues =
+                                if (!instruction.inputValues.isEmpty())
+                                    updatedData.intFakeVarsToValues[instruction.inputValues[0]]
+                                else null
                         rangeValues?.let {
                             val target = instruction.outputValue
                             updatedData.intFakeVarsToValues.put(target, it)
