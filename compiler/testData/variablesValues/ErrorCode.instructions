@@ -26,3 +26,36 @@ error:
 sink:
     <SINK>                                          in: INTS{}        BOOLS{} ARRS{}    out: INTS{}        BOOLS{} ARRS{}
 =====================
+== incompleteFor ==
+fun incompleteFor(a : IntArray) : Int {
+    for (n
+    return "?"
+}
+---------------------
+L0:
+  1 <START>                                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    v(a : IntArray)                                           in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    magic[FAKE_INITIALIZER](a : IntArray) -> <v0>             in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    w(a|<v0>)                                                 in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+  2 mark({ for (n return "?" })                               in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+  3 v(n)                                                      in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    jmp?(L3)                                                  in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](for (n return "?") -> <v1>    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    w(n|<v1>)                                                 in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    mark(for (n return "?")                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L4 [body entry point]:
+    mark("?")                                                 in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    r("?") -> <v2>                                            in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    jmp(L2)                                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                               in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                     in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                                    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+=====================
