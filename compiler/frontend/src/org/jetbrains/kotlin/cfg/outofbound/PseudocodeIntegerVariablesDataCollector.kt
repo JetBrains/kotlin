@@ -445,9 +445,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 arrayConstructorName, intArrayConstructorName -> {
                     // there are other kinds of array constructors (for example, ByteArray)
                     // and they will be added later
-                    assert(instruction.inputValues.size() >= 1,
-                           "Array creation calls are expected to have at least one argument")
-                    valuesData.intFakeVarsToValues[instruction.inputValues[0]]
+                    if (instruction.inputValues.isEmpty()) {
+                        // Code possibly contains error (like Array<Int>())
+                        // so we can't define size
+                        null
+                    }
+                    else {
+                        valuesData.intFakeVarsToValues[instruction.inputValues[0]]
+                    }
                 }
                 else -> null
             }
