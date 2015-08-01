@@ -3,7 +3,6 @@ fun operationsWithUndefinedArgument() {
     val b: Int = -x
 }
 
-fun incompleteFor(a : IntArray) : Int {
-    for (n
-    return "?"
+fun arrayWithNoSize() {
+    val arr1 = Array<Int>()
 }
