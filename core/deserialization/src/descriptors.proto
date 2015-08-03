@@ -112,7 +112,7 @@ message Type {
     required int32 id = 2 [(skip_in_comparison) = true]; // CLASS - fqName id, TYPE_PARAMETER - type parameter id
   }
 
-  required Constructor constructor = 1;
+  required Constructor constructor = 1 [(skip_in_comparison) = true];
 
   message Argument {
     enum Projection {
