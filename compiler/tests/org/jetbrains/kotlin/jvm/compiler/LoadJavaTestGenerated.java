@@ -1382,6 +1382,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
                 doTestCompiledJava(fileName);
             }
+
+            @TestMetadata("ReadOnlyExtendsWildcard.java")
+            public void testReadOnlyExtendsWildcard() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
+                doTestCompiledJava(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledJava/notNull")

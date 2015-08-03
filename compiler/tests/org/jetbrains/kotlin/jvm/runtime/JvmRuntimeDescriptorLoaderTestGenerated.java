@@ -3977,6 +3977,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
                 doTest(fileName);
             }
+
+            @TestMetadata("ReadOnlyExtendsWildcard.java")
+            public void testReadOnlyExtendsWildcard() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledJava/notNull")

@@ -136,3 +136,5 @@ public fun List<JetType>.defaultProjections(): List<TypeProjection> = map { Type
 
 public fun JetType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
+public fun createProjection(type: JetType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
+        TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)

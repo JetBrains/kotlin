@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
 import java.util.HashSet
@@ -247,11 +248,11 @@ class LazyJavaTypeResolver(
                     if (bound == null)
                         makeStarProjection(typeParameter, attr)
                     else {
-                        var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
-                        if (projectionKind == typeParameter.getVariance()) {
-                            projectionKind = Variance.INVARIANT
-                        }
-                        TypeProjectionImpl(projectionKind, transformJavaType(bound, UPPER_BOUND.toAttributes()))
+                        createProjection(
+                                type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
+                                projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE,
+                                typeParameterDescriptor = typeParameter
+                        )
                     }
                 }
                 else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
