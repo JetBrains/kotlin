@@ -16,38 +16,4 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-import org.jetbrains.kotlin.name.FqName
-
 public data class AnnotationWithTarget(val annotation: AnnotationDescriptor, val target: AnnotationUseSiteTarget?)
-
-private class UseSiteTargetedAnnotations(
-        private val original: Annotations,
-        private val additionalAnnotations: Annotations
-) : Annotations {
-    override fun isEmpty() = original.isEmpty()
-
-    override fun findAnnotation(fqName: FqName) = original.findAnnotation(fqName)
-
-    override fun findExternalAnnotation(fqName: FqName) = original.findExternalAnnotation(fqName)
-
-    private fun getAdditionalTargetedAnnotations() = additionalAnnotations.getUseSiteTargetedAnnotations()
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return original.getUseSiteTargetedAnnotations() + getAdditionalTargetedAnnotations()
-    }
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> {
-        return original.getAllAnnotations() + getAdditionalTargetedAnnotations()
-    }
-
-    override fun iterator() = original.iterator()
-}
-
-public class AnnotatedWithAdditionalAnnotations(
-        delegate: Annotated?,
-        additional: Annotated
-) : Annotated {
-    private val annotations: Annotations = UseSiteTargetedAnnotations(delegate?.annotations ?: Annotations.EMPTY, additional.annotations)
-
-    override fun getAnnotations() = annotations
-}
