@@ -1,5 +1,6 @@
 package kotlin
 
+import java.lang
 import java.util.NoSuchElementException
 import kotlin.platform.platformName
 import kotlin.text.MatchResult
@@ -791,6 +792,85 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
 public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
+private fun getIndentFunction(indent: String) = when {
+    indent.isEmpty() -> { line: String -> line }
+    else -> { line: String -> "$indent$line" }
+}
+
+private inline fun List<String>.reindent(length: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String) = lastIndex.let { lastLineIndex ->
+    withIndex()
+            .dropWhile { it.index == 0 && it.value.isBlank() }
+            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
+            .map { indentCutFunction(it.value) }
+            .map(indentAddFunction)
+            .joinTo(StringBuilder(length), "\n")
+            .toString()
+}
+
+/**
+ * Trims leading whitespace characters followed by [marginPrefix] from every line of a source string and removes
+ * first and last lines if they are blank (notice difference blank vs empty).
+ * Do not preserves original line endings
+ *
+ * Example
+ * ```kotlin
+ * assertEquals("ABC\n123\n456", """ABC
+ *                             |123
+ *                             |456""".trimMargin())
+ * ```
+ *
+ * @param marginPrefix characters to be used as a margin delimiter. Default is `|` (pipe character)
+ * @return the trimmed String
+ * @see kotlin.isWhitespace
+ * @since M13
+ */
+public fun String.trimMargin(marginPrefix: String = "|", newIndent: String = ""): String {
+    require(marginPrefix.isNotBlank()) { "marginPrefix should be non blank string but it is '$marginPrefix'" }
+
+    return lines().reindent(length(), getIndentFunction(newIndent)) { line ->
+        val firstNonWhitespaceIndex = line.indexOfFirst { !it.isWhitespace() }
+
+        when {
+            firstNonWhitespaceIndex == -1 -> line
+            line.startsWith(marginPrefix, firstNonWhitespaceIndex) -> line.substring(firstNonWhitespaceIndex + marginPrefix.length())
+            else -> line
+        }
+    }
+}
+
+/**
+ * Detects a common minimal indent of all the input lines, removes it from every line and also removes first and last
+ * lines if they are blank (notice difference blank vs empty).
+ * Note that blank lines do not affect detected indent level.
+ * Please keep in mind that if there are non-blank lines with no leading whitespace characters (no indent at all) then the
+ * common indent is 0 so this function may do nothing so it is recommended to keep first line empty (will be dropped).
+ *
+ * Do not preserves original line endings
+ *
+ * Example
+ * ```kotlin
+ * assertEquals("ABC\n123\n456", """
+ *                             ABC
+ *                             123
+ *                             456""".trimMargin())
+ * ```
+ *
+ * @return deindented String
+ * @see kotlin.isBlank
+ * @since M13
+ */
+public fun String.trimIndent(newIndent: String = ""): String {
+    val lines = lines()
+
+    val minCommonIndent = lines
+            .filter { it.isNotBlank() }
+            .map { it.indentWidth() }
+            .min() ?: 0
+
+    return lines.reindent(length(), getIndentFunction(newIndent)) { line -> line.drop(minCommonIndent) }
+}
+
+private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length() else it }
 
 // rangesDelimitedBy
 
