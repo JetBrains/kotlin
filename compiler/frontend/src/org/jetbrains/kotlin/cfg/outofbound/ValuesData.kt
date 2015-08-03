@@ -28,7 +28,7 @@ public data class ValuesData(
         val arraysToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
 ) {
     override fun toString(): String {
-        val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
+        val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
         val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
         val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
         val arrs = MapUtils.mapToString(arraysToSizes, descriptorToString, descriptorToString)

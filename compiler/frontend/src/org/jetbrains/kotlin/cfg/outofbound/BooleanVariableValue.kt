@@ -16,12 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
-import com.intellij.util.containers.HashMap
-import org.jetbrains.kotlin.cfg.outofbound.IntegerVariableValues
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
 
 public interface BooleanVariableValue {
     // Logic operators, (BoolVariableValue, BoolVariableValue) -> BoolVariableValue
@@ -58,7 +53,7 @@ public interface BooleanVariableValue {
             val onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
     ): BooleanVariableValue {
         override fun toString(): String {
-            val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
+            val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
             val setToString: (Set<Int>) -> String = { it.sort().toString() }
             val onTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString, setToString)
             val onFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString, setToString)
