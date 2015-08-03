@@ -27,7 +27,8 @@ public object JsPlatformConfigurator : PlatformConfigurator(
         additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), ClassDeclarationChecker()),
         additionalCallCheckers = listOf(),
         additionalTypeCheckers = listOf(),
-        additionalSymbolUsageValidators = listOf()
+        additionalSymbolUsageValidators = listOf(),
+        additionalAnnotationCheckers = listOf()
 ) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)

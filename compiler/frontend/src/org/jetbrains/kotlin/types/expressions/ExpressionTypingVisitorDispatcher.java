@@ -46,8 +46,8 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     private static final Logger LOG = Logger.getInstance(ExpressionTypingVisitor.class);
 
     public static class ForDeclarations extends ExpressionTypingVisitorDispatcher {
-        public ForDeclarations(@NotNull ExpressionTypingComponents components) {
-            super(components);
+        public ForDeclarations(@NotNull ExpressionTypingComponents components, @NotNull AnnotationChecker annotationChecker) {
+            super(components, annotationChecker);
         }
 
         @Override
@@ -64,9 +64,10 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
 
         public ForBlock(
                 @NotNull ExpressionTypingComponents components,
+                @NotNull AnnotationChecker annotationChecker,
                 @NotNull WritableScope writableScope
         ) {
-            super(components);
+            super(components, annotationChecker);
             this.visitorForBlock = new ExpressionTypingVisitorForStatements(
                     this, writableScope, basic, controlStructures, patterns, functions
             );
@@ -79,15 +80,18 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     }
 
     private final ExpressionTypingComponents components;
+    @NotNull private final AnnotationChecker annotationChecker;
     protected final BasicExpressionTypingVisitor basic;
     protected final FunctionsTypingVisitor functions;
     protected final ControlStructureTypingVisitor controlStructures;
     protected final PatternMatchingTypingVisitor patterns;
 
     private ExpressionTypingVisitorDispatcher(
-            @NotNull ExpressionTypingComponents components
+            @NotNull ExpressionTypingComponents components,
+            @NotNull AnnotationChecker annotationChecker
     ) {
         this.components = components;
+        this.annotationChecker = annotationChecker;
         this.basic = new BasicExpressionTypingVisitor(this);
         this.controlStructures = new ControlStructureTypingVisitor(this);
         this.patterns = new PatternMatchingTypingVisitor(this);
@@ -128,7 +132,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     @NotNull
     public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
         JetTypeInfo result = getTypeInfo(expression, context, this);
-        AnnotationChecker.INSTANCE$.checkExpression(expression, context.trace);
+        annotationChecker.checkExpression(expression, context.trace);
         return result;
     }
 

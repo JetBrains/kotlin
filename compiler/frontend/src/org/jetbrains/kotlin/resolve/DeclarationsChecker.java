@@ -47,21 +47,24 @@ public class DeclarationsChecker {
     @NotNull private final BindingTrace trace;
     @NotNull private final ModifiersChecker.ModifiersCheckingProcedure modifiersChecker;
     @NotNull private final DescriptorResolver descriptorResolver;
+    @NotNull private final AnnotationChecker annotationChecker;
 
     public DeclarationsChecker(
             @NotNull DescriptorResolver descriptorResolver,
             @NotNull ModifiersChecker modifiersChecker,
+            @NotNull AnnotationChecker annotationChecker,
             @NotNull BindingTrace trace
     ) {
         this.descriptorResolver = descriptorResolver;
         this.modifiersChecker = modifiersChecker.withTrace(trace);
+        this.annotationChecker = annotationChecker;
         this.trace = trace;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
         for (JetFile file : bodiesResolveContext.getFiles()) {
             checkModifiersAndAnnotationsInPackageDirective(file);
-            AnnotationChecker.INSTANCE$.check(file, trace, null);
+            annotationChecker.check(file, trace, null);
         }
 
         Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
@@ -133,7 +136,7 @@ public class DeclarationsChecker {
                 }
             }
         }
-        AnnotationChecker.INSTANCE$.check(packageDirective, trace, null);
+        annotationChecker.check(packageDirective, trace, null);
         ModifierCheckerCore.INSTANCE$.check(packageDirective, trace, null);
     }
 
@@ -279,7 +282,7 @@ public class DeclarationsChecker {
             if (typeParameter != null) {
                 DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
             }
-            AnnotationChecker.INSTANCE$.check(jetTypeParameter, trace, null);
+            annotationChecker.check(jetTypeParameter, trace, null);
         }
     }
 

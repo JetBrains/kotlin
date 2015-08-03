@@ -49,14 +49,17 @@ public class ExpressionTypingServices {
     private final ExpressionTypingFacade expressionTypingFacade;
     private final ExpressionTypingComponents expressionTypingComponents;
 
+    @NotNull AnnotationChecker annotationChecker;
     @NotNull private final StatementFilter statementFilter;
 
     public ExpressionTypingServices(
             @NotNull ExpressionTypingComponents components,
+            @NotNull AnnotationChecker annotationChecker,
             @NotNull StatementFilter statementFilter,
             @NotNull ExpressionTypingVisitorDispatcher.ForDeclarations facade
     ) {
         this.expressionTypingComponents = components;
+        this.annotationChecker = annotationChecker;
         this.statementFilter = statementFilter;
         this.expressionTypingFacade = facade;
     }
@@ -227,7 +230,8 @@ public class ExpressionTypingServices {
             return TypeInfoFactoryPackage.createTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
+        ExpressionTypingInternals blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(
+                expressionTypingComponents, annotationChecker, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
         JetTypeInfo result = TypeInfoFactoryPackage.noTypeInfo(context);
@@ -260,7 +264,7 @@ public class ExpressionTypingServices {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
                 // We take current data flow info if jump there is not possible
             }
-            blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, scope);
+            blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
         }
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }

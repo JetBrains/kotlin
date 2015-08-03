@@ -192,7 +192,7 @@ public class ModifiersChecker {
             checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
             ClassDescriptor classDescriptor = descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
-            AnnotationChecker.INSTANCE$.check(modifierListOwner, trace, classDescriptor);
+            annotationChecker.check(modifierListOwner, trace, classDescriptor);
         }
 
         public void checkModifiersForLocalDeclaration(
@@ -201,7 +201,7 @@ public class ModifiersChecker {
         ) {
             checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
-            AnnotationChecker.INSTANCE$.check(modifierListOwner, trace,
+            annotationChecker.check(modifierListOwner, trace,
                                               descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
             ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
         }
@@ -286,9 +286,13 @@ public class ModifiersChecker {
     }
 
     @NotNull
+    private final AnnotationChecker annotationChecker;
+
+    @NotNull
     private final Iterable<DeclarationChecker> declarationCheckers;
 
-    public ModifiersChecker(@NotNull Iterable<DeclarationChecker> declarationCheckers) {
+    public ModifiersChecker(@NotNull AnnotationChecker annotationChecker, @NotNull Iterable<DeclarationChecker> declarationCheckers) {
+        this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
     }
 

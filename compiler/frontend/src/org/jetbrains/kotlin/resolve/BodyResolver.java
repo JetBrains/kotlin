@@ -54,7 +54,7 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
     @NotNull private final ScriptBodyResolver scriptBodyResolverResolver;
-    @NotNull private final ModifiersChecker modifiersChecker;
+    @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
     @NotNull private final ObservableBindingTrace trace;
@@ -78,7 +78,7 @@ public class BodyResolver {
             @NotNull ScriptBodyResolver scriptBodyResolverResolver,
             @NotNull BindingTrace trace,
             @NotNull ValueParameterResolver valueParameterResolver,
-            @NotNull ModifiersChecker modifiersChecker
+            @NotNull AnnotationChecker annotationChecker
     ) {
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
@@ -89,7 +89,7 @@ public class BodyResolver {
         this.expressionTypingServices = expressionTypingServices;
         this.functionAnalyzerExtension = functionAnalyzerExtension;
         this.scriptBodyResolverResolver = scriptBodyResolverResolver;
-        this.modifiersChecker = modifiersChecker;
+        this.annotationChecker = annotationChecker;
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
     }
@@ -507,7 +507,7 @@ public class BodyResolver {
     }
 
     private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull JetScope scope) {
-        AnnotationChecker.INSTANCE$.check(owner, trace, null);
+        annotationChecker.check(owner, trace, null);
         ModifierCheckerCore.INSTANCE$.check(owner, trace, null);
         JetModifierList modifierList = owner.getModifierList();
         if (modifierList == null) return;

@@ -82,7 +82,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
         additionalSymbolUsageValidators = listOf(),
 
-        additionalAnnotationChecker = RepeatableAnnotationChecker
+        additionalAnnotationCheckers = listOf(RepeatableAnnotationChecker)
 ) {
 
     override fun configure(container: StorageComponentContainer) {
