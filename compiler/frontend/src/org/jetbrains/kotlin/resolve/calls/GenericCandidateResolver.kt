@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -279,6 +280,7 @@ class GenericCandidateResolver(
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                            ?: return
+        if (!ReflectionTypes.isCallableType(expectedType)) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
         constraintSystem.addSubtypeConstraint(resolvedType, effectiveExpectedType, position)
