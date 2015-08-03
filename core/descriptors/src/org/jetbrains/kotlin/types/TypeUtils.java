@@ -99,6 +99,12 @@ public class TypeUtils {
             return null;
         }
 
+        @NotNull
+        @Override
+        public TypeCapabilities getCapabilities() {
+            return TypeCapabilities.NONE.INSTANCE$;
+        }
+
         @Override
         public String toString() {
             return name;
@@ -797,6 +803,18 @@ public class TypeUtils {
         @Override
         public TypeSubstitution getSubstitution() {
             return delegate.getSubstitution();
+        }
+
+        @Nullable
+        @Override
+        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+            return delegate.getCapability(capabilityClass);
+        }
+
+        @NotNull
+        @Override
+        public TypeCapabilities getCapabilities() {
+            return delegate.getCapabilities();
         }
     }
 

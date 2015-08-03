@@ -20,6 +20,13 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 public interface TypeCapability
 
+public interface TypeCapabilities {
+    object NONE : TypeCapabilities {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = null
+    }
+
+    fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
+}
 public interface Specificity : TypeCapability {
 
     public enum class Relation {

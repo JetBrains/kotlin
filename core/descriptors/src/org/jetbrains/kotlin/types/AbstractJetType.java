@@ -29,7 +29,13 @@ public abstract class AbstractJetType implements JetType {
     @Nullable
     @Override
     public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-        return null;
+        return getCapabilities().getCapability(capabilityClass);
+    }
+
+    @NotNull
+    @Override
+    public TypeCapabilities getCapabilities() {
+        return TypeCapabilities.NONE.INSTANCE$;
     }
 
     @Override
