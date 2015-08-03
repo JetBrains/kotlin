@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
     private val arrayGetFunctionName = "get"
@@ -57,7 +56,7 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
                                 JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == arrayGetFunctionName } ?: false
         val isGetOperation = (isGetFunctionCall || instruction.element is JetArrayAccessExpression) &&
                              instruction.inputValues.size() == 2
-        return isGetOperation && receiverIsArray(instruction)
+        return isGetOperation && KotlinArrayUtils.receiverIsArray(instruction)
     }
 
     private fun isArraySetCall(instruction: CallInstruction): Boolean {
@@ -67,14 +66,7 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
                                           instruction.element.left is JetArrayAccessExpression
         val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
                              instruction.inputValues.size() == 3
-        return isSetOperation && receiverIsArray(instruction)
-    }
-
-    private fun receiverIsArray(instruction: CallInstruction): Boolean {
-        val callReceiver = instruction.resolvedCall.dispatchReceiver
-        return if (callReceiver != ReceiverValue.NO_RECEIVER)
-            KotlinCodeUtils.isGenericOrPrimitiveArray(callReceiver.type)
-        else false
+        return isSetOperation && KotlinArrayUtils.receiverIsArray(instruction)
     }
 
     private fun checkOutOfBoundAccess(instruction: CallInstruction, valuesData: ValuesData, ctxt: VariableContext) {

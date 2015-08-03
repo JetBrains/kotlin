@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import java.util.HashMap
 
 // This file contains functionality similar to org.jetbrains.kotlin.cfg.PseudocodeVariablesData,
@@ -280,7 +281,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
                 when {
-                    KotlinCodeUtils.isExpectedReturnType(instruction) { KotlinCodeUtils.isGenericOrPrimitiveArray(it) } ->
+                    InstructionUtils.isExpectedReturnType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) } ->
                         processArrayCreation(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
@@ -325,7 +326,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
-            KotlinCodeUtils.isGenericOrPrimitiveArray(variableType) ->
+            KotlinArrayUtils.isGenericOrPrimitiveArray(variableType) ->
                 updatedData.arraysToSizes.put(variableDescriptor, IntegerVariableValues())
         }
     }
@@ -391,7 +392,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
                 )
             }
-            KotlinCodeUtils.isGenericOrPrimitiveArray(targetType) -> {
+            KotlinArrayUtils.isGenericOrPrimitiveArray(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
                 updatedData.arraysToSizes.put(
                         variableDescriptor,
@@ -421,9 +422,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             return when (calledName) {
-                KotlinCodeUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
-                KotlinCodeUtils.arrayConstructorName,
-                in KotlinCodeUtils.primitiveArrayConstructorNames -> {
+                KotlinArrayUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
+                KotlinArrayUtils.arrayConstructorName,
+                in KotlinArrayUtils.primitiveArrayConstructorNames -> {
                     if (instruction.inputValues.isEmpty()) {
                         // Code possibly contains error (like Array<Int>())
                         // so we can't define size
@@ -511,13 +512,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun isSizeMethodCallOnArray(instruction: CallInstruction): Boolean =
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
-            val isSizeMethodCalled = calledName == KotlinCodeUtils.sizeMethodNameOfArray
-            val arrayIsReceiver = KotlinCodeUtils.isGenericOrPrimitiveArray(instruction.resolvedCall.dispatchReceiver.type)
-            val returnTypeIsInt = KotlinCodeUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
+            val isSizeMethodCalled = calledName == KotlinArrayUtils.sizeMethodNameOfArray
+            val arrayIsReceiver = KotlinArrayUtils.receiverIsArray(instruction)
+            val returnTypeIsInt = InstructionUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
             isSizeMethodCalled && arrayIsReceiver && returnTypeIsInt
         }
         else false
-
 
     private fun processSizeMethodCallOnArray(instruction: CallInstruction, updatedData: ValuesData) {
         if (!instruction.inputValues.isEmpty()) {
