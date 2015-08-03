@@ -21,6 +21,7 @@ import com.sun.org.apache.xml.internal.security.keys.content.KeyValue
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfo
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfoImpl
@@ -57,10 +58,6 @@ import kotlin.properties.Delegates
 // merge functionality in this two files
 
 public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
-    private val arrayOfFunctionName: String = "arrayOf"
-    private val arrayConstructorName: String = "Array"
-    private val intArrayConstructorName = "IntArray"
-
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
     // The map below is used to define indices of instructions. To achieve O(1) operation time cost
     // the map is created with capacity = instructions number (+ constant) and load factor = 1
@@ -330,13 +327,13 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
-        val variableType = variableDescriptor.getType()
+        val variableType = variableDescriptor.type
         when {
             KotlinBuiltIns.isInt(variableType) ->
                 updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
-            KotlinBuiltIns.isArray(variableType) ->
+            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(variableType) ->
                 updatedData.arraysToSizes.put(variableDescriptor, IntegerVariableValues())
         }
     }
@@ -402,7 +399,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
                 )
             }
-            KotlinBuiltIns.isArray(targetType) -> {
+            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
                 updatedData.arraysToSizes.put(
                         variableDescriptor,
@@ -425,7 +422,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return instruction.resolvedCall
                 .getCandidateDescriptor()
                 .getReturnType()
-                ?.let { KotlinBuiltIns.isArray(it) }
+                ?.let { KotlinBuiltInsUtils.isGenericOrPrimitiveArray(it) }
                ?: false
     }
 
@@ -441,10 +438,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             return when (calledName) {
-                arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
-                arrayConstructorName, intArrayConstructorName -> {
-                    // there are other kinds of array constructors (for example, ByteArray)
-                    // and they will be added later
+                KotlinBuiltInsUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
+                KotlinBuiltInsUtils.arrayConstructorName,
+                in KotlinBuiltInsUtils.primitiveArrayConstructorNames -> {
                     if (instruction.inputValues.isEmpty()) {
                         // Code possibly contains error (like Array<Int>())
                         // so we can't define size

@@ -4,3 +4,13 @@ fun accessWithLiteral(): Int {
     val b = <!OUT_OF_BOUND_ACCESS!>arr[1]<!>
     return a + b
 }
+
+fun simpleFor() {
+    val arr = IntArray(5)
+    for (i in 0..4) {
+        println(arr[i])
+    }
+    for (i in 0..5) {
+        println(<!OUT_OF_BOUND_ACCESS!>arr[i]<!>)
+    }
+}

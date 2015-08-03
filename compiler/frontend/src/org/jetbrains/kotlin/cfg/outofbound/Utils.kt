@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.util.containers.HashMap
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.types.JetType
 
 public object MapUtils {
     public fun mapToString<K, V, C : Comparable<C>>(
@@ -63,4 +66,13 @@ public object MapUtils {
 public object JetExpressionUtils {
     public fun tryGetCalledName(callExpression: JetCallExpression): String? =
             callExpression.getCalleeExpression()?.getNode()?.getText()
+}
+
+public object KotlinBuiltInsUtils {
+    public  fun isGenericOrPrimitiveArray(type: JetType): Boolean =
+            KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
+
+    public val arrayOfFunctionName: String = "arrayOf"
+    public val arrayConstructorName: String = "Array"
+    public val primitiveArrayConstructorNames: Set<String> = PrimitiveType.values().map { it.arrayTypeName.asString() }.toSet()
 }
