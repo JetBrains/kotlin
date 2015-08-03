@@ -28,22 +28,32 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 class DeserializedAnnotations(
         storageManager: StorageManager,
         compute: () -> List<AnnotationDescriptor>
+) : DeserializedAnnotationsWithPossibleTargets(
+        storageManager,
+        { compute().map { AnnotationWithTarget(it, null) } })
+
+open class DeserializedAnnotationsWithPossibleTargets(
+        storageManager: StorageManager,
+        compute: () -> List<AnnotationWithTarget>
 ) : Annotations {
     private val annotations = storageManager.createLazyValue { compute().toReadOnlyList() }
 
     override fun isEmpty(): Boolean = annotations().isEmpty()
 
     override fun findAnnotation(fqName: FqName) = annotations().firstOrNull {
-        annotation ->
-        val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
+        annotationWithTarget ->
+        if (annotationWithTarget.target != null) return@firstOrNull false
+        val descriptor = annotationWithTarget.annotation.type.constructor.declarationDescriptor
         descriptor is ClassDescriptor && fqName.equalsTo(DescriptorUtils.getFqName(descriptor))
-    }
+    }?.annotation
 
     override fun findExternalAnnotation(fqName: FqName) = null
 
-    override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
+    override fun getUseSiteTargetedAnnotations() = annotations().filter { it.target != null }
 
-    override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
+    override fun getAllAnnotations() = annotations()
 
-    override fun iterator(): Iterator<AnnotationDescriptor> = annotations().iterator()
+    override fun iterator(): Iterator<AnnotationDescriptor> {
+        return annotations().asSequence().filter { it.target == null }.map { it.annotation }.iterator()
+    }
 }

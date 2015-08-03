@@ -48,6 +48,14 @@ public interface AnnotationAndConstantLoader<A, C> {
     );
 
     @NotNull
+    List<A> loadExtensionReceiverParameterAnnotations(
+            @NotNull ProtoContainer container,
+            @NotNull ProtoBuf.Callable callable,
+            @NotNull NameResolver nameResolver,
+            @NotNull AnnotatedCallableKind kind
+    );
+
+    @NotNull
     List<A> loadTypeAnnotations(
             @NotNull ProtoBuf.Type type,
             @NotNull NameResolver nameResolver

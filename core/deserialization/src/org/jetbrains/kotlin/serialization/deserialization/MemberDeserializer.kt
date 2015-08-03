@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
+import org.jetbrains.kotlin.utils.sure
 
 public class MemberDeserializer(private val c: DeserializationContext) {
     public fun loadCallable(proto: Callable): CallableMemberDescriptor {
@@ -43,9 +47,16 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     private fun loadProperty(proto: Callable): PropertyDescriptor {
         val flags = proto.getFlags()
 
+        val hasGetter = Flags.HAS_GETTER.get(flags)
+
+        val propertyAnnotations = if (hasGetter)
+            getAnnotationsWithReceiverTargeted(proto, AnnotatedCallableKind.PROPERTY, AnnotatedCallableKind.PROPERTY_GETTER)
+        else
+            getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY)
+
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
-                getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
+                propertyAnnotations,
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
@@ -63,7 +74,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
         )
 
-        val getter = if (Flags.HAS_GETTER.get(flags)) {
+        val getter = if (hasGetter) {
             val getterFlags = proto.getGetterFlags()
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
             val getter = if (isNotDefault) {
@@ -128,11 +139,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun loadFunction(proto: Callable): CallableMemberDescriptor {
-        val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
+        val annotations = getAnnotationsWithReceiverTargeted(proto, AnnotatedCallableKind.FUNCTION)
         val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, proto, c.nameResolver, annotations)
         val local = c.childContext(function, proto.getTypeParameterList())
+        val receiverParameterType = if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
+
         function.initialize(
-                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null,
+                receiverParameterType,
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
@@ -161,6 +174,29 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         )
         descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()))
         return descriptor
+    }
+
+    private fun getAnnotationsWithReceiverTargeted(
+            proto: Callable,
+            kind: AnnotatedCallableKind,
+            receiverTargetedKind: AnnotatedCallableKind = kind
+    ): Annotations {
+        return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+            val annotations = arrayListOf<AnnotationWithTarget>()
+            val container = c.containingDeclaration.asProtoContainer()
+
+            annotations += c.components.annotationAndConstantLoader
+                    .loadCallableAnnotations(container, proto, c.nameResolver, kind)
+                    .map { AnnotationWithTarget(it, null) }
+
+            if (proto.hasReceiverType()) {
+                annotations += c.components.annotationAndConstantLoader
+                        .loadExtensionReceiverParameterAnnotations(container, proto, c.nameResolver, receiverTargetedKind)
+                        .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+            }
+
+            annotations
+        }
     }
 
     private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {

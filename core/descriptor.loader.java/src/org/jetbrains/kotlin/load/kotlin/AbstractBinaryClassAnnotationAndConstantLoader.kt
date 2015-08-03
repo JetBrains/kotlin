@@ -132,6 +132,22 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         return listOf()
     }
 
+    override fun loadExtensionReceiverParameterAnnotations(
+            container: ProtoContainer,
+            callable: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): List<A> {
+        if (!callable.hasReceiverType()) return emptyList()
+        val methodSignature = getCallableSignature(callable, nameResolver, kind)
+        if (methodSignature != null) {
+            val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
+            return findClassAndLoadMemberAnnotations(container, callable, nameResolver, kind, paramSignature)
+        }
+
+        return emptyList()
+    }
+
     override fun loadTypeAnnotations(type: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return type.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
     }

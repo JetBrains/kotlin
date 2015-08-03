@@ -57,6 +57,13 @@ class KotlinJavascriptAnnotationAndConstantLoader(
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
     }
 
+    override fun loadExtensionReceiverParameterAnnotations(
+            container: ProtoContainer,
+            callable: ProtoBuf.Callable,
+            nameResolver: NameResolver,
+            kind: AnnotatedCallableKind
+    ): List<AnnotationDescriptor> = emptyList()
+
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(JsProtoBuf.typeAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }

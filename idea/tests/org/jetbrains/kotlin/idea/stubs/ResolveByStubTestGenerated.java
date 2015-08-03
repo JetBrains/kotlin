@@ -468,6 +468,21 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithUseSiteTarget extends AbstractResolveByStubTest {
+            public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ReceiverTarget.kt")
+            public void testReceiverTarget() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/class")
