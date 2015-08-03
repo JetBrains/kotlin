@@ -14,7 +14,7 @@ fun Int.qux(zux: String) {}
 fun checkParameters(f: KFunction<*>, names: List<String?>) {
     val params = f.parameters
     assertEquals(names, params.map { it.name })
-    assertEquals((0..params.size() - 1).toList(), params.mapIndexed { index, element -> index })
+    assertEquals(params.indices.toList(), params.map { it.index })
 }
 
 fun box(): String {
