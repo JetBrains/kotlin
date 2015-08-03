@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.psi.JetStringTemplateEntry
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
-data class SplitArguments(val positional: List<ValueArgument>, val named: List<ValueArgument>)
+data class PositionalAndNamedArguments(val positional: List<ValueArgument>, val named: List<ValueArgument>)
 {
     fun get(position: Int, name: String): ValueArgument? =
             positional.getOrNull(position) ?: named.find { it.getArgumentName()!!.asName.asString() == name }
 }
 
-fun List<ValueArgument>.splitToPositionalAndNamed(): SplitArguments {
+fun List<ValueArgument>.splitToPositionalAndNamed(): PositionalAndNamedArguments {
     val (positional, named) = partition { !it.isNamed() }
-    return SplitArguments(positional, named)
+    return PositionalAndNamedArguments(positional, named)
 }
 
 fun ValueArgument.parseIntegerValue(): Int = getArgumentExpression()!!.text.toInt()

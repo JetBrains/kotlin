@@ -26,66 +26,8 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.psi.*
 import java.io.File
 import java.io.IOException
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 
-fun main(args: Array<String>) {
-    require(args.size() == 1, "Please specify path to sources")
-
-    val sourcePath = File(args.first())
-
-//    val evaluators = listOf(JvmPlatformEvaluator(version = 7), JsPlatformEvaluator())
-
-    //println("Using condition evaluator: $evaluators")
-
-    val targetPath = File("libraries/stdlib/target")
-
-
-    val profiles = listOf(6, 7, 8).map { Preprocessor(createJvmProfile(targetPath, version = it)) }
-
-    val pool = Executors.newFixedThreadPool(4)
-
-    profiles.forEach { pool.submit { it.processSources(sourcePath) } }
-
-    pool.shutdown()
-    pool.awaitTermination(1, TimeUnit.MINUTES)
-}
-
-
-data class Modification(val range: TextRange, val selector: (String) -> String)
-
-class CollectModificationsVisitor(evaluators: List<Evaluator>) : JetTreeVisitorVoid() {
-
-    val elementModifications: Map<Evaluator, MutableList<Modification>> =
-            evaluators.toMap(selector = { it }, transform = { arrayListOf<Modification>() })
-
-    override fun visitDeclaration(declaration: JetDeclaration) {
-        super.visitDeclaration(declaration)
-
-        val annotations = declaration.parseConditionalAnnotations()
-        val name = (declaration as? JetNamedDeclaration)?.nameAsSafeName ?: declaration.name
-
-        val declResults = arrayListOf<Pair<Evaluator, Boolean>>()
-        for ((evaluator, modifications) in elementModifications) {
-            val conditionalResult = evaluator(annotations)
-            declResults.add(evaluator to conditionalResult)
-
-            if (!conditionalResult)
-                modifications.add(Modification(declaration.textRange) {""})
-            else {
-                val targetName = annotations.filterIsInstance<Conditional.TargetName>().singleOrNull()
-                if (targetName != null) {
-                    val placeholderName = (declaration as JetNamedDeclaration).nameAsName!!.asString()
-                    val realName = targetName.name
-                    modifications.add(Modification(declaration.textRange) { it.replace(placeholderName, realName) })
-                }
-            }
-
-        }
-        //println("declaration: ${declaration.javaClass.simpleName} $name${if (annotations.isNotEmpty()) ", annotations: ${annotations.joinToString { it.toString() }}, evaluation result: $declResults" else ""}")
-    }
-}
 
 
 data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
@@ -111,7 +53,9 @@ public class Preprocessor(val profile: Profile) {
         object Skip : FileProcessingResult()
         object Copy : FileProcessingResult()
 
-        class Modify(val sourceText: String, val modifications: List<Modification>) : FileProcessingResult()
+        class Modify(val sourceText: String, val modifications: List<Modification>) : FileProcessingResult() {
+            fun getModifiedText(): String = modifications.applyTo(sourceText)
+        }
     }
 
     public fun processSources(sourceRoot: File) {
@@ -162,7 +106,7 @@ public class Preprocessor(val profile: Profile) {
             if (result is FileProcessingResult.Copy) {
                 FileUtil.copy(sourceFile, destFile)
             } else if (result is FileProcessingResult.Modify) {
-                val resultText = applyModifications(result.modifications, result.sourceText, evaluator)
+                val resultText = result.getModifiedText()
                 if (destFile.exists() && destFile.isTextEqualTo(resultText))
                     continue
                 destFile.writeText(resultText)
@@ -228,27 +172,6 @@ public class Preprocessor(val profile: Profile) {
 
     }
 
-    private fun applyModifications(modifications: List<Modification>, sourceText: String, evaluator: Evaluator): String {
-        var prevIndex = 0
-        val result = StringBuilder()
-        for ((range, selector) in modifications) {
-            result.append(sourceText, prevIndex, range.startOffset)
-            val rangeText = range.substring(sourceText)
-            val newValue = selector(rangeText)
-            if (newValue.isEmpty()) {
-                result.append("/* Not available on $evaluator */")
-                repeat(StringUtil.getLineBreakCount(rangeText)) {
-                    result.append("\n")
-                }
-            }
-            else {
-                result.append(newValue)
-            }
-            prevIndex = range.endOffset
-        }
-        result.append(sourceText, prevIndex, sourceText.length())
-        return result.toString()
-    }
 
 }
 

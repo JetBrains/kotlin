@@ -22,7 +22,7 @@ interface Conditional {
 
     interface PlatformVersion : Conditional
 
-    abstract class Parser(val name: String, val parse: (arguments: SplitArguments) -> Conditional)
+    abstract class Parser(val name: String, val parse: (arguments: PositionalAndNamedArguments) -> Conditional)
 
     data class JvmVersion(val minimum: Int, val maximum: Int): PlatformVersion {
         val versionRange: IntRange = minimum..maximum
