@@ -17,16 +17,11 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.intellij.psi.tree.IElementType
-import com.sun.org.apache.xml.internal.security.keys.content.KeyValue
 import org.jetbrains.kotlin.JetNodeType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfo
 import org.jetbrains.kotlin.cfg.LexicalScopeVariableInfoImpl
-import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
-import org.jetbrains.kotlin.cfg.outofbound.IntegerVariableValues
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
@@ -42,16 +37,10 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-import java.util.*
-import kotlin.properties.Delegates
+import java.util.HashMap
 
 // This file contains functionality similar to org.jetbrains.kotlin.cfg.PseudocodeVariablesData,
 // but collects information about integer variables' values. Semantically it would be better to
@@ -293,9 +282,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 when {
                     isArrayCreation(instruction) -> processArrayCreation(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
-                        processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                        processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                     instruction.element is JetPrefixExpression ->
-                        processUnaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                        processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
@@ -314,7 +303,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     MagicKind.AND, MagicKind.OR -> {
                         // && and || operations are represented as MagicInstruction for some reason (not as CallInstruction)
                         if (instruction.element is JetBinaryExpression) {
-                            processBinaryOperation(instruction.element.getOperationToken(), instruction, updatedData)
+                            processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                         }
                     }
                     else -> Unit
@@ -340,11 +329,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun processLiteral(element: JetConstantExpression, instruction: ReadValueInstruction, updatedData: ValuesData) {
         // process literal occurrence (all literals are stored to fake variables by read instruction)
-        val node = element.getNode()
-        val nodeType = node.getElementType() as? JetNodeType
+        val node = element.node
+        val nodeType = node.elementType as? JetNodeType
                        ?: return
         val fakeVariable = instruction.outputValue
-        val valueAsText = node.getText()
+        val valueAsText = node.text
         when (nodeType) {
             JetNodeTypes.INTEGER_CONSTANT ->
                 try {
@@ -382,7 +371,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
         val fakeVariable = instruction.rValue
-        val targetType = tryGetTargetDescriptor(instruction.target)?.getReturnType()
+        val targetType = tryGetTargetDescriptor(instruction.target)?.returnType
                          ?: return
         when {
             KotlinBuiltIns.isInt(targetType) -> {
@@ -412,7 +401,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun tryGetTargetDescriptor(target: AccessTarget): CallableDescriptor? {
         return when(target) {
             is AccessTarget.Declaration -> target.descriptor
-            is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
+            is AccessTarget.Call -> target.resolvedCall.resultingDescriptor
             else -> null
         }
     }
@@ -420,8 +409,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun isArrayCreation(instruction: CallInstruction): Boolean {
         // todo: change to annotations checking
         return instruction.resolvedCall
-                .getCandidateDescriptor()
-                .getReturnType()
+                .candidateDescriptor
+                .returnType
                 ?.let { KotlinBuiltInsUtils.isGenericOrPrimitiveArray(it) }
                ?: false
     }

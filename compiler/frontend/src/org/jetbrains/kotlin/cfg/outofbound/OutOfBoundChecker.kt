@@ -17,37 +17,28 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.google.common.collect.Maps
-import org.jetbrains.kotlin.JetNodeType
-import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cfg.outofbound.PseudocodeIntegerVariablesDataCollector
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.scopes.receivers
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import java.util.*
-import kotlin.properties.Delegates
 
 public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
     private val arrayGetFunctionName = "get"
     private val arraySetFunctionName = "set"
 
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
-            PseudocodeIntegerVariablesDataCollector(pseudocode, trace.getBindingContext())
+            PseudocodeIntegerVariablesDataCollector(pseudocode, trace.bindingContext)
 
     public fun checkOutOfBoundErrors() {
         val outOfBoundAnalysisData = pseudocodeVariablesDataCollector.collectVariableValuesData()
@@ -73,16 +64,16 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
         val isSetFunctionCall = instruction.element is JetCallExpression &&
                                 JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == arraySetFunctionName } ?: false
         val isSetThroughAccessOperation = instruction.element is JetBinaryExpression &&
-                                          instruction.element.getLeft() is JetArrayAccessExpression
+                                          instruction.element.left is JetArrayAccessExpression
         val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
                              instruction.inputValues.size() == 3
         return isSetOperation && receiverIsArray(instruction)
     }
 
     private fun receiverIsArray(instruction: CallInstruction): Boolean {
-        val callReceiver = instruction.resolvedCall.getDispatchReceiver()
+        val callReceiver = instruction.resolvedCall.dispatchReceiver
         return if (callReceiver != ReceiverValue.NO_RECEIVER)
-            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(callReceiver.getType())
+            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(callReceiver.type)
         else false
     }
 

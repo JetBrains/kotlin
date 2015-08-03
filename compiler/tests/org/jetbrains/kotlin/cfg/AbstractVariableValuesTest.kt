@@ -16,33 +16,15 @@
 
 package org.jetbrains.kotlin.cfg
 
-import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cfg.outofbound.MapUtils
-import org.jetbrains.kotlin.cfg.outofbound.OutOfBoundChecker
 import org.jetbrains.kotlin.cfg.outofbound.PseudocodeIntegerVariablesDataCollector
 import org.jetbrains.kotlin.cfg.outofbound.ValuesData
-import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.runner.RunWith
-import java.io.File
-import java.io.IOException
-import java.util.*
-import java.util.regex.Pattern
 
 public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
     override fun createEnvironment(): KotlinCoreEnvironment {
@@ -90,7 +72,7 @@ public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
     )
 
     private fun dumpCollectedData(dataMap: Map<Instruction, ValuesData>): DumpData {
-        val descriptorToString: (VariableDescriptor) -> String = { it.getName().asString() }
+        val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
         val data = dataMap.mapValues {
             CollectedDataStrings(
                     "INTS${MapUtils.mapToString(it.value.intVarsToValues, descriptorToString, descriptorToString)}",
