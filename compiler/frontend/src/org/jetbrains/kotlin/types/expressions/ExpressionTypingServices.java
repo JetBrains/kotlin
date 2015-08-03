@@ -49,7 +49,7 @@ public class ExpressionTypingServices {
     private final ExpressionTypingFacade expressionTypingFacade;
     private final ExpressionTypingComponents expressionTypingComponents;
 
-    @NotNull AnnotationChecker annotationChecker;
+    @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final StatementFilter statementFilter;
 
     public ExpressionTypingServices(
