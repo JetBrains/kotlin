@@ -1,4 +1,5 @@
 package
 
 internal fun accessWithLiteral(): kotlin.Int
+internal fun arraySizeMethodCall(): kotlin.Unit
 internal fun simpleFor(): kotlin.Unit
