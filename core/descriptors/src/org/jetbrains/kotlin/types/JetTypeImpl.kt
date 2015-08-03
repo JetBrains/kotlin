@@ -14,96 +14,49 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.types;
+package org.jetbrains.kotlin.types
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-import java.util.List;
-
-public final class JetTypeImpl extends AbstractJetType {
-
-    private final TypeConstructor constructor;
-    private final List<? extends TypeProjection> arguments;
-    private final boolean nullable;
-    private final JetScope memberScope;
-    private final Annotations annotations;
-    private final TypeSubstitution substitution;
-
-    public JetTypeImpl(
-            @NotNull Annotations annotations,
-            @NotNull TypeConstructor constructor,
-            boolean nullable,
-            @NotNull List<? extends TypeProjection> arguments,
-            @Nullable TypeSubstitution substitution,
-            @NotNull JetScope memberScope
-    ) {
-        this.annotations = annotations;
-
-        if (memberScope instanceof ErrorUtils.ErrorScope) {
-            throw new IllegalStateException("JetTypeImpl should not be created for error type: " + memberScope + "\n" + constructor);
+public class JetTypeImpl(
+        private val annotations: Annotations,
+        private val constructor: TypeConstructor,
+        private val nullable: Boolean,
+        private val arguments: List<TypeProjection>,
+        private val substitution: TypeSubstitution?,
+        private val memberScope: JetScope
+) : AbstractJetType() {
+    init {
+        if (memberScope is ErrorUtils.ErrorScope) {
+            throw IllegalStateException("JetTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
-
-        this.constructor = constructor;
-        this.nullable = nullable;
-        this.arguments = arguments;
-        this.memberScope = memberScope;
-        this.substitution = substitution;
     }
 
-    public JetTypeImpl(
-            @NotNull Annotations annotations,
-            @NotNull TypeConstructor constructor,
-            boolean nullable,
-            @NotNull List<? extends TypeProjection> arguments,
-            @NotNull JetScope memberScope
-    ) {
-        this(annotations, constructor, nullable, arguments, null, memberScope);
-    }
+    public constructor(
+            annotations: Annotations,
+            constructor: TypeConstructor,
+            nullable: Boolean,
+            arguments: List<TypeProjection>,
+            memberScope: JetScope
+    ) : this(annotations, constructor, nullable, arguments, null, memberScope)
 
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return annotations;
-    }
+    override fun getAnnotations() = annotations
 
-    @NotNull
-    @Override
-    public TypeSubstitution getSubstitution() {
+    override fun getSubstitution(): TypeSubstitution {
         if (substitution == null) {
-            return new IndexedParametersSubstitution(getConstructor(), getArguments());
+            return IndexedParametersSubstitution(getConstructor(), getArguments())
         }
-        return substitution;
+        return substitution
     }
 
-    @NotNull
-    @Override
-    public TypeConstructor getConstructor() {
-        return constructor;
-    }
+    override fun getConstructor() = constructor
 
-    @NotNull
-    @Override
-    public List<TypeProjection> getArguments() {
-        //noinspection unchecked
-        return (List) arguments;
-    }
+    override fun getArguments() = arguments
 
-    @Override
-    public boolean isMarkedNullable() {
-        return nullable;
-    }
+    override fun isMarkedNullable() = nullable
 
-    @NotNull
-    @Override
-    public JetScope getMemberScope() {
-        return memberScope;
-    }
+    override fun getMemberScope() = memberScope
 
-    @Override
-    public boolean isError() {
-        return false;
-    }
+    override fun isError() = false
 }
