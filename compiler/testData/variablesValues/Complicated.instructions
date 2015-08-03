@@ -1,0 +1,184 @@
+== forWithIf ==
+fun forWithIf() {
+    for (a in 1..5) {
+        if (!(a > 0 && a < 3 || a >= 4 && a < 10)) {
+            42
+        }
+        else {
+            43
+        }
+    }
+    44
+}
+---------------------
+L0:
+  1 <START>                                                                                           in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+  2 mark({ for (a in 1..5) { if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 } } 44 })    in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+  3 r(1) -> <v0>                                                                                      in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+    r(5) -> <v1>                                                                                      in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+    mark(1..5)                                                                                        in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+    call(1..5, rangeTo|<v0>, <v1>) -> <v2>                                                            in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+    v(a)                                                                                              in: INTS{}                  BOOLS{} ARRS{}    out: INTS{a:-}               BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    jmp?(L3)                                                                                          in: INTS{a:-}               BOOLS{} ARRS{}    out: INTS{a:-}               BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](1..5|<v2>) -> <v3>                                                    in: INTS{a:-}               BOOLS{} ARRS{}    out: INTS{a:-}               BOOLS{} ARRS{}
+    w(a|<v3>)                                                                                         in: INTS{a:-}               BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(for (a in 1..5) { if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 } })           in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+L4 [body entry point]:
+  4 mark({ if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 } })                           in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 })                               in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark((a > 0 && a < 3 || a >= 4 && a < 10))                                                        in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(a) -> <v4>                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(0) -> <v5>                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(a > 0)                                                                                       in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    call(a > 0, compareTo|<v4>, <v5>) -> <v6>                                                         in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    jf(L8|<v6>)                                                                                       in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(a) -> <v7>                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(3) -> <v8>                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(a < 3)                                                                                       in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    call(a < 3, compareTo|<v7>, <v8>) -> <v9>                                                         in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+L8 [result of boolean operation]:
+    magic[AND](a > 0 && a < 3|<v6>, <v9>) -> <v10>                                                    in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    jt(L7|<v10>)                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(a) -> <v11>                                                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(4) -> <v12>                                                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(a >= 4)                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    call(a >= 4, compareTo|<v11>, <v12>) -> <v13>                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    jf(L9|<v13>)                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(a) -> <v14>                                                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(10) -> <v15>                                                                                    in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(a < 10)                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    call(a < 10, compareTo|<v14>, <v15>) -> <v16>                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+L9 [result of boolean operation]:
+    magic[AND](a >= 4 && a < 10|<v13>, <v16>) -> <v17>                                                in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+L7 [result of boolean operation]:
+    magic[OR](a > 0 && a < 3 || a >= 4 && a < 10|<v10>, <v17>) -> <v18>                               in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    mark(!(a > 0 && a < 3 || a >= 4 && a < 10))                                                       in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    call(!(a > 0 && a < 3 || a >= 4 && a < 10), not|<v18>) -> <v19>                                   in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    jf(L10|<v19>)                                                                                     in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+  5 mark({ 42 })                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(42) -> <v20>                                                                                    in: INTS{a:[3]}             BOOLS{} ARRS{}    out: INTS{a:[3]}             BOOLS{} ARRS{}
+  4 jmp(L11)                                                                                          in: INTS{a:[3]}             BOOLS{} ARRS{}    out: INTS{a:[3]}             BOOLS{} ARRS{}
+L10 [else branch]:
+  5 mark({ 43 })                                                                                      in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+    r(43) -> <v21>                                                                                    in: INTS{a:[1, 2, 4, 5]}    BOOLS{} ARRS{}    out: INTS{a:[1, 2, 4, 5]}    BOOLS{} ARRS{}
+L11 ['if' expression result]:
+  4 merge(if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 }|<v20>, <v21>) -> <v22>        in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+  3 jmp(L2)                                                                                           in: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4, 5]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                       in: INTS{a:-}               BOOLS{} ARRS{}    out: INTS{a:-}               BOOLS{} ARRS{}
+  2 r(44) -> <v23>                                                                                    in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                             in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                           in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                            in: INTS{}                  BOOLS{} ARRS{}    out: INTS{}                  BOOLS{} ARRS{}
+=====================
+== nestedIf ==
+fun nestedIf() {
+    for (a in -1..6) {
+        if (a < 5) {
+            if (a > 0) {
+                if (a == 1) {
+                    41
+                }
+                else {
+                    if (a == 2) {
+                        42
+                    }
+                }
+            }
+            43
+        }
+        else {
+            44
+        }
+        45
+    }
+}
+---------------------
+L0:
+  1 <START>                                                                                                                          in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+  2 mark({ for (a in -1..6) { if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 } 45 } })    in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+  3 r(1) -> <v0>                                                                                                                     in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    mark(-1)                                                                                                                         in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    call(-1, minus|<v0>) -> <v1>                                                                                                     in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    r(6) -> <v2>                                                                                                                     in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    mark(-1..6)                                                                                                                      in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    call(-1..6, rangeTo|<v1>, <v2>) -> <v3>                                                                                          in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+    v(a)                                                                                                                             in: INTS{}                            BOOLS{} ARRS{}    out: INTS{a:-}                         BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    jmp?(L3)                                                                                                                         in: INTS{a:-}                         BOOLS{} ARRS{}    out: INTS{a:-}                         BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](-1..6|<v3>) -> <v4>                                                                                  in: INTS{a:-}                         BOOLS{} ARRS{}    out: INTS{a:-}                         BOOLS{} ARRS{}
+    w(a|<v4>)                                                                                                                        in: INTS{a:-}                         BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    mark(for (a in -1..6) { if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 } 45 })        in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+L4 [body entry point]:
+  4 mark({ if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 } 45 })                         in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    mark(if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 })                                in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    r(a) -> <v5>                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    r(5) -> <v6>                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    mark(a < 5)                                                                                                                      in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    call(a < 5, compareTo|<v5>, <v6>) -> <v7>                                                                                        in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    jf(L7|<v7>)                                                                                                                      in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+  5 mark({ if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 })                                                       in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    mark(if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } })                                                              in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    r(a) -> <v8>                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    r(0) -> <v9>                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    mark(a > 0)                                                                                                                      in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    call(a > 0, compareTo|<v8>, <v9>) -> <v10>                                                                                       in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    jf(L8|<v10>)                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+  6 mark({ if (a == 1) { 41 } else { if (a == 2) { 42 } } })                                                                         in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    mark(if (a == 1) { 41 } else { if (a == 2) { 42 } })                                                                             in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    r(a) -> <v11>                                                                                                                    in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    r(1) -> <v12>                                                                                                                    in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    mark(a == 1)                                                                                                                     in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    call(a == 1, equals|<v11>, <v12>) -> <v13>                                                                                       in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    jf(L9|<v13>)                                                                                                                     in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+  7 mark({ 41 })                                                                                                                     in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    r(41) -> <v14>                                                                                                                   in: INTS{a:[1]}                       BOOLS{} ARRS{}    out: INTS{a:[1]}                       BOOLS{} ARRS{}
+  6 jmp(L10)                                                                                                                         in: INTS{a:[1]}                       BOOLS{} ARRS{}    out: INTS{a:[1]}                       BOOLS{} ARRS{}
+L9 [else branch]:
+  7 mark({ if (a == 2) { 42 } })                                                                                                     in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+    mark(if (a == 2) { 42 })                                                                                                         in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    r(a) -> <v15>                                                                                                                    in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    r(2) -> <v16>                                                                                                                    in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    mark(a == 2)                                                                                                                     in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    call(a == 2, equals|<v15>, <v16>) -> <v17>                                                                                       in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    jf(L11|<v17>)                                                                                                                    in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+  8 mark({ 42 })                                                                                                                     in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+    r(42) -> <v18>                                                                                                                   in: INTS{a:[2]}                       BOOLS{} ARRS{}    out: INTS{a:[2]}                       BOOLS{} ARRS{}
+  7 jmp(L12)                                                                                                                         in: INTS{a:[2]}                       BOOLS{} ARRS{}    out: INTS{a:[2]}                       BOOLS{} ARRS{}
+L11 [else branch]:
+    read (Unit)                                                                                                                      in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+L12 ['if' expression result]:
+    merge(if (a == 2) { 42 }|<v18>) -> <v19>                                                                                         in: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}    out: INTS{a:[2, 3, 4]}                 BOOLS{} ARRS{}
+L10 ['if' expression result]:
+  6 merge(if (a == 1) { 41 } else { if (a == 2) { 42 } }|<v14>, <v19>) -> <v20>                                                      in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+  5 jmp(L13)                                                                                                                         in: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}    out: INTS{a:[1, 2, 3, 4]}              BOOLS{} ARRS{}
+L8 [else branch]:
+    read (Unit)                                                                                                                      in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+L13 ['if' expression result]:
+    merge(if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } }|<v20>) -> <v21>                                              in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+    r(43) -> <v22>                                                                                                                   in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+  4 jmp(L14)                                                                                                                         in: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4]}       BOOLS{} ARRS{}
+L7 [else branch]:
+  5 mark({ 44 })                                                                                                                     in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    r(44) -> <v23>                                                                                                                   in: INTS{a:[5, 6]}                    BOOLS{} ARRS{}    out: INTS{a:[5, 6]}                    BOOLS{} ARRS{}
+L14 ['if' expression result]:
+  4 merge(if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 }|<v22>, <v23>) -> <v24>         in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+    r(45) -> <v25>                                                                                                                   in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+  3 jmp(L2)                                                                                                                          in: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}    out: INTS{a:[-1, 0, 1, 2, 3, 4, 5, 6]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                      in: INTS{a:-}                         BOOLS{} ARRS{}    out: INTS{a:-}                         BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                                                            in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                          in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                           in: INTS{}                            BOOLS{} ARRS{}    out: INTS{}                            BOOLS{} ARRS{}
+=====================
