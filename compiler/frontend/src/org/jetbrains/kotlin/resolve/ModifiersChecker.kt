@@ -56,7 +56,6 @@ public object ModifierCheckerCore {
             OUT_KEYWORD       to EnumSet.of(TYPE_PARAMETER, TYPE_PROJECTION),
             REIFIED_KEYWORD   to EnumSet.of(TYPE_PARAMETER),
             VARARG_KEYWORD    to EnumSet.of(VALUE_PARAMETER, PROPERTY_PARAMETER),
-            DYNAMIC_KEYWORD   to emptySet(), // not really a modifier
             COMPANION_KEYWORD to EnumSet.of(OBJECT)
     )
 
