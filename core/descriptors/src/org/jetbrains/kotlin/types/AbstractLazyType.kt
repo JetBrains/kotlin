@@ -39,7 +39,14 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()
 
-    protected abstract fun computeMemberScope(): JetScope
+    protected open fun computeMemberScope(): JetScope {
+        val descriptor = constructor.getDeclarationDescriptor()
+        return when (descriptor) {
+            is TypeParameterDescriptor -> descriptor.getDefaultType().getMemberScope()
+            is ClassDescriptor -> descriptor.getMemberScope(substitution)
+            else -> throw IllegalStateException("Unsupported classifier: $descriptor")
+        }
+    }
 
     override fun isMarkedNullable() = false
 

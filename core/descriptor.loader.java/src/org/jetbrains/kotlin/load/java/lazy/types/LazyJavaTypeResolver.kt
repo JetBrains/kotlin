@@ -259,14 +259,6 @@ class LazyJavaTypeResolver(
             }
         }
 
-        override fun computeMemberScope(): JetScope {
-            val descriptor = getConstructor().getDeclarationDescriptor()!!
-
-            if (descriptor is TypeParameterDescriptor) return descriptor.getDefaultType().getMemberScope()
-
-             return (descriptor as ClassDescriptor).getMemberScope(substitution)
-        }
-
         override fun computeCustomSubstitution() = if (isRaw()) RawSubstitution else null
 
         private object RawSubstitution : TypeSubstitution() {
