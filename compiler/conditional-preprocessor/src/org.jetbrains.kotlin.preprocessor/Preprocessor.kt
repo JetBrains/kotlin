@@ -36,7 +36,7 @@ fun createJvmProfile(targetRoot: File, version: Int) = Profile("JVM$version", Jv
 fun createJsProfile(targetRoot: File) = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
 
 
-public class Preprocessor(val profile: Profile) {
+public class Preprocessor() {
 
     val fileType = JetFileType.INSTANCE
     val jetPsiFactory: JetPsiFactory
@@ -58,7 +58,7 @@ public class Preprocessor(val profile: Profile) {
         }
     }
 
-    public fun processSources(sourceRoot: File) {
+    public fun processSources(sourceRoot: File, profile: Profile) {
         processDirectorySingleEvaluator(sourceRoot, profile.targetRoot, profile.evaluator)
     }
 

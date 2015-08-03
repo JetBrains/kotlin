@@ -21,18 +21,16 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
-    require(args.size() == 1, "Please specify path to sources")
+    require(args.size() == 2, "Please specify path to sources and output path for all platforms")
 
-    val sourcePath = File(args.first())
+    val sourcePath = File(args[0])
+    val targetPath = File(args[1])
 
-    val targetPath = File("libraries/stdlib/target")
-
-
-    val profiles = listOf(6, 7, 8).map { Preprocessor(createJvmProfile(targetPath, version = it)) }
+    val profiles = listOf(6, 7, 8).map { createJvmProfile(targetPath, version = it) } + createJsProfile(targetPath)
 
     val pool = Executors.newCachedThreadPool()
 
-    profiles.forEach { pool.submit { it.processSources(sourcePath) } }
+    profiles.forEach { profile -> pool.submit { Preprocessor().processSources(sourcePath, profile) } }
 
     pool.shutdown()
     pool.awaitTermination(1, TimeUnit.MINUTES)

@@ -16,6 +16,7 @@
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
 
     <property name="output" value="${basedir}/dist"/>
+    <property name="intermediate-sources" value="${basedir}/out/src" />
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
     <property name="bootstrap.build.no.tests" value="false"/>
@@ -738,6 +739,10 @@
     </target>
 
     <target name="stdlib">
+        <taskdef name="kotlin-pp" classname="org.jetbrains.kotlin.preprocessor.PreprocessorTask" classpathref="classpath" classpath="out\production\conditional-preprocessor" />
+        <kotlin-pp src="libraries/stdlib/src">
+            <jvmprofile version="6" output="${intermediate-sources}/stdlib/jvm6" />
+        </kotlin-pp>
         <new-kotlinc output="${output}/classes/stdlib" moduleName="kotlin-stdlib" additionalOptions="-Xmultifile-package-facades">
             <src>
                 <include name="libraries/stdlib/src"/>
