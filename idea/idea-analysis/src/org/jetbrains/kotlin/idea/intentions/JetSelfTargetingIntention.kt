@@ -16,18 +16,22 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import java.util.HashMap
 
 public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         public val elementType: Class<TElement>,
@@ -66,6 +70,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         }
 
         for (element in elementsToCheck) {
+            @suppress("UNCHECKED_CAST")
             if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
                 return element as TElement
             }
@@ -76,8 +81,19 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
 
     protected open fun allowCaretInsideElement(element: PsiElement): Boolean = true
 
-    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
-            = getTarget(editor, file) != null
+    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+        val target = getTarget(editor, file) ?: return false
+        return !isIntentionBaseInspectionEnabled(project, target)
+    }
+
+    private fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
+        val inspection = findInspection(javaClass) ?: return false
+
+        val key = HighlightDisplayKey.find(inspection.shortName)
+        if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) return false
+
+        return inspection.intentions.single { it.intention.javaClass == javaClass }.additionalChecker(target)
+    }
 
     final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
         val target = getTarget(editor, file) ?: error("Intention is not applicable")
@@ -87,6 +103,28 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
     override fun startInWriteAction() = true
 
     override fun toString(): String = getText()
+
+    companion object {
+        private val intentionBasedInspections = HashMap<Class<out JetSelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
+
+        fun <TElement : JetElement> findInspection(intentionClass: Class<out JetSelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
+            if (intentionBasedInspections.containsKey(intentionClass)) {
+                @suppress("UNCHECKED_CAST")
+                return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
+            }
+
+            for (extension in Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION)) {
+                val inspection = extension.instance as? IntentionBasedInspection<*> ?: continue
+                if (inspection.intentions.any { it.intention.javaClass == intentionClass }) {
+                    intentionBasedInspections[intentionClass] = inspection
+                    @suppress("UNCHECKED_CAST")
+                    return inspection as IntentionBasedInspection<TElement>
+                }
+            }
+
+            return null
+        }
+    }
 }
 
 public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
