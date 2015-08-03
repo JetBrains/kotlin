@@ -20,7 +20,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 
@@ -44,10 +46,10 @@ public object AnnotationUseSiteTargetChecker {
             val target = annotationWithTarget.target ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, descriptor, annotation)
-                AnnotationUseSiteTarget.PROPERTY -> checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_PROPERTY_TARGET)
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_GET_TARGET)
-                AnnotationUseSiteTarget.PROPERTY_SETTER -> checkMutableProperty(descriptor, annotation, INAPPLICABLE_SET_TARGET)
+                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, descriptor, annotationWithTarget)
+                AnnotationUseSiteTarget.PROPERTY -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
+                AnnotationUseSiteTarget.PROPERTY_SETTER -> checkMutableProperty(descriptor, annotationWithTarget)
                 AnnotationUseSiteTarget.RECEIVER -> {
                     if (descriptor !is FunctionDescriptor && descriptor !is PropertyDescriptor) {
                         report(annotation, INAPPLICABLE_RECEIVER_TARGET)
@@ -67,7 +69,7 @@ public object AnnotationUseSiteTargetChecker {
                         }
                     }
                 }
-                AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotation, INAPPLICABLE_SPARAM_TARGET)
+                AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotationWithTarget)
                 AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
             }
         }
@@ -76,36 +78,32 @@ public object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkFieldTargetApplicability(
             modifierListOwner: JetAnnotated,
             descriptor: DeclarationDescriptor,
-            annotation: AnnotationDescriptor) {
-        if (checkIfPropertyDescriptor(descriptor, annotation, INAPPLICABLE_FIELD_TARGET)) return
+            annotationWithTarget: AnnotationWithTarget) {
+        if (checkIfPropertyDescriptor(descriptor, annotationWithTarget)) return
 
         descriptor as PropertyDescriptor
         val hasDelegate = modifierListOwner is JetProperty && modifierListOwner.hasDelegate()
 
         if (!hasDelegate && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false)) {
-            report(annotation, INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD)
+            report(annotationWithTarget.annotation, INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD)
         }
     }
 
-    private fun BindingTrace.checkMutableProperty(
-            descriptor: DeclarationDescriptor,
-            annotation: AnnotationDescriptor,
-            diagnosticFactory: DiagnosticFactory0<PsiElement>) {
-        checkIfPropertyDescriptor(descriptor, annotation, diagnosticFactory)
+    private fun BindingTrace.checkMutableProperty(descriptor: DeclarationDescriptor, annotationWIthTarget: AnnotationWithTarget) {
+        checkIfPropertyDescriptor(descriptor, annotationWIthTarget)
 
         if (descriptor is PropertyDescriptor) {
             if (!descriptor.isVar) {
-                report(annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
+                report(annotationWIthTarget.annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
             }
         }
     }
 
     private fun BindingTrace.checkIfPropertyDescriptor(
             descriptor: DeclarationDescriptor,
-            annotation: AnnotationDescriptor,
-            diagnosticFactory: DiagnosticFactory0<PsiElement>): Boolean {
+            annotationWithTarget: AnnotationWithTarget): Boolean {
         if (descriptor !is PropertyDescriptor) {
-            report(annotation, diagnosticFactory)
+            report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
             return true
         }
         return false
@@ -115,5 +113,11 @@ public object AnnotationUseSiteTargetChecker {
         val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
         report(diagnosticFactory.on(annotationEntry))
     }
+
+    private fun BindingTrace.report(annotationWithTarget: AnnotationWithTarget, diagnosticFactory: DiagnosticFactory1<PsiElement, String>) {
+        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotationWithTarget.annotation) ?: return
+        report(diagnosticFactory.on(annotationEntry, annotationWithTarget.target?.renderName ?: "invalid target"))
+    }
+
 
 }

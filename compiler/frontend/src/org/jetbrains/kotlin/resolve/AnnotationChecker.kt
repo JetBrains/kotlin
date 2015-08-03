@@ -84,7 +84,14 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             it in applicableTargets && KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it
         }) return
 
-        trace.report(Errors.WRONG_ANNOTATION_TARGET.on(entry, actualTargets.declarationSite.firstOrNull()?.description ?: "unidentified target"))
+        if (useSiteTarget != null) {
+            trace.report(Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
+                    entry, actualTargets.declarationSite.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName))
+        }
+        else {
+            trace.report(Errors.WRONG_ANNOTATION_TARGET.on(
+                    entry, actualTargets.declarationSite.firstOrNull()?.description ?: "unidentified target"))
+        }
     }
 
     companion object {

@@ -122,16 +122,13 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
+        MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");
 
-        MAP.put(INAPPLICABLE_FIELD_TARGET, "''@field:'' annotations could be applied only to property declarations");
+        MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}'' annotations could be applied only to property declarations", TO_STRING);
         MAP.put(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD, "Property has neither a backing field nor a delegate");
-        MAP.put(INAPPLICABLE_PROPERTY_TARGET, "''@property:'' annotations could be applied only to property declarations");
-        MAP.put(INAPPLICABLE_GET_TARGET, "''@get:'' annotations could be applied only to property declarations");
-        MAP.put(INAPPLICABLE_SET_TARGET, "''@set:'' annotations could be applied only to property declarations");
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "Property must be mutable");
         MAP.put(INAPPLICABLE_RECEIVER_TARGET, "''@receiver:'' annotations could be applied only to extension function or extension property declarations");
-        MAP.put(INAPPLICABLE_SPARAM_TARGET, "''@sparam:'' annotations could be applied only to property declarations");
         MAP.put(INAPPLICABLE_PARAM_TARGET, "''@param:'' annotations could be applied only to primary constructor parameters");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
