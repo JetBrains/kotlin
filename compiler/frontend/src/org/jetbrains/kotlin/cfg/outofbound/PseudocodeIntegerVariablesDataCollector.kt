@@ -280,11 +280,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
                 when {
-                    isArrayCreation(instruction) -> processArrayCreation(instruction, updatedData)
+                    KotlinCodeUtils.isExpectedReturnType(instruction) { KotlinCodeUtils.isGenericOrPrimitiveArray(it) } ->
+                        processArrayCreation(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                     instruction.element is JetPrefixExpression ->
                         processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
+                    isSizeMethodCallOnArray(instruction) ->
+                        processSizeMethodCallOnArray(instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
@@ -322,7 +325,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
-            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(variableType) ->
+            KotlinCodeUtils.isGenericOrPrimitiveArray(variableType) ->
                 updatedData.arraysToSizes.put(variableDescriptor, IntegerVariableValues())
         }
     }
@@ -388,7 +391,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
                 )
             }
-            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(targetType) -> {
+            KotlinCodeUtils.isGenericOrPrimitiveArray(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
                 updatedData.arraysToSizes.put(
                         variableDescriptor,
@@ -406,15 +409,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun isArrayCreation(instruction: CallInstruction): Boolean {
-        // todo: change to annotations checking
-        return instruction.resolvedCall
-                .candidateDescriptor
-                .returnType
-                ?.let { KotlinBuiltInsUtils.isGenericOrPrimitiveArray(it) }
-               ?: false
-    }
-
     private fun processArrayCreation(instruction: CallInstruction, updatedData: ValuesData) {
         val arraySize = tryExtractArraySize(instruction, updatedData)
         val arraySizeVariable = instruction.outputValue
@@ -427,9 +421,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             return when (calledName) {
-                KotlinBuiltInsUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
-                KotlinBuiltInsUtils.arrayConstructorName,
-                in KotlinBuiltInsUtils.primitiveArrayConstructorNames -> {
+                KotlinCodeUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
+                KotlinCodeUtils.arrayConstructorName,
+                in KotlinCodeUtils.primitiveArrayConstructorNames -> {
                     if (instruction.inputValues.isEmpty()) {
                         // Code possibly contains error (like Array<Int>())
                         // so we can't define size
@@ -511,6 +505,27 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.createUndefined()) { -it }
             JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.createUndefined()) { it.copy() }
             JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.undefinedWithNoRestrictions) { !it }
+        }
+    }
+
+    private fun isSizeMethodCallOnArray(instruction: CallInstruction): Boolean =
+        if (instruction.element is JetCallExpression) {
+            val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
+            val isSizeMethodCalled = calledName == KotlinCodeUtils.sizeMethodNameOfArray
+            val arrayIsReceiver = KotlinCodeUtils.isGenericOrPrimitiveArray(instruction.resolvedCall.dispatchReceiver.type)
+            val returnTypeIsInt = KotlinCodeUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
+            isSizeMethodCalled && arrayIsReceiver && returnTypeIsInt
+        }
+        else false
+
+
+    private fun processSizeMethodCallOnArray(instruction: CallInstruction, updatedData: ValuesData) {
+        if (!instruction.inputValues.isEmpty()) {
+            val arraySize = updatedData.intFakeVarsToValues[instruction.inputValues[0]]
+            val resultVariable = instruction.outputValue
+            if (arraySize != null && resultVariable != null) {
+                updatedData.intFakeVarsToValues[resultVariable] = arraySize
+            }
         }
     }
 }
