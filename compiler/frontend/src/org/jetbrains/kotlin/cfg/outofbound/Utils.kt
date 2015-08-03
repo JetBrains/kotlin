@@ -65,7 +65,7 @@ public object MapUtils {
 
 public object JetExpressionUtils {
     public fun tryGetCalledName(callExpression: JetCallExpression): String? =
-            callExpression.getCalleeExpression()?.getNode()?.getText()
+            callExpression.calleeExpression?.node?.text
 }
 
 public object KotlinBuiltInsUtils {

@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.cfg.outofbound
 
-import com.google.common.collect.UnmodifiableListIterator
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.cfg.outofbound.ValuesData
-import org.jetbrains.kotlin.cfg.outofbound.BooleanVariableValue
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import java.util.*
+import java.util.Collections
+import java.util.HashSet
+import java.util.LinkedList
 
 // Represents possible integer variable values
 public class IntegerVariableValues() {
