@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.psi.*
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 
 fun main(args: Array<String>) {
@@ -33,62 +35,21 @@ fun main(args: Array<String>) {
 
     val sourcePath = File(args.first())
 
-    processRecursive(sourcePath, File("libraries/stdlib/target/jvm6"))
+//    val evaluators = listOf(JvmPlatformEvaluator(version = 7), JsPlatformEvaluator())
 
-    val configuration = CompilerConfiguration()
-    val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, emptyList())
+    //println("Using condition evaluator: $evaluators")
 
-    val project = environment.project
-    val jetPsiFactory = JetPsiFactory(project)
-    val fileType = JetFileType.INSTANCE
-
-    val evaluators = listOf(JvmPlatformEvaluator(version = 7), JsPlatformEvaluator())
+    val targetPath = File("libraries/stdlib/target")
 
 
+    val profiles = listOf(6, 7, 8).map { Preprocessor(createJvmProfile(targetPath, version = it)) }
 
-    println("Using condition evaluator: $evaluators")
+    val pool = Executors.newFixedThreadPool(4)
 
-    (sourcePath.walk() as Sequence<File>)
-            .filter { it.isFile && it.extension == fileType.defaultExtension }
-            .forEach { sourceFile ->
-                val sourceText = sourceFile.readText().convertLineSeparators()
-                val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
-                println("$psiFile")
+    profiles.forEach { pool.submit { it.processSources(sourcePath) } }
 
-                val visitor = CollectModificationsVisitor(evaluators)
-                psiFile.accept(visitor)
-                val modifications = visitor.elementModifications
-
-                for ((evaluator, list) in modifications) {
-                    if (list.isNotEmpty()) {
-                        val resultText = applyModifications(list, sourceText, evaluator)
-                        println("Version of $sourceFile for $evaluator")
-                        println(resultText)
-                    }
-                }
-            }
-}
-
-private fun applyModifications(modifications: List<Modification>, sourceText: String, evaluator: Evaluator): String {
-    var prevIndex = 0
-    val result = StringBuilder()
-    for ((range, selector) in modifications) {
-        result.append(sourceText, prevIndex, range.startOffset)
-        val rangeText = range.substring(sourceText)
-        val newValue = selector(rangeText)
-        if (newValue.isEmpty()) {
-            result.append("/* Not available on $evaluator */")
-            repeat(StringUtil.getLineBreakCount(rangeText)) {
-                result.append("\n")
-            }
-        }
-        else {
-            result.append(newValue)
-        }
-        prevIndex = range.endOffset
-    }
-    result.append(sourceText, prevIndex, sourceText.length())
-    return result.toString()
+    pool.shutdown()
+    pool.awaitTermination(1, TimeUnit.MINUTES)
 }
 
 
@@ -122,94 +83,176 @@ class CollectModificationsVisitor(evaluators: List<Evaluator>) : JetTreeVisitorV
             }
 
         }
-        println("declaration: ${declaration.javaClass.simpleName} $name${if (annotations.isNotEmpty()) ", annotations: ${annotations.joinToString { it.toString() }}, evaluation result: $declResults" else ""}")
+        //println("declaration: ${declaration.javaClass.simpleName} $name${if (annotations.isNotEmpty()) ", annotations: ${annotations.joinToString { it.toString() }}, evaluation result: $declResults" else ""}")
     }
 }
 
 
 data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
 
+fun createJvmProfile(targetRoot: File, version: Int) = Profile("JVM$version", JvmPlatformEvaluator(version), File(targetRoot, "jvm$version"))
+fun createJsProfile(targetRoot: File) = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
 
-public class Preprocessor {
+
+public class Preprocessor(val profile: Profile) {
 
     val fileType = JetFileType.INSTANCE
+    val jetPsiFactory: JetPsiFactory
 
+    init {
+        val configuration = CompilerConfiguration()
+        val environment = KotlinCoreEnvironment.createForProduction(Disposable {  }, configuration, emptyList())
+
+        val project = environment.project
+        jetPsiFactory = JetPsiFactory(project)
+    }
 
     sealed class FileProcessingResult {
         object Skip : FileProcessingResult()
         object Copy : FileProcessingResult()
 
-        class Modify(val resultText: String) : FileProcessingResult()
+        class Modify(val sourceText: String, val modifications: List<Modification>) : FileProcessingResult()
     }
 
-//    private fun processFile(sourceFile: File, evaluator: Evaluator): FileProcessingResult {
-//        if (sourceFile.extension != fileType.defaultExtension)
-//            return FileProcessingResult.Copy
-//
-//        val sourceText = sourceFile.readText().convertLineSeparators()
-//        val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
-//        println("$psiFile")
-//
-//
-//    }
-}
+    public fun processSources(sourceRoot: File) {
+        processDirectorySingleEvaluator(sourceRoot, profile.targetRoot, profile.evaluator)
+    }
 
-private fun processDirectory(sourceRoot: File, targetRelativeRoot: File, profiles: List<Profile>) {
+    private fun processFileSingleEvaluator(sourceFile: File, evaluator: Evaluator): FileProcessingResult {
+        if (sourceFile.extension != fileType.defaultExtension)
+            return FileProcessingResult.Copy
 
-    val (sourceFiles, sourceDirectories) = sourceRoot.listFiles().partition { !it.isDirectory }
+        val sourceText = sourceFile.readText().convertLineSeparators()
+        val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
+        println("$psiFile")
 
-    // TODO: keep processed file list for each profile
-}
 
-private fun processRecursive(sourceRoot: File, targetRoot: File) {
-    val (sourceFiles, sourceDirectories) = sourceRoot.listFiles().partition { !it.isDirectory }
+        val fileAnnotations = psiFile.parseConditionalAnnotations()
+        if (!evaluator(fileAnnotations))
+            return FileProcessingResult.Skip
 
-    val processedFiles = hashSetOf<File>()
-    for (sourceFile in sourceFiles)
-    {
-        // TODO: only if .kt
-        val resultText = processFileText(sourceFile)
 
-        // if (keepFile)
+        val visitor = CollectModificationsVisitor(listOf(evaluator))
+        psiFile.accept(visitor)
 
-        val destFile = sourceFile.makeRelativeTo(sourceRoot, targetRoot)
-        // if no modifications — copy
+        val list = visitor.elementModifications.values().single()
+        return if (list.isNotEmpty())
+            FileProcessingResult.Modify(sourceText, list)
+        else
+            FileProcessingResult.Copy
+    }
 
-        processedFiles += destFile
+    private fun processDirectorySingleEvaluator(sourceRoot: File, targetRoot: File, evaluator: Evaluator) {
+        val (sourceFiles, sourceDirectories) = sourceRoot.listFiles().partition { !it.isDirectory }
 
-        if (destFile.exists()) {
-            if (destFile.isDirectory)
+        val processedFiles = hashSetOf<File>()
+        for (sourceFile in sourceFiles)
+        {
+            val result = processFileSingleEvaluator(sourceFile, evaluator)
+            if (result is FileProcessingResult.Skip)
+                continue
+
+            val destFile = sourceFile.makeRelativeTo(sourceRoot, targetRoot)
+            processedFiles += destFile
+
+            if (destFile.exists() && destFile.isDirectory)
                 destFile.deleteRecursively()
-            else
-                if (destFile.isTextEqualTo(resultText))
+
+            // if no modifications — copy
+            if (result is FileProcessingResult.Copy) {
+                FileUtil.copy(sourceFile, destFile)
+            } else if (result is FileProcessingResult.Modify) {
+                val resultText = applyModifications(result.modifications, result.sourceText, evaluator)
+                if (destFile.exists() && destFile.isTextEqualTo(resultText))
                     continue
+                destFile.writeText(resultText)
+            }
         }
-        destFile.writeText(resultText)
+
+        for (sourceDir in sourceDirectories) {
+            val destDir = sourceDir.makeRelativeTo(sourceRoot, targetRoot)
+            if (!destDir.exists()) {
+                destDir.mkdirsOrFail()
+            }
+            else if (!destDir.isDirectory) {
+                destDir.delete()
+            }
+            processDirectorySingleEvaluator(sourceDir, destDir, evaluator)
+            processedFiles += destDir
+        }
+
+        targetRoot.listFiles().forEach { targetFile ->
+            if (!processedFiles.remove(processedFiles.find { FileUtil.filesEqual(it, targetFile) })) {
+                targetFile.deleteRecursively()
+            }
+        }
     }
 
-    for (sourceDir in sourceDirectories) {
-        val destDir = sourceDir.makeRelativeTo(sourceRoot, targetRoot)
-        if (!destDir.exists()) {
-            destDir.mkdirsOrFail()
+
+    private fun processFileMultiEvaluators(sourceFile: File, evaluators: List<Evaluator>): List<FileProcessingResult> {
+        if (sourceFile.extension != fileType.defaultExtension)
+            return evaluators map { FileProcessingResult.Copy }
+
+        val sourceText = sourceFile.readText().convertLineSeparators()
+        val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
+        println("$psiFile")
+
+        val results = hashMapOf<Evaluator, FileProcessingResult>()
+
+        val fileAnnotations = psiFile.parseConditionalAnnotations()
+        evaluators.forEach { evaluator ->
+            if (!evaluator(fileAnnotations))
+                results += evaluator to FileProcessingResult.Skip
         }
-        else if (!destDir.isDirectory) {
-            destDir.delete()
+
+        val visitor = CollectModificationsVisitor(evaluators - results.keySet())
+        psiFile.accept(visitor)
+
+        for ((evaluator, list) in visitor.elementModifications) {
+            val result =
+                if (list.isNotEmpty())
+                    FileProcessingResult.Modify(sourceText, list)
+                else
+                    FileProcessingResult.Copy
+            results += evaluator to result
         }
-        processRecursive(sourceDir, destDir)
-        processedFiles += destDir
+        return evaluators.map { results[it]!! }
     }
 
-    targetRoot.listFiles().forEach { targetFile ->
-        if (!processedFiles.remove(processedFiles.find { FileUtil.filesEqual(it, targetFile) })) {
-            targetFile.deleteRecursively()
-        }
+    private fun processDirectoryMultiEvaluators(sourceRoot: File, targetRelativeRoot: File, profiles: List<Profile>) {
+
+        val (sourceFiles, sourceDirectories) = sourceRoot.listFiles().partition { !it.isDirectory }
+
+        // TODO: keep processed file list for each profile
+        val processedFiles = profiles.toMap({ it }, { hashSetOf<File>()})
+
     }
+
+    private fun applyModifications(modifications: List<Modification>, sourceText: String, evaluator: Evaluator): String {
+        var prevIndex = 0
+        val result = StringBuilder()
+        for ((range, selector) in modifications) {
+            result.append(sourceText, prevIndex, range.startOffset)
+            val rangeText = range.substring(sourceText)
+            val newValue = selector(rangeText)
+            if (newValue.isEmpty()) {
+                result.append("/* Not available on $evaluator */")
+                repeat(StringUtil.getLineBreakCount(rangeText)) {
+                    result.append("\n")
+                }
+            }
+            else {
+                result.append(newValue)
+            }
+            prevIndex = range.endOffset
+        }
+        result.append(sourceText, prevIndex, sourceText.length())
+        return result.toString()
+    }
+
 }
-
-private fun processFileText(sourceFile: File): String = sourceFile.readText()
 
 fun String.convertLineSeparators(): String = StringUtil.convertLineSeparators(this)
-
 
 fun File.isTextEqualTo(content: String): Boolean = readText().lines() == content.lines()
 

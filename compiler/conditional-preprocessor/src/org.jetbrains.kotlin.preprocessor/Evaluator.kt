@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.preprocessor
 
-interface Evaluator : Function1<List<Conditional>, Boolean>
+interface Evaluator : (List<Conditional>) -> Boolean
 
 abstract class PlatformEvaluator : Evaluator {
     final override fun invoke(conditions: List<Conditional>): Boolean = evaluate(conditions.filterIsInstance())
