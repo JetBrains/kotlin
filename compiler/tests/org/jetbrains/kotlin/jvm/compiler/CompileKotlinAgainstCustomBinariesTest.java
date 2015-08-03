@@ -141,6 +141,36 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         }
     }
 
+    public void testRawTypes() throws Exception {
+        JetTestUtils.compileJavaFiles(
+                Collections.singletonList(
+                        new File(getTestDataDirectory() + "/library/test/A.java")
+                ),
+                Arrays.asList("-d", tmpdir.getPath())
+        );
+
+        File libSrc = new File(getTestDataDirectory(), "library/test/lib.kt");
+
+        Pair<String, ExitCode> pair1 = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+                libSrc.getPath(),
+                "-classpath", tmpdir.getPath(),
+                "-d", tmpdir.getPath()
+        ));
+
+        String outputLib = CliBaseTest.getNormalizedCompilerOutput(pair1.first, pair1.second, getTestDataDirectory().getPath());
+
+        File mainSrc = new File(getTestDataDirectory(), "main.kt");
+
+        Pair<String, ExitCode> pair2 = CliBaseTest.executeCompilerGrabOutput(new K2JVMCompiler(), Arrays.asList(
+                mainSrc.getPath(),
+                "-classpath", tmpdir.getPath(),
+                "-d", tmpdir.getPath()
+        ));
+
+        String outputMain = CliBaseTest.getNormalizedCompilerOutput(pair2.first, pair2.second, getTestDataDirectory().getPath());
+
+        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), outputLib + "\n" + outputMain);
+    }
 
     public void testDuplicateObjectInBinaryAndSources() throws Exception {
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"));

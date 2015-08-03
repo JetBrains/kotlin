@@ -259,8 +259,8 @@ class LazyJavaTypeResolver(
             }
         }
 
-        override fun computeCustomSubstitution() = if (isRaw()) RawSubstitution else null
-        
+        override fun getCapabilities(): TypeCapabilities = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
+
         private val nullable = c.storageManager.createLazyValue l@ {
             when (attr.flexibility) {
                 FLEXIBLE_LOWER_BOUND -> return@l false

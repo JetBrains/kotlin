@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import kotlin.platform.platformStatic
 
-public class JetTypeImpl
+public open class JetTypeImpl
 private constructor(
         private val annotations: Annotations,
         private val constructor: TypeConstructor,
@@ -47,9 +47,14 @@ private constructor(
                           nullable: Boolean,
                           arguments: List<TypeProjection>,
                           substitution: TypeSubstitution,
-                          memberScope: JetScope): JetTypeImpl
-
-                = JetTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
+                          memberScope: JetScope,
+                          capabilities: TypeCapabilities
+        ): JetTypeImpl {
+            if (capabilities !== TypeCapabilities.NONE) {
+                return WithCapabilities(annotations, constructor, nullable, arguments, substitution, memberScope, capabilities)
+            }
+            return JetTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
+        }
 
         @platformStatic
         public fun create(annotations: Annotations,
@@ -60,6 +65,18 @@ private constructor(
                 = JetTypeImpl(
                     annotations, descriptor.typeConstructor, nullable, arguments, null, descriptor.getMemberScope(arguments)
                 )
+    }
+
+    private class WithCapabilities(
+            annotations: Annotations,
+            constructor: TypeConstructor,
+            nullable: Boolean,
+            arguments: List<TypeProjection>,
+            substitution: TypeSubstitution?,
+            memberScope: JetScope,
+            private val typeCapabilities: TypeCapabilities
+    ) : JetTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope) {
+        override fun getCapabilities(): TypeCapabilities = typeCapabilities
     }
 
     init {

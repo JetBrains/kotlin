@@ -110,7 +110,8 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
             newSubstitution,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)
-            else enhancedClassifier.getDefaultType().getMemberScope()
+            else enhancedClassifier.getDefaultType().getMemberScope(),
+            capabilities
     )
     return Result(enhancedType, globalArgIndex - index)
 }

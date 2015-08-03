@@ -177,6 +177,11 @@ open class ProtoCompareGenerated(private val oldNameResolver: NameResolver, priv
         }
 
 
+        if (old.hasExtension(JvmProtoBuf.isRaw) != new.hasExtension(JvmProtoBuf.isRaw)) return false
+        if (old.hasExtension(JvmProtoBuf.isRaw)) {
+            if (old.getExtension(JvmProtoBuf.isRaw) != new.getExtension(JvmProtoBuf.isRaw)) return false
+        }
+
         return true
     }
 

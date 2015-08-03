@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.LazyType
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
-        c: DeserializationContext,
+        private val c: DeserializationContext,
         private val typeProto: ProtoBuf.Type
 ) : AbstractLazyType(c.storageManager), LazyType {
     private val typeDeserializer = c.typeDeserializer
@@ -50,6 +50,8 @@ class DeserializedType(
     }
 
     override fun getAnnotations(): Annotations = annotations
+
+    override fun getCapabilities() = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
 
     private fun <E: Any> List<E>.getOrNull(index: Int): E? {
         return if (index in indices) this[index] else null

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -34,7 +36,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
 
     override fun getSubstitution() = computeCustomSubstitution() ?: IndexedParametersSubstitution(constructor, getArguments())
 
-    protected open fun computeCustomSubstitution(): TypeSubstitution? = null
+    protected open fun computeCustomSubstitution(): TypeSubstitution? = getCapability<CustomSubstitutionCapability>()?.substitution
 
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()

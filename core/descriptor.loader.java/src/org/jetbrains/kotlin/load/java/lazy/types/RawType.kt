@@ -22,6 +22,20 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.types.*
 
+public object RawTypeCapabilities : TypeCapabilities {
+    private object RawSubstitutionCapability : CustomSubstitutionCapability {
+        override val substitution = RawSubstitution
+    }
+
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+        @suppress("UNCHECKED_CAST")
+        return when(capabilityClass) {
+            javaClass<CustomSubstitutionCapability>() -> RawSubstitutionCapability as T
+            else -> null
+        }
+    }
+}
+
 private object RawSubstitution : TypeSubstitution() {
     override fun get(key: JetType) = TypeProjectionImpl(eraseType(key))
 
@@ -64,7 +78,8 @@ private object RawSubstitution : TypeSubstitution() {
                     computeProjection(parameter, attr)
                 },
                 RawSubstitution,
-                declaration.getMemberScope(RawSubstitution)
+                declaration.getMemberScope(RawSubstitution),
+                RawTypeCapabilities
         )
     }
 

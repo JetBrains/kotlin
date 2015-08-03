@@ -31,7 +31,8 @@ public class DeserializationComponents(
         public val packageFragmentProvider: PackageFragmentProvider,
         public val localClassResolver: LocalClassResolver,
         public val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
-        public val fictitiousClassDescriptorFactory: ClassDescriptorFactory
+        public val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
+        public val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE
 ) {
     public val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 
