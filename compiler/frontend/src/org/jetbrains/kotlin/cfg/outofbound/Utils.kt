@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg.outofbound
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.JetType
 
@@ -68,11 +69,23 @@ public object JetExpressionUtils {
             callExpression.calleeExpression?.node?.text
 }
 
-public object KotlinBuiltInsUtils {
-    public  fun isGenericOrPrimitiveArray(type: JetType): Boolean =
+public object KotlinCodeUtils {
+    public fun isGenericOrPrimitiveArray(type: JetType): Boolean =
             KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
 
+    public fun isExpectedReturnType(instruction: CallInstruction, isExpectedType: (JetType) -> Boolean): Boolean {
+        return instruction.resolvedCall
+                       .candidateDescriptor
+                       .returnType
+                       ?.let { isExpectedType(it) }
+               ?: false
+    }
+
+    // Array creation
     public val arrayOfFunctionName: String = "arrayOf"
     public val arrayConstructorName: String = "Array"
     public val primitiveArrayConstructorNames: Set<String> = PrimitiveType.values().map { it.arrayTypeName.asString() }.toSet()
+
+    // Array methods
+    public val sizeMethodNameOfArray: String = "size"
 }

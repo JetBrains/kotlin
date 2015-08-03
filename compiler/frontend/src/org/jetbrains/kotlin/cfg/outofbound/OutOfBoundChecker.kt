@@ -73,7 +73,7 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
     private fun receiverIsArray(instruction: CallInstruction): Boolean {
         val callReceiver = instruction.resolvedCall.dispatchReceiver
         return if (callReceiver != ReceiverValue.NO_RECEIVER)
-            KotlinBuiltInsUtils.isGenericOrPrimitiveArray(callReceiver.type)
+            KotlinCodeUtils.isGenericOrPrimitiveArray(callReceiver.type)
         else false
     }
 

@@ -119,3 +119,32 @@ error:
 sink:
     <SINK>                                in: INTS{}    BOOLS{} ARRS{}    out: INTS{}    BOOLS{} ARRS{}
 =====================
+== sizeMethodCall ==
+fun sizeMethodCall() {
+    val arr = arrayOf(1, 2, 3)
+    val sz = arr.size()
+}
+---------------------
+L0:
+  1 <START>                                                     in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+  2 mark({ val arr = arrayOf(1, 2, 3) val sz = arr.size() })    in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+    v(val arr = arrayOf(1, 2, 3))                               in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{arr:-}
+    r(1) -> <v0>                                                in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:-}
+    r(2) -> <v1>                                                in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:-}
+    r(3) -> <v2>                                                in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:-}
+    mark(arrayOf(1, 2, 3))                                      in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:-}
+    call(arrayOf(1, 2, 3), arrayOf|<v0>, <v1>, <v2>) -> <v3>    in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:-}
+    w(arr|<v3>)                                                 in: INTS{}     BOOLS{} ARRS{arr:-}      out: INTS{}       BOOLS{} ARRS{arr:[3]}
+    v(val sz = arr.size())                                      in: INTS{}     BOOLS{} ARRS{arr:[3]}    out: INTS{sz:-}   BOOLS{} ARRS{arr:[3]}
+    mark(arr.size())                                            in: INTS{sz:-} BOOLS{} ARRS{arr:[3]}    out: INTS{sz:-}   BOOLS{} ARRS{arr:[3]}
+    r(arr) -> <v4>                                              in: INTS{sz:-} BOOLS{} ARRS{arr:[3]}    out: INTS{sz:-}   BOOLS{} ARRS{arr:[3]}
+    mark(size())                                                in: INTS{sz:-} BOOLS{} ARRS{arr:[3]}    out: INTS{sz:-}   BOOLS{} ARRS{arr:[3]}
+    call(size(), size|<v4>) -> <v5>                             in: INTS{sz:-} BOOLS{} ARRS{arr:[3]}    out: INTS{sz:-}   BOOLS{} ARRS{arr:[3]}
+    w(sz|<v5>)                                                  in: INTS{sz:-} BOOLS{} ARRS{arr:[3]}    out: INTS{sz:[3]} BOOLS{} ARRS{arr:[3]}
+L1:
+  1 <END>                                                       in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+error:
+    <ERROR>                                                     in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+sink:
+    <SINK>                                                      in: INTS{}     BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+=====================
