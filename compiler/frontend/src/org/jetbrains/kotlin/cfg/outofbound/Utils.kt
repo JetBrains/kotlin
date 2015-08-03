@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
 import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.JetType
 
 public object MapUtils {
@@ -69,16 +70,25 @@ public object JetExpressionUtils {
             callExpression.calleeExpression?.node?.text
 }
 
-public object KotlinCodeUtils {
-    public fun isGenericOrPrimitiveArray(type: JetType): Boolean =
-            KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
-
+public object InstructionUtils {
     public fun isExpectedReturnType(instruction: CallInstruction, isExpectedType: (JetType) -> Boolean): Boolean {
         return instruction.resolvedCall
                        .candidateDescriptor
                        .returnType
                        ?.let { isExpectedType(it) }
                ?: false
+    }
+}
+
+public object KotlinArrayUtils {
+    public fun isGenericOrPrimitiveArray(type: JetType): Boolean =
+            KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
+
+    public fun receiverIsArray(instruction: CallInstruction): Boolean {
+        val callReceiver = instruction.resolvedCall.dispatchReceiver
+        return if (callReceiver is ExpressionReceiver)
+            KotlinArrayUtils.isGenericOrPrimitiveArray(callReceiver.type)
+        else false
     }
 
     // Array creation
