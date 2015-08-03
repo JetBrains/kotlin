@@ -555,5 +555,32 @@ class StringTest {
         assertEquals("-test", "test".replaceFirst("", "-"))
     }
 
+    test fun trimMargin() {
+        // WARNING
+        // DO NOT REFORMAT AS TESTS MAY FAIL DUE TO INDENTATION CHANGE
 
+        assertEquals("ABC\n123\n456", """ABC
+                                      |123
+                                      |456""".trimMargin())
+
+        assertEquals("ABC \n123\n456", """ABC${" "}
+                                      |123
+                                      |456""".trimMargin())
+
+        assertEquals(" ABC\n123\n456", """ ABC
+                                        >>123
+                                        ${"\t"}>>456""".trimMargin(">>"))
+
+        assertEquals("", "".trimMargin())
+
+        assertEquals("\n                            ", """
+                            """.trimMargin())
+
+        assertEquals("\n", """
+                            |""".trimMargin())
+
+        assertEquals("\n\n                            ", """
+                            |
+                            """.trimMargin())
+    }
 }

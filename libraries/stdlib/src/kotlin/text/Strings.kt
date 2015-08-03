@@ -791,6 +791,31 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
 public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
+/**
+ * Trims leading whitespace characters followed by [marginPrefix] from every line of a [java.lang.CharSequence].
+ * Always creates a new string even if the original CharSequence is mutable
+ *
+ * Example
+ * ```kotlin
+ * assertEquals("ABC\n123\n456", """ABC
+ *                             |123
+ *                             |456""".trimMargin())
+ * ```
+ *
+ * @param marginPrefix characters to be used as a margin delimiter. Default is `|` (pipe character)
+ * @return the trimmed String
+ * @see kotlin.isWhitespace
+ * @since M13
+ */
+public fun CharSequence.trimMargin(marginPrefix: String = "|"): String =
+        toString().lineSequence().map { line ->
+            val content = line.trimStart()
+
+            when {
+                content.startsWith(marginPrefix) -> content.removePrefix(marginPrefix)
+                else -> line
+            }
+        }.joinTo(StringBuilder(length()), "\n").toString()
 
 // rangesDelimitedBy
 
