@@ -226,9 +226,9 @@ public class TypeSubstitutor {
                 return substitution.isEmpty();
             }
         };
-        JetType substitutedType = new JetTypeImpl(type.getAnnotations(),   // Old annotations. This is questionable
-                                           type.getConstructor(),   // The same constructor
-                                           type.isMarkedNullable(),       // Same nullability
+        JetType substitutedType = JetTypeImpl.create(type.getAnnotations(),   // Old annotations. This is questionable
+                                           type.getConstructor(),             // The same constructor
+                                           type.isMarkedNullable(),           // Same nullability
                                            substitutedArguments,
                                            new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)));
         return new TypeProjectionImpl(projectionKind, substitutedType);

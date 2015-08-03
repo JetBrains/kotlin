@@ -137,7 +137,7 @@ public class TypeResolver(
                         result = if (scopeForTypeParameter is ErrorUtils.ErrorScope)
                                     type(ErrorUtils.createErrorType("?"))
                                  else
-                                    type(JetTypeImpl(
+                                    type(JetTypeImpl.create(
                                             annotations,
                                             classifierDescriptor.getTypeConstructor(),
                                             TypeUtils.hasNullableLowerBound(classifierDescriptor),
@@ -191,7 +191,7 @@ public class TypeResolver(
                                     )
                                     return
                                 }
-                                val resultingType = JetTypeImpl(annotations, typeConstructor, false, arguments, classifierDescriptor.getMemberScope(arguments))
+                                val resultingType = JetTypeImpl.create(annotations, classifierDescriptor, false, arguments)
                                 result = type(resultingType)
                                 if (c.checkBounds) {
                                     val substitutor = TypeSubstitutor.create(resultingType)

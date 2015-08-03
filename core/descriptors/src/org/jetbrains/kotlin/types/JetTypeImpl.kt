@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import kotlin.platform.platformStatic
 
-public class JetTypeImpl(
+public class JetTypeImpl
+private constructor(
         private val annotations: Annotations,
         private val constructor: TypeConstructor,
         private val nullable: Boolean,
@@ -27,19 +30,43 @@ public class JetTypeImpl(
         private val substitution: TypeSubstitution?,
         private val memberScope: JetScope
 ) : AbstractJetType() {
+
+    companion object {
+        @platformStatic
+        public fun create(annotations: Annotations,
+                          constructor: TypeConstructor,
+                          nullable: Boolean,
+                          arguments: List<TypeProjection>,
+                          memberScope: JetScope): JetTypeImpl
+
+                = JetTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
+
+        @platformStatic
+        public fun create(annotations: Annotations,
+                          constructor: TypeConstructor,
+                          nullable: Boolean,
+                          arguments: List<TypeProjection>,
+                          substitution: TypeSubstitution,
+                          memberScope: JetScope): JetTypeImpl
+
+                = JetTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
+
+        @platformStatic
+        public fun create(annotations: Annotations,
+                          descriptor: ClassDescriptor,
+                          nullable: Boolean,
+                          arguments: List<TypeProjection>): JetTypeImpl
+
+                = JetTypeImpl(
+                    annotations, descriptor.typeConstructor, nullable, arguments, null, descriptor.getMemberScope(arguments)
+                )
+    }
+
     init {
         if (memberScope is ErrorUtils.ErrorScope) {
             throw IllegalStateException("JetTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
     }
-
-    public constructor(
-            annotations: Annotations,
-            constructor: TypeConstructor,
-            nullable: Boolean,
-            arguments: List<TypeProjection>,
-            memberScope: JetScope
-    ) : this(annotations, constructor, nullable, arguments, null, memberScope)
 
     override fun getAnnotations() = annotations
 

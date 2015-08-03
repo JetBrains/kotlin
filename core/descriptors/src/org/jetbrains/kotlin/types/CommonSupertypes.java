@@ -238,7 +238,7 @@ public class CommonSupertypes {
         else {
             newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
-        return new JetTypeImpl(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
+        return JetTypeImpl.create(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
     }
 
     @NotNull

@@ -168,10 +168,9 @@ class LazyJavaClassDescriptor(
                 parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
             }
 
-            return JetTypeImpl(
-                    Annotations.EMPTY, classDescriptor.getTypeConstructor(),
-                    /* nullable =*/ false, parametersAsTypeProjections,
-                    classDescriptor.getMemberScope(parametersAsTypeProjections)
+            return JetTypeImpl.create(
+                    Annotations.EMPTY, classDescriptor,
+                    /* nullable =*/ false, parametersAsTypeProjections
             )
         }
 

@@ -259,7 +259,7 @@ public class TypeUtils {
             i++;
         }
 
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
                 constructor,
                 allNullable,
@@ -415,7 +415,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
                 typeConstructor,
                 false,

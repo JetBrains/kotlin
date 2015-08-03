@@ -407,7 +407,7 @@ public class SignaturesPropagationData {
             resultScope = autoType.getMemberScope();
         }
 
-        JetTypeImpl type = new JetTypeImpl(autoType.getAnnotations(),
+        JetType type = JetTypeImpl.create(autoType.getAnnotations(),
                                            resultClassifier.getTypeConstructor(),
                                            resultNullable,
                                            resultArguments,

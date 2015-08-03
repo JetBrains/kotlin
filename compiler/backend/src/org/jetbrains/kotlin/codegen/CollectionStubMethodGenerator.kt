@@ -209,8 +209,7 @@ class CollectionStubMethodGenerator(
     }
 
     private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): JetType {
-        return JetTypeImpl(Annotations.EMPTY, classDescriptor.getTypeConstructor(), false, typeArguments,
-                           classDescriptor.getMemberScope(typeArguments))
+        return JetTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
     }
 
     private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignature(this)

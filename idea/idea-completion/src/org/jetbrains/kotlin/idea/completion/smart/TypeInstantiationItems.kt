@@ -265,9 +265,8 @@ class TypeInstantiationItems(
             val typeArgs: List<TypeProjection>,
             val tail: Tail?) : InheritanceItemsSearcher {
 
-        private val typeConstructor = classDescriptor.getTypeConstructor()
-        private val baseHasTypeArgs = typeConstructor.getParameters().isNotEmpty()
-        private val expectedType = JetTypeImpl(Annotations.EMPTY, typeConstructor, false, typeArgs, classDescriptor.getMemberScope(typeArgs))
+        private val baseHasTypeArgs = classDescriptor.typeConstructor.parameters.isNotEmpty()
+        private val expectedType = JetTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
 
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)

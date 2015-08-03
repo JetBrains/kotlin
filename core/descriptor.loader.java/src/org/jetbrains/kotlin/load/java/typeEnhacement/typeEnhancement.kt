@@ -102,7 +102,7 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
         typeConstructor.parameters, enhancedArguments
     )
 
-    val enhancedType = JetTypeImpl(
+    val enhancedType = JetTypeImpl.create(
             newAnnotations,
             typeConstructor,
             enhancedNullability,

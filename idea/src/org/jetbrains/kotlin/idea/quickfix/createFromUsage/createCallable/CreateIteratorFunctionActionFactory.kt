@@ -50,7 +50,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = JetTypeImpl(returnJetType.annotations,
+        val newReturnJetType = JetTypeImpl.create(returnJetType.annotations,
                                            returnJetType.constructor,
                                            returnJetType.isMarkedNullable,
                                            returnJetTypeArguments,

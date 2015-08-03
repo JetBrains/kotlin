@@ -71,7 +71,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
             public JetType invoke() {
-                return new JetTypeImpl(Annotations.EMPTY, getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                return JetTypeImpl.create(Annotations.EMPTY, getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
                                        new LazyScopeAdapter(storageManager.createLazyValue(
                                                new Function0<JetScope>() {
                                                    @Override

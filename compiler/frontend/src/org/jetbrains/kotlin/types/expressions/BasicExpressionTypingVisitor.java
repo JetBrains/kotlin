@@ -578,7 +578,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     }
                 });
 
-        return new JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, descriptor.getMemberScope(arguments));
+        return JetTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments);
     }
 
     private static boolean isAllowedInClassLiteral(@NotNull JetType type) {

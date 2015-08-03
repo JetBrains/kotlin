@@ -61,7 +61,7 @@ class PropagationHeuristics {
 
                     if (JetTypeChecker.DEFAULT.isSubtypeOf(elementType, elementTypeInSuper)
                         && !JetTypeChecker.DEFAULT.equalTypes(elementType, elementTypeInSuper)) {
-                        JetTypeImpl betterTypeInSuper = new JetTypeImpl(
+                        JetTypeImpl betterTypeInSuper = JetTypeImpl.create(
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isMarkedNullable(),

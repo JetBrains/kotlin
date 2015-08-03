@@ -76,7 +76,7 @@ public class SingleAbstractMethodUtils {
         }
         ClassifierDescriptor classifier = functionType.getConstructor().getDeclarationDescriptor();
         assert classifier instanceof ClassDescriptor : "Not class: " + classifier;
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 functionType.getAnnotations(),
                 functionType.getConstructor(),
                 functionType.isMarkedNullable(),

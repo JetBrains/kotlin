@@ -664,12 +664,11 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
-                getArray().getTypeConstructor(),
+                getArray(),
                 false,
-                types,
-                getArray().getMemberScope(types)
+                types
         );
     }
 
@@ -677,12 +676,11 @@ public class KotlinBuiltIns {
     public JetType getEnumType(@NotNull JetType argument) {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
-                getEnum().getTypeConstructor(),
+                getEnum(),
                 false,
-                types,
-                getEnum().getMemberScope(types)
+                types
         );
     }
 
@@ -721,11 +719,10 @@ public class KotlinBuiltIns {
         List<TypeProjection> arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType);
         int size = parameterTypes.size();
         ClassDescriptor classDescriptor = receiverType == null ? getFunction(size) : getExtensionFunction(size);
-        TypeConstructor constructor = classDescriptor.getTypeConstructor();
 
         Annotations typeAnnotations = receiverType == null ? annotations : addExtensionAnnotation(annotations);
 
-        return new JetTypeImpl(typeAnnotations, constructor, false, arguments, classDescriptor.getMemberScope(arguments));
+        return JetTypeImpl.create(typeAnnotations, classDescriptor, false, arguments);
     }
 
     @NotNull

@@ -289,14 +289,14 @@ class LazyJavaTypeResolver(
                     val arguments = listOf(
                         TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
                     )
-                    return JetTypeImpl(
+                    return JetTypeImpl.create(
                         type.annotations, type.constructor, type.isMarkedNullable, arguments,
                         (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
                     )
                 }
 
                 val constructor = type.constructor
-                return JetTypeImpl(
+                return JetTypeImpl.create(
                     type.annotations, constructor, type.isMarkedNullable,
                     type.constructor.parameters.map {
                         parameter -> computeProjection(parameter, attr)
