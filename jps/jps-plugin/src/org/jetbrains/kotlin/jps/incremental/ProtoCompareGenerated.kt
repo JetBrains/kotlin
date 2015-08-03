@@ -141,8 +141,6 @@ open class ProtoCompareGenerated(private val oldNameResolver: NameResolver, priv
     }
 
     open fun checkEquals(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
-        if (!checkEquals(old.constructor, new.constructor)) return false
-
         if (!checkEqualsTypeArgument(old, new)) return false
 
         if (old.hasNullable() != new.hasNullable()) return false
@@ -256,10 +254,6 @@ open class ProtoCompareGenerated(private val oldNameResolver: NameResolver, priv
             if (!checkEquals(old.setter, new.setter)) return false
         }
 
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.Type.Constructor, new: ProtoBuf.Type.Constructor): Boolean {
         return true
     }
 
