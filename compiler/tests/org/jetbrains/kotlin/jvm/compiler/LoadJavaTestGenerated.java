@@ -283,6 +283,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("WildcardBounds.java")
+        public void testWildcardBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/WildcardBounds.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
