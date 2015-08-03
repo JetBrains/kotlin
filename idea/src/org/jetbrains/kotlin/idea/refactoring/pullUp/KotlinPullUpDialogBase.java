@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.memberInfo;
+package org.jetbrains.kotlin.idea.refactoring.pullUp;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.refactoring.memberPullUp.PullUpDialogBase;
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.JetClassOrObjectListCellRenderer;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 
