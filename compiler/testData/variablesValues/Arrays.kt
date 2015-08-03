@@ -16,3 +16,8 @@ fun arrayWithTwoPossibleSizes(cond: Boolean) {
     }
     42
 }
+
+fun sizeMethodCall() {
+    val arr = arrayOf(1, 2, 3)
+    val sz = arr.size()
+}
