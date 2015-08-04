@@ -3537,6 +3537,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("privatePropertyCallIsAccessibleOnAccessors.kt")
+            public void testPrivatePropertyCallIsAccessibleOnAccessors() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privatePropertyCallIsAccessibleOnAccessors.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("privateToThisAccessors.kt")
             public void testPrivateToThisAccessors() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateToThisAccessors.kt");
