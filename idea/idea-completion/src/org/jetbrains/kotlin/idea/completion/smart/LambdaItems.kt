@@ -21,10 +21,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
+import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.handlers.buildLambdaPresentation
 import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
-import java.util.*
+import java.util.ArrayList
 
 object LambdaItems {
     public fun collect(functionExpectedInfos: Collection<ExpectedInfo>): Collection<LookupElement> {
@@ -34,7 +35,10 @@ object LambdaItems {
     }
 
     public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
-        val distinctTypes = functionExpectedInfos.map { it.fuzzyType.type }.toSet()
+        val distinctTypes = functionExpectedInfos
+                .map { it.fuzzyType?.type }
+                .filterNotNull()
+                .toSet()
 
         val singleType = if (distinctTypes.size() == 1) distinctTypes.single() else null
         val singleSignatureLength = singleType?.let { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() }
@@ -60,7 +64,7 @@ object LambdaItems {
                                            })
                         .suppressAutoInsertion()
                         .assignSmartCompletionPriority(SmartCompletionItemPriority.LAMBDA)
-                        .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType.type == functionType })
+                        .addTailAndNameSimilarity(functionExpectedInfos.filter { it.fuzzyType?.type == functionType })
                 collection.add(lookupElement)
             }
         }

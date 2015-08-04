@@ -23,6 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
+import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.shortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -46,7 +47,9 @@ class StaticMembers(
                                context: JetSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
-        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.fuzzyType.type) }
+        val expectedInfosByClass = expectedInfos.groupBy {
+            expectedInfo -> expectedInfo.fuzzyType?.type?.let { TypeUtils.getClassDescriptor(it) }
+        }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
                 addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)

@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.completion.smart.toList
+import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
@@ -45,10 +47,12 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.LinkedHashSet
 
 enum class Tail {
@@ -65,9 +69,28 @@ data class ItemOptions(val starPrefix: Boolean) {
     }
 }
 
-open data class ExpectedInfo(val fuzzyType: FuzzyType, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT) {
-    constructor(type: JetType, expectedName: String?, tail: Tail?) : this(FuzzyType(type, emptyList()), expectedName, tail)
+interface ByTypeFilter {
+    fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor?
 }
+
+class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
+    override fun matchingSubstitutor(descriptorType: FuzzyType) = descriptorType.checkIsSubtypeOf(fuzzyType)
+}
+
+open data class ExpectedInfo(val filter: ByTypeFilter, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT) {
+    constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT)
+        : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions)
+
+    constructor(type: JetType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT)
+        : this(FuzzyType(type, emptyList()), expectedName, tail, itemOptions)
+
+    fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)
+
+    fun matchingSubstitutor(descriptorType: JetType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
+}
+
+val ExpectedInfo.fuzzyType: FuzzyType?
+    get() = (this.filter as? ByExpectedTypeFilter)?.fuzzyType
 
 data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val isFunctionLiteralArgument: Boolean) {
     constructor(argumentIndex: Int, isFunctionLiteralArgument: Boolean = false) : this(argumentIndex, null, isFunctionLiteralArgument)
@@ -111,6 +134,8 @@ class ExpectedInfos(
             ?: calculateForInitializer(expressionWithType)
             ?: calculateForExpressionBody(expressionWithType)
             ?: calculateForReturn(expressionWithType)
+            ?: calculateForLoopRange(expressionWithType)
+            ?: calculateForInOperatorArgument(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -137,11 +162,12 @@ class ExpectedInfos(
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
         val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument) ?: return null
 
-        if (useOuterCallsExpectedTypeCount > 0 && results.any { it.fuzzyType.freeParameters.isNotEmpty() && it.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false }) {
+        if (useOuterCallsExpectedTypeCount > 0 && results.any { it.fuzzyType != null && it.fuzzyType!!.freeParameters.isNotEmpty() && it.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false }) {
             val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
             val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
-                    ?.map { it.fuzzyType } ?: return results
+                    ?.map { it.fuzzyType }
+                    ?.filterNotNull() ?: return results
             if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
 
             return expectedFuzzyTypes
@@ -304,13 +330,13 @@ class ExpectedInfos(
         return when (expressionWithType) {
             ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.fuzzyType, it.expectedName, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
                 if (thenType != null && !thenType.isError())
-                    ifExpectedInfo?.filter { it.fuzzyType.checkIsSubtypeOf(thenType) != null }
+                    ifExpectedInfo?.filter { it.matchingSubstitutor(thenType) != null }
                 else
                     ifExpectedInfo
             }
@@ -330,7 +356,7 @@ class ExpectedInfos(
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos != null) {
                     return if (leftTypeNotNullable != null)
-                        expectedInfos.filter { it.fuzzyType.checkIsSuperTypeOf(leftTypeNotNullable) != null }
+                        expectedInfos.filter { it.matchingSubstitutor(leftTypeNotNullable) != null }
                     else
                         expectedInfos
                 }
@@ -351,6 +377,7 @@ class ExpectedInfos(
             val literalExpression = functionLiteral.parent as JetFunctionLiteralExpression
             return calculate(literalExpression)
                     ?.map { it.fuzzyType }
+                    ?.filterNotNull()
                     ?.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
                     ?.map {
                         val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)
@@ -358,7 +385,7 @@ class ExpectedInfos(
                     }
         }
         else {
-            return calculate(block)?.map { ExpectedInfo(it.fuzzyType, it.expectedName, null) }
+            return calculate(block)?.map { ExpectedInfo(it.filter, it.expectedName, null) }
         }
     }
 
@@ -414,6 +441,45 @@ class ExpectedInfos(
 
             else -> null
         }
+    }
+
+    private fun calculateForLoopRange(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val forExpression = (expressionWithType.parent as? JetContainerNode)
+                                    ?.parent as? JetForExpression ?: return null
+        if (expressionWithType != forExpression.loopRange) return null
+
+        val loopVar = forExpression.loopParameter
+        val loopVarType = if (loopVar != null && loopVar.typeReference != null)
+            (resolutionFacade.resolveToDescriptor(loopVar) as VariableDescriptor).type.check { !it.isError }
+        else
+            null
+
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
+        val iterableDetector = IterableTypesDetector(forExpression.project, moduleDescriptor, scope)
+
+        val byTypeFilter = object : ByTypeFilter {
+            override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
+                return if (iterableDetector.isIterable(descriptorType, loopVarType)) TypeSubstitutor.EMPTY else null
+            }
+        }
+        return listOf(ExpectedInfo(byTypeFilter, null, Tail.RPARENTH))
+    }
+
+    private fun calculateForInOperatorArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val binaryExpression = expressionWithType.parent as? JetBinaryExpression ?: return null
+        val operationToken = binaryExpression.operationToken
+        if (operationToken != JetTokens.IN_KEYWORD && operationToken != JetTokens.NOT_IN || expressionWithType != binaryExpression.right) return null
+
+        val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
+        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
+        val detector = TypesWithContainsDetector(scope, leftOperandType, binaryExpression.project, moduleDescriptor)
+
+        val byTypeFilter = object : ByTypeFilter {
+            override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
+                return if (detector.hasContains(descriptorType)) TypeSubstitutor.EMPTY else null
+            }
+        }
+        return listOf(ExpectedInfo(byTypeFilter, null, null))
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

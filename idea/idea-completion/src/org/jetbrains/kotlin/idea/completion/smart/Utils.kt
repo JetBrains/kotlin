@@ -133,13 +133,13 @@ private constructor(
 
 fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
     val sequence = asSequence()
-    val substitutor = sequence.map { it.checkIsSubtypeOf(expectedInfo.fuzzyType) }.firstOrNull()
+    val substitutor = sequence.map { expectedInfo.matchingSubstitutor(it) }.firstOrNull()
     if (substitutor != null) {
         return ExpectedInfoClassification.matches(substitutor)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
-        val substitutor2 = sequence.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.fuzzyType) }.firstOrNull()
+        val substitutor2 = sequence.map { expectedInfo.matchingSubstitutor(it.makeNotNullable()) }.firstOrNull()
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
         }

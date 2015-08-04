@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.resolve.PossiblyBareType
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class TypeInstantiationItems(
@@ -64,8 +64,9 @@ class TypeInstantiationItems(
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
     ) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType.type.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
         for ((type, infos) in expectedInfosGrouped) {
+            if (type == null) continue
             val tail = mergeTails(infos.map { it.tail })
             addTo(items, inheritanceSearchers, type, tail)
         }
