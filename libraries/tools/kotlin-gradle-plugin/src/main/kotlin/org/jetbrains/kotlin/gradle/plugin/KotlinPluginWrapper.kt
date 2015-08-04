@@ -55,7 +55,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
                 return scriptHandler
             }
             log.kotlinDebug("not found, switching to parent")
-            curProject = curProject.getParent()!!
+            curProject = curProject.getParent() ?: break
         }
         return null
     }
