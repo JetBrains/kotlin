@@ -130,14 +130,14 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                         extendedTargetList(PROPERTY_USE_SITE_TARGETS, LOCAL_VARIABLE)
                     }
                     else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody) {
-                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, MEMBER_PROPERTY, PROPERTY, FIELD)
+                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, MEMBER_PROPERTY, PROPERTY)
                     }
                     else {
-                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, TOP_LEVEL_PROPERTY, PROPERTY, FIELD)
+                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, TOP_LEVEL_PROPERTY, PROPERTY)
                     }
                 is JetParameter -> {
                     if (annotated.hasValOrVar()) {
-                        extendedTargetList(VALUE_PARAMETER_USE_SITE_TARGETS, PROPERTY_PARAMETER, MEMBER_PROPERTY, PROPERTY, FIELD)
+                        extendedTargetList(VALUE_PARAMETER_USE_SITE_TARGETS, PROPERTY_PARAMETER, MEMBER_PROPERTY, PROPERTY)
                     }
                     else {
                         extendedTargetList(VALUE_PARAMETER_USE_SITE_TARGETS, VALUE_PARAMETER)
