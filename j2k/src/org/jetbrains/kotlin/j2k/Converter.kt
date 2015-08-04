@@ -114,6 +114,13 @@ class Converter private constructor(
         is PsiImportStatementBase -> convertImport(element, false)
         is PsiAnnotation -> annotationConverter.convertAnnotation(element, withAt = false, newLineAfter = false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: "")).assignPrototype(element)
+        is PsiJavaCodeReferenceElement -> {
+            if (element.parent is PsiReferenceList) {
+                val factory = JavaPsiFacade.getInstance(project).elementFactory
+                typeConverter.convertType(factory.createType(element), Nullability.NotNull)
+            }
+            else null
+        }
         else -> null
     }
 
