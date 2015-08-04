@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
@@ -284,7 +283,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
         }
 
-        if (expression != null && completionKind == CompletionKind.ALL) {
+        if (expression != null) {
             val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expression)
 
             if (expectedInfos != null && expectedInfos.isNotEmpty()) {

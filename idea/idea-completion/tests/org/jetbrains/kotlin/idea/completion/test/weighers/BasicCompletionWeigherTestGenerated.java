@@ -156,6 +156,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("PreferMatchingThis.kt")
+        public void testPreferMatchingThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/PreferMatchingThis.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType")

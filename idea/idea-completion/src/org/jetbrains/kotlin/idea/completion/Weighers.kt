@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.completion.smart.fuzzyTypesForSmartCompletion
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.idea.util.nullability
@@ -200,12 +201,22 @@ class ExpectedInfoMatchWeigher(
     }
 
     override fun weigh(element: LookupElement): Weight {
-        // TODO: keywords with type, this etc
-        val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor ?: return Weight.doesNotMatch
-        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+        // TODO: keywords with type
+        val o = element.`object`
+        val fuzzyTypes = when (o) {
+            is DeclarationLookupObject -> {
+                val descriptor = o.descriptor ?: return Weight.doesNotMatch
+                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+            }
+
+            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) }
+
+            else -> return Weight.doesNotMatch
+        }
+
         return when {
-            types.any { type -> expectedInfos.any { it.matchingSubstitutor(type) != null } } -> Weight.matches
-            types.any { type -> type.nullability() == TypeNullability.NULLABLE && expectedInfos.any { it.matchingSubstitutor(type.makeNotNullable()) != null } } -> Weight.matchesIfNotNull
+            fuzzyTypes.any { type -> expectedInfos.any { it.matchingSubstitutor(type) != null } } -> Weight.matches
+            fuzzyTypes.any { type -> type.nullability() == TypeNullability.NULLABLE && expectedInfos.any { it.matchingSubstitutor(type.makeNotNullable()) != null } } -> Weight.matchesIfNotNull
             else -> Weight.doesNotMatch
         }
     }
