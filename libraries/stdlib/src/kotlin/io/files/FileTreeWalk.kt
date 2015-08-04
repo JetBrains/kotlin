@@ -1,3 +1,4 @@
+@file:JvmVersion
 package kotlin.io
 
 import java.io.File

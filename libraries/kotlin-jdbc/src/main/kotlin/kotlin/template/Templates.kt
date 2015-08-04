@@ -1,3 +1,4 @@
+@file:JvmVersion
 package kotlin.template
 
 import kotlin.dom. *

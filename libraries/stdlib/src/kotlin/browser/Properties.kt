@@ -1,3 +1,4 @@
+@file:JvmVersion
 package kotlin.browser
 
 import org.w3c.dom.Document
