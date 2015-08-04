@@ -60,6 +60,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
+        K2JVMCompiler.Companion.resetInitStartTime();
         return exec(errStream, services, MessageRenderer.XML, args);
     }
 
