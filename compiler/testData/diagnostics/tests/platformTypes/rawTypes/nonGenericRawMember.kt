@@ -18,6 +18,7 @@ class B {
 // FILE: Test.java
 
 class Test {
+    static class RawADerived extends A {}
     static A rawAField = null;
 }
 

@@ -42,8 +42,8 @@ public open class Rendering {
     }
 
     public/*package*/ interface H_Raw {
-        public abstract fun foo1(/*0*/ p0: (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)): kotlin.Unit
-        public abstract fun foo2(/*0*/ p0: (test.Rendering.D_SuperG<kotlin.Any!>..test.Rendering.D_SuperG<*>?)): kotlin.Unit
+        public abstract fun foo1(/*0*/ p0: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.Unit
+        public abstract fun foo2(/*0*/ p0: test.Rendering.D_SuperG<(raw) kotlin.Any!>!): kotlin.Unit
     }
 
     public/*package*/ interface I_Wildcard {

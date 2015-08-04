@@ -13,10 +13,10 @@ public interface A</*0*/ T : kotlin.Any!> {
 public/*package*/ open class B {
     public/*package*/ constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun foo(/*0*/ runnable: java.lang.Runnable!, /*1*/ x: (A<kotlin.Any!>..A<*>?)): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ runnable: java.lang.Runnable!, /*1*/ x: A<(raw) kotlin.Any!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun bar(): (A<kotlin.Any!>..A<*>?)
+    public/*package*/ open fun bar(): A<(raw) kotlin.Any!>!
 }

@@ -1,4 +1,4 @@
 package test
 
-public interface RecursiveWildcardUpperBound</*0*/ T : (test.RecursiveWildcardUpperBound<test.RecursiveWildcardUpperBound<*>>..test.RecursiveWildcardUpperBound<out test.RecursiveWildcardUpperBound<*>>?)> {
+public interface RecursiveWildcardUpperBound</*0*/ T : test.RecursiveWildcardUpperBound<(raw) test.RecursiveWildcardUpperBound<*>>!> {
 }

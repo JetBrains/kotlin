@@ -171,11 +171,16 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderFlexibleTypeWithBothBounds(lower: JetType, upper: JetType): String {
-        return "(" + renderNormalizedType(lower) + ".." + renderNormalizedType(upper) + ")"
+        return renderFlexibleTypeWithBothBounds(renderNormalizedType(lower), renderNormalizedType(upper))
     }
+
+    private fun renderFlexibleTypeWithBothBounds(lower: String, upper: String) = "($lower..$upper)"
 
     private fun renderInflexibleType(type: JetType): String {
         assert(!type.isFlexible()) { "Flexible types not allowed here: " + renderNormalizedType(type) }
+
+        val customResult = type.getCapability<CustomFlexibleRendering>()?.renderInflexible(type, this)
+        if (customResult != null) return customResult
 
         if (type == CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
             return "???"
@@ -204,8 +209,8 @@ internal class DescriptorRendererImpl(
         val lower = type.flexibility().lowerBound
         val upper = type.flexibility().upperBound
 
-        val lowerRendered = renderInflexibleType(lower)
-        val upperRendered = renderInflexibleType(upper)
+        val (lowerRendered, upperRendered) = type.getCapability<CustomFlexibleRendering>()?.renderBounds(type.flexibility(), this)
+                                             ?: Pair(renderInflexibleType(lower), renderInflexibleType(upper))
 
         if (differsOnlyInNullability(lowerRendered, upperRendered)) {
             if (upperRendered.startsWith("(")) {
@@ -227,7 +232,7 @@ internal class DescriptorRendererImpl(
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array
-        return renderFlexibleTypeWithBothBounds(lower, upper)
+        return renderFlexibleTypeWithBothBounds(lowerRendered, upperRendered)
     }
 
     override fun renderTypeArguments(typeArguments: List<TypeProjection>): String {
@@ -248,7 +253,7 @@ internal class DescriptorRendererImpl(
             sb.append(type.getConstructor().toString()) // Debug name of an error type is more informative
         }
         else {
-            sb.append(renderTypeName(type.getConstructor()))
+            sb.append(renderTypeConstructor(type.getConstructor()))
         }
         sb.append(renderTypeArguments(type.getArguments()))
         if (type.isMarkedNullable()) {
@@ -257,7 +262,7 @@ internal class DescriptorRendererImpl(
         return sb.toString()
     }
 
-    private fun renderTypeName(typeConstructor: TypeConstructor): String {
+    override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.getDeclarationDescriptor()
         return when (cd) {
             is TypeParameterDescriptor -> renderName(cd.getName())
@@ -266,6 +271,10 @@ internal class DescriptorRendererImpl(
             else -> error("Unexpected classifier: " + cd.javaClass)
         }
     }
+
+    override fun renderTypeProjection(typeProjection: TypeProjection) = StringBuilder {
+        appendTypeProjections(listOf(typeProjection), this)
+    }.toString()
 
     private fun appendTypeProjections(typeProjections: List<TypeProjection>, builder: StringBuilder) {
         typeProjections.map {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import kotlin.platform.platformStatic
 

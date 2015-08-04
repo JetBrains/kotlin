@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
 public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
@@ -35,6 +36,10 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
     public fun renderType(type: JetType): String
 
     public fun renderTypeArguments(typeArguments: List<TypeProjection>): String
+
+    public fun renderTypeProjection(typeProjection: TypeProjection): String
+
+    public fun renderTypeConstructor(typeConstructor: TypeConstructor): String
 
     public fun renderClassifierName(klass: ClassifierDescriptor): String
 

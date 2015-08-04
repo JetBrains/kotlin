@@ -6,7 +6,7 @@ package test {
     public open class Usage {
         public constructor Usage()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public/*package*/ open fun foo(/*0*/ c: (kotlin.MutableCollection<kotlin.Any?>..kotlin.Collection<*>?)): kotlin.Unit
+        public/*package*/ open fun foo(/*0*/ c: kotlin.(Mutable)Collection<(raw) kotlin.Any?>!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

@@ -2,7 +2,7 @@ package
 
 internal fun main(/*0*/ x: A<*>): kotlin.Unit
 
-public interface A</*0*/ T : (A<A<*>>..A<out A<*>>?)> {
+public interface A</*0*/ T : A<(raw) A<*>>!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
