@@ -50,6 +50,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement {
     public val constructors: Collection<KFunction<T>>
 
     /**
+     * All classes declared inside this class. This includes both inner and static nested classes.
+     */
+    public val nestedClasses: Collection<KClass<*>>
+
+    /**
      * The instance of the object declaration, or `null` if this class is not an object declaration.
      */
     public val objectInstance: T?

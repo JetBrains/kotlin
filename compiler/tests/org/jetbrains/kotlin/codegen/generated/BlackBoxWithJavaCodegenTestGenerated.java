@@ -339,6 +339,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("nestedClasses")
+        public void testNestedClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/nestedClasses/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("noConflictOnKotlinGetterAndJavaField")
         public void testNoConflictOnKotlinGetterAndJavaField() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/noConflictOnKotlinGetterAndJavaField/");
