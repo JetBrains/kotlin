@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.util.SystemInfoRt
 import org.jetbrains.jps.model.java.JavaSourceRootType
 
-public class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest() {
+public class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDumpsCaseInsensitively = true) {
     fun testProjectPathCaseChanged() {
         doTest("jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
     }
@@ -35,9 +35,6 @@ public class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(
 
         super.doTest(testDataPath)
     }
-
-    override val checkDumpsCaseInsensitively: Boolean
-        get() = true
 
     override fun performAdditionalModifications() {
         val module = myProject.getModules()[0]

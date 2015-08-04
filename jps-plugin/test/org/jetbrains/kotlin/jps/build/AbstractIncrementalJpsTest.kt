@@ -56,7 +56,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.fail
 
-public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
+public abstract class AbstractIncrementalJpsTest(
+        private val allowNoFilesWithSuffixInTestData: Boolean = false,
+        private val checkDumpsCaseInsensitively: Boolean = false
+) : JpsBuildTestCase() {
     companion object {
         val COMPILATION_FAILED = "COMPILATION FAILED"
 
@@ -96,14 +99,8 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
-    protected open val allowNoFilesWithSuffixInTestData: Boolean
-        get() = false
-
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = null
-
-    protected open val checkDumpsCaseInsensitively: Boolean
-        get() = false
 
     fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.getAbsolutePath())
