@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KMutableProperty
@@ -81,16 +82,19 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
     fun isPlatformStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null
 
+    fun isNotNullProperty() =
+            !TypeUtils.isNullableType(property.descriptor.type)
+
     fun computeFieldCaller(field: Field): FunctionCaller.FieldAccessor = when {
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
-            else FunctionCaller.InstanceFieldSetter(field)
+            else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())
         isPlatformStaticProperty() ->
             if (isGetter) FunctionCaller.PlatformStaticInObjectFieldGetter(field)
-            else FunctionCaller.PlatformStaticInObjectFieldSetter(field)
+            else FunctionCaller.PlatformStaticInObjectFieldSetter(field, isNotNullProperty())
         else ->
             if (isGetter) FunctionCaller.StaticFieldGetter(field)
-            else FunctionCaller.StaticFieldSetter(field)
+            else FunctionCaller.StaticFieldSetter(field, isNotNullProperty())
     }
 
     val jvmSignature = RuntimeTypeMapper.mapPropertySignature(property.descriptor)

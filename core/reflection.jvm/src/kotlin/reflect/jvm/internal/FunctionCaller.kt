@@ -102,8 +102,16 @@ internal sealed class FunctionCaller(
 
     abstract class FieldSetter(
             field: ReflectField,
+            private val notNull: Boolean,
             private val requiresInstance: Boolean
     ) : FieldAccessor(field, if (requiresInstance) 2 else 1) {
+        override fun checkArguments(args: Array<*>) {
+            super.checkArguments(args)
+            if (notNull && args.last() == null) {
+                throw IllegalArgumentException("null is not allowed as a value for this property.")
+            }
+        }
+
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return field.set(if (requiresInstance) args.first() else null, args.last())
@@ -121,11 +129,11 @@ internal sealed class FunctionCaller(
         }
     }
 
-    class StaticFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = false)
+    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false)
 
-    class InstanceFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = true)
+    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true)
 
-    class PlatformStaticInObjectFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = true) {
+    class PlatformStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             checkObjectInstance(args.firstOrNull())

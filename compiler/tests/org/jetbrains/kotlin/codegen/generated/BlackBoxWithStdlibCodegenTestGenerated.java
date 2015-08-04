@@ -2844,6 +2844,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("disallowNullValueForNotNullField.kt")
+            public void testDisallowNullValueForNotNullField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/disallowNullValueForNotNullField.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("equalsHashCodeToString.kt")
             public void testEqualsHashCodeToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/equalsHashCodeToString.kt");
