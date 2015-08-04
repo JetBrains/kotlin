@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.HashMap
 
 // This file contains functionality similar to org.jetbrains.kotlin.cfg.PseudocodeVariablesData,
@@ -124,7 +125,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val filteredIntFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intFakeVarsToValues)
         val filteredBoolVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolVarsToValues)
         val filteredBoolFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolFakeVarsToValues)
-        val filteredArrayVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.arraysToSizes)
+        val filteredArrayVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.collectionsToSizes)
         return ValuesData(
                 HashMap(filteredIntVars),
                 HashMap(filteredIntFakeVars),
@@ -243,13 +244,13 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val unitedIntFakeVariables = headData.intFakeVarsToValues
         val unitedBoolVariables = headData.boolVarsToValues
         val unitedBoolFakeVariables = headData.boolFakeVarsToValues
-        val unitedArrayVariables = headData.arraysToSizes
+        val unitedArrayVariables = headData.collectionsToSizes
         for (data in tailData) {
             mergeCorrespondingIntegerVariables(unitedIntVariables, data.intVarsToValues)
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
             MapUtils.mergeMapsIntoFirst(unitedBoolVariables, data.boolVarsToValues) { value1, value2 -> value1.or(value2) }
             unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
-            mergeCorrespondingIntegerVariables(unitedArrayVariables, data.arraysToSizes)
+            mergeCorrespondingIntegerVariables(unitedArrayVariables, data.collectionsToSizes)
         }
         return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables, unitedArrayVariables)
     }
@@ -281,8 +282,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
                 when {
-                    InstructionUtils.isExpectedReturnType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) } ->
-                        processArrayCreation(instruction, updatedData)
+                    InstructionUtils.isExpectedReturnType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) },
+                    InstructionUtils.isExpectedReturnType(instruction) { KotlinListUtils.isKotlinList(it) } ->
+                        processCollectionCreation(instruction, updatedData)
                     instruction.element is JetBinaryExpression ->
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                     instruction.element is JetPrefixExpression ->
@@ -326,8 +328,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues())
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
-            KotlinArrayUtils.isGenericOrPrimitiveArray(variableType) ->
-                updatedData.arraysToSizes.put(variableDescriptor, IntegerVariableValues())
+            KotlinArrayUtils.isGenericOrPrimitiveArray(variableType),
+            KotlinListUtils.isKotlinList(variableType) ->
+                updatedData.collectionsToSizes.put(variableDescriptor, IntegerVariableValues())
         }
     }
 
@@ -357,7 +360,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val newFakeVariable = instruction.outputValue
         val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
                 variableDescriptor, { updatedData.boolVarsToValues.getOrElse(
-                variableDescriptor, { updatedData.arraysToSizes[variableDescriptor] }) })
+                variableDescriptor, { updatedData.collectionsToSizes[variableDescriptor] }) })
         when (referencedVariableValue) {
             is IntegerVariableValues ->
                 // we have the information about value, so it is definitely of integer type
@@ -392,9 +395,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         valueToAssign?.let { it.copy() } ?: BooleanVariableValue.undefinedWithNoRestrictions
                 )
             }
-            KotlinArrayUtils.isGenericOrPrimitiveArray(targetType) -> {
+            KotlinArrayUtils.isGenericOrPrimitiveArray(targetType),
+            KotlinListUtils.isKotlinList(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
-                updatedData.arraysToSizes.put(
+                updatedData.collectionsToSizes.put(
                         variableDescriptor,
                         valuesToAssign?.let { it.copy() } ?: IntegerVariableValues.createUndefined()
                 )
@@ -410,19 +414,21 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processArrayCreation(instruction: CallInstruction, updatedData: ValuesData) {
-        val arraySize = tryExtractArraySize(instruction, updatedData)
-        val arraySizeVariable = instruction.outputValue
-        if (arraySizeVariable != null && arraySize != null) {
-            updatedData.intFakeVarsToValues[arraySizeVariable] = arraySize
+    private fun processCollectionCreation(instruction: CallInstruction, updatedData: ValuesData) {
+        val collectionSize = tryExtractCollectionSize(instruction, updatedData)
+        val collectionSizeVariable = instruction.outputValue
+        if (collectionSizeVariable != null && collectionSize != null) {
+            updatedData.intFakeVarsToValues[collectionSizeVariable] = collectionSize
         }
     }
 
-    private fun tryExtractArraySize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
+    private fun tryExtractCollectionSize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             return when (calledName) {
-                KotlinArrayUtils.arrayOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
+                KotlinArrayUtils.arrayOfFunctionName,
+                KotlinListUtils.listOfFunctionName,
+                KotlinListUtils.linkedListOfFunctionName-> IntegerVariableValues(instruction.arguments.size())
                 KotlinArrayUtils.arrayConstructorName,
                 in KotlinArrayUtils.primitiveArrayConstructorNames -> {
                     if (instruction.inputValues.isEmpty()) {
@@ -513,7 +519,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             val isSizeMethodCalled = calledName == KotlinArrayUtils.sizeMethodNameOfArray
-            val arrayIsReceiver = KotlinArrayUtils.receiverIsArray(instruction)
+            val arrayIsReceiver = InstructionUtils.isExpectedReceiverType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) }
             val returnTypeIsInt = InstructionUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
             isSizeMethodCalled && arrayIsReceiver && returnTypeIsInt
         }

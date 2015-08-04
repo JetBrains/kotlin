@@ -25,14 +25,14 @@ public data class ValuesData(
         val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
         val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
         val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap(),
-        val arraysToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
+        val collectionsToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
 ) {
     override fun toString(): String {
         val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
         val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
         val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
-        val arrs = MapUtils.mapToString(arraysToSizes, descriptorToString, descriptorToString)
-        return "I$ints B$bools A$arrs "
+        val arrs = MapUtils.mapToString(collectionsToSizes, descriptorToString, descriptorToString)
+        return "I$ints B$bools C$arrs "
     }
 
     public fun copy(): ValuesData {
@@ -43,7 +43,7 @@ public data class ValuesData(
                 copyIntsMap(intFakeVarsToValues),
                 HashMap(boolVarsToValues),
                 HashMap(boolFakeVarsToValues),
-                copyIntsMap(arraysToSizes)
+                copyIntsMap(collectionsToSizes)
         )
     }
 }

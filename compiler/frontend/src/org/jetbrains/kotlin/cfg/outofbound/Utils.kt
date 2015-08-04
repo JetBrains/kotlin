@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
 import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeConstructor
 
 public object MapUtils {
     public fun mapToString<K, V, C : Comparable<C>>(
@@ -78,24 +80,39 @@ public object InstructionUtils {
                        ?.let { isExpectedType(it) }
                ?: false
     }
+
+    public fun isExpectedReceiverType(instruction: CallInstruction, isExpectedType: (JetType) -> Boolean): Boolean {
+        val callReceiver = instruction.resolvedCall.dispatchReceiver
+        return if (callReceiver is ExpressionReceiver)
+            isExpectedType(callReceiver.type)
+        else false
+    }
 }
 
 public object KotlinArrayUtils {
     public fun isGenericOrPrimitiveArray(type: JetType): Boolean =
             KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
 
-    public fun receiverIsArray(instruction: CallInstruction): Boolean {
-        val callReceiver = instruction.resolvedCall.dispatchReceiver
-        return if (callReceiver is ExpressionReceiver)
-            KotlinArrayUtils.isGenericOrPrimitiveArray(callReceiver.type)
-        else false
-    }
-
-    // Array creation
+    // Creation
     public val arrayOfFunctionName: String = "arrayOf"
     public val arrayConstructorName: String = "Array"
     public val primitiveArrayConstructorNames: Set<String> = PrimitiveType.values().map { it.arrayTypeName.asString() }.toSet()
 
-    // Array methods
+    // Methods
+    public val sizeMethodNameOfArray: String = "size"
+}
+
+public object KotlinListUtils {
+    public fun isKotlinList(type: JetType): Boolean =
+        if (type.constructor is TypeConstructor) {
+            type.constructor.declarationDescriptor?.let { it.fqNameSafe.asString() == "kotlin.List" } ?: false ||
+            type.constructor.toString().contains("java.util.LinkedList")
+        }
+        else false
+    // Creation
+    public val listOfFunctionName: String = "listOf"
+    public val linkedListOfFunctionName: String = "linkedListOf"
+
+    // Methods
     public val sizeMethodNameOfArray: String = "size"
 }

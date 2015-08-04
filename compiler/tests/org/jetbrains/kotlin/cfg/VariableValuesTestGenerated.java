@@ -83,6 +83,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Lists.kt")
+    public void testLists() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/Lists.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Loops.kt")
     public void testLoops() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/Loops.kt");
