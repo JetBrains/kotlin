@@ -59,7 +59,7 @@ class MigrateAnnotationMethodCallInWholeFile : IntentionAction {
             forEach {
                 (it.getPsiElement() as? JetCallExpression)?.let { MigrateAnnotationMethodCallFix.replaceWithSimpleCall(it) }
             }
-    }
+    } ?: Unit
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = MigrateAnnotationMethodCallInWholeFile()

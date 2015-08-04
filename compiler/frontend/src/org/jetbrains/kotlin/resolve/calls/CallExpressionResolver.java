@@ -373,7 +373,7 @@ public class CallExpressionResolver {
 
         //TODO move further
         if (safeCall) {
-            if (selectorReturnType != null && !KotlinBuiltIns.isUnit(selectorReturnType)) {
+            if (selectorReturnType != null) {
                 if (TypeUtils.isNullableType(receiverType)) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                     selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
