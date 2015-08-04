@@ -67,6 +67,9 @@ public object AnnotationUseSiteTargetChecker {
                         if (containingDeclaration !is ConstructorDescriptor || !containingDeclaration.isPrimary) {
                             report(annotation, INAPPLICABLE_PARAM_TARGET)
                         }
+                        else if (!annotated.hasValOrVar()) {
+                            report(annotationWithTarget, REDUNDANT_ANNOTATION_TARGET)
+                        }
                     }
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotationWithTarget)
