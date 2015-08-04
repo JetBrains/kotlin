@@ -22,7 +22,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
+import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.DirtyFilesHolder
+import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
+import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
@@ -102,9 +105,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
         val messageCollector = MessageCollectorAdapter(context)
-        val dataManager = context.projectDescriptor.dataManager
-        val targets = chunk.targets
-        val incrementalCaches = targets.keysToMap { dataManager.getKotlinCache(it) }
+        val incrementalCaches = getIncrementalCaches(chunk, context)
 
         try {
             return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, incrementalCaches)
@@ -607,6 +608,44 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     override fun buildFinished(context: CompileContext?) {
         statisticsLogger.reportTotal()
     }
+}
+
+private val Iterable<BuildTarget<*>>.moduleTargets: Iterable<ModuleBuildTarget>
+    get() = filterIsInstance(javaClass<ModuleBuildTarget>())
+
+private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, IncrementalCacheImpl> {
+    val dataManager = context.projectDescriptor.dataManager
+    val targets = chunk.targets
+
+    val buildRegistry = BuildTargetRegistryImpl(context.projectDescriptor.model)
+    val outputIndex = TargetOutputIndexImpl(targets, context)
+
+    val allTargets = buildRegistry.allTargets.moduleTargets
+    val allDependencies = allTargets.keysToMap { target ->
+        target.computeDependencies(buildRegistry, outputIndex).moduleTargets
+    }
+
+    val dependents = targets.keysToMap { hashSetOf<ModuleBuildTarget>() }
+    val targetsWithDependents = HashSet<ModuleBuildTarget>(targets)
+
+    for ((target, dependencies) in allDependencies) {
+        for (dependency in dependencies) {
+            if (dependency !in targets) continue
+
+            dependents[dependency]!!.add(target)
+            targetsWithDependents.add(target)
+        }
+    }
+
+    val caches = targetsWithDependents.keysToMap { dataManager.getKotlinCache(it) }
+
+    for ((target, cache) in caches) {
+        dependents[target]?.forEach {
+            cache.addDependentCache(caches[it]!!)
+        }
+    }
+
+    return caches
 }
 
 private val ALL_COMPILED_FILES_KEY = Key.create<MutableSet<File>>("_all_kotlin_compiled_files_")

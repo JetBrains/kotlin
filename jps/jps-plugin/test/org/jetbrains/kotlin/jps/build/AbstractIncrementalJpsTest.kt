@@ -37,6 +37,7 @@ import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.incremental.IncProjectBuilder
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsElementFactory
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil
@@ -51,8 +52,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -290,7 +290,10 @@ public abstract class AbstractIncrementalJpsTest(
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
         return StringBuilder {
-            for (target in project.buildTargetIndex.allTargets.sortBy { it.presentableName }) {
+            val allTargets = project.buildTargetIndex.allTargets
+            val moduleTargets = allTargets.filterIsInstance(ModuleBuildTarget::class.java)
+
+            for (target in moduleTargets.sortedBy { it.presentableName }) {
                 append("<target $target>\n")
                 append(project.dataManager.getKotlinCache(target).dump())
                 append("</target $target>\n\n\n")
