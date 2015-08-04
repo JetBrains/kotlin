@@ -21,17 +21,27 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
-    require(args.size() == 2, "Please specify path to sources and output path for all platforms")
+    if (args.size() != 3) {
+        println("Usage: <path to sources> <output path> <profile>")
+        System.exit(1)
+    }
 
     val sourcePath = File(args[0])
     val targetPath = File(args[1])
+    val profileName = args[2]
 
-    val profiles = listOf(6, 7, 8).map { createJvmProfile(targetPath, version = it) } + createJsProfile(targetPath)
+    val profiles = listOf(6, 7, 8).map { version -> "JVM$version" to { JvmPlatformEvaluator(version) } } + ("JS" to { JsPlatformEvaluator() })
 
-    val pool = Executors.newCachedThreadPool()
+    val (name, evaluatorBuilder) = profiles.single { it.first.equals(profileName, ignoreCase = true) }
+    val profile = Profile(name, evaluatorBuilder(), targetPath)
 
-    profiles.forEach { profile -> pool.submit { Preprocessor().processSources(sourcePath, profile) } }
+    println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
+    Preprocessor().processSources(sourcePath, profile)
 
-    pool.shutdown()
-    pool.awaitTermination(1, TimeUnit.MINUTES)
+//    val pool = Executors.newCachedThreadPool()
+//
+//    profiles.forEach { profile -> pool.submit { Preprocessor().processSources(sourcePath, profile) } }
+//
+//    pool.shutdown()
+//    pool.awaitTermination(1, TimeUnit.MINUTES)
 }

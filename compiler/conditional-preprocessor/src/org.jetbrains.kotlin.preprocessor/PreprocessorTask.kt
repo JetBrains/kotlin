@@ -15,7 +15,7 @@
  */
 
 package org.jetbrains.kotlin.preprocessor
-
+/*
 import org.apache.tools.ant.Task
 import java.io.File
 
@@ -25,7 +25,7 @@ public class PreprocessorTask: Task() {
         public var version: Int? = null
         public var output: File? = null
     }
-    public class JsProfileConfig{
+    public class JsProfileConfig {
         public var output: File? = null
     }
 
@@ -58,3 +58,4 @@ public class PreprocessorTask: Task() {
         if (profiles.isEmpty()) throw IllegalArgumentException("profiles")
     }
 }
+*/

@@ -68,7 +68,7 @@ public class Preprocessor() {
 
         val sourceText = sourceFile.readText().convertLineSeparators()
         val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
-        println("$psiFile")
+        //println("$psiFile")
 
 
         val fileAnnotations = psiFile.parseConditionalAnnotations()
@@ -93,40 +93,42 @@ public class Preprocessor() {
         for (sourceFile in sourceFiles)
         {
             val result = processFileSingleEvaluator(sourceFile, evaluator)
-            if (result is FileProcessingResult.Skip)
+            if (result is FileProcessingResult.Skip) {
+                println("$sourceFile is excluded")
                 continue
+            }
 
-            val destFile = sourceFile.makeRelativeTo(sourceRoot, targetRoot)
-            processedFiles += destFile
+            val targetFile = sourceFile.makeRelativeTo(sourceRoot, targetRoot)
+            processedFiles += targetFile
 
-            if (destFile.exists() && destFile.isDirectory)
-                destFile.deleteRecursively()
+            if (targetFile.exists() && targetFile.isDirectory)
+                targetFile.deleteRecursively()
 
             // if no modifications — copy
             if (result is FileProcessingResult.Copy) {
-                FileUtil.copy(sourceFile, destFile)
+                FileUtil.copy(sourceFile, targetFile)
             } else if (result is FileProcessingResult.Modify) {
                 val resultText = result.getModifiedText()
-                if (destFile.exists() && destFile.isTextEqualTo(resultText))
+                if (targetFile.exists() && targetFile.isTextEqualTo(resultText))
                     continue
-                destFile.writeText(resultText)
+                println("Rewriting modified $targetFile")
+                targetFile.writeText(resultText)
             }
         }
 
         for (sourceDir in sourceDirectories) {
-            val destDir = sourceDir.makeRelativeTo(sourceRoot, targetRoot)
-            if (!destDir.exists()) {
-                destDir.mkdirsOrFail()
+            val targetDir = sourceDir.makeRelativeTo(sourceRoot, targetRoot)
+            if (targetDir.exists() && !targetDir.isDirectory) {
+                targetDir.delete()
             }
-            else if (!destDir.isDirectory) {
-                destDir.delete()
-            }
-            processDirectorySingleEvaluator(sourceDir, destDir, evaluator)
-            processedFiles += destDir
+            targetDir.mkdirsOrFail()
+            processDirectorySingleEvaluator(sourceDir, targetDir, evaluator)
+            processedFiles += targetDir
         }
 
-        targetRoot.listFiles().forEach { targetFile ->
+        for (targetFile in targetRoot.listFiles()) {
             if (!processedFiles.remove(processedFiles.find { FileUtil.filesEqual(it, targetFile) })) {
+                println("Removing skipped $targetFile")
                 targetFile.deleteRecursively()
             }
         }

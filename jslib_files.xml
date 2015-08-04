@@ -20,25 +20,12 @@
             <include name="kotlin/annotation/Annotations.kt"/>
         </fileset>
 
-        <fileset dir="${basedir}/libraries/stdlib/src">
+        <fileset dir="${basedir}/${intermediate-sources}/stdlib/js">
             <include name="**/*.kt" />
 
             <!-- JVM specific -->
             <exclude name="**/*JVM.kt" />
             <exclude name="kotlin/jvm/**" />
-            <exclude name="kotlin/beans/**" />
-            <exclude name="kotlin/browser/**" />
-            <exclude name="kotlin/concurrent/**" />
-            <exclude name="kotlin/io/**" />
-            <exclude name="kotlin/math/**" />
-            <exclude name="kotlin/template/**" />
-
-            <!-- Temporary disabled -->
-            <!--TODO fix: (84, 27) Unresolved reference: copyOf (_SpecialJVM.kt)-->
-            <exclude name="kotlin/collections/ImmutableArrayList.kt" />
-
-            <!-- TODO fix: AllModules is subclass of ThreadLocal. -->
-            <exclude name="kotlin/modules/**" />
         </fileset>
     </union>
 </project>
