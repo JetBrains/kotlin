@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -125,14 +126,13 @@ class SmartCompletion(
         else
             originalExpectedInfos
 
-        val smartCastCalculator = (expression as? JetSimpleNameExpression)?.let { SmartCastCalculator(bindingContext, moduleDescriptor, it) }
+        val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
         val functionExpectedInfos = expectedInfos.filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
-            if (smartCastCalculator == null) return emptyList() // only happens for this@ completion
             if (descriptor in itemsToSkip) return emptyList()
 
             val result = SmartList<LookupElement>()
@@ -166,15 +166,13 @@ class SmartCompletion(
                 StaticMembers(bindingContext, lookupElementFactory).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
             }
 
-            additionalItems.addThisItems(expression, expectedInfos)
+            additionalItems.addThisItems(expression, expectedInfos, smartCastCalculator)
 
             LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
 
             KeywordValues.addToCollection(additionalItems, originalExpectedInfos/* use originalExpectedInfos to not include null after == */, expression)
 
-            if (smartCastCalculator != null) {
-                MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(additionalItems, expectedInfos, expression)
-            }
+            MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(additionalItems, expectedInfos, expression)
         }
 
         val inheritanceSearcher = if (inheritanceSearchers.isNotEmpty())
@@ -188,13 +186,14 @@ class SmartCompletion(
         return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
     }
 
-    private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
+    private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
         if (shouldCompleteThisItems(prefixMatcher)) {
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix())
-            for ((factory, type) in items) {
-                val classifier = { expectedInfo: ExpectedInfo -> type.classifyExpectedInfo(expectedInfo) }
+            for (item in items) {
+                val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
+                val classifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, classifier) {
-                    factory().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
+                    item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
                 }
             }
         }

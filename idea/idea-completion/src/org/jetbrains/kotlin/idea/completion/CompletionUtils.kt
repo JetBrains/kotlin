@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.findLabelAndCall
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -159,26 +162,22 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
     return prefix.startsWith(s) || s.startsWith(prefix)
 }
 
-data class ThisItemInfo(val factory: () -> LookupElement, val type: FuzzyType)
+class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, val labelName: Name?) : KeywordLookupObject()
 
-fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String): Collection<ThisItemInfo> {
+fun ThisItemLookupObject.createLookupElement() = createKeywordWithLabelElement("this", labelName, lookupObject = this)
+        .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
+
+fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression, prefix: String): Collection<ThisItemLookupObject> {
     val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return listOf()
 
     val psiFactory = JetPsiFactory(position)
 
-    val result = ArrayList<ThisItemInfo>()
+    val result = ArrayList<ThisItemLookupObject>()
     for ((receiver, expressionFactory) in scope.getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
         val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? JetThisExpression ?: continue
-
-        val thisType = receiver.getType()
-        val fuzzyType = FuzzyType(thisType, listOf())
-
-        fun createLookupElement() = createKeywordWithLabelElement("this", expression.getLabelNameAsName())
-                .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
-
-        result.add(ThisItemInfo(::createLookupElement, fuzzyType))
+        result.add(ThisItemLookupObject(receiver, expression.getLabelNameAsName()))
     }
     return result
 }
@@ -223,8 +222,8 @@ private fun JetDeclarationWithBody.returnType(bindingContext: BindingContext): J
     return callable.getReturnType()
 }
 
-private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpace: Boolean): LookupElement {
-    val element = createKeywordWithLabelElement(keyword, label)
+private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpace: Boolean, lookupObject: KeywordLookupObject = KeywordLookupObject()): LookupElement {
+    val element = createKeywordWithLabelElement(keyword, label, lookupObject)
     return if (addSpace) {
         object: LookupElementDecorator<LookupElement>(element) {
             override fun handleInsert(context: InsertionContext) {
@@ -237,9 +236,9 @@ private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpac
     }
 }
 
-private fun createKeywordWithLabelElement(keyword: String, label: Name?): LookupElementBuilder {
+private fun createKeywordWithLabelElement(keyword: String, label: Name?, lookupObject: KeywordLookupObject = KeywordLookupObject()): LookupElementBuilder {
     val labelInCode = label?.render()
-    var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$labelInCode")
+    var element = LookupElementBuilder.create(lookupObject, if (label == null) keyword else "$keyword@$labelInCode")
     element = element.withPresentableText(keyword)
     element = element.withBoldness(true)
     if (label != null) {

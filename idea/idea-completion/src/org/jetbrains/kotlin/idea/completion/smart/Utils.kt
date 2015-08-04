@@ -326,7 +326,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: Smar
         if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
 
         if (this is VariableDescriptor) { //TODO: generic properties!
-            return smartCastCalculator(this).map { FuzzyType(it, emptyList()) }
+            return smartCastCalculator.types(this).map { FuzzyType(it, emptyList()) }
         }
         else {
             return listOf(returnType)

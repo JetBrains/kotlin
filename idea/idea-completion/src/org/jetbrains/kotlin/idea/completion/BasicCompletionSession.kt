@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -194,7 +197,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 // if "this" is parsed correctly in the current context - insert it and all this@xxx items
                     "this" -> {
                         if (expression != null) {
-                            collector.addElements(thisExpressionItems(bindingContext, expression, prefix).map { it.factory() })
+                            collector.addElements(thisExpressionItems(bindingContext, expression, prefix).map { it.createLookupElement() })
                         }
                         else {
                             // for completion in secondary constructor delegation call
@@ -281,14 +284,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
         }
 
-        val expectedInfos = nameExpression
-                ?.check { completionKind == CompletionKind.ALL }
-                ?.let { it.getQualifiedElement() as? JetExpression }
-                ?.let { ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(it) }
+        if (expression != null && completionKind == CompletionKind.ALL) {
+            val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expression)
 
-        if (expectedInfos != null && expectedInfos.isNotEmpty()) {
-            val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, nameExpression!!)
-            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator))
+            if (expectedInfos != null && expectedInfos.isNotEmpty()) {
+                val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
+                sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator))
+            }
         }
 
         return sorter

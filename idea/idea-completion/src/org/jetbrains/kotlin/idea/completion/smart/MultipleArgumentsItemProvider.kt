@@ -91,7 +91,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.getLocalVariable(name) ?: scope.getProperties(name).singleOrNull() ?: return null
-        return if (smartCastCalculator(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastCalculator.types(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else
             null
