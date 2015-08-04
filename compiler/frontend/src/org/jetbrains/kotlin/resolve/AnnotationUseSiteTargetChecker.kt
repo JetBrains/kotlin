@@ -79,34 +79,39 @@ public object AnnotationUseSiteTargetChecker {
             modifierListOwner: JetAnnotated,
             descriptor: DeclarationDescriptor,
             annotationWithTarget: AnnotationWithTarget) {
-        if (checkIfPropertyDescriptor(descriptor, annotationWithTarget)) return
+        val propertyDescriptor = checkIfPropertyDescriptor(descriptor, annotationWithTarget) ?: return
 
-        descriptor as PropertyDescriptor
         val hasDelegate = modifierListOwner is JetProperty && modifierListOwner.hasDelegate()
 
-        if (!hasDelegate && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false)) {
+        if (!hasDelegate && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false)) {
             report(annotationWithTarget.annotation, INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD)
         }
     }
 
     private fun BindingTrace.checkMutableProperty(descriptor: DeclarationDescriptor, annotationWIthTarget: AnnotationWithTarget) {
-        checkIfPropertyDescriptor(descriptor, annotationWIthTarget)
+        val propertyDescriptor = checkIfPropertyDescriptor(descriptor, annotationWIthTarget) ?: return
 
-        if (descriptor is PropertyDescriptor) {
-            if (!descriptor.isVar) {
-                report(annotationWIthTarget.annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
-            }
+        if (!propertyDescriptor.isVar) {
+            report(annotationWIthTarget.annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
         }
     }
 
     private fun BindingTrace.checkIfPropertyDescriptor(
             descriptor: DeclarationDescriptor,
-            annotationWithTarget: AnnotationWithTarget): Boolean {
-        if (descriptor !is PropertyDescriptor) {
-            report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
-            return true
+            annotationWithTarget: AnnotationWithTarget): PropertyDescriptor? {
+        if (descriptor is PropertyDescriptor) {
+            return descriptor
         }
-        return false
+        else if (descriptor is ValueParameterDescriptor) {
+            val jetParameter = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetParameter
+            if (jetParameter != null && jetParameter.hasValOrVar()) {
+                val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+                if (propertyDescriptor != null) return propertyDescriptor
+            }
+        }
+
+        report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
+        return null
     }
 
     private fun BindingTrace.report(annotation: AnnotationDescriptor, diagnosticFactory: DiagnosticFactory0<PsiElement>) {
