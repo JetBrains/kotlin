@@ -77,7 +77,7 @@ public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
             CollectedDataStrings(
                     "INTS${MapUtils.mapToString(it.value.intVarsToValues, descriptorToString, descriptorToString)}",
                     "BOOLS${MapUtils.mapToString(it.value.boolVarsToValues, descriptorToString, descriptorToString)}",
-                    "ARRS${MapUtils.mapToString(it.value.arraysToSizes, descriptorToString, descriptorToString)}"
+                    "ARRS${MapUtils.mapToString(it.value.collectionsToSizes, descriptorToString, descriptorToString)}"
             )
         }
         return DumpData(
