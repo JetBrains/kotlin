@@ -1,4 +1,4 @@
-fun accessWithLiteral(): Int {
+fun arrayAccessWithLiteral(): Int {
     val arr = arrayOf(1)
     val a = arr[0]
     val b = <!OUT_OF_BOUND_ACCESS!>arr[1]<!>
@@ -28,4 +28,11 @@ fun arraySizeMethodCall() {
             println(<!OUT_OF_BOUND_ACCESS!>arr[i]<!>)
         }
     }
+}
+
+fun listAccessWithLiteral(): Int {
+    val lst = listOf(1)
+    val a = lst[0]
+    val b = <!OUT_OF_BOUND_ACCESS!>lst[1]<!>
+    return a + b
 }
