@@ -807,9 +807,9 @@ public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
  * @see kotlin.isWhitespace
  * @since M13
  */
-public fun CharSequence.trimMargin(marginPrefix: String = "|"): String =
+public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredicate: (Char) -> Boolean = { it.isWhitespace() }): String =
         toString().lineSequence().map { line ->
-            val content = line.trimStart()
+            val content = line.trimStart(whitespacePredicate)
 
             when {
                 content.startsWith(marginPrefix) -> content.removePrefix(marginPrefix)

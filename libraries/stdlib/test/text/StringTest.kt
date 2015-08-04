@@ -582,5 +582,8 @@ class StringTest {
         assertEquals("\n\n                            ", """
                             |
                             """.trimMargin())
+
+        assertEquals("\u0000|ABC", "${"\u0000"}|ABC".trimMargin())
+        assertEquals("ABC", "${"\u0000"}|ABC".trimMargin { it < ' ' })
     }
 }
