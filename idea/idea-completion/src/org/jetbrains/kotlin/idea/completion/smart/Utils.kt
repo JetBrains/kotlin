@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
 import java.util.HashMap
@@ -317,4 +317,25 @@ val SMART_COMPLETION_ITEM_PRIORITY_KEY = Key<SmartCompletionItemPriority>("SMART
 fun LookupElement.assignSmartCompletionPriority(priority: SmartCompletionItemPriority): LookupElement {
     putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, priority)
     return this
+}
+
+fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: SmartCastCalculator): Collection<FuzzyType> {
+    if (this is CallableDescriptor) {
+        var returnType = fuzzyReturnType() ?: return emptyList()
+        // skip declarations of type Nothing or of generic parameter type which has no real bounds
+        if (returnType.type.isNothing() || returnType.isAlmostEverything()) return emptyList()
+
+        if (this is VariableDescriptor) { //TODO: generic properties!
+            return smartCastCalculator(this).map { FuzzyType(it, emptyList()) }
+        }
+        else {
+            return listOf(returnType)
+        }
+    }
+    else if (this is ClassDescriptor && kind.isSingleton) {
+        return listOf(FuzzyType(defaultType, emptyList()))
+    }
+    else {
+        return emptyList()
+    }
 }

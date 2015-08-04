@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
@@ -28,17 +29,16 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
@@ -272,6 +272,26 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
+    }
+
+    override fun createSorter(): CompletionSorter {
+        var sorter = super.createSorter()
+
+        if (shouldCompleteParameterNameAndType()) {
+            sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
+        }
+
+        val expectedInfos = nameExpression
+                ?.check { completionKind == CompletionKind.ALL }
+                ?.let { it.getQualifiedElement() as? JetExpression }
+                ?.let { ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(it) }
+
+        if (expectedInfos != null && expectedInfos.isNotEmpty()) {
+            val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, nameExpression!!)
+            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator))
+        }
+
+        return sorter
     }
 
     private companion object {

@@ -24,18 +24,18 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.ArrayList
 import java.util.HashSet
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
-                                    val smartCastTypes: (VariableDescriptor) -> Collection<JetType>) {
+                                    val smartCastCalculator: SmartCastCalculator) {
 
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
@@ -91,7 +91,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.getLocalVariable(name) ?: scope.getProperties(name).singleOrNull() ?: return null
-        return if (smartCastTypes(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastCalculator(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else
             null

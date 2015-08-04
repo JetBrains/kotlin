@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -167,7 +164,10 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     else
         LookupElementsCollector.Context.NORMAL
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resultSet, resolutionFacade, lookupElementFactory, inDescriptor, collectorContext)
+    // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
+    protected val collector: LookupElementsCollector by lazy {
+        LookupElementsCollector(prefixMatcher, parameters, resultSet, resolutionFacade, lookupElementFactory, createSorter(), inDescriptor, collectorContext)
+    }
 
     protected val originalSearchScope: GlobalSearchScope = ResolutionFacade.getResolveScope(parameters.getOriginalFile() as JetFile)
 
@@ -216,6 +216,18 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected abstract fun doComplete()
 
     protected abstract val descriptorKindFilter: DescriptorKindFilter?
+
+    protected open fun createSorter(): CompletionSorter {
+        var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
+
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, KindWeigher)
+
+        sorter = sorter.weighAfter("stats", DeclarationRemotenessWeigher(parameters.originalFile as JetFile))
+
+        sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
+
+        return sorter
+    }
 
     protected val referenceVariants: Collection<DeclarationDescriptor> by lazy {
         if (descriptorKindFilter != null) {

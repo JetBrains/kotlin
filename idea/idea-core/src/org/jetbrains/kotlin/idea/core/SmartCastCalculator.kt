@@ -16,29 +16,40 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import com.google.common.collect.SetMultimap
-import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
-import java.util.Collections
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import java.util.HashMap
-import java.util.HashSet
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import java.util.Collections
+import java.util.HashMap
+import java.util.HashSet
 
-class SmartCastCalculator(val bindingContext: BindingContext, val containingDeclarationOrModule: DeclarationDescriptor) {
-    public fun calculate(position: JetExpression, receiver: JetExpression?): (VariableDescriptor) -> Collection<JetType> {
-        val dataFlowInfo = bindingContext.getDataFlowInfo(position)
+class SmartCastCalculator(
+        val bindingContext: BindingContext,
+        val containingDeclarationOrModule: DeclarationDescriptor,
+        nameExpression: JetSimpleNameExpression
+): (VariableDescriptor) -> Collection<JetType> {
+
+    override fun invoke(descriptor: VariableDescriptor): Collection<JetType> {
+        return function(descriptor)
+    }
+
+    private val function: (VariableDescriptor) -> Collection<JetType> = run {
+        val receiver = nameExpression.getReceiverExpression()
+        val dataFlowInfo = bindingContext.getDataFlowInfo(nameExpression)
         val (variableToTypes, notNullVariables) = processDataFlowInfo(dataFlowInfo, receiver)
 
         fun typesOf(descriptor: VariableDescriptor): Collection<JetType> {
@@ -52,7 +63,7 @@ class SmartCastCalculator(val bindingContext: BindingContext, val containingDecl
             return smartCastTypes + type.singletonOrEmptyList()
         }
 
-        return ::typesOf
+        ::typesOf
     }
 
     private data class ProcessDataFlowInfoResult(

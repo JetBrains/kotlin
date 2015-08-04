@@ -16,53 +16,37 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.CompletionSorter
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
+import org.jetbrains.kotlin.idea.completion.smart.fuzzyTypesForSmartCompletion
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.makeNotNullable
+import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import java.util.HashSet
 
-public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
-    var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
-
-    sorter = sorter.weighBefore("stats", ParameterNameAndTypeCompletion.Weigher, DeprecatedWeigher, PriorityWeigher, KindWeigher)
-
-    if (parameters.getCompletionType() == CompletionType.SMART) {
-        sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)
-    }
-
-    sorter = sorter.weighAfter("stats", DeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile))
-
-    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
-
-    return withRelevanceSorter(sorter)
-}
-
-private object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
+object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
             = element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT
 }
 
-private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartCompletionPriority") {
+object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartCompletionPriority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
             = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) ?: SmartCompletionItemPriority.DEFAULT
 }
 
-private object KindWeigher : LookupElementWeigher("kotlin.kind") {
+object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
         variable, // variable or property
         function,
@@ -102,14 +86,14 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     }
 }
 
-private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
+object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject() as? DeclarationLookupObject ?: return 0
         return if (o.isDeprecated) 1 else 0
     }
 }
 
-private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching", false, true) {
+object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching", false, true) {
     private enum class Weight {
         keywordExactMatch,
         defaultExactMatch,
@@ -133,7 +117,7 @@ private object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMa
     }
 }
 
-private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
+class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
     private val importCache = ImportCache()
 
     private enum class Weight {
@@ -201,5 +185,28 @@ private class DeclarationRemotenessWeigher(private val file: JetFile) : LookupEl
         fun isImportedWithPreciseImport(name: FqName) = name in preciseImports
         fun isImportedWithAllUnderImport(name: FqName) = name.parent() in allUnderImports
         fun hasPreciseImportFromPackage(packageName: FqName) = packageName in preciseImportPackages
+    }
+}
+
+//TODO: prefer by name too (and only by name too)
+class ExpectedInfoMatchWeigher(
+        private val expectedInfos: Collection<ExpectedInfo>,
+        private val smartCastCalculator: SmartCastCalculator
+) : LookupElementWeigher("kotlin.expectedInfoMatch") {
+    private enum class Weight {
+        matches,
+        matchesIfNotNull,
+        doesNotMatch
+    }
+
+    override fun weigh(element: LookupElement): Weight {
+        // TODO: keywords with type, this etc
+        val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor ?: return Weight.doesNotMatch
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+        return when {
+            types.any { type -> expectedInfos.any { it.matchingSubstitutor(type) != null } } -> Weight.matches
+            types.any { type -> type.nullability() == TypeNullability.NULLABLE && expectedInfos.any { it.matchingSubstitutor(type.makeNotNullable()) != null } } -> Weight.matchesIfNotNull
+            else -> Weight.doesNotMatch
+        }
     }
 }

@@ -39,6 +39,7 @@ class LookupElementsCollector(
         resultSet: CompletionResultSet,
         private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
+        private val sorter: CompletionSorter,
         private val inDescriptor: DeclarationDescriptor,
         private val context: LookupElementsCollector.Context
 ) {
@@ -52,7 +53,7 @@ class LookupElementsCollector(
 
     private val defaultResultSet = resultSet
             .withPrefixMatcher(defaultPrefixMatcher)
-            .addKotlinSorting(completionParameters)
+            .withRelevanceSorter(sorter)
 
     private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
 

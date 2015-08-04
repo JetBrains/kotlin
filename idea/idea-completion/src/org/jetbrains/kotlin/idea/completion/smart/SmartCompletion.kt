@@ -24,14 +24,13 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.ArrayList
 import java.util.HashSet
@@ -127,18 +125,18 @@ class SmartCompletion(
         else
             originalExpectedInfos
 
-        val smartCastTypes: (VariableDescriptor) -> Collection<JetType>
-                = SmartCastCalculator(bindingContext, moduleDescriptor).calculate(expressionWithType, receiver)
+        val smartCastCalculator = (expression as? JetSimpleNameExpression)?.let { SmartCastCalculator(bindingContext, moduleDescriptor, it) }
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
         val functionExpectedInfos = expectedInfos.filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
-            if (descriptor in itemsToSkip) return listOf()
+            if (smartCastCalculator == null) return emptyList() // only happens for this@ completion
+            if (descriptor in itemsToSkip) return emptyList()
 
-            val result = ArrayList<LookupElement>()
-            val types = descriptor.fuzzyTypes(smartCastTypes)
+            val result = SmartList<LookupElement>()
+            val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
             val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
             result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
@@ -174,7 +172,9 @@ class SmartCompletion(
 
             KeywordValues.addToCollection(additionalItems, originalExpectedInfos/* use originalExpectedInfos to not include null after == */, expression)
 
-            MultipleArgumentsItemProvider(bindingContext, smartCastTypes).addToCollection(additionalItems, expectedInfos, expression)
+            if (smartCastCalculator != null) {
+                MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(additionalItems, expectedInfos, expression)
+            }
         }
 
         val inheritanceSearcher = if (inheritanceSearchers.isNotEmpty())
@@ -197,28 +197,6 @@ class SmartCompletion(
                     factory().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
                 }
             }
-        }
-    }
-
-    private fun DeclarationDescriptor.fuzzyTypes(smartCastTypes: (VariableDescriptor) -> Collection<JetType>): Collection<FuzzyType> {
-        if (this is CallableDescriptor) {
-            var returnType = fuzzyReturnType() ?: return listOf()
-            // skip declarations of type Nothing or of generic parameter type which has no real bounds
-            //TODO: maybe we should include them on the second press?
-            if (returnType.type.isNothing() || returnType.isAlmostEverything()) return listOf()
-
-            if (this is VariableDescriptor) {
-                return smartCastTypes(this).map { FuzzyType(it, listOf()) }
-            }
-            else {
-                return listOf(fuzzyReturnType()!!)
-            }
-        }
-        else if (this is ClassDescriptor && getKind().isSingleton()) {
-            return listOf(FuzzyType(getDefaultType(), listOf()))
-        }
-        else {
-            return listOf()
         }
     }
 

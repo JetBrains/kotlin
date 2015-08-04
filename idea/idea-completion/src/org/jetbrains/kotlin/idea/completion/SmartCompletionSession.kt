@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
+import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -125,5 +127,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (shouldRunTopLevelCompletion()) {
             getTopLevelCallables().forEach(processor)
         }
+    }
+
+    override fun createSorter(): CompletionSorter {
+        return super.createSorter()
+                .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 }

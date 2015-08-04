@@ -143,6 +143,21 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExpectedInfo extends AbstractBasicCompletionWeigherTest {
+        public void testAllFilesPresentInExpectedInfo() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ExpectedType.kt")
+        public void testExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
