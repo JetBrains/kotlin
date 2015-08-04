@@ -289,8 +289,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                     instruction.element is JetPrefixExpression ->
                         processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    isSizeMethodCallOnArray(instruction) ->
-                        processSizeMethodCallOnArray(instruction, updatedData)
+                    isSizeMethodCallOnCollection(instruction) ->
+                        processSizeMethodCallOnCollection(instruction, updatedData)
                 }
             }
             is MagicInstruction -> {
@@ -515,22 +515,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun isSizeMethodCallOnArray(instruction: CallInstruction): Boolean =
+    private fun isSizeMethodCallOnCollection(instruction: CallInstruction): Boolean =
         if (instruction.element is JetCallExpression) {
             val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
             val isSizeMethodCalled = calledName == KotlinArrayUtils.sizeMethodNameOfArray
-            val arrayIsReceiver = InstructionUtils.isExpectedReceiverType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) }
+            val collectionIsReceiver = InstructionUtils.isExpectedReceiverType(instruction) {
+                KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
+            }
             val returnTypeIsInt = InstructionUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
-            isSizeMethodCalled && arrayIsReceiver && returnTypeIsInt
+            isSizeMethodCalled && collectionIsReceiver && returnTypeIsInt
         }
         else false
 
-    private fun processSizeMethodCallOnArray(instruction: CallInstruction, updatedData: ValuesData) {
+    private fun processSizeMethodCallOnCollection(instruction: CallInstruction, updatedData: ValuesData) {
         if (!instruction.inputValues.isEmpty()) {
-            val arraySize = updatedData.intFakeVarsToValues[instruction.inputValues[0]]
+            val collectionSize = updatedData.intFakeVarsToValues[instruction.inputValues[0]]
             val resultVariable = instruction.outputValue
-            if (arraySize != null && resultVariable != null) {
-                updatedData.intFakeVarsToValues[resultVariable] = arraySize
+            if (collectionSize != null && resultVariable != null) {
+                updatedData.intFakeVarsToValues[resultVariable] = collectionSize
             }
         }
     }
