@@ -138,7 +138,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     companion object {
         private val BUILT_INS_COMPILABLE_SRC_DIR = File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString())
 
-        private val builtInDirUrls = getBuiltInsDirUrls().map { VfsUtilCore.toIdeaUrl(it.toString()) }
+        private val builtInDirUrls = getBuiltInsDirUrls().map { VfsUtilCore.convertFromUrl(it) }
 
         public fun getInstance(project: Project): BuiltInsReferenceResolver =
             ServiceManager.getService(project, javaClass<BuiltInsReferenceResolver>())
