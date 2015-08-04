@@ -30,13 +30,21 @@ import java.io.IOException
 
 
 
-data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
+public data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
 
-fun createJvmProfile(targetRoot: File, version: Int) = Profile("JVM$version", JvmPlatformEvaluator(version), File(targetRoot, "jvm$version"))
-fun createJsProfile(targetRoot: File) = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
+public fun createJvmProfile(targetRoot: File, version: Int): Profile = Profile("JVM$version", JvmPlatformEvaluator(version), File(targetRoot, "jvm$version"))
+public fun createJsProfile(targetRoot: File): Profile = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
+
+public val profileEvaluators: Map<String, () -> Evaluator> =
+        listOf(6, 7, 8).toMap({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } })  + ("JS" to { JsPlatformEvaluator() })
+
+public fun createProfile(name: String, targetRoot: File): Profile {
+    val (profileName, evaluator) = profileEvaluators.entrySet().firstOrNull { it.key.equals(name, ignoreCase = true) } ?: throw IllegalArgumentException("Profile with name '$name' is not supported")
+    return Profile(profileName, evaluator(), targetRoot)
+}
 
 
-public class Preprocessor() {
+public class Preprocessor(val logger: Logger = SystemOutLogger) {
 
     val fileType = JetFileType.INSTANCE
     val jetPsiFactory: JetPsiFactory
@@ -55,7 +63,11 @@ public class Preprocessor() {
 
         class Modify(val sourceText: String, val modifications: List<Modification>) : FileProcessingResult() {
             fun getModifiedText(): String = modifications.applyTo(sourceText)
+
+            override fun toString(): String = "Modify(${modifications.size()})"
         }
+
+        override fun toString() = this.javaClass.simpleName
     }
 
     public fun processSources(sourceRoot: File, profile: Profile) {
@@ -68,8 +80,6 @@ public class Preprocessor() {
 
         val sourceText = sourceFile.readText().convertLineSeparators()
         val psiFile = jetPsiFactory.createFile(sourceFile.name, sourceText)
-        //println("$psiFile")
-
 
         val fileAnnotations = psiFile.parseConditionalAnnotations()
         if (!evaluator(fileAnnotations))
@@ -93,8 +103,8 @@ public class Preprocessor() {
         for (sourceFile in sourceFiles)
         {
             val result = processFileSingleEvaluator(sourceFile, evaluator)
+            logger.debug("$result: $sourceFile")
             if (result is FileProcessingResult.Skip) {
-                println("$sourceFile is excluded")
                 continue
             }
 
@@ -111,7 +121,7 @@ public class Preprocessor() {
                 val resultText = result.getModifiedText()
                 if (targetFile.exists() && targetFile.isTextEqualTo(resultText))
                     continue
-                println("Rewriting modified $targetFile")
+                logger.info("Rewriting modified $targetFile")
                 targetFile.writeText(resultText)
             }
         }
@@ -128,7 +138,7 @@ public class Preprocessor() {
 
         for (targetFile in targetRoot.listFiles()) {
             if (!processedFiles.remove(processedFiles.find { FileUtil.filesEqual(it, targetFile) })) {
-                println("Removing skipped $targetFile")
+                logger.info("Deleting skipped $targetFile")
                 targetFile.deleteRecursively()
             }
         }
@@ -173,8 +183,6 @@ public class Preprocessor() {
         val processedFiles = profiles.toMap({ it }, { hashSetOf<File>()})
 
     }
-
-
 }
 
 fun String.convertLineSeparators(): String = StringUtil.convertLineSeparators(this)

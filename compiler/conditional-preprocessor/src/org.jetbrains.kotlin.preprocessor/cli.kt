@@ -28,12 +28,8 @@ fun main(args: Array<String>) {
 
     val sourcePath = File(args[0])
     val targetPath = File(args[1])
-    val profileName = args[2]
 
-    val profiles = listOf(6, 7, 8).map { version -> "JVM$version" to { JvmPlatformEvaluator(version) } } + ("JS" to { JsPlatformEvaluator() })
-
-    val (name, evaluatorBuilder) = profiles.single { it.first.equals(profileName, ignoreCase = true) }
-    val profile = Profile(name, evaluatorBuilder(), targetPath)
+    val profile = createProfile(args[2], targetPath)
 
     println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
     Preprocessor().processSources(sourcePath, profile)
