@@ -28,5 +28,5 @@ public open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ final var rawB: (B<(A<kotlin.Any!>..A<*>?)>..B<out (A<kotlin.Any!>..A<*>?)>?)
+    public/*package*/ final var rawB: (B<A<*>!>..B<out A<*>!>?)
 }

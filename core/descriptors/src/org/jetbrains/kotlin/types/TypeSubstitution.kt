@@ -91,25 +91,23 @@ public class IndexedParametersSubstitution(
     }
 }
 
-public fun JetType.computeNewSubstitutionAndArguments(
+public fun JetType.computeNewSubstitution(
     newParameters: List<TypeParameterDescriptor>,
     newArguments: List<TypeProjection>
-): Pair<TypeSubstitution, List<TypeProjection>> {
+): TypeSubstitution {
     val previousSubstitution = getSubstitution()
-    if (newArguments.isEmpty()) return Pair(previousSubstitution, emptyList())
+    if (newArguments.isEmpty()) return previousSubstitution
 
     val newIndexedSubstitution = IndexedParametersSubstitution(newParameters, newArguments)
 
     // If previous substitution was trivial just replace it with indexed one
     if (previousSubstitution is IndexedParametersSubstitution || previousSubstitution.isEmpty()) {
-        return Pair(newIndexedSubstitution, newArguments)
+        return newIndexedSubstitution
     }
 
     val composedSubstitution = CompositeTypeSubstitution(newIndexedSubstitution, previousSubstitution)
-    val newSubstitutor = composedSubstitution.buildSubstitutor()
-    val resultArguments = newParameters.map { newSubstitutor.substitute(TypeProjectionImpl(it.variance, it.defaultType))!! }
 
-    return Pair(composedSubstitution, resultArguments)
+    return composedSubstitution
 }
 
 private class CompositeTypeSubstitution(

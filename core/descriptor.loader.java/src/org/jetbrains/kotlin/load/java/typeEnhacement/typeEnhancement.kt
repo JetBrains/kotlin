@@ -98,7 +98,7 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
             enhancedNullabilityAnnotations
     ).filterNotNull().compositeAnnotationsOrSingle()
 
-    val (newSubstitution, substitutedEnhancedArgs) = computeNewSubstitutionAndArguments(
+    val newSubstitution = computeNewSubstitution(
         typeConstructor.parameters, enhancedArguments
     )
 
@@ -106,7 +106,7 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
             newAnnotations,
             typeConstructor,
             enhancedNullability,
-            substitutedEnhancedArgs,
+            enhancedArguments,
             newSubstitution,
             if (enhancedClassifier is ClassDescriptor)
                 enhancedClassifier.getMemberScope(newSubstitution)

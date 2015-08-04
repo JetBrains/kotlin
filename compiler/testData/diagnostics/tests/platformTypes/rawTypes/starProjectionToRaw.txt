@@ -23,5 +23,5 @@ public/*package*/ open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun foo(/*0*/ x: (B<(A<kotlin.CharSequence!>..A<*>?)>..B<out (A<kotlin.CharSequence!>..A<*>?)>?)): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: (B<A<*>!>..B<out A<*>!>?)): kotlin.Unit
 }

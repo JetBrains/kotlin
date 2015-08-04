@@ -30,5 +30,5 @@ public/*package*/ open class Test {
     }
 
     // Static members
-    public/*package*/ final var rawAField: (A<(A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>..A<out (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), out (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), out (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>?)
+    public/*package*/ final var rawAField: (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?)
 }
