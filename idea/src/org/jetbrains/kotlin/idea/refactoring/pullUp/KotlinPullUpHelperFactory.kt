@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.memberPullUp.PullUpData
 import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.memberPullUp.PullUpHelperFactory
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -30,7 +30,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun PullUpData.toKotlinPullUpData(): KotlinPullUpData? {
         if (!sourceClass.isInheritor(targetClass, true)) return null
         val sourceClass = sourceClass.unwrapped as? JetClassOrObject ?: return null
-        val targetClass = targetClass.unwrapped as? JetClass ?: return null
+        val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
         val membersToMove = membersToMove
                 .map { it.namedUnwrappedElement as? JetNamedDeclaration }
                 .filterNotNull()

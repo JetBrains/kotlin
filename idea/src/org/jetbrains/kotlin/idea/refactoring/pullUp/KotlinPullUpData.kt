@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.getClassDescriptorIfAny
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,7 +36,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.LinkedHashMap
 
 class KotlinPullUpData(val sourceClass: JetClassOrObject,
-                       val targetClass: JetClass,
+                       val targetClass: PsiNamedElement,
                        val membersToMove: Collection<JetNamedDeclaration>) {
     val resolutionFacade = sourceClass.getResolutionFacade()
 
@@ -44,7 +46,7 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
 
     val memberDescriptors = membersToMove.keysToMap { sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!! }
 
-    val targetClassDescriptor = resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
+    val targetClassDescriptor = targetClass.getClassDescriptorIfAny(resolutionFacade)!!
 
     val typeParametersInSourceClassContext by lazy {
         sourceClassDescriptor.typeConstructor.parameters + sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
@@ -71,4 +73,6 @@ class KotlinPullUpData(val sourceClass: JetClassOrObject,
 
         TypeSubstitutor.create(substitution)
     }
+
+    val isInterfaceTarget: Boolean = targetClassDescriptor.kind == ClassKind.INTERFACE
 }

@@ -22,8 +22,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
@@ -35,7 +37,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedNameForRendering
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -49,7 +51,7 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
 
     interface TestHelper {
         fun adjustMembers(members: List<KotlinMemberInfo>): List<KotlinMemberInfo>
-        fun chooseSuperClass(superClasses: List<JetClass>): JetClass
+        fun chooseSuperClass(superClasses: List<PsiNamedElement>): PsiNamedElement
     }
 
     private fun reportWrongPosition(project: Project, editor: Editor?) {
@@ -69,7 +71,7 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
     private fun reportNoSuperClasses(project: Project, editor: Editor?, classOrObject: JetClassOrObject) {
         val message = RefactoringBundle.getCannotRefactorMessage(
                 RefactoringBundle.message("class.does.not.have.base.classes.interfaces.in.current.project",
-                                          classOrObject.qualifiedNameForRendering())
+                                          classOrObject.qualifiedClassNameForRendering())
         )
         CommonRefactoringUtil.showErrorHint(project, editor, message, PULL_MEMBERS_UP, HelpID.MEMBERS_PULL_UP)
     }
@@ -125,10 +127,11 @@ public class KotlinPullUpHandler : RefactoringActionHandler, ElementsHandler {
                 .map {
                     val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                    if (declaration is JetClass && declaration.canRefactor()) declaration else null
+                    if ((declaration is JetClass || declaration is PsiClass)
+                        && declaration.canRefactor()) declaration as PsiNamedElement else null
                 }
                 .filterNotNull()
-                .toSortedListBy { it.qualifiedNameForRendering() }
+                .toSortedListBy { it.qualifiedClassNameForRendering() }
 
         if (superClasses.isEmpty()) {
             val containingClass = classOrObject.getStrictParentOfType<JetClassOrObject>()

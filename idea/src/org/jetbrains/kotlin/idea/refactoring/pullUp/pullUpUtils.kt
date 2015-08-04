@@ -16,7 +16,24 @@
 
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
+import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 
 fun JetProperty.mustBeAbstractInInterface() =
         hasInitializer() || hasDelegate() || (!hasInitializer() && !hasDelegate() && accessors.isEmpty())
+
+fun JetNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean {
+    return when (this) {
+        is JetProperty -> {
+            if (targetClass.isInterface) return false
+            if (hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)) return false
+            if (accessors.isNotEmpty() || delegateExpression != null) return false
+            true
+        }
+        is JetNamedFunction -> true
+        else -> false
+    }
+}

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
@@ -42,13 +43,15 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 fun checkConflicts(project: Project,
                    sourceClass: JetClassOrObject,
-                   targetClass: JetClass,
+                   targetClass: PsiNamedElement,
                    memberInfos: List<KotlinMemberInfo>,
                    onShowConflicts: () -> Unit = {},
                    onAccept: () -> Unit) {
     val conflicts = MultiMap<PsiElement, String>()
 
-    val pullUpData = KotlinPullUpData(sourceClass, targetClass, memberInfos.map { it.member })
+    val pullUpData = KotlinPullUpData(sourceClass,
+                                      targetClass,
+                                      memberInfos.map { it.member }.filterNotNull())
 
     with(pullUpData) {
         for (memberInfo in memberInfos) {
@@ -73,7 +76,6 @@ private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_I
 
 private fun DeclarationDescriptor.renderForConflicts(): String {
     return when (this) {
-        // todo: objects
         is ClassDescriptor -> "${DescriptorRenderer.getClassKindPrefix(this)} ${IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)}"
         is FunctionDescriptor -> "function '${CALLABLE_RENDERER.render(this)}'"
         is PropertyDescriptor -> "property '${CALLABLE_RENDERER.render(this)}'"
@@ -135,7 +137,7 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
         member: JetNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
-    if (targetClass.isInterface() && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
+    if (isInterfaceTarget && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
         val message = "${memberDescriptor.renderForConflicts()} is an inner class. It can not be moved to the interface"
         conflicts.putValue(member, message.capitalize())
     }

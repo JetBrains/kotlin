@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.memberPullUp.PullUpDialogBase;
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.JetClassOrObjectListCellRenderer;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinOrJavaClassCellRenderer;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
@@ -32,11 +33,11 @@ import java.util.List;
 
 // TODO: This is workaround which allows KotlinPullUpDialog to be compiled against both Java 6 and 8
 public abstract class KotlinPullUpDialogBase extends
-                                    PullUpDialogBase<KotlinMemberInfoStorage, KotlinMemberInfo, JetNamedDeclaration, JetClassOrObject> {
+                                    PullUpDialogBase<KotlinMemberInfoStorage, KotlinMemberInfo, JetNamedDeclaration, PsiNamedElement> {
     protected KotlinPullUpDialogBase(
             Project project,
             JetClassOrObject object,
-            List<JetClassOrObject> superClasses,
+            List<PsiNamedElement> superClasses,
             KotlinMemberInfoStorage memberInfoStorage,
             String title
     ) {
@@ -46,7 +47,7 @@ public abstract class KotlinPullUpDialogBase extends
     @SuppressWarnings("unchecked")
     @Override
     protected void initClassCombo(JComboBox classCombo) {
-        classCombo.setRenderer(new JetClassOrObjectListCellRenderer());
+        classCombo.setRenderer(new KotlinOrJavaClassCellRenderer());
         classCombo.addItemListener(
                 new ItemListener() {
                     @Override

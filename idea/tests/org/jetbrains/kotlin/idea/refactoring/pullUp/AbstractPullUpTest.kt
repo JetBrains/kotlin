@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.google.gson.JsonParser
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
@@ -57,6 +59,11 @@ public abstract class AbstractPullUpTest : JetLightCodeInsightFixtureTestCase() 
         fixture.testDataPath = "${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
 
         val mainFileName = mainFile.getName()
+        val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
+        val extraFiles = mainFile.getParentFile().listFiles { file, name ->
+            name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
+        }
+        val extraFilesToPsi = extraFiles.toMap { fixture.configureByFile(it.getName()) }
         val file = fixture.configureByFile(mainFileName) as JetFile
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
@@ -82,9 +89,9 @@ public abstract class AbstractPullUpTest : JetLightCodeInsightFixtureTestCase() 
                     return members.filter { it.isChecked }
                 }
 
-                override fun chooseSuperClass(superClasses: List<JetClass>): JetClass {
+                override fun chooseSuperClass(superClasses: List<PsiNamedElement>): PsiNamedElement {
                     if (targetClassName != null) {
-                        return superClasses.single { it.fqName?.asString() ?: it.name == targetClassName }
+                        return superClasses.single { it.qualifiedClassNameForRendering() == targetClassName }
                     }
                     return superClasses.first()
                 }
@@ -95,6 +102,9 @@ public abstract class AbstractPullUpTest : JetLightCodeInsightFixtureTestCase() 
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
             JetTestUtils.assertEqualsToFile(afterFile, file.text!!)
+            for ((extraPsiFile, extraFile) in extraFilesToPsi) {
+                JetTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.getText())
+            }
         }
         catch(e: Exception) {
             val message = when (e) {

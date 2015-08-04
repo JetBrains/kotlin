@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.idea.refactoring.memberInfo;
 
 import com.intellij.openapi.util.Iconable;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.ListCellRendererWrapper;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
 
 import javax.swing.*;
 
-public class JetClassOrObjectListCellRenderer extends ListCellRendererWrapper<JetClassOrObject> {
+public class KotlinOrJavaClassCellRenderer extends ListCellRendererWrapper<PsiNamedElement> {
     @Override
-    public void customize(JList list, JetClassOrObject value, int index, boolean selected, boolean hasFocus) {
+    public void customize(JList list, PsiNamedElement value, int index, boolean selected, boolean hasFocus) {
         if (value == null) return;
 
-        setText(MemberInfoPackage.qualifiedNameForRendering(value));
+        setText(MemberInfoPackage.qualifiedClassNameForRendering(value));
         Icon icon = value.getIcon(Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS);
         if (icon != null) {
             setIcon(icon);

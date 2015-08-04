@@ -1,0 +1,3 @@
+class A implements Z, X {
+
+}

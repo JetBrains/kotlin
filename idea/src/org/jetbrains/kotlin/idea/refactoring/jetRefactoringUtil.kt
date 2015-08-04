@@ -462,6 +462,9 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
     val method = targetClass.add(methodToAdd) as PsiMethod
 
     copyModifierListItems(template.getModifierList(), method.getModifierList())
+    if (targetClass.isInterface()) {
+        method.getModifierList().setModifierProperty(PsiModifier.FINAL, false)
+    }
 
     copyTypeParameters(template, method) { method, typeParameterList ->
         method.addAfter(typeParameterList, method.getModifierList())
