@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmSignaturePackage;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -303,7 +303,7 @@ public class SignaturesPropagationData {
         Name name = method.getName();
         JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
         for (JetType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, UsageLocation.NO_LOCATION);
+            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION);
             for (FunctionDescriptor candidate : superFunctionCandidates) {
                 JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (JvmSignaturePackage.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {

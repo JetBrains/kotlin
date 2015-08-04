@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.util.Collection;
@@ -74,7 +74,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         Collection<FunctionDescriptor> functions =
-                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), UsageLocation.NO_LOCATION);
+                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), LookupLocation.NO_LOCATION);
         assert functions.size() == 1 : "Many functions defined";
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
 

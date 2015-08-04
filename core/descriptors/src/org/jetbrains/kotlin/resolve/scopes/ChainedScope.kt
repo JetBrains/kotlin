@@ -49,25 +49,25 @@ public open class ChainedScope(
         return result ?: emptySet()
     }
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor?
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
             = getFirstMatch { it.getClassifier(name, location) }
 
     override fun getPackage(name: Name): PackageViewDescriptor?
             = getFirstMatch { it.getPackage(name) }
 
-    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor>
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor>
             = getFromAllScopes { it.getProperties(name, location) }
 
     override fun getLocalVariable(name: Name): VariableDescriptor?
             = getFirstMatch { it.getLocalVariable(name) }
 
-    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor>
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getFunctions(name, location) }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor>
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor>
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>

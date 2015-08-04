@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitution
@@ -49,7 +49,7 @@ private class ScopeWithMissingDependencies(val fqName: FqName, val containing: D
         p.println("Special scope for decompiler, containing class with any name")
     }
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return MissingDependencyErrorClassDescriptor(getContainingDeclaration(), fqName.child(name))
     }
 }

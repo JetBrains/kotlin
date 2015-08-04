@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
@@ -83,13 +83,13 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull UsageLocation location) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull LookupLocation location) {
             return createErrorClass(name.asString());
         }
 
         @NotNull
         @Override
-        public Set<VariableDescriptor> getProperties(@NotNull Name name, @NotNull UsageLocation location) {
+        public Set<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
             return ERROR_VARIABLE_GROUP;
         }
 
@@ -97,7 +97,7 @@ public class ErrorUtils {
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
                 @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
-                @NotNull UsageLocation location
+                @NotNull LookupLocation location
         ) {
             return ERROR_PROPERTY_GROUP;
         }
@@ -106,7 +106,7 @@ public class ErrorUtils {
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
                 @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
-                @NotNull UsageLocation location
+                @NotNull LookupLocation location
         ) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
@@ -143,7 +143,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull UsageLocation location) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -199,7 +199,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull UsageLocation location) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -211,7 +211,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull UsageLocation location) {
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -223,7 +223,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull UsageLocation location) {
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -231,7 +231,7 @@ public class ErrorUtils {
         @Override
         public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
                 @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
-                @NotNull UsageLocation location
+                @NotNull LookupLocation location
         ) {
             throw new IllegalStateException();
         }
@@ -240,7 +240,7 @@ public class ErrorUtils {
         @Override
         public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
                 @NotNull Collection<? extends JetType> receiverTypes, @NotNull Name name,
-                @NotNull UsageLocation location
+                @NotNull LookupLocation location
         ) {
             throw new IllegalStateException();
         }

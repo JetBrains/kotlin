@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.DynamicType
 import org.jetbrains.kotlin.types.JetType
@@ -49,7 +49,7 @@ object DynamicCallableDescriptors {
             p.println(javaClass.getSimpleName(), ": dynamic candidates for " + call)
         }
 
-        override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+        override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
             if (call.getCallType() == Call.CallType.INVOKE
                 && call.getValueArgumentList() == null && call.getFunctionLiteralArguments().isEmpty()) {
@@ -77,7 +77,7 @@ object DynamicCallableDescriptors {
             return false
         }
 
-        override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
+        override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
             return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
                 listOf(createDynamicProperty(owner, name, call))
             }

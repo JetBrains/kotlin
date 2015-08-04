@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -115,7 +115,7 @@ public open class LazyClassMemberScope(
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
-    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
         val functions = super.getFunctions(name, location)
         resolveUnknownVisibilitiesForMembers(functions)
@@ -173,7 +173,7 @@ public open class LazyClassMemberScope(
         }
     }
 
-    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         // TODO: this should be handled by lazy property descriptors
         val properties = super.getProperties(name, location)
         resolveUnknownVisibilitiesForMembers(properties as Collection<CallableMemberDescriptor>)

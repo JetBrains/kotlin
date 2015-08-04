@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
@@ -58,7 +58,7 @@ public class LazyJavaStaticClassScope(
             memberIndex().getAllFieldNames()
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
     override fun getSubPackages(): Collection<FqName> = listOf()
 

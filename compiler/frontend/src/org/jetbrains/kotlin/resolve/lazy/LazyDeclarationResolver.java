@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
 
 import javax.inject.Inject;
@@ -70,7 +70,7 @@ public class LazyDeclarationResolver {
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(classOrObject.getNameAsSafeName(), UsageLocation.NO_LOCATION);
+        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(classOrObject.getNameAsSafeName(), LookupLocation.NO_LOCATION);
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {
@@ -134,7 +134,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
                 JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(function);
-                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), UsageLocation.NO_LOCATION);
+                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), LookupLocation.NO_LOCATION);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -146,7 +146,7 @@ public class LazyDeclarationResolver {
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.hasValOrVar()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), UsageLocation.NO_LOCATION);
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), LookupLocation.NO_LOCATION);
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -189,7 +189,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
                 JetScope scopeForDeclaration = resolutionScopeToResolveDeclaration(property);
-                scopeForDeclaration.getProperties(property.getNameAsSafeName(), UsageLocation.NO_LOCATION);
+                scopeForDeclaration.getProperties(property.getNameAsSafeName(), LookupLocation.NO_LOCATION);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -239,7 +239,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
+        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, LookupLocation.NO_LOCATION);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
                                                        (classifier == null ? "null" : classifier.toString());
         return (ClassDescriptor) classifier;
@@ -254,7 +254,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, UsageLocation.NO_LOCATION);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, LookupLocation.NO_LOCATION);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -399,7 +399,7 @@ public class KotlinBuiltIns {
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
         ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(
-                Name.identifier(target.name()), UsageLocation.NO_LOCATION
+                Name.identifier(target.name()), LookupLocation.NO_LOCATION
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
@@ -412,7 +412,7 @@ public class KotlinBuiltIns {
     @Nullable
     public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
         ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getClassifier(
-                Name.identifier(retention.name()), UsageLocation.NO_LOCATION
+                Name.identifier(retention.name()), LookupLocation.NO_LOCATION
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
@@ -1038,6 +1038,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), UsageLocation.NO_LOCATION));
+        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), LookupLocation.NO_LOCATION));
     }
 }

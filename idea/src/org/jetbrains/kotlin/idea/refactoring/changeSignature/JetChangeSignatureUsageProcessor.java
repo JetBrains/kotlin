@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
@@ -615,8 +615,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? callableScope.getFunctions(newName, UsageLocation.NO_LOCATION)
-                                                                 : callableScope.getProperties(newName, UsageLocation.NO_LOCATION);
+                                                                 ? callableScope.getFunctions(newName, LookupLocation.NO_LOCATION)
+                                                                 : callableScope.getProperties(newName, LookupLocation.NO_LOCATION);
             for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;
 
@@ -639,7 +639,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
             if (parametersScope != null) {
                 if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
-                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), UsageLocation.NO_LOCATION)) {
+                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), LookupLocation.NO_LOCATION)) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
                         if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof JetParameterList)) {

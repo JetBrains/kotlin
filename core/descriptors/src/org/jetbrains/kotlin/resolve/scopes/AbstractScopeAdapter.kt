@@ -31,7 +31,7 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getImplicitReceiversHierarchy()
     }
 
-    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return workerScope.getFunctions(name, location)
     }
 
@@ -39,19 +39,19 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getPackage(name)
     }
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return workerScope.getClassifier(name, location)
     }
 
-    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return workerScope.getProperties(name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverTypes, name, location)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
     }
 

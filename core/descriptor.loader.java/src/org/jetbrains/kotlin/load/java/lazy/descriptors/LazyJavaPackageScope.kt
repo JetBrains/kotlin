@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaPackageScope(
@@ -76,11 +76,11 @@ public class LazyJavaPackageScope(
         }
     }
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? =
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
             if (SpecialNames.isSafeIdentifier(name)) classes(name) else null
 
-    override fun getProperties(name: Name, location: UsageLocation) = deserializedPackageScope().getProperties(name, location)
-    override fun getFunctions(name: Name, location: UsageLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
+    override fun getProperties(name: Name, location: LookupLocation) = deserializedPackageScope().getProperties(name, location)
+    override fun getFunctions(name: Name, location: LookupLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,

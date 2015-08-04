@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.VisibilityUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -268,7 +268,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         Name name = functionDescriptor.getName();
         for (JetType type : TypeUtils.getAllSupertypes(classDescriptor.getDefaultType())) {
             JetScope scope = type.getMemberScope();
-            for (FunctionDescriptor function : scope.getFunctions(name, UsageLocation.NO_LOCATION)) {
+            for (FunctionDescriptor function : scope.getFunctions(name, LookupLocation.NO_LOCATION)) {
                 if (!function.getKind().isReal()) continue;
                 if (function.getModality().isOverridable())
                     superFunctions.add(function);

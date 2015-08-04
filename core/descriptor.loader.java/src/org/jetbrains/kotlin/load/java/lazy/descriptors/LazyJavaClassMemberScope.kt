@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.*
@@ -285,7 +285,7 @@ public class LazyJavaClassMemberScope(
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = nestedClasses(name)
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = nestedClasses(name)
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keySet() + enumEntryIndex().keySet()

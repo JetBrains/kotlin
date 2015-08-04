@@ -519,7 +519,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = scope.getClassifier(name, UsageLocation.NO_LOCATION);
+            ClassifierDescriptor classifier = scope.getClassifier(name, LookupLocation.NO_LOCATION);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {

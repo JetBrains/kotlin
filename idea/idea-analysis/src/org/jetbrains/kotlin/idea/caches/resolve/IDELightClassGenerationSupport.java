@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 
 import java.io.IOException;
 import java.util.*;
@@ -140,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
-                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, UsageLocation.NO_LOCATION);
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION);
                     for (FunctionDescriptor descriptor : functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
@@ -148,7 +148,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 else if (declaration instanceof JetProperty) {
                     JetProperty jetProperty = (JetProperty) declaration;
                     Name name = jetProperty.getNameAsSafeName();
-                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, UsageLocation.NO_LOCATION);
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, LookupLocation.NO_LOCATION);
                     for (VariableDescriptor descriptor : properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }

@@ -85,7 +85,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetPsiFactory(getProject()).createFile(text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
-        ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"), UsageLocation.NO_LOCATION);
+        ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"), LookupLocation.NO_LOCATION);
         assert contextClass instanceof ClassDescriptor;
         WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.Empty.INSTANCE$, module, RedeclarationHandler.THROW_EXCEPTION,
                                       "Type parameter scope");
@@ -124,7 +124,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
             String typeParameterName = pair.first;
             String replacementProjectionString = pair.second;
 
-            ClassifierDescriptor classifier = scope.getClassifier(Name.identifier(typeParameterName), UsageLocation.NO_LOCATION);
+            ClassifierDescriptor classifier = scope.getClassifier(Name.identifier(typeParameterName), LookupLocation.NO_LOCATION);
             assertNotNull("No type parameter named " + typeParameterName, classifier);
             assertTrue(typeParameterName + " is not a type parameter: " + classifier, classifier instanceof TypeParameterDescriptor);
 

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,7 +84,7 @@ public class ResolveSessionUtils {
 
         JetScope scope = outerScope;
         for (Name name : path.pathSegments()) {
-            ClassifierDescriptor classifier = scope.getClassifier(name, UsageLocation.NO_LOCATION);
+            ClassifierDescriptor classifier = scope.getClassifier(name, LookupLocation.NO_LOCATION);
             if (!(classifier instanceof ClassDescriptor)) return null;
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }

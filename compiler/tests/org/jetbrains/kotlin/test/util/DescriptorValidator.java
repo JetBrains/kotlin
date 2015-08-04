@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.junit.Assert;
 
@@ -411,7 +411,7 @@ public class DescriptorValidator {
         public Void visitVariableDescriptor(
                 VariableDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getProperties(descriptor.getName(), UsageLocation.NO_LOCATION));
+            assertFound(scope, descriptor, scope.getProperties(descriptor.getName(), LookupLocation.NO_LOCATION));
             return null;
         }
 
@@ -419,7 +419,7 @@ public class DescriptorValidator {
         public Void visitFunctionDescriptor(
                 FunctionDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getFunctions(descriptor.getName(), UsageLocation.NO_LOCATION));
+            assertFound(scope, descriptor, scope.getFunctions(descriptor.getName(), LookupLocation.NO_LOCATION));
             return null;
         }
 
@@ -427,7 +427,7 @@ public class DescriptorValidator {
         public Void visitTypeParameterDescriptor(
                 TypeParameterDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), UsageLocation.NO_LOCATION), true);
+            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), LookupLocation.NO_LOCATION), true);
             return null;
         }
 
@@ -435,7 +435,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, JetScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), UsageLocation.NO_LOCATION), true);
+            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), LookupLocation.NO_LOCATION), true);
             return null;
         }
 

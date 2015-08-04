@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import com.google.common.collect.*
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.utils.Printer
-
-import java.util.*
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
+import org.jetbrains.kotlin.utils.Printer
+import java.util.ArrayList
+import java.util.HashMap
 
 // Reads from:
 // 1. Maps
@@ -156,7 +154,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         checkMayRead()
 
         return concatInOrder(functionsByName(name), workerScope.getFunctions(name, location))
@@ -166,7 +164,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         checkMayRead()
 
         return variableOrClassDescriptorByName(name) as? ClassifierDescriptor
@@ -270,13 +268,13 @@ public class WritableScopeImpl @jvmOverloads constructor(
             return workerScope.getLocalVariable(name)
         }
 
-        override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+        override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
             checkMayRead()
 
             return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name, location))
         }
 
-        override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? {
+        override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
             checkMayRead()
 
             return variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
