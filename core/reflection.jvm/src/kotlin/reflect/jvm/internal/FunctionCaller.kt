@@ -19,13 +19,20 @@ package kotlin.reflect.jvm.internal
 import java.lang.reflect.Member
 import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
-import java.lang.reflect.Member as ReflectMember
 import java.lang.reflect.Method as ReflectMethod
 
-internal sealed class FunctionCaller {
-    abstract val member: ReflectMember
+internal sealed class FunctionCaller(
+        private val expectedArgumentNumber: Int
+) {
+    abstract val member: Member
 
     abstract fun call(args: Array<*>): Any?
+
+    protected open fun checkArguments(args: Array<*>) {
+        if (expectedArgumentNumber != args.size()) {
+            throw IllegalArgumentException("Callable expects $expectedArgumentNumber arguments, but ${args.size()} were provided.")
+        }
+    }
 
     protected fun checkObjectInstance(obj: Any?) {
         if (obj == null || !member.declaringClass.isInstance(obj)) {
@@ -33,14 +40,19 @@ internal sealed class FunctionCaller {
         }
     }
 
-    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller() {
+    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller(constructor.parameterTypes.size()) {
         override val member: Member get() = constructor
 
-        override fun call(args: Array<*>): Any? =
-                constructor.newInstance(*args)
+        override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return constructor.newInstance(*args)
+        }
     }
 
-    abstract class Method(val method: ReflectMethod) : FunctionCaller() {
+    abstract class Method(
+            val method: ReflectMethod,
+            requiresInstance: Boolean
+    ) : FunctionCaller(method.parameterTypes.size() + (if (requiresInstance) 1 else 0)) {
         override val member: Member get() = method
         private val isVoidMethod = method.returnType == Void.TYPE
 
@@ -52,58 +64,71 @@ internal sealed class FunctionCaller {
         }
     }
 
-    class StaticMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? =
-                callMethod(null, args)
-    }
-
-    class InstanceMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? =
-                callMethod(args[0], args.asList().subList(1, args.size()).toTypedArray())
-    }
-
-    class PlatformStaticInObject(method: ReflectMethod) : Method(method) {
+    class StaticMethod(method: ReflectMethod) : Method(method, requiresInstance = false) {
         override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return callMethod(null, args)
+        }
+    }
+
+    class InstanceMethod(method: ReflectMethod) : Method(method, requiresInstance = true) {
+        override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return callMethod(args[0], args.asList().subList(1, args.size()).toTypedArray())
+        }
+    }
+
+    class PlatformStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = true) {
+        override fun call(args: Array<*>): Any? {
+            checkArguments(args)
             checkObjectInstance(args.firstOrNull())
             return callMethod(null, args.asList().subList(1, args.size()).toTypedArray())
         }
     }
 
-    abstract class Field(val field: ReflectField) : FunctionCaller() {
+    abstract class FieldAccessor(val field: ReflectField, expectedArgumentNumber: Int) : FunctionCaller(expectedArgumentNumber) {
         override val member: Member get() = field
     }
 
-    class StaticFieldGetter(field: ReflectField) : Field(field) {
-        override fun call(args: Array<*>): Any? =
-                field.get(null)
-    }
-
-    class InstanceFieldGetter(field: ReflectField) : Field(field) {
-        override fun call(args: Array<*>): Any? =
-                field.get(args[0])
-    }
-
-    class PlatformStaticInObjectFieldGetter(field: ReflectField) : Field(field) {
+    abstract class FieldGetter(
+            field: ReflectField,
+            private val requiresInstance: Boolean
+    ) : FieldAccessor(field, if (requiresInstance) 1 else 0) {
         override fun call(args: Array<*>): Any? {
-            checkObjectInstance(args.firstOrNull())
-            return field.get(null)
+            checkArguments(args)
+            return field.get(if (requiresInstance) args.first() else null)
         }
     }
 
-    class StaticFieldSetter(field: ReflectField) : Field(field) {
-        override fun call(args: Array<*>): Any? =
-                field.set(null, args[0])
-    }
-
-    class InstanceFieldSetter(field: ReflectField) : Field(field) {
-        override fun call(args: Array<*>): Any? =
-                field.set(args[0], args[1])
-    }
-
-    class PlatformStaticInObjectFieldSetter(field: ReflectField) : Field(field) {
+    abstract class FieldSetter(
+            field: ReflectField,
+            private val requiresInstance: Boolean
+    ) : FieldAccessor(field, if (requiresInstance) 2 else 1) {
         override fun call(args: Array<*>): Any? {
+            checkArguments(args)
+            return field.set(if (requiresInstance) args.first() else null, args.last())
+        }
+    }
+
+    class StaticFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
+
+    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true)
+
+    class PlatformStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
+        override fun checkArguments(args: Array<*>) {
+            super.checkArguments(args)
             checkObjectInstance(args.firstOrNull())
-            return field.set(null, args[1])
+        }
+    }
+
+    class StaticFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = false)
+
+    class InstanceFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = true)
+
+    class PlatformStaticInObjectFieldSetter(field: ReflectField) : FieldSetter(field, requiresInstance = true) {
+        override fun checkArguments(args: Array<*>) {
+            super.checkArguments(args)
+            checkObjectInstance(args.firstOrNull())
         }
     }
 }

@@ -2856,6 +2856,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("incorrectNumberOfArguments.kt")
+            public void testIncorrectNumberOfArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/incorrectNumberOfArguments.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("innerClassConstructor.kt")
             public void testInnerClassConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/innerClassConstructor.kt");

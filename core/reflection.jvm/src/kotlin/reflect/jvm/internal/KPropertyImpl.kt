@@ -81,7 +81,7 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
     fun isPlatformStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null
 
-    fun computeFieldCaller(field: Field): FunctionCaller.Field = when {
+    fun computeFieldCaller(field: Field): FunctionCaller.FieldAccessor = when {
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
             else FunctionCaller.InstanceFieldSetter(field)
