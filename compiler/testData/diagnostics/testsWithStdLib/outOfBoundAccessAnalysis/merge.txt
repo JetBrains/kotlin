@@ -1,0 +1,4 @@
+package
+
+internal fun failMerge1(): kotlin.IntArray
+internal fun mergeOk(): kotlin.IntArray
