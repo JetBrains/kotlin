@@ -36,3 +36,18 @@ fun listAccessWithLiteral(): Int {
     val b = <!OUT_OF_BOUND_ACCESS!>lst[1]<!>
     return a + b
 }
+
+fun listSizeMethodCall() {
+    val lst = listOf(1, 2, 3)
+    for (i in 0 .. lst.size()) {
+        println(<!OUT_OF_BOUND_ACCESS!>lst[i]<!>)
+    }
+    for (i in 0 .. 5) {
+        if (i < lst.size()) {
+            println(lst[i])
+        }
+        if (i <= lst.size()) {
+            println(<!OUT_OF_BOUND_ACCESS!>lst[i]<!>)
+        }
+    }
+}
