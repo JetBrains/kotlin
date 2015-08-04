@@ -36,15 +36,15 @@ interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
             var index = 0
 
             if (descriptor.dispatchReceiverParameter != null) {
-                result.add(KParameterImpl(index++) { descriptor.dispatchReceiverParameter!! })
+                result.add(KParameterImpl(this, index++) { descriptor.dispatchReceiverParameter!! })
             }
 
             if (descriptor.extensionReceiverParameter != null) {
-                result.add(KParameterImpl(index++) { descriptor.extensionReceiverParameter!! })
+                result.add(KParameterImpl(this, index++) { descriptor.extensionReceiverParameter!! })
             }
 
             for (i in descriptor.valueParameters.indices) {
-                result.add(KParameterImpl(index++) { descriptor.valueParameters[i] })
+                result.add(KParameterImpl(this, index++) { descriptor.valueParameters[i] })
             }
 
             result.trimToSize()
@@ -52,7 +52,7 @@ interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
         }
 
     override val returnType: KType
-        get() = KTypeImpl(descriptor.returnType!!)
+        get() = KTypeImpl(descriptor.returnType!!) { caller.returnType }
 
     @suppress("UNCHECKED_CAST")
     override fun call(vararg args: Any?): R = reflectionCall {

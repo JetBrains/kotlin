@@ -17,9 +17,15 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.types.JetType
+import java.lang.reflect.Type
 import kotlin.reflect.KType
 
-class KTypeImpl(val type: JetType) : KType {
+class KTypeImpl(
+        val type: JetType,
+        computeJavaType: () -> Type
+) : KType {
+    internal val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
+
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 }

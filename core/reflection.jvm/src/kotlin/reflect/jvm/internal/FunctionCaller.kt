@@ -17,20 +17,23 @@
 package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Member
+import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
-internal sealed class FunctionCaller(
-        private val expectedArgumentNumber: Int
-) {
+internal abstract class FunctionCaller {
     abstract val member: Member
+
+    abstract val returnType: Type
+    abstract val parameterTypes: List<Type>
 
     abstract fun call(args: Array<*>): Any?
 
     protected open fun checkArguments(args: Array<*>) {
-        if (expectedArgumentNumber != args.size()) {
-            throw IllegalArgumentException("Callable expects $expectedArgumentNumber arguments, but ${args.size()} were provided.")
+        if (parameterTypes.size() != args.size()) {
+            throw IllegalArgumentException("Callable expects ${parameterTypes.size()} arguments, but ${args.size()} were provided.")
         }
     }
 
@@ -40,8 +43,15 @@ internal sealed class FunctionCaller(
         }
     }
 
-    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller(constructor.parameterTypes.size()) {
+    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller() {
         override val member: Member get() = constructor
+
+        override val returnType = constructor.declaringClass
+
+        override val parameterTypes =
+                if (returnType.declaringClass == null || Modifier.isStatic(returnType.modifiers))
+                    constructor.genericParameterTypes.toList()
+                else listOf(returnType.declaringClass, *constructor.genericParameterTypes)
 
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
@@ -51,10 +61,17 @@ internal sealed class FunctionCaller(
 
     abstract class Method(
             val method: ReflectMethod,
-            requiresInstance: Boolean
-    ) : FunctionCaller(method.parameterTypes.size() + (if (requiresInstance) 1 else 0)) {
+            private val requiresInstance: Boolean
+    ) : FunctionCaller() {
         override val member: Member get() = method
-        private val isVoidMethod = method.returnType == Void.TYPE
+
+        override val returnType = method.genericReturnType
+
+        override val parameterTypes =
+                if (requiresInstance) listOf(method.declaringClass, *method.genericParameterTypes)
+                else method.genericParameterTypes.toList()
+
+        private val isVoidMethod = returnType == Void.TYPE
 
         protected fun callMethod(instance: Any?, args: Array<*>): Any? {
             val result = method.invoke(instance, *args)
@@ -86,14 +103,19 @@ internal sealed class FunctionCaller(
         }
     }
 
-    abstract class FieldAccessor(val field: ReflectField, expectedArgumentNumber: Int) : FunctionCaller(expectedArgumentNumber) {
+    abstract class FieldAccessor(val field: ReflectField) : FunctionCaller() {
         override val member: Member get() = field
     }
 
     abstract class FieldGetter(
             field: ReflectField,
             private val requiresInstance: Boolean
-    ) : FieldAccessor(field, if (requiresInstance) 1 else 0) {
+    ) : FieldAccessor(field) {
+        override val returnType = field.genericType
+
+        override val parameterTypes =
+                if (requiresInstance) listOf(field.declaringClass) else listOf()
+
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return field.get(if (requiresInstance) args.first() else null)
@@ -104,7 +126,13 @@ internal sealed class FunctionCaller(
             field: ReflectField,
             private val notNull: Boolean,
             private val requiresInstance: Boolean
-    ) : FieldAccessor(field, if (requiresInstance) 2 else 1) {
+    ) : FieldAccessor(field) {
+        override val returnType: Type get() = Void.TYPE
+
+        override val parameterTypes =
+                if (requiresInstance) listOf(field.declaringClass, field.genericType)
+                else listOf(field.genericType)
+
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             if (notNull && args.last() == null) {
