@@ -27,7 +27,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.incremental.components.UsageCollector;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -76,7 +76,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private LazyDeclarationResolver lazyDeclarationResolver;
     private FileScopeProvider fileScopeProvider;
     private DeclarationScopeProvider declarationScopeProvider;
-    private UsageCollector usageCollector;
+    private LookupTracker lookupTracker;
 
     @Inject
     public void setJetImportFactory(JetImportsFactory jetImportFactory) {
@@ -129,8 +129,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @Inject
-    public void setUsageCollector(@NotNull UsageCollector usageCollector) {
-        this.usageCollector = usageCollector;
+    public void setLookupTracker(@NotNull LookupTracker lookupTracker) {
+        this.lookupTracker = lookupTracker;
     }
 
     // Only calls from injectors expected
@@ -411,7 +411,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     @Override
-    public UsageCollector getUsageCollector() {
-        return usageCollector;
+    public LookupTracker getLookupTracker() {
+        return lookupTracker;
     }
 }

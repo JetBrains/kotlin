@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.incremental.components.UsageCollector
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.expressions.*
 
 public fun StorageComponentContainer.configureModule(
@@ -107,7 +106,7 @@ private fun createContainerForLazyResolve(
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
-    useInstance(UsageCollector.DO_NOTHING)
+    useInstance(LookupTracker.DO_NOTHING)
 
     useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()

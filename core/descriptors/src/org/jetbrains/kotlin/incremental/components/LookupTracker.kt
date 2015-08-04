@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.components
 
-public interface UsageCollector {
+public interface LookupTracker {
     companion object {
-        val DO_NOTHING = object : UsageCollector {}
+        val DO_NOTHING = object : LookupTracker {}
     }
 }
