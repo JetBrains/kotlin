@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="IDEA (win)" type="Application" factoryName="Application">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
+    <option name="VM_PARAMETERS" value="-Xmx800m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=450m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config-idea -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Dkotlin.internal.mode.enabled=true -Didea.additional.classpath=${JAVA_HOME}\lib\tools.jar,../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/ideaSDK/bin" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="1.7" />
+    <option name="ENABLE_SWING_INSPECTOR" value="false" />
+    <option name="ENV_VARIABLES" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="idea-runner" />
+    <envs />
+    <method>
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KotlinPlugin" />
+      </option>
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KotlinAndroidExtensions" />
+      </option>
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/idea-runner/runner.xml" target="force-enable-kotlin-plugin" />
+    </method>
+  </configuration>
+</component>
