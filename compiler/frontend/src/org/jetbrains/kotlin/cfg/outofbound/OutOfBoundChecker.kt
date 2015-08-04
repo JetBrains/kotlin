@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
-    private val arrayGetFunctionName = "get"
-    private val arraySetFunctionName = "set"
+    private val collectionGetFunctionName = "get"
+    private val collectionSetFunctionName = "set"
 
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
             PseudocodeIntegerVariablesDataCollector(pseudocode, trace.bindingContext)
@@ -45,28 +45,34 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
         pseudocode.traverse(TraversalOrder.FORWARD, outOfBoundAnalysisData, { instruction, inData: ValuesData, outData: ValuesData ->
             val ctxt = VariableContext(instruction, reportedDiagnosticMap)
             if (instruction is CallInstruction &&
-               (isArrayGetCall(instruction) || isArraySetCall(instruction))) {
+                (isGetCallOnCollection(instruction) || isSetCallOnCollection(instruction))) {
                 checkOutOfBoundAccess(instruction, inData, ctxt)
             }
         })
     }
 
-    private fun isArrayGetCall(instruction: CallInstruction): Boolean {
+    private fun isGetCallOnCollection(instruction: CallInstruction): Boolean {
         val isGetFunctionCall = instruction.element is JetCallExpression &&
-                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == arrayGetFunctionName } ?: false
+                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == collectionGetFunctionName } ?: false
         val isGetOperation = (isGetFunctionCall || instruction.element is JetArrayAccessExpression) &&
                              instruction.inputValues.size() == 2
-        return isGetOperation && InstructionUtils.isExpectedReceiverType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) }
+        val receiverIsCollection = InstructionUtils.isExpectedReceiverType(instruction) {
+            KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
+        }
+        return isGetOperation && receiverIsCollection
     }
 
-    private fun isArraySetCall(instruction: CallInstruction): Boolean {
+    private fun isSetCallOnCollection(instruction: CallInstruction): Boolean {
         val isSetFunctionCall = instruction.element is JetCallExpression &&
-                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == arraySetFunctionName } ?: false
+                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == collectionSetFunctionName } ?: false
         val isSetThroughAccessOperation = instruction.element is JetBinaryExpression &&
                                           instruction.element.left is JetArrayAccessExpression
         val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
                              instruction.inputValues.size() == 3
-        return isSetOperation && InstructionUtils.isExpectedReceiverType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) }
+        val receiverIsCollection = InstructionUtils.isExpectedReceiverType(instruction) {
+            KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
+        }
+        return isSetOperation && receiverIsCollection
     }
 
     private fun checkOutOfBoundAccess(instruction: CallInstruction, valuesData: ValuesData, ctxt: VariableContext) {
