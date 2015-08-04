@@ -31,193 +31,193 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PullUpTestGenerated extends AbstractPullUpTest {
-    @TestMetadata("accidentalOverrides.kt")
-    public void testAccidentalOverrides() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/accidentalOverrides.kt");
-        doTest(fileName);
-    }
-
     public void testAllFilesPresentInPullUp() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp"), Pattern.compile("^(.+)\\.kt$"));
     }
 
-    @TestMetadata("clashWithSuper.kt")
-    public void testClashWithSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/clashWithSuper.kt");
+    @TestMetadata("k2k/accidentalOverrides.kt")
+    public void testK2k_AccidentalOverrides() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/accidentalOverrides.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("fromClassToClass.kt")
-    public void testFromClassToClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/fromClassToClass.kt");
+    @TestMetadata("k2k/clashWithSuper.kt")
+    public void testK2k_ClashWithSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/clashWithSuper.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("fromClassToClassMakeAbstract.kt")
-    public void testFromClassToClassMakeAbstract() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/fromClassToClassMakeAbstract.kt");
+    @TestMetadata("k2k/fromClassToClass.kt")
+    public void testK2k_FromClassToClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("fromClassToClassWithGenerics.kt")
-    public void testFromClassToClassWithGenerics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/fromClassToClassWithGenerics.kt");
+    @TestMetadata("k2k/fromClassToClassMakeAbstract.kt")
+    public void testK2k_FromClassToClassMakeAbstract() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToClassMakeAbstract.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("fromClassToInterface.kt")
-    public void testFromClassToInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/fromClassToInterface.kt");
+    @TestMetadata("k2k/fromClassToClassWithGenerics.kt")
+    public void testK2k_FromClassToClassWithGenerics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToClassWithGenerics.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("fromClassToInterfaceMakeAbstract.kt")
-    public void testFromClassToInterfaceMakeAbstract() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/fromClassToInterfaceMakeAbstract.kt");
+    @TestMetadata("k2k/fromClassToInterface.kt")
+    public void testK2k_FromClassToInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("implicitCompanionUsages.kt")
-    public void testImplicitCompanionUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/implicitCompanionUsages.kt");
+    @TestMetadata("k2k/fromClassToInterfaceMakeAbstract.kt")
+    public void testK2k_FromClassToInterfaceMakeAbstract() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToInterfaceMakeAbstract.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("inaccessibleMemberUsed.kt")
-    public void testInaccessibleMemberUsed() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/inaccessibleMemberUsed.kt");
+    @TestMetadata("k2k/implicitCompanionUsages.kt")
+    public void testK2k_ImplicitCompanionUsages() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/implicitCompanionUsages.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("initializerInConstructor.kt")
-    public void testInitializerInConstructor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInConstructor.kt");
+    @TestMetadata("k2k/inaccessibleMemberUsed.kt")
+    public void testK2k_InaccessibleMemberUsed() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/inaccessibleMemberUsed.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("initializerInMultipleConstructorsEq.kt")
-    public void testInitializerInMultipleConstructorsEq() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInMultipleConstructorsEq.kt");
+    @TestMetadata("k2k/initializerInConstructor.kt")
+    public void testK2k_InitializerInConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/initializerInConstructor.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("initializerInMultipleConstructorsNonEq.kt")
-    public void testInitializerInMultipleConstructorsNonEq() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/initializerInMultipleConstructorsNonEq.kt");
+    @TestMetadata("k2k/initializerInMultipleConstructorsEq.kt")
+    public void testK2k_InitializerInMultipleConstructorsEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/initializerInMultipleConstructorsEq.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("innerClassToInterface.kt")
-    public void testInnerClassToInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/innerClassToInterface.kt");
+    @TestMetadata("k2k/initializerInMultipleConstructorsNonEq.kt")
+    public void testK2k_InitializerInMultipleConstructorsNonEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/initializerInMultipleConstructorsNonEq.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("moveAllSuperInterfaces.kt")
-    public void testMoveAllSuperInterfaces() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveAllSuperInterfaces.kt");
+    @TestMetadata("k2k/innerClassToInterface.kt")
+    public void testK2k_InnerClassToInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/innerClassToInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("moveAllSuperInterfacesWithGenerics.kt")
-    public void testMoveAllSuperInterfacesWithGenerics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveAllSuperInterfacesWithGenerics.kt");
+    @TestMetadata("k2k/moveAllSuperInterfaces.kt")
+    public void testK2k_MoveAllSuperInterfaces() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/moveAllSuperInterfaces.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("moveSuperInterfaces.kt")
-    public void testMoveSuperInterfaces() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfaces.kt");
+    @TestMetadata("k2k/moveAllSuperInterfacesWithGenerics.kt")
+    public void testK2k_MoveAllSuperInterfacesWithGenerics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/moveAllSuperInterfacesWithGenerics.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("moveSuperInterfacesToEmptySpecifierList.kt")
-    public void testMoveSuperInterfacesToEmptySpecifierList() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfacesToEmptySpecifierList.kt");
+    @TestMetadata("k2k/moveSuperInterfaces.kt")
+    public void testK2k_MoveSuperInterfaces() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/moveSuperInterfaces.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("moveSuperInterfaceToItSelf.kt")
-    public void testMoveSuperInterfaceToItSelf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/moveSuperInterfaceToItSelf.kt");
+    @TestMetadata("k2k/moveSuperInterfacesToEmptySpecifierList.kt")
+    public void testK2k_MoveSuperInterfacesToEmptySpecifierList() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/moveSuperInterfacesToEmptySpecifierList.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("multipleInitializersInConstructorsEq.kt")
-    public void testMultipleInitializersInConstructorsEq() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/multipleInitializersInConstructorsEq.kt");
+    @TestMetadata("k2k/moveSuperInterfaceToItSelf.kt")
+    public void testK2k_MoveSuperInterfaceToItSelf() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/moveSuperInterfaceToItSelf.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("noCaret.kt")
-    public void testNoCaret() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noCaret.kt");
+    @TestMetadata("k2k/multipleInitializersInConstructorsEq.kt")
+    public void testK2k_MultipleInitializersInConstructorsEq() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/multipleInitializersInConstructorsEq.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("noClashWithAbstractSuper.kt")
-    public void testNoClashWithAbstractSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noClashWithAbstractSuper.kt");
+    @TestMetadata("k2k/noCaret.kt")
+    public void testK2k_NoCaret() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noCaret.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("noInitializationInInterface.kt")
-    public void testNoInitializationInInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noInitializationInInterface.kt");
+    @TestMetadata("k2k/noClashWithAbstractSuper.kt")
+    public void testK2k_NoClashWithAbstractSuper() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noClashWithAbstractSuper.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("noSuperClass.kt")
-    public void testNoSuperClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/noSuperClass.kt");
+    @TestMetadata("k2k/noInitializationInInterface.kt")
+    public void testK2k_NoInitializationInInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noInitializationInInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("outsideOfClass.kt")
-    public void testOutsideOfClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/outsideOfClass.kt");
+    @TestMetadata("k2k/noSuperClass.kt")
+    public void testK2k_NoSuperClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/noSuperClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("parametersInPrimaryInitializer.kt")
-    public void testParametersInPrimaryInitializer() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/parametersInPrimaryInitializer.kt");
+    @TestMetadata("k2k/outsideOfClass.kt")
+    public void testK2k_OutsideOfClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/outsideOfClass.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("propertyDependenceSatisfied.kt")
-    public void testPropertyDependenceSatisfied() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/propertyDependenceSatisfied.kt");
+    @TestMetadata("k2k/parametersInPrimaryInitializer.kt")
+    public void testK2k_ParametersInPrimaryInitializer() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/parametersInPrimaryInitializer.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("propertyDependenceUnsatisfied.kt")
-    public void testPropertyDependenceUnsatisfied() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/propertyDependenceUnsatisfied.kt");
+    @TestMetadata("k2k/propertyDependenceSatisfied.kt")
+    public void testK2k_PropertyDependenceSatisfied() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyDependenceSatisfied.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("publicToInterface.kt")
-    public void testPublicToInterface() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/publicToInterface.kt");
+    @TestMetadata("k2k/propertyDependenceUnsatisfied.kt")
+    public void testK2k_PropertyDependenceUnsatisfied() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/propertyDependenceUnsatisfied.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("superToThis.kt")
-    public void testSuperToThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/superToThis.kt");
+    @TestMetadata("k2k/publicToInterface.kt")
+    public void testK2k_PublicToInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/publicToInterface.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("toIndirectSuperClass.kt")
-    public void testToIndirectSuperClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/toIndirectSuperClass.kt");
+    @TestMetadata("k2k/superToThis.kt")
+    public void testK2k_SuperToThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/superToThis.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("usedPrivateToClass.kt")
-    public void testUsedPrivateToClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/usedPrivateToClass.kt");
+    @TestMetadata("k2k/toIndirectSuperClass.kt")
+    public void testK2k_ToIndirectSuperClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/toIndirectSuperClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("k2k/usedPrivateToClass.kt")
+    public void testK2k_UsedPrivateToClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/usedPrivateToClass.kt");
         doTest(fileName);
     }
 }
