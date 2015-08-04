@@ -27,6 +27,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.builders.storage.StorageProvider
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
@@ -104,7 +105,10 @@ class CacheFormatVersion(targetDataRoot: File) {
     }
 }
 
-public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, IncrementalCache {
+public class IncrementalCacheImpl(
+        targetDataRoot: File,
+        private val target: ModuleBuildTarget
+) : StorageOwner, IncrementalCache {
     companion object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
@@ -143,6 +147,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                               hasInlineTo)
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
+    private val dependents = arrayListOf<IncrementalCacheImpl>()
 
     private val inlineRegistering = object : InlineRegistering {
         override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
@@ -151,6 +156,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 
     override fun getInlineRegistering(): InlineRegistering = inlineRegistering
+
+    public fun addDependentCache(cache: IncrementalCacheImpl) {
+        dependents.add(cache)
+    }
 
     TestOnly
     public fun dump(): String {
@@ -171,12 +180,21 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
     public fun getFilesToReinline(): Collection<File> {
         val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+        val outPath = target?.outputDir!!
 
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
             val sourceFiles = classToSourcesMap[className]
 
             for (sourceFile in sourceFiles) {
                 val targetFiles = functions.flatMap { hasInlineTo[sourceFile, it] }
+                result.addAll(targetFiles)
+            }
+
+            val classFile = File(outPath, "${className.internalName}.class")
+            val classFileName = classFile.normalizedPath
+
+            for (dependent in dependents) {
+                val targetFiles = functions.flatMap { dependent.hasInlineTo[classFileName, it] }
                 result.addAll(targetFiles)
             }
         }
@@ -724,15 +742,17 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 }
 
-private val storageProvider = object : StorageProvider<IncrementalCacheImpl>() {
-    override fun createStorage(targetDataDir: File): IncrementalCacheImpl {
-        return IncrementalCacheImpl(targetDataDir)
-    }
-}
-
 public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
 
-public fun BuildDataManager.getKotlinCache(target: BuildTarget<*>): IncrementalCacheImpl = getStorage(target, storageProvider)
+private data class KotlinIncrementalStorageProvider(
+        private val target: ModuleBuildTarget
+) : StorageProvider<IncrementalCacheImpl>() {
+    override fun createStorage(targetDataDir: File): IncrementalCacheImpl =
+            IncrementalCacheImpl(targetDataDir, target)
+}
+
+public fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): IncrementalCacheImpl =
+        getStorage(target, KotlinIncrementalStorageProvider(target))
 
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!
