@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -50,7 +49,7 @@ open class KFunctionImpl protected constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    internal val caller: FunctionCaller by ReflectProperties.lazySoft {
+    override val caller: FunctionCaller by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction ->
@@ -74,10 +73,6 @@ open class KFunctionImpl protected constructor(
         }
     }
 
-    override fun call(vararg args: Any?): Any? = reflectionCall {
-        caller.call(args)
-    }
-
     override fun getArity(): Int {
         return descriptor.valueParameters.size() +
                (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
@@ -92,8 +87,4 @@ open class KFunctionImpl protected constructor(
 
     override fun toString(): String =
             ReflectionObjectRenderer.renderFunction(descriptor)
-
-    private companion object {
-        val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
-    }
 }

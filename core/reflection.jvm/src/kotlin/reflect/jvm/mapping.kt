@@ -55,14 +55,14 @@ public val KProperty<*>.javaField: Field?
  * or `null` if the property has no getter, for example in case of a simple private `val` in a class.
  */
 public val KProperty<*>.javaGetter: Method?
-    get() = (this as? KPropertyImpl<*>)?.javaGetter
+    get() = getter.javaMethod
 
 /**
  * Returns a Java [Method] instance corresponding to the setter of the given mutable property,
  * or `null` if the property has no setter, for example in case of a simple private `var` in a class.
  */
 public val KMutableProperty<*>.javaSetter: Method?
-    get() = (this as? KMutablePropertyImpl<*>)?.javaSetter
+    get() = setter.javaMethod
 
 
 /**
@@ -71,9 +71,7 @@ public val KMutableProperty<*>.javaSetter: Method?
  */
 public val KFunction<*>.javaMethod: Method?
     get() = when (this) {
-        is KFunctionImpl -> (caller as? FunctionCaller.Method)?.method
-        is KPropertyImpl.Getter<*> -> property.javaGetter
-        is KMutablePropertyImpl.Setter<*> -> property.javaSetter
+        is KCallableImpl<*> -> (caller as? FunctionCaller.Method)?.method
         else -> null
     }
 

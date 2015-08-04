@@ -16,19 +16,32 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.reflect.Member
 import java.lang.reflect.Constructor as ReflectConstructor
+import java.lang.reflect.Field as ReflectField
+import java.lang.reflect.Member as ReflectMember
 import java.lang.reflect.Method as ReflectMethod
 
 internal sealed class FunctionCaller {
+    abstract val member: ReflectMember
+
     abstract fun call(args: Array<*>): Any?
 
-    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller() {
-        override fun call(args: Array<*>): Any? {
-            return constructor.newInstance(*args)
+    protected fun checkObjectInstance(obj: Any?) {
+        if (obj == null || !member.declaringClass.isInstance(obj)) {
+            throw IllegalArgumentException("An object member requires the object instance passed as the first argument.")
         }
     }
 
+    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller() {
+        override val member: Member get() = constructor
+
+        override fun call(args: Array<*>): Any? =
+                constructor.newInstance(*args)
+    }
+
     abstract class Method(val method: ReflectMethod) : FunctionCaller() {
+        override val member: Member get() = method
         private val isVoidMethod = method.returnType == Void.TYPE
 
         protected fun callMethod(instance: Any?, args: Array<*>): Any? {
@@ -40,23 +53,57 @@ internal sealed class FunctionCaller {
     }
 
     class StaticMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? {
-            return callMethod(null, args)
-        }
+        override fun call(args: Array<*>): Any? =
+                callMethod(null, args)
     }
 
     class InstanceMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? {
-            return callMethod(args[0], args.asList().subList(1, args.size()).toTypedArray())
-        }
+        override fun call(args: Array<*>): Any? =
+                callMethod(args[0], args.asList().subList(1, args.size()).toTypedArray())
     }
 
     class PlatformStaticInObject(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
-            if (args.isEmpty() || !method.declaringClass.isInstance(args[0])) {
-                throw IllegalArgumentException("A function in an object requires the object instance passed as the first argument.")
-            }
+            checkObjectInstance(args.firstOrNull())
             return callMethod(null, args.asList().subList(1, args.size()).toTypedArray())
+        }
+    }
+
+    abstract class Field(val field: ReflectField) : FunctionCaller() {
+        override val member: Member get() = field
+    }
+
+    class StaticFieldGetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? =
+                field.get(null)
+    }
+
+    class InstanceFieldGetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? =
+                field.get(args[0])
+    }
+
+    class PlatformStaticInObjectFieldGetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? {
+            checkObjectInstance(args.firstOrNull())
+            return field.get(null)
+        }
+    }
+
+    class StaticFieldSetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? =
+                field.set(null, args[0])
+    }
+
+    class InstanceFieldSetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? =
+                field.set(args[0], args[1])
+    }
+
+    class PlatformStaticInObjectFieldSetter(field: ReflectField) : Field(field) {
+        override fun call(args: Array<*>): Any? {
+            checkObjectInstance(args.firstOrNull())
+            return field.set(null, args[1])
         }
     }
 }

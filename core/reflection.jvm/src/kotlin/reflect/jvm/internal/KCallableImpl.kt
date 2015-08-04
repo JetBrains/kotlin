@@ -26,6 +26,8 @@ import kotlin.reflect.KType
 interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     val descriptor: CallableMemberDescriptor
 
+    val caller: FunctionCaller
+
     override val annotated: Annotated get() = descriptor
 
     override val parameters: List<KParameter>
@@ -51,4 +53,9 @@ interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
 
     override val returnType: KType
         get() = KTypeImpl(descriptor.returnType!!)
+
+    @suppress("UNCHECKED_CAST")
+    override fun call(vararg args: Any?): R = reflectionCall {
+        return caller.call(args) as R
+    }
 }
