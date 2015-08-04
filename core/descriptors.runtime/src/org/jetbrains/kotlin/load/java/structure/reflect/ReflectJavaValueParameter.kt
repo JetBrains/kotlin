@@ -28,6 +28,8 @@ public class ReflectJavaValueParameter(
 
     override fun findAnnotation(fqName: FqName) = findAnnotation(annotations, fqName)
 
+    override fun isDeprecatedInJavaDoc() = false
+
     override fun getName() = null // TODO: use ParameterNames on JDK 8
     override fun getType() = returnType
     override fun isVararg() = isVararg

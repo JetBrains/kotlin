@@ -4524,6 +4524,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("javaDocDeprecated.kt")
+            public void testJavaDocDeprecated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/javaDocDeprecated.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nestedTypesUsage.kt")
             public void testNestedTypesUsage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/nestedTypesUsage.kt");

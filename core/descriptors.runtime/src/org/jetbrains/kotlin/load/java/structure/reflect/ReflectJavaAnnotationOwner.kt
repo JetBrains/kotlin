@@ -26,6 +26,8 @@ public interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
     override fun getAnnotations() = getAnnotations(element.getDeclaredAnnotations())
 
     override fun findAnnotation(fqName: FqName) = findAnnotation(element.getDeclaredAnnotations(), fqName)
+
+    override fun isDeprecatedInJavaDoc() = false
 }
 
 fun getAnnotations(annotations: Array<Annotation>): List<ReflectJavaAnnotation> {

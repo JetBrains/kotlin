@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.load.java.lazy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
-import org.jetbrains.kotlin.load.java.lazy.descriptors.resolveAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class LazyJavaAnnotations(
         private val c: LazyJavaResolverContext,
@@ -42,7 +40,8 @@ class LazyJavaAnnotations(
 
     override fun iterator() =
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)
-             + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.annotation, annotationOwner, c)).filterNotNull().iterator()
+             + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.annotation, annotationOwner, c)
+             + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated, annotationOwner, c)).filterNotNull().iterator()
 
     override fun isEmpty() = !iterator().hasNext()
 }

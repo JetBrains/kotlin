@@ -28,4 +28,6 @@ public interface JavaAnnotationOwner extends JavaElement {
 
     @Nullable
     JavaAnnotation findAnnotation(@NotNull FqName fqName);
+
+    boolean isDeprecatedInJavaDoc();
 }

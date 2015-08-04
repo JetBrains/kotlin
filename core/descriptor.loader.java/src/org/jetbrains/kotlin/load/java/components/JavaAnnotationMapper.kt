@@ -48,8 +48,7 @@ public object JavaAnnotationMapper {
     public fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
                 ClassId.topLevel(javaTargetFqName) -> JavaTargetAnnotationDescriptor(annotation, c)
-                ClassId.topLevel(javaDeprecatedFqName) -> JavaDeprecatedAnnotationDescriptor(annotation, c)
-                ClassId.topLevel(javaRetentionFqName) -> null
+                ClassId.topLevel(javaRetentionFqName), ClassId.topLevel(javaDeprecatedFqName) -> null
                 else -> c.resolveAnnotation(annotation)
             }
 
@@ -70,6 +69,12 @@ public object JavaAnnotationMapper {
                 null
             }
         }
+        if (kotlinName == KotlinBuiltIns.FQ_NAMES.deprecated) {
+            val javaAnnotation = annotationOwner.findAnnotation(javaDeprecatedFqName)
+            if (javaAnnotation != null || annotationOwner.isDeprecatedInJavaDoc) {
+                return JavaDeprecatedAnnotationDescriptor(javaAnnotation, c)
+            }
+        }
         return kotlinToJavaNameMap[kotlinName]?.let {
             annotationOwner.findAnnotation(it)?.let {
                 mapOrResolveJavaAnnotation(it, c)
@@ -79,8 +84,7 @@ public object JavaAnnotationMapper {
 
     // kotlin.annotation.annotation is treated separately
     private val kotlinToJavaNameMap: Map<FqName, FqName> =
-            mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName,
-                  KotlinBuiltIns.FQ_NAMES.deprecated to javaDeprecatedFqName)
+            mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName)
 
     public val javaToKotlinNameMap: Map<FqName, FqName> =
             mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
@@ -108,7 +112,7 @@ abstract class AbstractJavaAnnotationDescriptor(
 }
 
 class JavaDeprecatedAnnotationDescriptor(
-        annotation: JavaAnnotation,
+        annotation: JavaAnnotation?,
         c: LazyJavaResolverContext
 ): AbstractJavaAnnotationDescriptor(c, annotation, c.module.builtIns.deprecatedAnnotation) {
 
