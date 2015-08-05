@@ -428,7 +428,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             return when (calledName) {
                 KotlinArrayUtils.arrayOfFunctionName,
                 KotlinListUtils.listOfFunctionName,
-                KotlinListUtils.linkedListOfFunctionName-> IntegerVariableValues(instruction.arguments.size())
+                KotlinListUtils.arrayListOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
                 KotlinArrayUtils.arrayConstructorName,
                 in KotlinArrayUtils.primitiveArrayConstructorNames -> {
                     if (instruction.inputValues.isEmpty()) {
