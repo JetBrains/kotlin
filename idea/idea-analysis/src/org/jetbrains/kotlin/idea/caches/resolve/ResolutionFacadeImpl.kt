@@ -17,7 +17,14 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
@@ -26,59 +33,101 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-private class ResolutionFacadeImpl(private val project: Project, private val cache: KotlinResolveCache) : ResolutionFacade {
-    override fun <T> getIdeService(element: JetElement, serviceClass: Class<T>): T {
-        return cache.getIdeService(element, serviceClass)
+private class ResolutionFacadeImpl(
+        private val project: Project,
+        computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
+) : ResolutionFacade {
+    override fun <T> get(extension: CacheExtension<T>): T  = error("TODO: support")
+
+    private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
+
+    val moduleResolverProvider: ModuleResolverProvider
+        get() = resolverCache.getValue()
+
+    public fun getLazyResolveSession(element: JetElement): ResolveSession {
+        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.get<ResolveSession>()
+    }
+
+    private fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
+    private fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
+
+    override fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
+        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.getService(serviceClass)
+    }
+
+    override fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
+        return resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
+    }
+
+    override fun <T> getIdeService(element: PsiElement, serviceClass: Class<T>): T {
+        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.create(serviceClass)
     }
 
     override fun <T> getIdeService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
-        return cache.getIdeService(moduleDescriptor, serviceClass)
+        return resolverForDescriptor(moduleDescriptor).componentProvider.create(serviceClass)
     }
 
     override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        val resolveElementCache = cache.getService(element, javaClass<ResolveElementCache>())
+        val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
         return resolveElementCache.resolveToElement(element, bodyResolveMode)
     }
 
     override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
-        return cache.getLazyResolveSession(element).getModuleDescriptor()
+        return moduleResolverProvider.resolverForProject.descriptorForModule(element.getModuleInfo())
     }
 
     override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
-        return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
+        return getLazyResolveSession(declaration).resolveToDescriptor(declaration)
     }
 
     override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
-        return cache.getAnalysisResultsForElements(elements)
+        return getAnalysisResultsForElements(elements)
     }
 
     override fun getFileTopLevelScope(file: JetFile): JetScope {
-        return cache.getLazyResolveSession(file).getFileScopeProvider().getFileScope(file)
-    }
-
-    override fun <T> getFrontendService(element: JetElement, serviceClass: Class<T>): T {
-        return cache.getService(element, serviceClass)
-    }
-
-    override fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
-        return cache.getService(moduleDescriptor, serviceClass)
+        return getLazyResolveSession(file).getFileScopeProvider().getFileScope(file)
     }
 
     override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-        val qualifiedExpressionResolver = this.getService<QualifiedExpressionResolver>(moduleDescriptor)
+        val qualifiedExpressionResolver = this.frontendService<QualifiedExpressionResolver>(moduleDescriptor)
         return qualifiedExpressionResolver.processImportReference(
                 importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
     }
 
-    override fun <T> get(extension: CacheExtension<T>): T {
-        return cache[extension]
+    private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
+            {
+                val resolverProvider = moduleResolverProvider
+                val results = object : SLRUCache<JetFile, PerFileAnalysisCache>(2, 3) {
+                    override fun createValue(file: JetFile?): PerFileAnalysisCache {
+                        return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
+                    }
+                }
+                CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
+            }, false)
+
+    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
+        assert(elements.isNotEmpty(), "elements collection should not be empty")
+        val slruCache = synchronized(analysisResults) {
+            analysisResults.getValue()!!
+        }
+        val results = elements.map {
+            val perFileCache = synchronized(slruCache) {
+                slruCache[it.getContainingJetFile()]
+            }
+            perFileCache.getAnalysisResults(it)
+        }
+        val withError = results.firstOrNull { it.isError() }
+        val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
+        return if (withError != null)
+            AnalysisResult.error(bindingContext, withError.error)
+        else
+        //TODO: (module refactoring) several elements are passed here in debugger
+            AnalysisResult.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())
     }
 }

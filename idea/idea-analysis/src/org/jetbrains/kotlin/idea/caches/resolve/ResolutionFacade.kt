@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -44,11 +45,11 @@ public interface ResolutionFacade {
 
     public fun <T> get(extension: CacheExtension<T>): T
 
-    public fun <T> getFrontendService(element: JetElement, serviceClass: Class<T>): T
+    public fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
 
     public fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
 
-    public fun <T> getIdeService(element: JetElement, serviceClass: Class<T>): T
+    public fun <T> getIdeService(element: PsiElement, serviceClass: Class<T>): T
 
     public fun <T> getIdeService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
 
@@ -65,13 +66,13 @@ public interface ResolutionFacade {
     }
 }
 
-public inline fun <reified T> ResolutionFacade.getService(element: JetElement): T
+public inline fun <reified T> ResolutionFacade.frontendService(element: PsiElement): T
         = this.getFrontendService(element, javaClass<T>())
 
-public inline fun <reified T> ResolutionFacade.getService(moduleDescriptor: ModuleDescriptor): T
+public inline fun <reified T> ResolutionFacade.frontendService(moduleDescriptor: ModuleDescriptor): T
         = this.getFrontendService(moduleDescriptor, javaClass<T>())
 
-public inline fun <reified T> ResolutionFacade.ideService(element: JetElement): T
+public inline fun <reified T> ResolutionFacade.ideService(element: PsiElement): T
         = this.getIdeService(element, javaClass<T>())
 
 public inline fun <reified T> ResolutionFacade.ideService(moduleDescriptor: ModuleDescriptor): T

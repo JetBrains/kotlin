@@ -16,25 +16,26 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.frontendService
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 
 public fun ResolutionFacade.psiClassToDescriptor(
         psiClass: PsiClass,
         declarationTranslator: (JetClassOrObject) -> JetClassOrObject? = { it }
 ): ClassifierDescriptor? {
     return if (psiClass is KotlinLightClass && psiClass !is KotlinLightClassForDecompiledDeclaration) {
-        val origin = psiClass.getOrigin ()?: return null
+        val origin = psiClass.getOrigin () ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolveToDescriptor(declaration)
-    } else {
-        get(JavaResolveExtension)(psiClass).first.resolveClass(JavaClassImpl(psiClass))
+    }
+    else {
+        frontendService<JavaDescriptorResolver>(psiClass).resolveClass(JavaClassImpl(psiClass))
     }  as? ClassifierDescriptor
 }

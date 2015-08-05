@@ -24,7 +24,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getService
+import org.jetbrains.kotlin.idea.caches.resolve.frontendService
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -115,7 +115,7 @@ public class KotlinIndicesHelper(
     private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
         val result = HashSet<String>()
         for (receiverValue in receiverValues) {
-            val smartCastManager = resolutionFacade.getService<SmartCastManager>(moduleDescriptor)
+            val smartCastManager = resolutionFacade.frontendService<SmartCastManager>(moduleDescriptor)
             for (type in smartCastManager.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
                 result.addTypeNames(type)
             }

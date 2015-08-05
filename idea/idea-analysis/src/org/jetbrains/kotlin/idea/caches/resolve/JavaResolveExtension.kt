@@ -16,41 +16,24 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDescriptorResolver, BindingContext>> {
-    override val platform: TargetPlatform = JvmPlatform
-
-    override fun getData(resolverProvider: ModuleResolverProvider): (PsiElement) -> Pair<JavaDescriptorResolver, BindingContext> {
-        return {
-            val componentProvider = resolverProvider.resolverByModule(it.getModuleInfo()).componentProvider
-            Pair(componentProvider.get<JavaDescriptorResolver>(), componentProvider.get<BindingTrace>().getBindingContext())
-        }
-    }
-
-    public fun getResolver(project: Project, element: PsiElement): JavaDescriptorResolver =
-            KotlinCacheService.getInstance(project)[this](element).first
-
-    public fun getContext(project: Project, element: PsiElement): BindingContext =
-            KotlinCacheService.getInstance(project)[this](element).second
+private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver {
+    @suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
+    return KotlinCacheService.getInstance(getProject()).getGlobalFacade(JvmPlatform).frontendService<JavaDescriptorResolver>(this)
 }
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     val method = getOriginalElement() as? PsiMethod ?: return null
-    val resolver = JavaResolveExtension.getResolver(method.getProject(), method)
+    val resolver = method.getJavaDescriptorResolver()
     return when {
         method.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(method))
         else -> resolver.resolveMethod(JavaMethodImpl(method))
@@ -58,11 +41,11 @@ fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
 }
 
 fun PsiClass.getJavaClassDescriptor(): ClassDescriptor? {
-    return JavaResolveExtension.getResolver(getProject(), this).resolveClass(JavaClassImpl(this))
+    return getJavaDescriptorResolver().resolveClass(JavaClassImpl(this))
 }
 
 fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor? {
-    return JavaResolveExtension.getResolver(getProject(), this).resolveField(JavaFieldImpl(this))
+    return getJavaDescriptorResolver().resolveField(JavaFieldImpl(this))
 }
 
 fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {

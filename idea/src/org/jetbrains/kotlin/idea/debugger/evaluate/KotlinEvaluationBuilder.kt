@@ -57,8 +57,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -82,7 +81,8 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
+import java.util.Collections
+import java.util.HashMap
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -540,8 +540,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
         val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
         if (classes.isEmpty()) null
         else {
-            val clazz = classes.first()
-            JavaResolveExtension.getResolver(project, clazz).resolveClass(JavaClassImpl(clazz))
+            classes.first().getJavaClassDescriptor()
         }
     }
 }

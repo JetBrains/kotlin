@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.JetIcons;
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
@@ -160,7 +159,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember element) {
         PsiMember analyzableAnnotationOwner = KotlinSignatureUtil.getAnalyzableAnnotationOwner(element);
         assert analyzableAnnotationOwner != null;
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.getResolver(project, analyzableAnnotationOwner);
+        JavaDescriptorResolver javaDescriptorResolver = ResolvePackage.getJavaDescriptorResolver(analyzableAnnotationOwner);
 
         if (analyzableAnnotationOwner instanceof PsiMethod) {
             PsiMethod psiMethod = (PsiMethod) analyzableAnnotationOwner;

@@ -20,11 +20,11 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getService
+import org.jetbrains.kotlin.idea.caches.resolve.frontendService
+import org.jetbrains.kotlin.idea.caches.resolve.ideService
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
-import org.jetbrains.kotlin.idea.caches.resolve.ideService
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
@@ -247,7 +247,7 @@ class ExpectedInfos(
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = resolutionFacade.getService<CallResolver>(moduleDescriptor)
+        val callResolver = resolutionFacade.frontendService<CallResolver>(moduleDescriptor)
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = LinkedHashSet<ExpectedInfo>()

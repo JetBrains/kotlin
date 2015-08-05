@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.analysis
 
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getService
+import org.jetbrains.kotlin.idea.caches.resolve.frontendService
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -36,7 +36,7 @@ public fun JetExpression.computeTypeInfoInContext(
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE
 ): JetTypeInfo {
-    return getResolutionFacade().getService<ExpressionTypingServices>(this).getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
+    return getResolutionFacade().frontendService<ExpressionTypingServices>(this).getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
 }
 
 jvmOverloads
