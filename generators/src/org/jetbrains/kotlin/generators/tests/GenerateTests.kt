@@ -97,6 +97,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
 import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
+import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
@@ -829,6 +830,15 @@ fun main(args: Array<String>) {
         }
         testClass(javaClass<AbstractLookupTrackerTest>()) {
             model("incremental/lookupTracker", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    testGroup("jps-plugin/test", "jps-plugin/testData") {
+        testClass(javaClass<AbstractProtoComparisonTest>()) {
+            model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
+            model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
+            model("comparison/classMembersOnlyChanged", extension = null, excludeParentDirs = true)
+            model("comparison/unchanged", extension = null, excludeParentDirs = true)
         }
     }
 

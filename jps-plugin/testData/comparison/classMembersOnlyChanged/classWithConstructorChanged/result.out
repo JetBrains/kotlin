@@ -1,0 +1,10 @@
+changes in test/ClassWithPrimaryConstructorChanged: MEMBERS
+    [<init>]
+changes in test/ClassWithPrimaryConstructorVisibilityChanged: MEMBERS
+    [<init>]
+changes in test/ClassWithSecondaryConstructorVisibilityChanged: MEMBERS
+    [<init>]
+changes in test/ClassWithSecondaryConstructorsAdded: MEMBERS
+    [<init>]
+changes in test/ClassWithSecondaryConstructorsRemoved: MEMBERS
+    [<init>]
