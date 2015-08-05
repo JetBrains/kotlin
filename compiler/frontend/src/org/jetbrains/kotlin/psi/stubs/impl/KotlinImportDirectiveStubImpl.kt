@@ -14,54 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.io.StringRef;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetImportDirective;
-import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-public class KotlinImportDirectiveStubImpl extends KotlinStubBaseImpl<JetImportDirective> implements KotlinImportDirectiveStub {
-    private final boolean isAbsoluteInRootPackage;
-    private final boolean isAllUnder;
-    @Nullable
-    private final StringRef aliasName;
-    private final boolean isValid;
+public class KotlinImportDirectiveStubImpl(
+        parent: StubElement<PsiElement>,
+        private val isAbsoluteInRootPackage: Boolean,
+        private val isAllUnder: Boolean,
+        private val aliasName: StringRef?,
+        private val isValid: Boolean) : KotlinStubBaseImpl<JetImportDirective>(parent, JetStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
 
-    public KotlinImportDirectiveStubImpl(
-            StubElement parent,
-            boolean isAbsoluteInRootPackage,
-            boolean isAllUnder,
-            @Nullable StringRef aliasName,
-            boolean isValid
-    ) {
-        super(parent, JetStubElementTypes.IMPORT_DIRECTIVE);
-        this.isAbsoluteInRootPackage = isAbsoluteInRootPackage;
-        this.isAllUnder = isAllUnder;
-        this.aliasName = aliasName;
-        this.isValid = isValid;
-    }
-
-    @Override
-    public boolean isAbsoluteInRootPackage() {
-        return isAbsoluteInRootPackage;
-    }
-
-    @Override
-    public boolean isAllUnder() {
-        return isAllUnder;
-    }
-
-    @Nullable
-    @Override
-    public String getAliasName() {
-        return StringRef.toString(aliasName);
-    }
-
-    @Override
-    public boolean isValid() {
-        return isValid;
-    }
+    override fun isAbsoluteInRootPackage(): Boolean = isAbsoluteInRootPackage
+    override fun isAllUnder(): Boolean = isAllUnder
+    override fun getAliasName(): String? = StringRef.toString(aliasName)
+    override fun isValid(): Boolean = isValid
 }
