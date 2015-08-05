@@ -34,8 +34,6 @@ JetFile: SoftKeywords.kt
       PsiWhiteSpace('\n')
       PsiElement(open)('open')
       PsiWhiteSpace('\n')
-      PsiElement(enum)('enum')
-      PsiWhiteSpace('\n')
       PsiElement(open)('open')
       PsiWhiteSpace('\n')
       ANNOTATION_ENTRY

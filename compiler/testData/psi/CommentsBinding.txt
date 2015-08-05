@@ -352,6 +352,7 @@ JetFile: CommentsBinding.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('A')
+        PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('// this is A')
       PsiWhiteSpace('\n    ')
@@ -364,12 +365,14 @@ JetFile: CommentsBinding.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         PsiComment(BLOCK_COMMENT)('/* And this is C */')
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('C')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         KDoc

@@ -849,7 +849,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumClassBody
-     *   : "{" enumEntries ";"? members "}"
+     *   : "{" enumEntries (";" members)? "}"
      *   ;
      */
     private void parseEnumClassBody() {
@@ -860,62 +860,59 @@ public class JetParsing extends AbstractJetParsing {
 
         advance(); // LBRACE
 
-        parseEnumEntries();
-        // TODO: syntax without SEMICOLON is deprecated, KT-7605
-        consumeIf(SEMICOLON);
-        parseMembers(true); // Members can include also entries, but it's deprecated syntax
-
+        if (!parseEnumEntries() && !at(RBRACE)) {
+            error("Expecting ';' after the last enum entry or '}' to close enum class body");
+        }
+        parseMembers();
         expect(RBRACE, "Expecting '}' to close enum class body");
+
         myBuilder.restoreNewlinesState();
         body.done(CLASS_BODY);
     }
 
     /**
      * enumEntries
-     *   : (enumEntry ","? )?
+     *   : enumEntry{","}?
      *   ;
+     *
+     * @return true if enum regular members can follow, false otherwise
      */
-    private void parseEnumEntries() {
+    private boolean parseEnumEntries() {
         while (!eof() && !at(RBRACE)) {
-            if (!parseEnumEntry()) {
-                break;
+            switch (parseEnumEntry()) {
+                case FAILED:
+                    // Special case without any enum entries but with possible members after semicolon
+                    if (at(SEMICOLON)) {
+                        advance();
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                case NO_DELIMITER:
+                    return false;
+                case COMMA_DELIMITER:
+                    break;
+                case SEMICOLON_DELIMITER:
+                    return true;
             }
-            parseEnumEntryDelimiter();
         }
+        return false;
     }
 
-    private void parseEnumEntryDelimiter() {
-        // TODO: syntax with SEMICOLON between enum entries is deprecated, KT-7605
-        if (at(SEMICOLON)) {
-            // Semicolon can be legally here only if member follows
-            PsiBuilder.Marker temp = mark();
-            advance(); // SEMICOLON
-            ModifierDetector detector = new ModifierDetector();
-            parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
-            if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
-                // Otherwise it's old syntax that's not supported
-                temp.rollbackTo();
-                // Despite of the error, try to restore and parse next enum entry
-                temp = mark();
-                advance(); // SEMICOLON
-                temp.error("Expecting ','");
-            }
-            else {
-                temp.rollbackTo();
-            }
-        }
-        else {
-            // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
-            consumeIf(COMMA);
-        }
+    private enum ParseEnumEntryResult {
+        FAILED,
+        NO_DELIMITER,
+        COMMA_DELIMITER,
+        SEMICOLON_DELIMITER
     }
 
     /*
      * enumEntry
-     *   : modifiers SimpleName ((":" initializer) | ("(" arguments ")"))? classBody?
+     *   : modifiers SimpleName ("(" arguments ")")? classBody?
      *   ;
      */
-    private boolean parseEnumEntry() {
+    private ParseEnumEntryResult parseEnumEntry() {
         PsiBuilder.Marker entry = mark();
 
         ModifierDetector detector = new ModifierDetector();
@@ -946,23 +943,27 @@ public class JetParsing extends AbstractJetParsing {
                 delegatorSuperCall.done(DELEGATOR_SUPER_CALL);
                 initializerList.done(INITIALIZER_LIST);
             }
-            // TODO: syntax with COLON is deprecated, should be changed to syntax with LPAR above, KT-7605
-            else if (at(COLON)) {
-                advance(); // COLON
-
-                parseInitializerList();
-            }
             if (at(LBRACE)) {
                 parseClassBody();
+            }
+            boolean commaFound = at(COMMA);
+            if (commaFound) {
+                advance();
+            }
+            boolean semicolonFound = at(SEMICOLON);
+            if (semicolonFound) {
+                advance();
             }
 
             // Probably some helper function
             closeDeclarationWithCommentBinders(entry, ENUM_ENTRY, true);
-            return true;
+            return semicolonFound
+                   ? ParseEnumEntryResult.SEMICOLON_DELIMITER
+                   : (commaFound ? ParseEnumEntryResult.COMMA_DELIMITER : ParseEnumEntryResult.NO_DELIMITER);
         }
         else {
             entry.rollbackTo();
-            return false;
+            return ParseEnumEntryResult.FAILED;
         }
     }
 
@@ -992,23 +993,8 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseMembers() {
-        parseMembers(false);
-    }
-
-    private void parseMembers(boolean deprecatedEnumEntryPossible) {
-        while (!eof()) {
-            if (at(RBRACE)) {
-                break;
-            }
-            if (deprecatedEnumEntryPossible && parseEnumEntry()) {
-                // Enum entry is deprecated here
-                // Error is generated later in DeclarationsChecker
-                parseEnumEntryDelimiter();
-                consumeIf(SEMICOLON);
-            }
-            else {
-                parseMemberDeclaration();
-            }
+        while (!eof() && !at(RBRACE)) {
+            parseMemberDeclaration();
         }
     }
 
@@ -1160,19 +1146,6 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // THIS_KEYWORD | SUPER_KEYWORD
 
         mark.done(CONSTRUCTOR_DELEGATION_REFERENCE);
-    }
-
-    /*
-     * initializerList
-     *      : initializer
-     *
-     */
-    private void parseInitializerList() {
-        // In practice, only one initializer is always in use
-        PsiBuilder.Marker list = mark();
-        if (at(COMMA)) errorAndAdvance("Expecting a this or super constructor call");
-        parseInitializer();
-        list.done(INITIALIZER_LIST);
     }
 
     /*

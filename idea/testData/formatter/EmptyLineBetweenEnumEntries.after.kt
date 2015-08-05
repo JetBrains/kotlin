@@ -23,5 +23,6 @@ enum class E6 {
 enum class E7 {
     F {
 
-    }, S, T
+    },
+    S, T
 }

@@ -105,7 +105,7 @@ public class CodegenTestFiles {
         String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<CheckerTestUtil.DiagnosedRange>());
         JetFile file = JetTestUtils.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
-        assert ranges.isEmpty() : "Syntax errors found: " + ranges;
+        assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;
 
         List<Pair<String, String>> expectedValues = Lists.newArrayList();
 

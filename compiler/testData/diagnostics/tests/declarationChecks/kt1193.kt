@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-//KT-1193 Check enum entry supertype
+//KT-1193 Check enum entry supertype / initialization
 
 package kt1193
 
@@ -9,8 +9,5 @@ enum class MyEnum(val i: Int) {
 }
 
 open class A(x: Int = 1)
-enum class MyOtherEnum(val i: Int) {
-    X : <!ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR!><!ENUM_ENTRY_ILLEGAL_TYPE!>A<!>(3)<!>,
-    Y : <!ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR!><!ENUM_ENTRY_ILLEGAL_TYPE!>A<!>()<!>,
-    Z : <!ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR!><!ENUM_ENTRY_ILLEGAL_TYPE!>A<!>(3)<!> {}
-}
+
+val x: MyEnum = MyEnum.A

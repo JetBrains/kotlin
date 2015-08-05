@@ -17,16 +17,13 @@ JetFile: enumParsing.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('abc1')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -41,20 +38,18 @@ JetFile: enumParsing.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('3')
               PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n   ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('abc2')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -73,10 +68,12 @@ JetFile: enumParsing.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n   ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('abc3')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n   ')
       SECONDARY_CONSTRUCTOR
         PsiElement(constructor)('constructor')

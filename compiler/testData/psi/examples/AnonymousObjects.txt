@@ -139,6 +139,7 @@ JetFile: AnonymousObjects.kt
           ENUM_ENTRY
             OBJECT_DECLARATION_NAME
               PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+            PsiElement(COMMA)(',')
           PsiWhiteSpace('\n  ')
           ENUM_ENTRY
             OBJECT_DECLARATION_NAME

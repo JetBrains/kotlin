@@ -5136,24 +5136,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("enumCommaNoSemicolon.kt")
-            public void testEnumCommaNoSemicolon() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumCommaNoSemicolon.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumCommaSemicolonBetween.kt")
-            public void testEnumCommaSemicolonBetween() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumCommaSemicolonBetween.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumEntriesAtTheEnd.kt")
-            public void testEnumEntriesAtTheEnd() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntriesAtTheEnd.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
@@ -5184,75 +5166,15 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("enumMissedComma.kt")
-            public void testEnumMissedComma() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMissedComma.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("enumMissingName.kt")
             public void testEnumMissingName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMissingName.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("enumMixed.kt")
-            public void testEnumMixed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixed.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumMixedWithCommas.kt")
-            public void testEnumMixedWithCommas() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixedWithCommas.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumMixedWithSemicolons.kt")
-            public void testEnumMixedWithSemicolons() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixedWithSemicolons.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("enumModifier.kt")
             public void testEnumModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumModifier.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumNoComma.kt")
-            public void testEnumNoComma() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumNoComma.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumNoSemicolon.kt")
-            public void testEnumNoSemicolon() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumNoSemicolon.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumOldConstructor.kt")
-            public void testEnumOldConstructor() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumOldConstructor.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumOldConstructorNamedArgument.kt")
-            public void testEnumOldConstructorNamedArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumOldConstructorNamedArgument.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumOldConstructors.kt")
-            public void testEnumOldConstructors() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumOldConstructors.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("enumSemicolonBetween.kt")
-            public void testEnumSemicolonBetween() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumSemicolonBetween.kt");
                 doTest(fileName);
             }
 
@@ -5385,12 +5307,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("modifiersOnEnumEntry.kt")
             public void testModifiersOnEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/modifiersOnEnumEntry.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("OldSyntaxConstructorCall.kt")
-            public void testOldSyntaxConstructorCall() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/OldSyntaxConstructorCall.kt");
                 doTest(fileName);
             }
 

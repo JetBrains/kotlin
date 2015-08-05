@@ -219,17 +219,17 @@ JetFile: Comparison.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('LS')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('EQ')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('GR')
-      PsiElement(SEMICOLON)(';')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

@@ -47,7 +47,7 @@ JetFile: EnumMissingName.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0xFF000')
               PsiElement(RPAR)(')')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
@@ -65,7 +65,7 @@ JetFile: EnumMissingName.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0x00FF00')
               PsiElement(RPAR)(')')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME

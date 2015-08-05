@@ -228,8 +228,7 @@ public class DefaultErrorMessages {
                 FQ_NAMES_IN_TYPES);
         MAP.put(CANNOT_INFER_VISIBILITY, "Cannot infer visibility for ''{0}''. Please specify it explicitly", COMPACT);
 
-        MAP.put(ENUM_ENTRY_SHOULD_BE_INITIALIZED, "Missing delegation specifier ''{0}''", NAME);
-        MAP.put(ENUM_ENTRY_ILLEGAL_TYPE, "The type constructor of enum entry should be ''{0}''", NAME);
+        MAP.put(ENUM_ENTRY_SHOULD_BE_INITIALIZED, "Enum has no default constructor, use 'entry(parameters)'");
 
         MAP.put(UNINITIALIZED_VARIABLE, "Variable ''{0}'' must be initialized", NAME);
         MAP.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", NAME);
@@ -266,9 +265,6 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
-        MAP.put(ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER, "Enum entry ''{0}'' should have a correct delimiter ''{1}'' after it", NAME, STRING);
-        MAP.put(ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR, "Enum entry ''{0}'' uses deprecated super constructor syntax, use ENTRY(arguments) instead", NAME);
-        MAP.put(ENUM_ENTRY_AFTER_ENUM_MEMBER, "Enum entry ''{0}'' is not allowed after a member", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
         MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 

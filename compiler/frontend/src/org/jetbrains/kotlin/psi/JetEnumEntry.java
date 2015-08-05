@@ -75,6 +75,10 @@ public class JetEnumEntry extends JetClass {
         return initializerList.getInitializers();
     }
 
+    public boolean hasInitializer() {
+        return !getDelegationSpecifiers().isEmpty();
+    }
+
     @Nullable
     public JetInitializerList getInitializerList() {
         return getStubOrPsiChild(JetStubElementTypes.INITIALIZER_LIST);

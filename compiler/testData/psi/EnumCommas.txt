@@ -17,23 +17,23 @@ JetFile: EnumCommas.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('NORTH')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('SOUTH')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('WEST')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('EAST')
-      PsiElement(COMMA)(',')
-      PsiWhiteSpace('\n    ')
-      PsiElement(SEMICOLON)(';')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n    ')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -3,14 +3,8 @@ package
 package bug {
 
     public final enum class Foo</*0*/ T> : kotlin.Enum<bug.Foo<T>> {
-        public enum entry A : bug.Foo<kotlin.String> {
+        public enum entry A {
             private constructor A()
-            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: bug.Foo<kotlin.String>): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
         private constructor Foo</*0*/ T>()

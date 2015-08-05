@@ -3,6 +3,45 @@ package
 package abstract {
 
     internal final enum class MyEnum : kotlin.Enum<abstract.MyEnum> {
+        public enum entry INSTANCE : abstract.MyEnum {
+            private constructor INSTANCE()
+            internal final override /*1*/ /*fake_override*/ val a: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ val a1: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ val a2: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ val a3: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var b: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var b1: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ var b2: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ var b3: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var c: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var c1: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ var c2: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ var c3: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ val e: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ val e1: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ val e2: kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ val e3: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var i: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var i1: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var j: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var j1: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var k: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var k1: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var l: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var l1: kotlin.Int
+            internal final override /*1*/ /*fake_override*/ var n: kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: abstract.MyEnum): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            internal final override /*1*/ /*fake_override*/ fun f(): kotlin.Unit
+            internal final override /*1*/ /*fake_override*/ fun g(): kotlin.Unit
+            internal abstract override /*1*/ /*fake_override*/ fun h(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            internal abstract override /*1*/ /*fake_override*/ fun j(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
         private constructor MyEnum()
         internal final val a: kotlin.Int
         internal final val a1: kotlin.Int = 1

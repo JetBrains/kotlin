@@ -240,11 +240,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testFunctionModalityInClass("abstract class A { open fun foo() }", Modality.OPEN);
         tc.testFunctionModalityInClass("abstract class A { abstract fun foo() }", Modality.ABSTRACT);
 
-        tc.testFunctionModalityInEnum("enum class A { fun foo() {} }", Modality.FINAL);
-        tc.testFunctionModalityInEnum("enum class A { final fun foo() {} }", Modality.FINAL);
-        tc.testFunctionModalityInEnum("open enum class A { open fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInEnum("abstract enum class A { open fun foo() }", Modality.OPEN);
-        tc.testFunctionModalityInEnum("abstract enum class A { abstract fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInEnum("enum class A { ; fun foo() {} }", Modality.FINAL);
+        tc.testFunctionModalityInEnum("enum class A { ; final fun foo() {} }", Modality.FINAL);
+        tc.testFunctionModalityInEnum("open enum class A { ; open fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInEnum("abstract enum class A { ; open fun foo() }", Modality.OPEN);
+        tc.testFunctionModalityInEnum("abstract enum class A { ; abstract fun foo() }", Modality.ABSTRACT);
 
         tc.testFunctionModalityInTrait("trait A { fun foo() }", Modality.ABSTRACT);
         tc.testFunctionModalityInTrait("trait A { abstract fun foo() }", Modality.ABSTRACT);
@@ -264,11 +264,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testFunctionModalityInClass("abstract class A : C { open override  fun foo() }", Modality.OPEN);
         tc.testFunctionModalityInClass("abstract class A : C { abstract override fun foo() }", Modality.ABSTRACT);
 
-        tc.testFunctionModalityInEnum("enum class A : C { override fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInEnum("enum class A : C { final override fun foo() {} }", Modality.FINAL);
-        tc.testFunctionModalityInEnum("open enum class A : C { open override fun foo() {} }", Modality.OPEN);
-        tc.testFunctionModalityInEnum("abstract enum class A : C { open override fun foo() }", Modality.OPEN);
-        tc.testFunctionModalityInEnum("abstract enum class A : C { abstract override fun foo() }", Modality.ABSTRACT);
+        tc.testFunctionModalityInEnum("enum class A : C { ; override fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInEnum("enum class A : C { ; final override fun foo() {} }", Modality.FINAL);
+        tc.testFunctionModalityInEnum("open enum class A : C { ; open override fun foo() {} }", Modality.OPEN);
+        tc.testFunctionModalityInEnum("abstract enum class A : C { ; open override fun foo() }", Modality.OPEN);
+        tc.testFunctionModalityInEnum("abstract enum class A : C { ; abstract override fun foo() }", Modality.ABSTRACT);
 
         tc.testFunctionModalityInTrait("trait A : C { override fun foo() }", Modality.ABSTRACT);
         tc.testFunctionModalityInTrait("trait A : C { abstract override fun foo() }", Modality.ABSTRACT);
@@ -287,13 +287,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyModalityInClass("abstract class A { open val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyModalityInClass("abstract class A { abstract val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInEnum("enum class A { val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("enum class A { final val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("open enum class A { val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("open enum class A { final val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("open enum class A { open val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("abstract enum class A { open val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("abstract enum class A { abstract val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInEnum("enum class A { ; val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("enum class A { ; final val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("open enum class A { ; val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("open enum class A { ; final val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("open enum class A { ; open val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("abstract enum class A { ; open val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("abstract enum class A { ; abstract val a: Int }", Modality.ABSTRACT);
 
         tc.testPropertyModalityInTrait("trait A { val a: Int }", Modality.ABSTRACT);
         tc.testPropertyModalityInTrait("trait A { open val a: Int }", Modality.ABSTRACT);
@@ -319,13 +319,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyModalityInClass("abstract class A : C { open override val a: Int = 0 }", Modality.OPEN);
         tc.testPropertyModalityInClass("abstract class A : C { abstract override val a: Int }", Modality.ABSTRACT);
 
-        tc.testPropertyModalityInEnum("enum class A : C { override val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("enum class A : C { final override val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("open enum class A : C { override val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("open enum class A : C { final override val a: Int = 0 }", Modality.FINAL);
-        tc.testPropertyModalityInEnum("open enum class A : C { open override val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("abstract enum class A : C { open override val a: Int = 0 }", Modality.OPEN);
-        tc.testPropertyModalityInEnum("abstract enum class A : C { abstract override val a: Int }", Modality.ABSTRACT);
+        tc.testPropertyModalityInEnum("enum class A : C { ; override val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("enum class A : C { ; final override val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("open enum class A : C { ; override val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("open enum class A : C { ; final override val a: Int = 0 }", Modality.FINAL);
+        tc.testPropertyModalityInEnum("open enum class A : C { ; open override val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("abstract enum class A : C { ; open override val a: Int = 0 }", Modality.OPEN);
+        tc.testPropertyModalityInEnum("abstract enum class A : C { ; abstract override val a: Int }", Modality.ABSTRACT);
 
         tc.testPropertyModalityInTrait("trait A : C { override val a: Int }", Modality.ABSTRACT);
         tc.testPropertyModalityInTrait("trait A : C { open override val a: Int }", Modality.ABSTRACT);
