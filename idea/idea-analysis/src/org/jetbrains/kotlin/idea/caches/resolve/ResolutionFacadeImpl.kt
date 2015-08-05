@@ -42,8 +42,6 @@ private class ResolutionFacadeImpl(
         private val project: Project,
         computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) : ResolutionFacade {
-    override fun <T> get(extension: CacheExtension<T>): T  = error("TODO: support")
-
     private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
 
     val moduleResolverProvider: ModuleResolverProvider

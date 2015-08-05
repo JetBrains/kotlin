@@ -21,11 +21,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -43,12 +39,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.HashMap
-
-public interface CacheExtension<T> {
-    public val platform: TargetPlatform
-    public fun getData(resolverProvider: ModuleResolverProvider): T
-}
-
 
 private class PerFileAnalysisCache(val file: JetFile, val componentProvider: ComponentProvider) {
     private val cache = HashMap<PsiElement, AnalysisResult>()

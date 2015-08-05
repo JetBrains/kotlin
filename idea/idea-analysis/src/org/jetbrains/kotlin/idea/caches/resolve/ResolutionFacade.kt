@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public interface ResolutionFacade {
-
     public fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
 
     public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
@@ -41,8 +40,6 @@ public interface ResolutionFacade {
     public fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor>
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
-
-    public fun <T> get(extension: CacheExtension<T>): T
 
     public fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
 
