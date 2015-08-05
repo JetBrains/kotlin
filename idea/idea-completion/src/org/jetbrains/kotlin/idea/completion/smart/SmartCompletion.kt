@@ -110,12 +110,7 @@ class SmartCompletion(
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val expressionWithType = if (receiver != null) {
-            expression.getParent() as? JetExpression ?: return null
-        }
-        else {
-            expression
-        }
+        val expressionWithType = expression.toExpressionWithType()
 
         var originalExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
         originalExpectedInfos = originalExpectedInfos.filterNot { it.fuzzyType?.type?.isError ?: false }
@@ -207,7 +202,9 @@ class SmartCompletion(
             if (originalDeclaration != null) {
                 val originalDescriptor = originalDeclaration.resolveToDescriptor() as? CallableDescriptor
                 val returnType = originalDescriptor?.getReturnType()
-                return if (returnType != null) listOf(ExpectedInfo(returnType, declaration.getName(), null)) else null
+                if (returnType != null && !returnType.isError) {
+                    return listOf(ExpectedInfo(returnType, declaration.getName(), null))
+                }
             }
         }
 

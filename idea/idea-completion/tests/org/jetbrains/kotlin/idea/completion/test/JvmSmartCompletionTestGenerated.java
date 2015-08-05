@@ -179,6 +179,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImplicitlyTypedValInitializerUnknownType.kt")
+    public void testImplicitlyTypedValInitializerUnknownType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializerUnknownType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InClassObject.kt")
     public void testInClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InClassObject.kt");
