@@ -2,12 +2,12 @@ package test
 
 internal final class A {
     /*primary*/ public constructor A()
-    @receiver:test.Ann() internal final val kotlin.String.myLength2: kotlin.Int
-        internal final fun kotlin.String.<get-myLength2>(): kotlin.Int
-    @receiver:test.Ann() internal final var kotlin.String.myLength3: kotlin.Int
-        internal final fun kotlin.String.<get-myLength3>(): kotlin.Int
-        internal final fun kotlin.String.<set-myLength3>(/*0*/ v: kotlin.Int): kotlin.Unit
-    @receiver:test.Ann() internal final fun kotlin.String.myLength(/*0*/ test.Ann() q: kotlin.String): kotlin.Int
+    internal final val @receiver:test.Ann() kotlin.String.myLength2: kotlin.Int
+        internal final fun @receiver:test.Ann() kotlin.String.<get-myLength2>(): kotlin.Int
+    internal final var @receiver:test.Ann() kotlin.String.myLength3: kotlin.Int
+        internal final fun @receiver:test.Ann() kotlin.String.<get-myLength3>(): kotlin.Int
+        internal final fun @receiver:test.Ann() kotlin.String.<set-myLength3>(/*0*/ v: kotlin.Int): kotlin.Unit
+    internal final fun @receiver:test.Ann() kotlin.String.myLength(/*0*/ test.Ann() q: kotlin.String): kotlin.Int
 }
 
 kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {

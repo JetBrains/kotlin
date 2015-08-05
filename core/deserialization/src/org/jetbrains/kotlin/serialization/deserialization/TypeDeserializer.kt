@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
@@ -76,7 +76,7 @@ public class TypeDeserializer(
     val ownTypeParameters: List<TypeParameterDescriptor>
             get() = typeParameterDescriptors().values().toReadOnlyList()
 
-    fun type(proto: ProtoBuf.Type): JetType {
+    fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): JetType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(proto.getFlexibleTypeCapabilitiesId())
             val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id)
@@ -92,7 +92,7 @@ public class TypeDeserializer(
             )
         }
 
-        return DeserializedType(c, proto)
+        return DeserializedType(c, proto, additionalAnnotations)
     }
 
     fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {

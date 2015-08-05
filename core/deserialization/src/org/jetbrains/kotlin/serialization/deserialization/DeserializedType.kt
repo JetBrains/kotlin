@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.types.AbstractLazyType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.LazyType
@@ -26,26 +27,29 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
         private val c: DeserializationContext,
-        private val typeProto: ProtoBuf.Type
+        private val typeProto: ProtoBuf.Type,
+        private val additionalAnnotations: Annotations = Annotations.EMPTY
 ) : AbstractLazyType(c.storageManager), LazyType {
     private val typeDeserializer = c.typeDeserializer
 
     override fun computeTypeConstructor() = typeDeserializer.typeConstructor(typeProto)
 
     override fun computeArguments() =
-        typeProto.getArgumentList().mapIndexed {
+        typeProto.argumentList.mapIndexed {
             index, proto ->
-            typeDeserializer.typeArgument(getConstructor().getParameters().getOrNull(index), proto)
+            typeDeserializer.typeArgument(constructor.parameters.getOrNull(index), proto)
         }.toReadOnlyList()
 
-    private val annotations = DeserializedAnnotations(c.storageManager) {
-        c.components.annotationAndConstantLoader.loadTypeAnnotations(typeProto, c.nameResolver)
+    private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+        c.components.annotationAndConstantLoader
+                .loadTypeAnnotations(typeProto, c.nameResolver)
+                .map { AnnotationWithTarget(it, null) } + additionalAnnotations.getAllAnnotations()
     }
 
-    override fun isMarkedNullable(): Boolean = typeProto.getNullable()
+    override fun isMarkedNullable(): Boolean = typeProto.nullable
 
     override fun isError(): Boolean {
-        val descriptor = getConstructor().getDeclarationDescriptor()
+        val descriptor = constructor.declarationDescriptor
         return descriptor != null && ErrorUtils.isError(descriptor)
     }
 

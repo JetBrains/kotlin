@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext;
@@ -55,7 +56,7 @@ public class DeserializedTypeParameterDescriptor extends AbstractLazyTypeParamet
         }
         Set<JetType> result = new LinkedHashSet<JetType>(proto.getUpperBoundCount());
         for (ProtoBuf.Type upperBound : proto.getUpperBoundList()) {
-            result.add(typeDeserializer.type(upperBound));
+            result.add(typeDeserializer.type(upperBound, Annotations.EMPTY));
         }
         return result;
     }

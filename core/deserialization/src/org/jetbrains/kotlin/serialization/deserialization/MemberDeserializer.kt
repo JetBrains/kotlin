@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -47,16 +46,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     private fun loadProperty(proto: Callable): PropertyDescriptor {
         val flags = proto.getFlags()
 
-        val hasGetter = Flags.HAS_GETTER.get(flags)
-
-        val propertyAnnotations = if (hasGetter)
-            getAnnotationsWithReceiverTargeted(proto, AnnotatedCallableKind.PROPERTY, AnnotatedCallableKind.PROPERTY_GETTER)
-        else
-            getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY)
-
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
-                propertyAnnotations,
+                getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
@@ -67,11 +59,18 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         )
 
         val local = c.childContext(property, proto.getTypeParameterList())
+
+        val hasGetter = Flags.HAS_GETTER.get(flags)
+        val receiverAnnotations = if (hasGetter)
+            getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
+        else
+            Annotations.EMPTY
+
         property.setType(
                 local.typeDeserializer.type(proto.getReturnType()),
                 local.typeDeserializer.ownTypeParameters,
                 getDispatchReceiverParameter(),
-                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
+                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType(), receiverAnnotations) else null
         )
 
         val getter = if (hasGetter) {
@@ -126,10 +125,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                c.storageManager.createNullableLazyValue {
-                    val container = c.containingDeclaration.asProtoContainer()
-                    c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
-                }
+                    c.storageManager.createNullableLazyValue {
+                        val container = c.containingDeclaration.asProtoContainer()
+                        c.components.annotationAndConstantLoader.loadPropertyConstant(container, proto, c.nameResolver, property.getReturnType())
+                    }
             )
         }
 
@@ -139,13 +138,12 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun loadFunction(proto: Callable): CallableMemberDescriptor {
-        val annotations = getAnnotationsWithReceiverTargeted(proto, AnnotatedCallableKind.FUNCTION)
+        val annotations = getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION)
+        val receiverAnnotations = getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
         val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, proto, c.nameResolver, annotations)
         val local = c.childContext(function, proto.getTypeParameterList())
-        val receiverParameterType = if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType()) else null
-
         function.initialize(
-                receiverParameterType,
+                if (proto.hasReceiverType()) local.typeDeserializer.type(proto.getReceiverType(), receiverAnnotations) else null,
                 getDispatchReceiverParameter(),
                 local.typeDeserializer.ownTypeParameters,
                 local.memberDeserializer.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
@@ -176,29 +174,6 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return descriptor
     }
 
-    private fun getAnnotationsWithReceiverTargeted(
-            proto: Callable,
-            kind: AnnotatedCallableKind,
-            receiverTargetedKind: AnnotatedCallableKind = kind
-    ): Annotations {
-        return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
-            val annotations = arrayListOf<AnnotationWithTarget>()
-            val container = c.containingDeclaration.asProtoContainer()
-
-            annotations += c.components.annotationAndConstantLoader
-                    .loadCallableAnnotations(container, proto, c.nameResolver, kind)
-                    .map { AnnotationWithTarget(it, null) }
-
-            if (proto.hasReceiverType()) {
-                annotations += c.components.annotationAndConstantLoader
-                        .loadExtensionReceiverParameterAnnotations(container, proto, c.nameResolver, receiverTargetedKind)
-                        .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
-            }
-
-            annotations
-        }
-    }
-
     private fun getAnnotations(proto: Callable, flags: Int, kind: AnnotatedCallableKind): Annotations {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
@@ -207,6 +182,25 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             c.components.annotationAndConstantLoader.loadCallableAnnotations(
                     c.containingDeclaration.asProtoContainer(), proto, c.nameResolver, kind
             )
+        }
+    }
+
+    private fun getReceiverParameterAnnotations(
+            proto: Callable,
+            kind: AnnotatedCallableKind,
+            receiverTargetedKind: AnnotatedCallableKind = kind
+    ): Annotations {
+        return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+            val annotations = arrayListOf<AnnotationWithTarget>()
+            val container = c.containingDeclaration.asProtoContainer()
+
+            if (proto.hasReceiverType()) {
+                annotations += c.components.annotationAndConstantLoader
+                        .loadExtensionReceiverParameterAnnotations(container, proto, c.nameResolver, receiverTargetedKind)
+                        .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+            }
+
+            annotations
         }
     }
 
