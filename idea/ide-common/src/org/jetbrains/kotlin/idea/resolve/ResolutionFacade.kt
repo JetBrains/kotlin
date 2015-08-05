@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public interface ResolutionFacade {
+    public val project: Project
+
     public fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
 
     public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult

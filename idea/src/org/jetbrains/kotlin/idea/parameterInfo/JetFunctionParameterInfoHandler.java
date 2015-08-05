@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper;
 import org.jetbrains.kotlin.idea.core.CorePackage;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -386,7 +386,6 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(callNameExpression.getContainingJetFile());
         final BindingContext bindingContext = resolutionFacade.analyze(callNameExpression, BodyResolveMode.FULL);
-        ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         final DeclarationDescriptor placeDescriptor;
@@ -413,7 +412,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 return name.equals(refName);
             }
         };
-        Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, moduleDescriptor, file.getProject(), visibilityFilter).getReferenceVariants(
+        Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter).getReferenceVariants(
                 callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
                                                              Collections.<DescriptorKindExclude>emptyList()), nameFilter, false, false);
 

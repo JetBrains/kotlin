@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -39,10 +40,9 @@ import java.util.HashSet
 
 public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
-        private val moduleDescriptor: ModuleDescriptor,
-        private val project: Project
+        private val resolutionFacade: ResolutionFacade
 ) {
-    private val psiFactory = JetPsiFactory(project)
+    private val psiFactory = JetPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>, expression: JetSimpleNameExpression): Collection<TDescriptor> {
@@ -165,7 +165,7 @@ public class ShadowedDeclarationsFilter(
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
-        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val callResolver = resolutionFacade.frontendService<CallResolver>(calleeExpression)
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }
         val resultingOriginals = resultingDescriptors.mapTo(HashSet<DeclarationDescriptor>()) { it.getOriginal() }

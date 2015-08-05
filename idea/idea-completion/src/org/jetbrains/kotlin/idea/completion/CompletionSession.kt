@@ -137,7 +137,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project, isVisibleFilter)
+    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
 
@@ -296,7 +296,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(this, referenceVariants, nameExpression!!)
+        return ShadowedDeclarationsFilter(bindingContext, resolutionFacade).filterNonImported(this, referenceVariants, nameExpression!!)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {

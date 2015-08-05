@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.getResolutionScope
@@ -77,12 +77,13 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val callee = callExpression.getCalleeExpression() as? JetSimpleNameExpression ?: return null
 
-        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+        val resolutionFacade = callExpression.getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.getStatus().isSuccess()) return null
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
-        val resolutionScope = callExpression.getResolutionScope(bindingContext, callExpression.getResolutionFacade())
+        val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
         val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
         val moduleDescriptor = callExpression.getResolutionFacade().findModuleDescriptor(callExpression)

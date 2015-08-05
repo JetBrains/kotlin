@@ -17,8 +17,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
@@ -44,8 +47,7 @@ import java.util.LinkedHashSet
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
-        private val moduleDescriptor: ModuleDescriptor,
-        private val project: Project,
+        private val resolutionFacade: ResolutionFacade,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
     public data class ReceiversData(
@@ -68,7 +70,7 @@ public class ReferenceVariantsHelper(
                 = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
                 .filter(visibilityFilter)
 
-        variants = ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
+        variants = ShadowedDeclarationsFilter(context, resolutionFacade).filter(variants, expression)
 
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 private class ResolutionFacadeImpl(
-        private val project: Project,
+        override val project: Project,
         computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) : ResolutionFacade {
     private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
