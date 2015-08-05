@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
@@ -37,4 +39,10 @@ class LazyJavaPackageFragment(
     override fun getMemberScope() = scope
 
     override fun toString() = "lazy java package fragment: $fqName"
+
+    override fun getSource(): SourceElement {
+        val binaryClass = scope.kotlinBinaryClass ?: return SourceElement.NO_SOURCE
+
+        return KotlinJvmBinarySourceElement(binaryClass)
+    }
 }
