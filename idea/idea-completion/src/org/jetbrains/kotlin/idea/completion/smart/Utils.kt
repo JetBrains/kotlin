@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertH
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
@@ -340,4 +343,8 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: Smar
     else {
         return emptyList()
     }
+}
+
+fun JetExpression.toExpressionWithType(): JetExpression {
+    return (this as? JetSimpleNameExpression)?.getReceiverExpression()?.parent as? JetExpression ?: this
 }

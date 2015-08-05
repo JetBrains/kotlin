@@ -71,10 +71,18 @@ data class ItemOptions(val starPrefix: Boolean) {
 
 interface ByTypeFilter {
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor?
+
+    object All : ByTypeFilter {
+        override fun matchingSubstitutor(descriptorType: FuzzyType) = TypeSubstitutor.EMPTY
+    }
 }
 
 class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
     override fun matchingSubstitutor(descriptorType: FuzzyType) = descriptorType.checkIsSubtypeOf(fuzzyType)
+
+    override fun equals(other: Any?) = other is ByExpectedTypeFilter && fuzzyType == other.fuzzyType
+
+    override fun hashCode() = fuzzyType.hashCode()
 }
 
 open data class ExpectedInfo(val filter: ByTypeFilter, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT) {
@@ -107,7 +115,14 @@ class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val functi
             = function.hashCode()
 }
 
-class ReturnValueExpectedInfo(type: JetType, val callable: CallableDescriptor) : ExpectedInfo(type, callable.getName().asString(), null) {
+class ReturnValueExpectedInfo(
+        type: JetType?,
+        val callable: CallableDescriptor
+) : ExpectedInfo(
+        if (type != null) ByExpectedTypeFilter(FuzzyType(type, emptyList())) else ByTypeFilter.All,
+        callable.name.asString(),
+        null
+) {
     override fun equals(other: Any?)
             = other is ReturnValueExpectedInfo && super.equals(other) && callable == other.callable
 
@@ -413,30 +428,39 @@ class ExpectedInfos(
         val property = expressionWithType.getParent() as? JetProperty ?: return null
         if (expressionWithType != property.getInitializer()) return null
         val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptor ?: return null
-        return listOf(ExpectedInfo(propertyDescriptor.getType(), propertyDescriptor.getName().asString(), null))
+        val expectedName = propertyDescriptor.name.asString()
+        val expectedInfo = if (property.typeReference != null)
+            ExpectedInfo(propertyDescriptor.getType(), expectedName, null)
+        else
+            ExpectedInfo(ByTypeFilter.All, expectedName, null) // no explicit type - only expected name known
+        return listOf(expectedInfo)
     }
 
     private fun calculateForExpressionBody(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
         if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
-        return functionReturnValueExpectedInfo(descriptor).toList()
+        return functionReturnValueExpectedInfo(descriptor, expectType = declaration.hasDeclaredReturnType()).toList()
     }
 
     private fun calculateForReturn(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val returnExpression = expressionWithType.getParent() as? JetReturnExpression ?: return null
         val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
-        return functionReturnValueExpectedInfo(descriptor).toList()
+        return functionReturnValueExpectedInfo(descriptor, expectType = true).toList()
     }
 
-    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor): ReturnValueExpectedInfo? {
+    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, expectType: Boolean): ReturnValueExpectedInfo? {
         return when (descriptor) {
-            is SimpleFunctionDescriptor -> ReturnValueExpectedInfo(descriptor.getReturnType() ?: return null, descriptor)
+            is SimpleFunctionDescriptor -> {
+                val expectedType = if (expectType) descriptor.returnType else null
+                ReturnValueExpectedInfo(expectedType, descriptor)
+            }
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.getCorrespondingProperty()
-                ReturnValueExpectedInfo(property.getType(), property)
+                val expectedType = if (expectType) property.type else null
+                ReturnValueExpectedInfo(expectedType, property)
             }
 
             else -> null

@@ -157,9 +157,27 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("ExpectedType2.kt")
+        public void testExpectedType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NameSimilarity.kt")
         public void testNameSimilarity() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarity.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NameSimilarityAndNoExpectedType.kt")
+        public void testNameSimilarityAndNoExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarityAndNoExpectedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NameSimilarityAndNoExpectedType2.kt")
+        public void testNameSimilarityAndNoExpectedType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarityAndNoExpectedType2.kt");
             doTest(fileName);
         }
 

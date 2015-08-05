@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.toExpressionWithType
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
@@ -284,7 +285,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (expression != null) {
-            val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expression)
+            val expressionWithType = expression.toExpressionWithType()
+            val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expressionWithType)
 
             if (expectedInfos != null && expectedInfos.isNotEmpty()) {
                 val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)

@@ -184,7 +184,6 @@ class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWei
     }
 }
 
-//TODO: prefer by name too (and only by name too)
 class ExpectedInfoMatchWeigher(
         private val expectedInfos: Collection<ExpectedInfo>,
         private val smartCastCalculator: SmartCastCalculator
