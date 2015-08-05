@@ -76,3 +76,60 @@ error:
 sink:
     <SINK>                                                                                                                        in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
 =====================
+== listAdd ==
+fun listAdd() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.add(4)
+    lst.addAll(arrayOf(5, 6, 7, 8, 9, 10, 11))
+    val lst2 = arrayListOf(1, 2)
+    lst2.addAll(lst)
+    42
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                            in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
+  2 mark({ val lst = arrayListOf(1, 2, 3) lst.add(4) lst.addAll(arrayOf(5, 6, 7, 8, 9, 10, 11)) val lst2 = arrayListOf(1, 2) lst2.addAll(lst) 42 })    in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
+    v(val lst = arrayListOf(1, 2, 3))                                                                                                                  in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{lst:-}
+    r(1) -> <v0>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:-}
+    r(2) -> <v1>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:-}
+    r(3) -> <v2>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:-}
+    mark(arrayListOf(1, 2, 3))                                                                                                                         in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:-}
+    call(arrayListOf(1, 2, 3), arrayListOf|<v0>, <v1>, <v2>) -> <v3>                                                                                   in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:-}
+    w(lst|<v3>)                                                                                                                                        in: INTS{} BOOLS{} ARRS{lst:-}                 out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(lst.add(4))                                                                                                                                   in: INTS{} BOOLS{} ARRS{lst:[3]}               out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(lst) -> <v4>                                                                                                                                     in: INTS{} BOOLS{} ARRS{lst:[3]}               out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(4) -> <v5>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:[3]}               out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(add(4))                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:[3]}               out: INTS{} BOOLS{} ARRS{lst:[3]}
+    call(add(4), add|<v4>, <v5>) -> <v6>                                                                                                               in: INTS{} BOOLS{} ARRS{lst:[3]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    mark(lst.addAll(arrayOf(5, 6, 7, 8, 9, 10, 11)))                                                                                                   in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(lst) -> <v7>                                                                                                                                     in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(5) -> <v8>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(6) -> <v9>                                                                                                                                       in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(7) -> <v10>                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(8) -> <v11>                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(9) -> <v12>                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(10) -> <v13>                                                                                                                                     in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    r(11) -> <v14>                                                                                                                                     in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    mark(arrayOf(5, 6, 7, 8, 9, 10, 11))                                                                                                               in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    call(arrayOf(5, 6, 7, 8, 9, 10, 11), arrayOf|<v8>, <v9>, <v10>, <v11>, <v12>, <v13>, <v14>) -> <v15>                                               in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    mark(addAll(arrayOf(5, 6, 7, 8, 9, 10, 11)))                                                                                                       in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[4]}
+    call(addAll(arrayOf(5, 6, 7, 8, 9, 10, 11)), addAll|<v7>, <v15>) -> <v16>                                                                          in: INTS{} BOOLS{} ARRS{lst:[4]}               out: INTS{} BOOLS{} ARRS{lst:[11]}
+    v(val lst2 = arrayListOf(1, 2))                                                                                                                    in: INTS{} BOOLS{} ARRS{lst:[11]}              out: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}
+    r(1) -> <v17>                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}       out: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}
+    r(2) -> <v18>                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}       out: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}
+    mark(arrayListOf(1, 2))                                                                                                                            in: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}       out: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}
+    call(arrayListOf(1, 2), arrayListOf|<v17>, <v18>) -> <v19>                                                                                         in: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}       out: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}
+    w(lst2|<v19>)                                                                                                                                      in: INTS{} BOOLS{} ARRS{lst:[11],lst2:-}       out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}
+    mark(lst2.addAll(lst))                                                                                                                             in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}     out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}
+    r(lst2) -> <v20>                                                                                                                                   in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}     out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}
+    r(lst) -> <v21>                                                                                                                                    in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}     out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}
+    mark(addAll(lst))                                                                                                                                  in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}     out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}
+    call(addAll(lst), addAll|<v20>, <v21>) -> <v22>                                                                                                    in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[2]}     out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[13]}
+    r(42) -> <v23>                                                                                                                                     in: INTS{} BOOLS{} ARRS{lst:[11],lst2:[13]}    out: INTS{} BOOLS{} ARRS{lst:[11],lst2:[13]}
+L1:
+  1 <END>                                                                                                                                              in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                            in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                             in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
+=====================

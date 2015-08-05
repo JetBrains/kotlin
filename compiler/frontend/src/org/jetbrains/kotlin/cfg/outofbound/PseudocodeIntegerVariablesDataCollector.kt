@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.HashMap
 
 // This file contains functionality similar to org.jetbrains.kotlin.cfg.PseudocodeVariablesData,
@@ -282,15 +280,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
             is CallInstruction -> {
                 when {
-                    InstructionUtils.isExpectedReturnType(instruction) { KotlinArrayUtils.isGenericOrPrimitiveArray(it) },
-                    InstructionUtils.isExpectedReturnType(instruction) { KotlinListUtils.isKotlinList(it) } ->
-                        processCollectionCreation(instruction, updatedData)
-                    instruction.element is JetBinaryExpression ->
+                    instruction.element is JetBinaryExpression -> // todo: make this check stronger, check args types
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    instruction.element is JetPrefixExpression ->
+                    instruction.element is JetPrefixExpression -> // todo: make this check stronger, check args types
                         processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    isSizeMethodCallOnCollection(instruction) ->
-                        processSizeMethodCallOnCollection(instruction, updatedData)
+                    else -> {
+                        val callInfo = CallInstructionUtils.tryExtractCallInfo(instruction)
+                        if(callInfo != null) {
+                            when {
+                                CallInstructionUtils.returnTypeIsCollection(callInfo) ->
+                                    processCollectionCreation(callInfo, instruction, updatedData)
+                                isSizeMethodCallOnCollection(callInfo) ->
+                                    processSizeMethodCallOnCollection(instruction, updatedData)
+                                isIncreaseSizeMethodCallOnCollection(callInfo) ->
+                                    processIncreaseSizeMethodCallOnCollection(callInfo, instruction, updatedData)
+                                else -> Unit
+                            }
+                        }
+                    }
                 }
             }
             is MagicInstruction -> {
@@ -414,38 +421,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processCollectionCreation(instruction: CallInstruction, updatedData: ValuesData) {
-        val collectionSize = tryExtractCollectionSize(instruction, updatedData)
-        val collectionSizeVariable = instruction.outputValue
-        if (collectionSizeVariable != null && collectionSize != null) {
-            updatedData.intFakeVarsToValues[collectionSizeVariable] = collectionSize
-        }
-    }
-
-    private fun tryExtractCollectionSize(instruction: CallInstruction, valuesData: ValuesData): IntegerVariableValues? {
-        if (instruction.element is JetCallExpression) {
-            val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
-            return when (calledName) {
-                KotlinArrayUtils.arrayOfFunctionName,
-                KotlinListUtils.listOfFunctionName,
-                KotlinListUtils.arrayListOfFunctionName -> IntegerVariableValues(instruction.arguments.size())
-                KotlinArrayUtils.arrayConstructorName,
-                in KotlinArrayUtils.primitiveArrayConstructorNames -> {
-                    if (instruction.inputValues.isEmpty()) {
-                        // Code possibly contains error (like Array<Int>())
-                        // so we can't define size
-                        null
-                    }
-                    else {
-                        valuesData.intFakeVarsToValues[instruction.inputValues[0]]
-                    }
-                }
-                else -> null
-            }
-        }
-        return null
-    }
-
     private fun processBinaryOperation(token: IElementType, instruction: OperationInstruction, updatedData: ValuesData) {
         if(instruction.inputValues.size() < 2) {
             // If the code under processing contains error (for example val a = x + 1, where variable x is undefined)
@@ -515,17 +490,44 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun isSizeMethodCallOnCollection(instruction: CallInstruction): Boolean =
-        if (instruction.element is JetCallExpression) {
-            val calledName = JetExpressionUtils.tryGetCalledName(instruction.element)
-            val isSizeMethodCalled = calledName == KotlinArrayUtils.sizeMethodNameOfArray
-            val collectionIsReceiver = InstructionUtils.isExpectedReceiverType(instruction) {
-                KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
-            }
-            val returnTypeIsInt = InstructionUtils.isExpectedReturnType(instruction) { KotlinBuiltIns.isInt(it) }
-            isSizeMethodCalled && collectionIsReceiver && returnTypeIsInt
+    private fun processCollectionCreation(callInfo: CallInstructionUtils.CallInfo, instruction: CallInstruction, updatedData: ValuesData) {
+        val collectionSize = tryExtractCollectionSize(callInfo, instruction, updatedData)
+        val collectionSizeVariable = instruction.outputValue
+        if (collectionSizeVariable != null && collectionSize != null) {
+            updatedData.intFakeVarsToValues[collectionSizeVariable] = collectionSize
         }
-        else false
+    }
+
+    private fun tryExtractCollectionSize(
+            callInfo: CallInstructionUtils.CallInfo,
+            instruction: CallInstruction,
+            valuesData: ValuesData
+    ): IntegerVariableValues? =
+            when (callInfo.calledName) {
+                KotlinArrayUtils.arrayOfFunctionName,
+                KotlinListUtils.listOfFunctionName,
+                KotlinListUtils.arrayListOfFunctionName ->
+                    IntegerVariableValues(instruction.arguments.size())
+                KotlinArrayUtils.arrayConstructorName,
+                in KotlinArrayUtils.primitiveArrayConstructorNames -> {
+                    if (instruction.inputValues.isEmpty()) {
+                        // Code possibly contains error (like Array<Int>())
+                        // so we can't define size
+                        null
+                    }
+                    else {
+                        valuesData.intFakeVarsToValues[instruction.inputValues[0]]
+                    }
+                }
+                else -> null
+            }
+
+    private fun isSizeMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo): Boolean =
+        CallInstructionUtils.checkMethodCallOnCollection(
+                callInfo,
+                { it == KotlinCollectionsUtils.sizeMethodName },
+                { KotlinBuiltIns.isInt(it) }
+        )
 
     private fun processSizeMethodCallOnCollection(instruction: CallInstruction, updatedData: ValuesData) {
         if (!instruction.inputValues.isEmpty()) {
@@ -535,5 +537,71 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updatedData.intFakeVarsToValues[resultVariable] = collectionSize
             }
         }
+    }
+
+    private fun isIncreaseSizeMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo): Boolean =
+            CallInstructionUtils.checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.addMethodName },
+                    { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) }
+            )
+            ||
+            CallInstructionUtils.checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.addAllMethodName },
+                    { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) }
+            )
+
+    private fun processIncreaseSizeMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo, instruction: CallInstruction, updatedData: ValuesData) {
+        if (instruction.inputValues.size() > 0) {
+            val collectionVariableValueSourceInstruction = instruction.inputValues[0].createdAt
+                                                           ?: return
+            val collectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                    collectionVariableValueSourceInstruction, false, bindingContext
+            ) ?: return
+            val collectionSizes = updatedData.collectionsToSizes[collectionVariableDescriptor]
+                                  ?: return
+            val numberOfElementsToAdd: IntegerVariableValues? = when(callInfo.calledName) {
+                KotlinListUtils.addMethodName -> IntegerVariableValues(1)
+                KotlinListUtils.addAllMethodName -> tryExtractPassedCollectionSizes(instruction, updatedData)
+                else -> null
+            }
+            updatedData.collectionsToSizes[collectionVariableDescriptor] =
+                    numberOfElementsToAdd?.let { collectionSizes + it }
+                    ?: IntegerVariableValues.createUndefined()
+        }
+    }
+
+    private fun tryExtractPassedCollectionSizes(instruction: CallInstruction, updatedData: ValuesData): IntegerVariableValues? {
+        // This function is used to handle the code like `lst.addAll(lst2)`, when we know both `lst` and `lst2` sizes
+        fun tryExtractFromKnownCollections(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerVariableValues? {
+            val passedCollectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                    passedCollectionValueSourceInstruction, false, bindingContext
+            ) ?: return null
+            return updatedData.collectionsToSizes[passedCollectionVariableDescriptor]
+        }
+        // This function is used to handle the code like `lst.addAll(arrayOf(...))`
+        // so we check if the passed value is collection creation
+        fun tryExtractFromInstruction(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerVariableValues? {
+            if (passedCollectionValueSourceInstruction is CallInstruction) {
+                val callInfo = CallInstructionUtils.tryExtractCallInfo(passedCollectionValueSourceInstruction)
+                               ?: return null
+                if (CallInstructionUtils.returnTypeIsCollection(callInfo)) {
+                    return tryExtractCollectionSize(callInfo, passedCollectionValueSourceInstruction, updatedData)
+                }
+                return null
+            }
+            return null
+        }
+        if (instruction.inputValues.size() > 1) {
+            val passedCollectionValueSourceInstruction = instruction.inputValues[1].createdAt
+                                                         ?: return null
+            val sizeFromKnownCollections = tryExtractFromKnownCollections(passedCollectionValueSourceInstruction)
+            if (sizeFromKnownCollections != null) {
+                return sizeFromKnownCollections
+            }
+            return tryExtractFromInstruction(passedCollectionValueSourceInstruction)
+        }
+        return null
     }
 }
