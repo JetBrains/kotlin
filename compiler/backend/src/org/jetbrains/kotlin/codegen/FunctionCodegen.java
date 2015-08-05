@@ -268,12 +268,14 @@ public class FunctionCodegen {
                 }
             }
             else if (kind == JvmMethodParameterKind.RECEIVER) {
-                Annotated annotationHolder = (functionDescriptor instanceof PropertyAccessorDescriptor)
+                ReceiverParameterDescriptor receiver = ((functionDescriptor instanceof PropertyAccessorDescriptor)
                                              ? ((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty()
-                                             : functionDescriptor;
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
-                Annotated targetedAnnotations = new AnnotatedWithAdditionalAnnotations(null, annotationHolder);
-                annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
+                                             : functionDescriptor).getExtensionReceiverParameter();
+                if (receiver != null) {
+                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
+                    Annotated targetedAnnotations = new AnnotatedWithAdditionalAnnotations(null, receiver.getType());
+                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
+                }
             }
         }
     }

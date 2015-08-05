@@ -38,6 +38,26 @@ public object AnnotationUseSiteTargetChecker {
             }
         }
 
+        if (descriptor is CallableDescriptor) trace.checkReceiverAnnotations(descriptor)
+    }
+
+    private fun BindingTrace.checkReceiverAnnotations(descriptor: CallableDescriptor) {
+        val extensionReceiver = descriptor.extensionReceiverParameter ?: return
+        for (annotationWithTarget in extensionReceiver.type.annotations.getUseSiteTargetedAnnotations()) {
+            val annotation = annotationWithTarget.annotation
+            val target = annotationWithTarget.target ?: continue
+
+            when (target) {
+                AnnotationUseSiteTarget.RECEIVER -> {}
+                AnnotationUseSiteTarget.FIELD,
+                    AnnotationUseSiteTarget.PROPERTY,
+                    AnnotationUseSiteTarget.PROPERTY_GETTER,
+                    AnnotationUseSiteTarget.PROPERTY_SETTER,
+                    AnnotationUseSiteTarget.SETTER_PARAMETER -> report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> report(annotation, INAPPLICABLE_PARAM_TARGET)
+                AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
+            }
+        }
     }
 
     private fun BindingTrace.checkDeclaration(annotated: JetAnnotated, descriptor: DeclarationDescriptor) {
@@ -50,14 +70,6 @@ public object AnnotationUseSiteTargetChecker {
                 AnnotationUseSiteTarget.PROPERTY -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
                 AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkMutableProperty(descriptor, annotationWithTarget)
-                AnnotationUseSiteTarget.RECEIVER -> {
-                    if (descriptor !is FunctionDescriptor && descriptor !is PropertyDescriptor) {
-                        report(annotation, INAPPLICABLE_RECEIVER_TARGET)
-                    }
-                    else if ((descriptor as CallableMemberDescriptor).extensionReceiverParameter == null) {
-                        report(annotation, INAPPLICABLE_RECEIVER_TARGET)
-                    }
-                }
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
                     if (annotated !is JetParameter) {
                         report(annotation, INAPPLICABLE_PARAM_TARGET)
@@ -74,6 +86,7 @@ public object AnnotationUseSiteTargetChecker {
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotationWithTarget)
                 AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
+                AnnotationUseSiteTarget.RECEIVER -> report(annotation, INAPPLICABLE_RECEIVER_TARGET)
             }
         }
     }
