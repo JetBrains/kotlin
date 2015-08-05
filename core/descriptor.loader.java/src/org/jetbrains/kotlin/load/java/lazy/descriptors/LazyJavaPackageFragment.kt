@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.resolve.scopes.DecapitalizedAnnotationScope
@@ -27,7 +29,8 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
-        private val jPackage: JavaPackage
+        private val jPackage: JavaPackage,
+        val packageMapper: PackageMappingProvider
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
     val scope: LazyJavaPackageScope by lazy { LazyJavaPackageScope(c, jPackage, this) }
     // Just a temporary hack to inject deprecated decapitalized annotation

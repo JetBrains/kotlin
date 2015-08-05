@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
 
 public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
@@ -41,7 +42,7 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject(), "test"),
-                    listOf(), BindingTraceContext(), null, null
+                    listOf(), BindingTraceContext(), null, null, PackageMappingProvider.EMPTY
             ).moduleDescriptor
 
     override fun getProjectDescriptor() = object : JetWithJdkAndRuntimeLightProjectDescriptor() {

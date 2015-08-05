@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
@@ -78,7 +79,8 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 ModuleDescriptor module = LazyResolveTestUtil.resolve(
-                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList()
+                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList(),
+                        new JvmPackageMappingProvider(commonEnvironment)
                 );
 
                 AlternativeSignatureErrorFindingVisitor visitor =

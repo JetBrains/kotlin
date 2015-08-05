@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 public class LazyJavaPackageFragmentProvider(
         components: JavaResolverComponents,
         module: ModuleDescriptor,
-        reflectionTypes: ReflectionTypes
+        reflectionTypes: ReflectionTypes,
+        packageMapper: PackageMappingProvider
 ) : PackageFragmentProvider {
 
     private val c =
@@ -41,7 +42,7 @@ public class LazyJavaPackageFragmentProvider(
                 fqName ->
                 val jPackage = c.components.finder.findPackage(fqName)
                 if (jPackage != null) {
-                    LazyJavaPackageFragment(c, jPackage)
+                    LazyJavaPackageFragment(c, jPackage, packageMapper)
                 }
                 else null
             }

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
@@ -326,7 +327,8 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
-                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
+                                environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
+                                new JvmPackageMappingProvider(environment)
                         );
                     }
                 }

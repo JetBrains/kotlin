@@ -190,7 +190,7 @@ public class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
+    fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         when (root) {
             is JvmClasspathRoot -> {
                 return if (root.file.isFile()) findJarRoot(root) else findLocalDirectory(root)
@@ -240,6 +240,10 @@ public class KotlinCoreEnvironment private constructor(
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                                ?: throw CompileEnvironmentException(message)
         messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
+    }
+
+    public fun getJavaRoots() : List<JavaRoot> {
+        return javaRoots
     }
 
     companion object {

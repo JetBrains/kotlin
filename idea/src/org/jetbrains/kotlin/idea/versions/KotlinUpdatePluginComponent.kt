@@ -28,6 +28,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.JetPluginUtil
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
+import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -65,6 +66,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             fileBasedIndex.requestRebuild(KotlinJavaScriptAbiVersionIndex.getName())
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
+            fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)
 
             PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, JetPluginUtil.getPluginVersion())
         }

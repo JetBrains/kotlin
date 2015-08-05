@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.JavaFlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.load.java.components.*
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
@@ -69,8 +70,13 @@ public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentS
 
 public fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver, targetEnvironment: TargetEnvironment = CompilerEnvironment
+        moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver,
+        targetEnvironment: TargetEnvironment = CompilerEnvironment,
+        packageMappingProvider: PackageMappingProvider
 ): ComponentProvider = createContainer("LazyResolveWithJava") {
+    //TODO: idea specific code
+    useInstance(packageMappingProvider)
+
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
 
@@ -92,8 +98,11 @@ public fun createContainerForTopDownAnalyzerForJvm(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope,
-        lookupTracker: LookupTracker
+        lookupTracker: LookupTracker,
+        packageMappingProvider: PackageMappingProvider
 ): ContainerForTopDownAnalyzerForJvm = createContainer("TopDownAnalyzerForJvm") {
+    useInstance(packageMappingProvider)
+
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
 
