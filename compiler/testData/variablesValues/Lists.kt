@@ -14,3 +14,12 @@ fun listWithTwoPossibleSizes(cond: Boolean) {
     }
     42
 }
+
+fun listAdd() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.add(4)
+    lst.addAll(arrayOf(5, 6, 7, 8, 9, 10, 11))
+    val lst2 = arrayListOf(1, 2)
+    lst2.addAll(lst)
+    42
+}

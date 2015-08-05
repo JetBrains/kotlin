@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
 import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.JetType
@@ -67,26 +68,54 @@ public object MapUtils {
     }
 }
 
-public object JetExpressionUtils {
-    public fun tryGetCalledName(callExpression: JetCallExpression): String? =
-            callExpression.calleeExpression?.node?.text
-}
+public object CallInstructionUtils {
+    public data class CallInfo (
+            val calledName: String?,
+            val receiverType: JetType?,
+            val returnType: JetType?
+    )
 
-public object InstructionUtils {
-    public fun isExpectedReturnType(instruction: CallInstruction, isExpectedType: (JetType) -> Boolean): Boolean {
-        return instruction.resolvedCall
-                       .candidateDescriptor
-                       .returnType
-                       ?.let { isExpectedType(it) }
-               ?: false
+    public fun tryExtractReceiverType(instruction: CallInstruction): JetType? {
+        val receiver = when (instruction.resolvedCall.explicitReceiverKind) {
+            ExplicitReceiverKind.DISPATCH_RECEIVER -> instruction.resolvedCall.dispatchReceiver
+            ExplicitReceiverKind.EXTENSION_RECEIVER -> instruction.resolvedCall.extensionReceiver
+            else -> null
+        }
+        return if (receiver is ExpressionReceiver) receiver.type else null
     }
 
-    public fun isExpectedReceiverType(instruction: CallInstruction, isExpectedType: (JetType) -> Boolean): Boolean {
-        val callReceiver = instruction.resolvedCall.dispatchReceiver
-        return if (callReceiver is ExpressionReceiver)
-            isExpectedType(callReceiver.type)
-        else false
+    public fun tryExtractCallInfo(instruction: CallInstruction): CallInfo? =
+        if (instruction.element is JetCallExpression) {
+            val calledName = instruction.element.calleeExpression?.node?.text
+            val receiverType = tryExtractReceiverType(instruction)
+            val returnType = instruction.resolvedCall.candidateDescriptor.returnType
+            CallInfo(calledName, receiverType, returnType)
+        }
+        else null
+
+    public fun receiverIsCollection(receiverType: JetType): Boolean =
+               (KotlinArrayUtils.isGenericOrPrimitiveArray(receiverType) || KotlinListUtils.isKotlinList(receiverType))
+
+    public fun receiverIsCollection(callInfo: CallInfo): Boolean =
+            callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType)
+
+    public fun receiverIsCollection(instruction: CallInstruction): Boolean {
+        val receiverType = tryExtractReceiverType(instruction)
+        return receiverType != null && receiverIsCollection(receiverType)
     }
+
+    public fun returnTypeIsCollection(callInfo: CallInfo): Boolean =
+            callInfo.returnType != null &&
+            (KotlinArrayUtils.isGenericOrPrimitiveArray(callInfo.returnType) || KotlinListUtils.isKotlinList(callInfo.returnType))
+
+    public fun checkMethodCallOnCollection(
+            callInfo: CallInfo,
+            isExpectedMethodName: (String) -> Boolean,
+            isExpectedReturnType: (JetType) -> Boolean
+    ): Boolean =
+        callInfo.calledName != null && isExpectedMethodName(callInfo.calledName) &&
+        receiverIsCollection(callInfo) &&
+        callInfo.returnType != null && isExpectedReturnType(callInfo.returnType)
 }
 
 public object KotlinArrayUtils {
@@ -97,9 +126,6 @@ public object KotlinArrayUtils {
     public val arrayOfFunctionName: String = "arrayOf"
     public val arrayConstructorName: String = "Array"
     public val primitiveArrayConstructorNames: Set<String> = PrimitiveType.values().map { it.arrayTypeName.asString() }.toSet()
-
-    // Methods
-    public val sizeMethodNameOfArray: String = "size"
 }
 
 public object KotlinListUtils {
@@ -116,5 +142,14 @@ public object KotlinListUtils {
     public val arrayListOfFunctionName: String = "arrayListOf"
 
     // Methods
-    public val sizeMethodNameOfArray: String = "size"
+    public val addMethodName: String = "add"
+    public val addAllMethodName: String = "addAll"
+}
+
+public object KotlinCollectionsUtils {
+    // Methods
+    public val sizeMethodName: String = "size"
+    public val getMethodName: String = "get"
+    public val setMethodName: String = "set"
+
 }
