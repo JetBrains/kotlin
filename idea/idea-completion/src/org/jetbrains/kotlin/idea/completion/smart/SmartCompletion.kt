@@ -30,10 +30,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
-import org.jetbrains.kotlin.idea.util.makeNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -113,14 +111,7 @@ class SmartCompletion(
 
         val expressionWithType = expression.toExpressionWithType()
 
-        var originalExpectedInfos = calcExpectedInfos(expressionWithType) ?: return null
-        originalExpectedInfos = originalExpectedInfos.filterNot { it.fuzzyType?.type?.isError ?: false }
-
-        // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
-        val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in COMPARISON_TOKENS)
-            originalExpectedInfos.map { if (it.fuzzyType != null) ExpectedInfo(it.fuzzyType!!.makeNullable(), it.expectedName, it.tail) else it }
-        else
-            originalExpectedInfos
+        val expectedInfos = calcExpectedInfos(expressionWithType) ?: return null
 
         val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
 
@@ -166,7 +157,7 @@ class SmartCompletion(
 
             LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
 
-            KeywordValues.addToCollection(additionalItems, originalExpectedInfos/* use originalExpectedInfos to not include null after == */, expression)
+            KeywordValues.addToCollection(additionalItems, expectedInfos, expression)
 
             MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(additionalItems, expectedInfos, expression)
         }
@@ -349,7 +340,5 @@ class SmartCompletion(
     companion object {
         public val OLD_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("nonFunctionReplacementOffset")
         public val MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("multipleArgumentsReplacementOffset")
-
-        private val COMPARISON_TOKENS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ)
     }
 }

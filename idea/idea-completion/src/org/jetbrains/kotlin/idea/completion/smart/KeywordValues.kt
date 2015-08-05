@@ -21,13 +21,11 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.completion.COMPARISON_TOKENS
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetWhenConditionWithExpression
-import org.jetbrains.kotlin.psi.JetWhenEntry
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 object KeywordValues {
@@ -60,14 +58,21 @@ object KeywordValues {
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) }
         }
 
-        val classifier = { info: ExpectedInfo ->
-            if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
-                ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
-            else
-                ExpectedInfoClassification.noMatch
+        if (!shouldSkipNull(expressionWithType)) {
+            val classifier = { info: ExpectedInfo ->
+                if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
+                    ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
+                else
+                    ExpectedInfoClassification.noMatch
+            }
+            collection.addLookupElements(null, expectedInfos, classifier) {
+                LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)
+            }
         }
-        collection.addLookupElements(null, expectedInfos, classifier) {
-            LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)
-        }
+    }
+
+    private fun shouldSkipNull(expressionWithType: JetExpression): Boolean {
+        val binaryExpression = expressionWithType.parent as? JetBinaryExpression ?: return false
+        return binaryExpression.operationToken in COMPARISON_TOKENS
     }
 }

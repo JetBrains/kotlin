@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.LinkedHashSet
@@ -138,20 +139,22 @@ class ExpectedInfos(
         val useOuterCallsExpectedTypeCount: Int = 0
 ) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        return calculateForArgument(expressionWithType)
-            ?: calculateForFunctionLiteralArgument(expressionWithType)
-            ?: calculateForEqAndAssignment(expressionWithType)
-            ?: calculateForIf(expressionWithType)
-            ?: calculateForElvis(expressionWithType)
-            ?: calculateForBlockExpression(expressionWithType)
-            ?: calculateForWhenEntryValue(expressionWithType)
-            ?: calculateForExclOperand(expressionWithType)
-            ?: calculateForInitializer(expressionWithType)
-            ?: calculateForExpressionBody(expressionWithType)
-            ?: calculateForReturn(expressionWithType)
-            ?: calculateForLoopRange(expressionWithType)
-            ?: calculateForInOperatorArgument(expressionWithType)
-            ?: getFromBindingContext(expressionWithType)
+        val expectedInfos = calculateForArgument(expressionWithType)
+                            ?: calculateForFunctionLiteralArgument(expressionWithType)
+                            ?: calculateForEqAndAssignment(expressionWithType)
+                            ?: calculateForIf(expressionWithType)
+                            ?: calculateForElvis(expressionWithType)
+                            ?: calculateForBlockExpression(expressionWithType)
+                            ?: calculateForWhenEntryValue(expressionWithType)
+                            ?: calculateForExclOperand(expressionWithType)
+                            ?: calculateForInitializer(expressionWithType)
+                            ?: calculateForExpressionBody(expressionWithType)
+                            ?: calculateForReturn(expressionWithType)
+                            ?: calculateForLoopRange(expressionWithType)
+                            ?: calculateForInOperatorArgument(expressionWithType)
+                            ?: getFromBindingContext(expressionWithType)
+                            ?: return null
+        return expectedInfos.filterNot { it.fuzzyType?.type?.isError ?: false }
     }
 
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -328,12 +331,17 @@ class ExpectedInfos(
         val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
         if (binaryExpression != null) {
             val operationToken = binaryExpression.getOperationToken()
-            if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ
-                || operationToken == JetTokens.EQEQEQ || operationToken == JetTokens.EXCLEQEQEQ) {
+            if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
-                    val expressionType = bindingContext.getType(otherOperand) ?: return null
-                    return listOf(ExpectedInfo(expressionType, expectedNameFromExpression(otherOperand), null))
+                    var expectedType = bindingContext.getType(otherOperand) ?: return null
+
+                    // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
+                    if (operationToken in COMPARISON_TOKENS) {
+                        expectedType = expectedType.makeNullable()
+                    }
+
+                    return listOf(ExpectedInfo(expectedType, expectedNameFromExpression(otherOperand), null))
                 }
             }
         }
@@ -524,3 +532,6 @@ class ExpectedInfos(
     private fun String.unpluralize()
             = StringUtil.unpluralize(this)
 }
+
+val COMPARISON_TOKENS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ)
+
