@@ -37,6 +37,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is JetCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
+            annotated.receiverTypeReference?.let { check(it, trace) }
         }
         if (annotated is JetFunction) {
             for (parameter in annotated.valueParameters) {
@@ -158,7 +159,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 }
                 is JetPropertyAccessor -> if (annotated.isGetter) targetList(PROPERTY_GETTER) else targetList(PROPERTY_SETTER)
                 is JetPackageDirective -> targetList(PACKAGE)
-                is JetTypeReference -> targetList(TYPE)
+                is JetTypeReference -> extendedTargetList(listOf(VALUE_PARAMETER), TYPE)
                 is JetFile -> targetList(FILE)
                 is JetTypeParameter -> targetList(TYPE_PARAMETER)
                 is JetTypeProjection -> {
