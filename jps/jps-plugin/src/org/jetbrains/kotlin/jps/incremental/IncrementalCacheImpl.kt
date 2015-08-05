@@ -191,7 +191,15 @@ public class IncrementalCacheImpl(
                 result.addAll(targetFiles)
             }
 
-            val classFile = File(outPath, "${className.internalName}.class")
+            var internalName = className.internalName
+
+            if (packagePartMap.isPackagePart(className)) {
+                val packageInternalName = PackageClassUtils.getPackageClassInternalName(className.packageFqName)
+                val packageJvmName = JvmClassName.byInternalName(packageInternalName)
+                internalName = packageJvmName.internalName
+            }
+
+            val classFile = File(outPath, "$internalName.class")
             val classFileName = classFile.normalizedPath
 
             for (dependent in dependents) {
@@ -234,6 +242,8 @@ public class IncrementalCacheImpl(
             classToSourcesMap.add(className, it)
         }
 
+        inlineFunctionsMap.process(className, fileBytes)
+
         val decision = when {
             header.isCompatiblePackageFacadeKind() ->
                 getRecompilationDecision(
@@ -243,13 +253,12 @@ public class IncrementalCacheImpl(
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
-                inlineFunctionsMap.process(className, fileBytes)
                 getRecompilationDecision(
                         protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
                         constantsChanged = constantsMap.process(className, fileBytes)
                 )
             }
-            header.isCompatibleClassKind() -> {
+            header.isCompatibleClassKind() ->
                 when (header.classKind!!) {
                     JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
                             protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = false),
@@ -258,10 +267,7 @@ public class IncrementalCacheImpl(
 
                     JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
                 }
-            }
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
-                val facadeClassName = PackageClassUtils.getPackageClassInternalName(kotlinClass.classId.packageFqName)
-                inlineFunctionsMap.process(JvmClassName.byInternalName(facadeClassName), fileBytes)
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
                 packagePartMap.addPackagePart(className)
