@@ -25,7 +25,6 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -117,8 +116,6 @@ class SmartCompletion(
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
-        val functionExpectedInfos = expectedInfos.filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
-
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             if (descriptor in itemsToSkip) return emptyList()
 
@@ -137,29 +134,42 @@ class SmartCompletion(
             }
 
             if (receiver == null) {
-                toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
+                toFunctionReferenceLookupElement(descriptor, expectedInfos.filterFunctionExpected())?.let { result.add(it) }
             }
 
             return result
         }
 
-        val additionalItems = ArrayList<LookupElement>()
+        val (additionalItems, inheritanceSearcher) = additionalItems(expectedInfos, smartCastCalculator, itemsToSkip)
+
+        return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
+    }
+
+    public fun additionalItems(
+            expectedInfos: Collection<ExpectedInfo>,
+            smartCastCalculator: SmartCastCalculator,
+            itemsToSkip: Set<DeclarationDescriptor>,
+            forOrdinaryCompletion: Boolean = false
+    ): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+        val items = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
         if (receiver == null) {
-            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory)
-                    .addTo(additionalItems, inheritanceSearchers, expectedInfos)
+            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forOrdinaryCompletion)
+                    .addTo(items, inheritanceSearchers, expectedInfos)
 
             if (expression is JetSimpleNameExpression) {
-                StaticMembers(bindingContext, lookupElementFactory).addToCollection(additionalItems, expectedInfos, expression, itemsToSkip)
+                StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, itemsToSkip)
             }
 
-            additionalItems.addThisItems(expression, expectedInfos, smartCastCalculator)
+            if (!forOrdinaryCompletion) {
+                items.addThisItems(expression, expectedInfos, smartCastCalculator)
 
-            LambdaItems.addToCollection(additionalItems, functionExpectedInfos)
+                LambdaItems.addToCollection(items, expectedInfos)
 
-            KeywordValues.addToCollection(additionalItems, expectedInfos, expression)
+                KeywordValues.addToCollection(items, expectedInfos, expression) //TODO: in ordinary completion?
+            }
 
-            MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(additionalItems, expectedInfos, expression)
+            MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(items, expectedInfos, expression)
         }
 
         val inheritanceSearcher = if (inheritanceSearchers.isNotEmpty())
@@ -170,7 +180,8 @@ class SmartCompletion(
             }
         else
             null
-        return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
+
+        return Pair(items, inheritanceSearcher)
     }
 
     private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {

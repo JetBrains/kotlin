@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -84,7 +83,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                 }
                 .withIcon(compoundIcon)
                 .addTail(Tail.RPARENTH) //TODO: support square brackets
-                .assignPriority(ItemPriority.MULTIPLE_ARGUMENTS_ITEM)
+                .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: JetScope): VariableDescriptor? {

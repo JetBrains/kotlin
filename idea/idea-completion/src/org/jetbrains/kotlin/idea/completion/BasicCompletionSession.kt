@@ -23,14 +23,15 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.toExpressionWithType
-import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
@@ -91,6 +92,16 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
+    else
+        null
+
+    private val expectedInfos = if (expression != null)
+        ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expression.toExpressionWithType())
+    else
+        null
+
+    private val smartCastCalculator = if (expression != null)
+        SmartCastCalculator(bindingContext, moduleDescriptor, expression)
     else
         null
 
@@ -241,6 +252,15 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
+                if (expectedInfos != null && expectedInfos.isNotEmpty()) {
+                    @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
+                    val (additionalItems, inheritanceSearcher) = SmartCompletion(
+                            expression!!, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor,
+                            prefixMatcher, GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory)
+                            .additionalItems(expectedInfos, smartCastCalculator!!, itemsToSkip = emptySet(), forOrdinaryCompletion = true)
+                    collector.addElements(additionalItems)
+                }
+
                 flushToResultSet()
 
                 if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
@@ -284,14 +304,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
         }
 
-        if (expression != null) {
-            val expressionWithType = expression.toExpressionWithType()
-            val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expressionWithType)
-
-            if (expectedInfos != null && expectedInfos.isNotEmpty()) {
-                val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
-                sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator))
-            }
+        if (expectedInfos != null && expectedInfos.isNotEmpty()) {
+            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator!!), SmartCompletionPriorityWeigher)
         }
 
         return sorter

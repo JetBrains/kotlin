@@ -34,7 +34,10 @@ object LambdaItems {
         return list
     }
 
-    public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
+    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
+        val functionExpectedInfos = expectedInfos.filterFunctionExpected()
+        if (functionExpectedInfos.isEmpty()) return
+
         val distinctTypes = functionExpectedInfos
                 .map { it.fuzzyType?.type }
                 .filterNotNull()

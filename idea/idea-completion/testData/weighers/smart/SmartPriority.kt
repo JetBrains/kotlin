@@ -10,10 +10,10 @@ class C {
     }
 }
 
-// ORDER: "pFoo, s"
 // ORDER: pFoo
 // ORDER: nullableFoo
 // ORDER: nullableFoo
+// ORDER: "pFoo, s"
 // ORDER: this
 // ORDER: local
 // ORDER: apply

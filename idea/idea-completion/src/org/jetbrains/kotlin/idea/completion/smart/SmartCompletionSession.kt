@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -46,13 +45,11 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         }
 
         if (expression != null) {
-            val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
-
             addFunctionLiteralArgumentCompletions()
 
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
                                              bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
-                                             mapper, lookupElementFactory)
+                                             toFromOriginalFileMapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {
                 collector.addElements(result.additionalItems)

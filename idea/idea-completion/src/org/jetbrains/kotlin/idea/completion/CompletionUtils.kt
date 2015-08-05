@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.ArrayList
 
 enum class ItemPriority {
-    MULTIPLE_ARGUMENTS_ITEM,
     DEFAULT,
     BACKING_FIELD,
     NAMED_PARAMETER

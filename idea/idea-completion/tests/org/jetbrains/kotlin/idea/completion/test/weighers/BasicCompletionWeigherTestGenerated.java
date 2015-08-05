@@ -151,6 +151,18 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("CompanionObjectMethod.kt")
+        public void testCompanionObjectMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/CompanionObjectMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EnumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/EnumEntries.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExpectedType.kt")
         public void testExpectedType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType.kt");
@@ -160,6 +172,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         @TestMetadata("ExpectedType2.kt")
         public void testExpectedType2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultiArgsItem.kt")
+        public void testMultiArgsItem() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/MultiArgsItem.kt");
             doTest(fileName);
         }
 

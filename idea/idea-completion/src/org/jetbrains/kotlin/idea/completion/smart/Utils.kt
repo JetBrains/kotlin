@@ -22,6 +22,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
@@ -297,6 +298,7 @@ fun LookupElementFactory.createLookupElement(
 }
 
 enum class SmartCompletionItemPriority {
+    MULTIPLE_ARGUMENTS_ITEM,
     IT,
     TRUE,
     FALSE,
@@ -344,3 +346,7 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: Smar
 fun JetExpression.toExpressionWithType(): JetExpression {
     return (this as? JetSimpleNameExpression)?.getReceiverExpression()?.parent as? JetExpression ?: this
 }
+
+fun Collection<ExpectedInfo>.filterFunctionExpected()
+        = filter { it.fuzzyType != null && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.fuzzyType!!.type) }
+

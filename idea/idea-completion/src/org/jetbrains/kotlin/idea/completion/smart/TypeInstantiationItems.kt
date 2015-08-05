@@ -57,7 +57,8 @@ class TypeInstantiationItems(
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         val inheritorSearchScope: GlobalSearchScope,
-        val lookupElementFactory: LookupElementFactory
+        val lookupElementFactory: LookupElementFactory,
+        val forOrdinaryCompletion: Boolean
 ) {
     public fun addTo(
             items: MutableCollection<LookupElement>,
@@ -88,7 +89,7 @@ class TypeInstantiationItems(
         val typeArgs = type.getArguments()
         items.addIfNotNull(createTypeInstantiationItem(classifier, typeArgs, tail))
 
-        if (!KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
+        if (!forOrdinaryCompletion && !KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
             inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
 
             val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classifier))
@@ -133,6 +134,8 @@ class TypeInstantiationItems(
         if (classifier.isInner()) return null
 
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
+        if (forOrdinaryCompletion && isAbstract) return null
+
         val allConstructors = classifier.getConstructors()
         val visibleConstructors = allConstructors.filter {
             if (isAbstract)

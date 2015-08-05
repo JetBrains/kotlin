@@ -179,6 +179,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val indicesHelper: KotlinIndicesHelper
         get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter, true)
 
+    protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
+            = ToFromOriginalFileMapper(parameters.originalFile as JetFile, position.containingFile as JetFile, parameters.offset)
+
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
 

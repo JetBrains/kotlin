@@ -8,10 +8,10 @@ fun foo(pFoo: Boolean, s: String) {
     foo(<caret>)
 }
 
-// ORDER: "pFoo, s"
 // ORDER: pFoo
 // ORDER: nullableFoo
 // ORDER: nullableFoo
+// ORDER: "pFoo, s"
 // ORDER: true
 // ORDER: false
 // ORDER: local
