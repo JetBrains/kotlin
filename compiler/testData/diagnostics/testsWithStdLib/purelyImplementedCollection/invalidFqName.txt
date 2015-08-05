@@ -35,9 +35,6 @@ kotlin.jvm.PurelyImplements(value = "") public open class A</*0*/ T : kotlin.Any
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
     public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ p0: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    // Static members
-    public/*package*/ final var rawField: (A<kotlin.Any!>..A<*>?)
 }
 
 kotlin.jvm.PurelyImplements(value = "[INVALID]") public open class B</*0*/ T : kotlin.Any!> : java.util.AbstractList<T!> {
