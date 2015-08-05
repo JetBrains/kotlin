@@ -1,0 +1,4 @@
+package usage
+
+fun other() {
+}
