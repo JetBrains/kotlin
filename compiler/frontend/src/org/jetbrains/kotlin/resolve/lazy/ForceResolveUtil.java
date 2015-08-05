@@ -94,6 +94,7 @@ public class ForceResolveUtil {
     public static JetType forceResolveAllContents(@Nullable JetType type) {
         if (type == null) return null;
 
+        forceResolveAllContents(type.getAnnotations());
         if (TypesPackage.isFlexible(type)) {
             forceResolveAllContents(TypesPackage.flexibility(type).getLowerBound());
             forceResolveAllContents(TypesPackage.flexibility(type).getUpperBound());
