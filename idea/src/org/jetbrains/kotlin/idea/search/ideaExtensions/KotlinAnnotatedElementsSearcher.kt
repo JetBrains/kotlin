@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -91,7 +92,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
                     return JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
                 }
 
-                return (useScope as LocalSearchScope).scope.flatMap { it.getChildrenOfType<JetAnnotationEntry>().asIterable() }
+                return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<JetAnnotationEntry>() }
             })
         }
 

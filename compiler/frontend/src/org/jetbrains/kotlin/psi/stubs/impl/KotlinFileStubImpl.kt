@@ -45,8 +45,8 @@ public class KotlinFileStubImpl(jetFile: JetFile?, private val packageName: Stri
         return childrenStubs.filterIsInstance<PsiClassStub<*>>().map { it.psi }.toTypedArray()
     }
 
-    override fun findImportByAlias(alias: String): KotlinImportDirectiveStub? {
-        val importList = childrenStubs.firstOrNull { it.stubType == JetStubElementTypes.IMPORT_LIST } ?: return null
-        return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().firstOrNull { it.getAliasName() == alias }
+    override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
+        val importList = childrenStubs.firstOrNull { it.stubType == JetStubElementTypes.IMPORT_LIST } ?: return emptyList()
+        return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter { it.getAliasName() == alias }
     }
 }

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.UtilPackage;
 
+import java.util.List;
+
 public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
@@ -127,9 +129,9 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         KotlinFileStub fileStub = getContainingFileStub(stub);
         if (fileStub != null) {
-            KotlinImportDirectiveStub aliasImportStub = fileStub.findImportByAlias(stub.getShortName());
-            if (aliasImportStub != null) {
-                sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), aliasImportStub.getImportedFqName().shortName().asString());
+            List<KotlinImportDirectiveStub> aliasImportStubs = fileStub.findImportsByAlias(stub.getShortName());
+            for (KotlinImportDirectiveStub importStub : aliasImportStubs) {
+                sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), importStub.getImportedFqName().shortName().asString());
             }
         }
     }
