@@ -61,15 +61,15 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inlineFunctionChanged")
-        public void testInlineFunctionChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionChanged/");
-            doTest(fileName);
-        }
-
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineFunctionTwoPackageParts")
+        public void testInlineFunctionTwoPackageParts() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionTwoPackageParts/");
             doTest(fileName);
         }
 
