@@ -1232,6 +1232,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("repeatable.kt")
+                public void testRepeatable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/repeatable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("SetterAnnotations.kt")
                 public void testSetterAnnotations() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SetterAnnotations.kt");

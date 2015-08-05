@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
@@ -61,14 +63,23 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     private fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: TargetList, trace: BindingTrace) {
-        val entryTypes: MutableSet<JetType> = hashSetOf()
+        val entryTypesWithAnnotations = hashMapOf<JetType, MutableList<AnnotationUseSiteTarget?>>()
+
         for (entry in entries) {
             checkAnnotationEntry(entry, actualTargets, trace)
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
-            if (!entryTypes.add(descriptor.type) && !classDescriptor.isRepeatableAnnotation()) {
+
+            val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+            val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
+            val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
+                                      || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
+
+            if (duplicateAnnotation && !classDescriptor.isRepeatableAnnotation()) {
                 trace.report(Errors.REPEATED_ANNOTATION.on(entry));
             }
+
+            existingTargetsForAnnotation.add(useSiteTarget)
         }
         additionalCheckers.forEach { it.checkEntries(entries, actualTargets.declarationSite, trace) }
     }

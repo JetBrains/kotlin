@@ -1,0 +1,28 @@
+package
+
+public final class A {
+    public constructor A(/*0*/ Ann() Ann() x: kotlin.Int, /*1*/ RepeatableAnn() Ann() y: kotlin.Int)
+    Ann() RepeatableAnn() Ann() RepeatableAnn() internal final val a: kotlin.Int = 0
+    Ann() Ann() Ann() internal final val b: kotlin.Int = 0
+    RepeatableAnn() RepeatableAnn() internal final val c: kotlin.Int = 0
+    RepeatableAnn() RepeatableAnn() internal final val d: kotlin.Int = 0
+    internal final val x: kotlin.Int
+    internal final val y: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.annotation.annotation(repeatable = true) internal final class RepeatableAnn : kotlin.Annotation {
+    public constructor RepeatableAnn()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

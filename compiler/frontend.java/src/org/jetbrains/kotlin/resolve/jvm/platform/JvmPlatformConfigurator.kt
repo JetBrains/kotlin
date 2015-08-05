@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -97,15 +98,24 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
 
 public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
     override fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
-        val entryTypes: MutableSet<JetType> = hashSetOf()
+        val entryTypesWithAnnotations = hashMapOf<JetType, MutableList<AnnotationUseSiteTarget?>>()
+
         for (entry in entries) {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: continue
-            if (!entryTypes.add(descriptor.type)
+
+            val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
+            val existingTargetsForAnnotation = entryTypesWithAnnotations.getOrPut(descriptor.type) { arrayListOf() }
+            val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation
+                                      || (existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) })
+
+            if (duplicateAnnotation
                 && classDescriptor.isRepeatableAnnotation()
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE) {
                 trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry));
             }
+
+            existingTargetsForAnnotation.add(useSiteTarget)
         }
     }
 }
