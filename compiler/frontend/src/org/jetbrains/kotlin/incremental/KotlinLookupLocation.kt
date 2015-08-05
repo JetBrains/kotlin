@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.incremental.components
+package org.jetbrains.kotlin.incremental
 
-public interface LookupTracker {
-    val verbose: Boolean
-        get() = false
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.psi.JetElement
 
-    fun record(lookupLocation: String, scopeFqName: String, scopeContainingFile: String?, scopeKind: ScopeKind, name: String)
-
-    companion object {
-        val DO_NOTHING = object : LookupTracker {
-            override fun record(lookupLocation: String, scopeFqName: String, scopeContainingFile: String?, scopeKind: ScopeKind, name: String) {}
-        }
-    }
-}
-
-public enum class ScopeKind {
-    PACKAGE,
-    CLASSIFIER
-}
+class KotlinLookupLocation(val element: JetElement) : LookupLocation
