@@ -29,13 +29,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetArrayAccessExpression
 import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 
 public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
-    private val collectionGetFunctionName = "get"
-    private val collectionSetFunctionName = "set"
-
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
             PseudocodeIntegerVariablesDataCollector(pseudocode, trace.bindingContext)
 
@@ -44,35 +40,34 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
         val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
         pseudocode.traverse(TraversalOrder.FORWARD, outOfBoundAnalysisData, { instruction, inData: ValuesData, outData: ValuesData ->
             val ctxt = VariableContext(instruction, reportedDiagnosticMap)
-            if (instruction is CallInstruction &&
-                (isGetCallOnCollection(instruction) || isSetCallOnCollection(instruction))) {
-                checkOutOfBoundAccess(instruction, inData, ctxt)
+            if (instruction is CallInstruction) {
+                if (isAccessOperationCallOnCollection(instruction)) {
+                    checkOutOfBoundAccess(instruction, inData, ctxt)
+                }
+                else {
+                    val callInfo = CallInstructionUtils.tryExtractCallInfo(instruction)
+                    if (callInfo != null && (isGetMethodCallOnCollection(callInfo) || isSetMethodCallOnCollection(callInfo))) {
+                        checkOutOfBoundAccess(instruction, inData, ctxt)
+                    }
+                }
             }
         })
     }
 
-    private fun isGetCallOnCollection(instruction: CallInstruction): Boolean {
-        val isGetFunctionCall = instruction.element is JetCallExpression &&
-                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == collectionGetFunctionName } ?: false
-        val isGetOperation = (isGetFunctionCall || instruction.element is JetArrayAccessExpression) &&
-                             instruction.inputValues.size() == 2
-        val receiverIsCollection = InstructionUtils.isExpectedReceiverType(instruction) {
-            KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
-        }
-        return isGetOperation && receiverIsCollection
+    private fun isAccessOperationCallOnCollection(instruction: CallInstruction): Boolean {
+        val isAccessOperation = instruction.element is JetArrayAccessExpression ||
+                                instruction.element is JetBinaryExpression && instruction.element.left is JetArrayAccessExpression
+        return isAccessOperation && CallInstructionUtils.receiverIsCollection(instruction)
     }
 
-    private fun isSetCallOnCollection(instruction: CallInstruction): Boolean {
-        val isSetFunctionCall = instruction.element is JetCallExpression &&
-                                JetExpressionUtils.tryGetCalledName(instruction.element)?.let { it == collectionSetFunctionName } ?: false
-        val isSetThroughAccessOperation = instruction.element is JetBinaryExpression &&
-                                          instruction.element.left is JetArrayAccessExpression
-        val isSetOperation = (isSetFunctionCall || isSetThroughAccessOperation) &&
-                             instruction.inputValues.size() == 3
-        val receiverIsCollection = InstructionUtils.isExpectedReceiverType(instruction) {
-            KotlinArrayUtils.isGenericOrPrimitiveArray(it) || KotlinListUtils.isKotlinList(it)
-        }
-        return isSetOperation && receiverIsCollection
+    private fun isGetMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo): Boolean {
+        val isGetMethodCall = callInfo.calledName == KotlinCollectionsUtils.getMethodName
+        return isGetMethodCall && CallInstructionUtils.receiverIsCollection(callInfo)
+    }
+
+    private fun isSetMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo): Boolean {
+        val isSetMethodCall = callInfo.calledName == KotlinCollectionsUtils.setMethodName
+        return isSetMethodCall && CallInstructionUtils.receiverIsCollection(callInfo)
     }
 
     private fun checkOutOfBoundAccess(instruction: CallInstruction, valuesData: ValuesData, ctxt: VariableContext) {
