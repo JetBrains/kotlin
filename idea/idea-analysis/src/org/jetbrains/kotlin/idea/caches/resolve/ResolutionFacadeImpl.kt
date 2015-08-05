@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 private class ResolutionFacadeImpl(
         private val project: Project,
@@ -84,10 +83,6 @@ private class ResolutionFacadeImpl(
 
     override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
         return getAnalysisResultsForElements(elements)
-    }
-
-    override fun getFileTopLevelScope(file: JetFile): JetScope {
-        return getLazyResolveSession(file).getFileScopeProvider().getFileScope(file)
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(

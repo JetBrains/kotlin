@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public interface ResolutionFacade {
     public fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext
@@ -33,8 +31,6 @@ public interface ResolutionFacade {
     public fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
-
-    public fun getFileTopLevelScope(file: JetFile): JetScope
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 

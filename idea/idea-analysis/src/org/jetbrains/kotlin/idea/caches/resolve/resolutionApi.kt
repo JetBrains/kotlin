@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public fun JetElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -91,4 +93,8 @@ public fun getResolveScope(file: JetFile): GlobalSearchScope {
         is ModuleSourceInfo -> file.getResolveScope()
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
+}
+
+public fun ResolutionFacade.getFileTopLevelScope(file: JetFile): JetScope {
+    return frontendService<FileScopeProvider>(file).getFileScope(file)
 }
