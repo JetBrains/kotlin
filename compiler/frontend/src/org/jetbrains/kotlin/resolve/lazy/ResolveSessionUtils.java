@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclarationUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 
 import java.util.ArrayList;
 import java.util.Collection;

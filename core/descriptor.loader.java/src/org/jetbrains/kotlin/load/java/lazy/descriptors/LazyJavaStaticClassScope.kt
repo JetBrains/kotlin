@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 import org.jetbrains.kotlin.utils.Printer

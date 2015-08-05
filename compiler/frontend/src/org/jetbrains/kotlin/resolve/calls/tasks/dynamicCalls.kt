@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.DynamicType
 import org.jetbrains.kotlin.types.JetType
