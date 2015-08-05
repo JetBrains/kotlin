@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.google.common.collect.Lists
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.stubs.PsiClassHolderFileStub
@@ -35,29 +34,13 @@ public class KotlinFileStubImpl(jetFile: JetFile?, private val packageName: Stri
         : this(jetFile, StringRef.fromString(packageName)!!, isScript) {
     }
 
-    override fun getPackageFqName(): FqName {
-        return FqName(StringRef.toString(packageName)!!)
-    }
+    override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)
+    override fun isScript(): Boolean = isScript
+    override fun getType(): IStubFileElementType<KotlinFileStub> = JetStubElementTypes.FILE
 
-    override fun isScript(): Boolean {
-        return isScript
-    }
-
-    override fun getType(): IStubFileElementType<KotlinFileStub> {
-        return JetStubElementTypes.FILE
-    }
-
-    override fun toString(): String {
-        return "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
-    }
+    override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
 
     override fun getClasses(): Array<PsiClass> {
-        val result = Lists.newArrayList<PsiClass>()
-        for (child in getChildrenStubs()) {
-            if (child is PsiClassStub<*>) {
-                result.add(child.getPsi() as PsiClass)
-            }
-        }
-        return result.toArray<PsiClass>(arrayOfNulls<PsiClass>(result.size()))
+        return childrenStubs.filterIsInstance<PsiClassStub<*>>().map { it.psi }.toTypedArray()
     }
 }
