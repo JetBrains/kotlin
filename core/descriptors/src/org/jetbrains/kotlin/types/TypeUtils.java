@@ -303,6 +303,7 @@ public class TypeUtils {
 
     /**
      * A work-around of the generic nullability problem in the type checker
+     * Semantics should be the same as `!isSubtype(T, Any)`
      * @return true if a value of this type can be null
      */
     public static boolean isNullableType(@NotNull JetType type) {
@@ -314,6 +315,24 @@ public class TypeUtils {
         }
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
+        }
+        return false;
+    }
+
+    /**
+     * Differs from `isNullableType` only by treating type parameters: acceptsNullable(T) <=> T has nullable lower bound
+     * Semantics should be the same as `isSubtype(Nothing?, T)`
+     * @return true if `null` can be assigned to storage of this type
+     */
+    public static boolean acceptsNullable(@NotNull JetType type) {
+        if (type.isMarkedNullable()) {
+            return true;
+        }
+        if (TypesPackage.isFlexible(type) && acceptsNullable(TypesPackage.flexibility(type).getUpperBound())) {
+            return true;
+        }
+        if (isTypeParameter(type)) {
+            return hasNullableLowerBound((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor());
         }
         return false;
     }
