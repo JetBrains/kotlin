@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core
+package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor

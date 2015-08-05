@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.performCompletionWithOutOfBlockTracking
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionSession
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*

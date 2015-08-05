@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
 import org.jetbrains.kotlin.idea.util.makeNullable

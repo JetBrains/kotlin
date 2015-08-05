@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.toExpressionWithType
-import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName

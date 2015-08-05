@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion
+package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
@@ -22,9 +22,7 @@ import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
-import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
+import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
