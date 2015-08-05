@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
-import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -53,6 +52,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.LinkedHashSet
 
 enum class Tail {
@@ -440,13 +440,13 @@ class ExpectedInfos(
         val declaration = expressionWithType.getParent() as? JetDeclarationWithBody ?: return null
         if (expressionWithType != declaration.getBodyExpression() || declaration.hasBlockBody()) return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
-        return functionReturnValueExpectedInfo(descriptor, expectType = declaration.hasDeclaredReturnType()).toList()
+        return functionReturnValueExpectedInfo(descriptor, expectType = declaration.hasDeclaredReturnType()).singletonOrEmptyList()
     }
 
     private fun calculateForReturn(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val returnExpression = expressionWithType.getParent() as? JetReturnExpression ?: return null
         val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
-        return functionReturnValueExpectedInfo(descriptor, expectType = true).toList()
+        return functionReturnValueExpectedInfo(descriptor, expectType = true).singletonOrEmptyList()
     }
 
     private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, expectType: Boolean): ReturnValueExpectedInfo? {

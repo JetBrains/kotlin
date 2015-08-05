@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -296,9 +295,6 @@ fun LookupElementFactory.createLookupElement(
 
     return element
 }
-
-fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
-fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
 enum class SmartCompletionItemPriority {
     IT,

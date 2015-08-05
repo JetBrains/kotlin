@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 import java.util.ArrayList
 import java.util.HashSet
 
@@ -237,7 +238,7 @@ class SmartCompletion(
                     if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
                         val left = parent.getLeft()
                         if (left is JetReferenceExpression) {
-                            return bindingContext[BindingContext.REFERENCE_TARGET, left].toSet()
+                            return bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
                         }
                     }
                 }
