@@ -1,0 +1,3 @@
+REMOVED: class MainKt$Companion.class
+changes in test/MainKt: CLASS_SIGNATURE
+changes in test/TestPackage: CLASS_SIGNATURE

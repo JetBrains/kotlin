@@ -1,0 +1,12 @@
+REMOVED: class ClassWithChangedCompanionObject$FirstName.class
+REMOVED: class ClassWithRemovedCompanionObject$Companion.class
+ADDED: class ClassWithAddedCompanionObject$Companion.class
+ADDED: class ClassWithChangedCompanionObject$SecondName.class
+changes in test/ClassWithAddedCompanionObject: MEMBERS
+    [Companion]
+changes in test/ClassWithChangedCompanionObject: MEMBERS
+    [FirstName, SecondName]
+changes in test/ClassWithChangedVisibilityForCompanionObject.Companion: CLASS_SIGNATURE
+changes in test/ClassWithChangedVisibilityForCompanionObject: NONE
+changes in test/ClassWithRemovedCompanionObject: MEMBERS
+    [Companion]

@@ -1,0 +1,4 @@
+changes in test/ClassWithGetterAndSetterForPrivateVarChanged: NONE
+changes in test/ClassWithPrivateVarAdded: NONE
+changes in test/ClassWithPrivateVarRemoved: NONE
+changes in test/ClassWithPrivateVarSignatureChanged: NONE
