@@ -68,13 +68,19 @@ public inline fun <T> compareValuesBy(a: T, b: T, selector: (T) -> Comparable<*>
     return compareValues(selector(a), selector(b))
 }
 
+public inline fun <T, K> compareValuesBy(a: T, b: T, comparator: Comparator<K>, selector: (T) -> K): Int {
+    return comparator.compare(selector(a), selector(b))
+}
+
 // Not so useful without type inference for receiver of expression
 // compareValuesWith(v1, v2, compareBy { it.prop1 } thenByDescending { it.prop2 })
-///**
-// * Compares two values using the specified [comparator].
-// */
-//@suppress("NOTHING_TO_INLINE")
-//public inline fun <T> compareValuesWith(a: T, b: T, comparator: Comparator<T>): Int = comparator.compare(a, b)
+/**
+ * Compares two values using the specified [comparator].
+ */
+@suppress("NOTHING_TO_INLINE")
+public inline fun <T> compareValuesWith(a: T, b: T, comparator: Comparator<T>): Int = comparator.compare(a, b)
+
+
 
 /**
  * Compares two nullable [Comparable] values. Null is considered less than any value.
@@ -111,6 +117,12 @@ public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T
 inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>?): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, comparable)
+    }
+}
+
+public fun <T, K> compareBy(comparator: Comparator<K>, selector: (T) -> K): Comparator<T> {
+    return object : Comparator<T> {
+        public override fun compare(a: T, b: T): Int = compareValuesBy(a, b, comparator, selector)
     }
 }
 
@@ -172,31 +184,31 @@ inline public fun <T> Comparator<T>.thenComparator(inlineOptions(InlineOption.ON
 
 // Not so useful without type inference for receiver of expression
 /**
- * Extends the given comparator of non-nullable values to a comparator of nullable values
+ * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering null value less than any other value.
  */
-public fun <T: Any> Comparator<T>.nullsFirst(): Comparator<T?> {
+public fun <T: Any> nullsFirst(comparator: Comparator<T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
             if (a === b) return 0
             if (a == null) return -1
             if (b == null) return 1
-            return this@nullsFirst.compare(a, b)
+            return comparator.compare(a, b)
         }
     }
 }
 
 /**
- * Extends the given comparator of non-nullable values to a comparator of nullable values
+ * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering null value greater than any other value.
  */
-public fun <T: Any> Comparator<T>.nullsLast(): Comparator<T?> {
+public fun <T: Any> nullsLast(comparator: Comparator<T>): Comparator<T?> {
     return object: Comparator<T?> {
         override fun compare(a: T?, b: T?): Int {
             if (a === b) return 0
             if (a == null) return 1
             if (b == null) return -1
-            return this@nullsLast.compare(a, b)
+            return comparator.compare(a, b)
         }
     }
 }

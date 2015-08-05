@@ -39,7 +39,7 @@ class OrderingTest {
         val v2: Item? = null
         val diff = compareValuesBy(v1, v2) { it?.rating }
         assertTrue(diff > 0)
-        val diff2 = compareBy<Item> { it.rating }.thenBy { it.name }.nullsLast().compare(v1, v2)
+        val diff2 = nullsLast(compareBy<Item> { it.rating }.thenBy { it.name }).compare(v1, v2)
         assertTrue(diff2 < 0)
     }
 

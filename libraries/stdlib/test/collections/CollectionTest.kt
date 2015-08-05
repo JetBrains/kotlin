@@ -572,13 +572,19 @@ class CollectionTest {
 
     test fun sortedNullableBy() {
         fun String.nullIfEmpty() = if (isEmpty()) null else this
-        listOf(null, "").let {
-//            expect(listOf(null, "")) { it.sortedBy { it.orEmpty()}}
-//            expect(listOf("", null)) { it.sortedByDescending { it.orEmpty() }}
-//            expect(listOf("", null)) { it.sortedByDescending { it?.nullIfEmpty() }}
-            expect(listOf(null, "")) { it.sortedWith(compareBy<String> { it }.nullsFirst()) }
-            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it }.nullsLast()) }
-            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it.nullIfEmpty() }.nullsLast() ) }
+        listOf(null, "", "a").let {
+            expect(listOf(null, "", "a")) { it.sortedWith(nullsFirst(compareBy { it })) }
+            expect(listOf("a", "", null)) { it.sortedWith(nullsLast(compareByDescending { it })) }
+            expect(listOf(null, "a", "")) { it.sortedWith(nullsFirst(compareByDescending { it.nullIfEmpty() })) }
+        }
+    }
+
+    test fun sortedByNullable() {
+        fun String.nonEmptyLength() = if (isEmpty()) null else length()
+        listOf("", "sort", "abc").let {
+            assertEquals(listOf("", "abc", "sort"), it.sortedBy { it.nonEmptyLength() })
+            assertEquals(listOf("sort", "abc", ""), it.sortedByDescending { it.nonEmptyLength() })
+            assertEquals(listOf("abc", "sort", ""), it.sortedWith(compareBy(nullsLast(compareBy<Int> {it})) { it.nonEmptyLength()}))
         }
     }
 

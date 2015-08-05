@@ -827,9 +827,9 @@ class ArraysTest {
     test fun sortedNullableBy() {
         fun String.nullIfEmpty() = if (isEmpty()) null else this
         arrayOf(null, "").let {
-            expect(listOf(null, "")) { it.sortedWith(compareBy<String> { it }.nullsFirst()) }
-            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it }.nullsLast()) }
-            expect(listOf("", null)) { it.sortedWith(compareByDescending<String> { it.nullIfEmpty() }.nullsLast() ) }
+            expect(listOf(null, "")) { it.sortedWith(nullsFirst(compareBy { it })) }
+            expect(listOf("", null)) { it.sortedWith(nullsLast(compareByDescending { it })) }
+            expect(listOf("", null)) { it.sortedWith(nullsLast(compareByDescending { it.nullIfEmpty() })) }
         }
     }
 
