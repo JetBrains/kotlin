@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,7 +25,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public fun JetElement.getResolutionFacade(): ResolutionFacade {
@@ -37,7 +42,7 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
 
 public fun JetFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
-    return facade.resolveImportReference(facade.findModuleDescriptor(this), fqName)
+    return facade.resolveImportReference(project, facade.findModuleDescriptor(this), fqName)
 }
 
 //NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear
@@ -65,6 +70,17 @@ public fun JetElement.analyzeFully(): BindingContext {
 
 public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): AnalysisResult {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
+}
+
+public fun ResolutionFacade.resolveImportReference(
+        project: Project,
+        moduleDescriptor: ModuleDescriptor,
+        fqName: FqName
+): Collection<DeclarationDescriptor> {
+    val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
+    val qualifiedExpressionResolver = this.frontendService<QualifiedExpressionResolver>(moduleDescriptor)
+    return qualifiedExpressionResolver.processImportReference(
+            importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
 }
 
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )

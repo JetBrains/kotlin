@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
@@ -91,7 +92,7 @@ object ReplaceWithAnnotationAnalyzer {
                 .filter { it.isSafe() }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
 
-        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
+        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(project, symbolDescriptor.module, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)

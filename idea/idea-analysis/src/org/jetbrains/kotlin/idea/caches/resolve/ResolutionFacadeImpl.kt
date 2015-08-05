@@ -28,12 +28,11 @@ import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -89,13 +88,6 @@ private class ResolutionFacadeImpl(
 
     override fun getFileTopLevelScope(file: JetFile): JetScope {
         return getLazyResolveSession(file).getFileScopeProvider().getFileScope(file)
-    }
-
-    override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor> {
-        val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-        val qualifiedExpressionResolver = this.frontendService<QualifiedExpressionResolver>(moduleDescriptor)
-        return qualifiedExpressionResolver.processImportReference(
-                importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(

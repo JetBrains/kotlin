@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
@@ -36,8 +35,6 @@ public interface ResolutionFacade {
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 
     public fun getFileTopLevelScope(file: JetFile): JetScope
-
-    public fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor>
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 
