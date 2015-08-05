@@ -1,33 +1,33 @@
 == basic ==
 fun basic() {
     val lst = listOf(1, 2)
-    val mLst = linkedListOf(1, 2, 3)
+    val mLst = arrayListOf(1, 2, 3)
     42
 }
 ---------------------
 L0:
-  1 <START>                                                                 in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
-  2 mark({ val lst = listOf(1, 2) val mLst = linkedListOf(1, 2, 3) 42 })    in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
-    v(val lst = listOf(1, 2))                                               in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{lst:-}
-    r(1) -> <v0>                                                            in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
-    r(2) -> <v1>                                                            in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
-    mark(listOf(1, 2))                                                      in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
-    call(listOf(1, 2), listOf|<v0>, <v1>) -> <v2>                           in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
-    w(lst|<v2>)                                                             in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:[2]}
-    v(val mLst = linkedListOf(1, 2, 3))                                     in: INTS{} BOOLS{} ARRS{lst:[2]}             out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    r(1) -> <v3>                                                            in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    r(2) -> <v4>                                                            in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    r(3) -> <v5>                                                            in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    mark(linkedListOf(1, 2, 3))                                             in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    call(linkedListOf(1, 2, 3), linkedListOf|<v3>, <v4>, <v5>) -> <v6>      in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
-    w(mLst|<v6>)                                                            in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}
-    r(42) -> <v7>                                                           in: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}
+  1 <START>                                                                in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
+  2 mark({ val lst = listOf(1, 2) val mLst = arrayListOf(1, 2, 3) 42 })    in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
+    v(val lst = listOf(1, 2))                                              in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{lst:-}
+    r(1) -> <v0>                                                           in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
+    r(2) -> <v1>                                                           in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
+    mark(listOf(1, 2))                                                     in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
+    call(listOf(1, 2), listOf|<v0>, <v1>) -> <v2>                          in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:-}
+    w(lst|<v2>)                                                            in: INTS{} BOOLS{} ARRS{lst:-}               out: INTS{} BOOLS{} ARRS{lst:[2]}
+    v(val mLst = arrayListOf(1, 2, 3))                                     in: INTS{} BOOLS{} ARRS{lst:[2]}             out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    r(1) -> <v3>                                                           in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    r(2) -> <v4>                                                           in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    r(3) -> <v5>                                                           in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    mark(arrayListOf(1, 2, 3))                                             in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    call(arrayListOf(1, 2, 3), arrayListOf|<v3>, <v4>, <v5>) -> <v6>       in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}
+    w(mLst|<v6>)                                                           in: INTS{} BOOLS{} ARRS{lst:[2],mLst:-}      out: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}
+    r(42) -> <v7>                                                          in: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[2],mLst:[3]}
 L1:
-  1 <END>                                                                   in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
+  1 <END>                                                                  in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
 error:
-    <ERROR>                                                                 in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
+    <ERROR>                                                                in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
 sink:
-    <SINK>                                                                  in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
+    <SINK>                                                                 in: INTS{} BOOLS{} ARRS{}                    out: INTS{} BOOLS{} ARRS{}
 =====================
 == listWithTwoPossibleSizes ==
 fun listWithTwoPossibleSizes(cond: Boolean) {
@@ -36,43 +36,43 @@ fun listWithTwoPossibleSizes(cond: Boolean) {
         lst = listOf(false, false)
     }
     else {
-        lst = linkedListOf(false, true, true)
+        lst = arrayListOf(false, true, true)
     }
     42
 }
 ---------------------
 L0:
-  1 <START>                                                                                                                        in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
-    v(cond: Boolean)                                                                                                               in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
-    magic[FAKE_INITIALIZER](cond: Boolean) -> <v0>                                                                                 in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
-    w(cond|<v0>)                                                                                                                   in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
-  2 mark({ val lst: List<Boolean> if (cond) { lst = listOf(false, false) } else { lst = linkedListOf(false, true, true) } 42 })    in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
-    v(val lst: List<Boolean>)                                                                                                      in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    mark(if (cond) { lst = listOf(false, false) } else { lst = linkedListOf(false, true, true) })                                  in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(cond) -> <v1>                                                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    jf(L2|<v1>)                                                                                                                    in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-  3 mark({ lst = listOf(false, false) })                                                                                           in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(false) -> <v2>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(false) -> <v3>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    mark(listOf(false, false))                                                                                                     in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    call(listOf(false, false), listOf|<v2>, <v3>) -> <v4>                                                                          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    w(lst|<v4>)                                                                                                                    in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}
-  2 jmp(L3)                                                                                                                        in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}       out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}
+  1 <START>                                                                                                                       in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
+    v(cond: Boolean)                                                                                                              in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
+    magic[FAKE_INITIALIZER](cond: Boolean) -> <v0>                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
+    w(cond|<v0>)                                                                                                                  in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
+  2 mark({ val lst: List<Boolean> if (cond) { lst = listOf(false, false) } else { lst = arrayListOf(false, true, true) } 42 })    in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
+    v(val lst: List<Boolean>)                                                                                                     in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    mark(if (cond) { lst = listOf(false, false) } else { lst = arrayListOf(false, true, true) })                                  in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(cond) -> <v1>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    jf(L2|<v1>)                                                                                                                   in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+  3 mark({ lst = listOf(false, false) })                                                                                          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(false) -> <v2>                                                                                                              in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(false) -> <v3>                                                                                                              in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    mark(listOf(false, false))                                                                                                    in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    call(listOf(false, false), listOf|<v2>, <v3>) -> <v4>                                                                         in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    w(lst|<v4>)                                                                                                                   in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}
+  2 jmp(L3)                                                                                                                       in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}       out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2]}
 L2 [else branch]:
-  3 mark({ lst = linkedListOf(false, true, true) })                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(false) -> <v6>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(true) -> <v7>                                                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    r(true) -> <v8>                                                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    mark(linkedListOf(false, true, true))                                                                                          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    call(linkedListOf(false, true, true), linkedListOf|<v6>, <v7>, <v8>) -> <v9>                                                   in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
-    w(lst|<v9>)                                                                                                                    in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[3]}
+  3 mark({ lst = arrayListOf(false, true, true) })                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(false) -> <v6>                                                                                                              in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(true) -> <v7>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    r(true) -> <v8>                                                                                                               in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    mark(arrayListOf(false, true, true))                                                                                          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    call(arrayListOf(false, true, true), arrayListOf|<v6>, <v7>, <v8>) -> <v9>                                                    in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}
+    w(lst|<v9>)                                                                                                                   in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:-}         out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[3]}
 L3 ['if' expression result]:
-  2 merge(if (cond) { lst = listOf(false, false) } else { lst = linkedListOf(false, true, true) }|!<v5>, !<v10>) -> <v11>          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}    out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}
-    r(42) -> <v12>                                                                                                                 in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}    out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}
+  2 merge(if (cond) { lst = listOf(false, false) } else { lst = arrayListOf(false, true, true) }|!<v5>, !<v10>) -> <v11>          in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}    out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}
+    r(42) -> <v12>                                                                                                                in: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}    out: INTS{} BOOLS{cond:U{}{}} ARRS{lst:[2, 3]}
 L1:
-  1 <END>                                                                                                                          in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
+  1 <END>                                                                                                                         in: INTS{} BOOLS{cond:U{}{}} ARRS{}              out: INTS{} BOOLS{cond:U{}{}} ARRS{}
 error:
-    <ERROR>                                                                                                                        in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
+    <ERROR>                                                                                                                       in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
 sink:
-    <SINK>                                                                                                                         in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
+    <SINK>                                                                                                                        in: INTS{} BOOLS{}           ARRS{}              out: INTS{} BOOLS{}           ARRS{}
 =====================
