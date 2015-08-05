@@ -841,10 +841,8 @@ public class OverrideResolver {
             @NotNull ValueParameterDescriptor parameterFromSubclass,
             @NotNull ValueParameterDescriptor parameterFromSuperclass
     ) {
-        DeclarationDescriptor subFunction = parameterFromSubclass.getContainingDeclaration();
-        DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
-        return subFunction instanceof CallableDescriptor && ((CallableDescriptor) subFunction).hasStableParameterNames() &&
-               superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
+        return parameterFromSubclass.getContainingDeclaration().hasStableParameterNames() &&
+               parameterFromSuperclass.getContainingDeclaration().hasStableParameterNames() &&
                !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName());
     }
 
