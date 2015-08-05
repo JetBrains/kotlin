@@ -38,17 +38,17 @@ import java.util.EnumSet
 
 public object JavaAnnotationMapper {
 
-    private val javaTargetFqName = FqName(javaClass<Target>().canonicalName)
-    private val javaRetentionFqName = FqName(javaClass<Retention>().canonicalName)
-    private val javaDeprecatedFqName = FqName(javaClass<Deprecated>().canonicalName)
-    private val javaDocumentedFqName = FqName(javaClass<Documented>().canonicalName)
+    private val JAVA_TARGET_FQ_NAME = FqName(javaClass<Target>().canonicalName)
+    private val JAVA_RETENTION_FQ_NAME = FqName(javaClass<Retention>().canonicalName)
+    private val JAVA_DEPRECATED_FQ_NAME = FqName(javaClass<Deprecated>().canonicalName)
+    private val JAVA_DOCUMENTED_FQ_NAME = FqName(javaClass<Documented>().canonicalName)
     // Java8-specific thing
-    private val javaRepeatableFqName = FqName("java.lang.annotation.Repeatable")
+    private val JAVA_REPEATABLE_FQ_NAME = FqName("java.lang.annotation.Repeatable")
 
     public fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
             when (annotation.classId) {
-                ClassId.topLevel(javaTargetFqName) -> JavaTargetAnnotationDescriptor(annotation, c)
-                ClassId.topLevel(javaRetentionFqName), ClassId.topLevel(javaDeprecatedFqName) -> null
+                ClassId.topLevel(JAVA_TARGET_FQ_NAME) -> JavaTargetAnnotationDescriptor(annotation, c)
+                ClassId.topLevel(JAVA_RETENTION_FQ_NAME), ClassId.topLevel(JAVA_DEPRECATED_FQ_NAME) -> null
                 else -> c.resolveAnnotation(annotation)
             }
 
@@ -58,9 +58,9 @@ public object JavaAnnotationMapper {
     ): AnnotationDescriptor? {
         if (kotlinName == KotlinBuiltIns.FQ_NAMES.annotation) {
             // Construct kotlin.annotation.annotation from Retention & Repeatable
-            val retentionAnnotation = annotationOwner.findAnnotation(javaRetentionFqName)
-            val repeatableAnnotation = annotationOwner.findAnnotation(javaRepeatableFqName)
-            val documentedAnnotation = annotationOwner.findAnnotation(javaDocumentedFqName)
+            val retentionAnnotation = annotationOwner.findAnnotation(JAVA_RETENTION_FQ_NAME)
+            val repeatableAnnotation = annotationOwner.findAnnotation(JAVA_REPEATABLE_FQ_NAME)
+            val documentedAnnotation = annotationOwner.findAnnotation(JAVA_DOCUMENTED_FQ_NAME)
             return if (retentionAnnotation != null || repeatableAnnotation != null || documentedAnnotation != null) {
                 JavaRetentionRepeatableAnnotationDescriptor(retentionAnnotation, repeatableAnnotation != null,
                                                             documentedAnnotation != null, c)
@@ -70,7 +70,7 @@ public object JavaAnnotationMapper {
             }
         }
         if (kotlinName == KotlinBuiltIns.FQ_NAMES.deprecated) {
-            val javaAnnotation = annotationOwner.findAnnotation(javaDeprecatedFqName)
+            val javaAnnotation = annotationOwner.findAnnotation(JAVA_DEPRECATED_FQ_NAME)
             if (javaAnnotation != null || annotationOwner.isDeprecatedInJavaDoc) {
                 return JavaDeprecatedAnnotationDescriptor(javaAnnotation, c)
             }
@@ -84,14 +84,14 @@ public object JavaAnnotationMapper {
 
     // kotlin.annotation.annotation is treated separately
     private val kotlinToJavaNameMap: Map<FqName, FqName> =
-            mapOf(KotlinBuiltIns.FQ_NAMES.target to javaTargetFqName)
+            mapOf(KotlinBuiltIns.FQ_NAMES.target to JAVA_TARGET_FQ_NAME)
 
     public val javaToKotlinNameMap: Map<FqName, FqName> =
-            mapOf(javaTargetFqName to KotlinBuiltIns.FQ_NAMES.target,
-                  javaRetentionFqName to KotlinBuiltIns.FQ_NAMES.annotation,
-                  javaDeprecatedFqName to KotlinBuiltIns.FQ_NAMES.deprecated,
-                  javaRepeatableFqName to KotlinBuiltIns.FQ_NAMES.annotation,
-                  javaDocumentedFqName to KotlinBuiltIns.FQ_NAMES.annotation)
+            mapOf(JAVA_TARGET_FQ_NAME     to KotlinBuiltIns.FQ_NAMES.target,
+                  JAVA_RETENTION_FQ_NAME  to KotlinBuiltIns.FQ_NAMES.annotation,
+                  JAVA_DEPRECATED_FQ_NAME to KotlinBuiltIns.FQ_NAMES.deprecated,
+                  JAVA_REPEATABLE_FQ_NAME to KotlinBuiltIns.FQ_NAMES.annotation,
+                  JAVA_DOCUMENTED_FQ_NAME to KotlinBuiltIns.FQ_NAMES.annotation)
 }
 
 abstract class AbstractJavaAnnotationDescriptor(
