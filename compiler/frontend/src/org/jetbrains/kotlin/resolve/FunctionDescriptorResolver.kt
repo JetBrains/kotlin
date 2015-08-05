@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -192,7 +191,7 @@ class FunctionDescriptorResolver(
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.first()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                                                      valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(),
+                                                      valueParameterDescriptor.getType(), valueParameterDescriptor.declaresDefaultValue(),
                                                       valueParameterDescriptor.getVarargElementType(), SourceElement.NO_SOURCE)
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)
