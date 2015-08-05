@@ -203,7 +203,7 @@ public class IncrementalCacheImpl(
         return result.map { File(it) }
     }
 
-    private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean, inlinesChanged: Boolean) =
+    private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean) =
             when {
                 constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
                 protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
@@ -237,8 +237,7 @@ public class IncrementalCacheImpl(
             header.isCompatiblePackageFacadeKind() ->
                 getRecompilationDecision(
                         protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
-                        constantsChanged = false,
-                        inlinesChanged = false
+                        constantsChanged = false
                 )
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
@@ -253,8 +252,7 @@ public class IncrementalCacheImpl(
                 when (header.classKind!!) {
                     JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
                             protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = false),
-                            constantsChanged = constantsMap.process(className, fileBytes),
-                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                            constantsChanged = constantsMap.process(className, fileBytes)
                     )
 
                     JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
@@ -266,8 +264,7 @@ public class IncrementalCacheImpl(
 
                 getRecompilationDecision(
                         protoChanged = false,
-                        constantsChanged = constantsMap.process(className, fileBytes),
-                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                        constantsChanged = constantsMap.process(className, fileBytes)
                 )
             }
             else -> {
@@ -287,8 +284,7 @@ public class IncrementalCacheImpl(
 
             val newDecision = getRecompilationDecision(
                     protoChanged = internalClassName in protoMap,
-                    constantsChanged = internalClassName in constantsMap,
-                    inlinesChanged = internalClassName in inlineFunctionsMap
+                    constantsChanged = internalClassName in constantsMap
             )
             if (newDecision != DO_NOTHING) {
                 KotlinBuilder.LOG.debug("$newDecision because $internalClassName is removed")
