@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
