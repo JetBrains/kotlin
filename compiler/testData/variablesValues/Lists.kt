@@ -1,6 +1,6 @@
 fun basic() {
     val lst = listOf(1, 2)
-    val mLst = linkedListOf(1, 2, 3)
+    val mLst = arrayListOf(1, 2, 3)
     42
 }
 
@@ -10,7 +10,7 @@ fun listWithTwoPossibleSizes(cond: Boolean) {
         lst = listOf(false, false)
     }
     else {
-        lst = linkedListOf(false, true, true)
+        lst = arrayListOf(false, true, true)
     }
     42
 }

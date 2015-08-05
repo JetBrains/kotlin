@@ -105,13 +105,15 @@ public object KotlinArrayUtils {
 public object KotlinListUtils {
     public fun isKotlinList(type: JetType): Boolean =
         if (type.constructor is TypeConstructor) {
-            type.constructor.declarationDescriptor?.let { it.fqNameSafe.asString() == "kotlin.List" } ?: false ||
-            type.constructor.toString().contains("java.util.LinkedList")
+            type.constructor.declarationDescriptor?.let {
+                val typeName = it.fqNameSafe.asString()
+                typeName == "kotlin.List" || typeName == "java.util.ArrayList"
+            } ?: false
         }
         else false
     // Creation
     public val listOfFunctionName: String = "listOf"
-    public val linkedListOfFunctionName: String = "linkedListOf"
+    public val arrayListOfFunctionName: String = "arrayListOf"
 
     // Methods
     public val sizeMethodNameOfArray: String = "size"
