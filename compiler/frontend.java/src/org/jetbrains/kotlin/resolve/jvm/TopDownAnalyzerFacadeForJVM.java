@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
 import java.util.ArrayList;
@@ -91,9 +92,10 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @NotNull TopDownAnalysisMode topDownAnalysisMode
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
+            PackageMappingProvider packageMappingProvider
     ) {
-        return analyzeFilesWithJavaIntegration(moduleContext, files, trace, topDownAnalysisMode, null, null);
+        return analyzeFilesWithJavaIntegration(moduleContext, files, trace, topDownAnalysisMode, null, null, packageMappingProvider);
     }
 
     @NotNull
@@ -102,11 +104,12 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @Nullable List<String> moduleIds,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull PackageMappingProvider packageMappingProvider
     ) {
         return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCompilationComponents
-        );
+                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCompilationComponents,
+                packageMappingProvider);
     }
 
     @NotNull
@@ -116,7 +119,8 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @Nullable List<String> moduleIds,
-            @Nullable IncrementalCompilationComponents incrementalCompilationComponents
+            @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
+            @NotNull PackageMappingProvider packageMappingProvider
     ) {
         Project project = moduleContext.getProject();
         List<JetFile> allFiles = JvmAnalyzerFacade.getAllFilesToAnalyze(project, null, files);
@@ -132,7 +136,8 @@ public enum TopDownAnalyzerFacadeForJVM {
                 trace,
                 providerFactory,
                 GlobalSearchScope.allScope(project),
-                lookupTracker
+                lookupTracker,
+                packageMappingProvider
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

@@ -30,15 +30,49 @@ public class ModuleMapping(val moduleMapping: String) {
             miniFacades.parts.add(facade)
         }
     }
+
+    fun findPackageParts(internalPackageName: String): PackageFacades? {
+        return package2MiniFacades[internalPackageName]
+    }
+
+    companion object {
+        public val MAPPING_FILE_EXT: String = "kotlin_module";
+    }
 }
 
 public class PackageFacades(val internalName: String) {
 
-    val parts = hashSetOf<String>()
+    val parts = linkedSetOf<String>()
 
     fun serialize(out: Writer) {
         for (i in parts) {
             out.write("$internalName->$i\n")
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is PackageFacades) {
+            return false;
+        }
+
+        if (other.internalName != internalName) {
+            return false;
+        }
+
+        if (other.parts.size() != parts.size()) {
+            return false;
+        }
+
+        for (part in other.parts) {
+            if (!parts.contains(part)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    override fun hashCode(): Int {
+        return internalName.hashCode() / 3 + parts.size() / 3+ (parts.firstOrNull()?.hashCode() ?: 0) /3
     }
 }

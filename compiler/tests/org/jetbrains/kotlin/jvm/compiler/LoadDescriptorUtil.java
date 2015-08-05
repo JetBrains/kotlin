@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -102,7 +103,8 @@ public final class LoadDescriptorUtil {
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        ModuleDescriptor module = LazyResolveTestUtil.resolve(environment.getProject(), trace, Collections.<JetFile>emptyList());
+        ModuleDescriptor module = LazyResolveTestUtil
+                .resolve(environment.getProject(), trace, Collections.<JetFile>emptyList(), new JvmPackageMappingProvider(environment));
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         return Pair.create(packageView, trace.getBindingContext());

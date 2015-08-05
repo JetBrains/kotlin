@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -128,9 +129,9 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             modulesContent: (M) -> ModuleContent,
             platformParameters: P,
             targetEnvironment: TargetEnvironment,
-            delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
+            delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
+            packageMappingProviderFactory: (M, ModuleContent) -> PackageMappingProvider = { (m, c) -> PackageMappingProvider.EMPTY }
     ): ResolverForProject<M> {
-
         val storageManager = projectContext.storageManager
         fun createResolverForProject(): ResolverForProjectImpl<M> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
@@ -182,9 +183,11 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val computeResolverForModule = storageManager.createLazyValue {
+                    val content = modulesContent(module)
                     createResolverForModule(
                             module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
-                            platformParameters, targetEnvironment, resolverForProject
+                            platformParameters, targetEnvironment, resolverForProject,
+                            packageMappingProviderFactory(module, content)
                     )
                 }
 
@@ -204,7 +207,8 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             moduleContent: ModuleContent,
             platformParameters: P,
             targetEnvironment: TargetEnvironment,
-            resolverForProject: ResolverForProject<M>
+            resolverForProject: ResolverForProject<M>,
+            packageMappingProvider: PackageMappingProvider
     ): ResolverForModule
 
     public abstract val moduleParameters: ModuleParameters

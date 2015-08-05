@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -154,7 +155,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 moduleContext,
                 environment.getSourceFiles(),
                 trace,
-                TopDownAnalysisMode.TopLevelDeclarations
+                TopDownAnalysisMode.TopLevelDeclarations,
+                PackageMappingProvider.EMPTY
         );
 
         PackageViewDescriptor packageView = moduleContext.getModule().getPackage(TEST_PACKAGE_FQNAME);

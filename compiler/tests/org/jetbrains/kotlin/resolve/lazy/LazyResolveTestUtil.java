@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -47,15 +48,21 @@ public class LazyResolveTestUtil {
 
     @NotNull
     public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles) {
-        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles);
+        return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles, PackageMappingProvider.EMPTY);
     }
 
     @NotNull
-    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
+    public static ModuleDescriptor resolve(
+            @NotNull Project project,
+            @NotNull BindingTrace trace,
+            @NotNull List<JetFile> sourceFiles,
+            @NotNull PackageMappingProvider packageMappingProvider
+    ) {
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "test");
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations
+                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations,
+                packageMappingProvider
         );
 
         return moduleContext.getModule();

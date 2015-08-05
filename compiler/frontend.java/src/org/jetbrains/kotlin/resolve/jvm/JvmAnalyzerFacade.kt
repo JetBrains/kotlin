@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -49,7 +50,8 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             moduleContent: ModuleContent,
             platformParameters: JvmPlatformParameters,
             targetEnvironment: TargetEnvironment,
-            resolverForProject: ResolverForProject<M>
+            resolverForProject: ResolverForProject<M>,
+            packageMappingProvider: PackageMappingProvider
     ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -69,7 +71,8 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 declarationProviderFactory,
                 moduleContentScope,
                 moduleClassResolver,
-                targetEnvironment
+                targetEnvironment,
+                packageMappingProvider
         )
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
