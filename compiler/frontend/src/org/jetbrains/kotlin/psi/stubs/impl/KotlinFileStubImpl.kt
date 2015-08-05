@@ -25,6 +25,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
 public class KotlinFileStubImpl(jetFile: JetFile?, private val packageName: StringRef, private val isScript: Boolean)// SCRIPT: PsiJetFileStubImpl knows about scripting
@@ -42,5 +43,10 @@ public class KotlinFileStubImpl(jetFile: JetFile?, private val packageName: Stri
 
     override fun getClasses(): Array<PsiClass> {
         return childrenStubs.filterIsInstance<PsiClassStub<*>>().map { it.psi }.toTypedArray()
+    }
+
+    override fun findImportByAlias(alias: String): KotlinImportDirectiveStub? {
+        val importList = childrenStubs.firstOrNull { it.stubType == JetStubElementTypes.IMPORT_LIST } ?: return null
+        return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().firstOrNull { it.getAliasName() == alias }
     }
 }

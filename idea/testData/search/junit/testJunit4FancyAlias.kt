@@ -1,10 +1,10 @@
-import org.junit.Test as test
+import org.junit.Test as unittest
 import org.junit.Test
 
 class MyTestClass {
-    test fun test1() {}
+    unittest fun test1() {}
 
-    @Deprecated @test fun test2() {}
+    @Deprecated @unittest fun test2() {}
 
     Test fun test3() {}
 }

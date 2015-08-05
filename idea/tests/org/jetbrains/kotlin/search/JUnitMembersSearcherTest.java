@@ -47,6 +47,10 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
         doJUnit4test();
     }
 
+    public void testJunit4FancyAlias() throws IOException {
+        doJUnit4test();
+    }
+
     private void doJUnit3test() throws IOException {
         myFixture.configureByFile(getFileName());
         List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile()), true), "// CLASS: ");

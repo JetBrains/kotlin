@@ -20,24 +20,26 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierListOwner
-import com.intellij.psi.impl.search.AnnotatedElementsSearcher
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.Processor
+import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinAnnotatedElementsSearcher : AnnotatedElementsSearcher() {
+public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
 
     override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<PsiModifierListOwner>): Boolean {
         val annClass = p.getAnnotationClass()
@@ -86,18 +88,10 @@ public class KotlinAnnotatedElementsSearcher : AnnotatedElementsSearcher() {
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
                     val name = annClass.getName() ?: return emptyList()
-                    val annotationEntries = JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
-
-                    // Add annotations 'test' as often used alias when we search Test annotation
-                    if (name == "Test") {
-                        annotationEntries.addAll(JetAnnotationsIndex.getInstance().get(name.toLowerCase(), annClass.getProject(), useScope))
-                    }
-
-                    return annotationEntries
+                    return JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
                 }
 
-                // TODO getJetAnnotationCandidates works only with global search scope
-                return emptyList()
+                return (useScope as LocalSearchScope).scope.flatMap { it.getChildrenOfType<JetAnnotationEntry>().asIterable() }
             })
         }
 
