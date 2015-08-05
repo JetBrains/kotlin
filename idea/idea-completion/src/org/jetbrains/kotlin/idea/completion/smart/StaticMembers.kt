@@ -75,7 +75,7 @@ class StaticMembers(
                 classifier = { expectedInfo -> returnType.classifyExpectedInfo(expectedInfo) }
             }
             else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
-                classifier = { ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
+                classifier = { ExpectedInfoClassification.match(TypeSubstitutor.EMPTY) } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
             else {
                 return

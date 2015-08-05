@@ -21,20 +21,15 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
-import org.jetbrains.kotlin.idea.completion.smart.fuzzyTypesForSmartCompletion
+import org.jetbrains.kotlin.idea.completion.smart.*
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import java.util.HashSet
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
@@ -194,30 +189,47 @@ class ExpectedInfoMatchWeigher(
         private val expectedInfos: Collection<ExpectedInfo>,
         private val smartCastCalculator: SmartCastCalculator
 ) : LookupElementWeigher("kotlin.expectedInfoMatch") {
-    private enum class Weight {
-        matches,
-        matchesIfNotNull,
-        doesNotMatch
+
+    private val NO_MATCH = 0L
+
+    private fun fullMatch(nameSimilarity: Int): Long {
+        return -((2L shl 32) + nameSimilarity)
     }
 
-    override fun weigh(element: LookupElement): Weight {
+    private fun ifNotNullMatch(nameSimilarity: Int): Long {
+        return -((1L shl 32) + nameSimilarity)
+    }
+
+    override fun weigh(element: LookupElement): Long {
         // TODO: keywords with type
         val o = element.`object`
-        val fuzzyTypes = when (o) {
+        val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
-                val descriptor = o.descriptor ?: return Weight.doesNotMatch
-                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+                val descriptor = o.descriptor ?: return NO_MATCH
+                descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
             }
 
-            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) }
+            is ThisItemLookupObject -> smartCastCalculator.types(o.receiverParameter).map { FuzzyType(it, emptyList()) } to null
 
-            else -> return Weight.doesNotMatch
+            else -> return NO_MATCH
         }
 
-        return when {
-            fuzzyTypes.any { type -> expectedInfos.any { it.matchingSubstitutor(type) != null } } -> Weight.matches
-            fuzzyTypes.any { type -> type.nullability() == TypeNullability.NULLABLE && expectedInfos.any { it.matchingSubstitutor(type.makeNotNullable()) != null } } -> Weight.matchesIfNotNull
-            else -> Weight.doesNotMatch
+        if (fuzzyTypes.isEmpty()) return NO_MATCH
+
+        val classified: Collection<Pair<ExpectedInfo, ExpectedInfoClassification>> = expectedInfos.map { it to fuzzyTypes.classifyExpectedInfo(it) }
+        if (classified.all { it.second == ExpectedInfoClassification.noMatch }) return NO_MATCH
+
+        val nameSimilarity = if (name != null) {
+            val matchingInfos = classified.filter { it.second != ExpectedInfoClassification.noMatch }.map { it.first }
+            calcNameSimilarity(name.asString(), matchingInfos)
         }
+        else {
+            0
+        }
+
+        return if (classified.any { it.second.isMatch() })
+            fullMatch(nameSimilarity)
+        else
+            ifNotNullMatch(nameSimilarity)
     }
 }

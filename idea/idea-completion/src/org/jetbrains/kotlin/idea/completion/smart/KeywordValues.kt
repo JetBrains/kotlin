@@ -54,7 +54,7 @@ object KeywordValues {
 
         if (!skipTrueFalse) {
             val booleanInfoClassifier = { info: ExpectedInfo ->
-                if (info.fuzzyType?.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches
+                if (info.fuzzyType?.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.match(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.noMatch
             }
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) }
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) }
@@ -62,9 +62,9 @@ object KeywordValues {
 
         val classifier = { info: ExpectedInfo ->
             if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
-                ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY)
+                ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
             else
-                ExpectedInfoClassification.notMatches
+                ExpectedInfoClassification.noMatch
         }
         collection.addLookupElements(null, expectedInfos, classifier) {
             LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)

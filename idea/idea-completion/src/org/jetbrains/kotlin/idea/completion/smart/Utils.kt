@@ -124,10 +124,12 @@ private constructor(
         val substitutor: TypeSubstitutor?,
         val makeNotNullable: Boolean
 ) {
+    fun isMatch() = substitutor != null && !makeNotNullable
+
     companion object {
-        val notMatches = ExpectedInfoClassification(null, false)
-        fun matches(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)
-        fun matchesIfNotNullable(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, true)
+        val noMatch = ExpectedInfoClassification(null, false)
+        fun match(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)
+        fun ifNotNullMatch(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, true)
     }
 }
 
@@ -135,17 +137,17 @@ fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): Expe
     val sequence = asSequence()
     val substitutor = sequence.map { expectedInfo.matchingSubstitutor(it) }.firstOrNull()
     if (substitutor != null) {
-        return ExpectedInfoClassification.matches(substitutor)
+        return ExpectedInfoClassification.match(substitutor)
     }
 
     if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
         val substitutor2 = sequence.map { expectedInfo.matchingSubstitutor(it.makeNotNullable()) }.firstOrNull()
         if (substitutor2 != null) {
-            return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
+            return ExpectedInfoClassification.ifNotNullMatch(substitutor2)
         }
     }
 
-    return ExpectedInfoClassification.notMatches
+    return ExpectedInfoClassification.noMatch
 }
 
 fun FuzzyType.classifyExpectedInfo(expectedInfo: ExpectedInfo) = listOf(this).classifyExpectedInfo(expectedInfo)
