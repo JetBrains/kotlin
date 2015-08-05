@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
@@ -218,7 +219,7 @@ public class IncrementalCacheImpl(
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
         protoMap.put(jvmClassName, file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
-        sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, jvmClassName) }
+        sourceFiles.forEach { sourceToClassesMap.add(it, jvmClassName) }
         return DO_NOTHING
     }
 
@@ -242,13 +243,13 @@ public class IncrementalCacheImpl(
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
+                inlineFunctionsMap.process(className, fileBytes)
                 getRecompilationDecision(
                         protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
-                        constantsChanged = constantsMap.process(className, fileBytes),
-                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                        constantsChanged = constantsMap.process(className, fileBytes)
                 )
             }
-            header.isCompatibleClassKind() ->
+            header.isCompatibleClassKind() -> {
                 when (header.classKind!!) {
                     JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
                             protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = false),
@@ -257,7 +258,10 @@ public class IncrementalCacheImpl(
 
                     JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
                 }
+            }
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
+                val facadeClassName = PackageClassUtils.getPackageClassInternalName(kotlinClass.classId.packageFqName)
+                inlineFunctionsMap.process(JvmClassName.byInternalName(facadeClassName), fileBytes)
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
                 packagePartMap.addPackagePart(className)
