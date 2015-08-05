@@ -1,5 +1,5 @@
 package usage
 
-fun main(args: Array<String>) {
+fun useF() {
     inline.f { println("to be inlined") }
 }
