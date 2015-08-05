@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
@@ -63,7 +63,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
     }
 
-    private final Set<JetType> upperBounds = new LinkedHashSet<JetType>();
+    private final Set<JetType> upperBounds = SmartSet.create();
     private boolean initialized = false;
 
     private TypeParameterDescriptorImpl(
