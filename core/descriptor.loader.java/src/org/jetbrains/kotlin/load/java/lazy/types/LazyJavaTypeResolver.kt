@@ -116,7 +116,7 @@ class LazyJavaTypeResolver(
                 is JavaClass -> {
                     val fqName = classifier.getFqName().sure { "Class type should have a FQ name: $classifier" }
 
-                    val classData = mapKotlinClass(fqName) ?: c.moduleClassResolver.resolveClass(classifier)
+                    val classData = mapKotlinClass(fqName) ?: c.components.moduleClassResolver.resolveClass(classifier)
 
                     classData?.getTypeConstructor()
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())

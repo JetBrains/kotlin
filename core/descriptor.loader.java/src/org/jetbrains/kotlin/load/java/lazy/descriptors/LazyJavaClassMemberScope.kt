@@ -68,7 +68,7 @@ public class LazyJavaClassMemberScope(
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)
-            result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
+            result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
         }
         
         enhanceSignatures(
@@ -78,7 +78,7 @@ public class LazyJavaClassMemberScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val functionsFromSupertypes = getFunctionsFromSupertypes(name, getContainingDeclaration())
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.errorReporter))
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
     }
 
     private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
@@ -95,7 +95,7 @@ public class LazyJavaClassMemberScope(
         val propertiesFromSupertypes = getPropertiesFromSupertypes(name, getContainingDeclaration())
 
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
-                                                                   c.errorReporter))
+                                                                   c.components.errorReporter))
     }
 
     private fun computeAnnotationProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
@@ -104,7 +104,7 @@ public class LazyJavaClassMemberScope(
 
         val propertyDescriptor = JavaPropertyDescriptor(
                 getContainingDeclaration(), annotations, method.getVisibility(),
-                /* isVar = */ false, method.getName(), c.sourceElementFactory.source(method), /* original */ null
+                /* isVar = */ false, method.getName(), c.components.sourceElementFactory.source(method), /* original */ null
         )
 
         // default getter is necessary because there is no real field in annotation
@@ -128,10 +128,10 @@ public class LazyJavaClassMemberScope(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
-        val propagated = c.externalSignatureResolver.resolvePropagatedSignature(
+        val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
                 method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters
         )
-        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
                 method, !propagated.getSuperMethods().isEmpty(), propagated.getReturnType(),
                 propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
                 propagated.hasStableParameterNames()
@@ -144,11 +144,11 @@ public class LazyJavaClassMemberScope(
         val classDescriptor = getContainingDeclaration()
 
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
-                classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.sourceElementFactory.source(constructor)
+                classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
         )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
-        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
                 constructor, false, null, null, valueParameters.descriptors, Collections.emptyList(), false)
 
         constructorDescriptor.initialize(
@@ -163,10 +163,10 @@ public class LazyJavaClassMemberScope(
 
         val signatureErrors = effectiveSignature.getErrors()
         if (!signatureErrors.isEmpty()) {
-            c.externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors)
+            c.components.externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors)
         }
 
-        c.javaResolverCache.recordConstructor(constructor, constructorDescriptor)
+        c.components.javaResolverCache.recordConstructor(constructor, constructorDescriptor)
 
         return constructorDescriptor
     }
@@ -178,7 +178,7 @@ public class LazyJavaClassMemberScope(
 
         val classDescriptor = getContainingDeclaration()
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
-                classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.sourceElementFactory.source(jClass)
+                classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
         )
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
@@ -188,7 +188,7 @@ public class LazyJavaClassMemberScope(
         constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
-        c.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
+        c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
         return constructorDescriptor
     }
 
@@ -250,7 +250,7 @@ public class LazyJavaClassMemberScope(
                 method.hasAnnotationParameterDefaultValue(),
                 // Nulls are not allowed in annotation arguments in Java
                 varargElementType?.let { TypeUtils.makeNotNullable(it) },
-                c.sourceElementFactory.source(method)
+                c.components.sourceElementFactory.source(method)
         ))
     }
 
@@ -271,7 +271,7 @@ public class LazyJavaClassMemberScope(
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
                                                          c.storageManager.createLazyValue {
                                                              memberIndex().getAllFieldNames() + memberIndex().getMethodNames({true})
-                                                         }, c.sourceElementFactory.source(field))
+                                                         }, c.components.sourceElementFactory.source(field))
             }
             else null
         }

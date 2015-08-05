@@ -43,7 +43,7 @@ public abstract class LazyJavaStaticScope(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
-        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
                 method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
         return LazyJavaScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
     }

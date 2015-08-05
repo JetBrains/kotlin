@@ -64,7 +64,7 @@ public class LazyJavaStaticClassScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
-        result.addIfNotNull(c.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
+        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
 
         if (jClass.isEnum()) {
             when (name) {

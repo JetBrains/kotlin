@@ -99,7 +99,7 @@ abstract class AbstractJavaAnnotationDescriptor(
         annotation: JavaAnnotation?,
         private val kotlinAnnotationClassDescriptor: ClassDescriptor
 ): AnnotationDescriptor {
-    private val source = annotation?.let { c.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
+    private val source = annotation?.let { c.components.sourceElementFactory.source(it) } ?: SourceElement.NO_SOURCE
 
     override fun getType() = kotlinAnnotationClassDescriptor.defaultType
 
