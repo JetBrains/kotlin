@@ -66,7 +66,7 @@ public interface KotlinFunctionStub : KotlinCallableStubBase<JetNamedFunction> {
 public interface KotlinImportDirectiveStub : StubElement<JetImportDirective> {
     public fun isAbsoluteInRootPackage(): Boolean
     public fun isAllUnder(): Boolean
-    public fun getImportedFqName(): FqName
+    public fun getImportedFqName(): FqName?
     public fun getAliasName(): String?
     public fun isValid(): Boolean
 }

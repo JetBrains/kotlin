@@ -28,13 +28,18 @@ public class KotlinImportDirectiveStubImpl(
         parent: StubElement<PsiElement>,
         private val isAbsoluteInRootPackage: Boolean,
         private val isAllUnder: Boolean,
-        private val importedFqName: StringRef,
+        private val importedFqName: StringRef?,
         private val aliasName: StringRef?,
         private val isValid: Boolean) : KotlinStubBaseImpl<JetImportDirective>(parent, JetStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
 
     override fun isAbsoluteInRootPackage(): Boolean = isAbsoluteInRootPackage
     override fun isAllUnder(): Boolean = isAllUnder
-    override fun getImportedFqName(): FqName = FqName(StringRef.toString(importedFqName)!!)
+
+    override fun getImportedFqName(): FqName? {
+        val fqNameString = StringRef.toString(importedFqName)
+        return if (fqNameString != null) FqName(fqNameString) else null
+    }
+
     override fun getAliasName(): String? = StringRef.toString(aliasName)
     override fun isValid(): Boolean = isValid
 }
