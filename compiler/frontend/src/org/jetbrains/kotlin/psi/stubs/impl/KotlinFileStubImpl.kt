@@ -14,69 +14,50 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi.stubs.impl;
+package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.java.stubs.PsiClassStub;
-import com.intellij.psi.stubs.PsiClassHolderFileStub;
-import com.intellij.psi.stubs.PsiFileStubImpl;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.tree.IStubFileElementType;
-import com.intellij.util.io.StringRef;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.kotlin.name.FqName;
+import com.google.common.collect.Lists
+import com.intellij.psi.PsiClass
+import com.intellij.psi.impl.java.stubs.PsiClassStub
+import com.intellij.psi.stubs.PsiClassHolderFileStub
+import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.tree.IStubFileElementType
+import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-import java.util.List;
+public class KotlinFileStubImpl(jetFile: JetFile?, private val packageName: StringRef, private val isScript: Boolean)// SCRIPT: PsiJetFileStubImpl knows about scripting
+    : PsiFileStubImpl<JetFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<JetFile> {
 
-public class KotlinFileStubImpl extends PsiFileStubImpl<JetFile> implements KotlinFileStub, PsiClassHolderFileStub<JetFile> {
-
-    private final StringRef packageName;
-    private final boolean isScript;
-
-    public KotlinFileStubImpl(JetFile jetFile, @NotNull StringRef packageName, boolean isScript) {
-        super(jetFile);
-        this.packageName = packageName;
-        // SCRIPT: PsiJetFileStubImpl knows about scripting
-        this.isScript = isScript;
+    public constructor(jetFile: JetFile?, packageName: String, isScript: Boolean)
+        : this(jetFile, StringRef.fromString(packageName)!!, isScript) {
     }
 
-    public KotlinFileStubImpl(JetFile jetFile, @NotNull String packageName, boolean isScript) {
-        this(jetFile, StringRef.fromString(packageName), isScript);
+    override fun getPackageFqName(): FqName {
+        return FqName(StringRef.toString(packageName)!!)
     }
 
-    @Override
-    @NotNull
-    public FqName getPackageFqName() {
-        return new FqName(StringRef.toString(packageName));
+    override fun isScript(): Boolean {
+        return isScript
     }
 
-    @Override
-    public boolean isScript() {
-        return isScript;
+    override fun getType(): IStubFileElementType<KotlinFileStub> {
+        return JetStubElementTypes.FILE
     }
 
-    @Override
-    public IStubFileElementType getType() {
-        return JetStubElementTypes.FILE;
+    override fun toString(): String {
+        return "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
     }
 
-    @Override
-    public String toString() {
-        return "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]";
-    }
-
-    @Override
-    public PsiClass[] getClasses() {
-        List<PsiClass> result = Lists.newArrayList();
-        for (StubElement child : getChildrenStubs()) {
-            if (child instanceof PsiClassStub) {
-                result.add((PsiClass) child.getPsi());
+    override fun getClasses(): Array<PsiClass> {
+        val result = Lists.newArrayList<PsiClass>()
+        for (child in getChildrenStubs()) {
+            if (child is PsiClassStub<*>) {
+                result.add(child.getPsi() as PsiClass)
             }
         }
-        return result.toArray(new PsiClass[result.size()]);
+        return result.toArray<PsiClass>(arrayOfNulls<PsiClass>(result.size()))
     }
 }
