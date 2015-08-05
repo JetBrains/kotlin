@@ -14,118 +14,111 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.search.ideaExtensions;
+package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.impl.search.AnnotatedElementsSearcher;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.Processor;
-import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.impl.search.AnnotatedElementsSearcher
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.AnnotatedElementsSearch
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.Processor
+import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import java.util.ArrayList
 
-import java.util.ArrayList;
-import java.util.Collection;
+public class KotlinAnnotatedElementsSearcher : AnnotatedElementsSearcher() {
 
-public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
-    private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher");
+    override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<PsiModifierListOwner>): Boolean {
+        val annClass = p.getAnnotationClass()
+        assert(annClass.isAnnotationType(), "Annotation type should be passed to annotated members search")
 
-    @Override
-    public boolean execute(@NotNull AnnotatedElementsSearch.Parameters p, @NotNull final Processor<PsiModifierListOwner> consumer) {
-        PsiClass annClass = p.getAnnotationClass();
-        assert annClass.isAnnotationType() : "Annotation type should be passed to annotated members search";
+        val annotationFQN = annClass.getQualifiedName()
+        assert(annotationFQN != null)
 
-        final String annotationFQN = annClass.getQualifiedName();
-        assert annotationFQN != null;
+        val useScope = p.getScope()
 
-        SearchScope useScope = p.getScope();
+        for (elt in getJetAnnotationCandidates(annClass, useScope)) {
+            if (notJetAnnotationEntry(elt)) continue
 
-        for (final PsiElement elt : getJetAnnotationCandidates(annClass, useScope)) {
-            if (notJetAnnotationEntry(elt)) continue;
+            ApplicationManager.getApplication().runReadAction(object : Runnable {
+                override fun run() {
+                    val parentOfType = PsiTreeUtil.getParentOfType<JetDeclaration>(elt, javaClass<JetDeclaration>()) ?: return
 
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-                @Override
-                public void run() {
-                    JetDeclaration parentOfType = PsiTreeUtil.getParentOfType(elt, JetDeclaration.class);
-                    if (parentOfType == null) return;
+                    val annotationEntry = elt as JetAnnotationEntry
 
-                    JetAnnotationEntry annotationEntry = (JetAnnotationEntry) elt;
+                    val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
+                    val annotationDescriptor = context.get<JetAnnotationEntry, AnnotationDescriptor>(BindingContext.ANNOTATION, annotationEntry)
+                    if (annotationDescriptor == null) return
 
-                    BindingContext context = ResolvePackage.analyze(annotationEntry, BodyResolveMode.PARTIAL);
-                    AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
-                    if (annotationDescriptor == null) return;
+                    val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor()
+                    if (descriptor == null) return
+                    if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return
 
-                    ClassifierDescriptor descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-                    if (descriptor == null) return;
-                    if (!(DescriptorUtils.getFqName(descriptor).asString().equals(annotationFQN))) return;
-
-                    if (parentOfType instanceof JetClass) {
-                        PsiClass lightClass = LightClassUtil.getPsiClass((JetClass) parentOfType);
-                        consumer.process(lightClass);
+                    if (parentOfType is JetClass) {
+                        val lightClass = LightClassUtil.getPsiClass(parentOfType as JetClass?)
+                        consumer.process(lightClass)
                     }
-                    else if (parentOfType instanceof JetNamedFunction || parentOfType instanceof JetSecondaryConstructor) {
-                        PsiMethod wrappedMethod = LightClassUtil.getLightClassMethod((JetFunction) parentOfType);
-                        consumer.process(wrappedMethod);
+                    else if (parentOfType is JetNamedFunction || parentOfType is JetSecondaryConstructor) {
+                        val wrappedMethod = LightClassUtil.getLightClassMethod(parentOfType as JetFunction)
+                        consumer.process(wrappedMethod)
                     }
                 }
-            });
+            })
         }
 
-        return true;
+        return true
     }
 
-    /* Return all elements annotated with given annotation name. Aliases don't work now. */
-    private static Collection<? extends PsiElement> getJetAnnotationCandidates(final PsiClass annClass, final SearchScope useScope) {
-        return ApplicationManager.getApplication().runReadAction(new Computable<Collection<? extends PsiElement>>() {
-            @Override
-            public Collection<? extends PsiElement> compute() {
-                if (useScope instanceof GlobalSearchScope) {
-                    Collection<JetAnnotationEntry> annotationEntries =
-                            JetAnnotationsIndex.getInstance().get(annClass.getName(), annClass.getProject(), (GlobalSearchScope) useScope);
+    companion object {
+        private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
-                    // Add annotations 'test' as often used alias when we search Test annotation
-                    if (annClass.getName().equals("Test")) {
-                        annotationEntries.addAll(JetAnnotationsIndex.getInstance().get(annClass.getName().toLowerCase(), annClass.getProject(), (GlobalSearchScope) useScope));
+        /* Return all elements annotated with given annotation name. Aliases don't work now. */
+        private fun getJetAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
+            return ApplicationManager.getApplication().runReadAction(object : Computable<Collection<PsiElement>> {
+                override fun compute(): Collection<PsiElement> {
+                    if (useScope is GlobalSearchScope) {
+                        val name = annClass.getName() ?: return emptyList()
+                        val annotationEntries = JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
+
+                        // Add annotations 'test' as often used alias when we search Test annotation
+                        if (name == "Test") {
+                            annotationEntries.addAll(JetAnnotationsIndex.getInstance().get(name.toLowerCase(), annClass.getProject(), useScope))
+                        }
+
+                        return annotationEntries
                     }
 
-                    return annotationEntries;
+                    // TODO getJetAnnotationCandidates works only with global search scope
+                    return ArrayList()
                 }
+            })
+        }
 
-                // TODO getJetAnnotationCandidates works only with global search scope
-                return new ArrayList<PsiElement>();
+        private fun notJetAnnotationEntry(found: PsiElement): Boolean {
+            if (found is JetAnnotationEntry) return false
+
+            val faultyContainer = PsiUtilCore.getVirtualFile(found)
+            LOG.error("Non annotation in annotations list: $faultyContainer; element:$found")
+            if (faultyContainer != null && faultyContainer.isValid()) {
+                FileBasedIndex.getInstance().requestReindex(faultyContainer)
             }
-        });
-    }
 
-    private static boolean notJetAnnotationEntry(PsiElement found) {
-        if (found instanceof JetAnnotationEntry) return false;
-
-        VirtualFile faultyContainer = PsiUtilCore.getVirtualFile(found);
-        LOG.error("Non annotation in annotations list: " + faultyContainer+"; element:"+found);
-        if (faultyContainer != null && faultyContainer.isValid()) {
-            FileBasedIndex.getInstance().requestReindex(faultyContainer);
+            return true
         }
-
-        return true;
     }
 
 }
