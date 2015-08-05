@@ -75,7 +75,7 @@ public enum class AnnotationRetention {
  * @property allowedTargets list of allowed annotation targets
  */
 target(AnnotationTarget.ANNOTATION_CLASS)
-public annotation class target(vararg val allowedTargets: AnnotationTarget)
+public annotation(mustBeDocumented = true) class target(vararg val allowedTargets: AnnotationTarget)
 
 /**
  * This special meta-annotation is used to declare an annotation and to set its base properties.
@@ -86,7 +86,7 @@ public annotation class target(vararg val allowedTargets: AnnotationTarget)
  * @property mustBeDocumented true if annotation is a part of public API and therefore must be documented, otherwise false (default)
  */
 target(AnnotationTarget.ANNOTATION_CLASS)
-public annotation(retention = AnnotationRetention.SOURCE) class annotation (
+public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class annotation (
         val retention: AnnotationRetention = AnnotationRetention.RUNTIME,
         val repeatable: Boolean = false,
         val mustBeDocumented: Boolean = false

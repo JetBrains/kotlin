@@ -1091,7 +1091,7 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
     public open fun isEmpty(): kotlin.Boolean
 }
 
-kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.annotation(retention = AnnotationRetention.BINARY) public final class ReplaceWith : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.BINARY) public final class ReplaceWith : kotlin.Annotation {
     /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     internal final val expression: kotlin.String
         internal final fun <get-expression>(): kotlin.String
@@ -1261,11 +1261,11 @@ public object Unit {
     /*primary*/ private constructor Unit()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation() public final class data : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class data : kotlin.Annotation {
     /*primary*/ public constructor data()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation() public final class deprecated : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class deprecated : kotlin.Annotation {
     /*primary*/ public constructor deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
     internal final val replaceWith: kotlin.ReplaceWith
         internal final fun <get-replaceWith>(): kotlin.ReplaceWith
@@ -1273,23 +1273,23 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, Annotati
         internal final fun <get-value>(): kotlin.String
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation() public final class extension : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annotation.annotation(mustBeDocumented = true) public final class extension : kotlin.Annotation {
     /*primary*/ public constructor extension()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
         public final fun <get-strategy>(): kotlin.InlineStrategy
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class inlineOptions : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class inlineOptions : kotlin.Annotation {
     /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<out kotlin.InlineOption>*/)
     internal final val value: kotlin.Array<out kotlin.InlineOption>
         internal final fun <get-value>(): kotlin.Array<out kotlin.InlineOption>
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true, retention = AnnotationRetention.RUNTIME) public final class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
 

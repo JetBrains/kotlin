@@ -35,4 +35,4 @@ package kotlin.jvm
  *  MyList<Int?>().add(null) // Ok
  */
 target(AnnotationTarget.CLASSIFIER)
-public annotation(retention = AnnotationRetention.RUNTIME) class PurelyImplements(public val value: String)
+public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class PurelyImplements(public val value: String)

@@ -27,7 +27,7 @@ import kotlin.annotation.AnnotationRetention.*
  * for more information.
  */
 target(CLASSIFIER)
-public annotation class data
+public annotation(mustBeDocumented = true) class data
 
 /**
  * Marks the annotated class, function, property, variable or parameter as deprecated.
@@ -37,7 +37,7 @@ public annotation class data
  */
 target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
        LOCAL_VARIABLE, FIELD, VALUE_PARAMETER)
-public annotation class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
+public annotation(mustBeDocumented = true) class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
  * Specifies a code fragment that can be used to replace a deprecated function or property. Tools such
@@ -53,13 +53,13 @@ public annotation class deprecated(val value: String, val replaceWith: ReplaceWi
  *     replacement expression to be resolved correctly.
  */
 target()
-public annotation(retention = BINARY) class ReplaceWith(val expression: String, vararg val imports: String)
+public annotation(retention = BINARY, mustBeDocumented = true) class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
  * Signifies that the annotated functional type represents an extension function.
  */
 target(TYPE)
-public annotation class extension
+public annotation(mustBeDocumented = true) class extension
 
 /**
  * Suppresses the given compilation warnings in the annotated element.

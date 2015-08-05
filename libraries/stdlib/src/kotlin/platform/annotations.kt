@@ -26,7 +26,7 @@ import kotlin.annotation.AnnotationTarget.*
  * @property name the name of the element.
  */
 target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.RUNTIME) class platformName(public val name: String)
+public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformName(public val name: String)
 
 /**
  * Specifies that a static method or field needs to be generated from this element.
@@ -34,4 +34,4 @@ public annotation(retention = AnnotationRetention.RUNTIME) class platformName(pu
  * for more information.
  */
 target(FUNCTION, PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
-public annotation(retention = AnnotationRetention.RUNTIME) class platformStatic
+public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformStatic
