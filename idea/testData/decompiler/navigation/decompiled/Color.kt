@@ -4,11 +4,11 @@
 package testData.libraries
 
 [[public final enum class Color private constructor(rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
-    [[RED]]
+    [[RED]],
 
-    [[GREEN]]
+    [[GREEN]],
 
-    [[BLUE]]
+    [[BLUE]];
 
     [internal final val rgb: kotlin.Int /* compiled code */]
 }]]
