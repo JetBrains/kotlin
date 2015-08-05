@@ -144,6 +144,7 @@ public object KotlinListUtils {
     // Methods
     public val addMethodName: String = "add"
     public val addAllMethodName: String = "addAll"
+    public val clearMethodName: String = "clear"
 }
 
 public object KotlinCollectionsUtils {

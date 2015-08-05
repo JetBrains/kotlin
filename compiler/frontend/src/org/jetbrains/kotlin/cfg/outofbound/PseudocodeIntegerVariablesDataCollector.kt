@@ -294,6 +294,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                     processSizeMethodCallOnCollection(instruction, updatedData)
                                 isIncreaseSizeMethodCallOnCollection(callInfo) ->
                                     processIncreaseSizeMethodCallOnCollection(callInfo, instruction, updatedData)
+                                isDecreaseSizeMethodCallOnCollection(callInfo) ->
+                                    processDecreaseSizeMethodCallOnCollection(callInfo, instruction, updatedData)
                                 else -> Unit
                             }
                         }
@@ -603,5 +605,26 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             return tryExtractFromInstruction(passedCollectionValueSourceInstruction)
         }
         return null
+    }
+
+    private fun isDecreaseSizeMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo): Boolean =
+            CallInstructionUtils.checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.clearMethodName },
+                    { KotlinBuiltIns.isUnit(it) }
+            )
+
+    private fun processDecreaseSizeMethodCallOnCollection(callInfo: CallInstructionUtils.CallInfo, instruction: CallInstruction, updatedData: ValuesData) {
+        if (instruction.inputValues.size() > 0) {
+            val collectionVariableValueSourceInstruction = instruction.inputValues[0].createdAt
+                                                           ?: return
+            val collectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                    collectionVariableValueSourceInstruction, false, bindingContext
+            ) ?: return
+            when(callInfo.calledName) {
+                KotlinListUtils.clearMethodName ->
+                    updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerVariableValues(0)
+            }
+        }
     }
 }

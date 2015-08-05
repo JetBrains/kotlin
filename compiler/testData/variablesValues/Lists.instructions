@@ -133,3 +133,32 @@ error:
 sink:
     <SINK>                                                                                                                                             in: INTS{} BOOLS{} ARRS{}                      out: INTS{} BOOLS{} ARRS{}
 =====================
+== listClear ==
+fun listClear() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.clear()
+    42
+}
+---------------------
+L0:
+  1 <START>                                                             in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+  2 mark({ val lst = arrayListOf(1, 2, 3) lst.clear() 42 })             in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+    v(val lst = arrayListOf(1, 2, 3))                                   in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{lst:-}
+    r(1) -> <v0>                                                        in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    r(2) -> <v1>                                                        in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    r(3) -> <v2>                                                        in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    mark(arrayListOf(1, 2, 3))                                          in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    call(arrayListOf(1, 2, 3), arrayListOf|<v0>, <v1>, <v2>) -> <v3>    in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    w(lst|<v3>)                                                         in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(lst.clear())                                                   in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(lst) -> <v4>                                                      in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(clear())                                                       in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    call(clear(), clear|<v4>) -> <v5>                                   in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[0]}
+    r(42) -> <v6>                                                       in: INTS{} BOOLS{} ARRS{lst:[0]}    out: INTS{} BOOLS{} ARRS{lst:[0]}
+L1:
+  1 <END>                                                               in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                                             in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                                              in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+=====================

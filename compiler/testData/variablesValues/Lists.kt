@@ -23,3 +23,9 @@ fun listAdd() {
     lst2.addAll(lst)
     42
 }
+
+fun listClear() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.clear()
+    42
+}
