@@ -86,16 +86,36 @@ class ByExpectedTypeFilter(val fuzzyType: FuzzyType) : ByTypeFilter {
     override fun hashCode() = fuzzyType.hashCode()
 }
 
-open data class ExpectedInfo(val filter: ByTypeFilter, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT) {
-    constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT)
-        : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions)
+data class ExpectedInfo(
+        val filter: ByTypeFilter,
+        val expectedName: String?,
+        val tail: Tail?,
+        val itemOptions: ItemOptions = ItemOptions.DEFAULT,
+        val additionalData: ExpectedInfo.AdditionalData? = null
+) {
+    // just a marker interface
+    interface AdditionalData {}
 
-    constructor(type: JetType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT)
-        : this(FuzzyType(type, emptyList()), expectedName, tail, itemOptions)
+    constructor(fuzzyType: FuzzyType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
+        : this(ByExpectedTypeFilter(fuzzyType), expectedName, tail, itemOptions, additionalData)
+
+    constructor(type: JetType, expectedName: String?, tail: Tail?, itemOptions: ItemOptions = ItemOptions.DEFAULT, additionalData: ExpectedInfo.AdditionalData? = null)
+        : this(FuzzyType(type, emptyList()), expectedName, tail, itemOptions, additionalData)
 
     fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? = filter.matchingSubstitutor(descriptorType)
 
     fun matchingSubstitutor(descriptorType: JetType): TypeSubstitutor? = matchingSubstitutor(FuzzyType(descriptorType, emptyList()))
+
+    companion object {
+        fun createForArgument(type: JetType, name: String?, tail: Tail?, function: FunctionDescriptor, position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT): ExpectedInfo {
+            return ExpectedInfo(FuzzyType(type, function.typeParameters), name, tail, itemOptions, ArgumentAdditionalData(function, position))
+        }
+
+        fun createForReturnValue(type: JetType?, callable: CallableDescriptor): ExpectedInfo {
+            val filter = if (type != null) ByExpectedTypeFilter(FuzzyType(type, emptyList())) else ByTypeFilter.All
+            return ExpectedInfo(filter, callable.name.asString(), null, additionalData = ReturnValueAdditionalData(callable))
+        }
+    }
 }
 
 val ExpectedInfo.fuzzyType: FuzzyType?
@@ -106,26 +126,17 @@ data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val
     constructor(argumentIndex: Int, argumentName: Name?) : this(argumentIndex, argumentName, false)
 }
 
-class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT)
-  : ExpectedInfo(FuzzyType(type, function.typeParameters), name, tail, itemOptions) {
-
+class ArgumentAdditionalData(val function: FunctionDescriptor, val position: ArgumentPosition) : ExpectedInfo.AdditionalData {
     override fun equals(other: Any?)
-            = other is ArgumentExpectedInfo && super.equals(other) && function == other.function && position == other.position
+            = other is ArgumentAdditionalData && function == other.function && position == other.position
 
     override fun hashCode()
             = function.hashCode()
 }
 
-class ReturnValueExpectedInfo(
-        type: JetType?,
-        val callable: CallableDescriptor
-) : ExpectedInfo(
-        if (type != null) ByExpectedTypeFilter(FuzzyType(type, emptyList())) else ByTypeFilter.All,
-        callable.name.asString(),
-        null
-) {
+class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo.AdditionalData {
     override fun equals(other: Any?)
-            = other is ReturnValueExpectedInfo && super.equals(other) && callable == other.callable
+            = other is ReturnValueAdditionalData && callable == other.callable
 
     override fun hashCode()
             = callable.hashCode()
@@ -180,7 +191,14 @@ class ExpectedInfos(
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
         val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument) ?: return null
 
-        if (useOuterCallsExpectedTypeCount > 0 && results.any { it.fuzzyType != null && it.fuzzyType!!.freeParameters.isNotEmpty() && it.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false }) {
+        fun makesSenseToUseOuterCallExpectedType(info: ExpectedInfo): Boolean {
+            val data = info.additionalData as ArgumentAdditionalData
+            return info.fuzzyType != null
+                   && info.fuzzyType!!.freeParameters.isNotEmpty()
+                   && data.function.fuzzyReturnType()?.freeParameters?.isNotEmpty() ?: false
+        }
+
+        if (useOuterCallsExpectedTypeCount > 0 && results.any(::makesSenseToUseOuterCallExpectedType)) {
             val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
             val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
@@ -198,7 +216,7 @@ class ExpectedInfos(
         return results
     }
 
-    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ArgumentExpectedInfo>? {
+    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo>? {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
@@ -229,7 +247,7 @@ class ExpectedInfos(
         val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val expectedInfos = LinkedHashSet<ArgumentExpectedInfo>()
+        val expectedInfos = LinkedHashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val status = candidate.getStatus()
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
@@ -289,11 +307,11 @@ class ExpectedInfos(
                     tail
 
                 if (!alreadyHasStar) {
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
+                    expectedInfos.add(ExpectedInfo.createForArgument(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
                 }
 
                 val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-                expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
+                expectedInfos.add(ExpectedInfo.createForArgument(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
             }
             else {
                 if (alreadyHasStar) continue
@@ -305,11 +323,11 @@ class ExpectedInfos(
 
                 if (isFunctionLiteralArgument) {
                     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                        expectedInfos.add(ArgumentExpectedInfo(parameterType, expectedName, null, descriptor, argumentPosition))
+                        expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, null, descriptor, argumentPosition))
                     }
                 }
                 else {
-                    expectedInfos.add(ArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, argumentPosition))
+                    expectedInfos.add(ExpectedInfo.createForArgument(parameterType, expectedName, tail, descriptor, argumentPosition))
                 }
             }
         }
@@ -457,18 +475,18 @@ class ExpectedInfos(
         return functionReturnValueExpectedInfo(descriptor, expectType = true).singletonOrEmptyList()
     }
 
-    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, expectType: Boolean): ReturnValueExpectedInfo? {
+    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, expectType: Boolean): ExpectedInfo? {
         return when (descriptor) {
             is SimpleFunctionDescriptor -> {
                 val expectedType = if (expectType) descriptor.returnType else null
-                ReturnValueExpectedInfo(expectedType, descriptor)
+                ExpectedInfo.createForReturnValue(expectedType, descriptor)
             }
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.getCorrespondingProperty()
                 val expectedType = if (expectType) property.type else null
-                ReturnValueExpectedInfo(expectedType, property)
+                ExpectedInfo.createForReturnValue(expectedType, property)
             }
 
             else -> null

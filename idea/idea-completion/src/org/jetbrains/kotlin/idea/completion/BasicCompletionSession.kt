@@ -30,8 +30,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
-import org.jetbrains.kotlin.idea.completion.smart.toExpressionWithType
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
@@ -95,13 +96,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     else
         null
 
-    private val expectedInfos = if (expression != null)
-        ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor).calculate(expression.toExpressionWithType())
-    else
-        null
-
     private val smartCompletion = expression?.let {
-        SmartCompletion(it, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory)
+        SmartCompletion(it, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
+                        GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true)
     }
 
     private fun calcCompletionKind(): CompletionKind {
@@ -198,6 +195,20 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
+            if (smartCompletion != null) {
+                @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
+                val (additionalItems, inheritanceSearcher) = smartCompletion.additionalItems()
+
+                // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
+                for (item in additionalItems) {
+                    if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
+                        item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                    }
+                }
+
+                collector.addElements(additionalItems)
+            }
+
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
@@ -251,12 +262,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                if (smartCompletion != null && expectedInfos != null && expectedInfos.isNotEmpty()) {
-                    @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
-                    val (additionalItems, inheritanceSearcher) = smartCompletion.additionalItems(expectedInfos, forOrdinaryCompletion = true)
-                    collector.addElements(additionalItems)
-                }
-
                 flushToResultSet()
 
                 if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
@@ -300,8 +305,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
         }
 
-        if (smartCompletion != null && expectedInfos != null && expectedInfos.isNotEmpty()) {
-            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCompletion), SmartCompletionPriorityWeigher)
+        if (smartCompletion != null) {
+            sorter = sorter.weighBefore(KindWeigher.toString(), SmartCompletionInBasicWeigher(smartCompletion), SmartCompletionPriorityWeigher)
         }
 
         return sorter

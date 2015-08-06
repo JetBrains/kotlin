@@ -43,8 +43,8 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
-            if (expectedInfo is ArgumentExpectedInfo && expectedInfo.position == ArgumentPosition(0)) {
-                val parameters = expectedInfo.function.getValueParameters()
+            if (expectedInfo.additionalData is ArgumentAdditionalData && expectedInfo.additionalData.position == ArgumentPosition(0)) {
+                val parameters = expectedInfo.additionalData.function.valueParameters
                 if (parameters.size() > 1) {
                     val variables = ArrayList<VariableDescriptor>()
                     for ((i, parameter) in parameters.withIndex()) {

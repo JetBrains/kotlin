@@ -315,17 +315,23 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
 
         val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 
-        return object : BaseTypeLookupElement(type, baseLookupElement) {
+        val typeLookupElement = object : BaseTypeLookupElement(type, baseLookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
                 presentation.setItemText(itemText)
             }
         }
+
+        // if type is simply classifier without anything else, use classifier's lookup element to avoid duplicates (works after "as" in basic completion)
+        return if (typeLookupElement.fullText == IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier))
+            baseLookupElement
+        else
+            typeLookupElement
     }
 }
 
 private open class BaseTypeLookupElement(type: JetType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
-    private val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText
     override fun hashCode() = fullText.hashCode()

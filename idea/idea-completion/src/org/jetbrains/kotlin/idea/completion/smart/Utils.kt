@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
@@ -41,7 +38,6 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.ArrayList
 import java.util.HashMap
-import java.util.HashSet
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -59,8 +55,7 @@ class ArtificialElementInsertHandler(
 }
 
 fun mergeTails(tails: Collection<Tail?>): Tail? {
-    if (tails.size() == 1) return tails.single()
-    return if (HashSet(tails).size() == 1) tails.first() else null
+    return tails.singleOrNull() ?: tails.toSet().singleOrNull()
 }
 
 fun LookupElement.addTail(tail: Tail?): LookupElement {
@@ -187,7 +182,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
             val lookupElement = itemData.createLookupElement()
             if (lookupElement != null) {
                 val nameSimilarityInfos = if (noNameSimilarityForReturnItself && descriptor is CallableDescriptor) {
-                    infos.filter { (it as? ReturnValueExpectedInfo)?.callable != descriptor } // do not calculate name similarity with function itself in its return
+                    infos.filter { (it.additionalData as? ReturnValueAdditionalData)?.callable != descriptor } // do not calculate name similarity with function itself in its return
                 }
                 else
                     infos
@@ -341,10 +336,6 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(smartCastCalculator: Smar
     else {
         return emptyList()
     }
-}
-
-fun JetExpression.toExpressionWithType(): JetExpression {
-    return (this as? JetSimpleNameExpression)?.getReceiverExpression()?.parent as? JetExpression ?: this
 }
 
 fun Collection<ExpectedInfo>.filterFunctionExpected()

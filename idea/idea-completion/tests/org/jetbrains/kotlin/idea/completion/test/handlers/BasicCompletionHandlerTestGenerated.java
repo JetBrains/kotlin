@@ -77,6 +77,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NoTailFromSmart.kt")
+    public void testNoTailFromSmart() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NoTailFromSmart.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PlatformStaticInClass.kt")
     public void testPlatformStaticInClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInClass.kt");

@@ -147,6 +147,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExpectedInfo extends AbstractBasicCompletionWeigherTest {
+        @TestMetadata("AfterAs.kt")
+        public void testAfterAs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/AfterAs.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInExpectedInfo() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }

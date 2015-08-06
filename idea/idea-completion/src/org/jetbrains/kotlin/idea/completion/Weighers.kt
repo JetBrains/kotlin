@@ -186,13 +186,9 @@ class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWei
     }
 }
 
-class ExpectedInfoMatchWeigher(
-        private val expectedInfos: Collection<ExpectedInfo>,
-        private val smartCompletion: SmartCompletion
-) : LookupElementWeigher("kotlin.expectedInfoMatch") {
-
-    private val smartCastCalculator = smartCompletion.smartCastCalculator
+class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion) : LookupElementWeigher("kotlin.smartInBasic") {
     private val descriptorsToSkip = smartCompletion.descriptorsToSkip
+    private val expectedInfos = smartCompletion.expectedInfos
 
     private fun fullMatchWeight(nameSimilarity: Int): Long {
         return -((3L shl 32) + nameSimilarity)
@@ -218,10 +214,16 @@ class ExpectedInfoMatchWeigher(
 
         // TODO: keywords with type
         val o = element.`object`
+
+        if ((o as? DeclarationLookupObject)?.descriptor in descriptorsToSkip) return DESCRIPTOR_TO_SKIP_WEIGHT
+
+        if (expectedInfos == null || expectedInfos.isEmpty()) return NO_MATCH_WEIGHT
+
+        val smartCastCalculator = smartCompletion.smartCastCalculator
+
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
-                if (descriptor in descriptorsToSkip) return DESCRIPTOR_TO_SKIP_WEIGHT
                 descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
             }
 

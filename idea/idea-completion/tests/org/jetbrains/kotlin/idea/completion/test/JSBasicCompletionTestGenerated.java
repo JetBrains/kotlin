@@ -1310,6 +1310,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FromSmart extends AbstractJSBasicCompletionTest {
+            @TestMetadata("AfterAs.kt")
+            public void testAfterAs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/AfterAs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AfterAsNoDuplicates.kt")
+            public void testAfterAsNoDuplicates() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/AfterAsNoDuplicates.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInFromSmart() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), true);
             }
