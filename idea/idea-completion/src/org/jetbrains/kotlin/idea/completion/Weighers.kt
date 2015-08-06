@@ -217,7 +217,7 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
 
         if ((o as? DeclarationLookupObject)?.descriptor in descriptorsToSkip) return DESCRIPTOR_TO_SKIP_WEIGHT
 
-        if (expectedInfos == null || expectedInfos.isEmpty()) return NO_MATCH_WEIGHT
+        if (expectedInfos.isEmpty()) return NO_MATCH_WEIGHT
 
         val smartCastCalculator = smartCompletion.smartCastCalculator
 

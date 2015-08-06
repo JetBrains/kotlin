@@ -149,7 +149,7 @@ class ExpectedInfos(
         val useHeuristicSignatures: Boolean = true,
         val useOuterCallsExpectedTypeCount: Int = 0
 ) {
-    public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+    public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)
                             ?: calculateForFunctionLiteralArgument(expressionWithType)
                             ?: calculateForEqAndAssignment(expressionWithType)
@@ -164,7 +164,7 @@ class ExpectedInfos(
                             ?: calculateForLoopRange(expressionWithType)
                             ?: calculateForInOperatorArgument(expressionWithType)
                             ?: getFromBindingContext(expressionWithType)
-                            ?: return null
+                            ?: return emptyList()
         return expectedInfos.filterNot { it.fuzzyType?.type?.isError ?: false }
     }
 
@@ -188,8 +188,8 @@ class ExpectedInfos(
         return calculateForArgument(call, argument)
     }
 
-    public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
-        val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument) ?: return null
+    public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo> {
+        val results = calculateForArgument(call, TypeUtils.NO_EXPECTED_TYPE, argument)
 
         fun makesSenseToUseOuterCallExpectedType(info: ExpectedInfo): Boolean {
             val data = info.additionalData as ArgumentAdditionalData
@@ -202,21 +202,21 @@ class ExpectedInfos(
             val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
             val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
-                    ?.map { it.fuzzyType }
-                    ?.filterNotNull() ?: return results
+                    .map { it.fuzzyType }
+                    .filterNotNull()
             if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
 
             return expectedFuzzyTypes
                     .map { it.type }
                     .toSet()
-                    .flatMap { calculateForArgument(call, it, argument) ?: emptyList() }
+                    .flatMap { calculateForArgument(call, it, argument) }
                     .toSet()
         }
 
         return results
     }
 
-    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo>? {
+    private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo> {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
@@ -236,7 +236,7 @@ class ExpectedInfos(
             override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
             override fun getValueArgumentList() = null
         }
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, call.calleeExpression] ?: return null //TODO: discuss it
+        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, call.calleeExpression] ?: return emptyList() //TODO: discuss it
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(call.calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
@@ -371,13 +371,13 @@ class ExpectedInfos(
         return when (expressionWithType) {
             ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression).map { ExpectedInfo(it.filter, it.expectedName, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
                 val thenType = ifExpression.getThen()?.let { bindingContext.getType(it) }
                 if (thenType != null && !thenType.isError())
-                    ifExpectedInfo?.filter { it.matchingSubstitutor(thenType) != null }
+                    ifExpectedInfo.filter { it.matchingSubstitutor(thenType) != null }
                 else
                     ifExpectedInfo
             }
@@ -395,7 +395,7 @@ class ExpectedInfos(
                 val leftType = bindingContext.getType(leftExpression)
                 val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
-                if (expectedInfos != null) {
+                if (expectedInfos.isNotEmpty()) {
                     return if (leftTypeNotNullable != null)
                         expectedInfos.filter { it.matchingSubstitutor(leftTypeNotNullable) != null }
                     else
@@ -417,16 +417,16 @@ class ExpectedInfos(
         if (functionLiteral != null) {
             val literalExpression = functionLiteral.parent as JetFunctionLiteralExpression
             return calculate(literalExpression)
-                    ?.map { it.fuzzyType }
-                    ?.filterNotNull()
-                    ?.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
-                    ?.map {
+                    .map { it.fuzzyType }
+                    .filterNotNull()
+                    .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
+                    .map {
                         val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)
                         ExpectedInfo(FuzzyType(returnType, it.freeParameters), null, Tail.RBRACE)
                     }
         }
         else {
-            return calculate(block)?.map { ExpectedInfo(it.filter, it.expectedName, null) }
+            return calculate(block).map { ExpectedInfo(it.filter, it.expectedName, null) }
         }
     }
 

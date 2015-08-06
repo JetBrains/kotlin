@@ -79,7 +79,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, resolutionFacade.findModuleDescriptor(file), useHeuristicSignatures = false)
-                                .calculate(expression) ?: return false
+                                .calculate(expression)
     val functionTypes = expectedInfos
             .map { it.fuzzyType?.type }
             .filterNotNull()

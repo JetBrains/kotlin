@@ -63,7 +63,7 @@ class SmartCompletion(
     private val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
     private val expressionWithType = receiver?.parent as? JetExpression ?: expression
 
-    public val expectedInfos: Collection<ExpectedInfo>? = calcExpectedInfos(expressionWithType)
+    public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
     public val smartCastCalculator: SmartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
 
@@ -113,7 +113,7 @@ class SmartCompletion(
     private fun executeInternal(): Result? {
         val (additionalItems, inheritanceSearcher) = additionalItems()
 
-        if (expectedInfos == null || expectedInfos.isEmpty()) {
+        if (expectedInfos.isEmpty()) {
             return Result(null, additionalItems, inheritanceSearcher)
         }
 
@@ -147,14 +147,14 @@ class SmartCompletion(
     public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val asTypePositionItems = buildForAsTypePosition()
         if (asTypePositionItems != null) {
-            assert(expectedInfos == null)
+            assert(expectedInfos.isEmpty())
             return Pair(asTypePositionItems, null)
         }
 
         val items = ArrayList<LookupElement>()
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
 
-        if (expectedInfos != null && expectedInfos.isNotEmpty() && receiver == null) {
+        if (expectedInfos.isNotEmpty() && receiver == null) {
             TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
                     .addTo(items, inheritanceSearchers, expectedInfos)
 
@@ -198,11 +198,11 @@ class SmartCompletion(
         }
     }
 
-    private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo>? {
+    private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo> {
         if (forBasicCompletion) {
             return ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = 0)
                     .calculate(expression)
-                    ?.map { it.copy(tail = null) }
+                    .map { it.copy(tail = null) }
         }
 
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
@@ -222,7 +222,7 @@ class SmartCompletion(
         var count = 0
         while (true) {
             val infos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = count)
-                    .calculate(expression) ?: return null
+                    .calculate(expression)
             if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) return infos
             count++
         }
@@ -342,7 +342,7 @@ class SmartCompletion(
                         ?: return null
         val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
         if (elementType != JetTokens.AS_KEYWORD && elementType != JetTokens.AS_SAFE) return null
-        val expectedInfos = calcExpectedInfos(binaryExpression) ?: return null
+        val expectedInfos = calcExpectedInfos(binaryExpression)
 
         val expectedInfosGrouped: Map<JetType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
 

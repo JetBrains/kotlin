@@ -106,9 +106,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor)
                             .calculateForArgument(dummyCall, dummyArgument)
-                    if (expectedInfos != null) {
-                        collector.addElements(LambdaItems.collect(expectedInfos))
-                    }
+                    collector.addElements(LambdaItems.collect(expectedInfos))
                 }
             }
         }
