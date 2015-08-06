@@ -1,15 +1,16 @@
 // MOVE: down
+// IS_APPLICABLE: false
 // class A
 enum class A {
     // U
-    U
+    U,
     // V
-    V
+    V;
 
     // class B
     enum class B {
         // X
-        X
+        X,
         // Y
         <caret>Y
     }
