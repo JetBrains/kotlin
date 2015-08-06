@@ -37,8 +37,10 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             proto: ProtoBuf.Callable,
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
-    ): List<ClassId> =
-        proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map { nameResolver.getClassId(it.getId()) }
+    ): List<ClassId> {
+        if (kind == AnnotatedCallableKind.PROPERTY_FIELD) return emptyList()
+        return proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty().map { nameResolver.getClassId(it.getId()) }
+    }
 
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,

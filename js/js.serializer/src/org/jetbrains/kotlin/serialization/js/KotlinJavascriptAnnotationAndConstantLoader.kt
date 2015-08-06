@@ -42,6 +42,7 @@ class KotlinJavascriptAnnotationAndConstantLoader(
             nameResolver: NameResolver,
             kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> {
+        if (kind == AnnotatedCallableKind.PROPERTY_FIELD) return emptyList()
         val annotations = proto.getExtension(JsProtoBuf.callableAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
     }
