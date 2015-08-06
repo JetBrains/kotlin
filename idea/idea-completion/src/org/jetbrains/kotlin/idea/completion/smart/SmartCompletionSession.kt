@@ -50,32 +50,31 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
                                              bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
                                              toFromOriginalFileMapper, lookupElementFactory)
-            val result = completion.execute()
-            if (result != null) {
-                collector.addElements(result.additionalItems)
 
-                if (nameExpression != null) {
-                    val filter = result.declarationFilter
-                    if (filter != null) {
-                        referenceVariants.forEach { collector.addElements(filter(it)) }
-                        flushToResultSet()
+            val (additionalItems, inheritanceSearcher) = completion.additionalItems()
+            collector.addElements(additionalItems)
 
-                        processNonImported { collector.addElements(filter(it)) }
-                        flushToResultSet()
+            if (nameExpression != null) {
+                val filter = completion.descriptorFilter
+                if (filter != null) {
+                    referenceVariants.forEach { collector.addElements(filter(it)) }
+                    flushToResultSet()
 
-                        if (position.getContainingFile() is JetCodeFragment) {
-                            getRuntimeReceiverTypeReferenceVariants().forEach {
-                                collector.addElements(filter(it).map { it.withReceiverCast() })
-                            }
-                            flushToResultSet()
+                    processNonImported { collector.addElements(filter(it)) }
+                    flushToResultSet()
+
+                    if (position.getContainingFile() is JetCodeFragment) {
+                        getRuntimeReceiverTypeReferenceVariants().forEach {
+                            collector.addElements(filter(it).map { it.withReceiverCast() })
                         }
-                    }
-
-                    // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
-                    result.inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
-                        collector.addElement(it)
                         flushToResultSet()
                     }
+                }
+
+                // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
+                inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+                    collector.addElement(it)
+                    flushToResultSet()
                 }
             }
         }

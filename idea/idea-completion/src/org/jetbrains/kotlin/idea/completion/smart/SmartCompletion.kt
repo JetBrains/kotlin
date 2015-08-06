@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 import java.util.ArrayList
 import java.util.HashSet
@@ -67,84 +68,47 @@ class SmartCompletion(
 
     public val smartCastCalculator: SmartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
 
-    public class Result(
-            val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
-            val additionalItems: Collection<LookupElement>,
-            val inheritanceSearcher: InheritanceItemsSearcher?)
+    public val descriptorFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?
+            = { descriptor: DeclarationDescriptor -> filterDescriptor(descriptor).map { postProcess(it) } }.check { expectedInfos.isNotEmpty() }
 
-    public fun execute(): Result? {
-        fun postProcess(item: LookupElement): LookupElement {
-            return if (item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) == null) {
-                object : LookupElementDecorator<LookupElement>(item) {
-                    override fun handleInsert(context: InsertionContext) {
-                        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
-                            val offset = context.getOffsetMap().getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
-                            if (offset != -1) {
-                                context.getDocument().deleteString(context.getTailOffset(), offset)
-                            }
-                        }
+    private fun filterDescriptor(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+        if (descriptor in descriptorsToSkip) return emptyList()
 
-                        super.handleInsert(context)
-                    }
-                }
-            }
-            else {
-                item
+        val result = SmartList<LookupElement>()
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
+        val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
+
+        result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
+            lookupElementFactory.createLookupElement(descriptor, bindingContext, true)
+        }
+
+        if (descriptor is PropertyDescriptor) {
+            result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
+                lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
             }
         }
 
-        val result = executeInternal() ?: return null
-        // TODO: code could be more simple, see KT-5726
-        val additionalItems = result.additionalItems.map(::postProcess)
-        val inheritanceSearcher = result.inheritanceSearcher?.let {
+        if (receiver == null) {
+            toFunctionReferenceLookupElement(descriptor, expectedInfos.filterFunctionExpected())?.let { result.add(it) }
+        }
+
+        return result
+    }
+
+    public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+        val (items, inheritanceSearcher) = additionalItemsNoPostProcess()
+        val postProcessedItems = items.map { postProcess(it) }
+        val postProcessedSearcher = inheritanceSearcher?.let {
             object : InheritanceItemsSearcher {
                 override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
                     it.search(nameFilter, { consumer(postProcess(it)) })
                 }
             }
         }
-        val filter = result.declarationFilter
-        return if (filter != null)
-            Result({ filter(it).map(::postProcess) }, additionalItems, inheritanceSearcher)
-        else
-            Result(null, additionalItems, inheritanceSearcher)
+        return postProcessedItems to postProcessedSearcher
     }
 
-    private fun executeInternal(): Result? {
-        val (additionalItems, inheritanceSearcher) = additionalItems()
-
-        if (expectedInfos.isEmpty()) {
-            return Result(null, additionalItems, inheritanceSearcher)
-        }
-
-        fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
-            if (descriptor in descriptorsToSkip) return emptyList()
-
-            val result = SmartList<LookupElement>()
-            val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
-            val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
-
-            result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
-                lookupElementFactory.createLookupElement(descriptor, bindingContext, true)
-            }
-
-            if (descriptor is PropertyDescriptor) {
-                result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
-                    lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
-                }
-            }
-
-            if (receiver == null) {
-                toFunctionReferenceLookupElement(descriptor, expectedInfos.filterFunctionExpected())?.let { result.add(it) }
-            }
-
-            return result
-        }
-
-        return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
-    }
-
-    public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+    private fun additionalItemsNoPostProcess(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val asTypePositionItems = buildForAsTypePosition()
         if (asTypePositionItems != null) {
             assert(expectedInfos.isEmpty())
@@ -183,6 +147,28 @@ class SmartCompletion(
             null
 
         return Pair(items, inheritanceSearcher)
+    }
+
+    private fun postProcess(item: LookupElement): LookupElement {
+        if (forBasicCompletion) return item
+
+        return if (item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) == null) {
+            object : LookupElementDecorator<LookupElement>(item) {
+                override fun handleInsert(context: InsertionContext) {
+                    if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
+                        val offset = context.getOffsetMap().getOffset(OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+                        if (offset != -1) {
+                            context.getDocument().deleteString(context.getTailOffset(), offset)
+                        }
+                    }
+
+                    super.handleInsert(context)
+                }
+            }
+        }
+        else {
+            item
+        }
     }
 
     private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
