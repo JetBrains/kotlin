@@ -214,8 +214,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
-        Collection<JetFile> filesInPackage = findFilesForPackage(facadeFqName.parent(), scope);
-        List<JetFile> filesForFacade = PackagePartClassUtils.getFilesForFacade(facadeFqName, filesInPackage);
+        Collection<JetFile> filesForFacade = findFilesForFacade(facadeFqName, scope);
         if (filesForFacade.isEmpty()) return Collections.emptyList();
 
         //noinspection RedundantTypeArguments
@@ -226,6 +225,8 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
+        // TODO We need a way to plug some platform-dependent stuff into LazyTopDownAnalyzer.
+        // It already performs some ad hoc stuff for packages->files mapping, anyway.
         Collection<JetFile> filesInPackage = findFilesForPackage(facadeFqName.parent(), scope);
         return PackagePartClassUtils.getFilesForFacade(facadeFqName, filesInPackage);
     }
