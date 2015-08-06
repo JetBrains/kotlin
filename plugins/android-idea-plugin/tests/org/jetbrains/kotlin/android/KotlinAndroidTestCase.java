@@ -224,7 +224,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     public void tearDown() throws Exception {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
 
-        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
+        Set<JetFile> builtInsSources = BuiltInsReferenceResolver.Companion.getInstance(getProject()).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
 
         Field listenersField = PsiProjectListener.class.getDeclaredField("ourListeners");

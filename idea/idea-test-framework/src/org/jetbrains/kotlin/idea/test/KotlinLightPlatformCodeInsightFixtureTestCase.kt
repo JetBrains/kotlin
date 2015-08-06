@@ -42,7 +42,7 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
 
-        val builtInsSources = getProject().getComponent<BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>()).getBuiltInsSources()
+        val builtInsSources = BuiltInsReferenceResolver.getInstance(getProject()).builtInsSources!!
         val fileManager = (PsiManager.getInstance(getProject()) as PsiManagerEx).getFileManager()
 
         super.tearDown()

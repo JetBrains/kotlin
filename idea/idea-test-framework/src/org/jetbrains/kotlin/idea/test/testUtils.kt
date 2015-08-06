@@ -83,8 +83,7 @@ public fun closeAndDeleteProject(): Unit =
 
 public fun unInvalidateBuiltins(project: Project, runnable: RunnableWithException) {
     // Doesn't work in idea 141. Shouldn't be used.
-    val builtInsSources = project.getComponent<org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>()).builtInsSources!!
-    //val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
+    val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
 
     runnable.run()
 
