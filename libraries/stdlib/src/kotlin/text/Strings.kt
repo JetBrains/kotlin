@@ -839,36 +839,22 @@ public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredica
  * @since M13
  */
 public fun CharSequence.trimIndent(): String {
-    val string = toString()
-    val lines = string.lineSequence()
+    val lines = toString().lineSequence()
 
     val minCommonIndent = lines
             .filter { it.isNotBlank() }
             .map { it.indentWidth() }
             .min() ?: 0
 
-    if (minCommonIndent == 0) {
-        return string
-    }
+    val lastLineIndex = lines.count() - 1
 
     return lines
             .withIndex()
             .dropWhile { it.index == 0 && it.value.isBlank() }
+            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
             .map { it.value.drop(minCommonIndent) }
             .joinTo(StringBuilder(length()), "\n")
-            .dropTrailingEmptyLine()
             .toString()
-}
-
-private fun StringBuilder.dropTrailingEmptyLine(): StringBuilder {
-    val trailingLineStart = lastIndexOf("\n")
-    val trailingLine = substring(trailingLineStart)
-
-    if (trailingLine.isBlank()) {
-        delete(trailingLineStart, length())
-    }
-
-    return this
 }
 
 private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length() else it }
