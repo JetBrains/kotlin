@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
@@ -50,7 +51,7 @@ public abstract class AnnotationCodegen {
         }
 
         public boolean hasAnnotation(@NotNull Annotated annotated) {
-            return annotated.getAnnotations().findAnnotation(fqName) != null;
+            return Annotations.Companion.findAnyAnnotation(annotated.getAnnotations(), fqName) != null;
         }
 
         public int getJvmFlag() {
@@ -84,7 +85,7 @@ public abstract class AnnotationCodegen {
         genAnnotations(annotated, returnType, null);
     }
 
-    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType, @Nullable AnnotationUseSiteTarget target) {
+    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType, @Nullable AnnotationUseSiteTarget allowedTarget) {
         if (annotated == null) {
             return;
         }
@@ -93,18 +94,16 @@ public abstract class AnnotationCodegen {
 
         Annotations annotations = annotated.getAnnotations();
 
-        if (target != null) {
-            for (AnnotationWithTarget annotationWithTarget : annotations.getUseSiteTargetedAnnotations()) {
-                if (target != annotationWithTarget.getTarget()) continue;
+        for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
+            AnnotationDescriptor annotation = annotationWithTarget.getAnnotation();
+            AnnotationUseSiteTarget annotationTarget = annotationWithTarget.getTarget();
 
-                String descriptor = genAnnotation(annotationWithTarget.getAnnotation());
-                if (descriptor != null) {
-                    annotationDescriptorsAlreadyPresent.add(descriptor);
-                }
-            }
-        }
+            // Skip targeted annotations by default
+            if (allowedTarget == null && annotationTarget != null) continue;
 
-        for (AnnotationDescriptor annotation : annotations) {
+            // Skip if the target is not the same
+            if (allowedTarget != null && annotationTarget != null && allowedTarget != annotationTarget) continue;
+
             String descriptor = genAnnotation(annotation);
             if (descriptor != null) {
                 annotationDescriptorsAlreadyPresent.add(descriptor);
@@ -119,8 +118,13 @@ public abstract class AnnotationCodegen {
             @Nullable Type returnType,
             @NotNull Set<String> annotationDescriptorsAlreadyPresent
     ) {
-        if (annotated instanceof CallableDescriptor) {
-            CallableDescriptor descriptor = (CallableDescriptor) annotated;
+        Annotated unwrapped = annotated;
+        if (annotated instanceof WrappedAnnotated) {
+            unwrapped = ((WrappedAnnotated) annotated).getOriginalAnnotated();
+        }
+
+        if (unwrapped instanceof CallableDescriptor) {
+            CallableDescriptor descriptor = (CallableDescriptor) unwrapped;
 
             // No need to annotate privates, synthetic accessors and their parameters
             if (isInvisibleFromTheOutside(descriptor)) return;
@@ -130,8 +134,8 @@ public abstract class AnnotationCodegen {
                 generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
             }
         }
-        if (annotated instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
+        if (unwrapped instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) unwrapped;
             if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 generateDocumentedAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
                 generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);

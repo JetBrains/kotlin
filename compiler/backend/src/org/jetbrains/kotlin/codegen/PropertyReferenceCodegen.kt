@@ -114,7 +114,7 @@ public class PropertyReferenceCodegen(
             target as PropertyDescriptor
 
             val getter = target.getGetter() ?: run {
-                val defaultGetter = DescriptorFactory.createDefaultGetter(target)
+                val defaultGetter = DescriptorFactory.createDefaultGetter(target, Annotations.EMPTY)
                 defaultGetter.initialize(target.getType())
                 defaultGetter
             }

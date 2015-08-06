@@ -1033,7 +1033,7 @@ public class KotlinBuiltIns {
 
         AnnotationUseSiteTarget associatedUseSiteTarget = AnnotationUseSiteTarget.Companion.getAssociatedUseSiteTarget(descriptor);
         if (associatedUseSiteTarget != null) {
-            if (annotations.findUseSiteTargetedAnnotation(associatedUseSiteTarget, annotationClassFqName) != null) {
+            if (Annotations.Companion.findUseSiteTargetedAnnotation(annotations, associatedUseSiteTarget, annotationClassFqName) != null) {
                 return true;
             }
         }

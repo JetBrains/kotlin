@@ -20,12 +20,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.util.AnnotationSplitter;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -112,12 +115,16 @@ public class PropertyCodegen {
         else {
             assert declaration != null : "Declaration is null for different context: " + context;
 
-            List<AnnotationDescriptor> propertyTargetedAnnotations =
-                    descriptor.getAnnotations().getUseSiteTargetedAnnotations(AnnotationUseSiteTarget.PROPERTY);
+            boolean hasBackingField = hasBackingField(declaration, descriptor);
 
-            if (!generateBackingField(declaration, descriptor) || !propertyTargetedAnnotations.isEmpty()) {
-                generateSyntheticMethodIfNeeded(descriptor, !propertyTargetedAnnotations.isEmpty());
-            }
+            AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
+                    descriptor.getAnnotations(), false, hasBackingField, descriptor.isVar());
+
+            Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+            Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+
+            generateBackingField(declaration, descriptor, fieldAnnotations);
+            generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
         }
 
         if (isAccessorNeeded(declaration, descriptor, getter)) {
@@ -163,7 +170,15 @@ public class PropertyCodegen {
     }
 
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
-        generateBackingField(p, descriptor);
+        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(
+                descriptor.getAnnotations(), true, hasBackingField(p, descriptor), descriptor.isVar());
+
+        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+        Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+
+        generateBackingField(p, descriptor, fieldAnnotations);
+        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+
         if (!Visibilities.isPrivate(descriptor.getVisibility())) {
             generateGetter(p, descriptor, null);
             if (descriptor.isVar()) {
@@ -196,16 +211,29 @@ public class PropertyCodegen {
         mv.visitEnd();
     }
 
-    private boolean generateBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
+    private boolean hasBackingField(@NotNull JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor) {
+        if (isInterface(descriptor.getContainingDeclaration()) ||
+                kind == OwnerKind.TRAIT_IMPL ||
+                Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
+            return false;
+        }
+        else return true;
+    }
+
+    private boolean generateBackingField(
+            @NotNull JetNamedDeclaration p,
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull Annotations annotations
+    ) {
         if (isInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.TRAIT_IMPL) {
             return false;
         }
 
         if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
-            generatePropertyDelegateAccess((JetProperty) p, descriptor);
+            generatePropertyDelegateAccess((JetProperty) p, descriptor, annotations);
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            generateBackingFieldAccess(p, descriptor);
+            generateBackingFieldAccess(p, descriptor, annotations);
         }
         else {
             return false;
@@ -213,10 +241,10 @@ public class PropertyCodegen {
         return true;
     }
 
-    // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
+    // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
-    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, boolean hasPropertyTargetedAnnotations) {
-        if (descriptor.getAnnotations().isEmpty() && !hasPropertyTargetedAnnotations) return;
+    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, Annotations annotations) {
+        if (annotations.getAllAnnotations().isEmpty()) return;
 
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
@@ -225,7 +253,8 @@ public class PropertyCodegen {
         if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
             MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
-            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor, Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
+            AnnotationCodegen.forMethod(mv, typeMapper)
+                    .genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
             mv.visitEnd();
@@ -240,7 +269,14 @@ public class PropertyCodegen {
         }
     }
 
-    private void generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
+    private void generateBackingField(
+            JetNamedDeclaration element,
+            PropertyDescriptor propertyDescriptor,
+            boolean isDelegate,
+            JetType jetType,
+            Object defaultValue,
+            Annotations annotations
+    ) {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.FIELD_FLAGS) {
@@ -299,10 +335,12 @@ public class PropertyCodegen {
 
         FieldVisitor fv = builder.newField(OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
                                                 typeMapper.mapFieldSignature(jetType), defaultValue);
-        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor, type, AnnotationUseSiteTarget.FIELD);
+
+        Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
+        AnnotationCodegen.forField(fv, typeMapper).genAnnotations(fieldAnnotated, type, AnnotationUseSiteTarget.FIELD);
     }
 
-    private void generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor) {
+    private void generatePropertyDelegateAccess(JetProperty p, PropertyDescriptor propertyDescriptor, Annotations annotations) {
         JetExpression delegateExpression = p.getDelegateExpression();
         JetType delegateType = delegateExpression != null ? bindingContext.getType(p.getDelegateExpression()) : null;
         if (delegateType == null) {
@@ -310,10 +348,10 @@ public class PropertyCodegen {
             delegateType = ErrorUtils.createErrorType("Delegate type");
         }
 
-        generateBackingField(p, propertyDescriptor, true, delegateType, null);
+        generateBackingField(p, propertyDescriptor, true, delegateType, null, annotations);
     }
 
-    private void generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
+    private void generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, Annotations annotations) {
         Object value = null;
 
         if (shouldWriteFieldInitializer(propertyDescriptor)) {
@@ -323,7 +361,7 @@ public class PropertyCodegen {
             }
         }
 
-        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
+        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value, annotations);
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
@@ -338,7 +376,7 @@ public class PropertyCodegen {
     private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor getter) {
         generateAccessor(p, getter, descriptor.getGetter() != null
                                     ? descriptor.getGetter()
-                                    : DescriptorFactory.createDefaultGetter(descriptor));
+                                    : DescriptorFactory.createDefaultGetter(descriptor, Annotations.EMPTY));
     }
 
     private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor setter) {
@@ -346,7 +384,7 @@ public class PropertyCodegen {
 
         generateAccessor(p, setter, descriptor.getSetter() != null
                                     ? descriptor.getSetter()
-                                    : DescriptorFactory.createDefaultSetter(descriptor));
+                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.EMPTY));
     }
 
     private void generateAccessor(

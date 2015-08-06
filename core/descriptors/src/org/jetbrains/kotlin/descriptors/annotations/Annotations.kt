@@ -30,22 +30,6 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
 
     public fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
-    public fun getUseSiteTargetedAnnotations(target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
-        return getUseSiteTargetedAnnotations().fold(arrayListOf<AnnotationDescriptor>()) { list, targeted ->
-            if (target == targeted.target) {
-                list.add(targeted.annotation)
-            }
-            list
-        }
-    }
-
-    public fun findUseSiteTargetedAnnotation(target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
-        return getUseSiteTargetedAnnotations(target).firstOrNull {
-            val descriptor = it.type.constructor.declarationDescriptor
-            descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
-        }
-    }
-
     // Returns both targeted and annotations without target. Annotation order is preserved.
     public fun getAllAnnotations(): List<AnnotationWithTarget>
 
@@ -65,7 +49,29 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
 
             override fun toString() = "EMPTY"
         }
+
+        public fun findAnyAnnotation(annotations: Annotations, fqName: FqName): AnnotationWithTarget? {
+            return annotations.getAllAnnotations().firstOrNull { checkAnnotationName(it.annotation, fqName) }
+        }
+
+        public fun findUseSiteTargetedAnnotation(annotations: Annotations, target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
+            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { checkAnnotationName(it, fqName) }
+        }
+
+        private fun getUseSiteTargetedAnnotations(annotations: Annotations, target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
+            return annotations.getUseSiteTargetedAnnotations().fold(arrayListOf<AnnotationDescriptor>()) { list, targeted ->
+                if (target == targeted.target) {
+                    list.add(targeted.annotation)
+                }
+                list
+            }
+        }
     }
+}
+
+private fun checkAnnotationName(annotation: AnnotationDescriptor, fqName: FqName): Boolean {
+    val descriptor = annotation.type.constructor.declarationDescriptor
+    return descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
 }
 
 class FilteredAnnotations(
