@@ -34,7 +34,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
     public var nowarn: Boolean = false
     public var verbose: Boolean = false
     public var printVersion: Boolean = false
-    public var failOnError: Boolean = false
+    public var failOnError: Boolean = true
 
     public var noStdlib: Boolean = false
 
