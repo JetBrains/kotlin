@@ -29,4 +29,7 @@ public interface JetModifierListOwner extends PsiElement, JetAnnotated {
 
     void addModifier(@NotNull JetModifierKeywordToken modifier);
     void removeModifier(@NotNull JetModifierKeywordToken modifier);
+
+    @NotNull
+    JetAnnotationEntry addAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry);
 }
