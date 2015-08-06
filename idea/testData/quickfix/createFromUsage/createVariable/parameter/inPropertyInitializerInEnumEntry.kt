@@ -4,9 +4,9 @@
 // ERROR: No value passed for parameter foo
 
 enum class E {
-    A
+    A,
     B {
         val t: Int = <caret>foo
-    }
+    },
     C
 }

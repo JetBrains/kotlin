@@ -1,4 +1,4 @@
 enum class <caret>E {
-    A
+    A,
     B
 }

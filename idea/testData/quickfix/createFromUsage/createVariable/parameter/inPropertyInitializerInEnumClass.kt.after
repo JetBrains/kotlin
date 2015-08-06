@@ -4,9 +4,9 @@
 // ERROR: No value passed for parameter foo
 
 enum class E(foo: Int) {
-    A : E()
-    B : E()
-    C : E()
+    A(),
+    B(),
+    C();
 
     val t: Int = foo
 }

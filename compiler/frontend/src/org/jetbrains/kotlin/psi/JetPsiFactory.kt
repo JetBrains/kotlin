@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
@@ -27,14 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
 import org.jetbrains.kotlin.resolve.ImportPath
-import java.io.PrintWriter
-import java.io.StringWriter
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(elementForProject: PsiElement): JetPsiFactory = JetPsiFactory(elementForProject.getProject())
@@ -262,9 +258,13 @@ public class JetPsiFactory(private val project: Project) {
         return createDeclaration<JetClass>("enum class E {$text}").getDeclarations()[0] as JetEnumEntry
     }
 
+    public fun createEnumEntryInitializerList(): JetInitializerList {
+        return createEnumEntry("Entry()").initializerList!!
+    }
+
     public fun createEnumEntrySuperclassReferenceExpression(): JetEnumEntrySuperclassReferenceExpression {
-        val userType = createEnumEntry("Entry()").getInitializerList()!!.getInitializers()[0].getTypeReference()!!.getTypeElement() as JetUserType
-        return userType.getReferenceExpression() as JetEnumEntrySuperclassReferenceExpression
+        val userType = createEnumEntryInitializerList().initializers[0].typeReference!!.typeElement as JetUserType
+        return userType.referenceExpression as JetEnumEntrySuperclassReferenceExpression
     }
 
     public fun createWhenEntry(entryText: String): JetWhenEntry {

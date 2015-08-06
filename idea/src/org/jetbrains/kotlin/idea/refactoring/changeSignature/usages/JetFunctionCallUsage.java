@@ -120,9 +120,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
     private boolean shouldSkipUsage(JetCallElement element) {
         // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
-        // TODO: Investigate why resolved call is not recorded for enum constructor call
         if (resolvedCall == null && !(element instanceof JetDelegatorToSuperCall)) return true;
         if (resolvedCall != null && !resolvedCall.getStatus().isSuccess()) {
+            // TODO: investigate why arguments are not recorded for enum constructor call
+            if (element instanceof JetDelegatorToSuperCall && element.getParent().getParent() instanceof JetEnumEntry) return false;
             for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {
                 if (!(resolvedCall.getArgumentMapping(valueArgument) instanceof ArgumentMatch)) return true;
             }

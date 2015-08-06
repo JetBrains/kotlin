@@ -252,7 +252,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findOneMethodUsages(
-            @NotNull JetCallableDefinitionUsage<?> functionUsageInfo,
+            @NotNull final JetCallableDefinitionUsage<?> functionUsageInfo,
             final JetChangeInfo changeInfo,
             final Set<UsageInfo> result
     ) {
@@ -333,10 +333,16 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         UsagesSearchPackage.processDelegationCallConstructorUsages(
                 functionPsi,
                 functionPsi.getUseScope(),
-                new Function1<JetConstructorDelegationCall, Unit>() {
+                new Function1<JetCallElement, Unit>() {
                     @Override
-                    public Unit invoke(JetConstructorDelegationCall element) {
-                        result.add(new JetConstructorDelegationCallUsage(element, changeInfo));
+                    public Unit invoke(JetCallElement element) {
+                        if (element instanceof JetConstructorDelegationCall) {
+                            result.add(new JetConstructorDelegationCallUsage((JetConstructorDelegationCall) element, changeInfo));
+                        }
+                        else if (element instanceof JetDelegatorToSuperCall) {
+                            result.add(new JetFunctionCallUsage(element, functionUsageInfo));
+
+                        }
                         return null;
                     }
                 }
@@ -478,10 +484,12 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         UsagesSearchPackage.processDelegationCallConstructorUsages(
                 psiMethod,
                 psiMethod.getUseScope(),
-                new Function1<JetConstructorDelegationCall, Unit>() {
+                new Function1<JetCallElement, Unit>() {
                     @Override
-                    public Unit invoke(JetConstructorDelegationCall element) {
-                        result.add(new JavaConstructorDeferredUsageInDelegationCall(element));
+                    public Unit invoke(JetCallElement element) {
+                        if (element instanceof JetConstructorDelegationCall) {
+                            result.add(new JavaConstructorDeferredUsageInDelegationCall((JetConstructorDelegationCall) element));
+                        }
                         return null;
                     }
                 }
