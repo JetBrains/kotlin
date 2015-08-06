@@ -121,7 +121,7 @@ public interface ModuleInfo {
     }
 }
 
-public interface AnalyzerFacade<in P : PlatformAnalysisParameters> {
+public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
             projectContext: ProjectContext,
             modules: Collection<M>,
@@ -197,7 +197,7 @@ public interface AnalyzerFacade<in P : PlatformAnalysisParameters> {
         return resolverForProject
     }
 
-    protected fun <M : ModuleInfo> createResolverForModule(
+    protected abstract fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
@@ -207,7 +207,7 @@ public interface AnalyzerFacade<in P : PlatformAnalysisParameters> {
             resolverForProject: ResolverForProject<M>
     ): ResolverForModule
 
-    public val moduleParameters: ModuleParameters
+    public abstract val moduleParameters: ModuleParameters
 }
 
 //NOTE: relies on delegate to be lazily computed and cached

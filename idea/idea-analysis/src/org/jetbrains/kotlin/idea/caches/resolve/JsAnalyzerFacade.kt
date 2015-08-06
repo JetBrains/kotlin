@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters> {
+public object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
 
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
