@@ -32,12 +32,13 @@ public class KotlinReplOutputHandler(
         process: Process,
         commandLine: String
 ) : OSProcessHandler(process, commandLine) {
+    private val XML_START = "<?xml"
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
     val rangeQueue: Queue<TextRange> = ConcurrentLinkedQueue()
 
     override fun notifyTextAvailable(text: String, key: Key<*>?) {
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
-        if (!text.startsWith("<?xml version=")) return super.notifyTextAvailable(text, key)
+        if (!text.startsWith(XML_START)) return super.notifyTextAvailable(text, key)
 
         val output = dBuilder.parse(strToSource(text))
         val root = output.firstChild as Element

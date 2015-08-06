@@ -23,13 +23,14 @@ import com.intellij.testFramework.LightVirtualFile;
 import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.FromIdeXmlMessagesParser;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,18 +41,22 @@ public class ReplFromTerminal {
     private final Object waitRepl = new Object();
 
     private final boolean ideMode;
-    private ReplSystemOutWrapper replWriter;
+    private final ReplSystemOutWrapper replWriter;
 
     private final ConsoleReader consoleReader;
 
     public ReplFromTerminal(
             @NotNull final Disposable disposable,
-            @NotNull final CompilerConfiguration compilerConfiguration) {
+            @NotNull final CompilerConfiguration compilerConfiguration
+    ) {
+        String replIdeMode = System.getProperty("repl.ideMode");
+        ideMode = replIdeMode != null && replIdeMode.equals("true");
+
         new Thread("initialize-repl") {
             @Override
             public void run() {
                 try {
-                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration);
+                    replInterpreter = new ReplInterpreter(disposable, compilerConfiguration, ideMode);
                 }
                 catch (Throwable e) {
                     replInitializationFailed = e;
@@ -62,8 +67,11 @@ public class ReplFromTerminal {
             }
         }.start();
 
-        String replIdeMode = System.getProperty("repl.ideMode");
-        ideMode = replIdeMode != null && replIdeMode.equals("true");
+        // wrapper is required to escape every input in [ideMode];
+        // if [ideMode == false] then just redirects all input to [System.out]
+        // if user calls [System.setOut(...)] then undefined behaviour
+        replWriter = new ReplSystemOutWrapper(System.out, ideMode);
+        System.setOut(replWriter);
 
         try {
             OutputStream outStream = System.out;
@@ -72,11 +80,6 @@ public class ReplFromTerminal {
                 // to prevent such behaviour we redirect his output to dummy output stream
                 VirtualFile consoleOutputRedirect = new LightVirtualFile("kotlinConsoleReplRedirect");
                 outStream = consoleOutputRedirect.getOutputStream(null);
-
-                // wrapper is required to escape every input;
-                // if user calls [System.setOut(...)] then undefined behaviour
-                replWriter = new ReplSystemOutWrapper(System.out);
-                System.setOut(replWriter);
             }
 
             consoleReader = new ConsoleReader("kotlin", System.in, outStream, null);
@@ -87,8 +90,6 @@ public class ReplFromTerminal {
         catch (Exception e) {
             throw UtilsPackage.rethrow(e);
         }
-
-        getReplInterpreter().setIdeMode(ideMode);
     }
 
     private ReplInterpreter getReplInterpreter() {
@@ -113,9 +114,9 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            System.out.println("Welcome to Kotlin version " + KotlinVersion.VERSION +
+            replWriter.println("Welcome to Kotlin version " + KotlinVersion.VERSION +
                                " (JRE " + System.getProperty("java.runtime.version") + ")");
-            System.out.println("Type :help for help, :quit for quit");
+            replWriter.println("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
                 next = one(next);
@@ -147,7 +148,7 @@ public class ReplFromTerminal {
     private WhatNextAfterOneLine one(@NotNull WhatNextAfterOneLine next) {
         try {
             String prompt = getPrompt(next);
-            String line = consoleReader.readLine(prompt);
+            String line = readLine(prompt);
 
             if (line == null) {
                 return WhatNextAfterOneLine.QUIT;
@@ -171,6 +172,7 @@ public class ReplFromTerminal {
         }
     }
 
+    @Nullable
     private String getPrompt(@NotNull WhatNextAfterOneLine next) {
         String prompt = null;
         // consoleReader always print prompt; in [ideMode] we don't allow it
@@ -180,22 +182,28 @@ public class ReplFromTerminal {
         return prompt;
     }
 
+    @Nullable
+    private String readLine(@Nullable String prompt) throws IOException {
+        String line = consoleReader.readLine(prompt);
+        if (ideMode && line != null) {
+            line = FromIdeXmlMessagesParser.parse(line);
+        }
+        return line;
+    }
+
     @NotNull
     private ReplInterpreter.LineResultType eval(@NotNull String line) {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
         if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
             if (!lineResult.isUnit()) {
-                System.out.println(lineResult.getValue());
+                replWriter.printlnResult(lineResult.getValue());
             }
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
+            replWriter.printlnIncomplete();
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.ERROR) {
-            if (ideMode) {
-                replWriter.printlnWithEscaping(lineResult.getErrorText(), EscapeType.REPORT);
-            } else {
-                System.out.print(lineResult.getErrorText());
-            }
+            replWriter.printlnError(lineResult.getErrorText());
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);
@@ -206,15 +214,15 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            System.out.println("Available commands:");
-            System.out.println(":help                   show this help");
-            System.out.println(":quit                   exit the interpreter");
-            System.out.println(":dump bytecode          dump classes to terminal");
-            System.out.println(":load <file>            load script from specified file");
+            replWriter.println("Available commands:");
+            replWriter.println(":help                   show this help");
+            replWriter.println(":quit                   exit the interpreter");
+            replWriter.println(":dump bytecode          dump classes to terminal");
+            replWriter.println(":load <file>            load script from specified file");
             return true;
         }
         else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
-            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
+            getReplInterpreter().dumpClasses(new PrintWriter(replWriter));
             return true;
         }
         else if (split.size() >= 1 && split.get(0).equals("quit")) {
@@ -227,8 +235,8 @@ public class ReplFromTerminal {
             return true;
         }
         else {
-            System.out.println("Unknown command");
-            System.out.println("Type :help for help");
+            replWriter.println("Unknown command");
+            replWriter.println("Type :help for help");
             return true;
         }
     }

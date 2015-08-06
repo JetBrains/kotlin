@@ -26,6 +26,14 @@ public interface MessageRenderer {
 
     MessageRenderer XML = new XmlMessageRenderer();
 
+    MessageRenderer WITHOUT_PATHS = new PlainTextMessageRenderer() {
+        @Nullable
+        @Override
+        protected String getPath(@NotNull CompilerMessageLocation location) {
+            return null;
+        }
+    };
+
     MessageRenderer PLAIN_FULL_PATHS = new PlainTextMessageRenderer() {
         @Nullable
         @Override

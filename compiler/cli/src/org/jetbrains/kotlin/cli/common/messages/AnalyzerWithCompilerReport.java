@@ -53,7 +53,7 @@ import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 public final class AnalyzerWithCompilerReport {
 
     @NotNull
-    private static CompilerMessageSeverity convertSeverity(@NotNull Severity severity) {
+    public static CompilerMessageSeverity convertSeverity(@NotNull Severity severity) {
         switch (severity) {
             case INFO:
                 return CompilerMessageSeverity.INFO;
@@ -76,7 +76,7 @@ public final class AnalyzerWithCompilerReport {
 
     private static boolean reportDiagnostic(
             @NotNull Diagnostic diagnostic,
-            @NotNull MessageCollector messageCollector,
+            @NotNull DiagnosticMessageReporter reporter,
             boolean incompatibleFilesFound
     ) {
         if (!diagnostic.isValid()) return false;
@@ -96,11 +96,7 @@ public final class AnalyzerWithCompilerReport {
         }
 
         PsiFile file = diagnostic.getPsiFile();
-        messageCollector.report(
-                convertSeverity(diagnostic.getSeverity()),
-                render,
-                MessageUtil.psiFileToMessageLocation(file, file.getName(), DiagnosticUtils.getLineAndColumn(diagnostic))
-        );
+        reporter.report(diagnostic, file, render);
 
         return diagnostic.getSeverity() == Severity.ERROR;
     }
@@ -175,20 +171,16 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    private static boolean reportDiagnostics(
-            @NotNull Diagnostics diagnostics,
-            @NotNull MessageCollector messageCollector,
-            boolean incompatibleFilesFound
-    ) {
+    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull DiagnosticMessageReporter reporter, boolean incompatibleFilesFound) {
         boolean hasErrors = false;
         for (Diagnostic diagnostic : sortedDiagnostics(diagnostics.all())) {
-            hasErrors |= reportDiagnostic(diagnostic, messageCollector, incompatibleFilesFound);
+            hasErrors |= reportDiagnostic(diagnostic, reporter, incompatibleFilesFound);
         }
         return hasErrors;
     }
 
-    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector collector) {
-        return reportDiagnostics(diagnostics, collector, false);
+    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector messageCollector, boolean incompatibleFilesFound) {
+        return reportDiagnostics(diagnostics, new DefaultDiagnosticReporter(messageCollector), incompatibleFilesFound);
     }
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
@@ -215,14 +207,17 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    public static SyntaxErrorReport reportSyntaxErrors(@NotNull final PsiElement file, @NotNull final MessageCollector messageCollector) {
+    public static SyntaxErrorReport reportSyntaxErrors(
+            @NotNull final PsiElement file,
+            @NotNull final DiagnosticMessageReporter reporter
+    ) {
         class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
             boolean hasErrors = false;
             boolean allErrorsAtEof = true;
 
             private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
                 MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
-                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector, false);
+                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter, false);
                 if (element.getTextRange().getStartOffset() != file.getTextRange().getEndOffset()) {
                     allErrorsAtEof = false;
                 }
@@ -242,34 +237,8 @@ public final class AnalyzerWithCompilerReport {
         return new SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof);
     }
 
-    public static SyntaxErrorReport reportSyntaxErrorsWithDiagnostics(@NotNull final PsiElement file, @NotNull final MessageCollector messageCollector,
-            @NotNull final List<Diagnostic> diagnostics) {
-        class ErrorReportingVisitor extends AnalyzingUtils.PsiErrorElementVisitor {
-            boolean hasErrors = false;
-            boolean allErrorsAtEof = true;
-
-            private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
-                MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
-                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
-                if (element.getTextRange().getStartOffset() != file.getTextRange().getEndOffset()) {
-                    allErrorsAtEof = false;
-                }
-                hasErrors = true;
-
-                diagnostics.add(diagnostic);
-            }
-
-            @Override
-            public void visitErrorElement(PsiErrorElement element) {
-                String description = element.getErrorDescription();
-                reportDiagnostic(element, SYNTAX_ERROR_FACTORY, StringUtil.isEmpty(description) ? "Syntax error" : description);
-            }
-        }
-        ErrorReportingVisitor visitor = new ErrorReportingVisitor();
-
-        file.accept(visitor);
-
-        return new SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof);
+    public static SyntaxErrorReport reportSyntaxErrors(@NotNull PsiElement file, @NotNull MessageCollector messageCollector) {
+        return reportSyntaxErrors(file, new DefaultDiagnosticReporter(messageCollector));
     }
 
     @Nullable

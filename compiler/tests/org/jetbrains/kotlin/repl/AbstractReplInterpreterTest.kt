@@ -83,7 +83,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
     protected fun doTest(path: String) {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val repl = ReplInterpreter(getTestRootDisposable()!!, configuration)
+        val repl = ReplInterpreter(getTestRootDisposable()!!, configuration, false)
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
