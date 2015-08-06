@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
-import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.types.DescriptorSubstitutor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -278,11 +277,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 newModality,
                 newVisibility
         );
+
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                OverridingUtil.bindOverride(substitutedDescriptor, overriddenFunction.substitute(substitutor));
+                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
             }
         }
+
         return substitutedDescriptor;
     }
 

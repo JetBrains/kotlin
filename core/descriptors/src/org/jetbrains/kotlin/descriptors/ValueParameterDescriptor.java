@@ -59,6 +59,4 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
     @NotNull
     @Override
     Set<? extends ValueParameterDescriptor> getOverriddenDescriptors();
-
-    void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden);
 }

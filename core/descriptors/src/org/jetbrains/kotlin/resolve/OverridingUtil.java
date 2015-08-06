@@ -230,17 +230,6 @@ public class OverridingUtil {
         }
     }
 
-    public static void bindOverride(CallableMemberDescriptor fromCurrent, CallableMemberDescriptor fromSupertype) {
-        fromCurrent.addOverriddenDescriptor(fromSupertype);
-
-        for (ValueParameterDescriptor parameterFromCurrent : fromCurrent.getValueParameters()) {
-            assert parameterFromCurrent.getIndex() < fromSupertype.getValueParameters().size()
-                    : "An override relation between functions implies that they have the same number of value parameters";
-            ValueParameterDescriptor parameterFromSupertype = fromSupertype.getValueParameters().get(parameterFromCurrent.getIndex());
-            parameterFromCurrent.addOverriddenDescriptor(parameterFromSupertype);
-        }
-    }
-
     public static void generateOverridesInFunctionGroup(
             @SuppressWarnings("UnusedParameters")
             @NotNull Name name, //DO NOT DELETE THIS PARAMETER: needed to make sure all descriptors have the same name
@@ -274,7 +263,7 @@ public class OverridingUtil {
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
-                        bindOverride(fromCurrent, fromSupertype);
+                        fromCurrent.addOverriddenDescriptor(fromSupertype);
                     }
                     bound.add(fromSupertype);
                     break;
@@ -354,7 +343,7 @@ public class OverridingUtil {
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
-            bindOverride(fakeOverride, descriptor);
+            fakeOverride.addOverriddenDescriptor(descriptor);
         }
         sink.addFakeOverride(fakeOverride);
     }

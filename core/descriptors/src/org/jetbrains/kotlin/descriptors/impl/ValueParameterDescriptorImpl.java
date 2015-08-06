@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -26,7 +28,6 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
@@ -34,7 +35,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final JetType varargElementType;
     private final int index;
     private final ValueParameterDescriptor original;
-    private final Set<ValueParameterDescriptor> overriddenDescriptors = new LinkedHashSet<ValueParameterDescriptor>(); // Linked is essential
 
     public ValueParameterDescriptorImpl(
             @NotNull CallableDescriptor containingDeclaration,
@@ -123,11 +123,14 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public Set<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
-        return Collections.unmodifiableSet(overriddenDescriptors);
-    }
+        Set<? extends CallableDescriptor> overriddenFunctions = getContainingDeclaration().getOverriddenDescriptors();
+        if (overriddenFunctions.isEmpty()) return Collections.emptySet();
 
-    @Override
-    public void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden) {
-        overriddenDescriptors.add(overridden);
+        return KotlinPackage.toSet(KotlinPackage.map(overriddenFunctions, new Function1<CallableDescriptor, ValueParameterDescriptor>() {
+            @Override
+            public ValueParameterDescriptor invoke(CallableDescriptor descriptor) {
+                return descriptor.getValueParameters().get(getIndex());
+            }
+        }));
     }
 }
