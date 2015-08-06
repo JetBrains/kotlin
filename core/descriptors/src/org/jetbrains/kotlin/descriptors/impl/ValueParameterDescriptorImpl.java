@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
     private final boolean declaresDefaultValue;
@@ -123,14 +122,13 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
-        Collection<? extends CallableDescriptor> overriddenFunctions = getContainingDeclaration().getOverriddenDescriptors();
-        if (overriddenFunctions.isEmpty()) return Collections.emptySet();
-
-        return KotlinPackage.toSet(KotlinPackage.map(overriddenFunctions, new Function1<CallableDescriptor, ValueParameterDescriptor>() {
-            @Override
-            public ValueParameterDescriptor invoke(CallableDescriptor descriptor) {
-                return descriptor.getValueParameters().get(getIndex());
-            }
-        }));
+        return KotlinPackage.map(
+                getContainingDeclaration().getOverriddenDescriptors(),
+                new Function1<CallableDescriptor, ValueParameterDescriptor>() {
+                    @Override
+                    public ValueParameterDescriptor invoke(CallableDescriptor descriptor) {
+                        return descriptor.getValueParameters().get(getIndex());
+                    }
+                });
     }
 }
