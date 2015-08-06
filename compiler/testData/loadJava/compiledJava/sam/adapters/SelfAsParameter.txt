@@ -3,6 +3,5 @@ package test
 public /*synthesized*/ fun SelfAsParameter(/*0*/ function: (test.SelfAsParameter!) -> kotlin.Unit): test.SelfAsParameter
 
 public interface SelfAsParameter {
-    public final /*synthesized*/ fun foo(/*0*/ p0: ((test.SelfAsParameter!) -> kotlin.Unit)!): kotlin.Unit
     public abstract fun foo(/*0*/ p0: test.SelfAsParameter!): kotlin.Unit
 }

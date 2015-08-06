@@ -115,6 +115,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull MessageRenderer messageRenderer,
             @NotNull String[] args
     ) {
+        K2JVMCompiler.Companion.resetInitStartTime();
+
         A arguments = parseArguments(errStream, messageRenderer, args);
         if (arguments == null) {
             return INTERNAL_ERROR;

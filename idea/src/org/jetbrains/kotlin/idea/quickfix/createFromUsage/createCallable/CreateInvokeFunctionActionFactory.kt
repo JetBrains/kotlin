@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
@@ -28,27 +27,26 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-object CreateInvokeFunctionActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val callExpr = diagnostic.getPsiElement().getParent() as? JetCallExpression ?: return null
+object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetCallExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
+        return diagnostic.psiElement.parent as? JetCallExpression
+    }
 
-        val expectedType = Errors.FUNCTION_EXPECTED.cast(diagnostic).getB()
-        if (expectedType.isError()) return null
+    override fun createCallableInfo(element: JetCallExpression, diagnostic: Diagnostic): CallableInfo? {
+        val expectedType = Errors.FUNCTION_EXPECTED.cast(diagnostic).b
+        if (expectedType.isError) return null
 
         val receiverType = TypeInfo(expectedType, Variance.IN_VARIANCE)
 
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
-        val parameters = callExpr.getValueArguments().map {
+        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
                     it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
             )
         }
 
-        val returnType = TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(
-                callExpr,
-                FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, emptyList(), parameters)
-        )
+        val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
+        return FunctionInfo(OperatorConventions.INVOKE.asString(), receiverType, returnType, emptyList(), parameters)
     }
 }

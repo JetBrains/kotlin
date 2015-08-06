@@ -38,11 +38,6 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.kotlin.utils.valuesToMap
 
-private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
-    override val name: Name? = null
-    override val value: Any? = "Deprecated in Java"
-}
-
 fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
     if (classId == null || isSpecialAnnotation(classId, !PLATFORM_TYPES)) return null
@@ -65,6 +60,8 @@ class LazyJavaAnnotationDescriptor(
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
+    private val source = c.sourceElementFactory.source(javaAnnotation)
+
     private val factory = ConstantValueFactory(c.module.builtIns)
 
     override fun getType(): JetType = type()
@@ -75,11 +72,13 @@ class LazyJavaAnnotationDescriptor(
 
     override fun getAllValueArguments() = allValueArguments()
 
+    override fun getSource() = source
+
     private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
         val constructors = getAnnotationClass().getConstructors()
         if (constructors.isEmpty()) return mapOf()
 
-        val nameToArg = nameToArgument()
+        val nameToArg = javaAnnotation.getArguments().valuesToMap { it.name }
 
         return constructors.first().getValueParameters().keysToMapExceptNulls { valueParameter ->
             var javaAnnotationArgument = nameToArg[valueParameter.getName()]
@@ -89,14 +88,6 @@ class LazyJavaAnnotationDescriptor(
 
             resolveAnnotationArgument(javaAnnotationArgument)
         }
-    }
-
-    private fun nameToArgument(): Map<Name?, JavaAnnotationArgument> {
-        var arguments = javaAnnotation.getArguments()
-        if (arguments.isEmpty() && fqName()?.asString() == "java.lang.Deprecated") {
-            arguments = listOf(DEPRECATED_IN_JAVA)
-        }
-        return arguments.valuesToMap { it.name }
     }
 
     private fun getAnnotationClass() = getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor

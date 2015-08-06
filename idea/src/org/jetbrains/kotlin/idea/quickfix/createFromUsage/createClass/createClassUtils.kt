@@ -106,8 +106,8 @@ private fun JetExpression.getInheritableTypeInfo(
     return TypeInfo.ByType(type, Variance.OUT_VARIANCE).noSubstitutions() to { classKind ->
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
-            ClassKind.TRAIT -> containingDeclaration !is PsiClass
-                               || (descriptor as? ClassDescriptor)?.getKind() == ClassDescriptorKind.INTERFACE
+            ClassKind.INTERFACE -> containingDeclaration !is PsiClass
+                                   || (descriptor as? ClassDescriptor)?.getKind() == ClassDescriptorKind.INTERFACE
             else -> canHaveSubtypes
         }
     }

@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -474,7 +471,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (catchParameter != null) {
                 ModifiersChecker.ModifiersCheckingProcedure modifiersChecking = components.modifiersChecker.withTrace(context.trace);
                 modifiersChecking.checkParameterHasNoValOrVar(catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
-                modifiersChecking.checkParameterHasNoModifier(catchParameter);
+                ModifierCheckerCore.INSTANCE$.check(catchParameter, context.trace, null);
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);

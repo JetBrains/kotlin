@@ -148,7 +148,7 @@ class ConstructorConverter(
 
                 val fieldCorrection = fieldCorrections[field]
                 // we cannot specify different setter access for constructor parameter
-                if (fieldCorrection != null && !isVal(converter.referenceSearcher, field) && fieldCorrection.access != fieldCorrection.setterAccess) continue
+                if (fieldCorrection != null && !field.isVal(converter.referenceSearcher) && fieldCorrection.access != fieldCorrection.setterAccess) continue
 
                 parameterToField.put(parameter, field to type)
                 statementsToRemove.add(initializationStatement)
@@ -209,12 +209,12 @@ class ConstructorConverter(
                             Modifiers(listOf()).with(fieldCorrection.access).assignNoPrototype()
                         else
                             converter.convertModifiers(field).filter { it in ACCESS_MODIFIERS }
-                        Parameter(name,
-                                  type,
-                                  if (isVal(converter.referenceSearcher, field)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
+                        FunctionParameter(name,
+                                          type,
+                                          if (field.isVal(converter.referenceSearcher)) FunctionParameter.VarValModifier.Val else FunctionParameter.VarValModifier.Var,
                                   converter.convertAnnotations(parameter) + converter.convertAnnotations(field),
-                                  accessModifiers,
-                                  default)
+                                          accessModifiers,
+                                          default)
                                 .assignPrototypes(
                                         PrototypeInfo(parameter, CommentsAndSpacesInheritance.LINE_BREAKS),
                                         PrototypeInfo(field, CommentsAndSpacesInheritance.NO_SPACES)

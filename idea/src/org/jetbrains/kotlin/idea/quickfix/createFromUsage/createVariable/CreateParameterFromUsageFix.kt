@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class CreateParameterFromUsageFix(
+public class CreateParameterFromUsageFix<E : JetElement>(
         val functionDescriptor: FunctionDescriptor,
         val bindingContext: BindingContext,
         val parameterInfo: JetParameterInfo,
-        val defaultValueContext: JetElement
-) : CreateFromUsageFixBase(defaultValueContext) {
+        val defaultValueContext: E
+) : CreateFromUsageFixBase<E>(defaultValueContext) {
     override fun getText(): String {
-        return JetBundle.message("create.parameter.from.usage", parameterInfo.getName())
+        return JetBundle.message("create.parameter.from.usage", parameterInfo.name)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
@@ -46,6 +46,6 @@ public class CreateParameterFromUsageFix(
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
         }
 
-        runChangeSignature(project, functionDescriptor, config, bindingContext, defaultValueContext, getText())
+        runChangeSignature(project, functionDescriptor, config, bindingContext, defaultValueContext, text)
     }
 }

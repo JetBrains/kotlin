@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
-import java.util.*
+import java.util.ArrayDeque
 
-class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), table) {
+val KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT: Short = 0x20
+
+class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): BaseFilterLexer(JetLexer(), occurrenceConsumer) {
     private val codeTokens = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
             TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER)
@@ -40,47 +42,63 @@ class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), 
 
     private val commentTokens = TokenSet.orSet(JetTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
-    private val skipTokens = TokenSet.create(
-            TokenType.WHITE_SPACE, JetTokens.RPAR, JetTokens.LBRACE, JetTokens.RBRACE,
-            JetTokens.RBRACKET, JetTokens.SEMICOLON, JetTokens.COMMA, JetTokens.DOT
-    )
-
-    private val previousTokens = LinkedList<IElementType>()
+    private val MAX_PREV_TOKENS = 2
+    private val prevTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
+    private var prevTokenStart = -1
+    private var prevTokenEnd = -1
 
     override fun advance() {
-        fun isMultiDeclarationPosition(): Boolean {
-            return previousTokens.firstOrNull() == JetTokens.VAL_KEYWORD
-                   || previousTokens.firstOrNull() == JetTokens.VAR_KEYWORD
-                   || previousTokens.size() == 2 && previousTokens[0] == JetTokens.LPAR && previousTokens[1] == JetTokens.FOR_KEYWORD
-        }
-
-        val tokenType = myDelegate.getTokenType()
+        val tokenType = myDelegate.tokenType
 
         when (tokenType) {
+            JetTokens.EQ -> {
+                if (prevTokens.peekFirst() == JetTokens.IDENTIFIER) {
+                    val prevPrev = prevTokens.elementAtOrNull(1)
+                    if (prevPrev == JetTokens.COMMA || prevPrev == JetTokens.LPAR) {
+                        occurrenceConsumer.addOccurrence(bufferSequence, null, prevTokenStart, prevTokenEnd, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT.toInt())
+                    }
+                }
+            }
+
+            JetTokens.LPAR -> {
+                if (isMultiDeclarationPosition()) {
+                    addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+                }
+            }
+
             in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
-            JetTokens.LPAR -> if (isMultiDeclarationPosition()) addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+
             in JetTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
+
             in commentTokens -> {
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
                 advanceTodoItemCountsInToken()
             }
-            !in skipTokens -> scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT.toInt(), false, false)
         }
 
-        if (tokenType != TokenType.WHITE_SPACE) {
-            previousTokens.addFirst(tokenType)
-
-            if (previousTokens.size() > 2) {
-                previousTokens.removeLast()
+        if (tokenType != TokenType.WHITE_SPACE && tokenType !in commentTokens) {
+            if (prevTokens.size() == MAX_PREV_TOKENS) {
+                prevTokens.removeLast()
             }
+            prevTokens.addFirst(tokenType)
+            prevTokenStart = tokenStart
+            prevTokenEnd = tokenEnd
         }
 
         myDelegate.advance()
+    }
+
+    private fun isMultiDeclarationPosition(): Boolean {
+        val first = prevTokens.peekFirst()
+        if (first == JetTokens.VAL_KEYWORD || first == JetTokens.VAR_KEYWORD) return true
+        return first == JetTokens.LPAR && prevTokens.elementAtOrNull(1) == JetTokens.FOR_KEYWORD
     }
 }
 
 class KotlinIdIndexer: LexerBasedIdIndexer() {
     override fun createLexer(consumer: OccurrenceConsumer): Lexer = KotlinFilterLexer(consumer)
+
+    override fun getVersion() = 2
 }
 
 class KotlinTodoIndexer: LexerBasedTodoIndexer(), IdAndToDoScannerBasedOnFilterLexer {

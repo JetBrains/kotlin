@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
 public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
@@ -56,3 +58,12 @@ public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?,
     return true
 }
 
+public fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemberDescriptor): CallableMemberDescriptor? {
+    val descriptorKind = if (signature is FunctionDescriptor) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
+    return getDefaultType().getMemberScope()
+            .getDescriptors(descriptorKind)
+            .firstOrNull {
+                it.getContainingDeclaration() == this
+                && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature).getResult() == OVERRIDABLE
+            } as? CallableMemberDescriptor
+}

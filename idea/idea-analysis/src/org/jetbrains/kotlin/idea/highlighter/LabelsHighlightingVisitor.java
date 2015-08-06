@@ -20,10 +20,13 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.JetExpressionWithLabel;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetVisitorVoid;
 
-class LabelsHighlightingVisitor extends HighlightingVisitor {
+class LabelsHighlightingVisitor extends JetVisitorVoid {
+    private final AnnotationHolder holder;
+
     LabelsHighlightingVisitor(AnnotationHolder holder) {
-        super(holder);
+        this.holder = holder;
     }
 
     @Override

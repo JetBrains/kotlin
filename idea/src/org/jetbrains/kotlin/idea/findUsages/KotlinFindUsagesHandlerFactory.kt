@@ -16,21 +16,28 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
+import com.intellij.CommonBundle
+import com.intellij.find.FindBundle
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
-import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
-import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
-import com.intellij.openapi.extensions.Extensions
-import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isOverridable
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
@@ -48,44 +55,94 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetTypeParameter ||
             element is JetConstructor<*>
 
-    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
-        val handler = when (element) {
+    public fun createFindUsagesHandlerNoQuestions(element: PsiElement): FindUsagesHandler {
+        return createFindUsagesHandler(element, forHighlightUsages = false, canAsk = false)
+    }
+
+    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
+        return createFindUsagesHandler(element, forHighlightUsages, canAsk = !forHighlightUsages)
+    }
+
+    private fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean, canAsk: Boolean): FindUsagesHandler {
+        val handler = createFindUsagesHandlerNoDecoration(element, canAsk)
+
+        return Extensions.getArea(element.project).getExtensionPoint(KotlinFindUsagesHandlerDecorator.EP_NAME).extensions.fold(handler) {
+            handler, decorator -> decorator.decorateHandler(element, forHighlightUsages, handler)
+        }
+    }
+
+    private fun createFindUsagesHandlerNoDecoration(element: PsiElement, canAsk: Boolean): FindUsagesHandler {
+        when (element) {
             is JetClassOrObject ->
-                KotlinFindClassUsagesHandler(element, this)
+                return KotlinFindClassUsagesHandler(element, this)
 
-            is JetNamedFunction, is JetProperty, is JetParameter, is JetConstructor<*> -> {
-                val declaration = element as JetNamedDeclaration
-
-                if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
-                JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
-                    when (callables.size()) {
-                        0 -> FindUsagesHandler.NULL_HANDLER
-                        1 -> {
-                            val target = callables.first().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
-                            if (target is JetNamedDeclaration) {
-                                KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
-                            }
-                            else {
-                                javaHandlerFactory.createFindUsagesHandler(target, false)
+            is JetParameter -> {
+                if (canAsk) {
+                    val function = element.ownerFunction
+                    if (function != null && function.isOverridable()) {
+                        val psiMethod = function.toLightMethods().singleOrNull()
+                        if (psiMethod != null) {
+                            val hasOverridden = OverridingMethodsSearch.search(psiMethod).any()
+                            if (hasOverridden && askWhetherShouldSearchForParameterInOverridingMethods(element)) {
+                                val parametersCount = psiMethod.parameterList.parametersCount
+                                val parameterIndex = element.parameterIndex()
+                                assert(parameterIndex < parametersCount)
+                                val overridingParameters = OverridingMethodsSearch.search(psiMethod, true)
+                                        .filter { it.parameterList.parametersCount == parametersCount }
+                                        .map { it.parameterList.parameters[parameterIndex].unwrapped }
+                                        .filterNotNull()
+                                return handlerForMultiple(element, listOf(element) + overridingParameters)
                             }
                         }
-                        else -> DelegatingFindMemberUsagesHandler(declaration, callables, this)
+
                     }
                 }
+
+                return KotlinFindMemberUsagesHandler.getInstance(element, factory = this)
+            }
+
+            is JetNamedFunction, is JetProperty, is JetConstructor<*> -> {
+                val declaration = element as JetNamedDeclaration
+
+                if (!canAsk) {
+                    return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
+                }
+
+                val declarationsToSearch = JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")
+                return handlerForMultiple(declaration, declarationsToSearch)
             }
 
             is JetTypeParameter ->
-                KotlinTypeParameterFindUsagesHandler(element, this)
+                return KotlinTypeParameterFindUsagesHandler(element, this)
 
             else ->
-                throw IllegalArgumentException("unexpected element type: " + element)
+                throw IllegalArgumentException("unexpected element type: $element")
         }
-
-        for (decorator in Extensions.getArea(element.getProject()).getExtensionPoint(KotlinFindUsagesHandlerDecorator.EP_NAME).getExtensions()) {
-            val decorated = decorator.decorateHandler(element, forHighlightUsages, handler!!)
-            if (decorated != handler) return decorated
-        }
-        return handler
     }
 
+    private fun handlerForMultiple(originalDeclaration: JetNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
+        return when (declarations.size()) {
+            0 -> FindUsagesHandler.NULL_HANDLER
+
+            1 -> {
+                val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
+                if (target is JetNamedDeclaration) {
+                    KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
+                }
+                else {
+                    javaHandlerFactory.createFindUsagesHandler(target, false)!!
+                }
+            }
+
+            else -> DelegatingFindMemberUsagesHandler(originalDeclaration, declarations, factory = this)
+        }
+    }
+
+    private fun askWhetherShouldSearchForParameterInOverridingMethods(parameter: JetParameter): Boolean {
+        return Messages.showOkCancelDialog(parameter.project,
+                                           FindBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
+                                           FindBundle.message("find.parameter.usages.in.overriding.methods.title"),
+                                           CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(),
+                                           Messages.getQuestionIcon()) == Messages.OK
+    }
 }

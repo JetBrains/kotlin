@@ -5,6 +5,14 @@ fun foo<T>(<caret>t: T): T {
     return t
 }
 
+fun bar(t: String) {
+    print(t)
+}
+
 fun usage() {
     foo(t = ":)")
+}
+
+fun falseUsage() {
+    bar(t = "")
 }

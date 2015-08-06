@@ -1,0 +1,13 @@
+interface T {
+    // INFO: {"checked": "true"}
+    val n: Int
+}
+
+class A: T {
+    // INFO: {"checked": "true"}
+    override val n: Int
+
+    constructor(a: Int) {
+        n = a + 1
+    }
+}

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
+import org.jetbrains.kotlin.types.TypeSubstitution;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -30,6 +31,9 @@ import java.util.List;
 public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrPackageFragmentDescriptor {
     @NotNull
     JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
+
+    @NotNull
+    JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
 
     @NotNull
     JetScope getUnsubstitutedMemberScope();

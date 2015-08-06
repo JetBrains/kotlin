@@ -22,6 +22,7 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.MethodFilter
 import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.engine.SuspendContextRunnable
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.PositionUtil
@@ -115,11 +116,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
 
     public fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
-        super.onBreakpoint {
+        super.onBreakpoint(SuspendContextRunnable {
             initContexts(it)
             it.printContext()
             it.action()
-        }
+        })
     }
 
     protected fun initContexts(suspendContext: SuspendContextImpl) {

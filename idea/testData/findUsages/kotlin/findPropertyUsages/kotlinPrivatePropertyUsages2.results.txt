@@ -1,5 +1,3 @@
 [kotlinPrivatePropertyUsages2.0.kt] Named argument (9: 33) public class ServerEx(): Server(foo = "!") {
-[kotlinPrivatePropertyUsages2.0.kt] Value read (10: 45) override fun processRequest() = "foo" + foo // this reference is found as a side effect of big use scope of constructor parameter:
 [kotlinPrivatePropertyUsages2.0.kt] Value read (6: 33) open fun processRequest() = foo
 [kotlinPrivatePropertyUsages2.1.kt] Named argument (5: 24) println(Server(foo = "!").foo)
-[kotlinPrivatePropertyUsages2.1.kt] Value read (5: 35) println(Server(foo = "!").foo)

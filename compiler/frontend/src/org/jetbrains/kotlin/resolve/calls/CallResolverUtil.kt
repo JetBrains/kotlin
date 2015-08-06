@@ -44,19 +44,19 @@ public enum class ResolveArgumentsMode {
 
 
 public fun hasUnknownFunctionParameter(type: JetType): Boolean {
-    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
+    assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any {
         TypeUtils.containsSpecialType(it.getType(), DONT_CARE) || ErrorUtils.containsUninferredParameter(it.getType())
     }
 }
 
 public fun hasUnknownReturnType(type: JetType): Boolean {
-    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
+    assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
 public fun replaceReturnTypeByUnknown(type: JetType): JetType {
-    assert(ReflectionTypes.isCallableType(type), "type is not a function or property")
+    assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
     newArguments.add(TypeProjectionImpl(Variance.INVARIANT, DONT_CARE))

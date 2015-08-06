@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.JetType
 public abstract class LazyJavaStaticScope(
         c: LazyJavaResolverContext,
         descriptor: ClassOrPackageFragmentDescriptor
-) : LazyJavaMemberScope(c, descriptor) {
+) : LazyJavaScope(c, descriptor) {
 
     override fun getDispatchReceiverParameter() = null
 
@@ -41,11 +41,11 @@ public abstract class LazyJavaStaticScope(
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
-            valueParameters: LazyJavaMemberScope.ResolvedValueParameters
-    ): LazyJavaMemberScope.MethodSignatureData {
+            valueParameters: LazyJavaScope.ResolvedValueParameters
+    ): LazyJavaScope.MethodSignatureData {
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
                 method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
-        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
+        return LazyJavaScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {

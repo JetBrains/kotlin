@@ -54,4 +54,6 @@ public class ReflectJavaClassifierType(public override val type: Type) : Reflect
     override fun findAnnotation(fqName: FqName): JavaAnnotation? {
         return null // TODO
     }
+
+    override fun isDeprecatedInJavaDoc() = false
 }

@@ -35,9 +35,11 @@ public interface JetScope {
 
     public fun getFunctions(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
 
     public fun getContainingDeclaration(): DeclarationDescriptor
 
@@ -92,8 +94,8 @@ public interface JetScope {
  * The same as getDescriptors(kindFilter, nameFilter) but the result is guaranteed to be filtered by kind and name.
  */
 public fun JetScope.getDescriptorsFiltered(
-        kindFilter: DescriptorKindFilter,
-        nameFilter: (Name) -> Boolean
+        kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+        nameFilter: (Name) -> Boolean = { true }
 ): Collection<DeclarationDescriptor> {
     if (kindFilter.kindMask == 0) return listOf()
     return getDescriptors(kindFilter, nameFilter).filter { kindFilter.accepts(it) && nameFilter(it.getName()) }

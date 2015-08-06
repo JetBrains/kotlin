@@ -1,5 +1,5 @@
 import kotlin.reflect.jvm.kotlin
-import kotlin.reflect.KMutableProperty2
+import kotlin.reflect.*
 
 var storage = "before"
 
@@ -13,7 +13,7 @@ class A {
 }
 
 fun box(): String {
-    val props = javaClass<A>().kotlin.extensionProperties
+    val props = javaClass<A>().kotlin.memberExtensionProperties
     val readonly = props.single { it.name == "readonly" }
     assert(readonly !is KMutableProperty2<A, *, *>) { "Fail 1: $readonly" }
     val mutable = props.single { it.name == "mutable" }

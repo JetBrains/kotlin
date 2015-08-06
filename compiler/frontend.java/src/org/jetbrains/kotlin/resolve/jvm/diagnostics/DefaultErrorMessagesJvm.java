@@ -58,6 +58,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");
         MAP.put(ErrorsJvm.DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''{0}'' instead", Renderers.TO_STRING);
+        MAP.put(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION, "Only annotations with SOURCE retention can be repeated on JVM platform");
 
         MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                                        "Make sure you have kotlin-reflect.jar in the classpath");

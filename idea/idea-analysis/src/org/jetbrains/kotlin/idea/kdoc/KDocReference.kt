@@ -154,6 +154,9 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
         is PackageViewDescriptor ->
             descriptor.memberScope
 
+        is ClassDescriptorWithResolutionScopes ->
+                descriptor.getScopeForMemberDeclarationResolution()
+
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)
 

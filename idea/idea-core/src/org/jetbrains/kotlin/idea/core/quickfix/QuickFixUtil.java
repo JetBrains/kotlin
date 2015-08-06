@@ -89,7 +89,7 @@ public class QuickFixUtil {
     }
 
     public static boolean canModifyElement(@NotNull PsiElement element) {
-        return element.isWritable() && !BuiltInsReferenceResolver.isFromBuiltIns(element);
+        return element.isWritable() && !BuiltInsReferenceResolver.Companion.isFromBuiltIns(element);
     }
 
     @Nullable

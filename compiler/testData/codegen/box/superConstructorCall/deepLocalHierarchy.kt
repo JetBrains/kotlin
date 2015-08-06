@@ -1,5 +1,5 @@
 fun box(): String {
-    open interface L1 {
+    interface L1 {
         fun foo(): String
     }
 

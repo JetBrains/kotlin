@@ -32,6 +32,10 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
 
     protected abstract fun computeArguments(): List<TypeProjection>
 
+    override fun getSubstitution() = computeCustomSubstitution() ?: IndexedParametersSubstitution(constructor, getArguments())
+
+    protected open fun computeCustomSubstitution(): TypeSubstitution? = null
+
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()
 

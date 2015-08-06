@@ -1,7 +1,9 @@
 package to
 
+import kotlin.platform.platformStatic
+
 public object JavaClass {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         println("Hello, world!")
     }
 }

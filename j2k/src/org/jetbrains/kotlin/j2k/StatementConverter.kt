@@ -64,14 +64,14 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             else {
                 val block = Block(listOf(description), LBrace().assignNoPrototype(), RBrace().assignNoPrototype())
                 val lambda = LambdaExpression(null, block.assignNoPrototype())
-                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, lambda)
+                result = MethodCallExpression.build(null, "assert", listOf(condition, lambda), listOf(), false)
             }
         }
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
         val block = codeConverter.convertBlock(statement.getCodeBlock())
-        result = MethodCallExpression.build(null, "run", listOf(), listOf(), false, LambdaExpression(null, block).assignNoPrototype())
+        result = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block).assignNoPrototype()), listOf(), false)
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -204,11 +204,11 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
                 listOf(parameterType)
             for (t in types) {
                 var convertedType = codeConverter.typeConverter.convertType(t, Nullability.NotNull)
-                val convertedParameter = Parameter(parameter.declarationIdentifier(),
-                                                   convertedType,
-                                                   Parameter.VarValModifier.None,
-                                                   annotations,
-                                                   Modifiers.Empty).assignPrototype(parameter)
+                val convertedParameter = FunctionParameter(parameter.declarationIdentifier(),
+                                                           convertedType,
+                                                           FunctionParameter.VarValModifier.None,
+                                                           annotations,
+                                                           Modifiers.Empty).assignPrototype(parameter)
                 catches.add(CatchStatement(convertedParameter, blockConverted).assignNoPrototype())
             }
         }
@@ -222,8 +222,10 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
         var block = converterForBody.convertBlock(tryBlock)
         var expression: Expression = Expression.Empty
         for (variable in resourceVariables.reverse()) {
-            val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), block)
-            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
+            val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
+            val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
+            val lambda = LambdaExpression(parameterList, block)
+            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(lambda), listOf(), false)
             expression.assignNoPrototype()
             block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
@@ -252,6 +254,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             codeConverter.convertExpression(returnValue, methodReturnType)
         else
             codeConverter.convertExpression(returnValue)
+
         result = ReturnStatement(expression)
     }
 

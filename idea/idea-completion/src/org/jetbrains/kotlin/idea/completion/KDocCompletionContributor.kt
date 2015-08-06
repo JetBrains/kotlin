@@ -23,9 +23,12 @@ import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.kdoc.getParamDescriptors
 import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
+import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
@@ -33,7 +36,10 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
@@ -86,7 +92,21 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
 
     private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor) {
         val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
-        scope.getDescriptors(nameFilter = prefixMatcher.asNameFilter()).forEach {
+        val implicitReceivers = scope.getImplicitReceiversHierarchy().map { it.value }
+
+        fun isApplicable(descriptor: DeclarationDescriptor): Boolean {
+            if (descriptor is CallableDescriptor) {
+                val extensionReceiver = descriptor.getExtensionReceiverParameter()
+                if (extensionReceiver != null) {
+                    val substituted = descriptor.substituteExtensionIfCallable(implicitReceivers, bindingContext, DataFlowInfo.EMPTY,
+                                                                               CallType.NORMAL, moduleDescriptor)
+                    return !substituted.isEmpty()
+                }
+            }
+            return true
+        }
+
+        scope.getDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
             val element = lookupElementFactory.createLookupElement(it, false)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {

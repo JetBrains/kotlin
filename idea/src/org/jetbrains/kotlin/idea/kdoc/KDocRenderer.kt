@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 object KDocRenderer {
     fun renderKDoc(docComment: KDocTag): String {
         val content = docComment.getContent()
-        val result = StringBuilder("<p>")
-        result.append(markdownToHtml(content))
+        val result = StringBuilder()
+        result.append(markdownToHtml(content, allowSingleParagraph = true))
         if (docComment is KDocSection) {
             result.append("\n")
             val paramTags = docComment.findTagsByName("param").filter { it.getSubjectName() != null }
@@ -47,7 +47,6 @@ object KDocRenderer {
 
             renderSeeAlso(docComment, result)
         }
-        result.append("</p>")
         return result.toString()
     }
 
@@ -85,13 +84,13 @@ object KDocRenderer {
         }
     }
 
-    fun markdownToHtml(markdown: String): String {
+    fun markdownToHtml(markdown: String, allowSingleParagraph: Boolean = false): String {
         val markdownTree = MarkdownParser(CommonMarkMarkerProcessor.Factory).buildMarkdownTreeFromString(markdown)
         val markdownNode = MarkdownNode(markdownTree, null, markdown)
 
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
-        val maybeSingleParagraph = markdownNode.children.filter { it.type == MarkdownElementTypes.PARAGRAPH }.singleOrNull()
-        if (maybeSingleParagraph != null) {
+        val maybeSingleParagraph = markdownNode.children.filter { it.type != MarkdownTokenTypes.EOL }.singleOrNull()
+        if (maybeSingleParagraph != null && !allowSingleParagraph) {
             return maybeSingleParagraph.children.map { it.toHtml() }.join("")
         } else {
             return markdownNode.toHtml()
@@ -118,80 +117,36 @@ object KDocRenderer {
     public fun MarkdownNode.toHtml(): String {
         val sb = StringBuilder()
         visit { node, processChildren ->
+            fun wrapChildren(tag: String, newline: Boolean = false) {
+                sb.append("<$tag>")
+                processChildren()
+                sb.append("</$tag>")
+                if (newline) sb.appendln()
+            }
+
             val nodeType = node.type
             val nodeText = node.text
             when (nodeType) {
-                MarkdownElementTypes.UNORDERED_LIST -> {
-                    sb.appendln("<ul>")
-                    processChildren()
-                    sb.appendln("</ul>")
-                }
-                MarkdownElementTypes.ORDERED_LIST -> {
-                    sb.appendln("<ol>")
-                    processChildren()
-                    sb.appendln("</ol>")
-                }
-                MarkdownElementTypes.LIST_ITEM -> {
-                    sb.append("<li>")
-                    processChildren()
-                    sb.appendln("</li>")
-                }
-                MarkdownElementTypes.EMPH -> {
-                    sb.append("<em>")
-                    processChildren()
-                    sb.append("</em>")
-                }
-                MarkdownElementTypes.STRONG -> {
-                    sb.append("<strong>")
-                    processChildren()
-                    sb.append("</strong>")
-                }
-                MarkdownElementTypes.ATX_1 -> {
-                    sb.append("<h1>")
-                    processChildren()
-                    sb.append("</h1>")
-                }
-                MarkdownElementTypes.ATX_2 -> {
-                    sb.append("<h2>")
-                    processChildren()
-                    sb.append("</h2>")
-                }
-                MarkdownElementTypes.ATX_3 -> {
-                    sb.append("<h3>")
-                    processChildren()
-                    sb.append("</h3>")
-                }
-                MarkdownElementTypes.ATX_4 -> {
-                    sb.append("<h4>")
-                    processChildren()
-                    sb.append("</h4>")
-                }
-                MarkdownElementTypes.ATX_5 -> {
-                    sb.append("<h5>")
-                    processChildren()
-                    sb.append("</h5>")
-                }
-                MarkdownElementTypes.ATX_6 -> {
-                    sb.append("<h6>")
-                    processChildren()
-                    sb.append("</h6>")
-                }
-                MarkdownElementTypes.BLOCK_QUOTE -> {
-                    sb.append("<blockquote>")
-                    processChildren()
-                    sb.append("</blockquote>")
-                }
+                MarkdownElementTypes.UNORDERED_LIST -> wrapChildren("ul", newline = true)
+                MarkdownElementTypes.ORDERED_LIST -> wrapChildren("ol", newline = true)
+                MarkdownElementTypes.LIST_ITEM -> wrapChildren("li")
+                MarkdownElementTypes.EMPH -> wrapChildren("em")
+                MarkdownElementTypes.STRONG -> wrapChildren("strong")
+                MarkdownElementTypes.ATX_1 -> wrapChildren("h1")
+                MarkdownElementTypes.ATX_2 -> wrapChildren("h2")
+                MarkdownElementTypes.ATX_3 -> wrapChildren("h3")
+                MarkdownElementTypes.ATX_4 -> wrapChildren("h4")
+                MarkdownElementTypes.ATX_5 -> wrapChildren("h5")
+                MarkdownElementTypes.ATX_6 -> wrapChildren("h6")
+                MarkdownElementTypes.BLOCK_QUOTE -> wrapChildren("blockquote")
                 MarkdownElementTypes.PARAGRAPH -> {
-                    sb.append("<p>")
-                    processChildren()
-                    sb.appendln("</p>")
+                    sb.trimEnd()
+                    wrapChildren("p", newline = true)
                 }
-                MarkdownElementTypes.CODE_SPAN -> {
-                    sb.append("<code>")
-                    processChildren()
-                    sb.append("</code>")
-                }
-                MarkdownElementTypes.CODE_BLOCK -> {
+                MarkdownElementTypes.CODE_SPAN -> wrapChildren("code")
+                MarkdownElementTypes.CODE_BLOCK,
+                MarkdownElementTypes.CODE_FENCE -> {
+                    sb.trimEnd()
                     sb.append("<pre><code>")
                     processChildren()
                     sb.append("</code><pre>")
@@ -202,7 +157,8 @@ object KDocRenderer {
                     if (label != null) {
                         val linkText = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text ?: label
                         DocumentationManagerUtil.createHyperlink(sb, label, linkText, true)
-                    } else {
+                    }
+                    else {
                         sb.append(node.text)
                     }
                 }
@@ -210,20 +166,32 @@ object KDocRenderer {
                     val label = node.child(MarkdownElementTypes.LINK_TEXT)?.child(MarkdownTokenTypes.TEXT)?.text
                     val destination = node.child(MarkdownElementTypes.LINK_DESTINATION)?.text
                     if (label != null && destination != null) {
-                        sb.append("a href=\"${destination}\">${label.htmlEscape()}</a>")
-                    } else {
+                        sb.append("<a href=\"$destination\">${label.htmlEscape()}</a>")
+                    }
+                    else {
                         sb.append(node.text)
                     }
                 }
                 MarkdownTokenTypes.TEXT,
+                MarkdownTokenTypes.CODE,
                 MarkdownTokenTypes.WHITE_SPACE,
                 MarkdownTokenTypes.COLON,
+                MarkdownTokenTypes.SINGLE_QUOTE,
                 MarkdownTokenTypes.DOUBLE_QUOTE,
                 MarkdownTokenTypes.LPAREN,
                 MarkdownTokenTypes.RPAREN,
                 MarkdownTokenTypes.LBRACKET,
                 MarkdownTokenTypes.RBRACKET -> {
                     sb.append(nodeText)
+                }
+                MarkdownTokenTypes.EOL -> {
+                    val parentType = node.parent?.type
+                    if (parentType == MarkdownElementTypes.CODE_BLOCK || parentType == MarkdownElementTypes.CODE_FENCE) {
+                        sb.append("\n")
+                    }
+                    else {
+                        sb.append(" ")
+                    }
                 }
                 MarkdownTokenTypes.GT -> sb.append("&gt;")
                 MarkdownTokenTypes.LT -> sb.append("&lt;")
@@ -232,7 +200,13 @@ object KDocRenderer {
                 }
             }
         }
-        return sb.toString()
+        return sb.toString().trimEnd()
+    }
+
+    fun StringBuilder.trimEnd() {
+        while (length() > 0 && this[length() - 1] == ' ') {
+            deleteCharAt(length() - 1)
+        }
     }
 
     fun String.htmlEscape(): String = replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

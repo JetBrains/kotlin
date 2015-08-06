@@ -11,7 +11,7 @@ annotation class Annotation4() <!ANNOTATION_CLASS_WITH_BODY!>{
 }<!>
 
 annotation class Annotation5() <!ANNOTATION_CLASS_WITH_BODY!>{
-    companion object {}
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {}
 }<!>
 
 annotation class Annotation6() <!ANNOTATION_CLASS_WITH_BODY!>{

@@ -58,18 +58,16 @@ val JetParameter.propertyDescriptor: PropertyDescriptor?
     get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
-        target: JetDeclaration,
+        targetDescriptor: DeclarationDescriptor,
         declarationToDescriptor: (JetDeclaration) -> DeclarationDescriptor? = {it.descriptor},
         checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
 ): Boolean {
-    return unwrappedTargets.any {
-        if (it is JetDeclaration) {
-            val usageDescriptor = declarationToDescriptor(it)
-            val targetDescriptor = declarationToDescriptor(target)
-            usageDescriptor != null && targetDescriptor != null && checker(usageDescriptor, targetDescriptor)
-        }
-        else false
-    }
+    return unwrappedTargets
+            .filterIsInstance<JetDeclaration>()
+            .any {
+                val usageDescriptor = declarationToDescriptor(it)
+                usageDescriptor != null && checker(usageDescriptor, targetDescriptor)
+            }
 }
 
 fun PsiReference.isImportUsage(): Boolean =
@@ -170,39 +168,52 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
 
 // Check if reference resolves to extension function whose receiver is the same as declaration's parent (or its superclass)
 // Used in extension search
-fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclaration): Boolean =
-        checkUsageVsOriginalDescriptor(declaration) { usageDescriptor, targetDescriptor ->
-            when {
-                usageDescriptor == targetDescriptor -> false
-                usageDescriptor !is FunctionDescriptor -> false
-                else -> {
-                    val receiverDescriptor =
-                            usageDescriptor.getExtensionReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
-                    val containingDescriptor = targetDescriptor.getContainingDeclaration()
+fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclaration): Boolean {
+    val descriptor = declaration.descriptor ?: return false
+    return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
+        when {
+            usageDescriptor == targetDescriptor -> false
+            usageDescriptor !is FunctionDescriptor -> false
+            else -> {
+                val receiverDescriptor =
+                        usageDescriptor.getExtensionReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
+                val containingDescriptor = targetDescriptor.getContainingDeclaration()
 
-                    containingDescriptor == receiverDescriptor
-                    || (containingDescriptor is ClassDescriptor
-                        && receiverDescriptor is ClassDescriptor
-                        && DescriptorUtils.isSubclass(containingDescriptor, receiverDescriptor))
-                }
+                containingDescriptor == receiverDescriptor
+                || (containingDescriptor is ClassDescriptor
+                    && receiverDescriptor is ClassDescriptor
+                    && DescriptorUtils.isSubclass(containingDescriptor, receiverDescriptor))
             }
         }
+    }
+}
 
 // Check if reference resolves to the declaration with the same parent
 // Used in overload search
-fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration): Boolean =
-        checkUsageVsOriginalDescriptor(declaration) { usageDescriptor, targetDescriptor ->
-            usageDescriptor != targetDescriptor
-            && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
-        }
+fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration): Boolean {
+    val descriptor = declaration.descriptor ?: return false
+    return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
+        usageDescriptor != targetDescriptor
+        && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
+    }
+}
 
 fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Boolean {
-    val decl2Desc = { declaration: JetDeclaration ->
-        if (declaration is JetParameter && declaration.hasValOrVar()) declaration.propertyDescriptor else declaration.descriptor
+    val toDescriptor: (JetDeclaration) -> DeclarationDescriptor? = { declaration ->
+        if (declaration is JetParameter) {
+            // we don't treat parameters in overriding method as "override" here (overriding parameters usages are searched optionally and via searching of overriding methods first)
+            if (declaration.hasValOrVar()) declaration.propertyDescriptor else null
+        }
+        else {
+            declaration.descriptor
+        }
     }
 
-    return checkUsageVsOriginalDescriptor(declaration, decl2Desc) { usageDescriptor, targetDescriptor ->
-        usageDescriptor is CallableDescriptor && targetDescriptor is CallableDescriptor
+    val descriptor = toDescriptor(declaration) ?: return false
+
+    return checkUsageVsOriginalDescriptor(descriptor, toDescriptor) { usageDescriptor, targetDescriptor ->
+        usageDescriptor is CallableDescriptor
+        && targetDescriptor is CallableDescriptor
         && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
     }
 }

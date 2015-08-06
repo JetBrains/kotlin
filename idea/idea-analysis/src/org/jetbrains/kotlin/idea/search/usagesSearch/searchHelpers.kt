@@ -18,15 +18,21 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.UsageSearchContext
 import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.matchesTarget
+import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
+import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.False
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.True
+import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
@@ -196,7 +202,7 @@ class ClassDeclarationsUsagesSearchHelper(
 
         for (decl in target.element.effectiveDeclarations()) {
             if ((decl is JetNamedFunction && functionUsages) || ((decl is JetProperty || decl is JetParameter) && propertyUsages)) {
-                items.add(declHelper.newItem(target.retarget(decl as JetNamedDeclaration)))
+                items.add(declHelper.newItem(target.withTarget(decl as JetNamedDeclaration)))
             }
         }
 
@@ -237,10 +243,46 @@ val isPropertyReadOnlyUsage = (PsiReference::isPropertyReadOnlyUsage).searchFilt
 class PropertyUsagesSearchHelper(
         public val readUsages: Boolean = true,
         public val writeUsages: Boolean = true,
+        public val namedArgumentUsages: Boolean = true,
         public override val selfUsages: Boolean = true,
         public override val overrideUsages: Boolean = true,
         skipImports: Boolean = false
 ) : DefaultSearchHelper<JetNamedDeclaration>(skipImports), OverrideSearchHelper {
+    override fun makeItemList(target: UsagesSearchTarget<JetNamedDeclaration>): List<UsagesSearchRequestItem> {
+        val element = target.element
+        if (element is JetParameter) {
+            val realUsagesScope = element.useScope and target.effectiveScope
+            val realUsagesTarget = target.withScope(realUsagesScope)
+            val realUsagesFilter = makeFilter(target) and !(PsiReference::isNamedArgumentUsage).searchFilter
+            val realUsagesRequest = UsagesSearchRequestItem(realUsagesTarget, makeWordList(target), realUsagesFilter, makeAdditionalSearchDelegate(target.element))
+
+            if (!namedArgumentUsages) {
+                return listOf(realUsagesRequest)
+            }
+
+            val function = element.ownerFunction
+                           ?: return listOf(realUsagesRequest) // parameter in for or something like that
+            if (function.nameAsName?.isSpecial ?: true) { // function literal or anonymous function
+                return listOf(realUsagesRequest)
+            }
+
+            var scope = function.useScope and target.effectiveScope
+            if (scope is GlobalSearchScope) {
+                scope = JetSourceFilterScope.kotlinSourcesAndLibraries(scope, element.project)
+            }
+
+            val additionalFilter1 = AdditionalFileFilter(element.name!!, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT, true)
+            val additionalFilter2 = AdditionalFileFilter(function.name!!, UsageSearchContext.IN_CODE, true)
+            val namedArgsRequest = UsagesSearchRequestItem(target.withScope(scope),
+                                                           listOf(element.name!!),
+                                                           (PsiReference::isNamedArgumentUsage).searchFilter and makeFilter(target),
+                                                           additionalFileFilters = listOf(additionalFilter1, additionalFilter2))
+            return listOf(realUsagesRequest, namedArgsRequest)
+        }
+
+        return super<DefaultSearchHelper>.makeItemList(target)
+    }
+
     override fun makeWordList(target: UsagesSearchTarget<JetNamedDeclaration>): List<String> {
         return with(target.element) {
             ContainerUtil.createMaybeSingletonList(getName()) +
@@ -250,12 +292,26 @@ class PropertyUsagesSearchHelper(
     }
 
     override fun makeFilter(target: UsagesSearchTarget<JetNamedDeclaration>): UsagesSearchFilter {
-        val readWriteUsage = when {
+        val readWriteFilter = when {
             readUsages && writeUsages -> True
             readUsages -> isPropertyReadOnlyUsage
             writeUsages -> !isPropertyReadOnlyUsage
             else -> False
         }
-        return isTargetOrOverrideUsage and readWriteUsage and isFilteredImport
+        var result = isTargetOrOverrideUsage and readWriteFilter and isFilteredImport
+        if (!namedArgumentUsages) {
+           result = result and !(PsiReference::isNamedArgumentUsage).searchFilter
+        }
+        return result
+    }
+
+    companion object {
     }
 }
+
+private fun PsiReference.isNamedArgumentUsage(): Boolean {
+    if (this !is JetSimpleNameReference) return false
+    return expression.parent is JetValueArgumentName
+}
+
+

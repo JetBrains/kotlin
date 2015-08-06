@@ -1,21 +1,21 @@
-<!ILLEGAL_MODIFIER!>inner<!> fun foo() {}
-<!ILLEGAL_MODIFIER!>inner<!> val prop = 42
+<!WRONG_MODIFIER_TARGET!>inner<!> fun foo() {}
+<!WRONG_MODIFIER_TARGET!>inner<!> val prop = 42
 
-<!ILLEGAL_MODIFIER!>inner<!> class A
-<!ILLEGAL_MODIFIER!>inner<!> interface B
-<!ILLEGAL_MODIFIER!>inner<!> object C
+<!WRONG_MODIFIER_TARGET!>inner<!> class A
+<!WRONG_MODIFIER_TARGET!>inner<!> interface B
+<!WRONG_MODIFIER_TARGET!>inner<!> object C
 
 class D {
     inner class E
-    <!ILLEGAL_MODIFIER!>inner<!> interface F
-    <!ILLEGAL_MODIFIER!>inner<!> object G
-    <!ILLEGAL_MODIFIER!>inner<!> enum class R
-    <!ILLEGAL_MODIFIER!>inner<!> annotation class S
-    <!ILLEGAL_MODIFIER!>inner<!> companion object
+    <!WRONG_MODIFIER_TARGET!>inner<!> interface F
+    <!WRONG_MODIFIER_TARGET!>inner<!> object G
+    <!WRONG_MODIFIER_TARGET!>inner<!> enum class R
+    <!WRONG_MODIFIER_TARGET!>inner<!> annotation class S
+    <!WRONG_MODIFIER_TARGET!>inner<!> companion object
 }
 
 enum class H {
-    <!ILLEGAL_MODIFIER!>inner<!> I {
+    <!WRONG_MODIFIER_TARGET!>inner<!> I {
         inner class II
     };
     
@@ -23,16 +23,16 @@ enum class H {
 }
 
 interface K {
-    <!INNER_CLASS_IN_TRAIT!>inner<!> class L
+    <!WRONG_MODIFIER_TARGET!>inner<!> class L
 }
 
 object N {
-    <!INNER_CLASS_IN_OBJECT!>inner<!> class O
+    <!WRONG_MODIFIER_TARGET!>inner<!> class O
 }
 
 class P {
     companion object {
-        <!INNER_CLASS_IN_OBJECT!>inner<!> class Q
+        <!WRONG_MODIFIER_TARGET!>inner<!> class Q
     }
 }
 

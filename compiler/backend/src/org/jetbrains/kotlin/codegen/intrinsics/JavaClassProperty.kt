@@ -28,8 +28,13 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class JavaClassProperty : IntrinsicMethod() {
-    public fun generate(returnType: Type, receiver: StackValue): StackValue =
+public class JavaClassProperty : IntrinsicPropertyGetter() {
+    public override fun generate(
+            resolvedCall: ResolvedCall<*>?,
+            codegen: ExpressionCodegen,
+            returnType: Type,
+            receiver: StackValue
+    ): StackValue? =
             StackValue.operation(returnType) {
                 val actualType = generateImpl(it, receiver)
                 StackValue.coerce(actualType, returnType, it)

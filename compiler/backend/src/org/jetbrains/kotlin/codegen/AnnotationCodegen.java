@@ -18,25 +18,22 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.AnnotationTargetChecker;
+import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.types.Flexibility;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
@@ -123,6 +120,7 @@ public abstract class AnnotationCodegen {
         if (annotated instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) annotated;
             if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                generateDocumentedAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
                 generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
                 generateTargetAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
             }
@@ -187,7 +185,7 @@ public abstract class AnnotationCodegen {
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
-        Set<KotlinTarget> targets = AnnotationTargetChecker.INSTANCE$.possibleTargetSet(classDescriptor);
+        Set<KotlinTarget> targets = AnnotationChecker.Companion.possibleTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
             javaTargets = getJavaTargetList(classDescriptor);
@@ -215,6 +213,15 @@ public abstract class AnnotationCodegen {
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
         AnnotationVisitor visitor = visitAnnotation(descriptor, true);
         visitor.visitEnum("value", Type.getType(RetentionPolicy.class).getDescriptor(), policy.name());
+        visitor.visitEnd();
+    }
+
+    private void generateDocumentedAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+        boolean documented = DescriptorUtilPackage.isDocumentedAnnotation(classDescriptor);
+        if (!documented) return;
+        String descriptor = Type.getType(Documented.class).getDescriptor();
+        if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+        AnnotationVisitor visitor = visitAnnotation(descriptor, true);
         visitor.visitEnd();
     }
 
@@ -407,20 +414,9 @@ public abstract class AnnotationCodegen {
 
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
-        AnnotationDescriptor kotlinAnnotation = descriptor.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.annotation);
-        if (kotlinAnnotation != null) {
-            for (Map.Entry<ValueParameterDescriptor, ConstantValue<?>> argument : kotlinAnnotation.getAllValueArguments().entrySet()) {
-                if ("retention".equals(argument.getKey().getName().asString()) && argument.getValue() instanceof EnumValue) {
-                    ClassDescriptor enumEntry = ((EnumValue) argument.getValue()).getValue();
-                    JetType classObjectType = getClassObjectType(enumEntry);
-                    if (classObjectType != null) {
-                        if ("kotlin/annotation/AnnotationRetention".equals(typeMapper.mapType(classObjectType).getInternalName())) {
-                            KotlinRetention retention = KotlinRetention.valueOf(enumEntry.getName().asString());
-                            return annotationRetentionMap.get(retention);
-                        }
-                    }
-                }
-            }
+        KotlinRetention retention = DescriptorUtilPackage.getAnnotationRetention(descriptor);
+        if (retention != null) {
+            return annotationRetentionMap.get(retention);
         }
         AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
         if (retentionAnnotation != null) {

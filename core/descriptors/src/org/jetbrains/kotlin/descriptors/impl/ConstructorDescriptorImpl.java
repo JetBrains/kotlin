@@ -112,7 +112,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(
+    protected ConstructorDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind

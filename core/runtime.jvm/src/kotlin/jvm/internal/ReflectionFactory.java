@@ -16,12 +16,11 @@
 
 package kotlin.jvm.internal;
 
-import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 
 public class ReflectionFactory {
     public KClass createKotlinClass(Class javaClass) {
-        return null;
+        return new ClassReference(javaClass);
     }
 
     public KPackage createKotlinPackage(Class javaClass) {
@@ -29,7 +28,7 @@ public class ReflectionFactory {
     }
 
     public KClass foreignKotlinClass(Class javaClass) {
-        throw error();
+        return new ClassReference(javaClass);
     }
 
     // Functions
@@ -62,9 +61,5 @@ public class ReflectionFactory {
 
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return p;
-    }
-
-    private Error error() {
-        throw new KotlinReflectionNotSupportedError();
     }
 }

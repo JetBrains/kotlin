@@ -1,23 +1,23 @@
 enum class E {
-    <!ILLEGAL_MODIFIER!>public<!> <!ILLEGAL_MODIFIER!>final<!> SUBCLASS {
+    <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>final<!> SUBCLASS {
         fun foo() {}
     },
 
-    <!ILLEGAL_MODIFIER!>public<!> PUBLIC,
-    <!ILLEGAL_MODIFIER!>protected<!> PROTECTED,
-    <!ILLEGAL_MODIFIER!>private<!> PRIVATE,
-    <!ILLEGAL_MODIFIER!>internal<!> INTERNAL,
+    <!WRONG_MODIFIER_TARGET!>public<!> PUBLIC,
+    <!WRONG_MODIFIER_TARGET!>protected<!> PROTECTED,
+    <!WRONG_MODIFIER_TARGET!>private<!> PRIVATE,
+    <!WRONG_MODIFIER_TARGET!>internal<!> INTERNAL,
 
-    <!ILLEGAL_MODIFIER!>abstract<!> ABSTRACT,
-    <!ILLEGAL_MODIFIER!>open<!> OPEN,
-    <!ILLEGAL_MODIFIER!>override<!> OVERRIDE,
-    <!ILLEGAL_MODIFIER!>final<!> FINAL,
+    <!WRONG_MODIFIER_TARGET!>abstract<!> ABSTRACT,
+    <!WRONG_MODIFIER_TARGET!>open<!> OPEN,
+    <!WRONG_MODIFIER_TARGET!>override<!> OVERRIDE,
+    <!WRONG_MODIFIER_TARGET!>final<!> FINAL,
 
-    <!ILLEGAL_MODIFIER!>inner<!> INNER,
+    <!WRONG_MODIFIER_TARGET!>inner<!> INNER,
     <!ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER!>annotation<!> ANNOTATION,
-    <!ILLEGAL_MODIFIER!>enum<!> ENUM,
-    <!ILLEGAL_MODIFIER!>out<!> OUT,
-    <!ILLEGAL_MODIFIER!>in<!> IN,
-    <!ILLEGAL_MODIFIER!>vararg<!> VARARG,
-    <!ILLEGAL_MODIFIER!>reified<!> REIFIED
+    <!WRONG_MODIFIER_TARGET!>enum<!> ENUM,
+    <!WRONG_MODIFIER_TARGET!>out<!> OUT,
+    <!WRONG_MODIFIER_TARGET!>in<!> IN,
+    <!WRONG_MODIFIER_TARGET!>vararg<!> VARARG,
+    <!WRONG_MODIFIER_TARGET!>reified<!> REIFIED
 }

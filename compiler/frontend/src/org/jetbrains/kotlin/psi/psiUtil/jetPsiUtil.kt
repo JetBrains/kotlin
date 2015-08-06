@@ -134,6 +134,15 @@ public fun JetExpression.getQualifiedExpressionForSelectorOrThis(): JetExpressio
     return getQualifiedExpressionForSelector() ?: this
 }
 
+public fun JetExpression.getQualifiedExpressionForReceiver(): JetQualifiedExpression? {
+    val parent = getParent()
+    return if (parent is JetQualifiedExpression && parent.getReceiverExpression() == this) parent else null
+}
+
+public fun JetExpression.getQualifiedExpressionForReceiverOrThis(): JetExpression {
+    return getQualifiedExpressionForReceiver() ?: this
+}
+
 public fun JetExpression.isDotReceiver(): Boolean =
         (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
 
@@ -383,4 +392,6 @@ public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingCont
     return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
 }
 
+public fun JetExpression.asAssignment(): JetBinaryExpression? =
+        if (JetPsiUtil.isAssignment(this)) this as JetBinaryExpression else null
 

@@ -126,7 +126,7 @@ public class CandidateResolver(
             for (projection in jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection))
-                    modifiersChecker.withTrace(trace).checkIncompatibleVarianceModifiers(projection.getModifierList())
+                    ModifierCheckerCore.check(projection, trace, null)
                 }
                 val type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), scope, trace,
@@ -139,8 +139,8 @@ public class CandidateResolver(
                 typeArguments.add(ErrorUtils.createErrorType(
                         "Explicit type argument expected for " + candidateDescriptor.getTypeParameters().get(index).getName()))
             }
-            val substitutionContext = FunctionDescriptorUtil.createSubstitutionContext(candidateDescriptor as FunctionDescriptor, typeArguments)
-            val substitutor = TypeSubstitutor.create(substitutionContext)
+            val substitution = FunctionDescriptorUtil.createSubstitution(candidateDescriptor as FunctionDescriptor, typeArguments)
+            val substitutor = TypeSubstitutor.create(substitution)
 
             if (expectedTypeArgumentCount != jetTypeArguments.size()) {
                 candidateCall.addStatus(OTHER_ERROR)

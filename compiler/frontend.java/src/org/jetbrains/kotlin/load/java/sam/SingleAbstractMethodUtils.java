@@ -86,7 +86,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    private static JetType getFunctionTypeForSamType(@NotNull JetType samType, boolean isSamConstructor) {
+    private static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
@@ -100,14 +100,14 @@ public class SingleAbstractMethodUtils {
 
                 if (substitute == null) return null;
 
-                JetType fixedProjections = fixProjections(substitute);
-                if (fixedProjections == null) return null;
+                JetType type = fixProjections(substitute);
+                if (type == null) return null;
 
-                if (JvmPackage.getPLATFORM_TYPES() && !isSamConstructor) {
-                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(fixedProjections, TypeUtils.makeNullable(fixedProjections));
+                if (JvmPackage.getPLATFORM_TYPES() && TypesPackage.isNullabilityFlexible(samType)) {
+                    return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
                 }
 
-                return TypeUtils.makeNullableAsSpecified(fixedProjections, !isSamConstructor && samType.isMarkedNullable());
+                return TypeUtils.makeNullableAsSpecified(type, samType.isMarkedNullable());
             }
         }
         return null;
@@ -151,7 +151,7 @@ public class SingleAbstractMethodUtils {
 
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
-        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType(), true);
+        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
         assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + samInterface.getDefaultType();
         JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
@@ -177,7 +177,7 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamType(@NotNull JetType type) {
-        return getFunctionTypeForSamType(type, /* irrelevant */ false) != null;
+        return getFunctionTypeForSamType(type) != null;
     }
 
     public static boolean isSamAdapterNecessary(@NotNull FunctionDescriptor fun) {
@@ -239,30 +239,40 @@ public class SingleAbstractMethodUtils {
         JetType returnTypeUnsubstituted = original.getReturnType();
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
 
-        JetType returnType = typeParameters.substitutor.substitute(returnTypeUnsubstituted, Variance.OUT_VARIANCE);
+        TypeSubstitutor substitutor = typeParameters.substitutor;
+        JetType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.INVARIANT);
         assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
-                                        ", substitutor = " + typeParameters.substitutor;
+                                        ", substitutor = " + substitutor;
 
 
-        List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
-        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
-        for (ValueParameterDescriptor originalParam : originalValueParameters) {
-            JetType originalType = originalParam.getType();
-            JetType functionType = getFunctionTypeForSamType(originalType, false);
-            JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
-            JetType newType = typeParameters.substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
-            assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
-
-            ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
-                    adapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
-                    originalParam.getName(), newType, false, null, SourceElement.NO_SOURCE
-            );
-            valueParameters.add(newParam);
-        }
+        List<ValueParameterDescriptor> valueParameters = createValueParametersForSamAdapter(original, adapter, substitutor);
 
         initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
 
         return adapter;
+    }
+
+    public static List<ValueParameterDescriptor> createValueParametersForSamAdapter(
+            @NotNull FunctionDescriptor original,
+            @NotNull FunctionDescriptor samAdapter,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
+        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
+        for (ValueParameterDescriptor originalParam : originalValueParameters) {
+            JetType originalType = originalParam.getType();
+            JetType functionType = getFunctionTypeForSamType(originalType);
+            JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
+            JetType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
+            assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
+
+            ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
+                    samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
+                    originalParam.getName(), newType, false, null, SourceElement.NO_SOURCE
+            );
+            valueParameters.add(newParam);
+        }
+        return valueParameters;
     }
 
     @NotNull

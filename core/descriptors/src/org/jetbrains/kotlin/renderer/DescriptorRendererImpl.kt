@@ -397,7 +397,7 @@ internal class DescriptorRendererImpl(
             visibility = visibility.normalize()
         }
         if (!showInternalKeyword && visibility == Visibilities.INTERNAL) return
-        builder.append(renderKeyword(visibility.toString())).append(" ")
+        builder.append(renderKeyword(visibility.displayName)).append(" ")
     }
 
     private fun renderModality(modality: Modality, builder: StringBuilder) {

@@ -131,7 +131,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             substituteOriginal: Boolean
     ): TypeSubstitutor {
         val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
-        return TypeUtils.makeSubstitutorForTypeParametersMap(parameterToInferredValueMap)
+        return TypeConstructorSubstitution.createByParametersMap(parameterToInferredValueMap).buildSubstitutor()
     }
 
     override fun getStatus(): ConstraintSystemStatus = constraintSystemStatus
@@ -525,7 +525,7 @@ private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
 }
 
 private class SubstitutionWithCapturedTypeApproximation(val substitution: TypeSubstitution) : TypeSubstitution() {
-    override fun get(key: TypeConstructor?) = substitution[key]
+    override fun get(key: JetType) = substitution[key]
     override fun isEmpty() = substitution.isEmpty()
     override fun approximateCapturedTypes() = true
 }
@@ -542,7 +542,7 @@ public fun ConstraintSystemImpl.registerTypeVariables(
 }
 
 public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypeParameterDescriptor?): TypeSubstitutor {
-    return TypeSubstitutor.create(object : TypeSubstitution() {
+    return TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
             val descriptor = key.getDeclarationDescriptor()
             if (descriptor !is TypeParameterDescriptor) return null

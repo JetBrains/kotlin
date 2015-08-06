@@ -61,11 +61,10 @@ public class CodegenBinding {
 
     public static final WritableSlice<JetCallElement, JetExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM =
-            Slices.<JetWhenExpression, WhenByEnumsMapping>sliceBuilder().build();
+    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM = Slices.createSimpleSlice();
 
     public static final WritableSlice<String, List<WhenByEnumsMapping>> MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE =
-            Slices.<String, List<WhenByEnumsMapping>>sliceBuilder().build();
+            Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);

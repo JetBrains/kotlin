@@ -62,6 +62,8 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
 
     public void testIfCondition() { doTest(); }
 
+    public void testMultiDeclaration() { doTest(); }
+
     private void doTest() {
         String dirName = getTestName(false);
 

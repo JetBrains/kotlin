@@ -68,7 +68,7 @@ public abstract class AndroidResourceManager(val project: Project) {
     companion object {
         public fun getInstance(module: Module): AndroidResourceManager {
             val service = ModuleServiceManager.getService(module, javaClass<AndroidResourceManager>())
-            return service ?: module.getComponent(javaClass<AndroidResourceManager>())
+            return service ?: module.getComponent(javaClass<AndroidResourceManager>())!!
         }
     }
 

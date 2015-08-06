@@ -2,7 +2,6 @@ package test
 
 public open class PrivateSamAdapter {
     public constructor PrivateSamAdapter()
-    private final /*synthesized*/ fun samAdapter(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
     private open fun samAdapter(/*0*/ p0: test.PrivateSamAdapter.SamInterface!): kotlin.Unit
 
     private interface SamInterface {

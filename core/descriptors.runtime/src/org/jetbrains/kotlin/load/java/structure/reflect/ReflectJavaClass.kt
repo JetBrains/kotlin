@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeSubstitutor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.util.Arrays
 
@@ -49,12 +47,8 @@ public class ReflectJavaClass(
     override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
 
     override fun getSupertypes(): Collection<JavaClassifierType> {
-        val supertype = klass.getGenericSuperclass()
-        val superClassName = (supertype as? Class<*>)?.getName()
-        val supertypes =
-                (if (superClassName == "java.lang.Object") emptyList() else emptyOrSingletonList(supertype)) +
-                klass.getGenericInterfaces()
-        return supertypes.map(::ReflectJavaClassifierType)
+        if (klass == javaClass<Any>()) return emptyList()
+        return listOf(klass.genericSuperclass ?: javaClass<Any>(), *klass.genericInterfaces).map(::ReflectJavaClassifierType)
     }
 
     override fun getMethods() = klass.getDeclaredMethods()

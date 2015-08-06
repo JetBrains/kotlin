@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -43,7 +45,9 @@ public open class DeserializedPackageMemberScope(
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = computeDescriptors(kindFilter, nameFilter)
 
-    override fun getClassDescriptor(name: Name) = c.components.deserializeClass(ClassId(packageFqName, name))
+    override fun getClassDescriptor(name: Name): ClassDescriptor? =
+            if (SpecialNames.isSafeIdentifier(name)) c.components.deserializeClass(ClassId(packageFqName, name))
+            else null
 
     override fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         for (className in classNames) {

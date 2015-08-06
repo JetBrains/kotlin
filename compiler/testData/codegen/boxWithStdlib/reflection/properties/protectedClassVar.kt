@@ -1,11 +1,10 @@
-import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.jvm.accessible
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.*
+import kotlin.reflect.jvm.isAccessible
 
 class A(param: String) {
     protected var v: String = param
 
-    fun ref() = A::class.properties.single() as KMutableProperty1<A, String>
+    fun ref() = A::class.memberProperties.single() as KMutableProperty1<A, String>
 }
 
 fun box(): String {
@@ -15,14 +14,14 @@ fun box(): String {
     try {
         f.get(a)
         return "Fail: protected property getter is accessible by default"
-    } catch (e: IllegalPropertyAccessException) { }
+    } catch (e: IllegalCallableAccessException) { }
 
     try {
         f.set(a, ":D")
         return "Fail: protected property setter is accessible by default"
-    } catch (e: IllegalPropertyAccessException) { }
+    } catch (e: IllegalCallableAccessException) { }
 
-    f.accessible = true
+    f.isAccessible = true
 
     f.set(a, ":)")
 

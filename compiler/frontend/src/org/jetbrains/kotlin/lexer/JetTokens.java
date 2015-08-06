@@ -154,7 +154,7 @@ public interface JetTokens {
     JetModifierKeywordToken OUT_KEYWORD       = JetModifierKeywordToken.softKeywordModifier("out");
     JetModifierKeywordToken VARARG_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("vararg");
     JetModifierKeywordToken REIFIED_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("reified");
-    JetModifierKeywordToken DYNAMIC_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("dynamic");
+    JetKeywordToken DYNAMIC_KEYWORD   = JetKeywordToken.softKeyword("dynamic");
     JetModifierKeywordToken COMPANION_KEYWORD = JetModifierKeywordToken.softKeywordModifier("companion");
     JetModifierKeywordToken SEALED_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("sealed");
 

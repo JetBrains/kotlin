@@ -25,17 +25,13 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.ENUM_ENTRY
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.OBJECT
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.PLAIN_CLASS
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.TRAIT
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
@@ -47,12 +43,13 @@ enum class ClassKind(val keyword: String, val description: String) {
     ENUM_CLASS("enum class", "enum"),
     ENUM_ENTRY("", "enum constant"),
     ANNOTATION_CLASS("annotation class", "annotation"),
-    TRAIT("interface", "interface"),
-    OBJECT("object", "object")
+    INTERFACE("interface", "interface"),
+    OBJECT("object", "object"),
+    DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
 
-public class ClassInfo(
-        val kind: ClassKind,
+public data class ClassInfo(
+        val kind: ClassKind = ClassKind.DEFAULT,
         val name: String,
         val targetParent: PsiElement,
         val expectedTypeInfo: TypeInfo,
@@ -62,19 +59,19 @@ public class ClassInfo(
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
 
-public class CreateClassFromUsageFix(
-        element: JetElement,
+public class CreateClassFromUsageFix<E : JetElement>(
+        element: E,
         val classInfo: ClassInfo
-): CreateFromUsageFixBase(element) {
-
+): CreateFromUsageFixBase<E>(element) {
     override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
         with(classInfo) {
+            if (kind == DEFAULT) return false
             if (targetParent is PsiClass) {
                 if (kind == OBJECT || kind == ENUM_ENTRY) return false
-                if (targetParent.isInterface() && inner) return false
+                if (targetParent.isInterface && inner) return false
             }
         }
         return true
@@ -82,27 +79,27 @@ public class CreateClassFromUsageFix(
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
-            val directories = psiPackage.getDirectories().filter { it.canRefactor() }
-            assert (directories.isNotEmpty()) { "Package '${psiPackage.getQualifiedName()}' must be refactorable" }
+            val directories = psiPackage.directories.filter { it.canRefactor() }
+            assert (directories.isNotEmpty()) { "Package '${psiPackage.qualifiedName}' must be refactorable" }
 
             val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
             val preferredDirectory =
                     directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
                     ?: directories.firstOrNull()
 
-            val targetDirectory = if (directories.size() > 1 && !ApplicationManager.getApplication().isUnitTestMode()) {
+            val targetDirectory = if (directories.size() > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
                 DirectoryChooserUtil.chooseDirectory(directories.toTypedArray(), preferredDirectory, project, HashMap())
             }
             else {
                 preferredDirectory
             } ?: return null
 
-            val fileName = "${classInfo.name}.${JetFileType.INSTANCE.getDefaultExtension()}"
+            val fileName = "${classInfo.name}.${JetFileType.INSTANCE.defaultExtension}"
             val targetFile = getOrCreateKotlinFile(fileName, targetDirectory)
             if (targetFile == null) {
-                val filePath = "${targetDirectory.getVirtualFile().getPath()}/$fileName"
+                val filePath = "${targetDirectory.virtualFile.path}/$fileName"
                 CodeInsightUtils.showErrorHint(
-                        targetDirectory.getProject(),
+                        targetDirectory.project,
                         editor!!,
                         "File $filePath already exists but does not correspond to Kotlin file",
                         "Create file",
@@ -117,15 +114,15 @@ public class CreateClassFromUsageFix(
                     when (targetParent) {
                         is JetElement, is PsiClass -> targetParent
                         is PsiPackage -> createFileByPackage(targetParent)
-                        else -> throw AssertionError("Unexpected element: " + targetParent.getText())
+                        else -> throw AssertionError("Unexpected element: " + targetParent.text)
                     } ?: return
 
             val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(
-                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == TRAIT
+                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == INTERFACE
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
-            project.executeCommand(getText()) { builder.build() }
+            project.executeCommand(text) { builder.build() }
         }
     }
 }

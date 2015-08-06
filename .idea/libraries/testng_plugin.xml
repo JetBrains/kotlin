@@ -9,7 +9,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.jar!/" />
     </SOURCES>
   </library>
 </component>

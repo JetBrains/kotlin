@@ -22,7 +22,7 @@ fun box(): String {
     assertEquals("<get-baz>", A::baz.getter.name)
     assertEquals("<set-baz>", A::baz.setter.name)
 
-    val me = A::class.extensionProperties.single() as KMutableProperty2<A, String, String>
+    val me = A::class.memberExtensionProperties.single() as KMutableProperty2<A, String, String>
     assertEquals("<get-quux>", me.getter.name)
     assertEquals("<set-quux>", me.setter.name)
 

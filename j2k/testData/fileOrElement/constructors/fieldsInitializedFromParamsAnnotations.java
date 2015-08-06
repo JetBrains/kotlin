@@ -1,4 +1,3 @@
-import java.lang.Deprecated;
 import java.lang.SuppressWarnings;
 
 class C {

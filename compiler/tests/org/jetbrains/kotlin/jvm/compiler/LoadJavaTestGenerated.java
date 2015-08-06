@@ -417,6 +417,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("JavaDocDeprecated.java")
+            public void testJavaDocDeprecated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/JavaDocDeprecated.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("NestedEnumArgument.java")
             public void testNestedEnumArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/NestedEnumArgument.java");

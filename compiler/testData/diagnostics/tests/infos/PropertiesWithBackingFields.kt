@@ -39,8 +39,8 @@ abstract class Test() {
   abstract var v8 : Int get set
   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v9 : Int<!> set
   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v10 : Int<!>  get
-  abstract val v11 : Int <!ILLEGAL_MODIFIER!>abstract<!> get
-  abstract var v12 : Int <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set
+  abstract val v11 : Int <!WRONG_MODIFIER_TARGET!>abstract<!> get
+  abstract var v12 : Int <!WRONG_MODIFIER_TARGET!>abstract<!> get <!WRONG_MODIFIER_TARGET!>abstract<!> set
 
 }
 

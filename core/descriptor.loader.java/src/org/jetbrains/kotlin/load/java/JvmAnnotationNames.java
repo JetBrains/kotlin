@@ -40,6 +40,8 @@ public final class JvmAnnotationNames {
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final Name TARGET_ANNOTATION_MEMBER_NAME = Name.identifier("allowedTargets");
     public static final Name RETENTION_ANNOTATION_PARAMETER_NAME = Name.identifier("retention");
+    public static final Name REPEATABLE_ANNOTATION_PARAMETER_NAME = Name.identifier("repeatable");
+    public static final Name DOCUMENTED_ANNOTATION_PARAMETER_NAME = Name.identifier("mustBeDocumented");
 
     public static final FqName TARGET_ANNOTATION = new FqName("java.lang.annotation.Target");
     public static final FqName RETENTION_ANNOTATION = new FqName("java.lang.annotation.Retention");
@@ -99,8 +101,6 @@ public final class JvmAnnotationNames {
     public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");
     @Deprecated
     public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
-    @Deprecated
-    public static final FqName OLD_JET_VALUE_PARAMETER_ANNOTATION = new FqName("jet.runtime.typeinfo.JetValueParameter");
     @Deprecated
     public static final FqName OLD_KOTLIN_CLASS = new FqName("jet.KotlinClass");
     @Deprecated

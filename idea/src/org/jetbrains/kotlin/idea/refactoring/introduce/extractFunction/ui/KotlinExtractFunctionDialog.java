@@ -225,6 +225,13 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 new Function0<Unit>() {
                     @Override
                     public Unit invoke() {
+                        close(OK_EXIT_CODE);
+                        return Unit.INSTANCE$;
+                    }
+                },
+                new Function0<Unit>() {
+                    @Override
+                    public Unit invoke() {
                         KotlinExtractFunctionDialog.super.doOKAction();
                         return onAccept.invoke(KotlinExtractFunctionDialog.this);
                     }

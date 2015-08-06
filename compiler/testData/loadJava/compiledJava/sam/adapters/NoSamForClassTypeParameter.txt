@@ -2,33 +2,25 @@ package test
 
 public/*package*/ open class NoSamForTypeParameter</*0*/ K : java.lang.Runnable!> {
     public/*package*/ constructor NoSamForTypeParameter</*0*/ K : java.lang.Runnable!>()
-    public/*package*/ final /*synthesized*/ fun foo(/*0*/ p0: K!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ p0: K!, /*1*/ p1: java.lang.Runnable!): kotlin.Unit
 }
 
 public/*package*/ open class NoSamForTypeParameterDerived1 : test.NoSamForTypeParameter<java.lang.Runnable!> {
     public/*package*/ constructor NoSamForTypeParameterDerived1()
-    public/*package*/ final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
-    public/*package*/ final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: java.lang.Runnable!): kotlin.Unit
 }
 
 public/*package*/ open class NoSamForTypeParameterDerived2</*0*/ E : java.lang.Runnable!> : test.NoSamForTypeParameter<E!> {
     public/*package*/ constructor NoSamForTypeParameterDerived2</*0*/ E : java.lang.Runnable!>()
-    public/*package*/ final override /*1*/ /*synthesized*/ fun foo(/*0*/ p0: E!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open override /*1*/ fun foo(/*0*/ p0: E!, /*1*/ p1: java.lang.Runnable!): kotlin.Unit
 }
 
 public/*package*/ open class NoSamForTypeParameterDerived3 : test.NoSamForTypeParameterDerived1 {
     public/*package*/ constructor NoSamForTypeParameterDerived3()
-    public/*package*/ final override /*1*/ /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
-    public/*package*/ final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: java.lang.Runnable!): kotlin.Unit
 }
 
 public/*package*/ open class NoSamForTypeParameterDerived4 : test.NoSamForTypeParameterDerived2<java.lang.Runnable!> {
     public/*package*/ constructor NoSamForTypeParameterDerived4()
-    public/*package*/ final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
-    public/*package*/ final override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: (() -> kotlin.Unit)!): kotlin.Unit
     public/*package*/ open override /*1*/ fun foo(/*0*/ p0: java.lang.Runnable!, /*1*/ p1: java.lang.Runnable!): kotlin.Unit
 }

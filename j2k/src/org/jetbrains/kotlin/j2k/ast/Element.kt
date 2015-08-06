@@ -62,7 +62,7 @@ data class CommentsAndSpacesInheritance(
 }
 
 fun Element.canonicalCode(): String {
-    val builder = CodeBuilder(null)
+    val builder = CodeBuilder(null, EmptyDocCommentConverter)
     builder.append(this)
     return builder.resultText
 }

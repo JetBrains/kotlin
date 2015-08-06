@@ -1,0 +1,12 @@
+package
+
+internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Unit
+
+public open class JavaClass</*0*/ X : kotlin.Any!> {
+    public constructor JavaClass</*0*/ X : kotlin.Any!>()
+    public open fun </*0*/ T : kotlin.Any!> doSomething1(/*0*/ t: T!, /*1*/ x: X!, /*2*/ i: I<T!>!): T!
+    public open fun </*0*/ T : kotlin.Any!> doSomething2(/*0*/ t: T!, /*1*/ x: X!, /*2*/ p: kotlin.Boolean, /*3*/ i: I<X!>!): T!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

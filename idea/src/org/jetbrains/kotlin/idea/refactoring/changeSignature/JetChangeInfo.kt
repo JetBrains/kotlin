@@ -49,7 +49,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashSet
 
-public class JetChangeInfo(
+public open class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
         val newReturnType: JetType? = methodDescriptor.baseDescriptor.getReturnType(),

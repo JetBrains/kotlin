@@ -17,6 +17,7 @@ enum class Family {
     ArraysOfPrimitives,
     InvariantArraysOfObjects,
     Strings,
+    Ranges,
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
     Primitives,
@@ -94,6 +95,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
 
     val buildFamilies = LinkedHashSet(defaultFamilies)
     val buildPrimitives = LinkedHashSet(defaultPrimitives)
+    val buildFamilyPrimitives = FamilyProperty<Set<PrimitiveType>>()
 
     val customSignature = FamilyProperty<String>()
     val deprecate = FamilyProperty<String>()
@@ -142,6 +144,14 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         buildPrimitives.addAll(primitives)
     }
 
+    fun onlyPrimitives(family: Family, vararg primitives: PrimitiveType) {
+        buildFamilyPrimitives(family) { primitives.toSet() }
+    }
+
+    fun onlyPrimitives(family: Family, primitives: Set<PrimitiveType>) {
+        buildFamilyPrimitives(family) { primitives }
+    }
+
     fun include(vararg families: Family) {
         buildFamilies.addAll(families.toList())
     }
@@ -165,8 +175,9 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family) {
-        if (f.isPrimitiveSpecialization) {
-            for (primitive in buildPrimitives.sortBy { it.name() })
+        val onlyPrimitives = buildFamilyPrimitives[f]
+        if (f.isPrimitiveSpecialization || onlyPrimitives != null) {
+            for (primitive in (onlyPrimitives ?: buildPrimitives).sortBy { it.name() })
                 build(builder, f, primitive)
         } else {
             build(builder, f, null)
@@ -176,27 +187,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     fun build(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
         val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
-        val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
-        val receiver = when (f) {
-            Iterables -> "Iterable<$isAsteriskOrT>"
-            Collections -> "Collection<$isAsteriskOrT>"
-            Lists -> "List<$isAsteriskOrT>"
-            Maps -> "Map<K, V>"
-            Sets -> "Set<$isAsteriskOrT>"
-            Sequences -> "Sequence<$isAsteriskOrT>"
-            InvariantArraysOfObjects -> "Array<T>"
-            ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
-            Strings -> "String"
-            ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
-            RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
-            ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
-            Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
-            Generic -> "T"
-        }
-
-
-        fun String.renderType(): String {
-            val t = StringTokenizer(this, " \t\n,:()<>?.", true)
+        fun renderType(expression: String, receiver: String): String {
+            val t = StringTokenizer(expression, " \t\n,:()<>?.", true)
             val answer = StringBuilder()
 
             while (t.hasMoreTokens()) {
@@ -231,7 +223,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
                                   "TCollection" -> {
                                       when (f) {
                                           Strings -> "Appendable"
-                                          else -> "MutableCollection<in T>".renderType()
+                                          else -> renderType("MutableCollection<in T>", receiver)
                                       }
                                   }
                                   "T" -> {
@@ -260,6 +252,27 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
 
             return answer.toString()
         }
+
+        val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
+        val receiver = when (f) {
+            Iterables -> "Iterable<$isAsteriskOrT>"
+            Collections -> "Collection<$isAsteriskOrT>"
+            Lists -> "List<$isAsteriskOrT>"
+            Maps -> "Map<K, V>"
+            Sets -> "Set<$isAsteriskOrT>"
+            Sequences -> "Sequence<$isAsteriskOrT>"
+            InvariantArraysOfObjects -> "Array<T>"
+            ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
+            Strings -> "String"
+            Ranges -> "Range<$isAsteriskOrT>"
+            ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
+            RangesOfPrimitives -> primitive?.let { it.name() + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
+            ProgressionsOfPrimitives -> primitive?.let { it.name() + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
+            Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
+            Generic -> "T"
+        }.let { renderType(it, it) }
+
+        fun String.renderType(): String = renderType(this, receiver)
 
         fun effectiveTypeParams(): List<String> {
             // TODO: Model for type parameter

@@ -14,10 +14,10 @@ class Sub : Super() {
 fun box(): String {
     val sub = Sub::class
 
-    assertEquals(listOf("a", "c"), sub.properties.map { it.name }.sort())
-    assertEquals(listOf("b", "d"), sub.extensionProperties.map { it.name }.sort())
-    assertEquals(listOf("c"), sub.declaredProperties.map { it.name })
-    assertEquals(listOf("d"), sub.declaredExtensionProperties.map { it.name })
+    assertEquals(listOf("a", "c"), sub.memberProperties.map { it.name }.sort())
+    assertEquals(listOf("b", "d"), sub.memberExtensionProperties.map { it.name }.sort())
+    assertEquals(listOf("c"), sub.declaredMemberProperties.map { it.name })
+    assertEquals(listOf("d"), sub.declaredMemberExtensionProperties.map { it.name })
 
     return "OK"
 }

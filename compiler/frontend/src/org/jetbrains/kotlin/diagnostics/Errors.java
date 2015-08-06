@@ -108,12 +108,15 @@ public interface Errors {
 
     // Modifiers
 
-    DiagnosticFactory1<PsiElement, Collection<JetModifierKeywordToken>> INCOMPATIBLE_MODIFIERS = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, JetModifierKeywordToken> ILLEGAL_MODIFIER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> INCOMPATIBLE_MODIFIERS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> REPEATED_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_TARGET = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> REDUNDANT_MODIFIER_FOR_TARGET = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_CONTAINING_DECLARATION = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PLATFORM_NAME = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<JetAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 
@@ -180,10 +183,6 @@ public interface Errors {
 
     DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = DiagnosticFactory0
             .create(WARNING, ABSTRACT_MODIFIER);
-    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = DiagnosticFactory0
-            .create(WARNING, modifierSetPosition(JetTokens.OPEN_KEYWORD));
-    DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
-    DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_SEALED = DiagnosticFactory0.create(ERROR, SEALED_MODIFIER);
 
     DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
@@ -195,33 +194,16 @@ public interface Errors {
 
     // Enum-specific
 
-    DiagnosticFactory0<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.ENUM_KEYWORD));
-
-    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
-    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_ENUM = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
-    DiagnosticFactory0<JetModifierListOwner> SEALED_MODIFIER_IN_ENUM = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.SEALED_KEYWORD));
-
     DiagnosticFactory0<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeParameterList> TYPE_PARAMETERS_IN_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetClass, ClassDescriptor> LOCAL_ENUM_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory2<JetEnumEntry, ClassDescriptor, String> ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER = DiagnosticFactory2.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory1<JetEnumEntry, ClassDescriptor> ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR = DiagnosticFactory1.create(WARNING, DELEGATOR_SUPER_CALL);
     DiagnosticFactory1<JetEnumEntry, ClassDescriptor> ENUM_ENTRY_AFTER_ENUM_MEMBER = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory0<JetCallExpression> ENUM_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
 
     // Sealed-specific
-    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_SEALED = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
-    DiagnosticFactory0<JetModifierListOwner> FINAL_MODIFIER_IN_SEALED = DiagnosticFactory0
-            .create(ERROR, modifierSetPosition(JetTokens.FINAL_KEYWORD));
-    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_SEALED = DiagnosticFactory0
-            .create(WARNING, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
     DiagnosticFactory0<JetCallExpression> SEALED_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SEALED_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SEALED_SUPERTYPE_IN_LOCAL_CLASS = DiagnosticFactory0.create(ERROR);
@@ -229,7 +211,6 @@ public interface Errors {
     // Companion objects
 
     DiagnosticFactory0<JetObjectDeclaration> MANY_COMPANION_OBJECTS = DiagnosticFactory0.create(ERROR, COMPANION_OBJECT);
-    DiagnosticFactory0<JetObjectDeclaration> COMPANION_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, COMPANION_OBJECT);
 
     DiagnosticFactory1<PsiElement, DeclarationDescriptor> DEPRECATED_SYMBOL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATED_SYMBOL_WITH_MESSAGE = DiagnosticFactory2.create(WARNING);
@@ -260,9 +241,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> CYCLIC_GENERIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     // Members
-
-    DiagnosticFactory0<JetModifierListOwner> PACKAGE_MEMBER_CANNOT_BE_PROTECTED =
-            DiagnosticFactory0.create(ERROR, modifierSetPosition(JetTokens.PROTECTED_KEYWORD));
 
     DiagnosticFactory0<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
@@ -680,9 +658,6 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetClass> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR, DECLARATION_NAME);
-
-    DiagnosticFactory0<JetModifierListOwner> INNER_CLASS_IN_TRAIT = DiagnosticFactory0.create(ERROR, PositioningStrategies.INNER_MODIFIER);
-    DiagnosticFactory0<JetModifierListOwner> INNER_CLASS_IN_OBJECT = DiagnosticFactory0.create(ERROR, PositioningStrategies.INNER_MODIFIER);
 
     //Inline and inlinable parameters
     DiagnosticFactory2<JetElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);

@@ -17,24 +17,27 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.types.Variance
 
-object CreateNextFunctionActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
+object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())
+    }
+
+    override fun createCallableInfo(element: JetForExpression, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
-        val ownerType = TypeInfo(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
+        val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)
 
-        val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-        val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
-        val returnType = TypeInfo(variableExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(forExpr, FunctionInfo("next", ownerType, returnType))
+        val variableExpr = element.loopParameter ?: element.multiParameter ?: return null
+        val returnType = TypeInfo(variableExpr as JetExpression, Variance.OUT_VARIANCE)
+        return FunctionInfo("next", ownerType, returnType)
     }
 }

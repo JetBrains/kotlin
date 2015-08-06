@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.jvm;
 
+import "core/deserialization/src/ext_options.proto";
 import "core/deserialization/src/descriptors.proto";
 
 option java_outer_classname = "JvmProtoBuf";
@@ -40,19 +41,19 @@ message JvmType {
   optional PrimitiveType primitive_type = 1;
 
   // id in QualifiedNameTable of a name in the following format: 'package.Outer$Nested'
-  optional int32 class_fq_name = 2;
+  optional int32 class_fq_name = 2 [(fq_name_id_in_table) = true];
 
   optional int32 array_dimension = 3 [default = 0];
 }
 
 message JvmMethodSignature {
-  required int32 name = 1;
+  required int32 name = 1 [(string_id_in_table) = true];
   required JvmType return_type = 2;
   repeated JvmType parameter_type = 3;
 }
 
 message JvmFieldSignature {
-  required int32 name = 1;
+  required int32 name = 1 [(string_id_in_table) = true];
   required JvmType type = 2;
 
   // True iff this field is a backing field for a companion object and is really present as a static
@@ -82,7 +83,7 @@ extend org.jetbrains.kotlin.serialization.Callable {
   // This is needed to find the class to load annotations from in the following cases:
   // 1) annotations on top-level members are written to compiled package part classes
   // 2) annotations on properties in traits are written to TImpl classes
-  optional int32 impl_class_name = 102;
+  optional int32 impl_class_name = 102 [(name_id_in_table) = true];
 }
 
 extend org.jetbrains.kotlin.serialization.Type {

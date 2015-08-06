@@ -77,6 +77,11 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     }
 
     @Override
+    public boolean isDeprecatedInJavaDoc() {
+        return false;
+    }
+
+    @Override
     @Nullable
     public Name getName() {
         PsiParameter psi = getPsi();

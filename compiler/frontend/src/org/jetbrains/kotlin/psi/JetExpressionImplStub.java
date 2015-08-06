@@ -24,7 +24,7 @@ import com.intellij.util.IncorrectOperationException;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class JetExpressionImplStub<T extends StubElement> extends JetElementImplStub<T> implements JetExpression {
+public abstract class JetExpressionImplStub<T extends StubElement<?>> extends JetElementImplStub<T> implements JetExpression {
     public JetExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

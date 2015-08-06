@@ -792,6 +792,10 @@ public class JetPsiUtil {
             }
         }
 
+        if (declaration instanceof PsiFile) {
+            return declaration;
+        }
+
         // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
         PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
         while (current != null) {

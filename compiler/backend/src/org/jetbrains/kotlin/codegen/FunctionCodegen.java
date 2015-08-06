@@ -71,7 +71,6 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -170,10 +169,6 @@ public class FunctionCodegen {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, asmMethod.getReturnType());
         generateParameterAnnotations(functionDescriptor, mv, typeMapper.mapSignature(functionDescriptor));
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
-            generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
-        }
-
         generateBridges(functionDescriptor);
 
         boolean staticInCompanionObject = AnnotationsPackage.isPlatformStaticInCompanionObject(functionDescriptor);
@@ -235,56 +230,6 @@ public class FunctionCodegen {
                 ValueParameterDescriptor parameter = iterator.next();
                 v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
                 AnnotationCodegen.forParameter(i, mv, typeMapper).genAnnotations(parameter, parameterSignature.getAsmType());
-            }
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void generateJetValueParameterAnnotations(
-            @NotNull MethodVisitor mv,
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JvmMethodSignature jvmSignature
-    ) {
-        Iterator<ValueParameterDescriptor> descriptors = functionDescriptor.getValueParameters().iterator();
-        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
-
-        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
-            JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
-            if (kind.isSkippedInGenericSignature()) continue;
-
-            String name;
-            boolean nullableType;
-            if (kind == JvmMethodParameterKind.VALUE) {
-                ValueParameterDescriptor descriptor = descriptors.next();
-                name = descriptor.getName().asString();
-                nullableType = descriptor.getType().isMarkedNullable();
-            }
-            else {
-                String lowercaseKind = kind.name().toLowerCase();
-                if (needIndexForVar(kind)) {
-                    name = "$" + lowercaseKind + "$" + i;
-                }
-                else {
-                    name = "$" + lowercaseKind;
-                }
-
-                if (kind == JvmMethodParameterKind.RECEIVER) {
-                    ReceiverParameterDescriptor receiver = functionDescriptor.getExtensionReceiverParameter();
-                    nullableType = receiver == null || receiver.getType().isMarkedNullable();
-                }
-                else {
-                    nullableType = true;
-                }
-            }
-
-            AnnotationVisitor av =
-                    mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(OLD_JET_VALUE_PARAMETER_ANNOTATION), true);
-            if (av != null) {
-                av.visit("name", name);
-                if (nullableType) {
-                    av.visit("type", "?");
-                }
-                av.visitEnd();
             }
         }
     }

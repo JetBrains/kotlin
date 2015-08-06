@@ -18,19 +18,16 @@ package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.typeEnhacement.JavaTypeQualifiers
 import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NULL
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.types.*
 
 // The index in the lambda is the position of the type component:
@@ -101,13 +98,18 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
             enhancedNullabilityAnnotations
     ).filterNotNull().compositeAnnotationsOrSingle()
 
+    val (newSubstitution, substitutedEnhancedArgs) = computeNewSubstitutionAndArguments(
+        enhancedClassifier.typeConstructor.parameters, enhancedArguments
+    )
+
     val enhancedType = JetTypeImpl(
             newAnnotations,
             enhancedClassifier.getTypeConstructor(),
             enhancedNullability,
-            enhancedArguments,
+            substitutedEnhancedArgs,
+            newSubstitution,
             if (enhancedClassifier is ClassDescriptor)
-                enhancedClassifier.getMemberScope(enhancedArguments)
+                enhancedClassifier.getMemberScope(newSubstitution)
             else enhancedClassifier.getDefaultType().getMemberScope()
     )
     return Result(enhancedType, globalArgIndex - index)
@@ -177,8 +179,9 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
 }
 
 private object EnhancedTypeAnnotationDescriptor : AnnotationDescriptor {
-    private fun throwError() = error("No methods should be called on this descriptor. Only it's presence matters")
+    private fun throwError() = error("No methods should be called on this descriptor. Only its presence matters")
     override fun getType() = throwError()
     override fun getAllValueArguments() = throwError()
+    override fun getSource() = throwError()
     override fun toString() = "[EnhancedType]"
 }

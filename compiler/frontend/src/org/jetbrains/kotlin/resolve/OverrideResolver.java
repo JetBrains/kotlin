@@ -30,6 +30,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -49,7 +50,6 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers;
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class OverrideResolver {
 
@@ -645,16 +645,12 @@ public class OverrideResolver {
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
         if (subTypeParameters.size() != superTypeParameters.size()) return null;
 
-        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMapWithExpectedSize(superTypeParameters.size());
+        ArrayList<TypeProjection> arguments = new ArrayList<TypeProjection>(subTypeParameters.size());
         for (int i = 0; i < superTypeParameters.size(); i++) {
-            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
-            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-            substitutionContext.put(
-                    superTypeParameter.getTypeConstructor(),
-                    new TypeProjectionImpl(subTypeParameter.getDefaultType())
-            );
+            arguments.add(new TypeProjectionImpl(subTypeParameters.get(i).getDefaultType()));
         }
-        return TypeSubstitutor.create(substitutionContext);
+
+        return new IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor();
     }
 
     public static boolean isPropertyTypeOkForOverride(
@@ -716,15 +712,15 @@ public class OverrideResolver {
     }
 
     @NotNull
-    private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        ClassDescriptor stdDataClassAnnotation = getBuiltIns(dataClass).getDataClassAnnotation();
-        AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(stdDataClassAnnotation));
-        if (annotation == null) {
-            throw new IllegalStateException("No data annotation is found for data class " + dataClass);
+    private static JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
+        AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.data);
+        if (annotation != null) {
+            JetAnnotationEntry entry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
+            if (entry != null) {
+                return entry;
+            }
         }
-        return BindingContextUtils.getNotNull(trace.getBindingContext(),
-                                              BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
-                                              annotation);
+        throw new IllegalStateException("No data annotation is found for data class " + dataClass);
     }
 
     @Nullable
@@ -845,10 +841,8 @@ public class OverrideResolver {
             @NotNull ValueParameterDescriptor parameterFromSubclass,
             @NotNull ValueParameterDescriptor parameterFromSuperclass
     ) {
-        DeclarationDescriptor subFunction = parameterFromSubclass.getContainingDeclaration();
-        DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
-        return subFunction instanceof CallableDescriptor && ((CallableDescriptor) subFunction).hasStableParameterNames() &&
-               superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
+        return parameterFromSubclass.getContainingDeclaration().hasStableParameterNames() &&
+               parameterFromSuperclass.getContainingDeclaration().hasStableParameterNames() &&
                !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName());
     }
 

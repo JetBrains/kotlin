@@ -66,7 +66,7 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
     override fun rootsChanged(event: ModuleRootEvent) {
         if (myMuted.get()) return
 
-        ApplicationManager.getApplication().invokeLater({
+        ApplicationManager.getApplication().invokeLater(Runnable {
                 DumbService.getInstance(myProject!!).runWhenSmart() { updateProjectLibrary() }
         }, ModalityState.NON_MODAL, myProject!!.getDisposed())
     }
@@ -220,6 +220,6 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
 
         platformStatic
         public fun getInstance(project: Project): KotlinJavaScriptLibraryManager =
-            project.getComponent(javaClass<KotlinJavaScriptLibraryManager>())
+            project.getComponent(javaClass<KotlinJavaScriptLibraryManager>())!!
     }
 }

@@ -16,40 +16,25 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
-import com.intellij.psi.PsiReference
-import com.intellij.util.QueryFactory
-import com.intellij.psi.search.SearchScope
-import com.intellij.psi.search.SearchRequestCollector
-import com.intellij.psi.search.SearchSession
-import com.intellij.psi.search.PsiSearchHelper
-import com.intellij.util.Query
-import com.intellij.util.MergeQuery
-import com.intellij.psi.search.SearchRequestQuery
-import com.intellij.util.UniqueResultsQuery
-import com.intellij.psi.search.searches.ReferenceDescriptor
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.psi.search.UsageSearchContext
-import com.intellij.psi.PsiElement
-import com.intellij.util.Processor
 import com.intellij.openapi.application.QueryExecutorBase
-import com.intellij.psi.PsiReferenceService
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.ReferenceRange
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.*
-import org.jetbrains.kotlin.idea.search.and
-import com.intellij.psi.impl.search.PsiSearchHelperImpl
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.impl.cache.impl.id.IdIndexEntry
-import java.util.Collections
 import com.intellij.openapi.roots.FileIndexFacade
-import com.intellij.util.indexing.FileBasedIndex
-import com.intellij.psi.impl.cache.impl.id.IdIndex
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import com.intellij.psi.search.TextOccurenceProcessor
-import com.intellij.psi.PsiManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.*
 import com.intellij.psi.impl.PsiManagerEx
+import com.intellij.psi.impl.cache.impl.id.IdIndex
+import com.intellij.psi.impl.cache.impl.id.IdIndexEntry
+import com.intellij.psi.impl.search.PsiSearchHelperImpl
+import com.intellij.psi.search.*
+import com.intellij.psi.search.searches.ReferenceDescriptor
+import com.intellij.util.*
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.kotlin.idea.search.and
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.False
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import java.util.Collections
 
 public data class UsagesSearchLocation(
         val inCode: Boolean = true,
@@ -81,7 +66,10 @@ public data class UsagesSearchTarget<out T : PsiElement>(
         val location: UsagesSearchLocation = UsagesSearchLocation.DEFAULT,
         val restrictByTargetScope: Boolean = true
 ) {
-    fun <U: PsiElement> retarget(element: U) =
+    fun <U: PsiElement> withTarget(element: U) =
+            UsagesSearchTarget(element, scope, location, restrictByTargetScope)
+
+    fun withScope(scope: SearchScope) =
             UsagesSearchTarget(element, scope, location, restrictByTargetScope)
 
     val effectiveScope: SearchScope
@@ -100,11 +88,18 @@ public interface UsagesSearchFilter {
     fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean
 }
 
-public data class UsagesSearchRequestItem(
+public class UsagesSearchRequestItem(
         val target: UsagesSearchTarget<PsiElement>,
         val words: List<String>,
         val filter: UsagesSearchFilter,
-        val additionalSearchDelegate: ((Processor<PsiReference>) -> Boolean)?
+        val additionalSearchDelegate: ((Processor<PsiReference>) -> Boolean)? = null,
+        val additionalFileFilters: Collection<AdditionalFileFilter> = emptyList()
+)
+
+public class AdditionalFileFilter(
+        val word: String,
+        val searchContext: Short,
+        val caseSensitively: Boolean
 )
 
 public data class UsagesSearchRequest(val project: Project, val items: List<UsagesSearchRequestItem>) {
@@ -153,7 +148,16 @@ public class KotlinPsiSearchHelper(private val project: Project): PsiSearchHelpe
     }
 
     public fun processFilesWithText(item: UsagesSearchRequestItem, consumer: Processor<PsiReference>): Boolean {
-        val scope = runReadAction { item.target.effectiveScope }
+        var scope = runReadAction { item.target.effectiveScope }
+
+        for (filter in item.additionalFileFilters) {
+            if (scope !is GlobalSearchScope) break
+            val processor = CommonProcessors.CollectProcessor<VirtualFile>()
+            processFilesWithText(scope, filter.searchContext, filter.caseSensitively, filter.word, processor)
+            if (processor.results.isEmpty()) return true
+            scope = GlobalSearchScope.filesScope(project, processor.results)
+        }
+
         return item.words.all { word ->
             val textProcessor = ResultTextProcessorImpl(item, consumer)
             processElementsWithWord(textProcessor, scope, word, item.target.location.searchContext, true)

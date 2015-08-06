@@ -104,15 +104,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     public List<String> args;
 
-    protected final Log LOG = getLog();
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        LOG.info("Kotlin Compiler version " + KotlinVersion.VERSION);
+        getLog().info("Kotlin Compiler version " + KotlinVersion.VERSION);
 
         if (!hasKotlinFilesInSources()) {
-            LOG.warn("No sources found skipping Kotlin compile");
+            getLog().warn("No sources found skipping Kotlin compile");
             return;
         }
 
@@ -131,13 +129,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 String text = position + message;
 
                 if (CompilerMessageSeverity.VERBOSE.contains(severity)) {
-                    LOG.debug(text);
+                    getLog().debug(text);
                 } else if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-                    LOG.error(text);
+                    getLog().error(text);
                 } else if (severity == CompilerMessageSeverity.INFO) {
-                    LOG.info(text);
+                    getLog().info(text);
                 } else {
-                    LOG.warn(text);
+                    getLog().warn(text);
                 }
             }
         };
@@ -227,7 +225,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments) throws MojoExecutionException;
 
     private void configureCompilerArguments(@NotNull A arguments) throws MojoExecutionException {
-        if (LOG.isDebugEnabled()) {
+        if (getLog().isDebugEnabled()) {
             arguments.verbose = true;
         }
 
@@ -237,18 +235,18 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 sources.add(source);
             }
             else {
-                LOG.warn("Source root doesn't exist: " + source);
+                getLog().warn("Source root doesn't exist: " + source);
             }
         }
 
-        if (sources == null || sources.isEmpty()) {
+        if (sources.isEmpty()) {
             throw new MojoExecutionException("No source roots to compile");
         }
 
         arguments.suppressWarnings = nowarn;
 
         arguments.freeArgs.addAll(sources);
-        LOG.info("Compiling Kotlin sources from " + sources);
+        getLog().info("Compiling Kotlin sources from " + sources);
 
         configureSpecificCompilerArguments(arguments);
 
@@ -260,7 +258,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         if (arguments.noInline) {
-            LOG.info("Method inlining is turned off");
+            getLog().info("Method inlining is turned off");
         }
     }
 }

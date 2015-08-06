@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.codeInsight.generation.GenerateEqualsHelper
+
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.KotlinLightField
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -139,7 +142,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 if (!psiClass.hasModifierProperty(PsiModifier.FINAL)) return false
                 if (psiClass.isEnum()) return true
 
-                val equalsSignature = GenerateEqualsHelper.getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
+                val equalsSignature = getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
                 val equalsMethod = MethodSignatureUtil.findMethodBySignature(psiClass, equalsSignature, true)
                 if (equalsMethod != null && equalsMethod.getContainingClass()?.getQualifiedName() != CommonClassNames.JAVA_LANG_OBJECT) return false
 
@@ -149,6 +152,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             else -> return false
         }
 
+    }
+
+    private fun getEqualsSignature(project: Project, scope: GlobalSearchScope): MethodSignature {
+        val javaLangObject = PsiType.getJavaLangObject(PsiManager.getInstance(project), scope)
+        return MethodSignatureUtil.createMethodSignature("equals", arrayOf<PsiType>(javaLangObject), PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY)
     }
 
     private val NON_NULL_OPERAND_OPS = setOf(
@@ -528,6 +536,54 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             JavaTokenType.MINUSMINUS -> "--"
             else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
         }
+    }
+
+    override fun visitLambdaExpression(expression: PsiLambdaExpression) {
+        val parameters = expression.parameterList
+        val convertedParameters = ParameterList(parameters.parameters.map {
+            val paramName = Identifier(it.name!!).assignNoPrototype()
+            val paramType = if (it.typeElement != null) converter.typeConverter.convertType(it.type) else null
+            LambdaParameter(paramName, paramType).assignPrototype(it)
+        }).assignPrototype(parameters)
+
+        val body = expression.body
+        when (body) {
+            is PsiExpression -> {
+                val convertedBody = codeConverter.convertExpression(body).assignPrototype(body)
+                result = LambdaExpression(convertedParameters, Block(listOf(convertedBody), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()))
+            }
+            is PsiCodeBlock -> {
+                val convertedBlock = codeConverter.withSpecialStatementConverter(object: SpecialStatementConverter {
+                    override fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement? {
+                        if (statement !is PsiReturnStatement) return null
+
+                        val returnValue = statement.returnValue
+                        val methodReturnType = codeConverter.methodReturnType
+                        val expressionForReturn = if (returnValue != null && methodReturnType != null)
+                            codeConverter.convertExpression(returnValue, methodReturnType)
+                        else
+                            codeConverter.convertExpression(returnValue)
+
+                        if (body.statements.lastOrNull() == statement) {
+                            return expressionForReturn
+                        }
+
+                        val callExpression = expression.getParentOfType<PsiMethodCallExpression>(false)
+                        if (callExpression != null) {
+                            return ReturnStatement(expressionForReturn, Identifier(callExpression.methodExpression.text).assignNoPrototype())
+                        }
+
+                        return ReturnStatement(expressionForReturn)
+                    }
+
+                }).convertBlock(body).assignPrototype(body)
+                result = LambdaExpression(convertedParameters, convertedBlock)
+            }
+        }
+    }
+
+    override fun visitExpression(expression: PsiExpression) {
+        result = DummyStringExpression(expression.text)
     }
 
     companion object {

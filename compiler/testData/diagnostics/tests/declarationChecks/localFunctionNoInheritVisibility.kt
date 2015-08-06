@@ -4,10 +4,10 @@ class T {
     fun baz() = 1
 }
 
-<!ILLEGAL_MODIFIER!>override<!> fun zzz() {}
+<!WRONG_MODIFIER_TARGET!>override<!> fun zzz() {}
 
 fun foo(t: T) {
-    <!ILLEGAL_MODIFIER!>override<!> fun T.baz() = 2
+    <!WRONG_MODIFIER_TARGET!>override<!> fun T.baz() = 2
 
     // was "Visibility is unknown yet exception"
     t.baz()

@@ -16,53 +16,56 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.types.Variance
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import java.util.Collections
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetOperationExpression
 import org.jetbrains.kotlin.psi.JetUnaryExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.util.ArrayList
+import java.util.Collections
 
-object CreateSetFunctionActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val accessExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>()) ?: return null
-        val arrayExpr = accessExpr.getArrayExpression() ?: return null
+object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetArrayAccessExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetArrayAccessExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>())
+    }
+
+    override fun createCallableInfo(element: JetArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
+        val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
         val builtIns = KotlinBuiltIns.getInstance()
 
-        val parameters = accessExpr.getIndexExpressions().mapTo(ArrayList<ParameterInfo>()) {
+        val parameters = element.indexExpressions.mapTo(ArrayList<ParameterInfo>()) {
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
-
         val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetOperationExpression>()) ?: return null
         val valType = when (assignmentExpr) {
             is JetBinaryExpression -> {
-                TypeInfo(assignmentExpr.getRight() ?: return null, Variance.IN_VARIANCE)
+                TypeInfo(assignmentExpr.right ?: return null, Variance.IN_VARIANCE)
             }
             is JetUnaryExpression -> {
-                if (assignmentExpr.getOperationToken() !in OperatorConventions.INCREMENT_OPERATIONS) return null
+                if (assignmentExpr.operationToken !in OperatorConventions.INCREMENT_OPERATIONS) return null
 
                 val context = assignmentExpr.analyze()
-                val rhsType = assignmentExpr.getResolvedCall(context)?.getResultingDescriptor()?.getReturnType()
-                TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.getAnyType() else rhsType, Variance.IN_VARIANCE)
+                val rhsType = assignmentExpr.getResolvedCall(context)?.resultingDescriptor?.returnType
+                TypeInfo(if (rhsType == null || ErrorUtils.containsErrorType(rhsType)) builtIns.anyType else rhsType, Variance.IN_VARIANCE)
             }
             else -> return null
         }
         parameters.add(ParameterInfo(valType, "value"))
 
-        val returnType = TypeInfo(builtIns.getUnitType(), Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(accessExpr, FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters))
+        val returnType = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE)
+        return FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters)
     }
 }

@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.load.java.lazy
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class LazyJavaPackageFragmentProvider(
@@ -46,17 +46,6 @@ public class LazyJavaPackageFragmentProvider(
                 else null
             }
 
-    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues lambda@ {
-        jClass: JavaClass ->
-        val fqName = jClass.getFqName()
-        if (fqName == null) return@lambda null
-
-        val packageFragment = getPackageFragment(fqName.parent())
-        if (packageFragment == null) return@lambda null
-
-        LazyJavaClassDescriptor(c, packageFragment, fqName, jClass)
-    }
-
     private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
     override fun getPackageFragments(fqName: FqName) = emptyOrSingletonList(getPackageFragment(fqName))
@@ -68,18 +57,22 @@ public class LazyJavaPackageFragmentProvider(
 
     private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-            val fqName = javaClass.getFqName()
-            if (fqName != null) {
-                if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
-                    return c.javaResolverCache.getClassResolvedFromSource(fqName)
-                }
+            val fqName = javaClass.fqName
+            if (fqName != null && javaClass.originKind == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
+                return c.javaResolverCache.getClassResolvedFromSource(fqName)
             }
-            val outerClass = javaClass.getOuterClass()
-            if (outerClass == null) {
-                return c.lookupBinaryClass(javaClass) ?: topLevelClasses(javaClass)
+
+            javaClass.outerClass?.let { outerClass ->
+                val outerClassScope = resolveClass(outerClass)?.unsubstitutedInnerClassesScope
+                return outerClassScope?.getClassifier(javaClass.name) as? ClassDescriptor
             }
-            val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
-            return outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
+
+            val kotlinResult = c.resolveKotlinBinaryClass(c.kotlinClassFinder.findKotlinClass(javaClass))
+            if (kotlinResult is KotlinClassLookupResult.Found) return kotlinResult.descriptor
+
+            if (fqName == null) return null
+
+            return getPackageFragment(fqName.parent())?.resolveTopLevelClass(javaClass)
         }
     }
 }

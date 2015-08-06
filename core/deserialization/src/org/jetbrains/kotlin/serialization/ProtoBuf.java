@@ -4367,6 +4367,42 @@ public final class ProtoBuf {
      * </pre>
      */
     org.jetbrains.kotlin.serialization.ProtoBuf.Type getFlexibleUpperBound();
+
+    // optional int32 constructor_class_name = 6;
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    boolean hasConstructorClassName();
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    int getConstructorClassName();
+
+    // optional int32 constructor_type_parameter = 7;
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    boolean hasConstructorTypeParameter();
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    int getConstructorTypeParameter();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -4453,6 +4489,16 @@ public final class ProtoBuf {
                 flexibleUpperBound_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000008;
+              break;
+            }
+            case 48: {
+              bitField0_ |= 0x00000010;
+              constructorClassName_ = input.readInt32();
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000020;
+              constructorTypeParameter_ = input.readInt32();
               break;
             }
           }
@@ -5709,12 +5755,62 @@ public final class ProtoBuf {
       return flexibleUpperBound_;
     }
 
+    // optional int32 constructor_class_name = 6;
+    public static final int CONSTRUCTOR_CLASS_NAME_FIELD_NUMBER = 6;
+    private int constructorClassName_;
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    public boolean hasConstructorClassName() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 constructor_class_name = 6;</code>
+     *
+     * <pre>
+     * fqName id
+     * </pre>
+     */
+    public int getConstructorClassName() {
+      return constructorClassName_;
+    }
+
+    // optional int32 constructor_type_parameter = 7;
+    public static final int CONSTRUCTOR_TYPE_PARAMETER_FIELD_NUMBER = 7;
+    private int constructorTypeParameter_;
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    public boolean hasConstructorTypeParameter() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional int32 constructor_type_parameter = 7;</code>
+     *
+     * <pre>
+     * type parameter id
+     * </pre>
+     */
+    public int getConstructorTypeParameter() {
+      return constructorTypeParameter_;
+    }
+
     private void initFields() {
       constructor_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.Constructor.getDefaultInstance();
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
       flexibleTypeCapabilitiesId_ = 0;
       flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      constructorClassName_ = 0;
+      constructorTypeParameter_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5770,6 +5866,12 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(5, flexibleUpperBound_);
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(6, constructorClassName_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeInt32(7, constructorTypeParameter_);
+      }
       extensionWriter.writeUntil(200, output);
     }
 
@@ -5798,6 +5900,14 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, flexibleUpperBound_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, constructorClassName_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, constructorTypeParameter_);
       }
       size += extensionsSerializedSize();
       memoizedSerializedSize = size;
@@ -5900,6 +6010,10 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000010);
+        constructorClassName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000020);
+        constructorTypeParameter_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -5944,6 +6058,14 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000008;
         }
         result.flexibleUpperBound_ = flexibleUpperBound_;
+        if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.constructorClassName_ = constructorClassName_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        result.constructorTypeParameter_ = constructorTypeParameter_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -5971,6 +6093,12 @@ public final class ProtoBuf {
         }
         if (other.hasFlexibleUpperBound()) {
           mergeFlexibleUpperBound(other.getFlexibleUpperBound());
+        }
+        if (other.hasConstructorClassName()) {
+          setConstructorClassName(other.getConstructorClassName());
+        }
+        if (other.hasConstructorTypeParameter()) {
+          setConstructorTypeParameter(other.getConstructorTypeParameter());
         }
         this.mergeExtensionFields(other);
         return this;
@@ -6393,6 +6521,104 @@ public final class ProtoBuf {
         flexibleUpperBound_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+
+      // optional int32 constructor_class_name = 6;
+      private int constructorClassName_ ;
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public boolean hasConstructorClassName() {
+        return ((bitField0_ & 0x00000020) == 0x00000020);
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public int getConstructorClassName() {
+        return constructorClassName_;
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public Builder setConstructorClassName(int value) {
+        bitField0_ |= 0x00000020;
+        constructorClassName_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 constructor_class_name = 6;</code>
+       *
+       * <pre>
+       * fqName id
+       * </pre>
+       */
+      public Builder clearConstructorClassName() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        constructorClassName_ = 0;
+        
+        return this;
+      }
+
+      // optional int32 constructor_type_parameter = 7;
+      private int constructorTypeParameter_ ;
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public boolean hasConstructorTypeParameter() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public int getConstructorTypeParameter() {
+        return constructorTypeParameter_;
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public Builder setConstructorTypeParameter(int value) {
+        bitField0_ |= 0x00000040;
+        constructorTypeParameter_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 constructor_type_parameter = 7;</code>
+       *
+       * <pre>
+       * type parameter id
+       * </pre>
+       */
+      public Builder clearConstructorTypeParameter() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        constructorTypeParameter_ = 0;
+        
         return this;
       }
 

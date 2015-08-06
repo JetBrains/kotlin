@@ -4,14 +4,13 @@ enum class Target {
     FUNCTION
 }
 
-target(Target.CLASSIFIER)
-public annotation class target(vararg val allowedTargets: Target)
+<!NOT_AN_ANNOTATION_CLASS!>target(Target.CLASSIFIER)<!>
+public <!NOT_AN_ANNOTATION_CLASS!>annotation<!> class target(vararg val allowedTargets: Target)
 
-target(Target.CLASSIFIER)
-public annotation(AnnotationRetention.SOURCE) class annotation(
+<!NOT_AN_ANNOTATION_CLASS!>target(Target.CLASSIFIER)<!>
+public <!NOT_AN_ANNOTATION_CLASS!>annotation(AnnotationRetention.SOURCE)<!> class annotation(
     val retention: AnnotationRetention = AnnotationRetention.RUNTIME,
     val repeatable: Boolean = false
 )
 
-annotation class some
-
+<!NOT_AN_ANNOTATION_CLASS!>annotation<!> class some

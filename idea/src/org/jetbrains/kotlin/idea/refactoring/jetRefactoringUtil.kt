@@ -63,11 +63,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -76,10 +75,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
+import java.lang.annotation.Retention
 import java.util.ArrayList
 import java.util.Collections
 import javax.swing.Icon
-import java.lang.annotation.Retention
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -175,13 +174,21 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     }
 }
 
-public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, String>, onAccept: () -> Unit) {
+public fun Project.checkConflictsInteractively(
+        conflicts: MultiMap<PsiElement, String>,
+        onShowConflicts: () -> Unit = {},
+        onAccept: () -> Unit) {
     if (!conflicts.isEmpty()) {
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) throw ConflictsInTestsException(conflicts.values())
 
-        val dialog = ConflictsDialog(this, conflicts, onAccept)
+        val dialog = ConflictsDialog(this, conflicts) { onAccept() }
         dialog.show()
-        if (!dialog.isOK()) return
+        if (!dialog.isOK()) {
+            if (dialog.isShowConflicts()) {
+                onShowConflicts()
+            }
+            return
+        }
     }
 
     onAccept()
@@ -563,8 +570,7 @@ fun PsiExpression.j2k(): JetExpression? {
     val project = getProject()
     val j2kConverter = JavaToKotlinConverter(project,
                                              ConverterSettings.defaultSettings,
-                                             IdeaReferenceSearcher,
-                                             IdeaResolverForConverter)
+                                             IdeaJavaToKotlinServices)
     val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
     return JetPsiFactory(getProject()).createExpression(text)
 }

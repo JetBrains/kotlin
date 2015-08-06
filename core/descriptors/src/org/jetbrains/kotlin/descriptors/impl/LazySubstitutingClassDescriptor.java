@@ -50,7 +50,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 List<TypeParameterDescriptor> originalTypeParameters = original.getTypeConstructor().getParameters();
                 typeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
                 newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(
-                        originalTypeParameters, originalSubstitutor, this, typeParameters
+                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeParameters
                 );
             }
         }
@@ -91,6 +91,16 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
         JetScope memberScope = original.getMemberScope(typeArguments);
+        if (originalSubstitutor.isEmpty()) {
+            return memberScope;
+        }
+        return new SubstitutingScope(memberScope, getSubstitutor());
+    }
+
+    @NotNull
+    @Override
+    public JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        JetScope memberScope = original.getMemberScope(typeSubstitution);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -170,7 +180,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         if (substitutor.isEmpty()) return this;
-        return new LazySubstitutingClassDescriptor(this, TypeSubstitutor.create(substitutor.getSubstitution(), getSubstitutor().getSubstitution()));
+        return new LazySubstitutingClassDescriptor(this, TypeSubstitutor.createChainedSubstitutor(substitutor.getSubstitution(), getSubstitutor().getSubstitution()));
     }
 
     @Override

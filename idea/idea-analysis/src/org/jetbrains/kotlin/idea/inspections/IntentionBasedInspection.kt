@@ -25,7 +25,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
 
 public abstract class IntentionBasedInspection<TElement : JetElement>(
-        protected val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
+        public val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected val problemText: String?,
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -65,6 +67,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     public fun testResolveCaching() {
         doTest {
+            // resolve statements in "a()"
             val statement1 = statements[0]
             val statement2 = statements[1]
             val bindingContext1 = statement1.analyze(BodyResolveMode.FULL)
@@ -74,15 +77,60 @@ class C(param1: String = "", param2: Int = 0) {
             val bindingContext3 = statement1.analyze(BodyResolveMode.FULL)
             assert(bindingContext3 === bindingContext1)
 
-            file.add(factory.createFunction("fun foo(){}"))
+            // modify body of "b()"
+            val bFun = members[1] as JetNamedFunction
+            val bBody = bFun.bodyExpression as JetBlockExpression
+            bBody.addAfter(factory.createExpression("x()"), bBody.lBrace)
 
             val bindingContext4 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext4 !== bindingContext1)
+            assert(bindingContext4 === bindingContext1) // change in other function's body should not affect resolve of other one
 
-            statement1.getParent().addAfter(factory.createExpression("x()"), statement1)
+            // add parameter to "b()" this should invalidate all resolve
+            bFun.valueParameterList!!.addParameter(factory.createParameter("p: Int"))
 
             val bindingContext5 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext5 !== bindingContext4)
+            assert(bindingContext5 !== bindingContext1)
+
+            statement1.parent.addAfter(factory.createExpression("x()"), statement1)
+
+            val bindingContext6 = statement1.analyze(BodyResolveMode.FULL)
+            assert(bindingContext6 !== bindingContext5)
+        }
+    }
+
+    public fun testResolveSurvivesTypingInCodeBlock() {
+        doTest {
+            val statement = statements[0]
+            val bindingContext1 = statement.analyze(BodyResolveMode.FULL)
+
+            val classConstructorParamTypeRef = klass.getPrimaryConstructor()!!.valueParameters.first().typeReference!!
+            val bindingContext2 = classConstructorParamTypeRef.analyze(BodyResolveMode.FULL)
+
+            val documentManager = PsiDocumentManager.getInstance(getProject())
+            val document = documentManager.getDocument(file)!!
+            documentManager.doPostponedOperationsAndUnblockDocument(document)
+
+            // modify body of "b()" via document
+            val bFun = members[1] as JetNamedFunction
+            val bBody = bFun.bodyExpression as JetBlockExpression
+            document.insertString(bBody.lBrace!!.startOffset + 1, "x()")
+            documentManager.commitAllDocuments()
+
+            val bindingContext3 = statement.analyze(BodyResolveMode.FULL)
+            assert(bindingContext3 === bindingContext1)
+
+            val bindingContext4 = classConstructorParamTypeRef.analyze(BodyResolveMode.FULL)
+            assert(bindingContext4 === bindingContext2)
+
+            // insert statement in "a()"
+            document.insertString(statement.startOffset, "x()\n")
+            documentManager.commitAllDocuments()
+
+            val bindingContext5 = (members[0] as JetNamedFunction).bodyExpression!!.analyze(BodyResolveMode.FULL)
+            assert(bindingContext5 !== bindingContext1)
+
+            val bindingContext6 = classConstructorParamTypeRef.analyze(BodyResolveMode.FULL)
+            assert(bindingContext6 === bindingContext2)
         }
     }
 

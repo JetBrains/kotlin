@@ -1,9 +1,9 @@
 package demo
 
+import kotlin.platform.platformStatic
+
 object Program {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         println("Halo!")
     }
 }
-
-fun main(args: Array<String>) = Program.main(args)

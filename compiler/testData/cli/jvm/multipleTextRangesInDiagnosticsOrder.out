@@ -1,10 +1,10 @@
 compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: cannot weaken access privilege 'public' for 'c' in 'A'
     override protected private val c: Int
              ^
-compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: incompatible modifiers: 'private protected'
+compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt:6:14: error: modifier 'protected' is incompatible with 'private'
     override protected private val c: Int
              ^
-compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt:6:24: error: incompatible modifiers: 'private protected'
+compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.kt:6:24: error: modifier 'private' is incompatible with 'protected'
     override protected private val c: Int
                        ^
 COMPILATION_ERROR

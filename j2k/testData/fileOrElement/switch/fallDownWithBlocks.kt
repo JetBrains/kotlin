@@ -1,5 +1,7 @@
+import kotlin.platform.platformStatic
+
 public object C {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         when (args.size()) {
             1 -> {
                 run {
@@ -19,5 +21,3 @@ public object C {
         }
     }
 }
-
-fun main(args: Array<String>) = C.main(args)

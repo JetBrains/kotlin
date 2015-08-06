@@ -29,8 +29,10 @@ public object JvmProtoBufUtil {
     }
 
     platformStatic
-    public fun readClassDataFrom(encodedData: Array<String>): ClassData =
-            ClassData.read(BitEncoding.decodeBytes(encodedData), EXTENSION_REGISTRY)
+    public fun readClassDataFrom(encodedData: Array<String>): ClassData = readClassDataFrom(BitEncoding.decodeBytes(encodedData))
+
+    platformStatic
+    public fun readClassDataFrom(data: ByteArray): ClassData = ClassData.read(data, EXTENSION_REGISTRY)
 
     platformStatic
     public fun readPackageDataFrom(encodedData: Array<String>): PackageData = readPackageDataFrom(BitEncoding.decodeBytes(encodedData))

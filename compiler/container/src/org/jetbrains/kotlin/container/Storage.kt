@@ -161,7 +161,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
                     continue
 
                 if (!Modifier.isAbstract(rawType.getModifiers()) && !rawType.isPrimitive()) {
-                    val implicitDescriptor = SingletonTypeComponentDescriptor(context.container, rawType)
+                    val implicitDescriptor = ImplicitSingletonTypeComponentDescriptor(context.container, rawType)
                     adhocDescriptors.add(implicitDescriptor)
                     collectAdhocComponents(context, implicitDescriptor, visitedTypes, adhocDescriptors)
                 }

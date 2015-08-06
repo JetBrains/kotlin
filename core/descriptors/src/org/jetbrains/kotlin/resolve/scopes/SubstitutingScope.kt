@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -69,9 +70,17 @@ public class SubstitutingScope(private val workerScope: JetScope, private val su
 
     override fun getFunctions(name: Name, location: UsageLocation) = substitute(workerScope.getFunctions(name, location))
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name))
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor>
+            = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name, location))
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes))
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor>
+            = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location))
+
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
+            = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes))
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
+            = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)
 

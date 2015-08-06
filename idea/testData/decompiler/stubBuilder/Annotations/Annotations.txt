@@ -44,19 +44,9 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[private companion]
-          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
-            CONSTRUCTOR_CALLEE:
-              TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=b]
         CLASS_BODY:
       PROPERTY:[fqName=Annotations.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[private final]
-          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
-            CONSTRUCTOR_CALLEE:
-              TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=b]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -133,11 +123,6 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=a]
-          ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
-            CONSTRUCTOR_CALLEE:
-              TYPE_REFERENCE:
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=b]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             MODIFIER_LIST:[]
@@ -200,15 +185,5 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE:
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=a]
-              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
-                CONSTRUCTOR_CALLEE:
-                  TYPE_REFERENCE:
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                      REFERENCE_EXPRESSION:[referencedName=b]
-              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=b]
-                CONSTRUCTOR_CALLEE:
-                  TYPE_REFERENCE:
-                    USER_TYPE:[isAbsoluteInRootPackage=false]
-                      REFERENCE_EXPRESSION:[referencedName=b]
           VALUE_PARAMETER_LIST:
         CLASS_BODY:

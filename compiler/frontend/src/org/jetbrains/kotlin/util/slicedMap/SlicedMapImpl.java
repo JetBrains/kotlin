@@ -100,24 +100,6 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
 
     @Override
-    public <K, V> V remove(RemovableSlice<K, V> slice, K key) {
-        UserDataHolderImpl holder = map.get(key);
-
-        if (holder == null) return null;
-
-        Key<V> sliceKey = slice.getKey();
-        V value = holder.getUserData(sliceKey);
-
-        holder.putUserData(sliceKey, null);
-
-        if (holder.isUserDataEmpty()) {
-            map.remove(key);
-        }
-
-        return value;
-    }
-
-    @Override
     public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
         for (Map.Entry<Object, UserDataHolderImpl> entry : map.entrySet()) {
             Object key = entry.getKey();

@@ -3,9 +3,10 @@
 // ERROR: Assignments are not expressions, and only expressions are allowed in this context
 // ERROR: Unresolved reference: close
 import java.io.*
+import kotlin.platform.platformStatic
 
 object FileRead {
-    public fun main(args: Array<String>) {
+    platformStatic public fun main(args: Array<String>) {
         try {
             val fstream = FileInputStream()
             val `in` = DataInputStream(fstream)
@@ -21,5 +22,3 @@ object FileRead {
 
     }
 }
-
-fun main(args: Array<String>) = FileRead.main(args)

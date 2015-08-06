@@ -90,7 +90,7 @@ class Foo {
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private val packagePrivateProperty<!> = object : MyClass(), MyTrait {}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> val packageProtectedProperty<!> = object : MyClass(), MyTrait {}
+<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty<!> = object : MyClass(), MyTrait {}
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>val packageInternalProperty<!> = object : MyClass(), MyTrait {}
 
@@ -98,7 +98,7 @@ class Foo {
 
 <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val packagePublicProperty<!> = object : MyClass(), MyTrait {}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> fun packageProtectedFunction()<!> = object : MyClass(), MyTrait {}
+<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> fun packageProtectedFunction()<!> = object : MyClass(), MyTrait {}
 
 <!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>fun packageInternalFunction()<!> = object : MyClass(), MyTrait {}
 

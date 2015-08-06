@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
-import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
-import com.intellij.openapi.project.Project
-import com.intellij.find.findUsages.JavaClassFindUsagesOptions
-import org.jetbrains.kotlin.idea.search.usagesSearch.ClassUsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
 import com.intellij.find.findUsages.FindUsagesOptions
-import org.jetbrains.kotlin.idea.search.usagesSearch.PropertyUsagesSearchHelper
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.ClassDeclarationsUsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
+import com.intellij.find.findUsages.JavaClassFindUsagesOptions
+import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
 
 public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsagesOptions(project) {
     public var searchConstructorUsages: Boolean = true
@@ -70,6 +65,18 @@ fun KotlinFunctionFindUsagesOptions.toJavaMethodOptions(project: Project): JavaM
     return javaOptions
 }
 
+fun KotlinPropertyFindUsagesOptions.toJavaVariableOptions(project: Project): JavaVariableFindUsagesOptions {
+    val javaOptions = JavaVariableFindUsagesOptions(project)
+    javaOptions.fastTrack = fastTrack
+    javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
+    javaOptions.isSkipImportStatements = isSkipImportStatements
+    javaOptions.isReadAccess = isReadAccess
+    javaOptions.isWriteAccess = isWriteAccess
+    javaOptions.isUsages = isUsages
+    javaOptions.searchScope = searchScope
+    return javaOptions
+}
+
 public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
     override var searchOverrides: Boolean = false
 }
@@ -101,6 +108,7 @@ fun KotlinPropertyFindUsagesOptions.toHelper(): PropertyUsagesSearchHelper =
         PropertyUsagesSearchHelper(
             selfUsages = isUsages,
             overrideUsages = isUsages,
+            namedArgumentUsages = isUsages,
             readUsages = isReadAccess,
             writeUsages = isWriteAccess,
             skipImports = isSkipImportStatements

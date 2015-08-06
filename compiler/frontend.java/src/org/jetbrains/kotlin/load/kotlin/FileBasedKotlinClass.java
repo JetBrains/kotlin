@@ -20,13 +20,17 @@ import com.intellij.openapi.util.Ref;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
 import java.util.*;
 
@@ -149,7 +153,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(
             @NotNull AnnotationVisitor visitor, @NotNull String desc, @NotNull InnerClassesInfo innerClasses
     ) {
-        AnnotationArgumentVisitor v = visitor.visitAnnotation(resolveNameByDesc(desc, innerClasses));
+        AnnotationArgumentVisitor v = visitor.visitAnnotation(resolveNameByDesc(desc, innerClasses), SourceElement.NO_SOURCE);
         return v == null ? null : convertAnnotationVisitor(v, innerClasses);
     }
 
@@ -236,7 +240,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int parameter, @NotNull String desc, boolean visible) {
-                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, resolveNameByDesc(desc, innerClasses));
+                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, resolveNameByDesc(desc, innerClasses), SourceElement.NO_SOURCE);
                         return av == null ? null : convertAnnotationVisitor(av, innerClasses);
                     }
 

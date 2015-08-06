@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.util.trimIndent
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
@@ -107,8 +108,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
 
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
-        val converter = JavaToKotlinConverter(project, settings,
-                                              IdeaReferenceSearcher, IdeaResolverForConverter)
+        val converter = JavaToKotlinConverter(project, settings, IdeaJavaToKotlinServices)
         return converter.filesToKotlin(listOf(file), J2kPostProcessor(formatCode = true)).results.single()
     }
 

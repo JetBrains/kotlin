@@ -32,29 +32,6 @@ public class TypeSubstitutor {
 
     private static final int MAX_RECURSION_DEPTH = 100;
 
-    public static class MapToTypeSubstitutionAdapter extends TypeSubstitution {
-        private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
-
-        public MapToTypeSubstitutionAdapter(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-            this.substitutionContext = substitutionContext;
-        }
-
-        @Override
-        public TypeProjection get(TypeConstructor key) {
-            return substitutionContext.get(key);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return substitutionContext.isEmpty();
-        }
-
-        @Override
-        public String toString() {
-            return substitutionContext.toString();
-        }
-    }
-
     public static final TypeSubstitutor EMPTY = create(TypeSubstitution.EMPTY);
 
     private static final class SubstitutionException extends Exception {
@@ -69,35 +46,18 @@ public class TypeSubstitutor {
     }
 
     @NotNull
-    public static TypeSubstitutor create(@NotNull TypeSubstitution... substitutions) {
-        return create(new CompositeTypeSubstitution(substitutions));
+    public static TypeSubstitutor createChainedSubstitutor(@NotNull TypeSubstitution first, @NotNull TypeSubstitution second) {
+        return create(DisjointKeysUnionTypeSubstitution.create(first, second));
     }
 
     @NotNull
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return create(new MapToTypeSubstitutionAdapter(substitutionContext));
+        return create(TypeConstructorSubstitution.createByConstructorsMap(substitutionContext));
     }
 
     @NotNull
     public static TypeSubstitutor create(@NotNull JetType context) {
-        return create(buildSubstitutionContext(context.getConstructor().getParameters(), context.getArguments()));
-    }
-
-    @NotNull
-    public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(
-            @NotNull List<TypeParameterDescriptor> parameters,
-            @NotNull List<? extends TypeProjection> contextArguments
-    ) {
-        Map<TypeConstructor, TypeProjection> parameterValues = new HashMap<TypeConstructor, TypeProjection>();
-        if (parameters.size() != contextArguments.size()) {
-            throw new IllegalArgumentException("type parameter count != context arguments: \n" +
-                                               "parameters=" + parameters + "\n" +
-                                               "contextArgs=" + contextArguments);
-        }
-        for (int i = 0, size = parameters.size(); i < size; i++) {
-            parameterValues.put(parameters.get(i).getTypeConstructor(), contextArguments.get(i));
-        }
-        return parameterValues;
+        return create(new IndexedParametersSubstitution(context.getConstructor(), context.getArguments()));
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,10 +66,6 @@ public class TypeSubstitutor {
 
     protected TypeSubstitutor(@NotNull TypeSubstitution substitution) {
         this.substitution = substitution;
-    }
-
-    public boolean inRange(@NotNull TypeConstructor typeConstructor) {
-        return substitution.get(typeConstructor) != null;
     }
 
     public boolean isEmpty() {
@@ -170,8 +126,9 @@ public class TypeSubstitutor {
 
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
+        TypeProjection replacement = substitution.get(type);
         Variance originalProjectionKind = originalProjection.getProjectionKind();
-        if (TypesPackage.isFlexible(type) && !TypesPackage.isCustomTypeVariable(type)) {
+        if (replacement == null && TypesPackage.isFlexible(type) && !TypesPackage.isCustomTypeVariable(type)) {
             Flexibility flexibility = TypesPackage.flexibility(type);
             TypeProjection substitutedLower =
                     unsafeSubstitute(new TypeProjectionImpl(originalProjectionKind, flexibility.getLowerBound()), recursionDepth + 1);
@@ -189,8 +146,6 @@ public class TypeSubstitutor {
         }
 
         if (KotlinBuiltIns.isNothing(type) || type.isError()) return originalProjection;
-
-        TypeProjection replacement = substitution.get(type.getConstructor());
 
         if (replacement != null) {
             VarianceConflictType varianceConflict = conflictType(originalProjectionKind, replacement.getProjectionKind());
@@ -262,8 +217,8 @@ public class TypeSubstitutor {
 
             @Nullable
             @Override
-            public TypeProjection get(TypeConstructor key) {
-                return containedOrCapturedTypeParameters.contains(key) ? substitution.get(key) : null;
+            public TypeProjection get(@NotNull JetType key) {
+                return containedOrCapturedTypeParameters.contains(key.getConstructor()) ? substitution.get(key) : null;
             }
 
             @Override

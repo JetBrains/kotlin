@@ -16,49 +16,48 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
 import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.Variance
 
-object CreateConstructorFromDelegatorToSuperCallActionFactory : JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val delegationCall = diagnostic.getPsiElement().getStrictParentOfType<JetDelegatorToSuperCall>() ?: return null
-        val typeReference = delegationCall.getCalleeExpression().getTypeReference() ?: return null
+object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMemberFromUsageFactory<JetDelegatorToSuperCall>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetDelegatorToSuperCall? {
+        return diagnostic.psiElement.getStrictParentOfType<JetDelegatorToSuperCall>()
+    }
 
-        val project = delegationCall.getProject()
+    override fun createCallableInfo(element: JetDelegatorToSuperCall, diagnostic: Diagnostic): CallableInfo? {
+        val typeReference = element.calleeExpression.typeReference ?: return null
+
+        val project = element.project
 
         val superType = typeReference.analyze()[BindingContext.TYPE, typeReference] ?: return null
-        val superClassDescriptor = superType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor ?: return null
-        if (superClassDescriptor.getKind() != ClassKind.CLASS) return null
+        val superClassDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        if (superClassDescriptor.kind != ClassKind.CLASS) return null
         val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
         if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
 
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
-        val parameters = delegationCall.getValueArguments().map {
+        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
+        val parameters = element.valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
                     it.getArgumentName()?.asName?.asString()
             )
         }
 
-        return CreateCallableFromUsageFix(delegationCall, SecondaryConstructorInfo(parameters, targetClass))
+        return SecondaryConstructorInfo(parameters, targetClass)
     }
 }

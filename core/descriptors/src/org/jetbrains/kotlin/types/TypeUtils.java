@@ -65,6 +65,12 @@ public class TypeUtils {
             throw new IllegalStateException(name);
         }
 
+        @NotNull
+        @Override
+        public TypeSubstitution getSubstitution() {
+            throw new IllegalStateException(name);
+        }
+
         @Override
         public boolean isMarkedNullable() {
             throw new IllegalStateException(name);
@@ -314,6 +320,7 @@ public class TypeUtils {
                 result.invoke(new TypeParameterUsage((TypeParameterDescriptor) descriptor, howThisTypeIsUsed));
             }
             for (TypeProjection projection : type.getArguments()) {
+                if (projection.isStarProjection()) continue;
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
             }
         }
@@ -714,9 +721,9 @@ public class TypeUtils {
         }
         final TypeProjection projection = new TypeProjectionImpl(type);
 
-        return TypeSubstitutor.create(new TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeConstructorSubstitution() {
             @Override
-            public TypeProjection get(TypeConstructor key) {
+            public TypeProjection get(@NotNull TypeConstructor key) {
                 if (constructors.contains(key)) {
                     return projection;
                 }
@@ -726,34 +733,6 @@ public class TypeUtils {
             @Override
             public boolean isEmpty() {
                 return false;
-            }
-        });
-    }
-
-    @NotNull
-    public static TypeSubstitutor makeSubstitutorForTypeParametersMap(
-           @NotNull final Map<TypeParameterDescriptor, TypeProjection> substitutionContext
-    ) {
-        return TypeSubstitutor.create(new TypeSubstitution() {
-            @Nullable
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
-                if (declarationDescriptor instanceof TypeParameterDescriptor) {
-                    TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
-                    return substitutionContext.get(descriptor);
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return substitutionContext.isEmpty();
-            }
-
-            @Override
-            public String toString() {
-                return substitutionContext.toString();
             }
         });
     }
@@ -812,6 +791,12 @@ public class TypeUtils {
         @NotNull
         public Annotations getAnnotations() {
             return delegate.getAnnotations();
+        }
+
+        @NotNull
+        @Override
+        public TypeSubstitution getSubstitution() {
+            return delegate.getSubstitution();
         }
     }
 

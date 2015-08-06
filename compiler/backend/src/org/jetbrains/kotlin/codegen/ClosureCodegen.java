@@ -326,7 +326,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+                Method method = typeMapper.mapSignature(descriptor.getOriginal()).getAsmMethod();
                 iv.aconst(method.getName() + method.getDescriptor());
                 iv.areturn(JAVA_STRING_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getSignature", element);

@@ -1,6 +1,6 @@
 package test
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 import kotlin.test.*
 
 class K(val p: String)
@@ -15,8 +15,8 @@ class Test {
         assertNotEquals(k1, k2)
 
         // The same for properties of these classes
-        val p1 = k1.properties.first()
-        val p2 = k2.properties.first()
+        val p1 = k1.memberProperties.first()
+        val p2 = k2.memberProperties.first()
         assertEquals("$p1", "$p2")
         assertNotEquals(p1, p2)
     }

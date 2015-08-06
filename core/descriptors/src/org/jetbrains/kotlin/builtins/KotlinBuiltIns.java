@@ -382,11 +382,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getDataClassAnnotation() {
-        return getBuiltInClassByName("data");
-    }
-
-    @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
         return getBuiltInClassByName("deprecated");
     }
@@ -709,7 +704,7 @@ public class KotlinBuiltIns {
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
         return new AnnotationDescriptorImpl(getBuiltInClassByName("extension").getDefaultType(),
-                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap());
+                                            Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
     private static boolean isTypeAnnotatedWithExtension(@NotNull JetType type) {
@@ -995,6 +990,11 @@ public class KotlinBuiltIns {
 
     public static boolean isNonPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return FQ_NAMES.array.equals(getFqName(descriptor));
+    }
+
+    public static boolean isAnnotation(@NotNull ClassDescriptor descriptor) {
+        return DescriptorUtils.getFqName(descriptor) == FQ_NAMES.annotation.toUnsafe()
+               || containsAnnotation(descriptor, FQ_NAMES.annotation);
     }
 
     public static boolean isCloneable(@NotNull ClassDescriptor descriptor) {

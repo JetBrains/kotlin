@@ -16,30 +16,33 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import java.util.Collections
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.types.JetTypeImpl
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
+import java.util.Collections
 
-object CreateIteratorFunctionActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val file = diagnostic.getPsiFile() as? JetFile ?: return null
-        val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
-        val iterableExpr = forExpr.getLoopRange() ?: return null
-        val variableExpr: JetExpression = ((forExpr.getLoopParameter() ?: forExpr.getMultiParameter()) ?: return null) as JetExpression
+object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())
+    }
+
+    override fun createCallableInfo(element: JetForExpression, diagnostic: Diagnostic): CallableInfo? {
+        val file = diagnostic.psiFile as? JetFile ?: return null
+        val iterableExpr = element.loopRange ?: return null
+        val variableExpr: JetExpression = ((element.loopParameter ?: element.multiParameter) ?: return null) as JetExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
-        val returnJetType = KotlinBuiltIns.getInstance().getIterator().getDefaultType()
+        val returnJetType = KotlinBuiltIns.getInstance().iterator.defaultType
 
         val analysisResult = file.analyzeFullyAndGetResult()
         val returnJetTypeParameterTypes = variableExpr.guessTypes(analysisResult.bindingContext, analysisResult.moduleDescriptor)
@@ -47,8 +50,12 @@ object CreateIteratorFunctionActionFactory : JetIntentionActionsFactory() {
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isMarkedNullable(), returnJetTypeArguments, returnJetType.getMemberScope())
+        val newReturnJetType = JetTypeImpl(returnJetType.annotations,
+                                           returnJetType.constructor,
+                                           returnJetType.isMarkedNullable,
+                                           returnJetTypeArguments,
+                                           returnJetType.memberScope)
         val returnType = TypeInfo(newReturnJetType, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(forExpr, FunctionInfo("iterator", iterableType, returnType))
+        return FunctionInfo("iterator", iterableType, returnType)
     }
 }

@@ -47,12 +47,20 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getProperties(name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
-        return workerScope.getSyntheticExtensionProperties(receiverTypes, name)
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor> {
+        return workerScope.getSyntheticExtensionProperties(receiverTypes, name, location)
+    }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+        return workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverTypes)
+    }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+        return workerScope.getSyntheticExtensionFunctions(receiverTypes)
     }
 
     override fun getLocalVariable(name: Name): VariableDescriptor? {

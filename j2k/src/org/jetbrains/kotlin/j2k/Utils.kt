@@ -24,12 +24,6 @@ import com.intellij.psi.util.PsiMethodUtil
 
 fun quoteKeywords(packageName: String): String = packageName.split('.').map { Identifier.toKotlin(it) }.joinToString(".")
 
-fun PsiVariable.countWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Int
-        = if (scope != null) searcher.findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
-
-fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
-        = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
-
 fun getDefaultInitializer(property: Property): Expression? {
     val t = property.type
     val result = if (t.isNullable) {
@@ -50,29 +44,8 @@ fun getDefaultInitializer(property: Property): Expression? {
     return result?.assignNoPrototype()
 }
 
-fun isVal(searcher: ReferenceSearcher, field: PsiField): Boolean {
-    if (field.hasModifierProperty(PsiModifier.FINAL)) return true
-    if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
-    val containingClass = field.getContainingClass() ?: return false
-    val writes = searcher.findVariableUsages(field, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
-    if (writes.size() == 0) return true
-    if (writes.size() > 1) return false
-    val write = writes.single()
-    val parent = write.getParent()
-    if (parent is PsiAssignmentExpression &&
-            parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
-            write.isQualifierEmptyOrThis()) {
-        val constructor = write.getContainingConstructor()
-        return constructor != null &&
-                constructor.getContainingClass() == containingClass &&
-                parent.getParent() is PsiExpressionStatement &&
-                parent.getParent()?.getParent() == constructor.getBody()
-    }
-    return false
-}
-
 fun shouldGenerateDefaultInitializer(searcher: ReferenceSearcher, field: PsiField)
-        = field.getInitializer() == null && !(isVal(searcher, field) && field.hasWriteAccesses(searcher, field.getContainingClass()))
+        = field.getInitializer() == null && !(field.isVal(searcher) && field.hasWriteAccesses(searcher, field.getContainingClass()))
 
 fun PsiReferenceExpression.isQualifierEmptyOrThis(): Boolean {
     val qualifier = getQualifierExpression()

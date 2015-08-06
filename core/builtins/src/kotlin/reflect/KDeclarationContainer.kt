@@ -20,4 +20,9 @@ package kotlin.reflect
  * Represents an entity which may contain declarations of any other entities,
  * such as a class or a package.
  */
-public interface KDeclarationContainer
+public interface KDeclarationContainer {
+    /**
+     * All functions and properties accessible in this container.
+     */
+    public val members: Collection<KCallable<*>>
+}

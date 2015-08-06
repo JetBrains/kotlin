@@ -113,9 +113,21 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
         doTest(fileName);
     }
 
+    @TestMetadata("OnMethodUsageMultiline.kt")
+    public void testOnMethodUsageMultiline() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageMultiline.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("OnMethodUsageWithBracketsInParam.kt")
     public void testOnMethodUsageWithBracketsInParam() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithBracketsInParam.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("OnMethodUsageWithCodeBlock.kt")
+    public void testOnMethodUsageWithCodeBlock() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/quickDoc/OnMethodUsageWithCodeBlock.kt");
         doTest(fileName);
     }
 

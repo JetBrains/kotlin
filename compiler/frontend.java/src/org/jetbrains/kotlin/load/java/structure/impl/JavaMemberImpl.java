@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDocCommentOwner;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,5 +90,11 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
         return JavaElementUtil.findAnnotation(this, fqName);
+    }
+
+    @Override
+    public boolean isDeprecatedInJavaDoc() {
+        PsiMember psi = getPsi();
+        return psi instanceof PsiDocCommentOwner && ((PsiDocCommentOwner) psi).isDeprecated();
     }
 }

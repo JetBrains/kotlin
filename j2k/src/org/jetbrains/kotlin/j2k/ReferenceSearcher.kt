@@ -16,16 +16,8 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.*
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ClassInheritorsSearch
-import com.intellij.psi.search.searches.OverridingMethodsSearch
-import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.idea.JetLanguage
-import java.util.ArrayList
+import com.intellij.psi.util.PsiUtil
 
 public interface ReferenceSearcher {
     fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference>
@@ -50,30 +42,34 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
     }.filterNotNull()
 }
 
+public fun PsiField.isVal(searcher: ReferenceSearcher): Boolean {
+    if (hasModifierProperty(PsiModifier.FINAL)) return true
+    if (!hasModifierProperty(PsiModifier.PRIVATE)) return false
+    val containingClass = getContainingClass() ?: return false
+    val writes = searcher.findVariableUsages(this, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
+    if (writes.size() == 0) return true
+    if (writes.size() > 1) return false
+    val write = writes.single()
+    val parent = write.getParent()
+    if (parent is PsiAssignmentExpression &&
+        parent.getOperationSign().getTokenType() == JavaTokenType.EQ &&
+        write.isQualifierEmptyOrThis()) {
+        val constructor = write.getContainingConstructor()
+        return constructor != null &&
+               constructor.getContainingClass() == containingClass &&
+               parent.getParent() is PsiExpressionStatement &&
+               parent.getParent()?.getParent() == constructor.getBody()
+    }
+    return false
+}
+
+public fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
+        = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
+
 public object EmptyReferenceSearcher: ReferenceSearcher {
     override fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference> = emptyList()
     override fun hasInheritors(`class`: PsiClass) = false
     override fun hasOverrides(method: PsiMethod) = false
     override fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference>
             = throw UnsupportedOperationException()
-}
-
-public object IdeaReferenceSearcher: ReferenceSearcher {
-    override fun findLocalUsages(element: PsiElement, scope: PsiElement) = ReferencesSearch.search(element, LocalSearchScope(scope)).findAll()
-
-    override fun hasInheritors(`class`: PsiClass) = ClassInheritorsSearch.search(`class`, false).any()
-
-    override fun hasOverrides(method: PsiMethod) = OverridingMethodsSearch.search(method, false).any()
-
-    override fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference> {
-        val fileTypes = ArrayList<FileType>()
-        if (searchJava) {
-            fileTypes.add(JavaLanguage.INSTANCE.getAssociatedFileType()!!)
-        }
-        if (searchKotlin) {
-            fileTypes.add(JetLanguage.INSTANCE.getAssociatedFileType()!!)
-        }
-        val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.toTypedArray())
-        return ReferencesSearch.search(element, searchScope).findAll()
-    }
 }

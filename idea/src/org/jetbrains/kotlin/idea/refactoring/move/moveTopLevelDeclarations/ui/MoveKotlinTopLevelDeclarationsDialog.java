@@ -61,11 +61,11 @@ import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.KotlinMemberInfo;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.move.MovePackage;
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*;
-import org.jetbrains.kotlin.idea.refactoring.ui.KotlinMemberSelectionPanel;
-import org.jetbrains.kotlin.idea.refactoring.ui.KotlinMemberSelectionTable;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
+import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.util.application.ApplicationPackage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -160,7 +160,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 new Function1<JetNamedDeclaration, KotlinMemberInfo>() {
                     @Override
                     public KotlinMemberInfo invoke(JetNamedDeclaration declaration) {
-                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration);
+                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration, false);
                         memberInfo.setChecked(elementsToMove.contains(declaration));
                         return memberInfo;
                     }

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementType;
 import java.util.Arrays;
 import java.util.List;
 
-public class JetElementImplStub<T extends StubElement> extends StubBasedPsiElementBase<T>
+public class JetElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
         implements JetElement, StubBasedPsiElement<T> {
     public JetElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);

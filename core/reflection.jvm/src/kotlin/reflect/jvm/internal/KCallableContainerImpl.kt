@@ -16,8 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
@@ -28,27 +28,87 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmType.PrimitiveType.*
+import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import kotlin.reflect.KDeclarationContainer
+import kotlin.jvm.internal.DeclarationContainerImpl
+import kotlin.reflect.KCallable
 import kotlin.reflect.KotlinReflectionInternalError
 
-abstract class KCallableContainerImpl : KDeclarationContainer {
+abstract class KCallableContainerImpl : DeclarationContainerImpl {
     // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
     val moduleData by ReflectProperties.lazySoft {
         jClass.getOrCreateModule()
     }
 
-    abstract val jClass: Class<*>
-
     abstract val scope: JetScope
+
+    abstract val constructorDescriptors: Collection<ConstructorDescriptor>
+
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(declaredOnly = false, nonExtensions = true, extensions = true).toList()
+
+    fun getMembers(declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
+        val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Unit>() {
+            private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
+                if (declaredOnly && !descriptor.getKind().isReal()) return true
+
+                val isExtension = descriptor.getExtensionReceiverParameter() != null
+                if (isExtension && !extensions) return true
+                if (!isExtension && !nonExtensions) return true
+
+                return false
+            }
+
+            override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallable<*>? {
+                return if (skipCallable(descriptor)) null else createProperty(descriptor)
+            }
+
+            override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallable<*>? {
+                return if (skipCallable(descriptor)) null else KFunctionImpl(this@KCallableContainerImpl, descriptor)
+            }
+
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): KCallable<*>? {
+                throw IllegalStateException("No constructors should appear in this scope: $descriptor")
+            }
+        }
+
+        return scope.getAllDescriptors().asSequence()
+                .filter { descriptor ->
+                    descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                }
+                .map { descriptor ->
+                    descriptor.accept(visitor, Unit)
+                }
+                .filterNotNull()
+    }
+
+    private fun createProperty(descriptor: PropertyDescriptor): KPropertyImpl<*> {
+        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
+                            (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+
+        when {
+            descriptor.isVar -> when (receiverCount) {
+                0 -> return KMutableProperty0Impl<Any?>(this, descriptor)
+                1 -> return KMutableProperty1Impl<Any?, Any?>(this, descriptor)
+                2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(this, descriptor)
+            }
+            else -> when (receiverCount) {
+                0 -> return KProperty0Impl<Any?>(this, descriptor)
+                1 -> return KProperty1Impl<Any?, Any?>(this, descriptor)
+                2 -> return KProperty2Impl<Any?, Any?, Any?>(this, descriptor)
+            }
+        }
+
+        throw KotlinReflectionInternalError("Unsupported property: $descriptor")
+    }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val properties = scope
                 .getProperties(Name.guess(name))
                 .filter { descriptor ->
                     descriptor is PropertyDescriptor &&
-                    RuntimeTypeMapper.mapPropertySignature(descriptor) == signature
+                    RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
         if (properties.size() != 1) {
@@ -63,10 +123,9 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val functions = scope
-                .getFunctions(Name.guess(name))
+        val functions = (if (name == "<init>") constructorDescriptors.toList() else scope.getFunctions(Name.guess(name)))
                 .filter { descriptor ->
-                    RuntimeTypeMapper.mapSignature(descriptor) == signature
+                    RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
                 }
 
         if (functions.size() != 1) {
@@ -81,20 +140,53 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
     }
 
     // TODO: check resulting method's return type
-    fun findMethodBySignature(signature: JvmProtoBuf.JvmMethodSignature, nameResolver: NameResolver, declared: Boolean): Method? {
+    fun findMethodBySignature(
+            @suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            declared: Boolean
+    ): Method? {
         val name = nameResolver.getString(signature.getName())
-        val classLoader = jClass.classLoader
-        val parameterTypes = signature.getParameterTypeList().map { jvmType ->
-            loadJvmType(jvmType, nameResolver, classLoader)
-        }.toTypedArray()
+        if (name == "<init>") return null
+
+        val parameterTypes = loadParameterTypes(nameResolver, signature)
+
+        // Method for a top level function should be the one from the package facade.
+        // This is likely to change after the package part reform.
+        val owner = jClass
 
         return try {
-            if (declared) jClass.getDeclaredMethod(name, *parameterTypes)
-            else jClass.getMethod(name, *parameterTypes)
+            if (declared) owner.getDeclaredMethod(name, *parameterTypes)
+            else owner.getMethod(name, *parameterTypes)
         }
         catch (e: NoSuchMethodException) {
             null
         }
+    }
+
+    fun findConstructorBySignature(
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            declared: Boolean
+    ): Constructor<*>? {
+        if (nameResolver.getString(signature.getName()) != "<init>") return null
+
+        val parameterTypes = loadParameterTypes(nameResolver, signature)
+
+        return try {
+            if (declared) jClass.getDeclaredConstructor(*parameterTypes)
+            else jClass.getConstructor(*parameterTypes)
+        }
+        catch (e: NoSuchMethodException) {
+            null
+        }
+    }
+
+    private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): Array<Class<*>> {
+        val classLoader = jClass.classLoader
+        return signature.getParameterTypeList().map { jvmType ->
+            loadJvmType(jvmType, nameResolver, classLoader)
+        }.toTypedArray()
     }
 
     // TODO: check resulting field's type
@@ -106,18 +198,11 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
         val name = nameResolver.getString(signature.getName())
 
         val owner =
-                when {
-                    proto.hasExtension(JvmProtoBuf.implClassName) -> {
-                        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
-                        // TODO: store fq name of impl class name in jvm_descriptors.proto
-                        val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
-                        jClass.classLoader.loadClass(classId.asSingleFqName().asString())
-                    }
-                    signature.getIsStaticInOuter() -> {
-                        jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
-                    }
-                    else -> jClass
+                implClassForCallable(nameResolver, proto) ?:
+                if (signature.getIsStaticInOuter()) {
+                    jClass.getEnclosingClass() ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
                 }
+                else jClass
 
         return try {
             owner.getDeclaredField(name)
@@ -125,6 +210,17 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
         catch (e: NoSuchFieldException) {
             null
         }
+    }
+
+    // Returns the JVM class which contains this callable. This class may be different from the one represented by descriptors
+    // in case of top level functions (their bodies are in package parts), methods with implementations in interfaces, etc.
+    private fun implClassForCallable(nameResolver: NameResolver, proto: ProtoBuf.Callable): Class<*>? {
+        if (!proto.hasExtension(JvmProtoBuf.implClassName)) return null
+
+        val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
+        // TODO: store fq name of impl class name in jvm_descriptors.proto
+        val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
+        return jClass.classLoader.loadClass(classId.asSingleFqName().asString())
     }
 
     private fun loadJvmType(

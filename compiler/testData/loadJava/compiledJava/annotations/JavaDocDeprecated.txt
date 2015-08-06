@@ -1,0 +1,6 @@
+package test
+
+kotlin.deprecated(value = "Deprecated in Java") public open class JavaDocDeprecated {
+    public constructor JavaDocDeprecated()
+    kotlin.deprecated(value = "Deprecated in Java") public open fun getFoo(/*0*/ p0: kotlin.String!): kotlin.String!
+}

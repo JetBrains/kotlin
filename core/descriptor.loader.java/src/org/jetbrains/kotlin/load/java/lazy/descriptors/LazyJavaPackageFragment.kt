@@ -18,13 +18,21 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.getFqName()) {
-    private val scope by lazy { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) }
+    private val scope by lazy { LazyJavaPackageScope(c, jPackage, this) }
+
+    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
+        javaClass: JavaClass ->
+        LazyJavaClassDescriptor(c, this, javaClass.fqName!!, javaClass)
+    }
+
+    internal fun resolveTopLevelClass(javaClass: JavaClass) = topLevelClasses(javaClass)
 
     override fun getMemberScope() = scope
 

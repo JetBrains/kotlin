@@ -39,6 +39,11 @@ public class KotlinListSelectioner : ExtendWordSelectionHandlerBase() {
         val node = e.getNode()!!
         val startNode = node.findChildByType(TokenSet.create(JetTokens.LPAR, JetTokens.LT)) ?: return null
         val endNode = node.findChildByType(TokenSet.create(JetTokens.RPAR, JetTokens.GT)) ?: return null
-        return listOf(TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset()))
+        val innerRange = TextRange(startNode.getStartOffset() + 1, endNode.getStartOffset())
+        if (e is JetTypeArgumentList || e is JetTypeParameterList) {
+            return listOf(innerRange,
+                          TextRange(startNode.getStartOffset(), endNode.getStartOffset() + endNode.getTextLength()))
+        }
+        return listOf(innerRange)
     }
 }

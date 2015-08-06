@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClas
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromReferenceExpressionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateLocalVariableActionFactory
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterActionFactory
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByNamedArgumentActionFactory
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.JetClass
@@ -99,8 +99,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
         ABSTRACT_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true))
-        OPEN_MODIFIER_IN_TRAIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true))
-        TRAIT_CAN_NOT_BE_FINAL.registerFactory(removeFinalModifierFactory)
         DEPRECATED_TRAIT_KEYWORD.registerFactory(DeprecatedTraitSyntaxFix, DeprecatedTraitSyntaxFix.createWholeProjectFixFactory())
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
@@ -114,12 +112,10 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
-        ILLEGAL_MODIFIER.registerFactory(removeModifierFactory)
+        WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
+        REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
+        WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
-
-        val removeInnerModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD)
-        INNER_CLASS_IN_TRAIT.registerFactory(removeInnerModifierFactory)
-        INNER_CLASS_IN_OBJECT.registerFactory(removeInnerModifierFactory)
 
         val changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory()
         INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.registerFactory(changeToBackingFieldFactory)
@@ -173,9 +169,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNNECESSARY_NOT_NULL_ASSERTION.registerFactory(RemoveExclExclCallFix)
         UNSAFE_INFIX_CALL.registerFactory(ReplaceInfixCallFix.createFactory())
 
-        val removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD)
-        PACKAGE_MEMBER_CANNOT_BE_PROTECTED.registerFactory(removeProtectedModifierFactory)
-
         PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.registerActions(SpecifyTypeExplicitlyFix())
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
 
@@ -201,10 +194,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix.createFactory())
 
         PARAMETER_NAME_CHANGED_ON_OVERRIDE.registerFactory(RenameParameterToMatchOverriddenMethodFix.createFactory())
-
-        OPEN_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD))
-        ABSTRACT_MODIFIER_IN_ENUM.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD))
-        ILLEGAL_ENUM_ANNOTATION.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ENUM_KEYWORD))
 
         NESTED_CLASS_NOT_ALLOWED.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD))
 
@@ -250,11 +239,11 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateBinaryOperationActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateBinaryOperationActionFactory)
 
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateCallableFromCallActionFactory)
-        UNRESOLVED_REFERENCE.registerFactory(CreateCallableFromCallActionFactory)
-        NO_VALUE_FOR_PARAMETER.registerFactory(CreateCallableFromCallActionFactory)
-        TOO_MANY_ARGUMENTS.registerFactory(CreateCallableFromCallActionFactory)
-        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateCallableFromCallActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        UNRESOLVED_REFERENCE.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        NO_VALUE_FOR_PARAMETER.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        TOO_MANY_ARGUMENTS.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(*CreateCallableFromCallActionFactory.INSTANCES)
 
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegationCallActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegationCallActionFactory)
@@ -269,9 +258,9 @@ public class QuickFixRegistrar : QuickFixContributor {
         UNRESOLVED_REFERENCE.registerFactory(CreateLocalVariableActionFactory)
         EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateLocalVariableActionFactory)
 
-        UNRESOLVED_REFERENCE.registerFactory(CreateParameterActionFactory)
-        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateParameterActionFactory)
-        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateParameterActionFactory)
+        UNRESOLVED_REFERENCE.registerFactory(CreateParameterByRefActionFactory)
+        UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateParameterByRefActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(CreateParameterByRefActionFactory)
 
         NAMED_PARAMETER_NOT_FOUND.registerFactory(CreateParameterByNamedArgumentActionFactory)
 

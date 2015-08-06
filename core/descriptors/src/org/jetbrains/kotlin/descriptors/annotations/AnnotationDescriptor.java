@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.JetType;
@@ -31,4 +32,7 @@ public interface AnnotationDescriptor {
     @NotNull
     @ReadOnly
     Map<ValueParameterDescriptor, ConstantValue<?>> getAllValueArguments();
+
+    @NotNull
+    SourceElement getSource();
 }

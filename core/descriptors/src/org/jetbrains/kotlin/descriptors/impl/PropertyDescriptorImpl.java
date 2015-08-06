@@ -212,7 +212,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
-                originalTypeParameters, originalSubstitutor, substitutedDescriptor, substitutedTypeParameters
+                originalTypeParameters, originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
         );
 
         JetType originalOutType = getType();

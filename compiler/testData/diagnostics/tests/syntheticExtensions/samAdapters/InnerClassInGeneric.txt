@@ -1,0 +1,21 @@
+package
+
+internal fun foo(/*0*/ javaClass: JavaClass<kotlin.Int>): kotlin.Int
+
+public open class JavaClass</*0*/ T : kotlin.Any!> {
+    public constructor JavaClass</*0*/ T : kotlin.Any!>()
+    public open fun </*0*/ X : kotlin.Any!> createInner(): JavaClass.Inner<X!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Inner</*0*/ X : kotlin.Any!> {
+        public abstract fun doSomething(/*0*/ t: T!, /*1*/ x: X!, /*2*/ runnable: java.lang.Runnable!): T!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun </*0*/ X : kotlin.Any!> Inner(/*0*/ function: (T!, X!, java.lang.Runnable!) -> T!): JavaClass.Inner<X>
+}

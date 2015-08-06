@@ -96,7 +96,7 @@
     };
 
     Kotlin.arrayToString = function (a) {
-        return "[" + a.join(", ") + "]";
+        return "[" + a.map(Kotlin.toString).join(", ") + "]";
     };
 
     Kotlin.compareTo = function (a, b) {
@@ -431,7 +431,7 @@
                 else {
                     builder += ", ";
                 }
-                builder += iterator.next();
+                builder += Kotlin.toString(iterator.next());
             }
             builder += "]";
             return builder;
@@ -618,7 +618,7 @@
                 return this.array.slice(0);
             },
             toString: function () {
-                return "[" + this.array.join(", ") + "]";
+                return Kotlin.arrayToString(this.array);
             },
             toJSON: function () {
                 return this.array;

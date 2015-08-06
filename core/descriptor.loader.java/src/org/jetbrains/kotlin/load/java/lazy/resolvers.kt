@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.mapToIndex
 
 //TODO: (module refactoring) usages of this interface should be replaced by ModuleClassResolver
@@ -60,45 +59,28 @@ class LazyJavaTypeParameterResolver(
     }
 }
 
-data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null) {
-    companion object {
-        val EMPTY = JavaClassLookupResult()
-    }
+sealed class KotlinClassLookupResult {
+    class Found(val descriptor: ClassDescriptor): KotlinClassLookupResult()
+    object NotFound : KotlinClassLookupResult()
+    object SyntheticClass : KotlinClassLookupResult()
 }
 
-fun LazyJavaResolverContext.lookupBinaryClass(javaClass: JavaClass): ClassDescriptor? {
-    val kotlinJvmBinaryClass = kotlinClassFinder.findKotlinClass(javaClass)
-    return resolveBinaryClass(kotlinJvmBinaryClass)?.kClass
-}
+fun LazyJavaResolverContext.resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass?): KotlinClassLookupResult {
+    if (kotlinClass == null) return KotlinClassLookupResult.NotFound
 
-fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupResult {
-    val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
-    val binaryClassResult = resolveBinaryClass(kotlinClass)
-    if (binaryClassResult != null) return binaryClassResult
-
-    val javaClass = finder.findClass(classId)
-    if (javaClass != null) return JavaClassLookupResult(javaClass)
-
-    return JavaClassLookupResult.EMPTY
-}
-
-private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBinaryClass?): JavaClassLookupResult? {
-    if (kotlinClass == null) return null
-
-    val header = kotlinClass.getClassHeader()
-    if (!header.isCompatibleAbiVersion) {
-        errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.version)
-    }
-    else if (header.kind == KotlinClassHeader.Kind.CLASS) {
-        val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
-        if (descriptor != null) {
-            return JavaClassLookupResult(kClass = descriptor)
+    val header = kotlinClass.classHeader
+    return when {
+        !header.isCompatibleAbiVersion -> {
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
+            KotlinClassLookupResult.NotFound
+        }
+        header.kind == KotlinClassHeader.Kind.CLASS -> {
+            val descriptor = deserializedDescriptorResolver.resolveClass(kotlinClass)
+            if (descriptor != null) KotlinClassLookupResult.Found(descriptor) else KotlinClassLookupResult.NotFound
+        }
+        else -> {
+            // This is a package or trait-impl or something like that
+            KotlinClassLookupResult.SyntheticClass
         }
     }
-    else {
-        // This is a package or trait-impl or something like that
-        return JavaClassLookupResult.EMPTY
-    }
-
-    return null
 }

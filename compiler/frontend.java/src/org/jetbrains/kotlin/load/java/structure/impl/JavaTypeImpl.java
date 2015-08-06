@@ -97,6 +97,10 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
         return JavaElementUtil.findAnnotation(this, fqName);
     }
 
+    @Override
+    public boolean isDeprecatedInJavaDoc() {
+        return false;
+    }
 
     @Override
     public int hashCode() {

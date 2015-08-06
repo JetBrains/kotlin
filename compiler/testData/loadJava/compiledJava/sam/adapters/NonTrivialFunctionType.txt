@@ -2,11 +2,8 @@ package test
 
 public open class NonTrivialFunctionType {
     public constructor NonTrivialFunctionType()
-    public final /*synthesized*/ fun foo(/*0*/ p0: ((java.io.File!, kotlin.String!) -> kotlin.Boolean)!): kotlin.Unit
-    public final /*synthesized*/ fun foo(/*0*/ p0: ((kotlin.String!, kotlin.String!) -> kotlin.Int)!): kotlin.Unit
     public open fun foo(/*0*/ p0: java.io.FilenameFilter!): kotlin.Unit
     public open fun foo(/*0*/ p0: java.util.Comparator<kotlin.String!>!): kotlin.Unit
-    public final /*synthesized*/ fun wildcardBound(/*0*/ p0: ((kotlin.CharSequence!, kotlin.CharSequence!) -> kotlin.Int)!): kotlin.Unit
     public open fun wildcardBound(/*0*/ p0: java.util.Comparator<in kotlin.CharSequence!>!): kotlin.Unit
     public open fun wildcardUnbound(/*0*/ p0: java.util.Comparator<*>!): kotlin.Unit
 }

@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-public interface KClass<T> : KDeclarationContainer {
+public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement {
     /**
      * The simple name of the class as it was declared in the source code,
      * or `null` if the class has no name (if, for example, it is an anonymous object literal).
@@ -39,12 +39,18 @@ public interface KClass<T> : KDeclarationContainer {
     public val qualifiedName: String?
 
     /**
-     * Returns non-extension properties declared in this class and all of its superclasses.
+     * All functions and properties accessible in this class, including those declared in this class
+     * and all of its superclasses. Does not include constructors.
      */
-    public val properties: Collection<KProperty1<T, *>>
+    override val members: Collection<KCallable<*>>
 
     /**
-     * Returns extension properties declared in this class and all of its superclasses.
+     * All constructors declared in this class.
      */
-    public val extensionProperties: Collection<KProperty2<T, *, *>>
+    public val constructors: Collection<KFunction<T>>
+
+    /**
+     * The instance of the object declaration, or `null` if this class is not an object declaration.
+     */
+    public val objectInstance: T?
 }

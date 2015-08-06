@@ -23,13 +23,12 @@ import com.intellij.find.findUsages.JavaFindUsagesHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiParameter
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.toJavaMethodOptions
+import org.jetbrains.kotlin.idea.findUsages.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import kotlin.properties.Delegates
 
 class DelegatingFindMemberUsagesHandler(
         val declaration: JetNamedDeclaration,
@@ -38,19 +37,32 @@ class DelegatingFindMemberUsagesHandler(
 ) : FindUsagesHandler(declaration) {
     private val kotlinHandler = KotlinFindMemberUsagesHandler.getInstance(declaration, elementsToSearch, factory)
 
-    private fun getHandler(element: PsiElement): FindUsagesHandler? =
-            when (element) {
-                is JetNamedDeclaration ->
-                    KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory)
+    private data class HandlerAndOptions(
+            val handler: FindUsagesHandler,
+            val options: FindUsagesOptions?
+    )
 
-                is PsiMethod ->
-                    JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory)
+    private fun getHandlerAndOptions(element: PsiElement, options: FindUsagesOptions?): HandlerAndOptions? {
+        return when (element) {
+            is JetNamedDeclaration ->
+                HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory), options)
 
-                else -> null
-            }
+            is PsiMethod ->
+                /* Can't have KotlinPropertyFindUsagesOptions here since Kotlin properties do not override java methods, so
+                 * elementsToSearch contains property declarations only */
+                HandlerAndOptions(JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
+                                  (options as KotlinFunctionFindUsagesOptions?)?.toJavaMethodOptions(project))
+
+            is PsiParameter ->
+                HandlerAndOptions(JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
+                                  (options as KotlinPropertyFindUsagesOptions?)?.toJavaVariableOptions(project))
+
+            else -> null
+        }
+    }
 
     override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
-        return getHandler(getPsiElement())?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+        return getHandlerAndOptions(getPsiElement(), null)?.handler?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
                ?: super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
     }
 
@@ -67,16 +79,8 @@ class DelegatingFindMemberUsagesHandler(
     }
 
     override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
-        val handler = getHandler(element)
-        if (handler == null) return true
-
-        val handlerOptions = when (handler) {
-            /* Can't have KotlinPropertyFindUsagesOptions here since Kotlin properties do not override java methods, so
-             * elementsToSearch contains property declarations only */
-            is JavaFindUsagesHandler -> (options as KotlinFunctionFindUsagesOptions).toJavaMethodOptions(element.getProject())
-            else -> options
-        }
-        return handler.processElementUsages(element, processor, handlerOptions)
+        val (handler, handlerOptions) = runReadAction { getHandlerAndOptions(element, options) } ?: return true
+        return handler.processElementUsages(element, processor, handlerOptions!!)
     }
 
     override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile

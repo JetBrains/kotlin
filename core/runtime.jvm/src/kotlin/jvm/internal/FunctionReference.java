@@ -18,6 +18,10 @@ package kotlin.jvm.internal;
 
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FunctionReference
@@ -55,6 +59,26 @@ public class FunctionReference
     }
 
     public String getSignature() {
+        throw error();
+    }
+
+    @Override
+    public List<KParameter> getParameters() {
+        throw error();
+    }
+
+    @Override
+    public KType getReturnType() {
+        throw error();
+    }
+
+    @Override
+    public List<Annotation> getAnnotations() {
+        throw error();
+    }
+
+    @Override
+    public Object call(@NotNull Object... args) {
         throw error();
     }
 

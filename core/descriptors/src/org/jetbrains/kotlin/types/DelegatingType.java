@@ -39,6 +39,12 @@ public abstract class DelegatingType implements JetType {
         return getDelegate().getArguments();
     }
 
+    @NotNull
+    @Override
+    public TypeSubstitution getSubstitution() {
+        return getDelegate().getSubstitution();
+    }
+
     @Override
     public boolean isMarkedNullable() {
         return getDelegate().isMarkedNullable();

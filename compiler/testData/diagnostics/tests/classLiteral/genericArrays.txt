@@ -1,0 +1,8 @@
+package
+
+internal fun </*0*/ T> f1(): kotlin.reflect.KClass<kotlin.Array<T>>
+internal fun </*0*/ T> f2(): kotlin.reflect.KClass<kotlin.Array<kotlin.Array<T>>>
+kotlin.inline() internal fun </*0*/ reified T> f3(): kotlin.reflect.KClass<kotlin.Array<T>>
+kotlin.inline() internal fun </*0*/ reified T> f4(): kotlin.reflect.KClass<kotlin.Array<kotlin.Array<T>>>
+internal fun f5(): kotlin.reflect.KClass<kotlin.Array<kotlin.Any>>
+internal fun f6(): kotlin.reflect.KClass<kotlin.Array<kotlin.Int?>>

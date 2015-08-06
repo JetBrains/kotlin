@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -109,7 +110,9 @@ class AnnotationLoaderForStubBuilder(
 
     override fun loadConstant(desc: String, initializer: Any) = null
 
-    override fun loadAnnotation(annotationClassId: ClassId, result: MutableList<ClassId>): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+    override fun loadAnnotation(
+            annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
         result.add(annotationClassId)
         return null
     }

@@ -4,7 +4,6 @@ internal final class K : p.J.C {
     public constructor K()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    invisible_fake final override /*1*/ /*fake_override*/ fun sam(/*0*/ sam: (() -> kotlin.Unit)!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun sam(/*0*/ sam: p.J.Sam!): kotlin.Unit
     internal final fun test(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

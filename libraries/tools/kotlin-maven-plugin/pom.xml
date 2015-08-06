@@ -45,6 +45,12 @@
             <artifactId>kotlin-jdk-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -80,6 +86,25 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                    <settingsFile>src/it/settings.xml</settingsFile>
+                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                    <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

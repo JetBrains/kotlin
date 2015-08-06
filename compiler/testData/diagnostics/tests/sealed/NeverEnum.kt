@@ -1,4 +1,4 @@
-<!SEALED_MODIFIER_IN_ENUM!>sealed<!> enum class SealedEnum {
+<!WRONG_MODIFIER_TARGET!>sealed<!> enum class SealedEnum {
     FIRST, 
     SECOND;
 

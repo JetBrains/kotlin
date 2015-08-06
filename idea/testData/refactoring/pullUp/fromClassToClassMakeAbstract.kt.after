@@ -1,0 +1,40 @@
+// WITH_RUNTIME
+abstract class A {
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val x: Int
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val y: Int
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val z: Int
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract val t: Int
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract fun foo(n: Int): Boolean
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract fun bar(s: String)
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    inner class X {
+
+    }
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    class Y {
+
+    }
+}
+
+abstract class B: A() {
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override val x = 1
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override val y: Int get() = 2
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override val z: Int by lazy { 3 }
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    override fun foo(n: Int): Boolean = n > 0
+
+}

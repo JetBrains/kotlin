@@ -269,10 +269,8 @@ public class TypeResolver(
         return argumentElements.mapIndexed { i, argumentElement ->
 
             val projectionKind = argumentElement.getProjectionKind()
-            modifiersChecker.withTrace(c.trace).checkIncompatibleVarianceModifiers(argumentElement.getModifierList())
+            ModifierCheckerCore.check(argumentElement, c.trace, null)
             if (projectionKind == JetProjectionKind.STAR) {
-                modifiersChecker.withTrace(c.trace).reportIllegalModifiers(argumentElement.getModifierList(), listOf(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD))
-
                 val parameters = constructor.getParameters()
                 if (parameters.size() > i) {
                     val parameterDescriptor = parameters[i]

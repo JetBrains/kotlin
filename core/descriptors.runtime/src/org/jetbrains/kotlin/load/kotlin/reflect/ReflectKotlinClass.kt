@@ -99,7 +99,7 @@ private object ReflectClassStructure {
             for ((parameterIndex, annotations) in method.getParameterAnnotations().withIndex()) {
                 for (annotation in annotations) {
                     val annotationType = annotation.annotationType()
-                    visitor.visitParameterAnnotation(parameterIndex, annotationType.classId)?.let {
+                    visitor.visitParameterAnnotation(parameterIndex, annotationType.classId, ReflectAnnotationSource(annotation))?.let {
                         processAnnotationArguments(it, annotation, annotationType)
                     }
                 }
@@ -130,7 +130,9 @@ private object ReflectClassStructure {
                 for ((parameterIndex, annotations) in parameterAnnotations.withIndex()) {
                     for (annotation in annotations) {
                         val annotationType = annotation.annotationType()
-                        visitor.visitParameterAnnotation(parameterIndex + shift, annotationType.classId)?.let {
+                        visitor.visitParameterAnnotation(
+                                parameterIndex + shift, annotationType.classId, ReflectAnnotationSource(annotation)
+                        )?.let {
                             processAnnotationArguments(it, annotation, annotationType)
                         }
                     }
@@ -155,7 +157,7 @@ private object ReflectClassStructure {
 
     private fun processAnnotation(visitor: KotlinJvmBinaryClass.AnnotationVisitor, annotation: Annotation) {
         val annotationType = annotation.annotationType()
-        visitor.visitAnnotation(annotationType.classId)?.let {
+        visitor.visitAnnotation(annotationType.classId, ReflectAnnotationSource(annotation))?.let {
             processAnnotationArguments(it, annotation, annotationType)
         }
     }

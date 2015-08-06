@@ -20,14 +20,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
-import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -42,8 +40,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.kotlin.psi.JetStubbedPsiUtil.getContainingDeclaration;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public class ModifiersChecker {
     private static final Collection<JetModifierKeywordToken> MODALITY_MODIFIERS =
@@ -170,16 +166,6 @@ public class ModifiersChecker {
         return modifierList != null && modifierList.hasModifier(INNER_KEYWORD);
     }
 
-    @NotNull
-    public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
-        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) {
-            // should be be accessible where containing class is accessible by default
-            return Visibilities.PUBLIC;
-        }
-        return Visibilities.INTERNAL;
-    }
-
-
     public class ModifiersCheckingProcedure {
 
         @NotNull
@@ -199,175 +185,29 @@ public class ModifiersChecker {
             }
         }
 
-        public void reportIllegalModifiers(
-                @Nullable JetModifierList modifierList,
-                @NotNull Collection<JetModifierKeywordToken> illegalModifiers
-        ) {
-            if (modifierList == null) return;
-
-            for (JetModifierKeywordToken modifierToken : illegalModifiers) {
-                if (modifierList.hasModifier(modifierToken)) {
-                    PsiElement modifierPsi = modifierList.getModifier(modifierToken);
-                    assert modifierPsi != null;
-                    trace.report(ILLEGAL_MODIFIER.on(modifierPsi, modifierToken));
-                }
-            }
-        }
-
-        public void reportIllegalModifiers(
-                @NotNull JetModifierListOwner modifierListOwner,
-                @NotNull Collection<JetModifierKeywordToken> illegalModifiers
-        ) {
-            reportIllegalModifiers(modifierListOwner.getModifierList(), illegalModifiers);
-        }
-
-        public void checkIncompatibleModifiers(
-                @Nullable JetModifierList modifierList,
-                @NotNull Collection<JetModifierKeywordToken> availableModifiers,
-                @NotNull Collection<JetModifierKeywordToken>... availableCombinations
-        ) {
-            if (modifierList == null) return;
-            Collection<JetModifierKeywordToken> presentModifiers = Sets.newLinkedHashSet();
-            for (JetModifierKeywordToken modifier : availableModifiers) {
-                if (modifierList.hasModifier(modifier)) {
-                    presentModifiers.add(modifier);
-                }
-            }
-            checkRepeatedModifiers(modifierList, availableModifiers);
-
-            if (presentModifiers.size() == 1) {
-                return;
-            }
-            for (Collection<JetModifierKeywordToken> combination : availableCombinations) {
-                if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
-                    return;
-                }
-            }
-            for (JetModifierKeywordToken token : presentModifiers) {
-                trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
-            }
-        }
-
-        private void checkRepeatedModifiers(
-                @NotNull JetModifierList modifierList,
-                @NotNull Collection<JetModifierKeywordToken> availableModifiers
-        ) {
-            for (JetModifierKeywordToken token : availableModifiers) {
-                if (!modifierList.hasModifier(token)) continue;
-
-                List<ASTNode> nodesOfRepeatedTokens = Lists.newArrayList();
-                ASTNode node = modifierList.getNode().getFirstChildNode();
-                while (node != null) {
-                    if (node.getElementType() == token) {
-                        nodesOfRepeatedTokens.add(node);
-                    }
-                    node = node.getTreeNext();
-                }
-                if (nodesOfRepeatedTokens.size() > 1) {
-                    for (ASTNode repeatedToken : nodesOfRepeatedTokens) {
-                        trace.report(REPEATED_MODIFIER.on(repeatedToken.getPsi(), token));
-                    }
-                }
-            }
-        }
-
-        public void checkIncompatibleVarianceModifiers(@Nullable JetModifierList modifierList) {
-            checkIncompatibleModifiers(modifierList, Arrays.asList(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD));
-        }
-
-
         public void checkModifiersForDeclaration(@NotNull JetDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
-            if (modifierListOwner instanceof JetEnumEntry) {
-                reportIllegalModifiers(modifierListOwner.getModifierList(), Arrays.asList(MODIFIER_KEYWORDS_ARRAY));
-            }
-            else {
-                checkInnerModifier(modifierListOwner, descriptor);
-                checkCompanionModifier(modifierListOwner);
-                checkModalityModifiers(modifierListOwner);
-                checkVisibilityModifiers(modifierListOwner, descriptor);
-                checkVarianceModifiers(modifierListOwner);
-                checkVarargsModifiers(modifierListOwner, descriptor);
-            }
+            checkNestedClassAllowed(modifierListOwner, descriptor);
+            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
+            checkTypeParametersModifiers(modifierListOwner);
             checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
-            AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace,
-                                                    descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
-        }
-
-        private void checkVarargsModifiers(@NotNull JetDeclaration owner, @NotNull MemberDescriptor descriptor) {
-            if (!(owner instanceof JetParameter)) {
-                reportIllegalModifiers(owner.getModifierList(), Collections.singleton(VARARG_KEYWORD));
-            }
+            ClassDescriptor classDescriptor = descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
+            annotationChecker.check(modifierListOwner, trace, classDescriptor);
         }
 
         public void checkModifiersForLocalDeclaration(
                 @NotNull JetDeclaration modifierListOwner,
                 @NotNull DeclarationDescriptor descriptor
         ) {
-            reportIllegalModalityModifiers(modifierListOwner);
-            reportIllegalVisibilityModifiers(modifierListOwner);
             checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
-            AnnotationTargetChecker.INSTANCE$.check(modifierListOwner, trace,
-                                                    descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
+            annotationChecker.check(modifierListOwner, trace,
+                                              descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
+            ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
         }
 
-        public void reportIllegalModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-            reportIllegalModifiers(modifierListOwner, MODALITY_MODIFIERS);
-        }
-
-        public void reportIllegalVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-            reportIllegalModifiers(modifierListOwner, VISIBILITY_MODIFIERS);
-        }
-
-        private void checkModalityModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-            JetModifierList modifierList = modifierListOwner.getModifierList();
-            if (modifierList == null) return;
-
-            checkRedundantModifier(modifierList, Pair.create(OPEN_KEYWORD, ABSTRACT_KEYWORD), Pair.create(OPEN_KEYWORD, OVERRIDE_KEYWORD));
-
-            checkCompatibility(modifierList, Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD),
-                               Arrays.asList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
-
-            if (modifierListOwner instanceof JetObjectDeclaration) {
-                reportIllegalModalityModifiers(modifierListOwner);
-            }
-            else if (modifierListOwner instanceof JetClassOrObject) {
-                reportIllegalModifiers(modifierListOwner, Collections.singletonList(OVERRIDE_KEYWORD));
-            }
-        }
-
-        private void checkVisibilityModifiers(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-            JetModifierList modifierList = modifierListOwner.getModifierList();
-            if (modifierList == null) return;
-
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                if (modifierList.hasModifier(PROTECTED_KEYWORD)) {
-                    trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierListOwner));
-                }
-            }
-
-            checkCompatibility(modifierList, VISIBILITY_MODIFIERS);
-        }
-
-        private void checkInnerModifier(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-            if (modifierListOwner.hasModifier(INNER_KEYWORD)) {
-                switch (checkIllegalInner(descriptor)) {
-                    case ALLOWED:
-                        break;
-                    case ILLEGAL_POSITION:
-                        reportIllegalModifiers(modifierListOwner, Collections.singletonList(INNER_KEYWORD));
-                        break;
-                    case IN_TRAIT:
-                        trace.report(INNER_CLASS_IN_TRAIT.on(modifierListOwner));
-                        break;
-                    case IN_OBJECT:
-                        trace.report(INNER_CLASS_IN_OBJECT.on(modifierListOwner));
-                        break;
-                }
-                return;
-            }
+        private void checkNestedClassAllowed(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+            if (modifierListOwner.hasModifier(INNER_KEYWORD)) return;
             if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry)) {
                 JetClass aClass = (JetClass) modifierListOwner;
                 boolean localEnumError = aClass.isLocal() && aClass.isEnum();
@@ -377,17 +217,11 @@ public class ModifiersChecker {
             }
         }
 
-        private void checkCompanionModifier(@NotNull JetDeclaration declaration) {
-            if (declaration.hasModifier(COMPANION_KEYWORD) && !isCompanionModifierAllowed(declaration)) {
-                reportIllegalModifiers(declaration, Collections.singletonList(COMPANION_KEYWORD));
-            }
-        }
-
         private void checkPlatformNameApplicability(@NotNull DeclarationDescriptor descriptor) {
             AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
             if (annotation == null) return;
 
-            JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
+            JetAnnotationEntry annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
             if (annotationEntry == null) return;
 
             if (descriptor instanceof FunctionDescriptor && !isRenamableFunction((FunctionDescriptor) descriptor)) {
@@ -421,28 +255,6 @@ public class ModifiersChecker {
             return containingDescriptor instanceof PackageFragmentDescriptor || containingDescriptor instanceof ClassDescriptor;
         }
 
-        private void checkCompatibility(
-                @Nullable JetModifierList modifierList,
-                Collection<JetModifierKeywordToken> availableModifiers,
-                Collection<JetModifierKeywordToken>... availableCombinations
-        ) {
-            checkIncompatibleModifiers(modifierList, availableModifiers, availableCombinations);
-        }
-
-        private void checkRedundantModifier(
-                @NotNull JetModifierList modifierList,
-                Pair<JetModifierKeywordToken, JetModifierKeywordToken>... redundantBundles
-        ) {
-            for (Pair<JetModifierKeywordToken, JetModifierKeywordToken> tokenPair : redundantBundles) {
-                JetModifierKeywordToken redundantModifier = tokenPair.getFirst();
-                JetModifierKeywordToken sufficientModifier = tokenPair.getSecond();
-                if (modifierList.hasModifier(redundantModifier) && modifierList.hasModifier(sufficientModifier)) {
-                    trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList.getModifierNode(redundantModifier).getPsi(), redundantModifier,
-                                                              sufficientModifier));
-                }
-            }
-        }
-
         @NotNull
         public Map<JetModifierKeywordToken, ASTNode> getNodesCorrespondingToModifiers(
                 @NotNull JetModifierList modifierList,
@@ -464,27 +276,23 @@ public class ModifiersChecker {
             }
         }
 
-        public void checkVarianceModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-            reportIllegalModifiers(modifierListOwner.getModifierList(), Arrays.asList(IN_KEYWORD, OUT_KEYWORD, REIFIED_KEYWORD));
+        public void checkTypeParametersModifiers(@NotNull JetModifierListOwner modifierListOwner) {
             if (!(modifierListOwner instanceof JetTypeParameterListOwner)) return;
             List<JetTypeParameter> typeParameters = ((JetTypeParameterListOwner) modifierListOwner).getTypeParameters();
             for (JetTypeParameter typeParameter : typeParameters) {
-                JetModifierList modifierList = typeParameter.getModifierList();
-                checkIncompatibleVarianceModifiers(modifierList);
+                ModifierCheckerCore.INSTANCE$.check(typeParameter, trace, null);
             }
-        }
-
-        public void checkParameterHasNoModifier(
-                @NotNull JetParameter parameter
-        ) {
-            reportIllegalModifiers(parameter.getModifierList(), MODIFIERS_ILLEGAL_ON_PARAMETERS);
         }
     }
 
     @NotNull
-    private final Iterable<? extends DeclarationChecker> declarationCheckers;
+    private final AnnotationChecker annotationChecker;
 
-    public ModifiersChecker(@NotNull Iterable<? extends DeclarationChecker> declarationCheckers) {
+    @NotNull
+    private final Iterable<DeclarationChecker> declarationCheckers;
+
+    public ModifiersChecker(@NotNull AnnotationChecker annotationChecker, @NotNull Iterable<DeclarationChecker> declarationCheckers) {
+        this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
     }
 

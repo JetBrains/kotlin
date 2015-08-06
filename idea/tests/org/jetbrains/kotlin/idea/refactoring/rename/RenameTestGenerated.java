@@ -257,6 +257,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinEnumEntry/renameKotlinEnumEntry.test")
+    public void testRenameKotlinEnumEntry_RenameKotlinEnumEntry() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinEnumEntry/renameKotlinEnumEntry.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test")
     public void testRenameKotlinFunctionInEnum_RenameKotlinFunctionInEnum() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinFunctionInEnum/renameKotlinFunctionInEnum.test");

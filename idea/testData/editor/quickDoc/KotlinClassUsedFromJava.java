@@ -6,5 +6,4 @@ class KotlinClassUsedFromJava {
     }
 }
 
-//INFO: <b>internal</b> <b>final</b> <b>class</b> Test <i>defined in</i> testing<br/><p>Some comment
-//INFO: </p>
+//INFO: <b>internal</b> <b>final</b> <b>class</b> Test <i>defined in</i> testing<p>Some comment</p>

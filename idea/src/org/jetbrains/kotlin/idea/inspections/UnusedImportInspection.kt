@@ -123,7 +123,9 @@ class UnusedImportInspection : AbstractKotlinInspection() {
             }
         }
 
-        scheduleOptimizeImportsOnTheFly(file, descriptorsToImport)
+        if (isOnTheFly) {
+            scheduleOptimizeImportsOnTheFly(file, descriptorsToImport)
+        }
 
         return problems.toTypedArray()
     }

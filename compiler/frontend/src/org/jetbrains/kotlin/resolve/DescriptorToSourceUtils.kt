@@ -17,19 +17,18 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.source.*
-
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.ArrayList
-
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import kotlin.platform.*
+import kotlin.platform.platformStatic
 
 public object DescriptorToSourceUtils {
     private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
@@ -55,6 +54,11 @@ public object DescriptorToSourceUtils {
     platformStatic
     public fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
         return (descriptor as? DeclarationDescriptorWithSource)?.getSource()?.getPsi()
+    }
+
+    platformStatic
+    public fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): JetAnnotationEntry? {
+        return descriptor.source.getPsi() as? JetAnnotationEntry
     }
 
     // NOTE this is also used by KDoc

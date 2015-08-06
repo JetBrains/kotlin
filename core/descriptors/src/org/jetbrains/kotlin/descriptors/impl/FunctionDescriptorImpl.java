@@ -228,7 +228,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
-                originalTypeParameters, originalSubstitutor, substitutedDescriptor, substitutedTypeParameters
+                originalTypeParameters, originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
         );
 
         JetType substitutedReceiverParameterType = null;

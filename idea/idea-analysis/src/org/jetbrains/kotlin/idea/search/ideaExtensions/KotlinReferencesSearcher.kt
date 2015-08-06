@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.idea.search.ideaExtensions
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.RequestResultProcessor
-import com.intellij.psi.search.SearchScope
+import com.intellij.psi.impl.cache.CacheManager
+import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
@@ -29,8 +28,11 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
+import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -45,30 +47,71 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         val words = unwrappedElement.getSpecialNamesToSearch()
 
-        val resultProcessor = object : RequestResultProcessor() {
-            private val referenceService = PsiReferenceService.getService()
+        val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 
-            override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
-                return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
-                    ProgressManager.checkCanceled()
-
-                    when {
-                        !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
-                        !ref.isReferenceTo(unwrappedElement) -> true
-                        else -> consumer.process(ref)
-                    }
-                }
-            }
-        }
+        val refFilter: (PsiReference) -> Boolean = if (unwrappedElement is JetParameter)
+            ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
+        else
+            ({true})
 
         words.forEach { word ->
-            queryParameters.getOptimizer().searchWord(word, queryParameters.getEffectiveSearchScope(),
-                                                      UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
-                                                      resultProcessor)
+            queryParameters.optimizer.searchWord(word, effectiveSearchScope,
+                                                 UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
+                                                 MyRequestResultProcessor(unwrappedElement, refFilter))
         }
 
-        if (!(unwrappedElement is JetElement && isOnlyKotlinSearch(queryParameters.getEffectiveSearchScope()))) {
+        if (unwrappedElement is JetParameter) {
+            runReadAction { searchNamedArguments(unwrappedElement, queryParameters) }
+        }
+
+        if (!(unwrappedElement is JetElement && isOnlyKotlinSearch(effectiveSearchScope))) {
             searchLightElements(queryParameters, element)
+        }
+    }
+
+    private fun searchNamedArguments(parameter: JetParameter, queryParameters: ReferencesSearch.SearchParameters) {
+        val function = parameter.ownerFunction ?: return
+        if (function.nameAsName?.isSpecial ?: true) return
+        val project = function.project
+        var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
+
+        if (namedArgsScope is GlobalSearchScope) {
+            namedArgsScope = JetSourceFilterScope.kotlinSourcesAndLibraries(namedArgsScope, project)
+
+            val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
+                    function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true)
+            namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
+        }
+
+        queryParameters.optimizer.searchWord(parameter.name!!,
+                                             namedArgsScope,
+                                             KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
+                                             true,
+                                             parameter,
+                                             MyRequestResultProcessor(parameter) { it.isNamedArgumentReference() })
+    }
+
+    private fun PsiReference.isNamedArgumentReference(): Boolean {
+        return this is JetSimpleNameReference && expression.parent is JetValueArgumentName
+    }
+
+    private class MyRequestResultProcessor(
+            private val unwrappedElement: PsiElement,
+            private val filter: (PsiReference) -> Boolean
+    ) : RequestResultProcessor() {
+        private val referenceService = PsiReferenceService.getService()
+
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+            return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+                ProgressManager.checkCanceled()
+
+                when {
+                    !filter(ref) -> true
+                    !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
+                    !ref.isReferenceTo(unwrappedElement) -> true
+                    else -> consumer.process(ref)
+                }
+            }
         }
     }
 

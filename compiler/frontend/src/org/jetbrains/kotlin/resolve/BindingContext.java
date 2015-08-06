@@ -86,9 +86,7 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<AnnotationDescriptor, JetAnnotationEntry> ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT = Slices.createSimpleSlice();
-    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION =
-            Slices.<JetAnnotationEntry, AnnotationDescriptor>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
+    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
 
@@ -153,8 +151,8 @@ public interface BindingContext {
      * Has type of current expression has been already resolved
      */
     WritableSlice<JetExpression, Boolean> PROCESSED = Slices.createSimpleSetSlice();
-    WritableSlice<JetElement, Boolean> USED_AS_EXPRESSION = Slices.createRemovableSetSlice();
-    WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createRemovableSetSlice();
+    WritableSlice<JetElement, Boolean> USED_AS_EXPRESSION = Slices.createSimpleSetSlice();
+    WritableSlice<JetElement, Boolean> UNREACHABLE_CODE = Slices.createSimpleSetSlice();
 
     WritableSlice<VariableDescriptor, CaptureKind> CAPTURED_IN_CLOSURE = new BasicWritableSlice<VariableDescriptor, CaptureKind>(DO_NOTHING);
 
@@ -198,50 +196,45 @@ public interface BindingContext {
         @Override
         public Boolean computeValue(SlicedMap map, JetFunctionLiteralExpression expression, Boolean isBlock, boolean valueNotFound) {
             isBlock = valueNotFound ? false : isBlock;
-            assert isBlock != null;
             return isBlock && !expression.getFunctionLiteral().hasParameterSpecification();
         }
     };
 
-    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().build();
-    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.<PsiElement, ScriptDescriptor>sliceBuilder().build();
-    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER =
-            Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().build();
+    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.createSimpleSlice();
+    WritableSlice<PsiElement, ScriptDescriptor> SCRIPT = Slices.createSimpleSlice();
+    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.createSimpleSlice();
     /**
      * @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)}
      */
-    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().build();
-    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().build();
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.createSimpleSlice();
+    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.createSimpleSlice();
     WritableSlice<ConstructorDescriptor, ResolvedCall<ConstructorDescriptor>> CONSTRUCTOR_RESOLVED_DELEGATION_CALL =
-            Slices.<ConstructorDescriptor, ResolvedCall<ConstructorDescriptor>>sliceBuilder().build();
-    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().build();
-    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().build();
-    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR =
-            Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder().build();
-    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER =
-            Slices.<PsiElement, PropertyDescriptor>sliceBuilder().build();
+            Slices.createSimpleSlice();
+    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.createSimpleSlice();
+    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.createSimpleSlice();
+    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.createSimpleSlice();
+    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.createSimpleSlice();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
             PRIMARY_CONSTRUCTOR_PARAMETER
     };
 
-    ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
-            .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
+    @SuppressWarnings("unchecked")
+    ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR =
+            Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
+                    .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS)
+                    .build();
 
-    WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
-    @KotlinSignature("val AMBIGUOUS_LABEL_TARGET: WritableSlice<JetReferenceExpression, Collection<PsiElement>>")
-    WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =
-            Slices.<JetReferenceExpression, Collection<? extends PsiElement>>sliceBuilder().build();
-    WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
-            Slices.<ValueParameterDescriptor, PropertyDescriptor>sliceBuilder().build();
+    WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.createSimpleSlice();
+    WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET = Slices.createSimpleSlice();
+    WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.createSimpleSlice();
 
-    WritableSlice<ValueParameterDescriptor, FunctionDescriptor> DATA_CLASS_COMPONENT_FUNCTION =
-            Slices.<ValueParameterDescriptor, FunctionDescriptor>sliceBuilder().build();
-    WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION =
-            Slices.<ClassDescriptor, FunctionDescriptor>sliceBuilder().build();
+    WritableSlice<ValueParameterDescriptor, FunctionDescriptor> DATA_CLASS_COMPONENT_FUNCTION = Slices.createSimpleSlice();
+    WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION = Slices.createSimpleSlice();
 
-    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
+    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR =
+            new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<JetFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<JetFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 

@@ -2242,6 +2242,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("java8Lambdas.java")
+        public void testJava8Lambdas() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8Lambdas.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaksBetweenParameters.java")
         public void testLineBreaksBetweenParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
@@ -3707,6 +3713,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class RawGenerics extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInRawGenerics() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("cycle.java")
+        public void testCycle() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/cycle.java");
+            doTest(fileName);
         }
 
         @TestMetadata("kt-540.java")

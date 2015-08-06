@@ -16,43 +16,63 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeInfoForTypeArguments
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetAnnotationEntry
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.Collections
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 
-public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val diagElement = diagnostic.getPsiElement()
+public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<JetCallExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
+        val diagElement = diagnostic.psiElement
+        if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
+
+        val callExpr = diagElement.parent as? JetCallExpression ?: return null
+        return if (callExpr.calleeExpression == diagElement) callExpr else null
+    }
+
+    override fun getPossibleClassKinds(element: JetCallExpression, diagnostic: Diagnostic): List<ClassKind> {
+        val inAnnotationEntry = diagnostic.psiElement.getNonStrictParentOfType<JetAnnotationEntry>() != null
+
+        val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
+        val file = element.containingFile as? JetFile ?: return emptyList()
+        val call = element.getCall(context) ?: return emptyList()
+        val targetParent = getTargetParentByCall(call, file) ?: return emptyList()
+
+        val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
+        val fullCallExpr = element.getQualifiedExpressionForSelectorOrThis()
+        if (!fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).second(classKind)) return emptyList()
+
+        return classKind.singletonList()
+    }
+
+    override fun createQuickFixData(element: JetCallExpression, diagnostic: Diagnostic): ClassInfo? {
+        val diagElement = diagnostic.psiElement
         if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
 
         val inAnnotationEntry = diagElement.getNonStrictParentOfType<JetAnnotationEntry>() != null
 
-        val callExpr = diagElement.getParent() as? JetCallExpression ?: return null
-        if (callExpr.getCalleeExpression() != diagElement) return null
+        val callExpr = diagElement.parent as? JetCallExpression ?: return null
+        if (callExpr.calleeExpression != diagElement) return null
 
-        val calleeExpr = callExpr.getCalleeExpression() as? JetSimpleNameExpression ?: return null
+        val calleeExpr = callExpr.calleeExpression as? JetSimpleNameExpression ?: return null
 
         val name = calleeExpr.getReferencedName()
         if (!inAnnotationEntry && !name.checkClassName()) return null
 
-        val callParent = callExpr.getParent()
+        val callParent = callExpr.parent
         val fullCallExpr =
-                if (callParent is JetQualifiedExpression && callParent.getSelectorExpression() == callExpr) callParent else callExpr
+                if (callParent is JetQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
 
-        val file = fullCallExpr.getContainingFile() as? JetFile ?: return null
+        val file = fullCallExpr.containingFile as? JetFile ?: return null
 
         val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 
@@ -60,9 +80,9 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
         val targetParent = getTargetParentByCall(call, file) ?: return null
         val inner = isInnerClassExpected(call)
 
-        val valueArguments = callExpr.getValueArguments()
+        val valueArguments = callExpr.valueArguments
         val defaultParamName = if (inAnnotationEntry && valueArguments.size() == 1) "value" else null
-        val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
+        val anyType = KotlinBuiltIns.getInstance().nullableAnyType
         val parameterInfos = valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
@@ -77,8 +97,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
 
         val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()
 
-        val classInfo = ClassInfo(
-                kind = classKind,
+        return ClassInfo(
                 name = name,
                 targetParent = targetParent,
                 expectedTypeInfo = expectedTypeInfo,
@@ -86,6 +105,5 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
                 typeArguments = typeArgumentInfos,
                 parameterInfos = parameterInfos
         )
-        return CreateClassFromUsageFix(callExpr, classInfo)
     }
 }

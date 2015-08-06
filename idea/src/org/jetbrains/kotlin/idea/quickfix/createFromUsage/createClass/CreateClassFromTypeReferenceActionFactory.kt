@@ -16,49 +16,36 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import java.util.Collections
-import org.jetbrains.kotlin.psi.JetUserType
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
-import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
+import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetUserType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.Variance
+import java.util.Collections
 
-public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-        val userType = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetUserType>()) ?: return Collections.emptyList()
-        val typeArguments = userType.getTypeArgumentsAsTypes()
+public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<JetUserType>(true) {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetUserType? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetUserType>())
+    }
 
-        val refExpr = userType.getReferenceExpression() ?: return Collections.emptyList()
-        val name = refExpr.getReferencedName()
-
-        val typeRefParent = userType.getParent()?.getParent()
+    override fun getPossibleClassKinds(element: JetUserType, diagnostic: Diagnostic): List<ClassKind> {
+        val typeRefParent = element.parent?.parent
         if (typeRefParent is JetConstructorCalleeExpression) return Collections.emptyList()
 
-        val traitExpected = typeRefParent is JetDelegatorToSuperClass
+        val interfaceExpected = typeRefParent is JetDelegatorToSuperClass
 
-        val context = userType.analyze()
+        val isQualifier = (element.parent as? JetUserType)?.let { it.qualifier == element } ?: false
 
-        val file = userType.getContainingFile() as? JetFile ?: return Collections.emptyList()
-
-        val isQualifier = (userType.getParent() as? JetUserType)?.let { it.getQualifier() == userType } ?: false
-        val qualifier = userType.getQualifier()?.getReferenceExpression()
-        val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
-
-        val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return Collections.emptyList()
-
-        val possibleKinds = when {
-            traitExpected -> Collections.singletonList(ClassKind.TRAIT)
+        return when {
+            interfaceExpected -> Collections.singletonList(ClassKind.INTERFACE)
             else -> ClassKind.values().filter {
-                val noTypeArguments = typeArguments.isEmpty()
+                val noTypeArguments = element.typeArgumentsAsTypes.isEmpty()
                 when (it) {
                     ClassKind.OBJECT -> noTypeArguments && isQualifier
                     ClassKind.ANNOTATION_CLASS -> noTypeArguments && !isQualifier
@@ -68,22 +55,29 @@ public object CreateClassFromTypeReferenceActionFactory: JetIntentionActionsFact
                 }
             }
         }
+    }
 
-        val anyType = KotlinBuiltIns.getInstance().getAnyType()
+    override fun createQuickFixData(element: JetUserType, diagnostic: Diagnostic): ClassInfo? {
+        val name = element.referenceExpression?.getReferencedName() ?: return null
+        if (element.parent?.parent is JetConstructorCalleeExpression) return null
 
-        val createPackageAction = refExpr.getCreatePackageFixIfApplicable(targetParent)
-        val createClassActions = possibleKinds.map {
-            val classInfo = ClassInfo(
-                    kind = it,
-                    name = name,
-                    targetParent = targetParent,
-                    expectedTypeInfo = TypeInfo.Empty,
-                    typeArguments = typeArguments.map {
-                        if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)
-                    }
-            )
-            CreateClassFromUsageFix(userType, classInfo)
-        }
-        return createPackageAction.singletonOrEmptyList() + createClassActions
+        val file = element.containingFile as? JetFile ?: return null
+
+        val context = element.analyze()
+        val qualifier = element.qualifier?.referenceExpression
+        val qualifierDescriptor = qualifier?.let { context[BindingContext.REFERENCE_TARGET, it] }
+
+        val targetParent = getTargetParentByQualifier(file, qualifier != null, qualifierDescriptor) ?: return null
+
+        val anyType = KotlinBuiltIns.getInstance().anyType
+
+        return ClassInfo(
+                name = name,
+                targetParent = targetParent,
+                expectedTypeInfo = TypeInfo.Empty,
+                typeArguments = element.typeArgumentsAsTypes.map {
+                    if (it != null) TypeInfo(it, Variance.INVARIANT) else TypeInfo(anyType, Variance.INVARIANT)
+                }
+        )
     }
 }

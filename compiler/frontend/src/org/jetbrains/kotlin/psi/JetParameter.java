@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -176,16 +175,12 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
         return Collections.emptyList();
     }
 
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
+    @Nullable
+    public JetFunction getOwnerFunction() {
         PsiElement parent = getParent();
-        if (parent != null) {
-            PsiElement grandparent = parent.getParent();
-            if (grandparent instanceof JetFunction && !(grandparent instanceof JetFunctionLiteral)) {
-                return grandparent.getUseScope();
-            }
-        }
-        return super.getUseScope();
+        if (parent == null) return null;
+        PsiElement grandparent = parent.getParent();
+        if (!(grandparent instanceof JetFunction)) return null;
+        return (JetFunction) grandparent;
     }
 }

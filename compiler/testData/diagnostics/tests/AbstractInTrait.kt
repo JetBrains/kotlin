@@ -29,17 +29,17 @@ interface MyTrait {
     <!ABSTRACT_MODIFIER_IN_TRAIT, ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    var i: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
-    var i1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var i: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get  <!WRONG_MODIFIER_TARGET!>abstract<!> set
+    var i1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!WRONG_MODIFIER_TARGET!>abstract<!> get  <!WRONG_MODIFIER_TARGET!>abstract<!> set
 
-    var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
-    var j1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
+    var j: Int                       get() = i;    <!WRONG_MODIFIER_TARGET!>abstract<!> set
+    var j1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  get() = i;    <!WRONG_MODIFIER_TARGET!>abstract<!> set
 
-    var k: Int                       <!ILLEGAL_MODIFIER!>abstract<!> set
-    var k1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var k: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> set
+    var k1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!WRONG_MODIFIER_TARGET!>abstract<!> set
 
-    var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
-    var l1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set
+    var l: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get  <!WRONG_MODIFIER_TARGET!>abstract<!> set
+    var l1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>0<!>;  <!WRONG_MODIFIER_TARGET!>abstract<!> get  <!WRONG_MODIFIER_TARGET!>abstract<!> set
 
-    var n: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get <!ILLEGAL_MODIFIER!>abstract<!> set(v: Int) {}
+    var n: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get <!WRONG_MODIFIER_TARGET!>abstract<!> set(v: Int) {}
 }

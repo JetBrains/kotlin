@@ -1,3 +1,2 @@
-<selection>fun <A, <caret>B> foo() {
+fun <selection><A, <caret>B></selection> foo() {
 }
-</selection>

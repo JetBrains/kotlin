@@ -1,4 +1,4 @@
-<!ILLEGAL_MODIFIER!>companion<!> class A {
+<!WRONG_MODIFIER_TARGET!>companion<!> class A {
     companion object {
 
     }
@@ -18,38 +18,38 @@ class C {
 
 class D {
     companion object A {
-        <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object {
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {
         }
     }
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> object G {
-    <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object G {
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> interface H {
+<!WRONG_MODIFIER_TARGET!>companion<!> interface H {
     companion object
 }
 
 class J {
     companion object C {
-        <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object
     }
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> enum class Enum {
+<!WRONG_MODIFIER_TARGET!>companion<!> enum class Enum {
     E1,
     E2;
 
     companion object
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> fun main() {
+<!WRONG_MODIFIER_TARGET!>companion<!> fun main() {
 
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> var prop: Int = 1
-    <!ILLEGAL_MODIFIER!>companion<!> get
-    <!ILLEGAL_MODIFIER!>companion<!> set
+<!WRONG_MODIFIER_TARGET!>companion<!> var prop: Int = 1
+    <!WRONG_MODIFIER_TARGET!>companion<!> get
+    <!WRONG_MODIFIER_TARGET!>companion<!> set
 
-class Z(<!ILLEGAL_MODIFIER!>companion<!> val c: Int)
+class Z(<!WRONG_MODIFIER_TARGET!>companion<!> val c: Int)

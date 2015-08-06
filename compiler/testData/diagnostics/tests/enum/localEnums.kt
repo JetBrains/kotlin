@@ -1,20 +1,20 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 fun foo() {
-    <!LOCAL_ENUM_NOT_ALLOWED!>enum class A<!> {
+    <!WRONG_MODIFIER_TARGET!>enum<!> class A {
         FOO,
         BAR
     }
     val foo = A.FOO
     val b = object {
-        <!LOCAL_ENUM_NOT_ALLOWED!>enum class B<!> {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class B {}
     }
     class C {
-        <!LOCAL_ENUM_NOT_ALLOWED!>enum class D<!> {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class D {}
     }
     val f = {
-        <!LOCAL_ENUM_NOT_ALLOWED!>enum class E<!> {}
+        <!WRONG_MODIFIER_TARGET!>enum<!> class E {}
     }
 
-    enum class<!SYNTAX!><!> {}
+    <!WRONG_MODIFIER_TARGET!>enum<!> class<!SYNTAX!><!> {}
 }

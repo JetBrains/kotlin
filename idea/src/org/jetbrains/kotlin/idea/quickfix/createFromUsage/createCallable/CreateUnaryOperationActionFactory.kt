@@ -17,25 +17,28 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.psi.JetUnaryExpression
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public object CreateUnaryOperationActionFactory: JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val callExpr = diagnostic.getPsiElement().getParent() as? JetUnaryExpression ?: return null
-        val token = callExpr.getOperationToken() as JetToken
+public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<JetUnaryExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetUnaryExpression? {
+        return diagnostic.psiElement.parent as? JetUnaryExpression
+    }
+
+    override fun createCallableInfo(element: JetUnaryExpression, diagnostic: Diagnostic): CallableInfo? {
+        val token = element.operationToken as JetToken
         val operationName = OperatorConventions.getNameForOperationSymbol(token) ?: return null
         val incDec = token in OperatorConventions.INCREMENT_OPERATIONS
 
-        val receiverExpr = callExpr.getBaseExpression() ?: return null
+        val receiverExpr = element.baseExpression ?: return null
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
-        val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(callExpr, Variance.OUT_VARIANCE)
-        return CreateCallableFromUsageFixes(callExpr, FunctionInfo(operationName.asString(), receiverType, returnType))
+        val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(element, Variance.OUT_VARIANCE)
+        return FunctionInfo(operationName.asString(), receiverType, returnType)
     }
 }

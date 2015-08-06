@@ -23,10 +23,10 @@ package kotlin.jvm
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
 target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
-public annotation(retention = AnnotationRetention.BINARY) class jvmOverloads
+public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = true) class jvmOverloads
 
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */
 target(AnnotationTarget.PROPERTY)
-public annotation(retention = AnnotationRetention.SOURCE) class publicField
+public annotation(retention = AnnotationRetention.SOURCE, mustBeDocumented = true) class publicField

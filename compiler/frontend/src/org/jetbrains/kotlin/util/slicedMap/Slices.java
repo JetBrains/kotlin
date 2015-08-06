@@ -60,42 +60,24 @@ public class Slices {
     }
 
     public static <K> WritableSlice<K, Boolean> createSimpleSetSlice() {
-        return createRemovableSetSlice();
+        return new SetSlice<K>(RewritePolicy.DO_NOTHING);
     }
 
     public static <K> WritableSlice<K, Boolean> createCollectiveSetSlice() {
         return new SetSlice<K>(RewritePolicy.DO_NOTHING, true);
     }
 
-    public static <K> RemovableSlice<K, Boolean> createRemovableSetSlice() {
-        return new SetSlice<K>(RewritePolicy.DO_NOTHING, false);
-    }
-
     public static class SliceBuilder<K, V> {
-        private V defaultValue = null;
-        private List<ReadOnlySlice<K, V>> furtherLookupSlices = null;
-        private WritableSlice<? super V, ? super K> opposite = null;
-
+        private List<ReadOnlySlice<K, V>> furtherLookupSlices;
         private final RewritePolicy rewritePolicy;
-
         private String debugName;
 
         private SliceBuilder(RewritePolicy rewritePolicy) {
             this.rewritePolicy = rewritePolicy;
         }
 
-        public SliceBuilder<K, V> setDefaultValue(V defaultValue) {
-            this.defaultValue = defaultValue;
-            return this;
-        }
-
         public SliceBuilder<K, V> setFurtherLookupSlices(ReadOnlySlice<K, V>... furtherLookupSlices) {
             this.furtherLookupSlices = Arrays.asList(furtherLookupSlices);
-            return this;
-        }
-
-        public SliceBuilder<K, V> setOpposite(WritableSlice<? super V, ? super K> opposite) {
-            this.opposite = opposite;
             return this;
         }
 
@@ -104,26 +86,17 @@ public class Slices {
             return this;
         }
 
-        public RemovableSlice<K, V>  build() {
-            SliceWithOpposite<K, V> result = doBuild();
+        public WritableSlice<K, V> build() {
+            BasicWritableSlice<K, V> result = doBuild();
             if (debugName != null) {
                 result.setDebugName(debugName);
             }
             return result;
         }
 
-        private SliceWithOpposite<K, V> doBuild() {
-            if (defaultValue != null) {
-                return new SliceWithOpposite<K, V>(rewritePolicy, opposite) {
-                    @Override
-                    public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
-                        if (valueNotFound) return defaultValue;
-                        return super.computeValue(map, key, value, false);
-                    }
-                };
-            }
+        private BasicWritableSlice<K, V> doBuild() {
             if (furtherLookupSlices != null) {
-                return new SliceWithOpposite<K, V>(rewritePolicy, opposite) {
+                return new BasicWritableSlice<K, V>(rewritePolicy) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
@@ -133,43 +106,17 @@ public class Slices {
                                     return v;
                                 }
                             }
-                            return defaultValue;
+                            return null;
                         }
                         return super.computeValue(map, key, value, false);
                     }
                 };
             }
-            return new SliceWithOpposite<K, V>(rewritePolicy, opposite);
+            return new BasicWritableSlice<K, V>(rewritePolicy);
         }
     }
 
-    public static class BasicRemovableSlice<K, V> extends BasicWritableSlice<K, V> implements RemovableSlice<K, V> {
-        protected BasicRemovableSlice(RewritePolicy rewritePolicy) {
-            super(rewritePolicy);
-        }
-
-        protected BasicRemovableSlice(RewritePolicy rewritePolicy, boolean isCollective) {
-            super(rewritePolicy, isCollective);
-        }
-    }
-
-    public static class SliceWithOpposite<K, V> extends BasicRemovableSlice<K, V> {
-        private final WritableSlice<? super V, ? super K> opposite;
-
-        public SliceWithOpposite(RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite) {
-            super(rewritePolicy);
-            this.opposite = opposite;
-        }
-
-        @Override
-        public void afterPut(MutableSlicedMap map, K key, V value) {
-            if (opposite != null) {
-                map.put(opposite, value, key);
-            }
-        }
-    }
-
-    public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
+    public static class SetSlice<K> extends BasicWritableSlice<K, Boolean> {
 
         protected SetSlice(RewritePolicy rewritePolicy) {
             this(rewritePolicy, false);

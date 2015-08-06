@@ -178,7 +178,7 @@ class OverloadReducer(
 public fun Converter.convertParameterList(
         method: PsiMethod,
         overloadReducer: OverloadReducer?,
-        convertParameter: (parameter: PsiParameter, default: DeferredElement<Expression>?) -> Parameter = { parameter, default -> convertParameter(parameter, defaultValue = default) },
+        convertParameter: (parameter: PsiParameter, default: DeferredElement<Expression>?) -> FunctionParameter = { parameter, default -> convertParameter(parameter, defaultValue = default) },
         correctCodeConverter: CodeConverter.() -> CodeConverter = { this }
 ): ParameterList {
     val parameterList = method.getParameterList()

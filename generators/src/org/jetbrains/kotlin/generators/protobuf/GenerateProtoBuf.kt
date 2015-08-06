@@ -53,14 +53,21 @@ public val PROTO_PATHS: List<ProtoPath> = listOf(
         ProtoPath("core/descriptor.loader.java/src/jvm_descriptors.proto")
 )
 
+private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/deserialization/src/ext_options.proto")
+private val PROTOBUF_PROTO_PATHS = listOf("./", "core/deserialization/src")
+
 fun main(args: Array<String>) {
     try {
         checkVersion()
+
+        modifyAndExecProtoc(EXT_OPTIONS_PROTO_PATH)
 
         for (protoPath in PROTO_PATHS) {
             execProtoc(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
+
+        println("Do not forget to run GenerateProtoBufCompare")
     }
     catch (e: Throwable) {
         e.printStackTrace()
@@ -75,20 +82,20 @@ fun main(args: Array<String>) {
 fun checkVersion() {
     val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, "--version"), null)
 
-    val version = processOutput.getStdout().trim()
+    val version = processOutput.stdout.trim()
     if (version.isEmpty()) {
-        throw AssertionError("Output is empty, stderr: " + processOutput.getStderr())
+        throw AssertionError("Output is empty, stderr: ${processOutput.stderr}")
     }
     if (version != "libprotoc 2.5.0") {
-        throw AssertionError("Expected protoc 2.5.0, but was: " + version)
+        throw AssertionError("Expected protoc 2.5.0, but was: $version")
     }
 }
 
 fun execProtoc(protoPath: String, outPath: String) {
-    val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, protoPath, "--java_out=$outPath"), null)
-    print(processOutput.getStdout())
-    if (processOutput.getStderr().isNotEmpty()) {
-        throw AssertionError(processOutput.getStderr())
+    val processOutput = ExecUtil.execAndGetOutput(listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") + PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }, null)
+    print(processOutput.stdout)
+    if (processOutput.stderr.isNotEmpty()) {
+        throw AssertionError(processOutput.stderr)
     }
 }
 
@@ -101,9 +108,14 @@ fun modifyAndExecProtoc(protoPath: ProtoPath) {
 }
 
 fun modifyForDebug(protoPath: ProtoPath): String {
-    return File(protoPath.file).readText()
+    var text = File(protoPath.file).readText()
             .replace("option java_outer_classname = \"${protoPath.className}\"",
                      "option java_outer_classname = \"${protoPath.debugClassName}\"") // give different name for class
             .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
-            .replace(".proto\"", ".debug.proto\"") // for "import" statement in proto
+    (listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS).forEach {
+        val file = it.file
+        val newFile = file.replace(".proto", ".debug.proto")
+        text = text.replace(file, newFile)
+    }
+    return text
 }

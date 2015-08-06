@@ -7,7 +7,7 @@ class K<in T : String> {
 
     fun run(): String {
         val p = ::t
-        p.accessible = true
+        p.isAccessible = true
         p.set(this, "" as T)
         return p.get(this)
     }

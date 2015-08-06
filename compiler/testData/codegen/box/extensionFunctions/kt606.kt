@@ -15,7 +15,9 @@ interface ChannelPipeline  {
 }
 
 class DefaultChannelPipeline : ChannelPipeline {
-  override fun print(any: Any) = System.out?.println(any)
+  override fun print(any: Any) {
+      System.out?.println(any)
+  }
 
 }
 

@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import kotlin.Charsets;
-import kotlin.KotlinPackage;
 import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
@@ -68,9 +67,15 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
     public void doTestWithStdlib(@NotNull String filename) {
         myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), ConfigurationKind.ALL, getTestJdkKind(filename)
+                getTestRootDisposable(), getTestConfigurationKind(filename), getTestJdkKind(filename)
         );
         blackBoxFileByFullPath(filename);
+    }
+
+    private static ConfigurationKind getTestConfigurationKind(String filename) {
+        return InTextDirectivesUtils.isDirectiveDefined(
+                IoPackage.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
+        ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
     }
 
     public void doTestMultiFile(@NotNull String folderName) {

@@ -21,9 +21,11 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -37,12 +39,53 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     public fun getDelegationSpecifierList(): JetDelegationSpecifierList? = getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
     open public fun getDelegationSpecifiers(): List<JetDelegationSpecifier> = getDelegationSpecifierList()?.getDelegationSpecifiers().orEmpty()
 
+    public fun addDelegationSpecifier(delegationSpecifier: JetDelegationSpecifier): JetDelegationSpecifier {
+        getDelegationSpecifierList()?.let {
+            return EditCommaSeparatedListHelper.addItem(it, getDelegationSpecifiers(), delegationSpecifier)
+        }
+
+        val psiFactory = JetPsiFactory(this)
+        val specifierListToAdd = psiFactory.createDelegatorToSuperCall("A()").replace(delegationSpecifier).getParent()
+        val colon = addBefore(psiFactory.createColon(), getBody())
+        return (addAfter(specifierListToAdd, colon) as JetDelegationSpecifierList).getDelegationSpecifiers().first()
+    }
+
+    public fun removeDelegationSpecifier(delegationSpecifier: JetDelegationSpecifier) {
+        val specifierList = getDelegationSpecifierList() ?: return
+        assert(delegationSpecifier.getParent() === specifierList)
+
+        if (specifierList.getDelegationSpecifiers().size() > 1) {
+            EditCommaSeparatedListHelper.removeItem<JetElement>(delegationSpecifier)
+        }
+        else {
+            deleteChildRange(findChildByType<PsiElement>(JetTokens.COLON) ?: specifierList, specifierList)
+        }
+    }
+
     public fun getAnonymousInitializers(): List<JetClassInitializer> = getBody()?.getAnonymousInitializers().orEmpty()
 
     public fun getNameAsDeclaration(): JetObjectDeclarationName? =
             findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName?
 
     public fun getBody(): JetClassBody? = getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
+
+    public fun getOrCreateBody(): JetClassBody = getBody() ?: add(JetPsiFactory(this).createEmptyClassBody()) as JetClassBody
+
+    public fun addDeclaration(declaration: JetDeclaration): JetDeclaration {
+        val body = getOrCreateBody()
+        val anchor = PsiTreeUtil.skipSiblingsBackward(body.getRBrace() ?: body.getLastChild()!!, javaClass<PsiWhiteSpace>())
+        return body.addAfter(declaration, anchor) as JetDeclaration
+    }
+
+    public fun addDeclarationAfter(declaration: JetDeclaration, anchor: PsiElement?): JetDeclaration {
+        val anchorBefore = anchor ?: getDeclarations().lastOrNull() ?: return addDeclaration(declaration)
+        return getOrCreateBody().addAfter(declaration, anchorBefore) as JetDeclaration
+    }
+
+    public fun addDeclarationBefore(declaration: JetDeclaration, anchor: PsiElement?): JetDeclaration {
+        val anchorAfter = anchor ?: getDeclarations().firstOrNull() ?: return addDeclaration(declaration)
+        return getOrCreateBody().addBefore(declaration, anchorAfter) as JetDeclaration
+    }
 
     public fun isTopLevel(): Boolean = getStub()?.isTopLevel() ?: (getParent() is JetFile)
 
@@ -65,7 +108,7 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
-    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor methods instead, e.g. getKind()")
+    deprecated(value = "It's no more possible to determine it exactly using AST. Use ClassDescriptor.getKind() instead")
     public fun isAnnotation(): Boolean = getBuiltInAnnotationEntry() != null
 
     public fun getBuiltInAnnotationEntry(): JetAnnotationEntry? = getAnnotation(KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString())

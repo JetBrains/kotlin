@@ -33,7 +33,7 @@ public abstract class TargetPlatform(
     public abstract val platformConfigurator: PlatformConfigurator
 
     public object Default : TargetPlatform("Default") {
-        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf())
+        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf())
     }
 }
 
@@ -48,7 +48,8 @@ public open class PlatformConfigurator(
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,
         additionalTypeCheckers: List<AdditionalTypeChecker>,
-        additionalSymbolUsageValidators: List<SymbolUsageValidator>
+        additionalSymbolUsageValidators: List<SymbolUsageValidator>,
+        private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>
 ) {
 
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
@@ -63,6 +64,7 @@ public open class PlatformConfigurator(
             callCheckers.forEach { useInstance(it) }
             typeCheckers.forEach { useInstance(it) }
             useInstance(symbolUsageValidator)
+            additionalAnnotationCheckers.forEach { useInstance(it) }
         }
     }
 }

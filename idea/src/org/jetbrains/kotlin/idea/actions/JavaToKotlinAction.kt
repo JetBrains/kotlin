@@ -32,12 +32,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
+import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
-import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import java.io.File
 import java.io.IOException
@@ -52,7 +51,7 @@ public class JavaToKotlinAction : AnAction() {
 
         var converterResult: JavaToKotlinConverter.FilesResult? = null
         fun convert() {
-            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
+            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
             converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().getProgressIndicator())
         }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
@@ -51,14 +52,14 @@ public interface KotlinJvmBinaryClass {
 
     interface AnnotationVisitor {
         @Nullable
-        AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId);
+        AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source);
 
         void visitEnd();
     }
 
     interface MethodAnnotationVisitor extends AnnotationVisitor {
         @Nullable
-        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull ClassId classId);
+        AnnotationArgumentVisitor visitParameterAnnotation(int index, @NotNull ClassId classId, @NotNull SourceElement source);
     }
 
     interface AnnotationArgumentVisitor {

@@ -59,4 +59,9 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
         return JavaElementUtil.findAnnotation(this, fqName);
     }
+
+    @Override
+    public boolean isDeprecatedInJavaDoc() {
+        return getPsi().isDeprecated();
+    }
 }

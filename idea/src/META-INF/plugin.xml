@@ -22,9 +22,6 @@
       <implementation-class>org.jetbrains.kotlin.idea.compiler.JetCompilerManager</implementation-class>
     </component>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification</implementation-class>
     </component>
     <component>
@@ -35,6 +32,9 @@
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
@@ -233,6 +233,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"
+                    serviceImplementation="org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
@@ -417,6 +420,8 @@
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetUsageTypeProvider"/>
+    <useScopeEnlarger implementation="org.jetbrains.kotlin.idea.findUsages.BuiltInsUseScopeEnlarger"/>
+
     <refactoring.safeDeleteProcessor
         id="kotlinProcessor"
         implementation="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinSafeDeleteProcessor"
@@ -432,6 +437,7 @@
     <debuggerClassFilterProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
     <debugger.nodeRenderer implementation="org.jetbrains.kotlin.idea.debugger.render.KotlinClassWithDelegatedPropertyRenderer"/>
     <debugger.sourcePositionProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinSourcePositionProvider"/>
+    <debugger.sourcePositionHighlighter implementation="org.jetbrains.kotlin.idea.debugger.KotlinSourcePositionHighlighter"/>
     <debugger.frameExtraVarsProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider"/>
     <debugger.extraSteppingFilter implementation="org.jetbrains.kotlin.idea.ExtraSteppingFilter"/>
     <xdebugger.settings implementation="org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings"/>
@@ -439,8 +445,8 @@
     <debugger.syntheticProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinSyntheticTypeComponentProvider"/>
     <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinBreakpointHandlerFactory"/>
 
-    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.codeInsight.ImplementMethodsHandler"/>
-    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.codeInsight.OverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler"/>
+    <codeInsight.overrideMethod language="jet" implementationClass="org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMethodsHandler"/>
 
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.kotlin.idea.framework.JSFrameworkType"/>
@@ -483,7 +489,7 @@
 
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileDecompiler"/>
-    
+
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinJavaScriptAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex"/>
@@ -497,6 +503,7 @@
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
+    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.caches.resolve.SubtreeModificationCountUpdater"/>
 
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
@@ -526,6 +533,10 @@
     <targetElementEvaluator
         language="jet"
         implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.JetTargetElementEvaluator" />
+
+    <refactoring.pullUpHelperFactory language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHelperFactory"/>
+
+    <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention</className>

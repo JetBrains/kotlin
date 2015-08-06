@@ -1,0 +1,23 @@
+package
+
+public open class JavaClass {
+    public constructor JavaClass()
+    protected/*protected and package*/ open fun doSomething(/*0*/ runnable: java.lang.Runnable!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package k {
+    internal fun bar(): kotlin.Unit
+    internal fun foo(/*0*/ javaClass: JavaClass): kotlin.Unit
+
+    internal final class X : JavaClass {
+        public constructor X()
+        protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun doSomething(/*0*/ runnable: java.lang.Runnable!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        internal final fun foo(/*0*/ other: JavaClass): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

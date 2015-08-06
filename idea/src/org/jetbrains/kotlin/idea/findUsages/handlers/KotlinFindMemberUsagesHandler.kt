@@ -19,13 +19,8 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
-import com.intellij.psi.search.PsiElementProcessor
-import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.CommonProcessors
@@ -35,14 +30,15 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindFunctionUsagesDialog
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinFindPropertyUsagesDialog
-import org.jetbrains.kotlin.idea.search.declarationsSearch.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
+import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchRequest
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.*
-import java.util.Collections
+import org.jetbrains.kotlin.psi.JetConstructor
+import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.JetParameter
 
 public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
@@ -89,7 +85,12 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
         val request = runReadAction {
             @suppress("UNCHECKED_CAST")
-            getSearchHelper(kotlinOptions).newRequest(options.toSearchTarget<T>(element as T, true))
+            val searchTarget = if (element is JetParameter)
+                options.toSearchTarget<T>(element as T, restrictByTarget = false) // named argument usages are outside getUseScope for JetParameter
+            else
+                options.toSearchTarget<T>(element as T, restrictByTarget = true)
+
+            getSearchHelper(kotlinOptions).newRequest(searchTarget)
         }
 
         val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)

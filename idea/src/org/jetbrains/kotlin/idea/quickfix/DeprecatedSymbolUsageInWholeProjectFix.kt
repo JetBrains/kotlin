@@ -17,26 +17,21 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.usageView.UsageInfo
-import com.intellij.util.CommonProcessors
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
-import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -87,43 +82,13 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                     override fun run(indicator: ProgressIndicator) {
                         val usages = runReadAction {
                             val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
-                            val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(psiElement, false)!!
-                            val processor = CommonProcessors.CollectProcessor<UsageInfo>()
-                            val options = createFindUsagesOptions(psiElement, searchScope, project)
-                            findUsagesHandler.processElementUsages(psiElement, processor, options)
-                            processor.getResults().map { it.getElement() }.filterIsInstance<JetSimpleNameExpression>()
+                            ReferencesSearch.search(psiElement, searchScope)
+                                    .filterIsInstance<JetSimpleNameReference>()
+                                    .map { ref -> ref.expression }
                         }
                         replaceUsages(project, usages, replacement)
                     }
                 })
-    }
-
-    private fun createFindUsagesOptions(element: PsiElement, searchScope: GlobalSearchScope, project: Project): FindUsagesOptions {
-        val options: FindUsagesOptions = when (element) {
-            is JetNamedFunction -> {
-                with(KotlinFunctionFindUsagesOptions(project)) {
-                    isSkipImportStatements = true
-                    isOverridingMethods = false
-                    isImplementingMethods = false
-                    isIncludeInherited = false
-                    isIncludeOverloadUsages = false
-                    this
-                }
-            }
-
-            is JetProperty -> {
-                with(KotlinPropertyFindUsagesOptions(project)) {
-                    isSkipImportStatements = true
-                    this
-                }
-            }
-
-            else -> throw IllegalArgumentException(element.toString()) //TODO?
-        }
-
-        options.searchScope = searchScope
-        options.isSearchForTextOccurrences = false
-        return options
     }
 
     private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {

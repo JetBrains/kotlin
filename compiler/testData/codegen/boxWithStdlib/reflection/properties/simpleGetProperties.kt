@@ -1,3 +1,4 @@
+import kotlin.reflect.*
 import kotlin.reflect.jvm.kotlin
 
 class A(param: String) {
@@ -13,7 +14,7 @@ class A(param: String) {
 fun box(): String {
     val klass = javaClass<A>().kotlin
 
-    val props = klass.properties
+    val props = klass.memberProperties
 
     val names = props.map { it.name }.toSortedList()
     assert(names == listOf("anyVar", "int", "string")) { "Fail names: $props" }

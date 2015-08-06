@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-public class JetModifierListOwnerStub<T extends StubElement> extends JetElementImplStub<T> implements JetModifierListOwner {
+public class JetModifierListOwnerStub<T extends StubElement<?>> extends JetElementImplStub<T> implements JetModifierListOwner {
     public JetModifierListOwnerStub(ASTNode node) {
         super(node);
     }

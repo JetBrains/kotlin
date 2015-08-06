@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
@@ -88,7 +89,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Nullable
     @Override
-    public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId) {
+    public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
         if (headerKind != null) {
             // Ignore all Kotlin annotations except the first found
             return null;

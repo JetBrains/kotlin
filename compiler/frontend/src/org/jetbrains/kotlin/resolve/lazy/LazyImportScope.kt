@@ -258,9 +258,14 @@ class LazyImportScope(
         return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name, location) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionProperties(receiverTypes, name) }
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionProperties(receiverTypes, name, location) }
+    }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getSyntheticExtensionFunctions(receiverTypes, name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
@@ -270,6 +275,17 @@ class LazyImportScope(
         return importResolver.storageManager.compute {
             importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<PropertyDescriptor>()) { import ->
                 importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionProperties(receiverTypes)
+            }
+        }
+    }
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+
+        return importResolver.storageManager.compute {
+            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { import ->
+                importResolver.getImportScope(import, LookupMode.EVERYTHING).getSyntheticExtensionFunctions(receiverTypes)
             }
         }
     }

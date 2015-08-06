@@ -207,8 +207,11 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     private fun createCoreEnvironment(rootDisposable: Disposable, configuration: CompilerConfiguration): KotlinCoreEnvironment {
         val result = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        val initNanos = System.nanoTime() - initStartNanos
-        reportPerf(configuration, "INIT: Compiler initialized in " + TimeUnit.NANOSECONDS.toMillis(initNanos) + " ms")
+        if (initStartNanos != 0L) {
+            val initNanos = System.nanoTime() - initStartNanos
+            reportPerf(configuration, "INIT: Compiler initialized in " + TimeUnit.NANOSECONDS.toMillis(initNanos) + " ms")
+            initStartNanos = 0L
+        }
         return result
     }
 
@@ -230,7 +233,9 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         private var elapsedJITTime = 0L
 
         public fun resetInitStartTime() {
-            initStartNanos = System.nanoTime()
+            if (initStartNanos == 0L) {
+                initStartNanos = System.nanoTime()
+            }
         }
 
         platformStatic public fun main(args: Array<String>) {

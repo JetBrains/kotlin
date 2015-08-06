@@ -157,6 +157,11 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
         return findChildByType(JetTokens.COLON);
     }
 
+    @Nullable
+    public PsiElement getEqualsToken() {
+        return findChildByType(JetTokens.EQ);
+    }
+
     @NotNull
     public List<JetPropertyAccessor> getAccessors() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.PROPERTY_ACCESSOR);

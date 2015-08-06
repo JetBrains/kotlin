@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints.dialog;
 
-import com.intellij.codeInsight.generation.PsiFieldMember;
 import com.intellij.debugger.DebuggerBundle;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.ide.util.TreeClassChooser;
@@ -27,10 +26,8 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.core.codeInsight.DescriptorClassMember;
+import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject;
 import org.jetbrains.kotlin.psi.JetProperty;
 
 import javax.swing.*;
@@ -88,12 +85,12 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
             @Override
             public void actionPerformed(@NotNull ActionEvent e) {
                 PsiClass selectedClass = getSelectedClass();
-                DescriptorClassMember[] properties = DialogPackage.collectProperties(selectedClass);
-                MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(properties, false, false, myProject);
+                DescriptorMemberChooserObject[] properties = DialogPackage.collectProperties(selectedClass);
+                MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<DescriptorMemberChooserObject>(properties, false, false, myProject);
                 chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
                 chooser.setCopyJavadocVisible(false);
                 chooser.show();
-                List<DescriptorClassMember> selectedElements = chooser.getSelectedElements();
+                List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();
                 if (selectedElements != null && selectedElements.size() == 1) {
                     JetProperty field = (JetProperty) selectedElements.get(0).getElement();
                     myFieldChooser.setText(field.getName());

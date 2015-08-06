@@ -31,18 +31,6 @@ public class TrackingSliceMapTest extends TestCase {
         assertEquals(42, (int) answer);
     }
 
-    public void testOppositeSlice() {
-        WritableSlice<Integer, String> COLOR_NAME = Slices.<Integer, String>sliceBuilder().setDebugName("COLOR_NAME").build();
-        WritableSlice<String, Integer> NAME_COLOR = Slices.<String, Integer>sliceBuilder().setOpposite(COLOR_NAME).setDebugName("NAME_COLOR").build();
-
-        BindingTraceContext traceContext = BindingTraceContext.createTraceableBindingTrace();
-
-        traceContext.record(NAME_COLOR, "RED", 0xff0000);
-        String redName = traceContext.get(COLOR_NAME, 0xff0000);
-
-        assertEquals("RED", redName);
-    }
-
     public void testFurtherSlices() {
         WritableSlice<String, Integer> NAME_COLOR = Slices.<String, Integer>sliceBuilder().setDebugName("NAME_COLOR").build();
 

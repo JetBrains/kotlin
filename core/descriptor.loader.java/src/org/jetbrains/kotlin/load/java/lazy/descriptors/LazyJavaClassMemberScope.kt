@@ -52,7 +52,7 @@ public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,
         containingDeclaration: ClassDescriptor,
         private val jClass: JavaClass
-) : LazyJavaMemberScope(c, containingDeclaration) {
+) : LazyJavaScope(c, containingDeclaration) {
 
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
@@ -112,7 +112,7 @@ public class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null : JetType?)
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as JetType?)
         getter.initialize(returnType)
 
         result.add(propertyDescriptor)
@@ -126,8 +126,8 @@ public class LazyJavaClassMemberScope(
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
-            valueParameters: LazyJavaMemberScope.ResolvedValueParameters
-    ): LazyJavaMemberScope.MethodSignatureData {
+            valueParameters: LazyJavaScope.ResolvedValueParameters
+    ): LazyJavaScope.MethodSignatureData {
         val propagated = c.externalSignatureResolver.resolvePropagatedSignature(
                 method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters
         )
@@ -137,7 +137,7 @@ public class LazyJavaClassMemberScope(
                 propagated.hasStableParameterNames()
         )
 
-        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
+        return LazyJavaScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {

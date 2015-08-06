@@ -36,7 +36,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
@@ -66,7 +66,7 @@ public class Visibilities {
 
     public static final Visibility PRIVATE_TO_THIS = new Visibility("private_to_this", false) {
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (PRIVATE.isVisible(thisObject, what, from)) {
                 DeclarationDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
 
@@ -82,8 +82,9 @@ public class Visibilities {
             return true;
         }
 
+        @NotNull
         @Override
-        public String toString() {
+        public String getDisplayName() {
             return "private/*private to this*/";
         }
     };
@@ -95,7 +96,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
             if (DescriptorUtils.isCompanionObject(classDescriptor)) {
                 classDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
@@ -118,7 +119,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             //NOTE: supposedly temporarily
             return PUBLIC.isVisible(receiver, what, from);
         }
@@ -131,7 +132,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return true;
         }
     };
@@ -143,7 +144,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             throw new IllegalStateException("This method shouldn't be invoked for LOCAL visibility");
         }
     };
@@ -155,7 +156,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             throw new IllegalStateException("Visibility is unknown yet"); //This method shouldn't be invoked for INHERITED visibility
         }
     };
@@ -168,7 +169,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return false;
         }
     };
@@ -182,7 +183,7 @@ public class Visibilities {
         }
 
         @Override
-        protected boolean isVisible(
+        public boolean isVisible(
                 @NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from
         ) {
             return false;

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -66,6 +65,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -582,19 +582,35 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static boolean isAllowedInClassLiteral(@NotNull JetType type) {
-        if (type.isMarkedNullable()) return false;
+        return isClassAvailableAtRuntime(type, false);
+    }
+
+    private static boolean isClassAvailableAtRuntime(@NotNull JetType type, boolean canBeNullable) {
+        if (type.isMarkedNullable() && !canBeNullable) return false;
 
         TypeConstructor typeConstructor = type.getConstructor();
-        if (!(typeConstructor.getDeclarationDescriptor() instanceof ClassDescriptor)) return false;
+        ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
 
-        List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
-        if (parameters.size() != type.getArguments().size()) return false;
+        if (typeDeclarationDescriptor instanceof ClassDescriptor) {
+            List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
+            if (parameters.size() != type.getArguments().size()) return false;
 
-        for (TypeParameterDescriptor parameter : parameters) {
-            if (!parameter.isReified()) return false;
+            Iterator<TypeProjection> typeArgumentsIterator = type.getArguments().iterator();
+            for (TypeParameterDescriptor parameter : parameters) {
+                if (!parameter.isReified()) return false;
+                TypeProjection typeArgument = typeArgumentsIterator.next();
+                if (typeArgument == null) return false;
+                if (typeArgument.isStarProjection()) return false;
+                if (!isClassAvailableAtRuntime(typeArgument.getType(), true)) return false;
+            }
+
+            return true;
+        }
+        else if (typeDeclarationDescriptor instanceof TypeParameterDescriptor) {
+            return ((TypeParameterDescriptor) typeDeclarationDescriptor).isReified();
         }
 
-        return true;
+        return false;
     }
 
     @Override

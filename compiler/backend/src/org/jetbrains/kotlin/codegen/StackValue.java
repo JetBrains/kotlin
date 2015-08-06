@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -485,15 +486,29 @@ public abstract class StackValue {
             ExpressionCodegen codegen,
             @Nullable Callable callableMethod
     ) {
-        if (resolvedCall.getDispatchReceiver().exists() || resolvedCall.getExtensionReceiver().exists() || isLocalFunCall(callableMethod)) {
-            boolean hasExtensionReceiver = resolvedCall.getExtensionReceiver().exists();
+        ReceiverValue callDispatchReceiver = resolvedCall.getDispatchReceiver();
+        ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
+        if (callDispatchReceiver.exists() || callExtensionReceiver.exists() || isLocalFunCall(callableMethod)) {
+            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+            ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
+            ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
+
+            if (descriptor.getOriginal() instanceof SamAdapterExtensionFunctionDescriptor) {
+                callDispatchReceiver = callExtensionReceiver;
+                callExtensionReceiver = ReceiverValue.NO_RECEIVER;
+                dispatchReceiverParameter = extensionReceiverParameter;
+                extensionReceiverParameter = null;
+            }
+
+            boolean hasExtensionReceiver = callExtensionReceiver.exists();
             StackValue dispatchReceiver = platformStaticCallIfPresent(
-                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, false),
-                    resolvedCall.getResultingDescriptor()
+                    genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, callDispatchReceiver, false),
+                    descriptor
             );
-            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, true);
-            return new CallReceiver(dispatchReceiver, extensionReceiver,
-                                    CallReceiver.calcType(resolvedCall, codegen.typeMapper, callableMethod));
+            StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
+            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod);
+            assert type != null : "Could not map receiver type for " + resolvedCall;
+            return new CallReceiver(dispatchReceiver, extensionReceiver, type);
         }
         return receiver;
     }
@@ -503,9 +518,9 @@ public abstract class StackValue {
             @NotNull ExpressionCodegen codegen,
             @NotNull ResolvedCall resolvedCall,
             @Nullable Callable callableMethod,
+            ReceiverValue receiverValue,
             boolean isExtension
     ) {
-        ReceiverValue receiverValue = isExtension ? resolvedCall.getExtensionReceiver() : resolvedCall.getDispatchReceiver();
         if (receiver == none()) {
             if (receiverValue.exists()) {
                 return codegen.generateReceiverValue(receiverValue);
@@ -1253,47 +1268,42 @@ public abstract class StackValue {
             this.extensionReceiver = extensionReceiver;
         }
 
+        @Nullable
         public static Type calcType(
                 @NotNull ResolvedCall<?> resolvedCall,
+                @Nullable ReceiverParameterDescriptor dispatchReceiver,
+                @Nullable ReceiverParameterDescriptor extensionReceiver,
                 @NotNull JetTypeMapper typeMapper,
                 @Nullable Callable callableMethod
         ) {
-            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-
-            Type dispatchReceiverType = smartDispatchReceiverType(descriptor, typeMapper);
-            ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
-
             if (extensionReceiver != null) {
                 return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
-            else if (dispatchReceiverType != null) {
+            else if (dispatchReceiver != null) {
+                CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+
                 if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
-                return callableMethod != null ? callableMethod.getDispatchReceiverType() : dispatchReceiverType;
+
+                if (callableMethod != null) {
+                    return callableMethod.getDispatchReceiverType();
+                }
+
+                // Extract the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
+                // all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
+                DeclarationDescriptor container = descriptor.getContainingDeclaration();
+                if (container instanceof ClassDescriptor) {
+                    return typeMapper.mapClass((ClassDescriptor) container);
+                }
+
+                return typeMapper.mapType(dispatchReceiver);
             }
             else if (isLocalFunCall(callableMethod)) {
                 return callableMethod.getGenerateCalleeType();
             }
 
             return Type.VOID_TYPE;
-        }
-
-        /**
-         * Extracts the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
-         * all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
-         */
-        @Nullable
-        private static Type smartDispatchReceiverType(@NotNull CallableDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
-            ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
-            if (dispatchReceiverParameter == null) return null;
-
-            DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            if (container instanceof ClassDescriptor) {
-                return typeMapper.mapClass((ClassDescriptor) container);
-            }
-
-            return typeMapper.mapType(dispatchReceiverParameter);
         }
 
         @Override

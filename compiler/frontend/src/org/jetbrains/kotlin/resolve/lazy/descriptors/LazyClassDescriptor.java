@@ -78,8 +78,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final LazyClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
-    private final ClassKind kind;
-    private final boolean isInner;
+    private final NotNullLazyValue<ClassKind> kind;
+    private final NotNullLazyValue<Boolean> isInner;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -119,24 +119,44 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        this.kind = classLikeInfo.getClassKind();
+        final ClassKind syntaxKind = classLikeInfo.getClassKind();
         this.isCompanionObject = classLikeInfo instanceof JetObjectInfo && ((JetObjectInfo) classLikeInfo).isCompanionObject();
 
-        JetModifierList modifierList = classLikeInfo.getModifierList();
-        if (kind.isSingleton()) {
+        final JetModifierList modifierList = classLikeInfo.getModifierList();
+        if (syntaxKind.isSingleton()) {
             this.modality = Modality.FINAL;
         }
         else {
-            Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
+            Modality defaultModality = syntaxKind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
 
         boolean isLocal = classOrObject != null && JetPsiUtil.isLocal(classOrObject);
-        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
-        this.isInner = isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(this);
+        Visibility defaultVisibility;
+        if (syntaxKind == ClassKind.ENUM_ENTRY || (syntaxKind == ClassKind.OBJECT && isCompanionObject)) {
+            defaultVisibility = Visibilities.PUBLIC;
+        }
+        else {
+            defaultVisibility = Visibilities.INTERNAL;
+        }
+        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, defaultVisibility);
 
         StorageManager storageManager = c.getStorageManager();
+        final ClassDescriptor descriptor = this;
 
+        this.isInner = storageManager.createLazyValue(new Function0<Boolean>() {
+            @Override
+            public Boolean invoke() {
+                return isInnerClass(modifierList) && !ModifiersChecker.isIllegalInner(descriptor);
+            }
+        });
+
+        this.kind = storageManager.createLazyValue(new Function0<ClassKind>() {
+            @Override
+            public ClassKind invoke() {
+                return (syntaxKind == ClassKind.CLASS && KotlinBuiltIns.isAnnotation(descriptor)) ? ClassKind.ANNOTATION_CLASS : syntaxKind;
+            }
+        });
 
         if (modifierList != null) {
             this.annotations = new LazyAnnotations(
@@ -361,12 +381,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private JetClassLikeInfo getCompanionObjectInfo(@Nullable JetObjectDeclaration companionObject) {
+    private static JetClassLikeInfo getCompanionObjectInfo(@Nullable JetObjectDeclaration companionObject) {
         if (companionObject != null) {
-            if (!isCompanionObjectAllowed()) {
-                c.getTrace().report(COMPANION_OBJECT_NOT_ALLOWED.on(companionObject));
-            }
-
             return JetClassInfoUtil.createClassLikeInfo(companionObject);
         }
 
@@ -386,7 +402,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public ClassKind getKind() {
-        return kind;
+        return kind.invoke();
     }
 
     @NotNull
@@ -403,7 +419,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     public boolean isInner() {
-        return isInner;
+        return isInner.invoke();
     }
 
     @Override

@@ -136,7 +136,7 @@ class Foo {
 
 }
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> val packageProtectedProperty<!> = object : MyClass() {}
+<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> val packageProtectedProperty<!> = object : MyClass() {}
 
 <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public val packagePublicProperty<!> = object : MyClass() {}
 
@@ -164,7 +164,7 @@ fun testProperties() {
 
 private fun privateFunction() = object : MyClass() {fun invisible() {}}
 
-<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> fun protectedFunction()<!> = object : MyClass() {}
+<!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!><!WRONG_MODIFIER_TARGET!>protected<!> fun protectedFunction()<!> = object : MyClass() {}
 
 <!PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE!>public fun publicFunction()<!> = object : MyClass() {}
 

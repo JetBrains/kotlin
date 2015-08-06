@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.TypeSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.utils.Printer
@@ -81,4 +82,5 @@ private class MissingDependencyErrorClassDescriptor(
     override fun getUnsubstitutedMemberScope() = scope
 
     override fun getMemberScope(typeArguments: List<TypeProjection?>) = scope
+    override fun getMemberScope(typeSubstitution: TypeSubstitution) = scope
 }

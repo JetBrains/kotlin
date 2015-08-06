@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.UsageLocation
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.SubstitutionUtils
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import java.util.HashMap
 
 public object HeuristicSignatures {
@@ -89,9 +86,7 @@ public object HeuristicSignatures {
 
             val type = typeFromText(typeStr, typeParameters, moduleDescriptor, project)
 
-            // now substitute type parameters with actual arguments
-            val typeArgsMap = typeParameters.zip(ownerType.getArguments()).toMap()
-            val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
+            val substitutor = IndexedParametersSubstitution(ownerClass.typeConstructor, ownerType.arguments).buildSubstitutor()
             return substitutor.substitute(type, Variance.INVARIANT)
         }
     }

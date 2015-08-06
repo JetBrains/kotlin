@@ -3,12 +3,10 @@ package test
 public interface DeepSamLoop {
 
     public interface Bar {
-        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar!) -> kotlin.Unit)!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo!): kotlin.Unit
     }
 
     public interface Foo {
-        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo!) -> kotlin.Unit)!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar!): kotlin.Unit
     }
 

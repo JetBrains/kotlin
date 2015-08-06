@@ -162,7 +162,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         assert resultingDescriptor != null : candidateDescriptor;
 
         for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
-            TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getTypeConstructor());
+            TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getDefaultType());
             if (typeArgumentProjection != null) {
                 typeArguments.put(typeParameter, typeArgumentProjection.getType());
             }

@@ -16,6 +16,39 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import java.util.ArrayList
 import kotlin.reflect.KCallable
+import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 
-interface KCallableImpl<out R> : KCallable<R>
+interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
+    val descriptor: CallableMemberDescriptor
+
+    override val annotated: Annotated get() = descriptor
+
+    override val parameters: List<KParameter>
+        get() {
+            val result = ArrayList<KParameter>()
+            var index = 0
+
+            if (descriptor.dispatchReceiverParameter != null) {
+                result.add(KParameterImpl(index++) { descriptor.dispatchReceiverParameter!! })
+            }
+
+            if (descriptor.extensionReceiverParameter != null) {
+                result.add(KParameterImpl(index++) { descriptor.extensionReceiverParameter!! })
+            }
+
+            for (i in descriptor.valueParameters.indices) {
+                result.add(KParameterImpl(index++) { descriptor.valueParameters[i] })
+            }
+
+            result.trimToSize()
+            return result
+        }
+
+    override val returnType: KType
+        get() = KTypeImpl(descriptor.returnType!!)
+}

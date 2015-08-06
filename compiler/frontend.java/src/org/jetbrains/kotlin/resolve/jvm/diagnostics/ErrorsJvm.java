@@ -56,6 +56,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetExpression>              POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetElement>                 DEPRECATED_ANNOTATION_METHOD_CALL      = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory1<JetAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<JetAnnotationEntry>         NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetElement> TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
 

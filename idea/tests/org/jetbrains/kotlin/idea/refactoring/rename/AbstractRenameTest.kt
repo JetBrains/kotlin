@@ -26,13 +26,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -49,9 +49,7 @@ import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -279,14 +277,12 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     }
 
     protected fun doTestCommittingDocuments(action : (VirtualFile, VirtualFile?) -> Unit) {
-        super.doTest(
-                { rootDir, rootAfter ->
-                    action(rootDir, rootAfter)
+        super.doTest(MultiFileTestCase.PerformAction { rootDir, rootAfter ->
+            action(rootDir, rootAfter)
 
-                    PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
-                    FileDocumentManager.getInstance().saveAllDocuments()
-                },
-                getTestDirName(true))
+            PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
+            FileDocumentManager.getInstance().saveAllDocuments()
+        }, getTestDirName(true))
     }
 
     protected override fun getTestRoot() : String {

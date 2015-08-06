@@ -16,44 +16,44 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.types.Variance
-import java.util.Collections
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.util.Collections
 
-public object CreateBinaryOperationActionFactory: JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
-        val callExpr = diagnostic.getPsiElement().getParent() as? JetBinaryExpression ?: return null
-        val token = callExpr.getOperationToken() as JetToken
+public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageFactory<JetBinaryExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetBinaryExpression? {
+        return diagnostic.psiElement.parent as? JetBinaryExpression
+    }
+
+    override fun createCallableInfo(element: JetBinaryExpression, diagnostic: Diagnostic): CallableInfo? {
+        val token = element.operationToken as JetToken
         val operationName = when (token) {
-            JetTokens.IDENTIFIER -> callExpr.getOperationReference().getReferencedName()
-            else -> OperatorConventions.getNameForOperationSymbol(token)?.asString()
-        } ?: return null
+                                JetTokens.IDENTIFIER -> element.operationReference.getReferencedName()
+                                else -> OperatorConventions.getNameForOperationSymbol(token)?.asString()
+                            } ?: return null
         val inOperation = token in OperatorConventions.IN_OPERATIONS
         val comparisonOperation = token in OperatorConventions.COMPARISON_OPERATIONS
 
-        val leftExpr = callExpr.getLeft() ?: return null
-        val rightExpr = callExpr.getRight() ?: return null
+        val leftExpr = element.left ?: return null
+        val rightExpr = element.right ?: return null
 
         val receiverExpr = if (inOperation) rightExpr else leftExpr
         val argumentExpr = if (inOperation) leftExpr else rightExpr
 
         val builtIns = KotlinBuiltIns.getInstance()
-
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = when {
-            inOperation -> TypeInfo.ByType(builtIns.getBooleanType(), Variance.INVARIANT).noSubstitutions()
-            comparisonOperation -> TypeInfo.ByType(builtIns.getIntType(), Variance.INVARIANT).noSubstitutions()
-            else -> TypeInfo(callExpr, Variance.OUT_VARIANCE)
+            inOperation -> TypeInfo.ByType(builtIns.booleanType, Variance.INVARIANT).noSubstitutions()
+            comparisonOperation -> TypeInfo.ByType(builtIns.intType, Variance.INVARIANT).noSubstitutions()
+            else -> TypeInfo(element, Variance.OUT_VARIANCE)
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
-        return CreateCallableFromUsageFixes(callExpr, FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters))
+        return FunctionInfo(operationName, receiverType, returnType, Collections.emptyList(), parameters)
     }
 }

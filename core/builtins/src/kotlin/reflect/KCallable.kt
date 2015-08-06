@@ -21,7 +21,7 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-public interface KCallable<out R> {
+public interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
      * If the callable has no name, a special invented name is created.
@@ -31,4 +31,23 @@ public interface KCallable<out R> {
      *   the setter, similarly, will have the name "<set-foo>".
      */
     public val name: String
+
+    /**
+     * Parameters required to make a call to this callable.
+     * If this callable requires a `this` instance or an extension receiver parameter,
+     * they come first in the list in that order.
+     */
+    public val parameters: List<KParameter>
+
+    /**
+     * The type of values returned by this callable.
+     */
+    public val returnType: KType
+
+    /**
+     * Calls this callable with the specified arguments and returns the result.
+     * Throws an exception if the number of specified arguments is not equal to the size of [parameters],
+     * or if their types do not match the types of the parameters.
+     */
+    public fun call(vararg args: Any?): R
 }

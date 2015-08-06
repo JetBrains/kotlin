@@ -22,9 +22,15 @@ import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.DeferredJavaMethodKotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JavaMethodKotlinUsageWithDelegate
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 
 private fun JetNamedDeclaration.getDeclarationBody(): JetElement? {
     return when {
@@ -56,4 +62,19 @@ public fun JetElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boo
     } as? JetNamedDeclaration ?: return false
     val body = container.getDeclarationBody() ?: return false
     return body.getTextRange().contains(getTextRange()) && container.isCaller(allUsages)
+}
+
+fun getCallableSubstitutor(
+        baseFunction: JetCallableDefinitionUsage<*>,
+        derivedCallable: JetCallableDefinitionUsage<*>
+): TypeSubstitutor? {
+    val currentBaseFunction = baseFunction.getCurrentCallableDescriptor() ?: return null
+    val currentDerivedFunction = derivedCallable.getCurrentCallableDescriptor() ?: return null
+    return getCallableSubstitutor(currentBaseFunction, currentDerivedFunction)
+}
+
+fun JetType.renderTypeWithSubstitution(substitutor: TypeSubstitutor?, defaultText: String, inArgumentPosition: Boolean): String {
+    val newType = substitutor?.substitute(this, Variance.INVARIANT) ?: return defaultText
+    val renderer = if (inArgumentPosition) IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS else IdeDescriptorRenderers.SOURCE_CODE
+    return renderer.renderType(newType)
 }

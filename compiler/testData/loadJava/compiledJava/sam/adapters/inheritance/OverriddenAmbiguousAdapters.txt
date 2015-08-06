@@ -3,14 +3,12 @@ package test
 public interface OverriddenAmbiguousAdapters {
 
     public interface Sub : test.OverriddenAmbiguousAdapters.Super {
-        public abstract override /*2*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: (() -> kotlin.Unit!)!): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.io.Closeable!): kotlin.Unit
         public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }
 
     public interface Super {
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.io.Closeable!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
     }

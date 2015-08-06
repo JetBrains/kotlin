@@ -65,6 +65,49 @@ k(Foo<Bar>) = Foo<Bar!>!
 k(int[]) = IntArray
 ```
 
+## Raw types
+Raw Java types (see https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.8 for clarification) are loaded as usual flexible types with special arguments projections.
+
+```
+Raw(G<T1>..F<T2>) = (G<ErasedUpperBound(T1)>..F<out ErasedUpperBound(T2)>) // T1 and T2 have invariant or `out` variance
+Raw(G<T1>..F<T2>) = (G<ErasedUpperBound(T1)>..F<Nothing>) // T1 and T2 have `in` variance
+```
+
+where `G<T1>..F<T2>` is initially loaded flexible type with yet unsubstituted type parameters.
+
+`ErasedUpperBound` defined as follows:
+
+```
+ErasedUpperBound(T : G<t>) = G<*> // UB(T) is a type G<t> with arguments
+ErasedUpperBound(T : A) = A // UB(T) is a type A without arguments
+ErasedUpperBound(T : F) = ErasedUpperBound(F) // UB(T) is another type parameter F
+```
+and `UB(T)` means first upper bound with notation `T : UB(T)`.
+
+NOTE: On Java code with errors later definition may recursively depend on the same type parameter,
+that should be handled properly, e.g. by loading such ErasedUpperBound as Error type
+
+Examples:
+
+```
+Raw(java.util.concurrent.Future) = (Future<Any!>..Future<out Any!>?)
+Raw(java.util.Collection) = (MutableCollection<Any?>..Collection<out Any?>?)
+
+class A<T extends CharSequence> {}
+Raw(A) = (A<CharSequence!>..A<out CharSequence>)
+
+Raw(java.lang.Enum) = (Enum<Enum<*>>..Enum<out Enum<*>>?)
+```
+
+Also raw types have special types of contained members, each of them is replaced with it's JVM erasure representation:
+
+```
+Erase(T) = Erase(UpperBound(T)) // T is a type variable
+Erase(Array<t>) = Array<Erase(t)>
+Erase(G<t>) = Raw(G<T>) // G<t> is a type constructed with argument t mapped onto parameter T
+Erase(A) = A // A is a type constructor without parameters
+```
+
 ## Overriding
 
 When overriding a method from a Java class, one can not use flexible type, only replace them with denotable Kotlin types:

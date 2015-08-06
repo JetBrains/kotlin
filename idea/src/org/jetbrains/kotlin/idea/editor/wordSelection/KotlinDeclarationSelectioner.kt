@@ -25,6 +25,7 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -33,8 +34,11 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
             = e is JetDeclaration
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        val result = ArrayList<TextRange>()
+        if (e is JetMultiDeclaration) {
+            return selectMultiDeclaration(editorText, e)
+        }
 
+        val result = ArrayList<TextRange>()
         val firstChild = e.getFirstChild()
         val firstNonComment = firstChild
                 .siblings(forward = true, withItself = true)
@@ -46,13 +50,26 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
 
         if (firstNonComment != firstChild || lastNonComment != lastChild) {
-            val start = firstNonComment.startOffset
-            val end = lastNonComment.endOffset
-            result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
+            result.addRange(editorText, TextRange(firstNonComment.startOffset, lastNonComment.endOffset))
         }
 
-        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.getTextRange()))
+        result.addRange(editorText, e.getTextRange())
 
         return result
     }
+
+    private fun selectMultiDeclaration(editorText: CharSequence, e: JetMultiDeclaration): ArrayList<TextRange> {
+        val result = ArrayList<TextRange>()
+        val lpar = e.lPar
+        val rpar = e.rPar
+        if (lpar != null && rpar != null) {
+            result.addRange(editorText, TextRange(lpar.textRange.endOffset, rpar.textRange.startOffset))
+            result.addRange(editorText, TextRange(lpar.textRange.startOffset, rpar.textRange.endOffset))
+        }
+        return result
+    }
+}
+
+fun MutableList<TextRange>.addRange(editorText: CharSequence, range: TextRange) {
+    addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, range))
 }

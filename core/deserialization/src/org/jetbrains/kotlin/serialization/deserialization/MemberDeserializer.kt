@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -28,10 +27,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Callable
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.FUN
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
 public class MemberDeserializer(private val c: DeserializationContext) {
     public fun loadCallable(proto: Callable): CallableMemberDescriptor {
@@ -152,9 +148,9 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
     public fun loadConstructor(proto: Callable, isPrimary: Boolean): ConstructorDescriptor {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
-        val descriptor = ConstructorDescriptorImpl.create(
-                classDescriptor, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
-                isPrimary, SourceElement.NO_SOURCE
+        val descriptor = DeserializedConstructorDescriptor(
+                classDescriptor, null, getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
+                isPrimary, CallableMemberDescriptor.Kind.DECLARATION, proto, c.nameResolver
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(

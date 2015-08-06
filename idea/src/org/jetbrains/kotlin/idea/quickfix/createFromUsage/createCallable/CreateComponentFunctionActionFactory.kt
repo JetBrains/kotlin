@@ -17,39 +17,38 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import com.intellij.codeInsight.intention.IntentionAction
-import org.jetbrains.kotlin.resolve.dataClassUtils.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.idea.quickfix.JetIntentionActionsFactory
 
-object CreateComponentFunctionActionFactory : JetIntentionActionsFactory() {
-    override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
+object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetMultiDeclaration>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): JetMultiDeclaration? {
+        QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetMultiDeclaration>())?.let { return it }
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())?.multiParameter
+    }
+
+    override fun createCallableInfo(element: JetMultiDeclaration, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
-        val name = diagnosticWithParameters.getA()
+
+        val name = diagnosticWithParameters.a
         if (!isComponentLike(name)) return null
 
         val componentNumber = getComponentIndex(name) - 1
 
-        var multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetMultiDeclaration>())
-        val ownerType = if (multiDeclaration == null) {
-            val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())!!
-            multiDeclaration = forExpr.getMultiParameter()!!
-            TypeInfo(diagnosticWithParameters.getB(), Variance.IN_VARIANCE)
-        }
-        else {
-            val rhs = multiDeclaration.getInitializer() ?: return null
-            TypeInfo(rhs, Variance.IN_VARIANCE)
-        }
-        val entries = multiDeclaration.getEntries()
+        val ownerType = element.initializer?.let { TypeInfo(it, Variance.IN_VARIANCE) }
+                        ?: TypeInfo(diagnosticWithParameters.b, Variance.IN_VARIANCE)
+        val entries = element.entries
 
         val entry = entries[componentNumber]
         val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return CreateCallableFromUsageFixes(multiDeclaration, FunctionInfo(name.getIdentifier(), ownerType, returnType))
+        return FunctionInfo(name.identifier, ownerType, returnType)
     }
 }
