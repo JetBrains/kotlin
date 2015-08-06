@@ -77,8 +77,14 @@ public class PackagePartClassUtils {
 
     @NotNull
     public static FqName getPackagePartFqName(@NotNull FqName facadeFqName, @NotNull VirtualFile file, @Nullable JetFile jetFile) {
-        String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
-        return facadeFqName.parent().child(Name.identifier(getSanitizedClassNameBase(fileName) + FACADE_CLASS_NAME_SUFFIX));
+        String fileName = file.getName();
+        return getStaticFacadeClassFqNameForFile(facadeFqName.parent(), fileName);
+    }
+
+    @NotNull
+    private static FqName getStaticFacadeClassFqNameForFile(@NotNull FqName packageFqName, String fileName) {
+        String nameWithoutExtension = FileUtil.getNameWithoutExtension(PathUtil.getFileName(fileName));
+        return packageFqName.child(Name.identifier(getSanitizedClassNameBase(nameWithoutExtension) + FACADE_CLASS_NAME_SUFFIX));
     }
 
     public static boolean isFacadeClassFqName(@NotNull FqName classFqName) {
@@ -98,7 +104,7 @@ public class PackagePartClassUtils {
 
     @NotNull
     public static FqName getPackagePartFqName(@NotNull JetFile file) {
-        return getPackagePartFqName(getPackageClassFqName(file.getPackageFqName()), file.getVirtualFile(), file);
+        return getStaticFacadeClassFqNameForFile(file.getPackageFqName(), file.getName());
     }
 
     @NotNull

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
+import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -350,16 +351,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope) {
-        // TODO naive version. Production variant should use an equivalent of JetExactPackageIndex.
-        Collection<JetFile> packageFiles = findFilesForPackage(facadeFqName.parent(), scope);
-        return PackagePartClassUtils.getFilesForFacade(facadeFqName, packageFiles);
+        return StaticFacadeIndexUtil.findFilesForStaticFacade(facadeFqName, kotlinSourceAndClassFiles(scope, project), project);
     }
 
     @NotNull
     private List<KotlinLightFacadeClassInfo> findFacadeClassesInfos(FqName facadeFqName, GlobalSearchScope scope) {
-        // TODO naive version. Production variant should use an equivalent of JetExactPackageIndex.
-        Collection<JetFile> packageFiles = findFilesForPackage(facadeFqName.parent(), scope);
-        List<JetFile> facadeFiles = PackagePartClassUtils.getFilesForFacade(facadeFqName, packageFiles);
+        Collection<JetFile> facadeFiles = findFilesForFacade(facadeFqName, scope);
         Map<IdeaModuleInfo, List<JetFile>> filesByInfo = groupByModuleInfo(facadeFiles);
         List<KotlinLightFacadeClassInfo> result = new ArrayList<KotlinLightFacadeClassInfo>();
         for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
