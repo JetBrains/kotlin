@@ -32,20 +32,36 @@ import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 jvmOverloads
 public fun JetExpression.computeTypeInfoInContext(
         scope: JetScope,
+        contextExpression: JetExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE
+        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
+        isStatement: Boolean = false
 ): JetTypeInfo {
-    return getResolutionFacade().frontendService<ExpressionTypingServices>(this).getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
+    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>(contextExpression)
+            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
 jvmOverloads
 public fun JetExpression.analyzeInContext(
         scope: JetScope,
+        contextExpression: JetExpression = this,
+        trace: BindingTrace = BindingTraceContext(),
+        dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
+        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
+        isStatement: Boolean = false
+): BindingContext {
+    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement)
+    return trace.getBindingContext()
+}
+
+jvmOverloads
+public fun JetExpression.computeTypeInContext(
+        scope: JetScope,
+        contextExpression: JetExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE
-): BindingContext {
-    computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType)
-    return trace.getBindingContext()
+): JetType? {
+    return computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType).type
 }

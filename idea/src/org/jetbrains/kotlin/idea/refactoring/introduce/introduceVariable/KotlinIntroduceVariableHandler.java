@@ -42,9 +42,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
-import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroducePackage;
@@ -65,10 +65,12 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -137,7 +139,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
             JetType typeNoExpectedType = AnalysisPackage.computeTypeInfoInContext(
-                    expression, scope, bindingTrace, dataFlowInfo
+                    expression, scope, expression, bindingTrace, dataFlowInfo
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {

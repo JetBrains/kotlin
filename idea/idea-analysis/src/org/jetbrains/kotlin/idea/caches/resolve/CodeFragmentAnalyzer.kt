@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 public class CodeFragmentAnalyzer(
         private val resolveSession: ResolveSession,
@@ -57,7 +56,8 @@ public class CodeFragmentAnalyzer(
                 codeFragmentExpression,
                 TypeUtils.NO_EXPECTED_TYPE,
                 dataFlowInfo,
-                trace
+                trace,
+                false
         )
     }
 
