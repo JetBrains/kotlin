@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.UPPER_BOUND;
@@ -188,8 +191,8 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                                                             parameterDescriptors.size(), altFunDeclaration.getValueParameters().size());
         }
 
-        List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
-        for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
+        List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>(parameterDescriptors.size());
+        for (int i = 0; i < parameterDescriptors.size(); i++) {
             ValueParameterDescriptor originalParameterDescriptor = parameterDescriptors.get(i);
             JetParameter annotationValueParameter = altFunDeclaration.getValueParameters().get(i);
 
@@ -231,7 +234,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     originalParameterDescriptor.declaresDefaultValue(),
                     alternativeVarargElementType,
                     SourceElement.NO_SOURCE
-                    ));
+            ));
         }
 
         altValueParameters = altParamDescriptors;
@@ -243,9 +246,9 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                                                             typeParameters.size(), altFunDeclaration.getTypeParameters().size());
         }
 
-        altTypeParameters = new ArrayList<TypeParameterDescriptor>();
+        altTypeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
 
-        for (int i = 0, size = typeParameters.size(); i < size; i++) {
+        for (int i = 0; i < typeParameters.size(); i++) {
             TypeParameterDescriptor originalTypeParamDescriptor = typeParameters.get(i);
 
             TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(originalTypeParamDescriptor);

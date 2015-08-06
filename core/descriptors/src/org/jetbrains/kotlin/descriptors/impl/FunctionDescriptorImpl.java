@@ -302,23 +302,25 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull TypeSubstitutor substitutor
     ) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
             // TODO : Lazy?
             JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
             JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
-            JetType substituteVarargElementType = varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
+            JetType substituteVarargElementType =
+                    varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
-            result.add(new ValueParameterDescriptorImpl(
-                    substitutedDescriptor,
-                    unsubstitutedValueParameter,
-                    unsubstitutedValueParameter.getIndex(),
-                    unsubstitutedValueParameter.getAnnotations(),
-                    unsubstitutedValueParameter.getName(),
-                    substitutedType,
-                    unsubstitutedValueParameter.declaresDefaultValue(),
-                    substituteVarargElementType,
-                    SourceElement.NO_SOURCE
+            result.add(
+                    new ValueParameterDescriptorImpl(
+                            substitutedDescriptor,
+                            unsubstitutedValueParameter,
+                            unsubstitutedValueParameter.getIndex(),
+                            unsubstitutedValueParameter.getAnnotations(),
+                            unsubstitutedValueParameter.getName(),
+                            substitutedType,
+                            unsubstitutedValueParameter.declaresDefaultValue(),
+                            substituteVarargElementType,
+                            SourceElement.NO_SOURCE
                     )
             );
         }

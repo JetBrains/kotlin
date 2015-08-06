@@ -216,7 +216,7 @@ public class SignaturesPropagationData {
                                       DescriptorUtils.getFqName(containingClass);
 
         JetType resultReceiverType = null;
-        List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
+        List<ValueParameterDescriptor> resultParameters = new ArrayList<ValueParameterDescriptor>(parameters.size());
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 

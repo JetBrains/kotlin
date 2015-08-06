@@ -739,7 +739,7 @@ public class KotlinBuiltIns {
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType
     ) {
-        List<TypeProjection> arguments = new ArrayList<TypeProjection>();
+        List<TypeProjection> arguments = new ArrayList<TypeProjection>(parameterTypes.size() + (receiverType != null ? 1 : 0) + 1);
         if (receiverType != null) {
             arguments.add(defaultProjection(receiverType));
         }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.Call.CallType;
 import org.jetbrains.kotlin.psi.debugText.DebugTextPackage;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -199,7 +200,7 @@ public class CallMaker {
     public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions, @NotNull CallType callType) {
-        List<ValueArgument> arguments = Lists.newArrayList();
+        List<ValueArgument> arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
         for (JetExpression argumentExpression : argumentExpressions) {
             arguments.add(makeValueArgument(argumentExpression, calleeExpression));
         }

@@ -425,12 +425,12 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static List<TypeProjection> getDefaultTypeProjections(List<TypeParameterDescriptor> parameters) {
-        List<TypeProjection> result = new ArrayList<TypeProjection>();
+    public static List<TypeProjection> getDefaultTypeProjections(@NotNull List<TypeParameterDescriptor> parameters) {
+        List<TypeProjection> result = new ArrayList<TypeProjection>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     @NotNull

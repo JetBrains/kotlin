@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 // The index in the lambda is the position of the type component:
 // Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
@@ -119,7 +120,7 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
 private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size()) {
     0 -> error("At least one Annotations object expected")
     1 -> single()
-    else -> CompositeAnnotations(this)
+    else -> CompositeAnnotations(this.toReadOnlyList())
 }
 
 private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
