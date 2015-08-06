@@ -74,13 +74,15 @@ class SmartCompletion(
     public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val (items, inheritanceSearcher) = additionalItemsNoPostProcess()
         val postProcessedItems = items.map { postProcess(it) }
-        val postProcessedSearcher = inheritanceSearcher?.let {
+        //TODO: could not use "let" because of KT-8754
+        val postProcessedSearcher = if (inheritanceSearcher != null)
             object : InheritanceItemsSearcher {
                 override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
-                    it.search(nameFilter, { consumer(postProcess(it)) })
+                    inheritanceSearcher.search(nameFilter, { consumer(postProcess(it)) })
                 }
             }
-        }
+        else
+            null
         return postProcessedItems to postProcessedSearcher
     }
 
