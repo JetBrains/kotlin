@@ -817,6 +817,62 @@ public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredica
             }
         }.joinTo(StringBuilder(length()), "\n").toString()
 
+/**
+ * Detects a common minimal indent of all the input lines, removes it from every line and also removes first and last
+ * lines if they are blank (notice difference blank vs empty).
+ * Note that blank lines do not affect detected indent level.
+ * Please keep in mind that if there are non-blank lines with no leading whitespace characters (no indent at all) then the
+ * common indent is 0 so this function may do nothing so it is recommended to keep first line empty (will be dropped).
+ *
+ * Always creates a new string even if the original CharSequence is mutable.
+ *
+ * Example
+ * ```kotlin
+ * assertEquals("ABC\n123\n456", """
+ *                             ABC
+ *                             123
+ *                             456""".trimMargin())
+ * ```
+ *
+ * @return deindented String
+ * @see kotlin.isBlank
+ * @since M13
+ */
+public fun CharSequence.trimIndent(): String {
+    val string = toString()
+    val lines = string.lineSequence()
+
+    val minCommonIndent = lines
+            .filter { it.isNotBlank() }
+            .map { it.indentWidth() }
+            .min() ?: 0
+
+    if (minCommonIndent == 0) {
+        return string
+    }
+
+    return lines
+            .withIndex()
+            .dropWhile { it.index == 0 && it.value.isBlank() }
+            .map { it.value.drop(minCommonIndent) }
+            .joinTo(StringBuilder(length()), "\n")
+            .dropTrailingEmptyLine()
+            .toString()
+}
+
+private fun StringBuilder.dropTrailingEmptyLine(): StringBuilder {
+    val trailingLineStart = lastIndexOf("\n")
+    val trailingLine = substring(trailingLineStart)
+
+    if (trailingLine.isBlank()) {
+        delete(trailingLineStart, length())
+    }
+
+    return this
+}
+
+private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length() else it }
+
 // rangesDelimitedBy
 
 
