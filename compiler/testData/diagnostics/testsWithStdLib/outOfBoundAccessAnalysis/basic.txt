@@ -1,5 +1,6 @@
 package
 
+internal fun accessThroughMethods(): kotlin.Unit
 internal fun arrayAccessWithLiteral(): kotlin.Int
 internal fun arraySizeMethodCall(): kotlin.Unit
 internal fun listAccessWithLiteral(): kotlin.Int

@@ -54,3 +54,11 @@ fun listSizeMethodCall() {
         }
     }
 }
+
+fun accessThroughMethods() {
+    val arr = IntArray(2)
+    arr.set(0, 1)
+    val fst = arr.get(1)
+    val snd = arr.<!OUT_OF_BOUND_ACCESS!>get(2)<!>
+    arr.<!OUT_OF_BOUND_ACCESS!>set(3, fst + snd)<!>
+}

@@ -20,6 +20,8 @@ import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
+import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -68,56 +70,6 @@ public object MapUtils {
     }
 }
 
-public object CallInstructionUtils {
-    public data class CallInfo (
-            val calledName: String?,
-            val receiverType: JetType?,
-            val returnType: JetType?
-    )
-
-    public fun tryExtractReceiverType(instruction: CallInstruction): JetType? {
-        val receiver = when (instruction.resolvedCall.explicitReceiverKind) {
-            ExplicitReceiverKind.DISPATCH_RECEIVER -> instruction.resolvedCall.dispatchReceiver
-            ExplicitReceiverKind.EXTENSION_RECEIVER -> instruction.resolvedCall.extensionReceiver
-            else -> null
-        }
-        return if (receiver is ExpressionReceiver) receiver.type else null
-    }
-
-    public fun tryExtractCallInfo(instruction: CallInstruction): CallInfo? =
-        if (instruction.element is JetCallExpression) {
-            val calledName = instruction.element.calleeExpression?.node?.text
-            val receiverType = tryExtractReceiverType(instruction)
-            val returnType = instruction.resolvedCall.candidateDescriptor.returnType
-            CallInfo(calledName, receiverType, returnType)
-        }
-        else null
-
-    public fun receiverIsCollection(receiverType: JetType): Boolean =
-               (KotlinArrayUtils.isGenericOrPrimitiveArray(receiverType) || KotlinListUtils.isKotlinList(receiverType))
-
-    public fun receiverIsCollection(callInfo: CallInfo): Boolean =
-            callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType)
-
-    public fun receiverIsCollection(instruction: CallInstruction): Boolean {
-        val receiverType = tryExtractReceiverType(instruction)
-        return receiverType != null && receiverIsCollection(receiverType)
-    }
-
-    public fun returnTypeIsCollection(callInfo: CallInfo): Boolean =
-            callInfo.returnType != null &&
-            (KotlinArrayUtils.isGenericOrPrimitiveArray(callInfo.returnType) || KotlinListUtils.isKotlinList(callInfo.returnType))
-
-    public fun checkMethodCallOnCollection(
-            callInfo: CallInfo,
-            isExpectedMethodName: (String) -> Boolean,
-            isExpectedReturnType: (JetType) -> Boolean
-    ): Boolean =
-        callInfo.calledName != null && isExpectedMethodName(callInfo.calledName) &&
-        receiverIsCollection(callInfo) &&
-        callInfo.returnType != null && isExpectedReturnType(callInfo.returnType)
-}
-
 public object KotlinArrayUtils {
     public fun isGenericOrPrimitiveArray(type: JetType): Boolean =
             KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
@@ -152,5 +104,208 @@ public object KotlinCollectionsUtils {
     public val sizeMethodName: String = "size"
     public val getMethodName: String = "get"
     public val setMethodName: String = "set"
+}
 
+public interface PseudoAnnotation
+public object ConstructorWithElementsAsArgs : PseudoAnnotation
+public data class ConstructorWithSizeAsArg(val sizeArgPosition: Int) : PseudoAnnotation
+public data class IncrSizeByConstantNumberMethod(val increaseBy: Int) : PseudoAnnotation
+public data class IncrSizeByPassedCollectionSizeMethod(val collectionArgPosition: Int) : PseudoAnnotation
+public object DecrSizeToZeroMethod : PseudoAnnotation
+public object SizeMethod : PseudoAnnotation
+public object GetMethod : PseudoAnnotation
+public object SetMethod : PseudoAnnotation
+public object AccessOperator : PseudoAnnotation
+
+public object CallInstructionUtils {
+    public interface CallInfo
+    public data class CallSignature (
+            val calledName: String?,
+            val receiverType: JetType?,
+            val returnType: JetType?
+    ): CallInfo
+
+    public data class RawInfo (val callInstruction: CallInstruction): CallInfo
+
+    public fun tryExtractPseudoAnnotationForCollector(instruction: CallInstruction): PseudoAnnotation? =
+        tryExtractPseudoAnnotation(instruction, collectorPseudoAnnotationExtractors)
+
+    public fun tryExtractPseudoAnnotationForAccess(instruction: CallInstruction): PseudoAnnotation? {
+        val accessOperation = accessOperatorChecker(RawInfo(instruction))
+        if (accessOperation != null) {
+            return accessOperation
+        }
+        return tryExtractPseudoAnnotation(instruction, accessPseudoAnnotationExtractors)
+    }
+
+    private fun tryExtractPseudoAnnotation(
+            instruction: CallInstruction,
+            extractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?>
+    ): PseudoAnnotation? {
+        val callInfo = tryExtractCallInfo(instruction)
+        if(callInfo != null) {
+            for (extractor in extractors) {
+                val res = extractor(callInfo)
+                if (res != null) {
+                    return res
+                }
+            }
+        }
+        return null
+    }
+
+    private val collectorPseudoAnnotationExtractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?> = listOf(
+            { info -> arrayOfElementsCreationFunctionChecker(info, KotlinArrayUtils.arrayOfFunctionName) },
+            { info -> listOfElementsCreationFunctionChecker(info, KotlinListUtils.listOfFunctionName) },
+            { info -> listOfElementsCreationFunctionChecker(info, KotlinListUtils.arrayListOfFunctionName) },
+            { info -> arrayConstructorChecker(info) },
+            { info -> primitiveArrayConstructorChecker(info) },
+            { info -> sizeMethodChecker(info)},
+            { info -> addMethodChecker(info) },
+            { info -> addAllMethodChecker(info)},
+            { info -> clearMethodChecker(info) }
+    )
+
+    private val accessPseudoAnnotationExtractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?> = listOf(
+            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.getMethodName }, GetMethod) },
+            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.setMethodName }, SetMethod) }
+    )
+
+    private fun tryExtractCallInfo(instruction: CallInstruction): CallInfo? =
+            if (instruction.element is JetCallExpression) {
+                val calledName = instruction.element.calleeExpression?.node?.text
+                val receiverType = tryExtractReceiverType(instruction)
+                val returnType = instruction.resolvedCall.candidateDescriptor.returnType
+                CallSignature(calledName, receiverType, returnType)
+            }
+            else null
+
+    private fun tryExtractReceiverType(instruction: CallInstruction): JetType? {
+        val receiver = when (instruction.resolvedCall.explicitReceiverKind) {
+            ExplicitReceiverKind.DISPATCH_RECEIVER -> instruction.resolvedCall.dispatchReceiver
+            ExplicitReceiverKind.EXTENSION_RECEIVER -> instruction.resolvedCall.extensionReceiver
+            else -> null
+        }
+        return if (receiver is ExpressionReceiver) receiver.type else null
+    }
+
+    private fun arrayOfElementsCreationFunctionChecker(callInfo: CallInfo, functionName: String): PseudoAnnotation? =
+            checkCollectionCreationFunction(
+                    callInfo,
+                    { it == functionName },
+                    { KotlinBuiltIns.isArray(it) },
+                    ConstructorWithElementsAsArgs
+            )
+
+    private fun listOfElementsCreationFunctionChecker(callInfo: CallInfo, functionName: String): PseudoAnnotation? =
+            checkCollectionCreationFunction(
+                    callInfo,
+                    { it == functionName },
+                    { KotlinListUtils.isKotlinList(it) },
+                    ConstructorWithElementsAsArgs
+            )
+
+    private fun arrayConstructorChecker(callInfo: CallInfo): PseudoAnnotation? =
+            checkCollectionCreationFunction(
+                    callInfo,
+                    { it == KotlinArrayUtils.arrayConstructorName },
+                    { KotlinBuiltIns.isArray(it) },
+                    ConstructorWithSizeAsArg(0)
+            )
+
+    private fun primitiveArrayConstructorChecker(callInfo: CallInfo): PseudoAnnotation? =
+            checkCollectionCreationFunction(
+                    callInfo,
+                    { it in KotlinArrayUtils.primitiveArrayConstructorNames },
+                    { KotlinBuiltIns.isPrimitiveArray(it) },
+                    ConstructorWithSizeAsArg(0)
+            )
+
+    private fun sizeMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
+            checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinCollectionsUtils.sizeMethodName },
+                    { KotlinBuiltIns.isInt(it) },
+                    SizeMethod
+            )
+
+    private fun addMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
+            checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.addMethodName },
+                    { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) },
+                    IncrSizeByConstantNumberMethod(1)
+            )
+
+    private fun addAllMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
+            checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.addAllMethodName },
+                    { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) },
+                    IncrSizeByPassedCollectionSizeMethod(0) // todo: method addAll(index, collection) should be tested
+            )
+
+    private fun clearMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
+            checkMethodCallOnCollection(
+                    callInfo,
+                    { it == KotlinListUtils.clearMethodName },
+                    { KotlinBuiltIns.isUnit(it) },
+                    DecrSizeToZeroMethod
+            )
+
+    private inline fun checkCollectionCreationFunction(
+            callInfo: CallInstructionUtils.CallInfo,
+            isExpectedFunctionName: (String) -> Boolean,
+            isExpectedReturnType: (JetType) -> Boolean,
+            onSuccess: PseudoAnnotation
+    ): PseudoAnnotation? =
+        if (callInfo is CallInstructionUtils.CallSignature &&
+            callInfo.calledName != null && isExpectedFunctionName(callInfo.calledName) &&
+            callInfo.returnType != null && isExpectedReturnType(callInfo.returnType)
+        ) {
+            onSuccess
+        }
+        else null
+
+    private inline fun checkMethodCallOnCollection(
+            callInfo: CallInstructionUtils.CallInfo,
+            isExpectedMethodName: (String) -> Boolean,
+            isExpectedReturnType: (JetType) -> Boolean,
+            onSuccess: PseudoAnnotation
+    ): PseudoAnnotation? =
+            if (callInfo is CallInstructionUtils.CallSignature &&
+                callInfo.calledName != null && isExpectedMethodName(callInfo.calledName) &&
+                callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType) &&
+                callInfo.returnType != null && isExpectedReturnType(callInfo.returnType)
+            ) {
+                onSuccess
+            }
+            else null
+
+    private fun checkCollectionAccessMethod(
+            callInfo: CallInstructionUtils.CallInfo,
+            isExpectedMethodName: (String) -> Boolean,
+            onSuccess: PseudoAnnotation
+    ): PseudoAnnotation? =
+            if (callInfo is CallInstructionUtils.CallSignature &&
+                callInfo.calledName != null && isExpectedMethodName(callInfo.calledName) &&
+                callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType)
+            ) {
+                onSuccess
+            }
+            else null
+
+    private fun accessOperatorChecker(rawInfo: RawInfo): PseudoAnnotation? {
+        val isAccessOperation = rawInfo.callInstruction.element is JetArrayAccessExpression ||
+                                rawInfo.callInstruction.element is JetBinaryExpression &&
+                                rawInfo.callInstruction.element.left is JetArrayAccessExpression
+        val receiverType = tryExtractReceiverType(rawInfo.callInstruction)
+        if (isAccessOperation && receiverType != null && receiverIsCollection(receiverType)) {
+            return AccessOperator
+        }
+        else return null
+    }
+
+    private fun receiverIsCollection(receiverType: JetType): Boolean =
+            (KotlinArrayUtils.isGenericOrPrimitiveArray(receiverType) || KotlinListUtils.isKotlinList(receiverType))
 }
