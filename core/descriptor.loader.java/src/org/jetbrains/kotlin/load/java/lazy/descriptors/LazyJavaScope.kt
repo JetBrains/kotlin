@@ -129,8 +129,7 @@ public abstract class LazyJavaScope(
                 method.getVisibility()
         )
 
-        functionDescriptorImpl.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
-        functionDescriptorImpl.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
+        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
 
         if (record) {
             c.javaResolverCache.recordMethod(method, functionDescriptorImpl)

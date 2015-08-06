@@ -37,11 +37,9 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
             @NotNull Kind kind,
             @NotNull JavaMethodDescriptor declaration
     ) {
-        super(containingDeclaration, original, declaration.getAnnotations(),
-              declaration.getName(), kind, declaration.getSource());
+        super(containingDeclaration, original, declaration.getAnnotations(), declaration.getName(), kind, declaration.getSource());
         this.declaration = declaration;
-        setHasStableParameterNames(declaration.hasStableParameterNames());
-        setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
+        setParameterNamesStatus(declaration.hasStableParameterNames(), declaration.hasSynthesizedParameterNames());
     }
 
     @NotNull
