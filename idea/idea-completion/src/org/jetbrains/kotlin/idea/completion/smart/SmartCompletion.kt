@@ -114,10 +114,8 @@ class SmartCompletion(
 
         val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
 
-        val itemsToSkip = calcItemsToSkip(expressionWithType)
-
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
-            if (descriptor in itemsToSkip) return emptyList()
+            if (descriptor in descriptorsToSkip) return emptyList()
 
             val result = SmartList<LookupElement>()
             val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator)
@@ -140,7 +138,7 @@ class SmartCompletion(
             return result
         }
 
-        val (additionalItems, inheritanceSearcher) = additionalItems(expectedInfos, smartCastCalculator, itemsToSkip)
+        val (additionalItems, inheritanceSearcher) = additionalItems(expectedInfos, smartCastCalculator)
 
         return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
     }
@@ -148,7 +146,6 @@ class SmartCompletion(
     public fun additionalItems(
             expectedInfos: Collection<ExpectedInfo>,
             smartCastCalculator: SmartCastCalculator,
-            itemsToSkip: Set<DeclarationDescriptor>,
             forOrdinaryCompletion: Boolean = false
     ): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val items = ArrayList<LookupElement>()
@@ -158,7 +155,7 @@ class SmartCompletion(
                     .addTo(items, inheritanceSearchers, expectedInfos)
 
             if (expression is JetSimpleNameExpression) {
-                StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, itemsToSkip)
+                StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, descriptorsToSkip)
             }
 
             if (!forOrdinaryCompletion) {
@@ -231,16 +228,17 @@ class SmartCompletion(
         return null
     }
 
-    private fun calcItemsToSkip(expression: JetExpression): Set<DeclarationDescriptor> {
-        val parent = expression.getParent()
-        when(parent) {
+    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
+        val expressionWithType = expression.toExpressionWithType()
+        val parent = expressionWithType.getParent()
+        when (parent) {
             is JetBinaryExpression -> {
-                if (parent.getRight() == expression) {
+                if (parent.getRight() == expressionWithType) {
                     val operationToken = parent.getOperationToken()
                     if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
                         val left = parent.getLeft()
                         if (left is JetReferenceExpression) {
-                            return bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
+                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
                         }
                     }
                 }
@@ -249,18 +247,18 @@ class SmartCompletion(
             is JetWhenConditionWithExpression -> {
                 val entry = parent.getParent() as JetWhenEntry
                 val whenExpression = entry.getParent() as JetWhenExpression
-                val subject = whenExpression.getSubjectExpression() ?: return setOf()
+                val subject = whenExpression.getSubjectExpression() ?: return@lazy emptySet()
 
-                val itemsToSkip = HashSet<DeclarationDescriptor>()
+                val descriptorsToSkip = HashSet<DeclarationDescriptor>()
 
                 if (subject is JetSimpleNameExpression) {
                     val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
                     if (variable != null) {
-                        itemsToSkip.add(variable)
+                        descriptorsToSkip.add(variable)
                     }
                 }
 
-                val subjectType = bindingContext.getType(subject) ?: return setOf()
+                val subjectType = bindingContext.getType(subject) ?: return@lazy emptySet()
                 val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
                     val conditions = whenExpression.getEntries()
@@ -268,18 +266,18 @@ class SmartCompletion(
                             .filterIsInstance<JetWhenConditionWithExpression>()
                     for (condition in conditions) {
                         val selectorExpr = (condition.getExpression() as? JetDotQualifiedExpression)
-                                ?.getSelectorExpression() as? JetReferenceExpression ?: continue
+                                                   ?.getSelectorExpression() as? JetReferenceExpression ?: continue
                         val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
                         if (DescriptorUtils.isEnumEntry(target)) {
-                            itemsToSkip.add(target)
+                            descriptorsToSkip.add(target)
                         }
                     }
                 }
 
-                return itemsToSkip
+                return@lazy descriptorsToSkip
             }
         }
-        return setOf()
+        return@lazy emptySet()
     }
 
     private fun toFunctionReferenceLookupElement(descriptor: DeclarationDescriptor,

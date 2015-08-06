@@ -1337,6 +1337,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/MultipleArgs.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("WhenByEnum.kt")
+            public void testWhenByEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/WhenByEnum.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/immediateMembers")

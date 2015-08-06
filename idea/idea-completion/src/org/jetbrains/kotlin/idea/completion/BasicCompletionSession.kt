@@ -257,7 +257,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     val (additionalItems, inheritanceSearcher) = SmartCompletion(
                             expression!!, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor,
                             prefixMatcher, GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory)
-                            .additionalItems(expectedInfos, smartCastCalculator!!, itemsToSkip = emptySet(), forOrdinaryCompletion = true)
+                            .additionalItems(expectedInfos, smartCastCalculator!!, forOrdinaryCompletion = true)
                     collector.addElements(additionalItems)
                 }
 
