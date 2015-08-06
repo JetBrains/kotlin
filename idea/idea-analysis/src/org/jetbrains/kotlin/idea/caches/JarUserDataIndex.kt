@@ -34,6 +34,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.ArrayList
 
 public object JarUserDataIndex : FileBasedIndexExtension<String, String>() {
@@ -59,22 +60,19 @@ public object JarUserDataIndex : FileBasedIndexExtension<String, String>() {
         val localJarFile = inputData.getFile()
         val jarFile = JarFileSystemUtil.findJarRootByLocal(inputData.getFile()) ?: return@DataIndexer mapOf()
 
-        val isSdk = VfsUtilCore.isUnder(jarFile, allJDKRoots)
-
         val resultMap = HashMap<String, String>()
         resultMap[INDEX_TIME_STAMP_KEY.toString()] = localJarFile.timeStamp.toString()
 
-        collectors.forEach { collector ->
-            jarFile.putUserData(collector.key, null)
-
-            val keyName = collector.key.toString()
-
-            resultMap[keyName] = if (!isSdk) {
-                @suppress("UNCHECKED_CAST")
-                countForCollector(collector as JarUserDataCollector<Any>, jarFile).toString()
+        val isSdk = VfsUtilCore.isUnder(jarFile, allJDKRoots)
+        if (isSdk) {
+            collectors.forEach {
+                resultMap[it.key.toString()] = it.sdk.toString()
             }
-            else {
-                collector.sdk.toString()
+        }
+        else {
+            val objectResultMap = countForCollectors(jarFile, collectors)
+            objectResultMap.forEach { pair ->
+                resultMap[pair.getKey().toString()] = pair.getValue().toString()
             }
         }
 
@@ -83,7 +81,7 @@ public object JarUserDataIndex : FileBasedIndexExtension<String, String>() {
 
     override fun getName(): ID<String, String> = name
 
-    override fun getVersion(): Int = 2
+    override fun getVersion(): Int = 3
 
     override fun dependsOnFileContent(): Boolean = true
 
@@ -162,7 +160,7 @@ public object JarUserDataIndex : FileBasedIndexExtension<String, String>() {
 
         ApplicationManager.getApplication().executeOnPooledThread {
             runReadAction {
-                val result = countForCollector(collector, jarFile)
+                val result = countForCollector(jarFile, collector)
                 storeResult(collector, localJarFile, result, localJarFile.timeStamp)
             }
         }
@@ -175,23 +173,28 @@ public object JarUserDataIndex : FileBasedIndexExtension<String, String>() {
         }
     }
 
-    private fun <T : Any> countForCollector(collector: JarUserDataCollector<T>, jarFile: VirtualFile): T {
-        var result = collector.notFoundState
+    private fun countForCollectors(jarFile: VirtualFile, processCollectors: List<JarUserDataCollector<*>>): Map<JarUserDataCollector<*>, Any?> {
+        val notFinishedCollectors = processCollectors.toMutableSet()
+        val finishedCollectors = HashSet<JarUserDataCollector<*>>()
 
         VfsUtilCore.processFilesRecursively(jarFile) { file ->
-            if (collector.count(file) == collector.stopState) {
-                result = collector.stopState
+            if (notFinishedCollectors.any { it.count(file) == it.stopState }) {
+                val finished = notFinishedCollectors.filter { it.count(file) == it.stopState }
+                finishedCollectors.addAll(finished)
+                notFinishedCollectors.removeAll(finished)
+            }
 
-                // stop processing
-                false
-            }
-            else {
-                // continue processing
-                true
-            }
+            notFinishedCollectors.isNotEmpty()
         }
 
-        return result
+        return processCollectors.keysToMap {
+            if (notFinishedCollectors.contains(it)) it.notFoundState else it.stopState
+        }
+    }
+
+    private fun <T : Any> countForCollector(jarFile: VirtualFile, collector: JarUserDataCollector<T>): T {
+        @suppress("UNCHECKED_CAST")
+        return countForCollectors(jarFile, listOf(collector))[collector] as T
     }
 
     private fun <T : Any> storeResult(collector: JarUserDataCollector<T>, localJarFile: VirtualFile, result: T?, timeStamp: Long?) {
