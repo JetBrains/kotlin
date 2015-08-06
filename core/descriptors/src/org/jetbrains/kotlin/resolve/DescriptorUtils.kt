@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.DFS
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
 
@@ -143,6 +144,32 @@ public fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): D
         return getContainingDeclaration()
     }
     return getDispatchReceiverParameter()?.getContainingDeclaration()
+}
+
+/**
+ * @return `true` iff the parameter has a default value, i.e. declares it or inherits by overriding a parameter which has a default value.
+ */
+public fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+    val handler = object : DFS.AbstractNodeHandler<ValueParameterDescriptor, Boolean>() {
+        var result = false
+
+        override fun beforeChildren(current: ValueParameterDescriptor): Boolean {
+            result = result || current.declaresDefaultValue()
+            return !result
+        }
+
+        override fun result() = result
+    }
+
+    DFS.dfs(
+            listOf(this),
+            DFS.Neighbors<ValueParameterDescriptor> { current ->
+                current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal)
+            },
+            handler
+    )
+
+    return handler.result()
 }
 
 private fun Annotated.isAnnotationPropertyTrue(name: String, defaultValue: Boolean = false): Boolean {

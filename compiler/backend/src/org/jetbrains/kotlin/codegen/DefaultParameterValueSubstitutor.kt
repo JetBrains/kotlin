@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -89,7 +89,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
     }
 
     private fun FunctionDescriptor.countDefaultParameters() =
-        getValueParameters().count { it.hasDefaultValue() }
+        valueParameters.count { it.hasDefaultValue() }
 
     /**
      * Generates an overload for [functionDescriptor] that substitutes default values for the last

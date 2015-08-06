@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -164,7 +165,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         builder.append(parameter.getName())
                 .append(": ")
                 .append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
-        if (parameter.hasDefaultValue()) {
+        if (DescriptorUtilPackage.hasDefaultValue(parameter)) {
             PsiElement parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter);
             builder.append(" = ").append(getDefaultExpressionString(parameterDeclaration));
         }

@@ -90,16 +90,7 @@ public abstract class LazyJavaScope(
 
         computeNonDeclaredFunctions(result, name)
 
-        val enhancedResult = enhanceSignatures(result)
-
-        // Make sure that lazy things are computed before we release the lock
-        for (f in enhancedResult) {
-            for (p in f.getValueParameters()) {
-                p.hasDefaultValue()
-            }
-        }
-
-        enhancedResult.toReadOnlyList()
+        enhanceSignatures(result).toReadOnlyList()
     }
 
     protected data class MethodSignatureData(

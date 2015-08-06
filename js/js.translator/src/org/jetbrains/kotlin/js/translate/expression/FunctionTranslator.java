@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -148,7 +149,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     public static void addParameters(List<JsParameter> list, FunctionDescriptor descriptor, TranslationContext context) {
         for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
             JsParameter jsParameter = new JsParameter(context.getNameForDescriptor(valueParameter));
-            MetadataPackage.setHasDefaultValue(jsParameter, valueParameter.hasDefaultValue());
+            MetadataPackage.setHasDefaultValue(jsParameter, DescriptorUtilPackage.hasDefaultValue(valueParameter));
             list.add(jsParameter);
         }
     }

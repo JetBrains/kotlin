@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 import java.util.List;
 import java.util.Map;
@@ -263,7 +264,7 @@ public class ValueArgumentsToParametersMapper {
             List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
             for (ValueParameterDescriptor valueParameter : valueParameters) {
                 if (!usedParameters.contains(valueParameter)) {
-                    if (valueParameter.hasDefaultValue()) {
+                    if (DescriptorUtilPackage.hasDefaultValue(valueParameter)) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                     }
                     else if (valueParameter.getVarargElementType() != null) {

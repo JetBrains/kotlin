@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 import java.util.List;
 
@@ -75,17 +75,15 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
     ) {
-        int index = 0;
         List<JetParameter> jetParameters = function.getValueParameters();
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
-            if (parameter.hasDefaultValue()) {
-                JetParameter jetParameter = jetParameters.get(index);
+            if (DescriptorUtilPackage.hasDefaultValue(parameter)) {
+                JetParameter jetParameter = jetParameters.get(parameter.getIndex());
                 //report not supported default only on inlinable lambda and on parameter with inherited default (there is some problems to inline it)
                 if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
                     trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
                 }
             }
-            index++;
         }
     }
 
