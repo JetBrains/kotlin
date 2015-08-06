@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot {
     @Nullable
@@ -66,8 +66,6 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
      */
     boolean hasSynthesizedParameterNames();
 
-    // Workaround for KT-4609 Wildcard types (super/extends) shouldn't be loaded as nullable
-    @KotlinSignature("fun getOverriddenDescriptors(): Set<out CallableDescriptor>")
     @NotNull
-    Set<? extends CallableDescriptor> getOverriddenDescriptors();
+    Collection<? extends CallableDescriptor> getOverriddenDescriptors();
 }

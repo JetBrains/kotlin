@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
@@ -120,7 +117,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return overriddenFunctions;
     }
 

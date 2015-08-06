@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface PropertyAccessorDescriptor extends FunctionDescriptor {
     boolean hasBody();
@@ -31,7 +31,7 @@ public interface PropertyAccessorDescriptor extends FunctionDescriptor {
 
     @Override
     @NotNull
-    Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors();
+    Collection<? extends PropertyAccessorDescriptor> getOverriddenDescriptors();
 
     @NotNull
     PropertyDescriptor getCorrespondingProperty();

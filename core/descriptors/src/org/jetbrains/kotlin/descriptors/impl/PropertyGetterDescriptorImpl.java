@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl implements PropertyGetterDescriptor {
     private JetType returnType;
@@ -57,8 +57,8 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Set<? extends PropertyGetterDescriptor> getOverriddenDescriptors() {
-        return (Set) super.getOverriddenDescriptors(true);
+    public Collection<? extends PropertyGetterDescriptor> getOverriddenDescriptors() {
+        return (Collection) super.getOverriddenDescriptors(true);
     }
 
     @NotNull

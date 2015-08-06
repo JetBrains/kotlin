@@ -135,14 +135,13 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static FunctionDescriptor getOverriddenDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
-        Set<? extends FunctionDescriptor> overriddenDescriptors = functionDescriptor.getOverriddenDescriptors();
+        Collection<? extends FunctionDescriptor> overriddenDescriptors = functionDescriptor.getOverriddenDescriptors();
         if (overriddenDescriptors.isEmpty()) {
             return null;
         }
-        else {
-            //TODO: for now translator can't deal with multiple inheritance good enough
-            return overriddenDescriptors.iterator().next();
-        }
+
+        //TODO: for now translator can't deal with multiple inheritance good enough
+        return overriddenDescriptors.iterator().next();
     }
 
     private static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {

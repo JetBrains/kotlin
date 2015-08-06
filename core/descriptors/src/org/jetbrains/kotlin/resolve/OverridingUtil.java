@@ -447,7 +447,7 @@ public class OverridingUtil {
 
     @Nullable
     private static Visibility computeVisibilityToInherit(@NotNull CallableMemberDescriptor memberDescriptor) {
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = memberDescriptor.getOverriddenDescriptors();
+        Collection<? extends CallableMemberDescriptor> overriddenDescriptors = memberDescriptor.getOverriddenDescriptors();
         Visibility maxVisibility = findMaxVisibility(overriddenDescriptors);
         if (maxVisibility == null) {
             return null;

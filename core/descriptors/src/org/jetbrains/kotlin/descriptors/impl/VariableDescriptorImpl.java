@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     protected JetType outType;
@@ -77,7 +77,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends CallableDescriptor> getOverriddenDescriptors() {
         return Collections.emptySet();
     }
 

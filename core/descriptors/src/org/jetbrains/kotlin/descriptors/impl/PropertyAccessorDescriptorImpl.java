@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PropertyAccessorDescriptor {
 
@@ -142,8 +139,8 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     }
 
     @NotNull
-    protected Set<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
-        Set<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
+    protected Collection<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
+        Collection<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
         // LinkedHashSet for determinism
         Set<PropertyAccessorDescriptor> overriddenAccessors = new LinkedHashSet<PropertyAccessorDescriptor>();
         for (PropertyDescriptor overriddenProperty : overriddenProperties) {

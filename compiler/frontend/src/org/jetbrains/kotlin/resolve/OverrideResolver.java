@@ -518,7 +518,7 @@ public class OverrideResolver {
 
         JetModifierList modifierList = member.getModifierList();
         boolean hasOverrideNode = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
+        Collection<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
         if (hasOverrideNode) {
             checkOverridesForMemberMarkedOverride(declared, true, new CheckOverrideReportStrategy() {
@@ -580,7 +580,7 @@ public class OverrideResolver {
             boolean checkIfOverridesNothing,
             @NotNull CheckOverrideReportStrategy reportError
     ) {
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
+        Collection<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {
             if (overridden == null) continue;
@@ -872,11 +872,10 @@ public class OverrideResolver {
     }
 
     @NotNull
-    public static <D extends CallableMemberDescriptor> Set<D> getDirectlyOverriddenDeclarations(@NotNull D descriptor) {
-        Set<D> result = Sets.newHashSet();
+    public static <D extends CallableMemberDescriptor> Collection<D> getDirectlyOverriddenDeclarations(@NotNull D descriptor) {
+        Set<D> result = new LinkedHashSet<D>();
         //noinspection unchecked
-        Set<D> overriddenDescriptors = (Set<D>) descriptor.getOverriddenDescriptors();
-        for (D overriddenDescriptor : overriddenDescriptors) {
+        for (D overriddenDescriptor : (Collection<D>) descriptor.getOverriddenDescriptors()) {
             CallableMemberDescriptor.Kind kind = overriddenDescriptor.getKind();
             if (kind == DECLARATION) {
                 result.add(overriddenDescriptor);

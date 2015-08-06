@@ -59,7 +59,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         return false
     }
 
-    private fun getClosestModifiableDescriptors(): Set<CallableDescriptor> {
+    private fun getClosestModifiableDescriptors(): Collection<CallableDescriptor> {
         return when (kind) {
             DECLARATION -> {
                 Collections.singleton(callableDescriptor)

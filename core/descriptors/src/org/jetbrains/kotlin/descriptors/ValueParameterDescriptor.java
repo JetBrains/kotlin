@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface ValueParameterDescriptor extends VariableDescriptor, ParameterDescriptor {
     @NotNull
@@ -58,5 +58,5 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
      */
     @NotNull
     @Override
-    Set<? extends ValueParameterDescriptor> getOverriddenDescriptors();
+    Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors();
 }

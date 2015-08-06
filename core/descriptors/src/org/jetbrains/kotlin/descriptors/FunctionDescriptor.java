@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
@@ -35,7 +35,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
 
     @Override
     @NotNull
-    Set<? extends FunctionDescriptor> getOverriddenDescriptors();
+    Collection<? extends FunctionDescriptor> getOverriddenDescriptors();
 
     @NotNull
     @Override

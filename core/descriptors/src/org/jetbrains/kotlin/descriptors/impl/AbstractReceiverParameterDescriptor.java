@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public abstract class AbstractReceiverParameterDescriptor extends DeclarationDescriptorImpl implements ReceiverParameterDescriptor {
     private static final Name RECEIVER_PARAMETER_NAME = Name.special("<this>");
@@ -100,7 +100,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @NotNull
     @Override
-    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends CallableDescriptor> getOverriddenDescriptors() {
         return Collections.emptySet();
     }
 

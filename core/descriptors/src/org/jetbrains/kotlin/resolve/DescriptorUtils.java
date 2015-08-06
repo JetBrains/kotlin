@@ -443,7 +443,7 @@ public class DescriptorUtils {
     @NotNull
     public static <D extends CallableMemberDescriptor> D unwrapFakeOverride(@NotNull D descriptor) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            Set<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            Collection<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
             if (overridden.isEmpty()) {
                 throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
             }

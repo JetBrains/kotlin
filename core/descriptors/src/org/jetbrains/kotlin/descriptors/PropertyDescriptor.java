@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDescriptor {
     @Nullable
@@ -49,7 +49,7 @@ public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDe
 
     @NotNull
     @Override
-    Set<? extends PropertyDescriptor> getOverriddenDescriptors();
+    Collection<? extends PropertyDescriptor> getOverriddenDescriptors();
 
     @Override
     PropertyDescriptor substitute(@NotNull TypeSubstitutor substitutor);

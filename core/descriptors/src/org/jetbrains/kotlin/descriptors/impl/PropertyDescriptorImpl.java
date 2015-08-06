@@ -325,7 +325,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
     @NotNull
     @Override
-    public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
     }
 
