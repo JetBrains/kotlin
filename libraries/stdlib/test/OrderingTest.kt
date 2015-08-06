@@ -53,6 +53,20 @@ class OrderingTest {
         assertEquals(v1, items[1])
     }
 
+    Test fun combineComparators() {
+        val byName = compareBy<Item> { it.name }
+        val byRating = compareBy<Item> { it.rating }
+        val v3 = Item(v1.name, v1.rating + 1)
+        val v4 = Item(v2.name + "_", v2.rating)
+        assertTrue( (byName then byRating).compare(v1, v2) > 0 )
+        assertTrue( (byName then byRating).compare(v1, v3) < 0 )
+        assertTrue( (byName thenDescending byRating).compare(v1, v3) > 0 )
+
+        assertTrue( (byRating then byName).compare(v1, v2) < 0 )
+        assertTrue( (byRating then byName).compare(v4, v2) > 0 )
+        assertTrue( (byRating thenDescending byName).compare(v4, v2) < 0 )
+    }
+
     Test fun sortByThenBy() {
         val comparator = compareBy<Item> { it.rating } thenBy { it.name }
 

@@ -584,7 +584,7 @@ class CollectionTest {
         listOf("", "sort", "abc").let {
             assertEquals(listOf("", "abc", "sort"), it.sortedBy { it.nonEmptyLength() })
             assertEquals(listOf("sort", "abc", ""), it.sortedByDescending { it.nonEmptyLength() })
-            assertEquals(listOf("abc", "sort", ""), it.sortedWith(compareBy(nullsLast(compareBy<Int> {it})) { it.nonEmptyLength()}))
+            assertEquals(listOf("abc", "sort", ""), it.sortedWith(compareBy(nullsLast<Int>()) { it.nonEmptyLength()}))
         }
     }
 
