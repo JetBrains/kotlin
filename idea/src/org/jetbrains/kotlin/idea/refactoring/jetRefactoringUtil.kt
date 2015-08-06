@@ -512,8 +512,8 @@ fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
     return field
 }
 
-fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
-    val kind = (klass.resolveToDescriptor() as ClassDescriptor).getKind()
+fun createJavaClass(klass: JetClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
+    val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).getKind()
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.getProject())
     val className = klass.getName()!!
@@ -524,7 +524,7 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
         ClassKind.ENUM_CLASS -> factory.createEnum(className)
         else -> throw AssertionError("Unexpected class kind: ${klass.getElementTextWithContext()}")
     }
-    val javaClass = targetClass.add(javaClassToAdd) as PsiClass
+    val javaClass = (targetClass?.add(javaClassToAdd) ?: javaClassToAdd) as PsiClass
 
     val template = LightClassUtil.getPsiClass(klass)
                    ?: throw AssertionError("Can't generate light class: ${klass.getElementTextWithContext()}")
@@ -538,17 +538,27 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
         klass.addAfter(typeParameterList, klass.getNameIdentifier())
     }
 
-    val extendsList = factory.createReferenceListWithRole(
-            template.getExtendsList()?.getReferenceElements() ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
-            PsiReferenceList.Role.EXTENDS_LIST
-    )
-    extendsList?.let { javaClass.getExtendsList()?.replace(it) }
+    // Turning interface to class
+    if (!javaClass.isInterface && template.isInterface) {
+        val implementsList = factory.createReferenceListWithRole(
+                template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+                PsiReferenceList.Role.IMPLEMENTS_LIST
+        )
+        implementsList?.let { javaClass.implementsList?.replace(it) }
+    }
+    else {
+        val extendsList = factory.createReferenceListWithRole(
+                template.extendsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+                PsiReferenceList.Role.EXTENDS_LIST
+        )
+        extendsList?.let { javaClass.extendsList?.replace(it) }
 
-    val implementsList = factory.createReferenceListWithRole(
-            template.getImplementsList()?.getReferenceElements() ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
-            PsiReferenceList.Role.IMPLEMENTS_LIST
-    )
-    implementsList?.let { javaClass.getImplementsList()?.replace(it) }
+        val implementsList = factory.createReferenceListWithRole(
+                template.implementsList?.referenceElements ?: PsiJavaCodeReferenceElement.EMPTY_ARRAY,
+                PsiReferenceList.Role.IMPLEMENTS_LIST
+        )
+        implementsList?.let { javaClass.implementsList?.replace(it) }
+    }
 
     for (method in template.getMethods()) {
         val hasParams = method.getParameterList().getParametersCount() > 0
@@ -567,15 +577,23 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     return javaClass
 }
 
-fun PsiExpression.j2k(): JetExpression? {
-    if (getLanguage() != JavaLanguage.INSTANCE) return null
+fun PsiElement.j2kText(): String? {
+    if (language != JavaLanguage.INSTANCE) return null
 
-    val project = getProject()
     val j2kConverter = JavaToKotlinConverter(project,
                                              ConverterSettings.defaultSettings,
                                              IdeaJavaToKotlinServices)
-    val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
-    return JetPsiFactory(getProject()).createExpression(text)
+    return j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
+}
+
+fun PsiExpression.j2k(): JetExpression? {
+    val text = j2kText() ?: return null
+    return JetPsiFactory(project).createExpression(text)
+}
+
+fun PsiMember.j2k(): JetNamedDeclaration? {
+    val text = j2kText() ?: return null
+    return JetPsiFactory(project).createDeclaration(text)
 }
 
 public fun (() -> Any).runRefactoringWithPostprocessing(

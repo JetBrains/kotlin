@@ -136,6 +136,10 @@ public class JetPsiFactory(private val project: Project) {
         return createDeclaration(text)
     }
 
+    public fun createCompanionObject(): JetObjectDeclaration {
+        return createClass("class A {\n companion object{\n}\n}").getCompanionObjects().first()
+    }
+
     public fun createFile(text: String): JetFile {
         return createFile("dummy.kt", text)
     }

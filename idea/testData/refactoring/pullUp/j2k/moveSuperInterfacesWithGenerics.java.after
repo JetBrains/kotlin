@@ -1,0 +1,22 @@
+// INFO: {"checked": "true"}
+interface X<T, U> {
+
+}
+
+// INFO: {"checked": "false"}
+interface Y<V> {
+
+}
+
+// INFO: {"checked": "true"}
+interface Z<T> {
+
+}
+
+class P {
+
+}
+
+class B<S, U, V> extends A<S> implements Y<U> {
+
+}

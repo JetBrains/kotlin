@@ -1,0 +1,24 @@
+import kotlin.platform.platformStatic
+
+interface A {
+    // INFO: {"checked": "true"}
+    class Y
+
+    // INFO: {"checked": "true"}
+    fun foo(n: Int): Boolean {
+        return n > 0
+    }
+
+    // INFO: {"checked": "true"}
+    fun bar(s: String): Int
+
+    companion object {
+        // INFO: {"checked": "true"}
+        var X = "1" + "2"
+
+        // INFO: {"checked": "true"}
+        platformStatic fun foo2(n: Int): String {
+            return "_" + n + "_"
+        }
+    }
+}

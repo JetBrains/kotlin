@@ -37,14 +37,12 @@ import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -377,24 +375,6 @@ class KotlinPullUpHelper(
         }
     }
 
-    private fun addMemberToTarget(targetMember: JetNamedDeclaration): JetNamedDeclaration {
-        data.targetClass as JetClass
-
-        val anchor = data.targetClass.declarations.filterIsInstance(targetMember.javaClass).lastOrNull()
-        val movedMember = when {
-            anchor == null && targetMember is JetProperty -> data.targetClass.addDeclarationBefore(targetMember, null)
-            else -> data.targetClass.addDeclarationAfter(targetMember, anchor)
-        }
-        return movedMember as JetNamedDeclaration
-    }
-
-    private fun doAddCallableMember(memberCopy: JetCallableDeclaration, clashingSuper: JetCallableDeclaration?): JetCallableDeclaration {
-        if (clashingSuper != null && clashingSuper.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-            return clashingSuper.replaced(memberCopy)
-        }
-        return addMemberToTarget(memberCopy) as JetCallableDeclaration
-    }
-
     private fun markElements(member: JetNamedDeclaration): List<JetElement> {
         val affectedElements = ArrayList<JetElement>()
 
@@ -508,12 +488,6 @@ class KotlinPullUpHelper(
             it.newTypeText = null
             it.replaceWithTargetThis = null
         }
-    }
-
-    // TODO: Formatting rules don't apply here for some reason
-    private fun JetNamedDeclaration.addModifierWithSpace(modifier: JetModifierKeywordToken) {
-        addModifier(modifier)
-        addAfter(JetPsiFactory(this).createWhiteSpace(), modifierList)
     }
 
     private fun moveSuperInterface(member: JetClass, substitutor: PsiSubstitutor) {
@@ -635,7 +609,7 @@ class KotlinPullUpHelper(
                 memberCopy.removeModifier(JetTokens.INNER_KEYWORD)
             }
 
-            val movedMember = addMemberToTarget(memberCopy) as JetClassOrObject
+            val movedMember = addMemberToTarget(memberCopy, data.targetClass as JetClass) as JetClassOrObject
             member.delete()
             return movedMember
         }
@@ -658,7 +632,7 @@ class KotlinPullUpHelper(
                     makeAbstract(member, memberCopy)
                 }
 
-                movedMember = doAddCallableMember(memberCopy, clashingSuper)
+                movedMember = doAddCallableMember(memberCopy, clashingSuper, data.targetClass)
                 if (member.typeReference == null) {
                     movedMember.typeReference?.addToShorteningWaitSet()
                 }
@@ -666,7 +640,7 @@ class KotlinPullUpHelper(
                 removeOriginalMemberOrAddOverride(member)
             }
             else {
-                movedMember = doAddCallableMember(memberCopy, clashingSuper)
+                movedMember = doAddCallableMember(memberCopy, clashingSuper, data.targetClass)
                 member.delete()
             }
 
@@ -674,10 +648,8 @@ class KotlinPullUpHelper(
                 movedMember.removeModifier(JetTokens.ABSTRACT_KEYWORD)
             }
 
-            if (!data.isInterfaceTarget
-                && !data.targetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)
-                && (movedMember.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
-                data.targetClass.addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+            if (movedMember.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+                data.targetClass.makeAbstract()
             }
             return movedMember
         }

@@ -658,7 +658,9 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractPullUpTest>()) {
-            model("refactoring/pullUp", extension = "kt", singleClass = true)
+            model("refactoring/pullUp/k2k", extension = "kt", singleClass = true, testClassName = "K2K", testMethod = "doKotlinTest")
+            model("refactoring/pullUp/k2j", extension = "kt", singleClass = true, testClassName = "K2J", testMethod = "doKotlinTest")
+            model("refactoring/pullUp/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {

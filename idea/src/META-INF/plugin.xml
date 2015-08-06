@@ -534,7 +534,13 @@
         language="jet"
         implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.JetTargetElementEvaluator" />
 
-    <refactoring.pullUpHelperFactory language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHelperFactory"/>
+    <refactoring.pullUpHelperFactory
+        language="jet"
+        implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHelperFactory"/>
+    <refactoring.pullUpHelperFactory
+        language="JAVA"
+        order="first"
+        implementationClass="org.jetbrains.kotlin.idea.refactoring.pullUp.JavaToKotlinPullUpHelperFactory"/>
 
     <problemFileHighlightFilter implementation="org.jetbrains.kotlin.idea.projectView.KotlinProblemFileHighlightFilter"/>
 
