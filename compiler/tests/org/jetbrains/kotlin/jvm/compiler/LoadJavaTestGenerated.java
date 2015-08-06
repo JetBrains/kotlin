@@ -2370,6 +2370,18 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("FieldTarget.kt")
+                public void testFieldTarget() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("PropertyTarget.kt")
+                public void testPropertyTarget() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/PropertyTarget.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
                 @TestMetadata("ReceiverTarget.kt")
                 public void testReceiverTarget() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");
