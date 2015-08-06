@@ -61,6 +61,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("AddImportsWithExplicitImports.java")
+    public void testAddImportsWithExplicitImports() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddImportsWithExplicitImports.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("AddKClassImport.java")
     public void testAddKClassImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/AddKClassImport.java");
