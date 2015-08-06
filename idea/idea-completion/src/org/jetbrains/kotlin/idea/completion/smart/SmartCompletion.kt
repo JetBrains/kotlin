@@ -61,15 +61,79 @@ class SmartCompletion(
         private val lookupElementFactory: LookupElementFactory,
         private val forBasicCompletion: Boolean = false
 ) {
-    private val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
+    private val receiver = (expression as? JetSimpleNameExpression)?.getReceiverExpression()
     private val expressionWithType = receiver?.parent as? JetExpression ?: expression
 
     public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
-    public val smartCastCalculator: SmartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
+    public val smartCastCalculator: SmartCastCalculator by lazy { SmartCastCalculator(bindingContext, moduleDescriptor, expression) }
 
     public val descriptorFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?
             = { descriptor: DeclarationDescriptor -> filterDescriptor(descriptor).map { postProcess(it) } }.check { expectedInfos.isNotEmpty() }
+
+    public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+        val (items, inheritanceSearcher) = additionalItemsNoPostProcess()
+        val postProcessedItems = items.map { postProcess(it) }
+        val postProcessedSearcher = inheritanceSearcher?.let {
+            object : InheritanceItemsSearcher {
+                override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
+                    it.search(nameFilter, { consumer(postProcess(it)) })
+                }
+            }
+        }
+        return postProcessedItems to postProcessedSearcher
+    }
+
+    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
+        val parent = expressionWithType.getParent()
+        when (parent) {
+            is JetBinaryExpression -> {
+                if (parent.getRight() == expressionWithType) {
+                    val operationToken = parent.getOperationToken()
+                    if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
+                        val left = parent.getLeft()
+                        if (left is JetReferenceExpression) {
+                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
+                        }
+                    }
+                }
+            }
+
+            is JetWhenConditionWithExpression -> {
+                val entry = parent.getParent() as JetWhenEntry
+                val whenExpression = entry.getParent() as JetWhenExpression
+                val subject = whenExpression.getSubjectExpression() ?: return@lazy emptySet()
+
+                val descriptorsToSkip = HashSet<DeclarationDescriptor>()
+
+                if (subject is JetSimpleNameExpression) {
+                    val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
+                    if (variable != null) {
+                        descriptorsToSkip.add(variable)
+                    }
+                }
+
+                val subjectType = bindingContext.getType(subject) ?: return@lazy emptySet()
+                val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
+                if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
+                    val conditions = whenExpression.getEntries()
+                            .flatMap { it.getConditions().toList() }
+                            .filterIsInstance<JetWhenConditionWithExpression>()
+                    for (condition in conditions) {
+                        val selectorExpr = (condition.getExpression() as? JetDotQualifiedExpression)
+                                                   ?.getSelectorExpression() as? JetReferenceExpression ?: continue
+                        val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
+                        if (DescriptorUtils.isEnumEntry(target)) {
+                            descriptorsToSkip.add(target)
+                        }
+                    }
+                }
+
+                return@lazy descriptorsToSkip
+            }
+        }
+        return@lazy emptySet()
+    }
 
     private fun filterDescriptor(descriptor: DeclarationDescriptor): Collection<LookupElement> {
         if (descriptor in descriptorsToSkip) return emptyList()
@@ -93,19 +157,6 @@ class SmartCompletion(
         }
 
         return result
-    }
-
-    public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
-        val (items, inheritanceSearcher) = additionalItemsNoPostProcess()
-        val postProcessedItems = items.map { postProcess(it) }
-        val postProcessedSearcher = inheritanceSearcher?.let {
-            object : InheritanceItemsSearcher {
-                override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
-                    it.search(nameFilter, { consumer(postProcess(it)) })
-                }
-            }
-        }
-        return postProcessedItems to postProcessedSearcher
     }
 
     private fun additionalItemsNoPostProcess(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
@@ -222,57 +273,6 @@ class SmartCompletion(
             is JetNamedFunction -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
         }
         return null
-    }
-
-    public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>> {
-        val parent = expressionWithType.getParent()
-        when (parent) {
-            is JetBinaryExpression -> {
-                if (parent.getRight() == expressionWithType) {
-                    val operationToken = parent.getOperationToken()
-                    if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
-                        val left = parent.getLeft()
-                        if (left is JetReferenceExpression) {
-                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
-                        }
-                    }
-                }
-            }
-
-            is JetWhenConditionWithExpression -> {
-                val entry = parent.getParent() as JetWhenEntry
-                val whenExpression = entry.getParent() as JetWhenExpression
-                val subject = whenExpression.getSubjectExpression() ?: return@lazy emptySet()
-
-                val descriptorsToSkip = HashSet<DeclarationDescriptor>()
-
-                if (subject is JetSimpleNameExpression) {
-                    val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
-                    if (variable != null) {
-                        descriptorsToSkip.add(variable)
-                    }
-                }
-
-                val subjectType = bindingContext.getType(subject) ?: return@lazy emptySet()
-                val classDescriptor = TypeUtils.getClassDescriptor(subjectType)
-                if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
-                    val conditions = whenExpression.getEntries()
-                            .flatMap { it.getConditions().toList() }
-                            .filterIsInstance<JetWhenConditionWithExpression>()
-                    for (condition in conditions) {
-                        val selectorExpr = (condition.getExpression() as? JetDotQualifiedExpression)
-                                                   ?.getSelectorExpression() as? JetReferenceExpression ?: continue
-                        val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
-                        if (DescriptorUtils.isEnumEntry(target)) {
-                            descriptorsToSkip.add(target)
-                        }
-                    }
-                }
-
-                return@lazy descriptorsToSkip
-            }
-        }
-        return@lazy emptySet()
     }
 
     private fun toFunctionReferenceLookupElement(descriptor: DeclarationDescriptor,
