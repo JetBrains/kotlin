@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.utils
 
-import java.util.LinkedHashMap
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
-import java.util.Collections
-import java.util.LinkedHashSet
+import java.util.LinkedHashMap
 
 public fun <K, V> Sequence<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
@@ -102,6 +100,11 @@ public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
 }
 
 public fun <T> Collection<T>.toReadOnlyList(): List<T> =
-        if (isEmpty()) Collections.emptyList() else ArrayList(this)
+        when (size()) {
+            0 -> emptyList()
+            1 -> listOf(first())
+            else -> ArrayList(this)
+        }
 
-public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
+public fun <T: Any> T?.singletonOrEmptyList(): List<T> =
+        if (this != null) listOf(this) else emptyList()
