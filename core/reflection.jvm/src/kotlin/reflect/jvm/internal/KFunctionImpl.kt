@@ -49,7 +49,7 @@ open class KFunctionImpl protected constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    override val caller: FunctionCaller by ReflectProperties.lazySoft {
+    override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction ->

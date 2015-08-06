@@ -26,7 +26,7 @@ import kotlin.reflect.KType
 interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     val descriptor: CallableMemberDescriptor
 
-    val caller: FunctionCaller
+    val caller: FunctionCaller<*>
 
     override val annotated: Annotated get() = descriptor
 

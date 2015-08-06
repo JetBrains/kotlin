@@ -67,10 +67,7 @@ public val KMutableProperty<*>.javaSetter: Method?
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
 public val KFunction<*>.javaMethod: Method?
-    get() = when (this) {
-        is KCallableImpl<*> -> (caller as? FunctionCaller.Method)?.method
-        else -> null
-    }
+    get() = (this as? KCallableImpl<*>)?.caller?.member as? Method
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
@@ -78,10 +75,7 @@ public val KFunction<*>.javaMethod: Method?
  */
 @suppress("UNCHECKED_CAST")
 public val <T> KFunction<T>.javaConstructor: Constructor<T>?
-    get() = when (this) {
-        is KFunctionImpl -> (caller as? FunctionCaller.Constructor)?.constructor as? Constructor<T>
-        else -> null
-    }
+    get() = (this as? KCallableImpl<T>)?.caller?.member as? Constructor<T>
 
 
 /**

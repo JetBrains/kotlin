@@ -23,11 +23,15 @@ import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
-internal abstract class FunctionCaller {
-    abstract val member: Member
-
-    abstract val returnType: Type
-    abstract val parameterTypes: List<Type>
+internal abstract class FunctionCaller<out M : Member>(
+        internal val member: M,
+        internal val returnType: Type,
+        internal val instanceClass: Class<*>?,
+        valueParameterTypes: Array<Type>
+) {
+    internal val parameterTypes: List<Type> =
+            instanceClass?.let { listOf(it, *valueParameterTypes) } ?:
+            valueParameterTypes.toList()
 
     abstract fun call(args: Array<*>): Any?
 
@@ -43,52 +47,52 @@ internal abstract class FunctionCaller {
         }
     }
 
-    class Constructor(val constructor: ReflectConstructor<*>) : FunctionCaller() {
-        override val member: Member get() = constructor
+    // Constructors
 
-        override val returnType = constructor.declaringClass
-
-        override val parameterTypes =
-                if (returnType.declaringClass == null || Modifier.isStatic(returnType.modifiers))
-                    constructor.genericParameterTypes.toList()
-                else listOf(returnType.declaringClass, *constructor.genericParameterTypes)
-
+    class Constructor(constructor: ReflectConstructor<*>) : FunctionCaller<ReflectConstructor<*>>(
+            constructor,
+            constructor.declaringClass,
+            constructor.declaringClass.let { klass ->
+                val outerClass = klass.declaringClass
+                if (outerClass != null && !Modifier.isStatic(klass.modifiers)) outerClass else null
+            },
+            constructor.genericParameterTypes
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return constructor.newInstance(*args)
+            return member.newInstance(*args)
         }
     }
 
+    // Methods
+
     abstract class Method(
-            val method: ReflectMethod,
-            private val requiresInstance: Boolean
-    ) : FunctionCaller() {
-        override val member: Member get() = method
-
-        override val returnType = method.genericReturnType
-
-        override val parameterTypes =
-                if (requiresInstance) listOf(method.declaringClass, *method.genericParameterTypes)
-                else method.genericParameterTypes.toList()
-
+            method: ReflectMethod,
+            requiresInstance: Boolean = !Modifier.isStatic(method.modifiers)
+    ) : FunctionCaller<ReflectMethod>(
+            method,
+            method.genericReturnType,
+            if (requiresInstance) method.declaringClass else null,
+            method.genericParameterTypes
+    ) {
         private val isVoidMethod = returnType == Void.TYPE
 
         protected fun callMethod(instance: Any?, args: Array<*>): Any? {
-            val result = method.invoke(instance, *args)
+            val result = member.invoke(instance, *args)
 
             // If this is a Unit function, the method returns void, Method#invoke returns null, while we should return Unit
             return if (isVoidMethod) Unit else result
         }
     }
 
-    class StaticMethod(method: ReflectMethod) : Method(method, requiresInstance = false) {
+    class StaticMethod(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(null, args)
         }
     }
 
-    class InstanceMethod(method: ReflectMethod) : Method(method, requiresInstance = true) {
+    class InstanceMethod(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(args[0], args.asList().subList(1, args.size()).toTypedArray())
@@ -103,36 +107,33 @@ internal abstract class FunctionCaller {
         }
     }
 
-    abstract class FieldAccessor(val field: ReflectField) : FunctionCaller() {
-        override val member: Member get() = field
-    }
+    // Field accessors
 
     abstract class FieldGetter(
             field: ReflectField,
-            private val requiresInstance: Boolean
-    ) : FieldAccessor(field) {
-        override val returnType = field.genericType
-
-        override val parameterTypes =
-                if (requiresInstance) listOf(field.declaringClass) else listOf()
-
+            requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+    ) : FunctionCaller<ReflectField>(
+            field,
+            field.genericType,
+            if (requiresInstance) field.declaringClass else null,
+            emptyArray()
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return field.get(if (requiresInstance) args.first() else null)
+            return member.get(if (instanceClass != null) args.first() else null)
         }
     }
 
     abstract class FieldSetter(
             field: ReflectField,
             private val notNull: Boolean,
-            private val requiresInstance: Boolean
-    ) : FieldAccessor(field) {
-        override val returnType: Type get() = Void.TYPE
-
-        override val parameterTypes =
-                if (requiresInstance) listOf(field.declaringClass, field.genericType)
-                else listOf(field.genericType)
-
+            requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+    ) : FunctionCaller<ReflectField>(
+            field,
+            Void.TYPE,
+            if (requiresInstance) field.declaringClass else null,
+            arrayOf(field.genericType)
+    ) {
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
             if (notNull && args.last() == null) {
@@ -142,13 +143,13 @@ internal abstract class FunctionCaller {
 
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return field.set(if (requiresInstance) args.first() else null, args.last())
+            return member.set(if (instanceClass != null) args.first() else null, args.last())
         }
     }
 
-    class StaticFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
+    class StaticFieldGetter(field: ReflectField) : FieldGetter(field)
 
-    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true)
+    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field)
 
     class PlatformStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
@@ -157,9 +158,9 @@ internal abstract class FunctionCaller {
         }
     }
 
-    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false)
+    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
 
-    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true)
+    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
 
     class PlatformStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {

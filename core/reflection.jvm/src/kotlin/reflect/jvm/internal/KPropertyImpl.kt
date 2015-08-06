@@ -35,7 +35,7 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val name: String get() = descriptor.name.asString()
 
-    override val caller: FunctionCaller get() = getter.caller
+    override val caller: FunctionCaller<*> get() = getter.caller
 
     abstract class Accessor<out R> : KProperty.Accessor<R> {
         abstract override val property: KPropertyImpl<R>
@@ -51,7 +51,7 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor)
         }
 
-        override val caller: FunctionCaller by ReflectProperties.lazySoft {
+        override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = true)
         }
     }
@@ -71,21 +71,21 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor)
         }
 
-        override val caller: FunctionCaller by ReflectProperties.lazySoft {
+        override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
     }
 }
 
 
-private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller {
+private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
     fun isPlatformStaticProperty() =
             property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)
 
-    fun computeFieldCaller(field: Field): FunctionCaller.FieldAccessor = when {
+    fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter) FunctionCaller.InstanceFieldGetter(field)
             else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())
