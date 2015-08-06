@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
@@ -96,6 +97,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @Override
     public boolean isVar() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public ConstantValue<?> getCompileTimeInitializer() {
+        return null;
     }
 
     @NotNull

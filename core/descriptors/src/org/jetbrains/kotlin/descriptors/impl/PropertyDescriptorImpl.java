@@ -33,10 +33,9 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
-public class PropertyDescriptorImpl extends VariableDescriptorImpl implements PropertyDescriptor {
+public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
     private final Modality modality;
     private Visibility visibility;
-    private final boolean isVar;
     private final Set<PropertyDescriptor> overriddenProperties = new LinkedHashSet<PropertyDescriptor>(); // LinkedHashSet is essential here
     private final PropertyDescriptor original;
     private final Kind kind;
@@ -59,8 +58,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Kind kind,
             @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, null, source);
-        this.isVar = isVar;
+        super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
         this.visibility = visibility;
         this.original = original == null ? this : original;
@@ -140,11 +138,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @Override
     public JetType getReturnType() {
         return getType();
-    }
-
-    @Override
-    public boolean isVar() {
-        return isVar;
     }
 
     @NotNull

@@ -629,7 +629,7 @@ public class DescriptorResolver {
             result = propertyDescriptor;
         }
         else {
-            VariableDescriptorImpl variableDescriptor =
+            LocalVariableDescriptor variableDescriptor =
                     resolveLocalVariableDescriptorWithType(scope, variable, null, trace);
             // For a local variable the type must not be deferred
             type = getVariableType(variableDescriptor, scope, variable, dataFlowInfo, false, trace);
@@ -656,13 +656,13 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(
+    public LocalVariableDescriptor resolveLocalVariableDescriptorWithType(
             @NotNull JetScope scope,
             @NotNull JetVariableDeclaration variable,
             @Nullable JetType type,
             @NotNull BindingTrace trace
     ) {
-        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
+        LocalVariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 scope.getContainingDeclaration(),
                 annotationResolver.resolveAnnotationsWithArguments(scope, variable.getModifierList(), trace),
                 JetPsiUtil.safeName(variable.getName()),
@@ -768,7 +768,7 @@ public class DescriptorResolver {
 
     @NotNull
     private JetType getVariableType(
-            @NotNull final VariableDescriptorImpl variableDescriptor,
+            @NotNull final VariableDescriptorWithInitializerImpl variableDescriptor,
             @NotNull final JetScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
@@ -830,7 +830,7 @@ public class DescriptorResolver {
     }
 
     private void setConstantForVariableIfNeeded(
-            @NotNull VariableDescriptorImpl variableDescriptor,
+            @NotNull VariableDescriptorWithInitializerImpl variableDescriptor,
             @NotNull final JetScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
