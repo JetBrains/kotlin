@@ -100,10 +100,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     else
         null
 
-    private val smartCastCalculator = if (expression != null)
-        SmartCastCalculator(bindingContext, moduleDescriptor, expression)
-    else
-        null
+    private val smartCompletion = expression?.let {
+        SmartCompletion(it, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory)
+    }
 
     private fun calcCompletionKind(): CompletionKind {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
@@ -252,12 +251,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                if (expectedInfos != null && expectedInfos.isNotEmpty()) {
+                if (smartCompletion != null && expectedInfos != null && expectedInfos.isNotEmpty()) {
                     @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
-                    val (additionalItems, inheritanceSearcher) = SmartCompletion(
-                            expression!!, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor,
-                            prefixMatcher, GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory)
-                            .additionalItems(expectedInfos, smartCastCalculator!!, forOrdinaryCompletion = true)
+                    val (additionalItems, inheritanceSearcher) = smartCompletion.additionalItems(expectedInfos, forOrdinaryCompletion = true)
                     collector.addElements(additionalItems)
                 }
 
@@ -304,8 +300,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
         }
 
-        if (expectedInfos != null && expectedInfos.isNotEmpty()) {
-            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCastCalculator!!), SmartCompletionPriorityWeigher)
+        if (smartCompletion != null && expectedInfos != null && expectedInfos.isNotEmpty()) {
+            sorter = sorter.weighBefore(KindWeigher.toString(), ExpectedInfoMatchWeigher(expectedInfos, smartCompletion), SmartCompletionPriorityWeigher)
         }
 
         return sorter

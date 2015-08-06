@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.*
@@ -70,6 +72,7 @@ object KindWeigher : LookupElementWeigher("kotlin.kind") {
                 when (descriptor) {
                     is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
                     is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
+                    is ClassDescriptor -> if (descriptor.kind == ClassKind.ENUM_ENTRY) CompoundWeight(Weight.variable) else CompoundWeight(Weight.default)
                     else -> CompoundWeight(Weight.default)
                 }
             }
@@ -185,8 +188,11 @@ class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWei
 
 class ExpectedInfoMatchWeigher(
         private val expectedInfos: Collection<ExpectedInfo>,
-        private val smartCastCalculator: SmartCastCalculator
+        private val smartCompletion: SmartCompletion
 ) : LookupElementWeigher("kotlin.expectedInfoMatch") {
+
+    private val smartCastCalculator = smartCompletion.smartCastCalculator
+    private val descriptorsToSkip = smartCompletion.descriptorsToSkip
 
     private fun fullMatchWeight(nameSimilarity: Int): Long {
         return -((3L shl 32) + nameSimilarity)
@@ -202,6 +208,8 @@ class ExpectedInfoMatchWeigher(
 
     private val NO_MATCH_WEIGHT = 0L
 
+    private val DESCRIPTOR_TO_SKIP_WEIGHT = 1L // if descriptor is skipped from smart completion then it's probably irrelevant
+
     override fun weigh(element: LookupElement): Long {
         val smartCompletionPriority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
         if (smartCompletionPriority != null) { // it's an "additional item" came from smart completion, don't match it against expected type
@@ -213,6 +221,7 @@ class ExpectedInfoMatchWeigher(
         val (fuzzyTypes, name) = when (o) {
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor ?: return NO_MATCH_WEIGHT
+                if (descriptor in descriptorsToSkip) return DESCRIPTOR_TO_SKIP_WEIGHT
                 descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator) to descriptor.name
             }
 

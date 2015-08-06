@@ -61,6 +61,8 @@ class SmartCompletion(
 ) {
     private val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
 
+    public val smartCastCalculator: SmartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
+
     public class Result(
             val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
             val additionalItems: Collection<LookupElement>,
@@ -108,11 +110,8 @@ class SmartCompletion(
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val expressionWithType = expression.toExpressionWithType()
-
-        val expectedInfos = calcExpectedInfos(expressionWithType) ?: return null
-
-        val smartCastCalculator = SmartCastCalculator(bindingContext, moduleDescriptor, expression)
+        val expectedInfos = calcExpectedInfos(expression.toExpressionWithType())
+        if (expectedInfos == null || expectedInfos.isEmpty()) return null
 
         fun filterDeclaration(descriptor: DeclarationDescriptor): Collection<LookupElement> {
             if (descriptor in descriptorsToSkip) return emptyList()
@@ -138,14 +137,13 @@ class SmartCompletion(
             return result
         }
 
-        val (additionalItems, inheritanceSearcher) = additionalItems(expectedInfos, smartCastCalculator)
+        val (additionalItems, inheritanceSearcher) = additionalItems(expectedInfos)
 
         return Result(::filterDeclaration, additionalItems, inheritanceSearcher)
     }
 
     public fun additionalItems(
             expectedInfos: Collection<ExpectedInfo>,
-            smartCastCalculator: SmartCastCalculator,
             forOrdinaryCompletion: Boolean = false
     ): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val items = ArrayList<LookupElement>()

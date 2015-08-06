@@ -199,9 +199,21 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("NoStupidComparison.kt")
+        public void testNoStupidComparison() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NoStupidComparison.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PreferMatchingThis.kt")
         public void testPreferMatchingThis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/PreferMatchingThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhenByEnum.kt")
+        public void testWhenByEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/WhenByEnum.kt");
             doTest(fileName);
         }
     }

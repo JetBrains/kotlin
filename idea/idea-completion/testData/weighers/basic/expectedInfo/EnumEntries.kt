@@ -7,7 +7,7 @@ fun foo(): EE {
     return E<caret>
 }
 
-// ORDER: valueOf
 // ORDER: A
 // ORDER: B
+// ORDER: valueOf
 // ORDER: EE
