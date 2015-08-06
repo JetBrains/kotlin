@@ -4,10 +4,10 @@ class CustomDelegate {
     public fun get(thisRef: Any?, prop: PropertyMetadata): String = prop.name
 }
 
-<!INAPPLICABLE_FIELD_TARGET, WRONG_ANNOTATION_TARGET!>@field:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_FIELD_TARGET, WRONG_ANNOTATION_TARGET!>@field:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
     constructor()
 
     @field:Ann
@@ -23,12 +23,12 @@ class SomeClass {
     val propertyWithCustomGetter: Int
         get() = 5
 
-    <!INAPPLICABLE_FIELD_TARGET, WRONG_ANNOTATION_TARGET!>@field:Ann<!>
-    fun anotherFun(<!INAPPLICABLE_FIELD_TARGET!>@field:Ann<!> <!UNUSED_PARAMETER!>s<!>: String) {
-        <!INAPPLICABLE_FIELD_TARGET!>@field:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
+    fun anotherFun(<!INAPPLICABLE_TARGET_ON_PROPERTY!>@field:Ann<!> <!UNUSED_PARAMETER!>s<!>: String) {
+        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@field:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 
 }
 
-class WithPrimaryConstructor(<!INAPPLICABLE_FIELD_TARGET!>@field:Ann<!> val a: String)
+class WithPrimaryConstructor(@field:Ann val a: String)

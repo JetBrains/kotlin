@@ -5,7 +5,7 @@ class CustomDelegate {
     fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}
 }
 
-<!INAPPLICABLE_SET_TARGET, WRONG_ANNOTATION_TARGET!>@set:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>
 class SomeClass {
 
     <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@set:Ann<!>
@@ -25,11 +25,11 @@ class SomeClass {
         get() = 5
         set(v) {}
 
-    <!INAPPLICABLE_SET_TARGET, WRONG_ANNOTATION_TARGET!>@set:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@set:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5
 
     fun anotherFun() {
-        <!INAPPLICABLE_SET_TARGET!>@set:Ann<!>
+        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@set:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 

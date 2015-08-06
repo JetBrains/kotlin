@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
-import java.util.*
 
 public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
-    throws(Exception::class)
     public fun doTest(filename: String) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         loadFileByFullPath(filename)

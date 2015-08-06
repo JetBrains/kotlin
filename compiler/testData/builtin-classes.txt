@@ -1254,7 +1254,7 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) kotlin.
     /*primary*/ public constructor data()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class deprecated : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER}) kotlin.annotation.annotation(mustBeDocumented = true) public final class deprecated : kotlin.Annotation {
     /*primary*/ public constructor deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
     internal final val replaceWith: kotlin.ReplaceWith
         internal final fun <get-replaceWith>(): kotlin.ReplaceWith

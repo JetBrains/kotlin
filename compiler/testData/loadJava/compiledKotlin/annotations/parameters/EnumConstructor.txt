@@ -10,9 +10,9 @@ kotlin.annotation.annotation() internal final class B : kotlin.Annotation {
 
 internal final enum class E : kotlin.Enum<test.E> {
     /*primary*/ private constructor E(/*0*/ test.A() x: kotlin.String, /*1*/ test.B() y: kotlin.Int)
-    test.A() internal final val x: kotlin.String
+    internal final val x: kotlin.String
         internal final fun <get-x>(): kotlin.String
-    test.B() internal final val y: kotlin.Int
+    internal final val y: kotlin.Int
         internal final fun <get-y>(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int

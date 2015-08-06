@@ -1,7 +1,7 @@
 package
 
-@receiver:Ann() internal val kotlin.String.extensionProperty: kotlin.String
-@receiver:Ann() internal fun kotlin.String.length2(): kotlin.Int
+internal val @receiver:Ann() kotlin.String.extensionProperty: kotlin.String
+internal fun @receiver:Ann() kotlin.String.length2(): kotlin.Int
 
 kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
     public constructor Ann()
@@ -13,6 +13,7 @@ kotlin.annotation.annotation() internal final class Ann : kotlin.Annotation {
 @receiver:Ann() internal final class SomeClass {
     @receiver:Ann() public constructor SomeClass(/*0*/ @receiver:Ann() a: kotlin.String)
     @receiver:Ann() protected final val simpleProperty: kotlin.String = "text"
+    internal final val @receiver:Ann() kotlin.String.extensionProperty2: kotlin.String
     @receiver:Ann() internal final fun anotherFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

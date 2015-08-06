@@ -1,10 +1,10 @@
 package 
 
-kotlin.jvm.jvmName(name = "c") internal val px: kotlin.Int = 1
+internal val px: kotlin.Int = 1
 internal val valx: kotlin.Int
 internal var vardef: kotlin.Int
 internal var varx: kotlin.Int
-kotlin.jvm.jvmName(name = "d") internal val kotlin.Any.px: kotlin.Int
+internal val kotlin.Any.px: kotlin.Int
 kotlin.jvm.jvmName(name = "a") internal fun foo(): kotlin.Unit
 internal fun foo1(): kotlin.Unit
 kotlin.jvm.jvmName(name = "b") internal fun kotlin.Any.foo(): kotlin.Unit
@@ -22,10 +22,10 @@ internal abstract class AB {
 kotlin.jvm.jvmName(name = "C") internal final class C {
     kotlin.jvm.jvmName(name = "primary") public constructor C()
     kotlin.jvm.jvmName(name = "ctr") public constructor C(/*0*/ x: kotlin.Int)
-    kotlin.jvm.jvmName(name = "c") internal final val px: kotlin.Int = 1
+    internal final val px: kotlin.Int = 1
     internal final val valx: kotlin.Int
     internal final var varx: kotlin.Int
-    kotlin.jvm.jvmName(name = "d") internal final val kotlin.Any.px: kotlin.Int
+    internal final val kotlin.Any.px: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     kotlin.jvm.jvmName(name = "a") internal final fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

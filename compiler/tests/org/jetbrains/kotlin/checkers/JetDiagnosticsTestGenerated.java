@@ -4605,6 +4605,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyUseSiteTargetedAnnotations.kt")
+            public void testPropertyUseSiteTargetedAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/propertyUseSiteTargetedAnnotations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeUsage.kt")
             public void testTypeUsage() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typeUsage.kt");

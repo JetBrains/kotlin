@@ -10,3 +10,4 @@ internal final class Class {
         internal final fun <get-property>(): kotlin.Int
         internal final fun <set-property>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 }
+

@@ -8,5 +8,5 @@ annotation class Anno(val t: ElementType)
 class Class {
     Anno(ElementType.METHOD) fun foo() {}
 
-    Anno(ElementType.FIELD) var bar = 42
+    @field:Anno(ElementType.FIELD) var bar = 42
 }

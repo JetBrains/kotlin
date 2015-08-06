@@ -31,7 +31,7 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.TYPE}) kotlin.annota
 
 base() internal final class correct {
     base() public constructor correct()
-    public constructor correct(/*0*/ base() x: @[base()] kotlin.Int)
+    public constructor correct(/*0*/ x: @[base()] kotlin.Int)
     base() internal final val x: @[base()] kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

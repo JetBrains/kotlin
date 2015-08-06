@@ -1,9 +1,9 @@
 annotation class Ann
 
-<!INAPPLICABLE_RECEIVER_TARGET, WRONG_ANNOTATION_TARGET!>@receiver:Ann<!>
+<!INAPPLICABLE_RECEIVER_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_RECEIVER_TARGET, WRONG_ANNOTATION_TARGET!>@receiver:Ann<!>
+    <!INAPPLICABLE_RECEIVER_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Ann<!>
     constructor(<!INAPPLICABLE_RECEIVER_TARGET!>@receiver:Ann<!> <!UNUSED_PARAMETER!>a<!>: String)
 
     <!INAPPLICABLE_RECEIVER_TARGET!>@receiver:Ann<!>
@@ -15,14 +15,11 @@ class SomeClass {
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 
-    @receiver:Ann
-    val String.extensionProperty2: String
+    val @receiver:Ann String.extensionProperty2: String
         get() = "A"
 }
 
-@receiver:Ann
-fun String.length2() = length()
+fun @receiver:Ann String.length2() = length()
 
-@receiver:Ann
-val String.extensionProperty: String
+val @receiver:Ann String.extensionProperty: String
     get() = "A"

@@ -5,10 +5,10 @@ class CustomDelegate {
     fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}
 }
 
-<!INAPPLICABLE_SPARAM_TARGET, WRONG_ANNOTATION_TARGET!>@sparam:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@sparam:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_SPARAM_TARGET, WRONG_ANNOTATION_TARGET!>@sparam:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@sparam:Ann<!>
     constructor()
 
     <!INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE!>@sparam:Ann<!>
@@ -28,9 +28,9 @@ class SomeClass {
         get() = 5
         set(v) {}
 
-    <!INAPPLICABLE_SPARAM_TARGET!>@sparam:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY!>@sparam:Ann<!>
     fun anotherFun() {
-        <!INAPPLICABLE_SPARAM_TARGET!>@sparam:Ann<!>
+        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@sparam:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 

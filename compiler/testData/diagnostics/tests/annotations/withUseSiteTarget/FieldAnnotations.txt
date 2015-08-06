@@ -28,7 +28,7 @@ internal final class CustomDelegate {
 }
 
 internal final class WithPrimaryConstructor {
-    public constructor WithPrimaryConstructor(/*0*/ @field:Ann() a: kotlin.String)
+    public constructor WithPrimaryConstructor(/*0*/ a: kotlin.String)
     @field:Ann() internal final val a: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

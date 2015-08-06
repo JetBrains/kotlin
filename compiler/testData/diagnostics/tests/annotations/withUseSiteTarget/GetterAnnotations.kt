@@ -4,10 +4,10 @@ class CustomDelegate {
     public fun get(thisRef: Any?, prop: PropertyMetadata): String = prop.name
 }
 
-<!INAPPLICABLE_GET_TARGET, WRONG_ANNOTATION_TARGET!>@get:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_GET_TARGET, WRONG_ANNOTATION_TARGET!>@get:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     constructor()
 
     @get:Ann
@@ -26,11 +26,11 @@ class SomeClass {
     val propertyWithCustomGetter: Int
         get() = 5
 
-    <!INAPPLICABLE_GET_TARGET, WRONG_ANNOTATION_TARGET!>@get:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5
 
     fun anotherFun() {
-        <!INAPPLICABLE_GET_TARGET!>@get:Ann<!>
+        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@get:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 

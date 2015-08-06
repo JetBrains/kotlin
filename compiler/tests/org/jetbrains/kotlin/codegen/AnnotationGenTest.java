@@ -152,7 +152,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testPropFieldInConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A (@[Deprecated] var x: Int) {}");
+        loadText("class A (@field:Deprecated @param:Deprecated var x: Int) {}");
         Class<?> aClass = generateClass("A");
         Constructor constructor = aClass.getDeclaredConstructor(int.class);
         assertNotNull(constructor);

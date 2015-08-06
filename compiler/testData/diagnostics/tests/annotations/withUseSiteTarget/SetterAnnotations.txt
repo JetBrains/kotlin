@@ -18,10 +18,10 @@ internal final class CustomDelegate {
 
 @set:Ann() internal final class SomeClass {
     public constructor SomeClass()
-    @set:Ann() protected final var delegatedProperty: kotlin.String
-    @set:Ann() protected final var mutableProperty: kotlin.String
-    @set:Ann() protected final var mutablePropertyWithAnnotationList: kotlin.String
-    @set:Ann() internal final var propertyWithCustomSetter: kotlin.Int
+    protected final var delegatedProperty: kotlin.String
+    protected final var mutableProperty: kotlin.String
+    protected final var mutablePropertyWithAnnotationList: kotlin.String
+    internal final var propertyWithCustomSetter: kotlin.Int
     @set:Ann() protected final val simpleProperty: kotlin.String = "text"
     @set:Ann() internal final fun annotationOnFunction(/*0*/ a: kotlin.Int): kotlin.Int
     internal final fun anotherFun(): kotlin.Unit
