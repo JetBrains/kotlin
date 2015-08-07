@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.ArrayList
 
@@ -204,7 +203,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
                     if (returnType != null && returnType.nullability() == TypeNullability.NULLABLE) {
                         result.add(createKeywordWithLabelElement("return null", null, addSpace = false))
                     }
-                    if (returnType != null && KotlinBuiltIns.isBoolean(returnType.makeNotNullable())) {
+                    if (returnType != null && KotlinBuiltIns.isBooleanOrNullableBoolean(returnType)) {
                         result.add(createKeywordWithLabelElement("return true", null, addSpace = false))
                         result.add(createKeywordWithLabelElement("return false", null, addSpace = false))
                     }

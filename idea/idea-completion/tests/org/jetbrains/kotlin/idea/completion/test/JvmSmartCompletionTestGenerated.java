@@ -359,6 +359,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("NullableBooleanExpected.kt")
+    public void testNullableBooleanExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NullableBooleanExpected.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Object.kt")
     public void testObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Object.kt");

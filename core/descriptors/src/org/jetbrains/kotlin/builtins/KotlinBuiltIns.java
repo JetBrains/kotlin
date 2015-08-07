@@ -903,6 +903,10 @@ public class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._boolean);
     }
 
+    public static boolean isBooleanOrNullableBoolean(@NotNull JetType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._boolean);
+    }
+
     public static boolean isBoolean(@NotNull ClassDescriptor classDescriptor) {
         return FQ_NAMES._boolean.equals(getFqName(classDescriptor));
     }
