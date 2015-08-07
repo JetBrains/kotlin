@@ -26,11 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.LookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 
@@ -229,14 +229,16 @@ public class QualifiedExpressionResolver {
             descriptors.add(packageDescriptor);
         }
 
-        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName, LookupLocation.NO_LOCATION);
+        KotlinLookupLocation location = new KotlinLookupLocation(referenceExpression);
+
+        ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName, location);
         if (classifierDescriptor != null) {
             descriptors.add(classifierDescriptor);
         }
 
         if (lookupMode == LookupMode.EVERYTHING) {
-            descriptors.addAll(outerScope.getFunctions(referencedName, LookupLocation.NO_LOCATION));
-            descriptors.addAll(outerScope.getProperties(referencedName, LookupLocation.NO_LOCATION));
+            descriptors.addAll(outerScope.getFunctions(referencedName, location));
+            descriptors.addAll(outerScope.getProperties(referencedName, location));
 
             VariableDescriptor localVariable = outerScope.getLocalVariable(referencedName);
             if (localVariable != null) {
