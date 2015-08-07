@@ -414,7 +414,7 @@ private fun JsNode.match(predicate: (JsNode) -> Boolean): Set<JsNode> {
     val visitor = object : JsExpressionVisitor() {
         val matched = IdentitySet<JsNode>()
 
-        override fun <R : JsNode?> doTraverse(node: R, ctx: JsContext<*>?) {
+        override fun <R : JsNode> doTraverse(node: R, ctx: JsContext<*>?) {
             super.doTraverse(node, ctx)
 
             if (node !in matched && predicate(node)) {

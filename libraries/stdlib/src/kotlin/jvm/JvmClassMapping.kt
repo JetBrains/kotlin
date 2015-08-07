@@ -25,11 +25,11 @@ import kotlin.reflect.KClass
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
 @Intrinsic("kotlin.KClass.java.property")
-public val <T> KClass<T>.java: Class<T>
+public val <T : Any> KClass<T>.java: Class<T>
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
 
 /**
  * Returns a [KClass] instance corresponding to the given Java [Class] instance.
  */
-public val <T> Class<T>.kotlin: KClass<T>
+public val <T : Any> Class<T>.kotlin: KClass<T>
     get() = Reflection.createKotlinClass(this) as KClass<T>

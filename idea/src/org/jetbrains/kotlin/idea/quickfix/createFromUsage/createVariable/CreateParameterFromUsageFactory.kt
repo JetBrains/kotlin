@@ -32,7 +32,7 @@ data class CreateParameterData<E : JetElement>(
         val originalExpression: E
 )
 
-abstract class CreateParameterFromUsageFactory<E : JetElement>: CreateFromUsageFactory<E, CreateParameterData<E>?>() {
+abstract class CreateParameterFromUsageFactory<E : JetElement>: CreateFromUsageFactory<E, CreateParameterData<E>>() {
     override fun createQuickFix(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,

@@ -110,21 +110,21 @@ private class ResolutionFacadeImpl(
         return resolveSession.resolveToDescriptor(declaration)
     }
 
-    override fun <T> getFrontendService(serviceClass: Class<T>): T  = getFrontendService(moduleInfo, serviceClass)
+    override fun <T : Any> getFrontendService(serviceClass: Class<T>): T  = getFrontendService(moduleInfo, serviceClass)
 
-    override fun <T> getIdeService(serviceClass: Class<T>): T {
+    override fun <T : Any> getIdeService(serviceClass: Class<T>): T {
         return projectFacade.resolverForModuleInfo(moduleInfo).componentProvider.create(serviceClass)
     }
 
-    override fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
+    override fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
         return getFrontendService(element.getModuleInfo(), serviceClass)
     }
 
-    fun <T> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+    fun <T : Any> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
         return projectFacade.resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
-    override fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
+    override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
     }
 

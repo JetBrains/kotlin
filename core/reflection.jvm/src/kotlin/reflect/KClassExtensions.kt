@@ -43,7 +43,7 @@ public val KClass<*>.declaredFunctions: Collection<KFunction<*>>
 /**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
-public val <T> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
+public val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>)
             .getMembers(declaredOnly = false, nonExtensions = true, extensions = false)
             .filterIsInstance<KProperty1<T, *>>()
@@ -52,7 +52,7 @@ public val <T> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
 /**
  * Returns extension properties declared in this class and all of its superclasses.
  */
-public val <T> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
+public val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>)
             .getMembers(declaredOnly = false, nonExtensions = false, extensions = true)
             .filterIsInstance<KProperty2<T, *, *>>()
@@ -61,7 +61,7 @@ public val <T> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, 
 /**
  * Returns non-extension properties declared in this class.
  */
-public val <T> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
+public val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>)
             .getMembers(declaredOnly = true, nonExtensions = true, extensions = false)
             .filterIsInstance<KProperty1<T, *>>()
@@ -70,7 +70,7 @@ public val <T> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
 /**
  * Returns extension properties declared in this class.
  */
-public val <T> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
+public val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>)
             .getMembers(declaredOnly = true, nonExtensions = false, extensions = true)
             .filterIsInstance<KProperty2<T, *, *>>()

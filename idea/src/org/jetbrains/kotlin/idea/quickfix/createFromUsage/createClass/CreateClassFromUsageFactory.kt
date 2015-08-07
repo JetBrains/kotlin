@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetUserType
 
 abstract class CreateClassFromUsageFactory<E : JetElement>(
         val createPackageIsAvailable: Boolean = false
-) : CreateFromUsageFactory<E, ClassInfo?>() {
+) : CreateFromUsageFactory<E, ClassInfo>() {
     protected abstract fun getPossibleClassKinds(element: E, diagnostic: Diagnostic): List<ClassKind>
 
     override fun createQuickFixes(

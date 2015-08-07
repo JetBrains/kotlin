@@ -131,7 +131,7 @@ public val Method.kotlinFunction: KFunction<*>?
  * or `null` if this constructor cannot be represented by a Kotlin function
  * (for example, if it is a synthetic constructor).
  */
-public val <T> Constructor<T>.kotlinFunction: KFunction<T>?
+public val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
         if (isSynthetic()) return null
 

@@ -112,7 +112,7 @@ public abstract class JetWholeProjectModalByCollectionAction<TTask : Any>(modalT
     abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<TTask>)
 }
 
-class JetWholeProjectForEachElementOfTypeFix<TTask> private constructor(
+class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private constructor(
         private val collectingVisitorFactory: (MutableCollection<TTask>) -> JetVisitorVoid,
         private val tasksProcessor: (Collection<TTask>) -> Unit,
         private val name: String,
@@ -148,7 +148,7 @@ class JetWholeProjectForEachElementOfTypeFix<TTask> private constructor(
                 name = name
         )
 
-        inline fun <reified TElement : JetElement, TTask> createForMultiTaskOnElement(
+        inline fun <reified TElement : JetElement, TTask : Any> createForMultiTaskOnElement(
                 noinline tasksFactory: (TElement) -> Collection<TTask>,
                 noinline tasksProcessor: (Collection<TTask>) -> Unit,
                 name: String

@@ -62,7 +62,7 @@ public inline fun getFromAllScopes<Scope, T>(scopes: Array<out Scope>, callback:
     return result ?: emptySet()
 }
 
-public inline fun getFirstMatch<Scope, T>(scopes: Array<out Scope>, callback: (Scope) -> T): T {
+public inline fun getFirstMatch<Scope, T : Any>(scopes: Array<out Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     for (scope in scopes) {
         val result = callback(scope)

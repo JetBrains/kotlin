@@ -25,19 +25,19 @@ public val Field.kotlin: KProperty<*>?
 
 
 @deprecated("Use memberProperties instead.", ReplaceWith("memberProperties"))
-public val <T> KClass<T>.properties: Collection<KProperty1<T, *>>
+public val <T : Any> KClass<T>.properties: Collection<KProperty1<T, *>>
     get() = memberProperties
 
 @deprecated("Use extensionProperties instead.", ReplaceWith("extensionProperties"))
-public val <T> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
+public val <T : Any> KClass<T>.extensionProperties: Collection<KProperty2<T, *, *>>
     get() = memberExtensionProperties
 
 @deprecated("Use declaredMemberProperties instead.", ReplaceWith("declaredMemberProperties"))
-public val <T> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
+public val <T : Any> KClass<T>.declaredProperties: Collection<KProperty1<T, *>>
     get() = declaredMemberProperties
 
 @deprecated("Use declaredMemberExtensionProperties instead.", ReplaceWith("declaredMemberExtensionProperties"))
-public val <T> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
+public val <T : Any> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = declaredMemberExtensionProperties
 
 
@@ -48,11 +48,11 @@ public var KProperty<*>.accessible: Boolean
 
 
 @deprecated("Use .java instead.", ReplaceWith("java"))
-public val <T> KClass<T>.__java: Class<T>
+public val <T : Any> KClass<T>.__java: Class<T>
     @jvmName("getJava")
     get() = this.java
 
 @deprecated("Use .kotlin instead.", ReplaceWith("kotlin"))
-public val <T> Class<T>.__kotlin: KClass<T>
+public val <T : Any> Class<T>.__kotlin: KClass<T>
     @jvmName("getKotlin")
     get() = this.kotlin
