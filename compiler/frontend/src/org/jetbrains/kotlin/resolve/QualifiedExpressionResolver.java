@@ -87,9 +87,11 @@ public class QualifiedExpressionResolver {
         }
 
         JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
+        /*
         if (referenceExpression == null) {
             return Collections.emptyList();
         }
+        */
         JetUserType qualifier = userType.getQualifier();
 
         // We do not want to resolve the last segment of a user type to a package
@@ -97,11 +99,13 @@ public class QualifiedExpressionResolver {
 
         DeclarationDescriptor shouldBeVisibleFrom = outerScope.getContainingDeclaration();
         if (qualifier == null) {
+            if (referenceExpression == null) return Collections.emptyList();
             return lookupDescriptorsForSimpleNameReference(referenceExpression, filteredScope, shouldBeVisibleFrom, trace,
                                                            LookupMode.ONLY_CLASSES_AND_PACKAGES,
                                                            false, true);
         }
         Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace, false);
+        if (referenceExpression == null) return Collections.emptyList();
         return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, shouldBeVisibleFrom,
                                          LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
     }

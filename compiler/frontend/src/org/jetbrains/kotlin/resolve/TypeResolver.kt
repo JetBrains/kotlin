@@ -117,24 +117,16 @@ public class TypeResolver(
         var result: PossiblyBareType? = null
         typeElement?.accept(object : JetVisitorVoid() {
             override fun visitUserType(type: JetUserType) {
-                if (type.qualifier != null) { // we must resolve all type references in arguments of qualifier type
-                    for (typeArgument in type.qualifier!!.typeArguments) {
-                        typeArgument.typeReference?.let {
-                            ForceResolveUtil.forceResolveAllContents(resolveType(c, it))
-                        }
-                    }
-                }
-
-                val referenceExpression = type.getReferenceExpression()
-                val referencedName = type.getReferencedName()
-                if (referenceExpression == null || referencedName == null) return
-
                 val classifierDescriptor = resolveClass(c.scope, type, c.trace)
                 if (classifierDescriptor == null) {
                     val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
                     result = type(ErrorUtils.createErrorTypeWithArguments(type.getDebugText(), arguments))
                     return
                 }
+
+                val referenceExpression = type.getReferenceExpression()
+                val referencedName = type.getReferencedName()
+                if (referenceExpression == null || referencedName == null) return
 
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor)
 
@@ -316,6 +308,14 @@ public class TypeResolver(
     }
 
     public fun resolveClass(scope: JetScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
+        if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
+            for (typeArgument in userType.qualifier!!.typeArguments) {
+                typeArgument.typeReference?.let {
+                    ForceResolveUtil.forceResolveAllContents(resolveType(scope, it, trace, true))
+                }
+            }
+        }
+
         val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace, true)
                                         .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {

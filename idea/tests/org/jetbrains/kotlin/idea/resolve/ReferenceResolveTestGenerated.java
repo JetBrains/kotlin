@@ -77,6 +77,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ClassNameBeforeDot.kt")
+    public void testClassNameBeforeDot() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassNameBeforeDot.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassObjectClassLiteralReference.kt")
     public void testClassObjectClassLiteralReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReference.kt");
@@ -356,6 +362,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("TypeArgumentBeforeDot.kt")
     public void testTypeArgumentBeforeDot() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeArgumentBeforeDot2.kt")
+    public void testTypeArgumentBeforeDot2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot2.kt");
         doTest(fileName);
     }
 
