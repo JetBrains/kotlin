@@ -36,7 +36,7 @@ fun createEnhancedValueParameters(
         val (newType, oldParameter) = pair
         ValueParameterDescriptorImpl(
                 newOwner,
-                null,
+                oldParameter,
                 oldParameter.getIndex(),
                 oldParameter.getAnnotations(),
                 oldParameter.getName(),
