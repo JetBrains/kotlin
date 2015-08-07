@@ -1,7 +1,7 @@
 package foo
 
 enum class Foo {
-    BAR
+    BAR;
 
     fun test(): () -> String {
         fun local() = 29

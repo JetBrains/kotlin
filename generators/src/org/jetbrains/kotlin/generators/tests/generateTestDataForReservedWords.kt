@@ -189,7 +189,7 @@ fun box(): String {
         suite("enum",
 """
 enum class Foo {
-    BAR
+    BAR;
     $DEFINITION_MARKER
 
     fun test() {

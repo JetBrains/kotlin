@@ -1,15 +1,15 @@
 package foo
 
 enum class B(open val bar: Int) {
-    a : B(0) {
+    a(0) {
         override val bar = 3
         init {
             y = 0
         }
-    }
-    b : B(4) {
-    }
-    c : B(5)
+    },
+    b(4) {
+    },
+    c(5);
     val x = 1
     var y = 12;
 }
@@ -22,8 +22,8 @@ trait X {
 }
 
 enum class Y(override val foo: Int) : X {
-    m:Y(3)
-    n:Y(6)
+    m(3),
+    n(6)
 }
 
 fun box(): String {

@@ -1,7 +1,7 @@
 package foo
 
 enum class A {
-    one
+    one,
     two
 }
 

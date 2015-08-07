@@ -7,9 +7,9 @@ enum class Simple {
 }
 
 enum class A {
-    a : A() {
-    }
-    b : A()
+    a() {
+    },
+    b(),
     c
 }
 
