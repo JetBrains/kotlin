@@ -181,6 +181,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("LambdaValue.kt")
+        public void testLambdaValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/LambdaValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultiArgsItem.kt")
         public void testMultiArgsItem() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/MultiArgsItem.kt");

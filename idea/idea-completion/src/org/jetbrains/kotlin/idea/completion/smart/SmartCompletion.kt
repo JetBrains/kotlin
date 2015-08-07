@@ -238,12 +238,6 @@ class SmartCompletion(
     }
 
     private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo> {
-        if (forBasicCompletion) {
-            return ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = 0)
-                    .calculate(expression)
-                    .map { it.copy(tail = null) }
-        }
-
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
         if (declaration != null) {
@@ -262,7 +256,12 @@ class SmartCompletion(
         while (true) {
             val infos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = count)
                     .calculate(expression)
-            if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) return infos
+            if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) {
+                return if (forBasicCompletion)
+                    infos.map { it.copy(tail = null) }
+                else
+                    infos
+            }
             count++
         }
         //TODO: we could always give higher priority to results with outer call expected type used
