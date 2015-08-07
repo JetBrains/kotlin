@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 
-public class IncrementalCompilationComponentsImpl(caches: Map<ModuleBuildTarget, IncrementalCache>): IncrementalCompilationComponents {
-    private val idToCache = caches.mapKeys { it.key.getId()!! }
+public class IncrementalCompilationComponentsImpl(
+        caches: Map<ModuleBuildTarget, IncrementalCache>,
+        private val lookupTracker: LookupTracker
+): IncrementalCompilationComponents {
+    private val idToCache = caches.mapKeys { it.key.id!! }
 
-    override fun getIncrementalCache(moduleId: String): IncrementalCache {
-        return idToCache[moduleId]!!
-    }
+    override fun getIncrementalCache(moduleId: String): IncrementalCache = idToCache[moduleId]!!
 
-    override fun getLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
+    override fun getLookupTracker(): LookupTracker = lookupTracker
 }
