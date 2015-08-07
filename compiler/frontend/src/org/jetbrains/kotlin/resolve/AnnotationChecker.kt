@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
+import kotlin.platform.platformStatic
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
@@ -54,7 +55,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), targetList(KotlinTarget.EXPRESSION), trace)
+        checkEntries(expression.getAnnotationEntries(), TargetLists.T_EXPRESSION, trace)
         if (expression is JetFunctionLiteralExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
@@ -81,42 +82,45 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 
             existingTargetsForAnnotation.add(useSiteTarget)
         }
-        additionalCheckers.forEach { it.checkEntries(entries, actualTargets.declarationSite, trace) }
+        additionalCheckers.forEach { it.checkEntries(entries, actualTargets.defaultTargets, trace) }
     }
 
     private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {
         val applicableTargets = applicableTargetSet(entry, trace)
         val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
 
-        if (actualTargets.declarationSite.any {
+        fun check(targets: List<KotlinTarget>) = targets.any {
             it in applicableTargets && (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it)
-        }) return
+        }
 
-        if (useSiteTarget != null && actualTargets.useSite.any {
+        if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted)) return
+
+        if (useSiteTarget != null && actualTargets.onlyWithUseSiteTarget.any {
             it in applicableTargets && KotlinTarget.USE_SITE_MAPPING[useSiteTarget] == it
         }) return
 
         if (useSiteTarget != null) {
             trace.report(Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(
-                    entry, actualTargets.declarationSite.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName))
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target", useSiteTarget.renderName))
         }
         else {
             trace.report(Errors.WRONG_ANNOTATION_TARGET.on(
-                    entry, actualTargets.declarationSite.firstOrNull()?.description ?: "unidentified target"))
+                    entry, actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"))
         }
     }
 
     companion object {
-
-        private val PROPERTY_USE_SITE_TARGETS = listOf(
-                KotlinTarget.FIELD, KotlinTarget.PROPERTY_GETTER, KotlinTarget.PROPERTY_SETTER, KotlinTarget.VALUE_PARAMETER)
-        private val VALUE_PARAMETER_USE_SITE_TARGETS = PROPERTY_USE_SITE_TARGETS + KotlinTarget.PROPERTY
-
         private fun applicableTargetSet(entry: JetAnnotationEntry, trace: BindingTrace): Set<KotlinTarget> {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return KotlinTarget.DEFAULT_TARGET_SET
             // For descriptor with error type, all targets are considered as possible
             if (descriptor.type.isError) return KotlinTarget.ALL_TARGET_SET
             val classDescriptor = TypeUtils.getClassDescriptor(descriptor.type) ?: return KotlinTarget.DEFAULT_TARGET_SET
+            return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
+        }
+
+        platformStatic
+        public fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
+            val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
@@ -131,70 +135,134 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         }
 
         public fun getDeclarationSiteActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): List<KotlinTarget> {
-            return getActualTargetList(annotated, descriptor).declarationSite
+            return getActualTargetList(annotated, descriptor).defaultTargets
         }
 
         private fun getActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): TargetList {
             return when (annotated) {
-                is JetClassOrObject -> descriptor?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: targetList(CLASSIFIER)
-                is JetProperty ->
-                    if (annotated.isLocal) {
-                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, LOCAL_VARIABLE)
-                    }
-                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody) {
-                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, MEMBER_PROPERTY, PROPERTY)
-                    }
-                    else {
-                        extendedTargetList(PROPERTY_USE_SITE_TARGETS, TOP_LEVEL_PROPERTY, PROPERTY)
-                    }
+                is JetClassOrObject -> descriptor?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
+                is JetProperty -> {
+                    if (annotated.isLocal)
+                        TargetLists.T_LOCAL_VARIABLE
+                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody)
+                        TargetLists.T_MEMBER_PROPERTY
+                    else
+                        TargetLists.T_TOP_LEVEL_PROPERTY
+                }
                 is JetParameter -> {
-                    if (annotated.hasValOrVar()) {
-                        extendedTargetList(VALUE_PARAMETER_USE_SITE_TARGETS, PROPERTY_PARAMETER, MEMBER_PROPERTY, PROPERTY)
-                    }
-                    else {
-                        extendedTargetList(VALUE_PARAMETER_USE_SITE_TARGETS, VALUE_PARAMETER)
-                    }
+                    if (annotated.hasValOrVar())
+                        TargetLists.T_VALUE_PARAMETER_WITH_VAL
+                    else
+                        TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
                 }
-                is JetConstructor<*> -> targetList(CONSTRUCTOR)
+                is JetConstructor<*> -> TargetLists.T_CONSTRUCTOR
                 is JetFunction -> {
-                    val extendedTargets = listOf(KotlinTarget.VALUE_PARAMETER)
-                    if (annotated.isLocal) {
-                        extendedTargetList(extendedTargets, LOCAL_FUNCTION, FUNCTION)
-                    }
-                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody) {
-                        extendedTargetList(extendedTargets, MEMBER_FUNCTION, FUNCTION)
-                    }
-                    else {
-                        extendedTargetList(extendedTargets, TOP_LEVEL_FUNCTION, FUNCTION)
-                    }
+                    if (annotated.isLocal)
+                        TargetLists.T_LOCAL_FUNCTION
+                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody)
+                        TargetLists.T_MEMBER_FUNCTION
+                    else
+                        TargetLists.T_TOP_LEVEL_FUNCTION
                 }
-                is JetPropertyAccessor -> if (annotated.isGetter) targetList(PROPERTY_GETTER) else targetList(PROPERTY_SETTER)
-                is JetPackageDirective -> targetList(PACKAGE)
-                is JetTypeReference -> extendedTargetList(listOf(VALUE_PARAMETER), TYPE)
-                is JetFile -> targetList(FILE)
-                is JetTypeParameter -> targetList(TYPE_PARAMETER)
-                is JetTypeProjection -> {
-                    if (annotated.projectionKind == JetProjectionKind.STAR) {
-                        targetList(STAR_PROJECTION)
-                    }
-                    else {
-                        targetList(TYPE_PROJECTION)
-                    }
-                }
-                is JetClassInitializer -> targetList(INITIALIZER)
-                else -> targetList()
+                is JetPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
+                is JetPackageDirective -> TargetLists.T_PACKAGE
+                is JetTypeReference -> TargetLists.T_TYPE_REFERENCE
+                is JetFile -> TargetLists.T_FILE
+                is JetTypeParameter -> TargetLists.T_TYPE_PARAMETER
+                is JetTypeProjection ->
+                    if (annotated.projectionKind == JetProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
+                is JetClassInitializer -> TargetLists.T_INITIALIZER
+                else -> TargetLists.EMPTY
             }
         }
 
-        private class TargetList(val declarationSite: List<KotlinTarget>, val useSite: List<KotlinTarget> = emptyList())
+        private object TargetLists {
+            val T_CLASSIFIER = targetList(CLASSIFIER)
 
-        private fun targetList(vararg target: KotlinTarget): TargetList {
-            return TargetList(listOf(*target), emptyList())
+            val T_LOCAL_VARIABLE = targetList(LOCAL_VARIABLE) {
+                onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
+            }
+
+            val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
+                canBeSubstituted(PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_TOP_LEVEL_PROPERTY = targetList(TOP_LEVEL_PROPERTY, PROPERTY) {
+                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_PROPERTY_GETTER = targetList(PROPERTY_GETTER)
+            val T_PROPERTY_SETTER = targetList(PROPERTY_SETTER)
+
+            val T_VALUE_PARAMETER_WITHOUT_VAL = targetList(VALUE_PARAMETER) {
+                onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+            }
+
+            val T_VALUE_PARAMETER_WITH_VAL = targetList(VALUE_PARAMETER, PROPERTY, MEMBER_PROPERTY) {
+                canBeSubstituted(FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+            }
+
+            val T_FILE = targetList(FILE)
+            val T_PACKAGE = targetList(PACKAGE)
+
+            val T_CONSTRUCTOR = targetList(CONSTRUCTOR)
+
+            val T_LOCAL_FUNCTION = targetList(LOCAL_FUNCTION, FUNCTION) {
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_MEMBER_FUNCTION = targetList(MEMBER_FUNCTION, FUNCTION) {
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_TOP_LEVEL_FUNCTION = targetList(TOP_LEVEL_FUNCTION, FUNCTION) {
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_EXPRESSION = targetList(EXPRESSION)
+
+            val T_TYPE_REFERENCE = targetList(TYPE) {
+                onlyWithUseSiteTarget(VALUE_PARAMETER)
+            }
+
+            val T_TYPE_PARAMETER = targetList(TYPE_PARAMETER)
+
+            val T_STAR_PROJECTION = targetList(STAR_PROJECTION)
+            val T_TYPE_PROJECTION = targetList(TYPE_PROJECTION)
+
+            val T_INITIALIZER = targetList(INITIALIZER)
+
+
+            private fun targetList(vararg target: KotlinTarget, otherTargets: TargetListBuilder.() -> Unit = {}): TargetList {
+                val builder = TargetListBuilder(*target)
+                builder.otherTargets()
+                return builder.build()
+            }
+
+            val EMPTY = targetList()
+
+            private class TargetListBuilder(vararg val defaultTargets: KotlinTarget) {
+                private var canBeSubstituted: List<KotlinTarget> = listOf()
+                private var onlyWithUseSiteTarget: List<KotlinTarget> = listOf()
+
+                fun canBeSubstituted(vararg targets: KotlinTarget) {
+                    canBeSubstituted = targets.toList()
+                }
+
+                fun onlyWithUseSiteTarget(vararg targets: KotlinTarget) {
+                    onlyWithUseSiteTarget = targets.toList()
+                }
+
+                fun build() = TargetList(defaultTargets.toList(), canBeSubstituted, onlyWithUseSiteTarget)
+            }
         }
 
-        private fun extendedTargetList(extended: List<KotlinTarget>, vararg target: KotlinTarget): TargetList {
-            return TargetList(listOf(*target), extended)
-        }
+        private class TargetList(
+                val defaultTargets: List<KotlinTarget>,
+                val canBeSubstituted: List<KotlinTarget> = emptyList(),
+                val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList())
     }
 }
 

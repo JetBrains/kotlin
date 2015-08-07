@@ -88,7 +88,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 )
             }
             else {
-                DescriptorFactory.createDefaultGetter(property)
+                DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY)
             }
             getter.initialize(property.getReturnType())
             getter
@@ -116,7 +116,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 setter
             }
             else {
-                DescriptorFactory.createDefaultSetter(property)
+                DescriptorFactory.createDefaultSetter(property, Annotations.EMPTY)
             }
         }
         else {

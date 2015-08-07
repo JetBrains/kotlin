@@ -107,7 +107,7 @@ public class LazyJavaClassMemberScope(
         )
 
         // default getter is necessary because there is no real field in annotation
-        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor)
+        val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
         propertyDescriptor.initialize(getter, null)
 
         val returnType = computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))

@@ -44,14 +44,21 @@ public class DescriptorFactory {
     }
 
     @NotNull
-    public static PropertySetterDescriptorImpl createDefaultSetter(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createSetter(propertyDescriptor, true);
+    public static PropertySetterDescriptorImpl createDefaultSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations
+    ) {
+        return createSetter(propertyDescriptor, annotations, true);
     }
 
     @NotNull
-    public static PropertySetterDescriptorImpl createSetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
+    public static PropertySetterDescriptorImpl createSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault
+    ) {
         PropertySetterDescriptorImpl setterDescriptor =
-                new PropertySetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
+                new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
                                                  propertyDescriptor.getVisibility(), !isDefault, isDefault,
                                                  CallableMemberDescriptor.Kind.DECLARATION, null, SourceElement.NO_SOURCE);
         setterDescriptor.initializeDefault();
@@ -59,13 +66,19 @@ public class DescriptorFactory {
     }
 
     @NotNull
-    public static PropertyGetterDescriptorImpl createDefaultGetter(@NotNull PropertyDescriptor propertyDescriptor) {
-        return createGetter(propertyDescriptor, true);
+    public static PropertyGetterDescriptorImpl createDefaultGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations
+    ) {
+        return createGetter(propertyDescriptor, annotations, true);
     }
 
     @NotNull
-    public static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
-        return new PropertyGetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
+    public static PropertyGetterDescriptorImpl createGetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault) {
+        return new PropertyGetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
                                                 CallableMemberDescriptor.Kind.DECLARATION, null, SourceElement.NO_SOURCE);
     }

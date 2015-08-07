@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
@@ -50,7 +51,7 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default getter created this way won't have any source information
-            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor)
+            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
         }
 
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
@@ -72,7 +73,7 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information
-            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor)
+            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY)
         }
 
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {

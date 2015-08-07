@@ -20,12 +20,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
+import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
@@ -44,9 +47,11 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
+import org.jetbrains.kotlin.util.AnnotationSplitter;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
@@ -328,11 +333,28 @@ public class DescriptorResolver {
             varargElementType = type;
             variableType = getVarargParameterType(type);
         }
+
+        JetModifierList modifierList = valueParameter.getModifierList();
+
+        Annotations allAnnotations =
+                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace);
+        Annotations valueParameterAnnotations = Annotations.EMPTY;
+
+        if (modifierList != null) {
+            if (valueParameter.hasValOrVar()) {
+                AnnotationSplitter annotationSplitter = new AnnotationSplitter(allAnnotations, KotlinPackage.setOf(CONSTRUCTOR_PARAMETER));
+                valueParameterAnnotations = annotationSplitter.getAnnotationsForTarget(CONSTRUCTOR_PARAMETER);
+            }
+            else {
+                valueParameterAnnotations = allAnnotations;
+            }
+        }
+
         ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 owner,
                 null,
                 index,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, valueParameter.getModifierList(), trace),
+                valueParameterAnnotations,
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
                 valueParameter.hasDefaultValue(),
@@ -645,13 +667,13 @@ public class DescriptorResolver {
     private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
         PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
         if (getter == null && !Visibilities.isPrivate(propertyDescriptor.getVisibility())) {
-            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
+            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY);
             getter.initialize(propertyDescriptor.getType());
         }
 
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         if (setter == null && propertyDescriptor.isVar()) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor);
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY);
         }
         propertyDescriptor.initialize(getter, setter);
     }
@@ -691,9 +713,24 @@ public class DescriptorResolver {
         Modality modality = containingDeclaration instanceof ClassDescriptor
                             ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, visibility, hasBody))
                             : Modality.FINAL;
+
+        JetPropertyAccessor propertyGetter = property.getGetter();
+
+        boolean hasBackingField = modality != Modality.ABSTRACT
+                                  && property.hasDelegateExpressionOrInitializer()
+                                  && (propertyGetter == null || !propertyGetter.hasBody());
+
+        Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace);
+        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(allAnnotations,
+                /*parameter =*/ false, /*hasBackingField =*/ hasBackingField, /*isMutable =*/ isVar);
+
+        Annotations propertyAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+                annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
+                annotationSplitter.getOtherAnnotations()));
+
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 containingDeclaration,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
+                propertyAnnotations,
                 modality,
                 visibility,
                 isVar,
@@ -742,8 +779,10 @@ public class DescriptorResolver {
         propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
                                    receiverDescriptor);
 
-        PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
-        PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
+        PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(
+                scopeWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace);
+        PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
+                scopeWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace);
 
         propertyDescriptor.initialize(getter, setter);
 
@@ -923,13 +962,15 @@ public class DescriptorResolver {
             @NotNull LexicalScope scope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull AnnotationSplitter annotationSplitter,
             BindingTrace trace
     ) {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
-            Annotations annotations =
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace);
+            Annotations annotations = new CompositeAnnotations(KotlinPackage.listOf(
+                    annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
+                    annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace)));
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
@@ -973,7 +1014,8 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
-            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, !property.hasDelegate());
+            Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
+            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, setterAnnotations, !property.hasDelegate());
         }
 
         if (!property.isVar()) {
@@ -990,13 +1032,16 @@ public class DescriptorResolver {
             @NotNull LexicalScope scope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull AnnotationSplitter annotationSplitter,
             BindingTrace trace
     ) {
         PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            Annotations annotations =
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace);
+            Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+                    annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
+                    annotationSplitter.getOtherAnnotations(),
+                    annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
 
             JetType outType = propertyDescriptor.getType();
             JetType returnType = outType;
@@ -1008,7 +1053,7 @@ public class DescriptorResolver {
                 }
             }
 
-            getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, annotations,
+            getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, getterAnnotations,
                                                                 resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                                                                 resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                                                                 getter.hasBody(), false,
@@ -1017,7 +1062,8 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, !property.hasDelegate());
+            Annotations getterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
+            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !property.hasDelegate());
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;
@@ -1041,9 +1087,17 @@ public class DescriptorResolver {
             }
         }
 
+        Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, parameter.getModifierList(), trace);
+        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(allAnnotations,
+                /*parameter =*/ true, /*hasBackingField =*/ true, /*isMutable =*/ isMutable);
+
+        Annotations propertyAnnotations = new CompositeAnnotations(
+                annotationSplitter.getAnnotationsForTargets(PROPERTY, FIELD),
+                annotationSplitter.getOtherAnnotations());
+
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 classDescriptor,
-                valueParameter.getAnnotations(),
+                propertyAnnotations,
                 resolveModalityFromModifiers(parameter, Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter, getDefaultVisibility(parameter, classDescriptor)),
                 isMutable,
@@ -1054,9 +1108,13 @@ public class DescriptorResolver {
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
                                    getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 
-        PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
+        Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
+        Annotations getterAnnotations = new CompositeAnnotations(KotlinPackage.listOf(
+                annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER)));
+
+        PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, getterAnnotations);
         PropertySetterDescriptor setter =
-                propertyDescriptor.isVar() ? DescriptorFactory.createDefaultSetter(propertyDescriptor) : null;
+                propertyDescriptor.isVar() ? DescriptorFactory.createDefaultSetter(propertyDescriptor, setterAnnotations) : null;
 
         propertyDescriptor.initialize(getter, setter);
         getter.initialize(propertyDescriptor.getType());
