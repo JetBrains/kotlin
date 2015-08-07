@@ -262,11 +262,6 @@ public class JetPsiFactory(private val project: Project) {
         return createEnumEntry("Entry()").initializerList!!
     }
 
-    public fun createEnumEntrySuperclassReferenceExpression(): JetEnumEntrySuperclassReferenceExpression {
-        val userType = createEnumEntryInitializerList().initializers[0].typeReference!!.typeElement as JetUserType
-        return userType.referenceExpression as JetEnumEntrySuperclassReferenceExpression
-    }
-
     public fun createWhenEntry(entryText: String): JetWhenEntry {
         val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
         val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<JetWhenEntry>())
@@ -293,10 +288,6 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createPackageDirectiveIfNeeded(fqName: FqName): JetPackageDirective? {
         return if (fqName.isRoot()) null else createPackageDirective(fqName)
-    }
-
-    public fun createImportDirective(path: String): JetImportDirective {
-        return createImportDirective(ImportPath(path))
     }
 
     public fun createImportDirective(importPath: ImportPath): JetImportDirective {
@@ -327,10 +318,6 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createConstructorKeyword(): PsiElement =
             createClass("class A constructor()").getPrimaryConstructor()!!.getConstructorKeyword()!!
-
-    public fun createClassLabel(labelName: String): JetSimpleNameExpression {
-        return (createExpression("this@" + labelName) as JetThisExpression).getTargetLabel()!!
-    }
 
     public fun createLabeledExpression(labelName: String): JetLabeledExpression
         = createExpression("$labelName@ 1") as JetLabeledExpression
@@ -525,15 +512,6 @@ public class JetPsiFactory(private val project: Project) {
             assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
 
             sb.append(bodyPrefix()).append(" {\n").append(body).append("\n}")
-            state = State.DONE
-
-            return this
-        }
-
-        public fun expressionBody(body: String): CallableBuilder {
-            assert(state == State.BODY || state == State.TYPE_CONSTRAINTS)
-
-            sb.append(bodyPrefix()).append(" = ").append(body)
             state = State.DONE
 
             return this
