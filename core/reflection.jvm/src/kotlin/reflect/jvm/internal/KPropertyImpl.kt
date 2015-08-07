@@ -27,7 +27,7 @@ import kotlin.reflect.KProperty
 interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     val javaField: Field?
 
-    val container: KCallableContainerImpl
+    val container: KDeclarationContainerImpl
 
     override val getter: Getter<R>
 

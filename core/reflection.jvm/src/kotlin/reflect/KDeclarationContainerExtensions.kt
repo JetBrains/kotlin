@@ -16,7 +16,7 @@
 
 package kotlin.reflect
 
-import kotlin.reflect.jvm.internal.KCallableContainerImpl
+import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 
 /**
  * Returns all functions declared in this container.
@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.internal.KCallableContainerImpl
  * and the superclasses, as well as static methods declared in the class.
  */
 public val KDeclarationContainer.functions: Collection<KFunction<*>>
-    get() = (this as KCallableContainerImpl)
+    get() = (this as KDeclarationContainerImpl)
             .getMembers(declaredOnly = false, nonExtensions = true, extensions = true)
             .filterIsInstance<KFunction<*>>()
             .toList()

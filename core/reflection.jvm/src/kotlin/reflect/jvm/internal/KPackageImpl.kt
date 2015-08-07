@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import kotlin.jvm.internal.KotlinPackage
 import kotlin.reflect.KPackage
 
-class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KPackage {
+class KPackageImpl(override val jClass: Class<*>) : KDeclarationContainerImpl(), KPackage {
     val descriptor by ReflectProperties.lazySoft {
         val moduleData = jClass.getOrCreateModule()
         val fqName = jClass.classId.getPackageFqName()

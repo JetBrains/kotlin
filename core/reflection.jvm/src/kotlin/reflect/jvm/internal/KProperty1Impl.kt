@@ -23,9 +23,9 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
 open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, R>, KPropertyImpl<R> {
-    constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
-    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     override val getter by ReflectProperties.lazy { Getter(this) }
 
@@ -37,9 +37,9 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty<R>, KProperty1<T, 
 }
 
 open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
-    constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
-    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
     override val setter by ReflectProperties.lazy { Setter(this) }
 
@@ -54,7 +54,7 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
 class KProperty1FromReferenceImpl(
         val reference: PropertyReference1
 ) : KProperty1Impl<Any?, Any?>(
-        reference.owner as KCallableContainerImpl,
+        reference.owner as KDeclarationContainerImpl,
         reference.name,
         reference.signature
 ) {
@@ -67,7 +67,7 @@ class KProperty1FromReferenceImpl(
 class KMutableProperty1FromReferenceImpl(
         val reference: MutablePropertyReference1
 ) : KMutableProperty1Impl<Any?, Any?>(
-        reference.owner as KCallableContainerImpl,
+        reference.owner as KDeclarationContainerImpl,
         reference.name,
         reference.signature
 ) {
