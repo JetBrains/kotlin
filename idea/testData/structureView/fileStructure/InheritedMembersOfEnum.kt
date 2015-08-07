@@ -1,5 +1,5 @@
 enum class Test {
-    FIRST
+    FIRST,
     SECOND
 }
 

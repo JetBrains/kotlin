@@ -1,9 +1,9 @@
 package a
 
 enum class A {
-    A
-    B
-    C
+    A,
+    B,
+    C;
 
     <selection>fun f() {
         A

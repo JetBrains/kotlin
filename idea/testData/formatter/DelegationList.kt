@@ -27,9 +27,8 @@ open class C1
 open class C2
 
 enum class Test : A1 {
-    FIRST_ITEM : Test()
-    SECOND_ITEM :
-    Test()
+    FIRST_ITEM(),
+    SECOND_ITEM()
 }
 
 // SET_TRUE: ALIGN_MULTILINE_EXTENDS_LIST

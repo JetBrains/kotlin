@@ -1,6 +1,6 @@
 package test
 
 enum class ZZZ {
-    A1
+    A1,
     B1
 }

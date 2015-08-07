@@ -3,5 +3,5 @@
 interface A1
 
 enum class EnumTest {
-    ENTRY: EnumTest(), <caret>A1
+    ENTRY(), <caret>A1
 }

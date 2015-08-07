@@ -6,13 +6,13 @@ interface Base {
 }
 
 enum class E(val i: Int = 0): Base {
-    E1: E() {
+    E1() {
         override fun f() {
         }
-    }
-    E2: E(3) {
+    },
+    E2(3) {
         override fun f() {
         }
-    }
+    },
     E3
 }

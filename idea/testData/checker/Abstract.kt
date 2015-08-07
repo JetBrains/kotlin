@@ -94,6 +94,7 @@ interface MyTrait {
 }
 
 enum class MyEnum() {
+    ;
     //properties
 
     <error>val a: Int</error>

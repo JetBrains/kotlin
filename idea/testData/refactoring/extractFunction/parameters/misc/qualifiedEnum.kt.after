@@ -5,7 +5,7 @@ class MyClass {
     }
 
     enum class P {
-        A
+        A;
 
         val a = 1
         fun foo() = 1
