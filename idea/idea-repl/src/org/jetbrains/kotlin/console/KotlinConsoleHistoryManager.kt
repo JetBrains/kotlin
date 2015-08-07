@@ -17,31 +17,45 @@
 package org.jetbrains.kotlin.console
 
 import com.intellij.openapi.command.WriteCommandAction
+import org.jetbrains.kotlin.console.highlight.ReplOutputType
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 
-public class KtConsoleKeyListener(private val ktConsole: KotlinConsoleRunner) : KeyAdapter() {
+public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRunner) : KeyAdapter() {
+    private val history = arrayListOf<String>()
+
     private var historyPos = 0
     private var prevCaretOffset = -1
     private var unfinishedCommand = ""
+
+    var lastCommandType = ReplOutputType.USER_OUTPUT
+
+    val lastCommandLength: Int
+        get() = history.last().length()
+
+    public fun updateHistory(command: String) {
+        if (lastCommandType == ReplOutputType.INCOMPLETE)
+            history[history.lastIndex] = "${history.last()}$command"
+        else
+            history.add(command)
+
+        // reset history positions
+        historyPos = history.size()
+        prevCaretOffset = -1
+        unfinishedCommand = ""
+    }
 
     private enum class HistoryMove {
         UP, DOWN
     }
 
-    public fun resetHistoryPosition() {
-        historyPos = ktConsole.history.size()
-        prevCaretOffset = -1
-        unfinishedCommand = ""
-    }
-
     override fun keyReleased(e: KeyEvent): Unit = when (e.keyCode) {
-        KeyEvent.VK_UP    -> moveHistoryCursor(HistoryMove.UP)
-        KeyEvent.VK_DOWN  -> moveHistoryCursor(HistoryMove.DOWN)
+        KeyEvent.VK_UP   -> moveHistoryCursor(HistoryMove.UP)
+        KeyEvent.VK_DOWN -> moveHistoryCursor(HistoryMove.DOWN)
+        KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = ktConsole.consoleView.consoleEditor.caretModel.offset
     }
 
     private fun moveHistoryCursor(move: HistoryMove) {
-        val history = ktConsole.history
         if (history.isEmpty()) return
 
         val caret = ktConsole.consoleView.consoleEditor.caretModel

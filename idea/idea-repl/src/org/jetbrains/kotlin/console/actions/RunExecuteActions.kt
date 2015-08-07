@@ -27,6 +27,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
 fun errorNotification(project: Project?, message: String) {
@@ -58,5 +59,14 @@ public class RunKotlinConsoleAction : AnAction() {
         }
 
         return ModuleManager.getInstance(project).modules.firstOrNull()
+    }
+}
+
+public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() {
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return errorNotification(null, "<p>Cannot find project</p>")
+        val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile) ?: return errorNotification(project, "<p>Action performed in an invalid console</p>")
+
+        ktConsole.executor.executeCommand()
     }
 }

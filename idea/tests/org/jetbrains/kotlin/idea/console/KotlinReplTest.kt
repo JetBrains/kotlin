@@ -83,9 +83,9 @@ public class KotlinReplTest : PlatformTestCase() {
     }
 
     @Test fun testSimpleCommand() {
-        consoleRunner.submitCommand("1 + 1")
-        val docHistory = checkHistoryUpdate { x: String -> x.endsWith('2') }
+        consoleRunner.pipeline.submitCommand("1 + 1")
+        val docHistory = checkHistoryUpdate { x: String -> x.endsWith("2</output>") }
 
-        assertTrue(docHistory.endsWith('2'), "1 + 1 should be equal 2, but document history is: '$docHistory'")
+        assertTrue(docHistory.endsWith("2</output>"), "1 + 1 should be equal 2, but document history is: '$docHistory'")
     }
 }

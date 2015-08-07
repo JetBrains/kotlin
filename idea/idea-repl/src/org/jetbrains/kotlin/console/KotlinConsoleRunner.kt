@@ -22,58 +22,53 @@ import com.intellij.execution.console.*
 import com.intellij.execution.process.*
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.event.DocumentAdapter
-import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.*
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
-import org.jetbrains.kotlin.console.actions.logError
+import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
+import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.ReplIcons
+import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
+import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.idea.caches.resolve.productionSourceInfo
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.moduleInfo
 import java.awt.Color
+import java.awt.Font
+import java.util.concurrent.ConcurrentHashMap
 import javax.swing.Icon
-import kotlin.properties.Delegates
 
 public class KotlinConsoleRunner(
-        val title: String,
+        private val title: String,
         private val cmdLine: GeneralCommandLine,
+        private val module: Module,
         myProject: Project,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    companion object {
-        private val HISTORY_GUTTER_ICON = AllIcons.Debugger.Console
-        private val EDITOR_GUTTER_ICON = AllIcons.Debugger.CommandLine
-    }
-
-    private val keyEventListener = KtConsoleKeyListener(this)
-    private var historyHighlighter: KotlinReplResultHighlighter by Delegates.notNull()
-    val history: MutableList<String> = arrayListOf()
+    private val editorToIndicator = ConcurrentHashMap<EditorEx, KotlinConsoleIndicatorRenderer>()
+    private val historyManager = KotlinConsoleHistoryManager(this)
+    val executor = KotlinConsoleExecutor(this, historyManager)
 
     override fun createProcess() = cmdLine.createProcess()
 
     override fun createConsoleView(): LanguageConsoleView? {
-        val consoleView = LanguageConsoleBuilder().build(project, JetLanguage.INSTANCE)
+        val consoleView = LanguageConsoleBuilder()
+                .gutterContentProvider(KotlinConsoleGutterContentProvider())
+                .build(project, JetLanguage.INSTANCE)
+
         consoleView.prompt = null
+        configureModuleForConsoleFile(consoleView)
 
-        val historyEditor = consoleView.historyViewer
         val consoleEditor = consoleView.consoleEditor
-        consoleEditor.contentComponent.addKeyListener(keyEventListener)
 
-        historyEditor.document.addDocumentListener(object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent): Unit =
-                    if (historyEditor.document.textLength == 0) addGutterIcon(historyEditor, HISTORY_GUTTER_ICON)
-        })
-
-        historyHighlighter = KotlinReplResultHighlighter(historyEditor)
-        historyEditor.document.addDocumentListener(historyHighlighter)
-
-        consoleEditor.setPlaceholder("<Ctrl+Enter> to execute")
-        consoleEditor.setShowPlaceholderWhenFocused(true)
-        val placeholderAttrs = consoleEditor.foldingModel.placeholderAttributes
-        placeholderAttrs.foregroundColor = Color.GRAY
+        setupPlaceholder(consoleEditor)
+        consoleEditor.contentComponent.addKeyListener(historyManager)
 
         val executeAction = KtExecuteCommandAction(consoleView.virtualFile)
         executeAction.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, consoleView.consoleEditor.component)
@@ -82,25 +77,20 @@ public class KotlinConsoleRunner(
     }
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
-        val processHandler = KotlinReplOutputHandler(process, cmdLine.commandLineString)
-        historyHighlighter.rangeQueue = processHandler.rangeQueue
+        val processHandler = KotlinReplOutputHandler(KotlinReplOutputHighlighter(this, historyManager), process, cmdLine.commandLineString)
         val consoleFile = consoleView.virtualFile
         val keeper = KotlinConsoleKeeper.getInstance(project)
 
         keeper.putVirtualFileToConsole(consoleFile, this)
         processHandler.addProcessListener(object : ProcessAdapter() {
-            override fun processTerminated(event: ProcessEvent) {
-                keeper.removeConsole(consoleFile)
-            }
+            override fun processTerminated(_: ProcessEvent) { keeper.removeConsole(consoleFile) }
         })
 
         return processHandler
     }
 
     override fun createExecuteActionHandler() = object : ProcessBackedConsoleExecuteActionHandler(processHandler, false) {
-        override fun sendText(line: String) {
-            submitCommand(line)
-        }
+        override fun runExecuteAction(_: LanguageConsoleView) = executor.executeCommand()
     }
 
     override fun fillToolBarActions(toolbarActions: DefaultActionGroup,
@@ -118,6 +108,22 @@ public class KotlinConsoleRunner(
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler)
         = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, "KotlinShellExecute", consoleExecuteActionHandler)
 
+    private fun setupPlaceholder(editor: EditorEx) {
+        editor.setPlaceholder("<Ctrl+Enter> to execute")
+        editor.setShowPlaceholderWhenFocused(true)
+
+        val placeholderAttrs = TextAttributes()
+        placeholderAttrs.foregroundColor = ReplColors.PLACEHOLDER_COLOR
+        placeholderAttrs.fontType = Font.ITALIC
+        editor.setPlaceholderAttributes(placeholderAttrs)
+    }
+
+    private fun configureModuleForConsoleFile(consoleView: LanguageConsoleView) {
+        val consoleFile = consoleView.virtualFile
+        val jetFile = PsiManager.getInstance(project).findFile(consoleFile) as JetFile
+        jetFile.moduleInfo = module.productionSourceInfo()
+    }
+
     fun setupGutters() {
         fun configureEditorGutter(editor: EditorEx, color: Color, icon: Icon) {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
@@ -127,37 +133,27 @@ public class KotlinConsoleRunner(
             editorColorScheme.setColor(EditorColors.GUTTER_BACKGROUND, color)
             editor.colorsScheme = editorColorScheme
 
-            addGutterIcon(editor, icon)
+            addGutterIndicator(editor, icon)
         }
 
-        val consoleView = consoleView
-        val lightGray = Color(0xF2, 0xF2, 0xF2)
-        val lightBlue = Color(0x93, 0xDE, 0xFF)
-        configureEditorGutter(consoleView.historyViewer, lightGray, HISTORY_GUTTER_ICON)
-        configureEditorGutter(consoleView.consoleEditor, lightBlue, EDITOR_GUTTER_ICON)
+        configureEditorGutter(consoleView.historyViewer, ReplColors.HISTORY_GUTTER_COLOR, ReplIcons.HISTORY_INDICATOR)
+        configureEditorGutter(consoleView.consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
+
+        consoleView.consoleEditor.settings.isCaretRowShown = true
     }
 
-    private fun addGutterIcon(editor: EditorEx, icon: Icon) {
+    fun addGutterIndicator(editor: EditorEx, icon: Icon) {
+        val indicator = KotlinConsoleIndicatorRenderer(icon)
         val editorMarkup = editor.markupModel
-        val highlighter = editorMarkup.addRangeHighlighter(0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE)
-        highlighter.gutterIconRenderer = object : GutterIconRenderer() {
-            override fun getIcon() = icon
-            override fun hashCode() = System.identityHashCode(this)
-            override fun equals(other: Any?) = this === other
-        }
+        val indicatorHighlighter = editorMarkup.addRangeHighlighter(
+                0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE
+        )
+
+        indicatorHighlighter.gutterIconRenderer = indicator
+        editorToIndicator[editor] = indicator
     }
 
-    public fun submitCommand(command: String) {
-        val res = command.trim()
-        if (res.isEmpty()) return
-
-        history.add(res)
-        keyEventListener.resetHistoryPosition()
-
-        val processInputOS = processHandler.processInput ?: return logError(javaClass, "<p>Broken process stream</p>")
-        val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
-        val bytes = ("$res\n").toByteArray(charset)
-        processInputOS.write(bytes)
-        processInputOS.flush()
+    fun changeEditorIndicatorIcon(editor: EditorEx, newIcon: Icon) {
+        editorToIndicator[editor]?.indicatorIcon = newIcon
     }
 }

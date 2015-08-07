@@ -114,9 +114,9 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            replWriter.println("Welcome to Kotlin version " + KotlinVersion.VERSION +
+            replWriter.printlnInit("Welcome to Kotlin version " + KotlinVersion.VERSION +
                                " (JRE " + System.getProperty("java.runtime.version") + ")");
-            replWriter.println("Type :help for help, :quit for quit");
+            replWriter.printlnInit("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
                 next = one(next);
