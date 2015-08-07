@@ -1,4 +1,4 @@
 enum class <caret>Hi(a: Int, b: Int) {
-    FOO : Hi(1, 2)
-    BAR : Hi(3, 4)
+    FOO(1, 2),
+    BAR(3, 4)
 }

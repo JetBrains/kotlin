@@ -1,4 +1,4 @@
 enum class Hi() {
-    FOO
+    FOO,
     BAR
 }
