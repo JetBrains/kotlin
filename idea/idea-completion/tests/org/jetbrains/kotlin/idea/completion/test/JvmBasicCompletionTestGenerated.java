@@ -67,6 +67,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("AutopopupInFunExtensionReceiver.kt")
+        public void testAutopopupInFunExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/AutopopupInFunExtensionReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BasicAny.kt");

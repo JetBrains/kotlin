@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class KotlinCompletionContributor : CompletionContributor() {
@@ -275,21 +276,29 @@ public class KotlinCompletionContributor : CompletionContributor() {
         if (invocationCount == 0 && prefixMatcher.getPrefix().isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
 
         // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
-        if (invocationCount == 0 && isInExtensionReceiver(position)) return true
+        if (invocationCount == 0) {
+            val callable = isInExtensionReceiverOf(position)
+            if (callable != null) {
+                return when (callable) {
+                    is JetNamedFunction -> prefixMatcher.prefix.let { it.isEmpty() || it[0].isLowerCase() /* function name usually starts with lower case letter */ }
+                    else -> true
+                }
+            }
+        }
 
         return false
     }
 
-    private fun isInExtensionReceiver(position: PsiElement): Boolean {
-        val nameRef = position.getParent() as? JetNameReferenceExpression ?: return false
-        val userType = nameRef.getParent() as? JetUserType ?: return false
-        val typeRef = userType.getParent() as? JetTypeReference ?: return false
-        if (userType != typeRef.getTypeElement()) return false
+    private fun isInExtensionReceiverOf(position: PsiElement): JetCallableDeclaration? {
+        val nameRef = position.getParent() as? JetNameReferenceExpression ?: return null
+        val userType = nameRef.getParent() as? JetUserType ?: return null
+        val typeRef = userType.getParent() as? JetTypeReference ?: return null
+        if (userType != typeRef.getTypeElement()) return null
         val parent = typeRef.getParent()
         return when (parent) {
-            is JetNamedFunction -> typeRef == parent.getReceiverTypeReference()
-            is JetProperty -> typeRef == parent.getReceiverTypeReference()
-            else -> false
+            is JetNamedFunction -> parent.check { typeRef == it.receiverTypeReference }
+            is JetProperty -> parent.check { typeRef == it.receiverTypeReference }
+            else -> null
         }
     }
 
