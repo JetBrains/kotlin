@@ -26,6 +26,8 @@ import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.BuildTargetType;
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
@@ -82,6 +84,8 @@ public class KotlinBuilderModuleScriptGenerator {
                 }
             }
 
+            BuildTargetType<?> targetType = target.getTargetType();
+            assert targetType instanceof JavaModuleBuildTargetType;
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
@@ -89,7 +93,7 @@ public class KotlinBuilderModuleScriptGenerator {
                     findSourceRoots(context, target),
                     findClassPathRoots(target),
                     findAnnotationRoots(target),
-                    target.isTests(),
+                    (JavaModuleBuildTargetType) targetType,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
                     outputDirs
             );

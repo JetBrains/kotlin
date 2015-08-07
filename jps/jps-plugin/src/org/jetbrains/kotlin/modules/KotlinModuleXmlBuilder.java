@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.modules;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -45,12 +46,12 @@ public class KotlinModuleXmlBuilder {
             List<File> javaSourceRoots,
             Collection<File> classpathRoots,
             List<File> annotationRoots,
-            boolean tests,
+            JavaModuleBuildTargetType targetType,
             Set<File> directoriesToFilterOut
     ) {
         assert !done : "Already done";
 
-        if (tests) {
+        if (targetType.isTests()) {
             p.println("<!-- Module script for tests -->");
         }
         else {
@@ -59,6 +60,7 @@ public class KotlinModuleXmlBuilder {
 
         p.println("<", MODULE, " ",
                   NAME, "=\"", escapeXml(moduleName), "\" ",
+                  TYPE, "=\"", escapeXml(targetType.getTypeId()), "\" ",
                   OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">"
         );
         p.pushIndent();

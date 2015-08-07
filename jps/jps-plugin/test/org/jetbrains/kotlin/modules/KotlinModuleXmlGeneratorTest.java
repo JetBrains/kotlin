@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.singletonList(new File("java")),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 Arrays.asList(new File("a1/f1"), new File("a2")),
-                false,
+                JavaModuleBuildTargetType.PRODUCTION,
                 Collections.<File>emptySet()
         ).asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
@@ -46,7 +47,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 Arrays.asList(new File("a1/f1"), new File("a2")),
-                false,
+                JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         ).asText().toString();
         JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
@@ -61,7 +62,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 Arrays.asList(new File("a1/f1"), new File("a2")),
-                false,
+                JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         );
         builder.addModule(
@@ -71,7 +72,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<File>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
                 Arrays.asList(new File("a12/f12"), new File("a22")),
-                true,
+                JavaModuleBuildTargetType.TEST,
                 Collections.singleton(new File("cp12"))
         );
         String actual = builder.asText().toString();

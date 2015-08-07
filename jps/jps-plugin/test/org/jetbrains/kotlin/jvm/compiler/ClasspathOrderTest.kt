@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -45,7 +46,7 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
                 listOf(sourceDir),
                 listOf(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
                 listOf(),
-                false,
+                JavaModuleBuildTargetType.PRODUCTION,
                 setOf()
         ).asText().toString()
 
