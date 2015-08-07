@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
-    <property name="ideaVersion" value="142.3553.1"/>
+    <property name="ideaVersion" value="142.3728.3"/>
 
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
