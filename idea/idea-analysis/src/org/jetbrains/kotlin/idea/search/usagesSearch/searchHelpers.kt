@@ -251,6 +251,8 @@ class PropertyUsagesSearchHelper(
     override fun makeItemList(target: UsagesSearchTarget<JetNamedDeclaration>): List<UsagesSearchRequestItem> {
         val element = target.element
         if (element is JetParameter) {
+            val parameterName = element.name ?: return emptyList()
+
             val realUsagesScope = element.useScope and target.effectiveScope
             val realUsagesTarget = target.withScope(realUsagesScope)
             val realUsagesFilter = makeFilter(target) and !(PsiReference::isNamedArgumentUsage).searchFilter
@@ -271,10 +273,10 @@ class PropertyUsagesSearchHelper(
                 scope = JetSourceFilterScope.kotlinSourcesAndLibraries(scope, element.project)
             }
 
-            val additionalFilter1 = AdditionalFileFilter(element.name!!, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT, true)
+            val additionalFilter1 = AdditionalFileFilter(parameterName, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT, true)
             val additionalFilter2 = AdditionalFileFilter(function.name!!, UsageSearchContext.IN_CODE, true)
             val namedArgsRequest = UsagesSearchRequestItem(target.withScope(scope),
-                                                           listOf(element.name!!),
+                                                           listOf(parameterName),
                                                            (PsiReference::isNamedArgumentUsage).searchFilter and makeFilter(target),
                                                            additionalFileFilters = listOf(additionalFilter1, additionalFilter2))
             return listOf(realUsagesRequest, namedArgsRequest)
