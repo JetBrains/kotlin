@@ -214,7 +214,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     }
 
     fun testEnumEntry() {
-        val tree = createStubTree("enum class Enum { E1 E2: Enum() E3: Enum(1, 2)}")
+        val tree = createStubTree("enum class Enum { E1, E2(), E3(1, 2)}")
         val enumClass = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
         val entries = enumClass.getChildrenByType(JetStubElementTypes.ENUM_ENTRY, JetStubElementTypes.ENUM_ENTRY.getArrayFactory())!!
         assertEquals("STUB: enum entry E1", entries[0].getDebugText())

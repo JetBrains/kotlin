@@ -52,7 +52,7 @@ public class JetEnumEntrySuperclassReferenceExpression:
         if (stub != null) {
             return stub.getReferencedName()
         }
-        val text = getReferencedNameElement().getNode()!!.getText()
+        val text = (getReferencedNameElement() as JetNamedDeclaration).nameAsSafeName.asString()
         return JetPsiUtil.unquoteIdentifierOrFieldReference(text)
     }
 
