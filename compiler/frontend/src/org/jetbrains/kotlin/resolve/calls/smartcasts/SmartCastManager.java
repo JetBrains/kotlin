@@ -118,18 +118,32 @@ public class SmartCastManager {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
     ) {
+        DataFlowValue dataFlowValue = getDataFlowValueExcludingReceiver(bindingContext, containingDeclarationOrModule, receiverToCast);
+
+        if (dataFlowValue != null) {
+            return dataFlowInfo.getPossibleTypes(dataFlowValue);
+        }
+
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    public static DataFlowValue getDataFlowValueExcludingReceiver(
+            @NotNull BindingContext bindingContext,
+            @NotNull DeclarationDescriptor containingDeclarationOrModule,
+            @NotNull ReceiverValue receiverToCast
+    ) {
         if (receiverToCast instanceof ThisReceiver) {
             ThisReceiver receiver = (ThisReceiver) receiverToCast;
             assert receiver.exists();
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver);
-            return dataFlowInfo.getPossibleTypes(dataFlowValue);
+            return DataFlowValueFactory.createDataFlowValue(receiver);
         }
         else if (receiverToCast instanceof ExpressionReceiver) {
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(
-                    receiverToCast, bindingContext, containingDeclarationOrModule);
-            return dataFlowInfo.getPossibleTypes(dataFlowValue);
+            return DataFlowValueFactory.createDataFlowValue(
+                    receiverToCast, bindingContext, containingDeclarationOrModule
+            );
         }
-        return Collections.emptyList();
+        return null;
     }
 
     public boolean isSubTypeBySmartCastIgnoringNullability(
