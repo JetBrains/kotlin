@@ -2,6 +2,7 @@
   <dictionary name="bashor">
     <words>
       <w>ctor</w>
+      <w>lookups</w>
     </words>
   </dictionary>
 </component>

@@ -1,0 +1,5 @@
+from "$TEST_DIR$/src/main.kt:3:16" by "Array" in PACKAGE scope "foo.bar" in file null
+from "$TEST_DIR$/src/main.kt:3:22" by "String" in PACKAGE scope "foo.bar" in file null
+from "$TEST_DIR$/src/main.kt:4:12" by "Array" in PACKAGE scope "foo.bar" in file null
+from "$TEST_DIR$/src/main.kt:4:18" by "Int" in PACKAGE scope "foo.bar" in file null
+from "$TEST_DIR$/src/main.kt:5:12" by "String" in PACKAGE scope "foo.bar" in file null
