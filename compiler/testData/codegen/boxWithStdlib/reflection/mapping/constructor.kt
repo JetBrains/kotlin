@@ -10,7 +10,7 @@ class Secondary {
     constructor(x: Int) {}
 }
 
-fun check(f: KFunction<*>) {
+fun check(f: KFunction<Any>) {
     assert(f.javaMethod == null, "Fail f method")
     assert(f.javaConstructor != null, "Fail f constructor")
     val c = f.javaConstructor!!

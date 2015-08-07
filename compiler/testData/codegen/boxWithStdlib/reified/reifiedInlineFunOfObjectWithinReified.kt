@@ -2,15 +2,15 @@ import kotlin.test.assertEquals
 
 fun foo(block: () -> String) = block()
 
-inline fun <reified T> className(): String = javaClass<T>().getName()
+inline fun <reified T : Any> className(): String = javaClass<T>().getName()
 
-inline fun <reified T> lambdaShouldBeReified(): String = foo { className<T>() }
+inline fun <reified T : Any> lambdaShouldBeReified(): String = foo { className<T>() }
 
 interface A {
     fun f(): String
     fun g(): String
 }
-inline fun<reified T1, reified T2> AFactory(): A = object : A {
+inline fun<reified T1 : Any, reified T2 : Any> AFactory(): A = object : A {
     override fun f(): String = className<T1>()
     override fun g(): String = foo { className<T2>() }
 }

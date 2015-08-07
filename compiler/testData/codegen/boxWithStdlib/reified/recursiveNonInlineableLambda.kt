@@ -2,14 +2,14 @@ import kotlin.test.assertEquals
 
 fun foo(block: () -> String) = block()
 
-inline fun<reified T> bar1(): String = foo() {
+inline fun<reified T : Any> bar1(): String = foo() {
     javaClass<T>().getName()
 }
-inline fun<reified T> bar2(y: String): String = foo() {
+inline fun<reified T : Any> bar2(y: String): String = foo() {
     javaClass<T>().getName() + "#" + y
 }
 
-inline fun<T1, T2, reified R1, reified R2> bar3(y: String) =
+inline fun<T1, T2, reified R1 : Any, reified R2 : Any> bar3(y: String) =
         Pair(bar1<R1>(), bar2<R2>(y))
 
 fun box(): String {

@@ -1,8 +1,8 @@
 import kotlin.test.assertEquals
 
-inline fun <reified T> foo(x: Class<T> = javaClass<T>()): String = x.getName()
+inline fun <reified T : Any> foo(x: Class<T> = javaClass<T>()): String = x.getName()
 
-inline fun <reified R> bar(x: R): String = foo<R>()
+inline fun <reified R : Any> bar(x: R): String = foo<R>()
 
 fun box(): String {
     assertEquals("java.lang.String", foo<String>())

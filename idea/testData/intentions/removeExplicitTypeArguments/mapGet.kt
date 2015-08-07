@@ -5,7 +5,7 @@ interface MyMap {
 }
 
 class A(val map: MyMap) {
-    fun <T> foo(`type`: I<T>) {
+    fun <T : Any> foo(`type`: I<T>) {
         val value = map.get<caret><T>(`type`)
     }
 }
