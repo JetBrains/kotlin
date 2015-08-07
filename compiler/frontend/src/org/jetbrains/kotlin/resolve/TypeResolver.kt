@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -124,7 +123,8 @@ public class TypeResolver(
 
                 val classifierDescriptor = resolveClass(c.scope, type, c.trace)
                 if (classifierDescriptor == null) {
-                    resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
+                    val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
+                    result = type(ErrorUtils.createErrorTypeWithArguments(type.getDebugText(), arguments))
                     return
                 }
 
@@ -162,7 +162,7 @@ public class TypeResolver(
                         val expectedArgumentCount = parameters.size()
                         val actualArgumentCount = arguments.size()
                         if (ErrorUtils.isError(classifierDescriptor)) {
-                            result = type(ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]"))
+                            result = type(ErrorUtils.createErrorTypeWithArguments("[Error type: " + typeConstructor + "]", arguments))
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
@@ -251,6 +251,13 @@ public class TypeResolver(
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
         })
+
+        if (result != null && !result!!.isBare) {
+            for (argument in result!!.actualType.arguments) {
+                ForceResolveUtil.forceResolveAllContents(argument.type)
+            }
+        }
+
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
 
