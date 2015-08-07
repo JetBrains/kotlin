@@ -3,9 +3,9 @@ import kotlin.test.assertEquals
 class A {
     companion object {
         enum class Season {
-            WINTER
-            SPRING
-            SUMMER
+            WINTER,
+            SPRING,
+            SUMMER,
             AUTUMN
         }
     }

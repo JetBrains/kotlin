@@ -8,7 +8,7 @@ enum class E {
     @First
     E1 {
         fun foo() = "something"
-    }
+    },
 
     @Second("OK")
     E2

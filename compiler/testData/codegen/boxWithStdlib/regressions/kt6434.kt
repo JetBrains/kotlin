@@ -1,5 +1,5 @@
 enum class E {
-    VALUE
+    VALUE,
     VALUE2
 }
 

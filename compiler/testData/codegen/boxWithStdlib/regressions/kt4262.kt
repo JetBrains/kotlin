@@ -1,7 +1,7 @@
 fun <E : Enum<E>> Byte.toEnum(clazz : Class<E>) : E =
     (clazz.getMethod("values").invoke(null) as Array<E>)[this.toInt()]
 
-enum class Letters { A B C }
+enum class Letters { A, B, C }
 
 fun box(): String {
     val clazz = javaClass<Letters>()

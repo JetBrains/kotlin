@@ -1,5 +1,5 @@
 enum class E {
-    ENTRY
+    ENTRY;
 
     abstract class Nested
 }

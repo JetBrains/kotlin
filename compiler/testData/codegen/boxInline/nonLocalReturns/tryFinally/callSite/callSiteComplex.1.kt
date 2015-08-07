@@ -2,8 +2,8 @@ import test.*
 import Kind.*
 
 enum class Kind {
-    LOCAL
-    EXTERNAL
+    LOCAL,
+    EXTERNAL,
     GLOBAL
 }
 

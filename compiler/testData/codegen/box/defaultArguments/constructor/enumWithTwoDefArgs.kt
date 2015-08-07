@@ -1,8 +1,8 @@
 enum class Foo(val a: Int = 1, val b: String = "a") {
-  A: Foo()
-  B: Foo(2, "b")
-  C: Foo(b = "b")
-  D: Foo(a = 2)
+  A(),
+  B(2, "b"),
+  C(b = "b"),
+  D(a = 2)
 }
 
 fun box(): String {

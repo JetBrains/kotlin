@@ -1,6 +1,6 @@
 class Outer {
     enum class Nested {
-        O
+        O,
         K
     }
 }

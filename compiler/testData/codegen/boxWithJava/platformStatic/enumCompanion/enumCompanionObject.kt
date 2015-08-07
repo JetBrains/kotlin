@@ -1,6 +1,7 @@
 import kotlin.platform.platformStatic
 
 enum class A {
+    ;
     companion object {
         val foo: String = "OK"
 
