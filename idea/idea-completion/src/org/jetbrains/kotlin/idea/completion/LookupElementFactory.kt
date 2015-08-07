@@ -125,7 +125,7 @@ public class LookupElementFactory(
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
         var element = LookupElementBuilder.create(lookupObject, psiClass.getName()!!)
-                .withInsertHandler(KotlinClassInsertHandler)
+                .withInsertHandler(KotlinClassifierInsertHandler)
 
         val typeParams = psiClass.getTypeParameters()
         if (includeClassTypeArguments && typeParams.isNotEmpty()) {
@@ -391,7 +391,7 @@ public class LookupElementFactory(
 
                 is PropertyDescriptor -> KotlinPropertyInsertHandler
 
-                is ClassDescriptor -> KotlinClassInsertHandler
+                is ClassifierDescriptor -> KotlinClassifierInsertHandler
 
                 else -> BaseDeclarationInsertHandler()
             }
