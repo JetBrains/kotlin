@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
+import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.HashSet
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
@@ -186,25 +189,24 @@ class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWei
     }
 }
 
-class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion) : LookupElementWeigher("kotlin.smartInBasic") {
+class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion) : LookupElementWeigher("kotlin.smartInBasic", true, false) {
     private val descriptorsToSkip = smartCompletion.descriptorsToSkip
     private val expectedInfos = smartCompletion.expectedInfos
 
-    private fun fullMatchWeight(nameSimilarity: Int): Long {
-        return -((3L shl 32) + nameSimilarity)
-    }
+    private fun fullMatchWeight(nameSimilarity: Int) = (3L shl 32) + nameSimilarity * 3 // true and false should be in between zero-nameSimilarity and 1-nameSimilarity
 
-    private fun ifNotNullMatchWeight(nameSimilarity: Int): Long {
-        return -((2L shl 32) + nameSimilarity)
-    }
+    private val MATCHED_TRUE_WEIGHT = (3L shl 32) + 2
+    private val MATCHED_FALSE_WEIGHT = (3L shl 32) + 1
 
-    private fun smartCompletionItemWeight(nameSimilarity: Int): Long {
-        return -((1L shl 32) + nameSimilarity)
-    }
+    private fun ifNotNullMatchWeight(nameSimilarity: Int) = (2L shl 32) + nameSimilarity
+
+    private fun smartCompletionItemWeight(nameSimilarity: Int) = (1L shl 32) + nameSimilarity
+
+    private val MATCHED_NULL_WEIGHT = 1L
 
     private val NO_MATCH_WEIGHT = 0L
 
-    private val DESCRIPTOR_TO_SKIP_WEIGHT = 1L // if descriptor is skipped from smart completion then it's probably irrelevant
+    private val DESCRIPTOR_TO_SKIP_WEIGHT = -1L // if descriptor is skipped from smart completion then it's probably irrelevant
 
     override fun weigh(element: LookupElement): Long {
         val smartCompletionPriority = element.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY)
@@ -212,12 +214,33 @@ class SmartCompletionInBasicWeigher(private val smartCompletion: SmartCompletion
             return smartCompletionItemWeight(element.getUserData(NAME_SIMILARITY_KEY) ?: 0)
         }
 
-        // TODO: keywords with type
         val o = element.`object`
 
         if ((o as? DeclarationLookupObject)?.descriptor in descriptorsToSkip) return DESCRIPTOR_TO_SKIP_WEIGHT
 
         if (expectedInfos.isEmpty()) return NO_MATCH_WEIGHT
+
+        if (o is KeywordLookupObject) {
+            when (element.lookupString) {
+                "true", "false" -> {
+                    if (expectedInfos.any { it.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false }) {
+                        return if (element.lookupString == "true") MATCHED_TRUE_WEIGHT else MATCHED_FALSE_WEIGHT
+                    }
+                    else {
+                        return NO_MATCH_WEIGHT
+                    }
+                }
+
+                "null" -> {
+                    if (expectedInfos.any { it.fuzzyType?.type?.nullability()?.let { it != TypeNullability.NOT_NULL } ?: false }) {
+                        return MATCHED_NULL_WEIGHT
+                    }
+                    else {
+                        return NO_MATCH_WEIGHT
+                    }
+                }
+            }
+        }
 
         val smartCastCalculator = smartCompletion.smartCastCalculator
 

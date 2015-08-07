@@ -184,7 +184,7 @@ class SmartCompletion(
 
                 LambdaItems.addToCollection(items, expectedInfos)
 
-                KeywordValues.addToCollection(items, expectedInfos, expression) //TODO: in ordinary completion?
+                KeywordValues.addToCollection(items, expectedInfos, expression)
             }
 
             MultipleArgumentsItemProvider(bindingContext, smartCastCalculator).addToCollection(items, expectedInfos, expression)
