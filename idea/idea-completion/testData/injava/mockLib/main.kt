@@ -26,8 +26,8 @@ public trait LibTrait {
 }
 
 public enum class LibEnum {
-    RED
-    GREEN
+    RED,
+    GREEN,
     BLUE
 }
 
