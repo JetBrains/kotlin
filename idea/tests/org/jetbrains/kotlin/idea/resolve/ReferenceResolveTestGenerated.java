@@ -353,6 +353,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TypeArgumentBeforeDot.kt")
+    public void testTypeArgumentBeforeDot() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeArgumentUnresolvedClass.kt")
     public void testTypeArgumentUnresolvedClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentUnresolvedClass.kt");

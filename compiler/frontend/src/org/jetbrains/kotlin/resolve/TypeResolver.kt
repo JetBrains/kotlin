@@ -117,6 +117,14 @@ public class TypeResolver(
         var result: PossiblyBareType? = null
         typeElement?.accept(object : JetVisitorVoid() {
             override fun visitUserType(type: JetUserType) {
+                if (type.qualifier != null) { // we must resolve all type references in arguments of qualifier type
+                    for (typeArgument in type.qualifier!!.typeArguments) {
+                        typeArgument.typeReference?.let {
+                            ForceResolveUtil.forceResolveAllContents(resolveType(c, it))
+                        }
+                    }
+                }
+
                 val referenceExpression = type.getReferenceExpression()
                 val referencedName = type.getReferencedName()
                 if (referenceExpression == null || referencedName == null) return
