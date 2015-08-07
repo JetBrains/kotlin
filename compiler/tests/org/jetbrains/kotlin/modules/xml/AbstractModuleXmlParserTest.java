@@ -62,6 +62,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
 
     private static String moduleToString(@NotNull Module module) {
         return module.getModuleName() +
+               "\n\ttype=" + module.getModuleType() +
                "\n\toutputDir=" + module.getOutputDirectory() +
                "\n\tsources=" + module.getSourceFiles() +
                "\n\tclasspath=" + module.getClasspathRoots() +

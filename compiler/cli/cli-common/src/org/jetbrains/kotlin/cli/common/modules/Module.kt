@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cli.common.modules
 public interface Module {
     public fun getModuleName(): String
 
+    public fun getModuleType(): String
+
     public fun getOutputDirectory(): String
 
     public fun getSourceFiles(): List<String>

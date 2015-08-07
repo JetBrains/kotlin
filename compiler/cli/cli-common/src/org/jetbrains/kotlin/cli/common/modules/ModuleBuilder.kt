@@ -18,7 +18,11 @@ package org.jetbrains.kotlin.cli.common.modules
 
 import java.util.ArrayList
 
-public class ModuleBuilder(private val name: String, private val outputDir: String) : Module {
+public class ModuleBuilder(
+        private val name: String,
+        private val outputDir: String,
+        private val type: String
+) : Module {
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<String>()
@@ -46,5 +50,6 @@ public class ModuleBuilder(private val name: String, private val outputDir: Stri
     override fun getClasspathRoots(): List<String> = classpathRoots
     override fun getAnnotationsRoots(): List<String> = annotationsRoots
     override fun getModuleName(): String = name
+    override fun getModuleType(): String = type
 }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.common.modules;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
@@ -40,6 +41,7 @@ public class ModuleXmlParser {
     public static final String MODULES = "modules";
     public static final String MODULE = "module";
     public static final String NAME = "name";
+    public static final String TYPE = "type";
     public static final String OUTPUT_DIR = "outputDir";
     public static final String SOURCES = "sources";
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
@@ -126,8 +128,20 @@ public class ModuleXmlParser {
 
             setCurrentState(new InsideModule(
                     getAttribute(attributes, NAME, qName),
-                    getAttribute(attributes, OUTPUT_DIR, qName)
+                    getAttribute(attributes, OUTPUT_DIR, qName),
+                    getType(attributes, qName)
             ));
+        }
+
+        @NotNull
+        private String getType(@NotNull Attributes attributes, @NotNull String tag) {
+            String value = attributes.getValue(TYPE);
+
+            assert value != null &&
+                   (JavaModuleBuildTargetType.PRODUCTION.getTypeId().equals(value) ||
+                    JavaModuleBuildTargetType.TEST.getTypeId().equals(value)): "Unknown value of module type: " + value;
+
+            return value;
         }
 
         @Override
@@ -141,8 +155,8 @@ public class ModuleXmlParser {
     private class InsideModule extends DefaultHandler {
 
         private final ModuleBuilder moduleBuilder;
-        private InsideModule(String name, String outputDir) {
-            this.moduleBuilder = new ModuleBuilder(name, outputDir);
+        private InsideModule(String name, String outputDir, @NotNull String type) {
+            this.moduleBuilder = new ModuleBuilder(name, outputDir, type);
             modules.add(moduleBuilder);
         }
 
