@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,13 +98,16 @@ public final class AnalyzerWithCompilerReport {
         BindingContext bindingContext = analysisResult.getBindingContext();
         Collection<ClassDescriptor> classes = bindingContext.getKeys(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY);
         if (!classes.isEmpty()) {
-            StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
+            StringBuilder message = new StringBuilder("Supertypes of the following classes cannot be resolved. " +
+                                                      "Please make sure you have the required dependencies in the classpath:\n");
             for (ClassDescriptor descriptor : classes) {
                 String fqName = DescriptorUtils.getFqName(descriptor).asString();
                 List<String> unresolved = bindingContext.get(TraceBasedErrorReporter.INCOMPLETE_HIERARCHY, descriptor);
                 assert unresolved != null && !unresolved.isEmpty() :
                         "Incomplete hierarchy should be reported with names of unresolved superclasses: " + fqName;
-                message.append("    ").append(fqName).append(", unresolved: ").append(unresolved).append("\n");
+                message.append("    class ").append(fqName)
+                        .append(", unresolved supertypes: ").append(UtilsPackage.join(unresolved, ", "))
+                        .append("\n");
             }
             messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
