@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -32,7 +34,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.LookupLocation
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -64,9 +65,15 @@ protected constructor(
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassDescriptor? = classDescriptors(name).firstOrNull()
+    override fun getClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
+        recordLookup(name, location)
+        return classDescriptors(name).firstOrNull()
+    }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = functionDescriptors(name)
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        recordLookup(name, location)
+        return functionDescriptors(name)
+    }
 
     private fun doGetFunctions(name: Name): Collection<FunctionDescriptor> {
         val result = Sets.newLinkedHashSet<FunctionDescriptor>()
@@ -91,7 +98,10 @@ protected constructor(
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = propertyDescriptors(name)
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        recordLookup(name, location)
+        return propertyDescriptors(name)
+    }
 
     public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
         val result = LinkedHashSet<VariableDescriptor>()
@@ -176,5 +186,9 @@ protected constructor(
 
         p.popIndent()
         p.println("}")
+    }
+
+    private fun recordLookup(name: Name, from: LookupLocation) {
+        c.lookupTracker.record(from, this, name)
     }
 }
