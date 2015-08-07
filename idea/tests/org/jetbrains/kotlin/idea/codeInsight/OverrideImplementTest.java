@@ -214,4 +214,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     public void testAmbiguousSuper() {
         doMultiOverrideFileTest();
     }
+
+    public void testImplementFunctionType() {
+        doMultiImplementFileTest();
+    }
 }

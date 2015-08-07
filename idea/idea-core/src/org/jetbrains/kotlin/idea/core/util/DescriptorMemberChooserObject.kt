@@ -40,7 +40,7 @@ import javax.swing.Icon
 
 public open class DescriptorMemberChooserObject(
         psiElement: PsiElement,
-        public val descriptor: DeclarationDescriptor
+        public open val descriptor: DeclarationDescriptor
 ) : PsiElementMemberChooserObject(psiElement, DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(psiElement, descriptor)), ClassMemberWithElement {
 
     override fun getParentNodeDelegate(): MemberChooserObject {
@@ -74,29 +74,29 @@ public open class DescriptorMemberChooserObject(
             nameShortness = NameShortness.SHORT
         }
 
-        private fun getText(descriptor: DeclarationDescriptor): String {
+        public fun getText(descriptor: DeclarationDescriptor): String {
             return if (descriptor is ClassDescriptor)
                 descriptor.fqNameSafe.render()
             else
                 MEMBER_RENDERER.render(descriptor)
         }
 
-        private fun getIcon(element: PsiElement, descriptor: DeclarationDescriptor): Icon {
-            if (element.isValid) {
-                val isClass = element is PsiClass || element is JetClass
+        public fun getIcon(declaration: PsiElement?, descriptor: DeclarationDescriptor): Icon {
+            if (declaration != null && declaration.isValid) {
+                val isClass = declaration is PsiClass || declaration is JetClass
                 val flags = if (isClass) 0 else Iconable.ICON_FLAG_VISIBILITY
-                if (element is JetDeclaration) {
+                if (declaration is JetDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
-                    return JetDescriptorIconProvider.getIcon(descriptor, element, flags)
+                    return JetDescriptorIconProvider.getIcon(descriptor, declaration, flags)
                 }
                 else {
                     // it is better to show java icons for java code
-                    return element.getIcon(flags)
+                    return declaration.getIcon(flags)
                 }
             }
             else {
-                return JetDescriptorIconProvider.getIcon(descriptor, element, 0)
+                return JetDescriptorIconProvider.getIcon(descriptor, declaration, 0)
             }
         }
     }
