@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -29,6 +30,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private val JAVA_DEPRECATED = FqName(javaClass<Deprecated>().getName())
@@ -63,9 +67,10 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     }
 
     private fun DeclarationDescriptor.getDeprecatedAnnotation(): Pair<AnnotationDescriptor, DeclarationDescriptor>? {
-        val ownAnnotation = getDeclaredDeprecatedAnnotation()
+        val ownAnnotation = getDeclaredDeprecatedAnnotation(AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
         if (ownAnnotation != null)
             return ownAnnotation to this
+
         when (this) {
             is ConstructorDescriptor -> {
                 val classDescriptor = getContainingDeclaration()
@@ -74,17 +79,39 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
                     return classAnnotation to classDescriptor
             }
             is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = getContainingDeclaration()
-                val propertyAnnotation = propertyDescriptor.getDeclaredDeprecatedAnnotation()
-                if (propertyAnnotation != null)
-                    return propertyAnnotation to propertyDescriptor
+                val propertyDescriptor = correspondingProperty
+
+                val target = if (this is PropertyGetterDescriptor) PROPERTY_GETTER else PROPERTY_SETTER
+                val accessorAnnotation = propertyDescriptor.getDeclaredDeprecatedAnnotation(target, false)
+                if (accessorAnnotation != null)
+                    return accessorAnnotation to this
+
+                val classDescriptor = containingDeclaration as? ClassDescriptor
+                if (classDescriptor != null && classDescriptor.isCompanionObject) {
+                    val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
+                    if (classAnnotation != null)
+                        return classAnnotation to classDescriptor
+                }
             }
         }
         return null
     }
 
-    private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(): AnnotationDescriptor? {
-        return getAnnotations().findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: getAnnotations().findAnnotation(JAVA_DEPRECATED)
+    private fun DeclarationDescriptor.getDeclaredDeprecatedAnnotation(
+            target: AnnotationUseSiteTarget? = null,
+            findAnnotationsWithoutTarget: Boolean = true
+    ): AnnotationDescriptor? {
+        if (findAnnotationsWithoutTarget) {
+            val annotations = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
+            if (annotations != null) return annotations
+        }
+
+        if (target != null) {
+            return Annotations.Companion.findUseSiteTargetedAnnotation(annotations, target, KotlinBuiltIns.FQ_NAMES.deprecated)
+                   ?: Annotations.Companion.findUseSiteTargetedAnnotation(annotations, target, JAVA_DEPRECATED)
+        }
+
+        return null
     }
 
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {

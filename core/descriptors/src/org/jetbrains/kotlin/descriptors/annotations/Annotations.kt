@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -35,6 +36,13 @@ public interface Annotations : Iterable<AnnotationDescriptor> {
                 list.add(targeted.annotation)
             }
             list
+        }
+    }
+
+    public fun findUseSiteTargetedAnnotation(target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
+        return getUseSiteTargetedAnnotations(target).firstOrNull {
+            val descriptor = it.type.constructor.declarationDescriptor
+            descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
         }
     }
 

@@ -1026,7 +1026,19 @@ public class KotlinBuiltIns {
     }
 
     private static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
-        return descriptor.getOriginal().getAnnotations().findAnnotation(annotationClassFqName) != null;
+        DeclarationDescriptor original = descriptor.getOriginal();
+        Annotations annotations = original.getAnnotations();
+
+        if (annotations.findAnnotation(annotationClassFqName) != null) return true;
+
+        AnnotationUseSiteTarget associatedUseSiteTarget = AnnotationUseSiteTarget.Companion.getAssociatedUseSiteTarget(descriptor);
+        if (associatedUseSiteTarget != null) {
+            if (annotations.findUseSiteTargetedAnnotation(associatedUseSiteTarget, annotationClassFqName) != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

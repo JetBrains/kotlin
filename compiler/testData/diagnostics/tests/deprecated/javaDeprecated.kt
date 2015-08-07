@@ -11,6 +11,6 @@ public class A {
 
 // FILE: B.kt
 
-class B(private @deprecated val foo: String) : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>A<!>() {
+class B(private @property:deprecated val foo: String) : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>A<!>() {
     override fun getFoo(text: String): String = super.<!DEPRECATED_SYMBOL_WITH_MESSAGE!>getFoo<!>(text + <!DEPRECATED_SYMBOL!>foo<!>)
 }
