@@ -807,15 +807,25 @@ public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
  * @see kotlin.isWhitespace
  * @since M13
  */
-public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredicate: (Char) -> Boolean = { it.isWhitespace() }): String =
-        toString().lineSequence().map { line ->
-            val content = line.trimStart(whitespacePredicate)
+public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredicate: (Char) -> Boolean = { it.isWhitespace() }): String {
+    val lines = toString().lineSequence()
 
-            when {
-                content.startsWith(marginPrefix) -> content.removePrefix(marginPrefix)
-                else -> line
-            }
-        }.joinTo(StringBuilder(length()), "\n").toString()
+    val lastLineIndex = lines.count() - 1
+
+    return lines
+            .withIndex()
+            .dropWhile { it.index == 0 && it.value.isBlank() }
+            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
+            .map { it.value }
+            .map { line ->
+                val content = line.trimStart(whitespacePredicate)
+
+                when {
+                    content.startsWith(marginPrefix) -> content.removePrefix(marginPrefix)
+                    else -> line
+                }
+            }.joinTo(StringBuilder(length()), "\n").toString()
+}
 
 /**
  * Detects a common minimal indent of all the input lines, removes it from every line and also removes first and last

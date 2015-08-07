@@ -576,15 +576,27 @@ class StringTest {
 
         assertEquals("", "".trimMargin())
 
-        assertEquals("\n                            ", """
+        assertEquals("", """
                             """.trimMargin())
 
-        assertEquals("\n", """
+        assertEquals("", """
                             |""".trimMargin())
 
-        assertEquals("\n\n                            ", """
+        assertEquals("", """
                             |
                             """.trimMargin())
+
+        assertEquals("    a", """
+            |    a
+        """.trimMargin())
+
+        assertEquals("    a", """
+            |    a""".trimMargin())
+
+        assertEquals("    a", """ |    a
+        """.trimMargin())
+
+        assertEquals("    a", """ |    a""".trimMargin())
 
         assertEquals("\u0000|ABC", "${"\u0000"}|ABC".trimMargin())
         assertEquals("ABC", "${"\u0000"}|ABC".trimMargin { it < ' ' })
