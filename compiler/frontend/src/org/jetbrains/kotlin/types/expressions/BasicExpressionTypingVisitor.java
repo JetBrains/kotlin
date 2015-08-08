@@ -591,6 +591,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TypeConstructor typeConstructor = type.getConstructor();
         ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
 
+        // no need to report error if unresolved
+        if (typeDeclarationDescriptor == null || ErrorUtils.isError(typeDeclarationDescriptor)) return true;
+
         if (typeDeclarationDescriptor instanceof ClassDescriptor) {
             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
             if (parameters.size() != type.getArguments().size()) return false;
