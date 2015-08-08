@@ -82,12 +82,12 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                                        )));
             }
         });
-        this.upperBounds = storageManager.createLazyValue(new Function0<Set<JetType>>() {
+        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<JetType>>() {
             @Override
             public Set<JetType> invoke() {
                 return resolveUpperBounds();
             }
-        });
+        }, Collections.singleton(ErrorUtils.createErrorType("Recursion while calculating upper bounds")));
         this.upperBoundsAsType = storageManager.createLazyValue(new Function0<JetType>() {
             @Override
             public JetType invoke() {
