@@ -99,7 +99,9 @@ class KotlinGradleIT: BaseGradleIT() {
     }
 
     Test fun testKaptSimple() {
-        Project("kaptSimple", "1.12").build("build") {
+        val project = Project("kaptSimple", "1.12")
+
+        project.build("build") {
             assertSuccessful()
             assertContains("kapt: Class file stubs are not used")
             assertContains(":compileKotlin")
@@ -109,10 +111,16 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
         }
+
+        project.build("build") {
+            assertSuccessful()
+        }
     }
 
     Test fun testKaptStubs() {
-        Project("kaptStubs", "1.12").build("build") {
+        val project = Project("kaptStubs", "1.12")
+
+        project.build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
             assertContains(":compileKotlin")
@@ -121,6 +129,10 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
             assertFileExists("build/classes/main/example/TestClass.class")
             assertFileExists("build/classes/main/example/TestClassGenerated.class")
+        }
+
+        project.build("build") {
+            assertSuccessful()
         }
     }
 

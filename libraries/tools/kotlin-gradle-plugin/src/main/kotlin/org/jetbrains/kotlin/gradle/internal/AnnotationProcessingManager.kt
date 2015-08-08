@@ -89,15 +89,17 @@ public class AnnotationProcessingManager(
         val javaAptSourceDir = File(aptWorkingDir, "java_src")
         val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
 
-        javaHackPackageDir.mkdirs()
+        if (!javaHackPackageDir.exists()) javaHackPackageDir.mkdirs()
 
         val javaHackClFile = File(javaHackPackageDir, "Cl.java")
-        javaHackClFile.writeText(
-                "package __gen.annotation;" +
-                "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
+        if (!javaHackClFile.exists()) {
+            javaHackClFile.writeText("package __gen.annotation; class Cl { @__gen.KotlinAptAnnotation boolean v; }")
+            project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
+        }
 
-        project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
-        javaTask.source(javaAptSourceDir)
+        if (!javaTask.source.contains(javaHackClFile)) {
+            javaTask.source(javaAptSourceDir)
+        }
     }
 
     private fun appendAnnotationsFileLocationArgument() {

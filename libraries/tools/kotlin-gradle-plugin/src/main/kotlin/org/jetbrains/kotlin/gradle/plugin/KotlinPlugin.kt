@@ -613,6 +613,7 @@ private fun Project.initKapt(
 
     javaTask.doFirst {
         kaptManager.setupKapt()
+        kaptManager.generateJavaHackFile()
     }
 
     javaTask.doLast {
