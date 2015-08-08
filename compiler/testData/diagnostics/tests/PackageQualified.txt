@@ -59,9 +59,9 @@ package foobar {
 
     package foobar.a {
         internal val a: java.util.List<kotlin.Int>? = null
-        internal val a2: [ERROR : util.List<Int>]?
-        internal val a3: [ERROR : ArrayList<Int>]?
+        internal val a2: [ERROR : util.List<Int>]<kotlin.Int>?
+        internal val a3: [ERROR : ArrayList<Int>]<kotlin.Int>?
         internal val b: kotlin.List<kotlin.Int>? = null
-        internal val b1: [ERROR : util.List<Int>]?
+        internal val b1: [ERROR : util.List<Int>]<kotlin.Int>?
     }
 }
