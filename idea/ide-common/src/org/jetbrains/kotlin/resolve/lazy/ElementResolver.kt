@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -33,11 +32,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public abstract class ElementResolver protected constructor(
         public val resolveSession: ResolveSession
@@ -183,10 +180,8 @@ public abstract class ElementResolver protected constructor(
             val header = jetElement.getParentOfType<JetPackageDirective>(true)!!
 
             if (trace.getBindingContext()[BindingContext.RESOLUTION_SCOPE, jetElement] == null) {
-                val scope = getExpressionMemberScope(resolveSession, jetElement)
-                if (scope != null) {
-                    trace.record(BindingContext.RESOLUTION_SCOPE, jetElement, scope)
-                }
+                val scope = resolveSession.getModuleDescriptor().getPackage(header.getFqName(jetElement).parent()).memberScope
+                trace.record(BindingContext.RESOLUTION_SCOPE, jetElement, scope)
             }
 
             if (Name.isValidIdentifier(jetElement.getReferencedName())) {
@@ -400,68 +395,6 @@ public abstract class ElementResolver protected constructor(
     private fun createDelegatingTrace(resolveElement: JetElement): BindingTrace {
         return resolveSession.getStorageManager().createSafeTrace(
                 DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement))
-    }
-
-    private fun getExpressionResolutionScope(resolveSession: ResolveSession, expression: JetExpression): JetScope {
-        val parentDeclaration = expression.getParentOfType<JetDeclaration>(true)
-        if (parentDeclaration == null) {
-            return resolveSession.getFileScopeProvider().getFileScope(expression.getContainingJetFile())
-        }
-        return resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(parentDeclaration)
-    }
-
-    private fun getExpressionMemberScope(resolveSession: ResolveSession, expression: JetExpression): JetScope? {
-        val trace = createDelegatingTrace(expression)
-
-        if (BindingContextUtils.isExpressionWithValidReference(expression, resolveSession.getBindingContext())) {
-            val qualifiedExpressionResolver = resolveSession.getQualifiedExpressionResolver()
-
-            // In some type declaration
-            val parent = expression.getParent()
-            if (parent is JetUserType) {
-                val qualifier = parent.getQualifier()
-                if (qualifier != null) {
-                    val resolutionScope = getExpressionResolutionScope(resolveSession, expression)
-                    val descriptors = qualifiedExpressionResolver.lookupDescriptorsForUserType(qualifier, resolutionScope, trace, false)
-                    return descriptors.firstIsInstanceOrNull<LazyPackageDescriptor>()?.getMemberScope()
-                }
-            }
-
-            // Inside import
-            if (expression.getParentOfType<JetImportDirective>(false) != null) {
-                val rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)
-
-                if (parent is JetDotQualifiedExpression) {
-                    val element = parent.getReceiverExpression()
-                    val fqName = expression.getContainingJetFile().getPackageFqName()
-
-                    val filePackage = resolveSession.getModuleDescriptor().getPackage(fqName)
-
-                    val descriptors = if (element is JetDotQualifiedExpression) {
-                        qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                                element, rootPackage.memberScope, filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false)
-                    }
-                    else {
-                        qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                                element as JetSimpleNameExpression, rootPackage.memberScope, filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false)
-                    }
-
-                    return descriptors.firstIsInstanceOrNull<PackageViewDescriptor>()?.memberScope
-                }
-                else {
-                    return rootPackage.memberScope
-                }
-            }
-
-            // Inside package declaration
-            val packageDirective = expression.getParentOfType<JetPackageDirective>(false)
-            if (packageDirective != null) {
-                val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(packageDirective.getFqName(expression as JetSimpleNameExpression).parent())
-                return packageDescriptor.memberScope
-            }
-        }
-
-        return null
     }
 
     protected abstract fun getTargetPlatform(file: JetFile): TargetPlatform
