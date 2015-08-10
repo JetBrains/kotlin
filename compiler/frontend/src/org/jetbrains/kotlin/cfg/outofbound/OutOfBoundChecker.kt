@@ -53,7 +53,7 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
         val arraySizes = valuesData.intFakeVarsToValues[arraySizeVariable]
         val accessPositions = valuesData.intFakeVarsToValues[accessPositionVariable]
         if (arraySizes != null && accessPositions != null &&
-            arraySizes.isDefined && accessPositions.isDefined) {
+            arraySizes is IntegerValues.Defined && accessPositions is IntegerValues.Defined) {
             val sizes = arraySizes.getValues().sort()
             val positions = accessPositions.getValues().sort()
             if (sizes.first() <= positions.last()) {
