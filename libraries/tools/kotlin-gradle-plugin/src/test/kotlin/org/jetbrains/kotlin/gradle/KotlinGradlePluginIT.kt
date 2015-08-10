@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
+import org.junit.Ignore
 import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -36,11 +37,15 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    Test fun testKotlinOnlyDaemonMemory() {
-        val project = Project("kotlinProject", "2.4", minLogLevel = LogLevel.DEBUG)
+    // This test isn't safe enough: gradle daemon is a singleton process (for a chosen version) and stopping it may
+    // affect the build environment in an unpredictable way. Therefore it is now disabled.
+    // TODO research the possibility to run isolated daemon build
+    Ignore Test fun testKotlinOnlyDaemonMemory() {
+        val project = Project("kotlinProject", "2.4")
 
         project.stopDaemon {}
 
+        // build to "warm up" the daemon, if it is not started yet
         project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
             assertSuccessful()
         }
@@ -51,7 +56,7 @@ class KotlinGradleIT: BaseGradleIT() {
                 val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(([+-]?\\d+) kb\\)".toRegex().match(output)
                 assert(matches != null && matches.groups.size() == 3, "Used memory after build is not reported by plugin")
                 val reportedGrowth = matches!!.groups.get(2)!!.value.toInt()
-                assert(reportedGrowth <= 1000, "Used memory growth $reportedGrowth > 1000")
+                assert(reportedGrowth <= 500, "Used memory growth $reportedGrowth > 500")
             }
 
         project.stopDaemon {
