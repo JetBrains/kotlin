@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.cli.common.CompilerPlugin;
 import org.jetbrains.kotlin.cli.common.CompilerPluginContext;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.modules.Module;
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;

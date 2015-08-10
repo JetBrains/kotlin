@@ -22,7 +22,7 @@ public class ModuleBuilder(
         private val name: String,
         private val outputDir: String,
         private val type: String
-) : Module {
+) : org.jetbrains.kotlin.modules.Module {
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<String>()

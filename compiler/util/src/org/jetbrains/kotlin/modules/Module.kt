@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.modules
+package org.jetbrains.kotlin.modules
 
 public interface Module {
     public fun getModuleName(): String
