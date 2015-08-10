@@ -554,6 +554,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             JetType actualType = possiblyBareType.getActualType();
+            if (actualType.isError()) return null;
             if (isAllowedInClassLiteral(actualType)) {
                 type = actualType;
             }
@@ -590,9 +591,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         TypeConstructor typeConstructor = type.getConstructor();
         ClassifierDescriptor typeDeclarationDescriptor = typeConstructor.getDeclarationDescriptor();
-
-        // no need to report error if unresolved
-        if (typeDeclarationDescriptor == null || ErrorUtils.isError(typeDeclarationDescriptor)) return true;
 
         if (typeDeclarationDescriptor instanceof ClassDescriptor) {
             List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
