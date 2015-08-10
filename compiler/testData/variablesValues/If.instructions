@@ -205,8 +205,8 @@ L4 [else branch]:
 L5 ['if' expression result]:
   2 merge(if(cond2) { a = 3 } else { a = 4 }|!<v8>, !<v10>) -> <v11>                            in: INTS{a:[3, 4]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[3, 4]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 L3 ['if' expression result]:
-    merge(if(cond1) { a = 2 } else if(cond2) { a = 3 } else { a = 4 }|!<v5>, <v11>) -> <v12>    in: INTS{a:[2, 3, 4]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2, 3, 4]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
-    r(42) -> <v13>                                                                              in: INTS{a:[2, 3, 4]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2, 3, 4]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    merge(if(cond1) { a = 2 } else if(cond2) { a = 3 } else { a = 4 }|!<v5>, <v11>) -> <v12>    in: INTS{a:[2, 4, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2, 4, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(42) -> <v13>                                                                              in: INTS{a:[2, 4, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2, 4, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 L1:
   1 <END>                                                                                       in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 error:
@@ -258,8 +258,8 @@ L4 [else branch]:
 L5 ['if' expression result]:
     merge(if(cond2) { a = 3 }|!<v8>) -> <v9>                                    in: INTS{a:[1, 3]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 L3 ['if' expression result]:
-    merge(if(cond1) { a = 2 } else if(cond2) { a = 3 }|!<v5>, <v9>) -> <v10>    in: INTS{a:[1, 2, 3]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 2, 3]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
-    r(42) -> <v11>                                                              in: INTS{a:[1, 2, 3]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 2, 3]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    merge(if(cond1) { a = 2 } else if(cond2) { a = 3 }|!<v5>, <v9>) -> <v10>    in: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(42) -> <v11>                                                              in: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 L1:
   1 <END>                                                                       in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
 error:
