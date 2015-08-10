@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.*
 
 public data class ValuesData(
-        val intVarsToValues: MutableMap<VariableDescriptor, IntegerValues> = HashMap(),
-        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerValues> = HashMap(),
+        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
+        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
         val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
         val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap(),
-        val collectionsToSizes: MutableMap<VariableDescriptor, IntegerValues> = HashMap()
+        val collectionsToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
 ) {
     override fun toString(): String {
         val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
@@ -36,7 +36,7 @@ public data class ValuesData(
     }
 
     public fun copy(): ValuesData {
-        fun copyIntsMap<K>(m: MutableMap<K, IntegerValues>) =
+        fun copyIntsMap<K>(m: MutableMap<K, IntegerVariableValues>) =
                 HashMap(m.map { Pair(it.getKey(), it.getValue().copy()) }.toMap())
         return ValuesData(
                 copyIntsMap(intVarsToValues),
