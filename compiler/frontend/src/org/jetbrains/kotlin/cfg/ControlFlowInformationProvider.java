@@ -125,6 +125,8 @@ public class ControlFlowInformationProvider {
         checkIfExpressions();
 
         checkWhenExpressions();
+
+        checkConstructorConsistency();
     }
 
     public void checkFunction(@Nullable KotlinType expectedReturnType) {
@@ -921,6 +923,15 @@ public class ControlFlowInformationProvider {
                     }
                 }
         );
+    }
+
+    private void checkConstructorConsistency() {
+        if (subroutine instanceof KtClassOrObject) {
+            ConstructorConsistencyChecker.check((KtClassOrObject) subroutine, trace, pseudocode, pseudocodeVariablesData);
+        }
+        else if (subroutine instanceof KtSecondaryConstructor) {
+            ConstructorConsistencyChecker.check((KtSecondaryConstructor) subroutine, trace, pseudocode, pseudocodeVariablesData);
+        }
     }
 
 ////////////////////////////////////////////////////////////////////////////////

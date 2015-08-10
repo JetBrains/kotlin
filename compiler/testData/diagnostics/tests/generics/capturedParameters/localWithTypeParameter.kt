@@ -12,7 +12,7 @@ class Q {
         C<F>()
     }
 
-    private var x = foo<CharSequence, Number>()()
+    private var x = <!DEBUG_INFO_LEAKING_THIS!>foo<!><CharSequence, Number>()()
 
     fun bar() {
         x.e.checkType { _<CharSequence>() }

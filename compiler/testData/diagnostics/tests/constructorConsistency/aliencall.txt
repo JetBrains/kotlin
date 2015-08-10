@@ -1,0 +1,28 @@
+package
+
+public fun foo(): kotlin.Int
+public fun Your.other(): kotlin.String
+
+public final class My {
+    public constructor My()
+    public final val r: kotlin.String
+    public final val t: kotlin.String
+    public final val v: kotlin.String
+    public final val w: kotlin.String
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    public final val your: Your
+    public final val z: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun Your.gav(): kotlin.String
+}
+
+public final class Your {
+    public constructor Your()
+    public final fun bar(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
