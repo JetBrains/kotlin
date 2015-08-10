@@ -54,6 +54,15 @@ class RegexTest {
         assertEquals(listOf(0..2, 4..6, 8..10), matches.map { it.range }.toList())
     }
 
+    test fun matchAllSequence() {
+        val input = "test"
+        val pattern = ".*".toRegex()
+        val matches = pattern.matchAll(input).toList()
+        assertEquals(input, matches[0].value)
+        assertEquals(input, matches.joinToString("") { it.value })
+        assertEquals(2, matches.size())
+    }
+
     test fun matchGroups() {
         val input = "1a 2b 3c"
         val pattern = "(\\d)(\\w)".toRegex()
