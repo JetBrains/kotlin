@@ -1,0 +1,11 @@
+package
+
+public final class WithLateInit {
+    public constructor WithLateInit()
+    public final lateinit var x: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun init(/*0*/ xx: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun use(): kotlin.String
+}

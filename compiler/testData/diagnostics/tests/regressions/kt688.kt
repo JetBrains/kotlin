@@ -10,5 +10,5 @@ class C() {
     return x(x(y))
   }
 
-  val x: B = a({it.b()}, B())
+  val x: B = <!DEBUG_INFO_LEAKING_THIS!>a<!>({it.b()}, B())
 }
