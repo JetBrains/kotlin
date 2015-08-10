@@ -86,6 +86,8 @@
         <include name="compiler/builtins-serializer/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
+        <include name="compiler/rmi/rmi-server/src"/>
+        <include name="compiler/rmi/rmi-interface/src"/>
         <include name="compiler/container/src"/>
         <include name="compiler/frontend/src"/>
         <include name="compiler/frontend.java/src"/>
@@ -535,6 +537,26 @@
         </jar>
     </target>
 
+    <target name="kotlinr">
+        <cleandir dir="${output}/classes/kotlinr"/>
+
+        <kotlinc output="${output}/classes/kotlinr">
+            <src>
+                <pathelement path="compiler/rmi/kotlinr/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+        </kotlinc>
+
+        <jar destfile="${kotlin-home}/lib/kotlinr.jar">
+            <fileset dir="${output}/classes/kotlinr"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        </jar>
+    </target>
+
     <target name="android-compiler-plugin">
         <cleandir dir="${output}/classes/android-compiler-plugin"/>
 
@@ -839,7 +861,7 @@
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,kotlinr"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
