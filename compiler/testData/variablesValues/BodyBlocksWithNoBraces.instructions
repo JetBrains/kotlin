@@ -1,0 +1,122 @@
+== onlyIfElseNoElse ==
+fun onlyIfElseNoElse(cond1: Boolean, cond2: Boolean) {
+    var a = 1
+    if(cond1)
+        a = 2
+    else if(cond2)
+        a = 3
+    42
+}
+---------------------
+L0:
+  1 <START>                                                             in: INTS{}            BOOLS{}                        ARRS{}    out: INTS{}            BOOLS{}                        ARRS{}
+    v(cond1: Boolean)                                                   in: INTS{}            BOOLS{}                        ARRS{}    out: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}
+    magic[FAKE_INITIALIZER](cond1: Boolean) -> <v0>                     in: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}    out: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}
+    w(cond1|<v0>)                                                       in: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}    out: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}
+    v(cond2: Boolean)                                                   in: INTS{}            BOOLS{cond1:U{}{}}             ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    magic[FAKE_INITIALIZER](cond2: Boolean) -> <v1>                     in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    w(cond2|<v1>)                                                       in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+  2 mark({ var a = 1 if(cond1) a = 2 else if(cond2) a = 3 42 })         in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    v(var a = 1)                                                        in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:-}         BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(1) -> <v2>                                                        in: INTS{a:-}         BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:-}         BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    w(a|<v2>)                                                           in: INTS{a:-}         BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    mark(if(cond1) a = 2 else if(cond2) a = 3)                          in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(cond1) -> <v3>                                                    in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    jf(L2|<v3>)                                                         in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(2) -> <v4>                                                        in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    w(a|<v4>)                                                           in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    jmp(L3)                                                             in: INTS{a:[2]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[2]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+L2 [else branch]:
+    mark(if(cond2) a = 3)                                               in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(cond2) -> <v5>                                                    in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    jf(L4|<v5>)                                                         in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(3) -> <v6>                                                        in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    w(a|<v6>)                                                           in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[3]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    jmp(L5)                                                             in: INTS{a:[3]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[3]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+L4 [else branch]:
+    read (Unit)                                                         in: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1]}       BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+L5 ['if' expression result]:
+    merge(if(cond2) a = 3|!<v7>) -> <v8>                                in: INTS{a:[1, 3]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3]}    BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+L3 ['if' expression result]:
+    merge(if(cond1) a = 2 else if(cond2) a = 3|!<v9>, <v8>) -> <v10>    in: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+    r(42) -> <v11>                                                      in: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{a:[1, 3, ?]} BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+L1:
+  1 <END>                                                               in: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}    out: INTS{}            BOOLS{cond1:U{}{},cond2:U{}{}} ARRS{}
+error:
+    <ERROR>                                                             in: INTS{}            BOOLS{}                        ARRS{}    out: INTS{}            BOOLS{}                        ARRS{}
+sink:
+    <SINK>                                                              in: INTS{}            BOOLS{}                        ARRS{}    out: INTS{}            BOOLS{}                        ARRS{}
+=====================
+== alwaysFalseIf ==
+fun alwaysFalseIf() {
+    var a = 1
+    if (a < 0)
+        a = 10000
+    42
+}
+---------------------
+L0:
+  1 <START>                                        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+  2 mark({ var a = 1 if (a < 0) a = 10000 42 })    in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+    v(var a = 1)                                   in: INTS{}      BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    r(1) -> <v0>                                   in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    w(a|<v0>)                                      in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    mark(if (a < 0) a = 10000)                     in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    r(a) -> <v1>                                   in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    r(0) -> <v2>                                   in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    mark(a < 0)                                    in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    call(a < 0, compareTo|<v1>, <v2>) -> <v3>      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    jf(L2|<v3>)                                    in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    r(10000) -> <v4>                               in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
+    w(a|<v4>)                                      in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
+    jmp(L3)                                        in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
+L2 [else branch]:
+    read (Unit)                                    in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+L3 ['if' expression result]:
+    merge(if (a < 0) a = 10000|!<v5>) -> <v6>      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    r(42) -> <v7>                                  in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                          in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+error:
+    <ERROR>                                        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+sink:
+    <SINK>                                         in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+=====================
+== alwaysTrueIfWithElse ==
+fun alwaysTrueIfWithElse() {
+    var a = 5
+    if (a > 2)
+        a = 2
+    else
+        a = 5
+    42
+}
+---------------------
+L0:
+  1 <START>                                                    in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+  2 mark({ var a = 5 if (a > 2) a = 2 else a = 5 42 })         in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+    v(var a = 5)                                               in: INTS{}      BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    r(5) -> <v0>                                               in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    w(a|<v0>)                                                  in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    mark(if (a > 2) a = 2 else a = 5)                          in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    r(a) -> <v1>                                               in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    r(2) -> <v2>                                               in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    mark(a > 2)                                                in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    call(a > 2, compareTo|<v1>, <v2>) -> <v3>                  in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    jf(L2|<v3>)                                                in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    r(2) -> <v4>                                               in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[5]} BOOLS{} ARRS{}
+    w(a|<v4>)                                                  in: INTS{a:[5]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    jmp(L3)                                                    in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L2 [else branch]:
+    r(5) -> <v5>                                               in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
+    w(a|<v5>)                                                  in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
+L3 ['if' expression result]:
+    merge(if (a > 2) a = 2 else a = 5|!<v6>, !<v7>) -> <v8>    in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+    r(42) -> <v9>                                              in: INTS{a:[2]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                      in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+error:
+    <ERROR>                                                    in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+sink:
+    <SINK>                                                     in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+=====================

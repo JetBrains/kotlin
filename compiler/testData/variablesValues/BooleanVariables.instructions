@@ -97,7 +97,7 @@ L7 ['if' expression result]:
     r(42) -> <v30>                                                                                                                                                                                       in: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
   2 jmp(L9)                                                                                                                                                                                              in: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
 L8 [else branch]:
-  3 mark({ 43 })                                                                                                                                                                                         in: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
+  3 mark({ 43 })                                                                                                                                                                                         in: INTS{a:?}         BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:?}         BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
     r(43) -> <v31>                                                                                                                                                                                       in: INTS{a:?}         BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:?}         BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
 L9 ['if' expression result]:
   2 merge(if (cond) { 42 } else { 43 }|<v30>, <v31>) -> <v32>                                                                                                                                            in: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{cond:U{a:[1, 5]}{a:[]}} ARRS{args:?}
@@ -180,7 +180,7 @@ L3 ['if' expression result]:
 L6 [result of boolean operation]:
     magic[AND](a > 1 && a < 5|<v18>, <v21>) -> <v22>                                                                                 in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}
     jf(L7|<v22>)                                                                                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}
-  3 mark({ 42 })                                                                                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{args:?}
+  3 mark({ 42 })                                                                                                                     in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
     r(42) -> <v23>                                                                                                                   in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
   2 jmp(L8)                                                                                                                          in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
 L7 [else branch]:
@@ -248,11 +248,11 @@ L5 [result of boolean operation]:
 L4 [result of boolean operation]:
     magic[AND](cond && a > 0 && a < 2|<v11>, <v14>) -> <v15>                                   in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
     jf(L6|<v15>)                                                                               in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
-  3 mark({ 42 })                                                                               in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
+  3 mark({ 42 })                                                                               in: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}
     r(42) -> <v16>                                                                             in: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}
   2 jmp(L7)                                                                                    in: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}
 L6 [else branch]:
-  3 mark({ 43 })                                                                               in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
+  3 mark({ 43 })                                                                               in: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}
     r(43) -> <v17>                                                                             in: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}
 L7 ['if' expression result]:
   2 merge(if (cond && a > 0 && a < 2) { 42 } else { 43 }|<v16>, <v17>) -> <v18>                in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
@@ -336,7 +336,7 @@ L0:
     mark(!(a < 2))                                                in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
     call(!(a < 2), not|<v3>) -> <v4>                              in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
     jf(L2|<v4>)                                                   in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-  3 mark({ 42 })                                                  in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+  3 mark({ 42 })                                                  in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
     r(42) -> <v5>                                                 in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
   2 jmp(L3)                                                       in: INTS{a:#}   BOOLS{} ARRS{}    out: INTS{a:#}   BOOLS{} ARRS{}
 L2 [else branch]:
@@ -459,7 +459,7 @@ L8 [result of boolean operation]:
     mark(!(a > 0 && a < 3 || a >= 4 && a < 10))                                                                                                                                                    in: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}
     call(!(a > 0 && a < 3 || a >= 4 && a < 10), not|<v37>) -> <v38>                                                                                                                                in: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}
     jf(L11|<v38>)                                                                                                                                                                                  in: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}
-  3 mark({ 42 })                                                                                                                                                                                   in: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}    out: INTS{a:[2, 5, ?]} BOOLS{} ARRS{args:?}
+  3 mark({ 42 })                                                                                                                                                                                   in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
     r(42) -> <v39>                                                                                                                                                                                 in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
   2 jmp(L12)                                                                                                                                                                                       in: INTS{a:?}         BOOLS{} ARRS{args:?}    out: INTS{a:?}         BOOLS{} ARRS{args:?}
 L11 [else branch]:
