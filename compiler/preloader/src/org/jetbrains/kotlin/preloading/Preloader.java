@@ -44,20 +44,19 @@ public class Preloader {
             classNumber = Integer.parseInt(args[2]);
         }
         catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
+            System.err.println("error: number expected: " + e.getMessage());
             printUsageAndExit();
             return;
         }
 
-        String modeStr = args[3];
-        final Mode mode = parseMode(modeStr);
-        URL[] instrumentersClasspath = parseInstrumentersClasspath(mode, modeStr);
+        final Mode mode = parseMode(args[3]);
 
         final long startTime = System.nanoTime();
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
-        ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
+        ClassLoader withInstrumenter =
+            mode instanceof Mode.Instrument ? new URLClassLoader(((Mode.Instrument) mode).classpath, parent) : parent;
 
         final Handler handler = getHandler(mode, withInstrumenter);
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, null, handler);
@@ -83,34 +82,13 @@ public class Preloader {
         mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
     }
 
-    private static URL[] parseInstrumentersClasspath(Mode mode, String modeStr)
-            throws MalformedURLException {
-        URL[] instrumentersClasspath;
-        if (mode == Mode.INSTRUMENT) {
-            List<File> instrumentersClassPathFiles = parseClassPath(getClassPath(modeStr));
-            instrumentersClasspath = new URL[instrumentersClassPathFiles.size()];
-            for (int i = 0; i < instrumentersClassPathFiles.size(); i++) {
-                File file = instrumentersClassPathFiles.get(i);
-                instrumentersClasspath[i] = file.toURI().toURL();
-            }
-        }
-        else {
-            instrumentersClasspath = new URL[0];
-        }
-        return instrumentersClasspath;
-    }
-
-    private static String getClassPath(String modeStr) {
-        return modeStr.substring(INSTRUMENT_PREFIX.length());
-    }
-
     private static List<File> parseClassPath(String classpath) {
         String[] paths = classpath.split("\\" + File.pathSeparator);
         List<File> files = new ArrayList<File>(paths.length);
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                System.out.println("File does not exist: " + file);
+                System.err.println("error: file does not exist: " + file);
                 printUsageAndExit();
             }
             files.add(file);
@@ -121,7 +99,7 @@ public class Preloader {
     private static Handler getHandler(Mode mode, ClassLoader withInstrumenter) {
         if (mode == Mode.NO_TIME) return new Handler();
 
-        final Instrumenter instrumenter = mode == Mode.INSTRUMENT ? loadInstrumenter(withInstrumenter) : Instrumenter.DO_NOTHING;
+        final Instrumenter instrumenter = mode instanceof Mode.Instrument ? loadInstrumenter(withInstrumenter) : Instrumenter.DO_NOTHING;
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
@@ -155,28 +133,50 @@ public class Preloader {
         if (instrumenters.hasNext()) {
             Instrumenter instrumenter = instrumenters.next();
             if (instrumenters.hasNext()) {
-                System.err.println("PRELOADER WARNING: Only the first instrumenter is used: " + instrumenter.getClass());
+                System.err.println("warning: only the first preloader instrumenter is used: " + instrumenter.getClass());
             }
             return instrumenter;
         }
         else {
-            System.err.println("PRELOADER WARNING: No instrumenters found");
+            System.err.println("warning: no preloader instrumenters found");
             return Instrumenter.DO_NOTHING;
         }
     }
 
-    private enum Mode {
-        NO_TIME,
-        TIME,
-        INSTRUMENT
+    private interface Mode {
+        Mode NO_TIME = new Mode() {};
+        Mode TIME = new Mode() {};
+
+        class Instrument implements Mode {
+            public final URL[] classpath;
+
+            Instrument(URL[] classpath) {
+                this.classpath = classpath;
+            }
+        }
     }
 
     private static Mode parseMode(String arg) {
         if ("time".equals(arg)) return Mode.TIME;
         if ("notime".equals(arg)) return Mode.NO_TIME;
-        if (arg.startsWith(INSTRUMENT_PREFIX)) return Mode.INSTRUMENT;
 
-        System.out.println("Unrecognized argument: " + arg);
+        if (arg.startsWith(INSTRUMENT_PREFIX)) {
+            List<File> files = parseClassPath(arg.substring(INSTRUMENT_PREFIX.length()));
+            URL[] classpath = new URL[files.size()];
+            for (int i = 0; i < files.size(); i++) {
+                File file = files.get(i);
+                try {
+                    classpath[i] = file.toURI().toURL();
+                }
+                catch (MalformedURLException e) {
+                    System.err.println("error: malformed URL: " + e.getMessage());
+                    printUsageAndExit();
+                }
+            }
+            return new Mode.Instrument(classpath);
+        }
+
+        System.err.println("error: unrecognized argument: " + arg);
         printUsageAndExit();
         return Mode.NO_TIME;
     }
