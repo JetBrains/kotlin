@@ -110,7 +110,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
         val updatedEdgeData = edgeData.copy()
         val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
-        removeUnavailableValuesIfNeeded(previousInstruction, filteredEdgeData)
+        removeUnavailableValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
         return filteredEdgeData
     }
 
@@ -176,45 +176,43 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun removeUnavailableValuesIfNeeded(
             previousInstruction: Instruction,
+            currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
-        if (previousInstruction is MarkInstruction && previousInstruction.previousInstructions.size() == 1) {
-            val beforePreviousInstruction = previousInstruction.previousInstructions.first()
-            if (beforePreviousInstruction is ConditionalJumpInstruction && beforePreviousInstruction.element is JetIfExpression) {
-                val conditionFakeVariable = beforePreviousInstruction.conditionValue
-                val conditionBoolValue = edgeData.boolFakeVarsToValues[conditionFakeVariable]
-                if (conditionBoolValue != null) {
-                    when (conditionBoolValue) {
-                        is BooleanVariableValue.True -> {
-                            if (beforePreviousInstruction.nextOnFalse == previousInstruction) {
-                                // We are in "else" block and condition evaluated to "true" so this block will not
-                                // be processed (dead code block). To indicate this we will make all variables dead
-                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                            }
+        if (previousInstruction is ConditionalJumpInstruction && previousInstruction.element is JetIfExpression) {
+            val conditionFakeVariable = previousInstruction.conditionValue
+            val conditionBoolValue = edgeData.boolFakeVarsToValues[conditionFakeVariable]
+            if (conditionBoolValue != null) {
+                when (conditionBoolValue) {
+                    is BooleanVariableValue.True -> {
+                        if (previousInstruction.nextOnFalse == currentInstruction) {
+                            // We are in "else" block and condition evaluated to "true" so this block will not
+                            // be processed (dead code block). To indicate this we will make all variables dead
+                            edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                         }
-                        is BooleanVariableValue.False -> {
-                            if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
-                                // We are in "then" block and condition evaluated to "false" so this block will not
-                                // be processed (dead code block). To indicate this we will make all variables dead
-                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                            }
+                    }
+                    is BooleanVariableValue.False -> {
+                        if (previousInstruction.nextOnTrue == currentInstruction) {
+                            // We are in "then" block and condition evaluated to "false" so this block will not
+                            // be processed (dead code block). To indicate this we will make all variables dead
+                            edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                         }
-                        is BooleanVariableValue.Undefined -> {
-                            val restrictions =
-                                if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
+                    }
+                    is BooleanVariableValue.Undefined -> {
+                        val restrictions =
+                                if (previousInstruction.nextOnTrue == currentInstruction) {
                                     // We are in "then" block and need to apply onTrue restrictions
                                     conditionBoolValue.onTrueRestrictions
                                 }
                                 else {
-                                    assert(beforePreviousInstruction.nextOnFalse == previousInstruction)
+                                    assert(previousInstruction.nextOnFalse == currentInstruction)
                                     // We are in "else" block and need to apply onFalse restrictions
                                     conditionBoolValue.onFalseRestrictions
                                 }
-                            for ((variable, unrestrictedValues) in restrictions) {
-                                val values = edgeData.intVarsToValues[variable]
-                                if (values is IntegerVariableValues.Defined) {
-                                    edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
-                                }
+                        for ((variable, unrestrictedValues) in restrictions) {
+                            val values = edgeData.intVarsToValues[variable]
+                            if (values is IntegerVariableValues.Defined) {
+                                edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                             }
                         }
                     }

@@ -126,14 +126,6 @@ fun complexLess(cond1: Boolean, cond2: Boolean) {
     }
 }
 
-fun falseAlarmOnAlwaysTrue() {
-    var a = 1
-    if (a < 2) {
-        a = 3
-    }
-    42
-}
-
 fun multipleElseIf(args: Array<Int>) {
     var a = 1
     if (args.size() == 999) {

@@ -53,6 +53,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("BodyBlocksWithNoBraces.kt")
+    public void testBodyBlocksWithNoBraces() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/BodyBlocksWithNoBraces.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("BooleanVariables.kt")
     public void testBooleanVariables() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/BooleanVariables.kt");
@@ -98,6 +104,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
     @TestMetadata("VariablesInitialization.kt")
     public void testVariablesInitialization() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/VariablesInitialization.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("WithDeadCode.kt")
+    public void testWithDeadCode() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/WithDeadCode.kt");
         doTest(fileName);
     }
 }
