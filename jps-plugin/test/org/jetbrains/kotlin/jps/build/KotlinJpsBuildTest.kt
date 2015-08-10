@@ -542,13 +542,15 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         generateLongKotlinFile("Foo.kt", "foo", "Foo")
         initProject()
 
+        val INITIAL_DELAY = 2000
+
         val start = System.currentTimeMillis()
-        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > 2000 }
+        val canceledStatus = CanceledStatus() { System.currentTimeMillis() - start > INITIAL_DELAY }
 
         val logger = TestProjectBuilderLogger()
         val buildResult = BuildResult()
         buildCustom(canceledStatus, logger, buildResult)
-        val interval = System.currentTimeMillis() - start
+        val interval = System.currentTimeMillis() - start - INITIAL_DELAY
 
         assertCanceled(buildResult)
         buildResult.assertSuccessful()
