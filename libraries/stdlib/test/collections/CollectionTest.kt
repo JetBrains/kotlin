@@ -310,19 +310,19 @@ class CollectionTest {
 
     test fun reverse() {
         val data = listOf("foo", "bar")
-        val rev = data.reverse()
+        val rev = data.reversed()
         assertEquals(listOf("bar", "foo"), rev)
     }
 
     test fun reverseFunctionShouldReturnReversedCopyForList() {
         val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { list.reverse() }
+        expect(listOf(1, 3, 2)) { list.reversed() }
         expect(listOf(2, 3, 1)) { list }
     }
 
     test fun reverseFunctionShouldReturnReversedCopyForIterable() {
         val iterable: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { iterable.reverse() }
+        expect(listOf(1, 3, 2)) { iterable.reversed() }
         expect(listOf(2, 3, 1)) { iterable }
     }
 

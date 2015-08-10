@@ -89,13 +89,13 @@ fun elements(): List<GenericFunction> {
         body(ArraysOfObjects) {
             """
             if (element == null) {
-                for (index in indices.reverse()) {
+                for (index in indices.reversed()) {
                     if (this[index] == null) {
                         return index
                     }
                 }
             } else {
-                for (index in indices.reverse()) {
+                for (index in indices.reversed()) {
                     if (element == this[index]) {
                         return index
                     }
@@ -106,7 +106,7 @@ fun elements(): List<GenericFunction> {
         }
         body(ArraysOfPrimitives) {
             """
-            for (index in indices.reverse()) {
+            for (index in indices.reversed()) {
                 if (element == this[index]) {
                     return index
                 }

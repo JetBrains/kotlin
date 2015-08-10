@@ -6,11 +6,24 @@ fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("reverse()") {
+        deprecate("reverse will change its behavior soon. Use reversed() instead.")
+        deprecateReplacement("reversed()")
+        doc { "Returns a list with elements in reversed order." }
+        returns { "List<T>" }
+        body { """return reversed()""" }
+
+        include(Strings)
+        returns(Strings) { "SELF" }
+
+        exclude(Sequences)
+    }
+
+    templates add f("reversed()") {
         doc { "Returns a list with elements in reversed order." }
         returns { "List<T>" }
         body {
             """
-            if (this is Collection<*> && isEmpty()) return emptyList()
+            if (this is Collection && isEmpty()) return emptyList()
             val list = toArrayList()
             Collections.reverse(list)
             return list
@@ -27,7 +40,7 @@ fun ordering(): List<GenericFunction> {
         }
 
         doc(Strings) { "Returns a string with characters in reversed order." }
-        returns(Strings) { "String" }
+        returns(Strings) { "SELF" }
         body(Strings) {
             // TODO: Replace with StringBuilder(this) when JS can handle it
             """

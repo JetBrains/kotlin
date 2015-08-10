@@ -2372,13 +2372,13 @@ public inline fun String.last(predicate: (Char) -> Boolean): Char {
  */
 public fun <T> Array<out T>.lastIndexOf(element: T): Int {
     if (element == null) {
-        for (index in indices.reverse()) {
+        for (index in indices.reversed()) {
             if (this[index] == null) {
                 return index
             }
         }
     } else {
-        for (index in indices.reverse()) {
+        for (index in indices.reversed()) {
             if (element == this[index]) {
                 return index
             }
@@ -2391,7 +2391,7 @@ public fun <T> Array<out T>.lastIndexOf(element: T): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun BooleanArray.lastIndexOf(element: Boolean): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2403,7 +2403,7 @@ public fun BooleanArray.lastIndexOf(element: Boolean): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun ByteArray.lastIndexOf(element: Byte): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2415,7 +2415,7 @@ public fun ByteArray.lastIndexOf(element: Byte): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun CharArray.lastIndexOf(element: Char): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2427,7 +2427,7 @@ public fun CharArray.lastIndexOf(element: Char): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun DoubleArray.lastIndexOf(element: Double): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2439,7 +2439,7 @@ public fun DoubleArray.lastIndexOf(element: Double): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun FloatArray.lastIndexOf(element: Float): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2451,7 +2451,7 @@ public fun FloatArray.lastIndexOf(element: Float): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun IntArray.lastIndexOf(element: Int): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2463,7 +2463,7 @@ public fun IntArray.lastIndexOf(element: Int): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun LongArray.lastIndexOf(element: Long): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }
@@ -2475,7 +2475,7 @@ public fun LongArray.lastIndexOf(element: Long): Int {
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun ShortArray.lastIndexOf(element: Short): Int {
-    for (index in indices.reverse()) {
+    for (index in indices.reversed()) {
         if (element == this[index]) {
             return index
         }

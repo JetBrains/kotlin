@@ -13,87 +13,95 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun <T> Array<out T>.reverse(): List<T> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun BooleanArray.reverse(): List<Boolean> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun ByteArray.reverse(): List<Byte> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun CharArray.reverse(): List<Char> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun DoubleArray.reverse(): List<Double> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun FloatArray.reverse(): List<Float> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun IntArray.reverse(): List<Int> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun LongArray.reverse(): List<Long> {
-    if (isEmpty()) return emptyList()
-    val list = toArrayList()
-    Collections.reverse(list)
-    return list
+    return reversed()
 }
 
 /**
  * Returns a list with elements in reversed order.
  */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
 public fun ShortArray.reverse(): List<Short> {
+    return reversed()
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+public fun <T> Iterable<T>.reverse(): List<T> {
+    return reversed()
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+deprecated("reverse will change its behavior soon. Use reversed() instead.", ReplaceWith("reversed()"))
+public fun String.reverse(): String {
+    return reversed()
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun <T> Array<out T>.reversed(): List<T> {
     if (isEmpty()) return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
@@ -103,8 +111,88 @@ public fun ShortArray.reverse(): List<Short> {
 /**
  * Returns a list with elements in reversed order.
  */
-public fun <T> Iterable<T>.reverse(): List<T> {
-    if (this is Collection<*> && isEmpty()) return emptyList()
+public fun BooleanArray.reversed(): List<Boolean> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun ByteArray.reversed(): List<Byte> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun CharArray.reversed(): List<Char> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun DoubleArray.reversed(): List<Double> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun FloatArray.reversed(): List<Float> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun IntArray.reversed(): List<Int> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun LongArray.reversed(): List<Long> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun ShortArray.reversed(): List<Short> {
+    if (isEmpty()) return emptyList()
+    val list = toArrayList()
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Returns a list with elements in reversed order.
+ */
+public fun <T> Iterable<T>.reversed(): List<T> {
+    if (this is Collection && isEmpty()) return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -113,7 +201,7 @@ public fun <T> Iterable<T>.reverse(): List<T> {
 /**
  * Returns a string with characters in reversed order.
  */
-public fun String.reverse(): String {
+public fun String.reversed(): String {
     return StringBuilder().append(this).reverse().toString()
 }
 
