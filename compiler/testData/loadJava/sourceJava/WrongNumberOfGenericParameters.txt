@@ -1,9 +1,9 @@
 package test
 
 public interface WrongNumberOfGenericParameters {
-    public abstract fun o0(): (test.WrongNumberOfGenericParameters.One<kotlin.Any!>..test.WrongNumberOfGenericParameters.One<*>?)
+    public abstract fun o0(): test.WrongNumberOfGenericParameters.One<(raw) kotlin.Any!>!
     public abstract fun o2(): test.WrongNumberOfGenericParameters.One<[ERROR : T]>!
-    public abstract fun t1(): (test.WrongNumberOfGenericParameters.Two<kotlin.Any!, kotlin.Any!>..test.WrongNumberOfGenericParameters.Two<*, *>?)
+    public abstract fun t1(): test.WrongNumberOfGenericParameters.Two<(raw) kotlin.Any!, (raw) kotlin.Any!>!
     public abstract fun z(): test.WrongNumberOfGenericParameters.Zero!
 
     public interface One</*0*/ T : kotlin.Any!> {

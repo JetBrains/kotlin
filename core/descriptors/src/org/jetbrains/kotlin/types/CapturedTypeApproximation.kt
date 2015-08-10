@@ -120,7 +120,9 @@ public fun approximateCapturedTypes(type: JetType): ApproximationBounds<JetType>
 
 private fun JetType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): JetType {
     assert(getArguments().size() == newTypeArguments.size()) { "Incorrect type arguments $newTypeArguments" }
-    return JetTypeImpl(getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope())
+    return JetTypeImpl.create(
+            getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope()
+    )
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {

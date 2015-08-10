@@ -112,7 +112,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
             val declaration = getDeclarationIfApplicable(project, it)
             val insertToJavaInterface = declaration is PsiClass && declaration.isInterface
             when {
-                propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo.writable) ->
+                !isExtension && propertyInfo != null && insertToJavaInterface && (!receiverInfo.staticContextRequired || propertyInfo.writable) ->
                     false
                 isFunction && insertToJavaInterface && receiverInfo.staticContextRequired ->
                     false

@@ -1,0 +1,42 @@
+import kotlin.platform.platformStatic
+
+abstract class A {
+    // INFO: {"checked": "true"}
+    var x = 2 * 3
+
+    // INFO: {"checked": "true"}
+    inner class X
+
+    // INFO: {"checked": "true"}
+    class Y
+
+    // INFO: {"checked": "true"}
+    fun foo(n: Int): Boolean {
+        return n > 0
+    }
+
+    // INFO: {"checked": "true"}
+    abstract fun bar(s: String): Int
+
+    companion object {
+        // INFO: {"checked": "true"}
+        var X = "1" + "2"
+
+        // INFO: {"checked": "true"}
+        platformStatic fun foo2(n: Int): String {
+            return "_" + n + "_"
+        }
+    }
+}
+
+fun test() {
+    val b = object : B() {
+        override fun bar(s: String) = s.length()
+    }
+    val t1 = b.x
+    b.x = t1 + 1
+    val t2 = A.X
+    b.foo(1)
+    A.foo2(2)
+    A.Y()
+}

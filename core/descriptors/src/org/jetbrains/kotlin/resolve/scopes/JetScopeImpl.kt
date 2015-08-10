@@ -17,23 +17,24 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 
 public abstract class JetScopeImpl : JetScope {
-    override fun getClassifier(name: Name, location: UsageLocation): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> = emptyList()
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getFunctions(name: Name, location: UsageLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<PropertyDescriptor> = emptyList()
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> = emptyList()
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> = emptyList()

@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.test.util
 import com.intellij.codeInspection.SmartHashMap
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.*
@@ -77,11 +75,11 @@ public fun String.trimIndent(): String {
     }.joinToString(separator = "\n")
 }
 
-public fun JetFile.findElementByCommentPrefix(commentText: String): JetElement? =
+public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keySet().singleOrNull()
 
-public fun JetFile.findElementsByCommentPrefix(prefix: String): Map<JetElement, String> {
-    var result = SmartFMap.emptyMap<JetElement, String>()
+public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
+    var result = SmartFMap.emptyMap<PsiElement, String>()
     accept(
             object : JetTreeVisitorVoid() {
                 override fun visitComment(comment: PsiComment) {
@@ -90,11 +88,12 @@ public fun JetFile.findElementsByCommentPrefix(prefix: String): Map<JetElement, 
                         val parent = comment.getParent()
                         val elementToAdd = when (parent) {
                             is JetDeclaration -> parent
+                            is PsiMember -> parent
                             else -> PsiTreeUtil.skipSiblingsForward(
                                     comment,
                                     javaClass<PsiWhiteSpace>(), javaClass<PsiComment>(), javaClass<JetPackageDirective>()
                             )
-                        } as? JetElement ?: return
+                        } as? PsiElement ?: return
 
                         result = result.plus(elementToAdd, commentText.substring(prefix.length()).trim())
                     }

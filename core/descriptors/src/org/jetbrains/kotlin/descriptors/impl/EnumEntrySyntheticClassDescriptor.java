@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
@@ -192,25 +193,25 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @NotNull
         @Override
         @SuppressWarnings("unchecked")
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull UsageLocation location) {
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
             return (Collection) properties.invoke(name);
         }
 
         @NotNull
         @SuppressWarnings("unchecked")
         private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
-            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, UsageLocation.NO_LOCATION));
+            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, LookupLocation.NO_LOCATION));
         }
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull UsageLocation location) {
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return functions.invoke(name);
         }
 
         @NotNull
         private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, UsageLocation.NO_LOCATION));
+            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, LookupLocation.NO_LOCATION));
         }
 
         @NotNull
@@ -266,8 +267,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         private Collection<DeclarationDescriptor> computeAllDeclarations() {
             Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
             for (Name name : enumMemberNames.invoke()) {
-                result.addAll(getFunctions(name, UsageLocation.NO_LOCATION));
-                result.addAll(getProperties(name, UsageLocation.NO_LOCATION));
+                result.addAll(getFunctions(name, LookupLocation.NO_LOCATION));
+                result.addAll(getProperties(name, LookupLocation.NO_LOCATION));
             }
             return result;
         }

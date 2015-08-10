@@ -20,6 +20,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DescriptorSubstitutor
 import org.jetbrains.kotlin.types.JetType
@@ -55,7 +55,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
         return MyFunctionDescriptor(enhancedFunction)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getFunctions(name, location)) {

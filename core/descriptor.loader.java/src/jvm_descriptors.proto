@@ -88,6 +88,7 @@ extend org.jetbrains.kotlin.serialization.Callable {
 
 extend org.jetbrains.kotlin.serialization.Type {
   repeated Annotation type_annotation = 100;
+  optional bool is_raw = 101;
 }
 
 extend org.jetbrains.kotlin.serialization.Callable.ValueParameter {

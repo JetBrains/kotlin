@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
 import java.util.HashSet
@@ -247,102 +248,18 @@ class LazyJavaTypeResolver(
                     if (bound == null)
                         makeStarProjection(typeParameter, attr)
                     else {
-                        var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
-                        if (projectionKind == typeParameter.getVariance()) {
-                            projectionKind = Variance.INVARIANT
-                        }
-                        TypeProjectionImpl(projectionKind, transformJavaType(bound, UPPER_BOUND.toAttributes()))
+                        createProjection(
+                                type = transformJavaType(bound, UPPER_BOUND.toAttributes()),
+                                projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE,
+                                typeParameterDescriptor = typeParameter
+                        )
                     }
                 }
                 else -> TypeProjectionImpl(INVARIANT, transformJavaType(javaType, attr))
             }
         }
 
-        override fun computeMemberScope(): JetScope {
-            val descriptor = getConstructor().getDeclarationDescriptor()!!
-
-            if (descriptor is TypeParameterDescriptor) return descriptor.getDefaultType().getMemberScope()
-
-             return (descriptor as ClassDescriptor).getMemberScope(substitution)
-        }
-
-        override fun computeCustomSubstitution() = if (isRaw()) RawSubstitution else null
-
-        private object RawSubstitution : TypeSubstitution() {
-            override fun get(key: JetType) = TypeProjectionImpl(eraseType(key))
-
-            private val lowerTypeAttr = MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(FLEXIBLE_LOWER_BOUND)
-            private val upperTypeAttr = MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(FLEXIBLE_UPPER_BOUND)
-
-            private fun eraseType(type: JetType): JetType {
-                val declaration = type.constructor.declarationDescriptor
-                return when (declaration) {
-                    is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())
-                    is ClassDescriptor -> {
-                        val lower = type.lowerIfFlexible()
-                        val upper = type.upperIfFlexible()
-                        FlexibleJavaClassifierTypeCapabilities.create(
-                            eraseInflexibleBasedOnClassDescriptor(lower, declaration, lowerTypeAttr),
-                            eraseInflexibleBasedOnClassDescriptor(upper, declaration, upperTypeAttr)
-                        )
-                    }
-                    else -> error("Unexpected declaration kind: $declaration")
-                }
-            }
-
-            private fun eraseInflexibleBasedOnClassDescriptor(type: JetType, declaration: ClassDescriptor, attr: JavaTypeAttributes): JetType {
-                if (KotlinBuiltIns.isArray(type)) {
-                    val componentTypeProjection = type.arguments[0]
-                    val arguments = listOf(
-                        TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
-                    )
-                    return JetTypeImpl(
-                        type.annotations, type.constructor, type.isMarkedNullable, arguments,
-                        (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
-                    )
-                }
-
-                val constructor = type.constructor
-                return JetTypeImpl(
-                    type.annotations, constructor, type.isMarkedNullable,
-                    type.constructor.parameters.map {
-                        parameter -> computeProjection(parameter, attr)
-                    },
-                    RawSubstitution,
-                    declaration.getMemberScope(RawSubstitution)
-                )
-            }
-
-            fun computeProjection(
-                    parameter: TypeParameterDescriptor,
-                    attr: JavaTypeAttributes,
-                    erasedUpperBound: JetType = parameter.getErasedUpperBound()
-            ) = when (attr.flexibility) {
-                    // Raw(List<T>) => (List<Any?>..List<*>)
-                    // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)
-                    // In the last case upper bound is equal to star projection `Enum<*>`,
-                    // but we want to keep matching tree structure of flexible bounds (at least they should have the same size)
-                    FLEXIBLE_LOWER_BOUND -> TypeProjectionImpl(
-                            // T : String -> String
-                            // in T : String -> String
-                            // T : Enum<T> -> Enum<*>
-                            Variance.INVARIANT, erasedUpperBound
-                    )
-                    FLEXIBLE_UPPER_BOUND, INFLEXIBLE -> {
-                        if (!parameter.variance.allowsOutPosition)
-                            // in T -> Comparable<Nothing>
-                            TypeProjectionImpl(Variance.INVARIANT, parameter.lowerBounds.first())
-                        else if (erasedUpperBound.constructor.parameters.isNotEmpty())
-                            // T : Enum<E> -> out Enum<*>
-                            TypeProjectionImpl(Variance.OUT_VARIANCE, erasedUpperBound)
-                        else
-                            // T : String -> *
-                            makeStarProjection(parameter, attr)
-                    }
-                }
-
-            override fun isEmpty() = false
-        }
+        override fun getCapabilities(): TypeCapabilities = if (isRaw()) RawTypeCapabilities else TypeCapabilities.NONE
 
         private val nullable = c.storageManager.createLazyValue l@ {
             when (attr.flexibility) {

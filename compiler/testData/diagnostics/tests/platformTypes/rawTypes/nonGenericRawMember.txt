@@ -25,6 +25,14 @@ public/*package*/ open class Test {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
+    public/*package*/ open class RawADerived : A<kotlin.Any!> {
+        public/*package*/ constructor RawADerived()
+        public/*package*/ final override /*1*/ /*fake_override*/ var b: B(raw)!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
+    }
+
     // Static members
-    public/*package*/ final var rawAField: (A<kotlin.Any!>..A<*>?)
+    public/*package*/ final var rawAField: A<(raw) kotlin.Any!>!
 }

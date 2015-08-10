@@ -28,8 +28,29 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 import java.util.List;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
-    private Boolean hasStableParameterNames = null;
-    private Boolean hasSynthesizedParameterNames = null;
+    private enum ParameterNamesStatus {
+        NON_STABLE_DECLARED(false, false),
+        STABLE_DECLARED(true, false),
+        NON_STABLE_SYNTHESIZED(false, true),
+        STABLE_SYNTHESIZED(true, true), // TODO: this makes no sense
+        ;
+
+        public final boolean isStable;
+        public final boolean isSynthesized;
+
+        ParameterNamesStatus(boolean isStable, boolean isSynthesized) {
+            this.isStable = isStable;
+            this.isSynthesized = isSynthesized;
+        }
+
+        @NotNull
+        public static ParameterNamesStatus get(boolean stable, boolean synthesized) {
+            return stable ? (synthesized ? STABLE_SYNTHESIZED : STABLE_DECLARED) :
+                   (synthesized ? NON_STABLE_SYNTHESIZED : NON_STABLE_DECLARED);
+        }
+    }
+
+    private ParameterNamesStatus parameterNamesStatus = null;
 
     protected JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -54,22 +75,18 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
 
     @Override
     public boolean hasStableParameterNames() {
-        assert hasStableParameterNames != null : "hasStableParameterNames was not set: " + this;
-        return hasStableParameterNames;
-    }
-
-    public void setHasStableParameterNames(boolean hasStableParameterNames) {
-        this.hasStableParameterNames = hasStableParameterNames;
+        assert parameterNamesStatus != null : "Parameter names status was not set: " + this;
+        return parameterNamesStatus.isStable;
     }
 
     @Override
     public boolean hasSynthesizedParameterNames() {
-        assert hasSynthesizedParameterNames != null : "hasSynthesizedParameterNames was not set: " + this;
-        return hasSynthesizedParameterNames;
+        assert parameterNamesStatus != null : "Parameter names status was not set: " + this;
+        return parameterNamesStatus.isSynthesized;
     }
 
-    public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
-        this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
+    public void setParameterNamesStatus(boolean hasStableParameterNames, boolean hasSynthesizedParameterNames) {
+        this.parameterNamesStatus = ParameterNamesStatus.get(hasStableParameterNames, hasSynthesizedParameterNames);
     }
 
     @NotNull
@@ -87,8 +104,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 kind,
                 SourceElement.NO_SOURCE
         );
-        result.setHasStableParameterNames(hasStableParameterNames());
-        result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
+        result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;
     }
 

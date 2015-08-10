@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
@@ -73,8 +73,8 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Set<? extends PropertySetterDescriptor> getOverriddenDescriptors() {
-        return (Set) super.getOverriddenDescriptors(false);
+    public Collection<? extends PropertySetterDescriptor> getOverriddenDescriptors() {
+        return (Collection) super.getOverriddenDescriptors(false);
     }
 
     @NotNull

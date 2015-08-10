@@ -9,5 +9,5 @@ public/*package*/ open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun foo(/*0*/ x: (kotlin.Comparable<in kotlin.Any?>..kotlin.Comparable<in kotlin.Nothing>?)): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: (kotlin.Comparable<(raw) kotlin.Any?>..kotlin.Comparable<kotlin.Nothing>?)): kotlin.Unit
 }

@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PropertyAccessorDescriptor {
 
@@ -142,17 +142,15 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     }
 
     @NotNull
-    protected Set<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
-        Set<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
-        // LinkedHashSet for determinism
-        Set<PropertyAccessorDescriptor> overriddenAccessors = new LinkedHashSet<PropertyAccessorDescriptor>();
-        for (PropertyDescriptor overriddenProperty : overriddenProperties) {
+    protected Collection<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
+        Collection<PropertyAccessorDescriptor> result = new ArrayList<PropertyAccessorDescriptor>(0);
+        for (PropertyDescriptor overriddenProperty : getCorrespondingProperty().getOverriddenDescriptors()) {
             PropertyAccessorDescriptor accessorDescriptor = isGetter ? overriddenProperty.getGetter() : overriddenProperty.getSetter();
             if (accessorDescriptor != null) {
-                overriddenAccessors.add(accessorDescriptor);
+                result.add(accessorDescriptor);
             }
         }
-        return overriddenAccessors;
+        return result;
     }
 
     @Override

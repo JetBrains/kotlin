@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 public interface KotlinFileStub : PsiFileStub<JetFile> {
     public fun getPackageFqName(): FqName
     public fun isScript(): Boolean
+    public fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub>
 }
 
 public interface KotlinPlaceHolderStub<T : JetElement> : StubElement<T>
@@ -65,6 +66,7 @@ public interface KotlinFunctionStub : KotlinCallableStubBase<JetNamedFunction> {
 public interface KotlinImportDirectiveStub : StubElement<JetImportDirective> {
     public fun isAbsoluteInRootPackage(): Boolean
     public fun isAllUnder(): Boolean
+    public fun getImportedFqName(): FqName?
     public fun getAliasName(): String?
     public fun isValid(): Boolean
 }

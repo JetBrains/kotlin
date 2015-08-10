@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
@@ -101,7 +101,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return Collections.emptySet();
     }
 

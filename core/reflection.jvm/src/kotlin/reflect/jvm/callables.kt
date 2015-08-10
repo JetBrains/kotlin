@@ -42,6 +42,12 @@ public var KCallable<*>.isAccessible: Boolean
             is KProperty ->
                 javaField?.isAccessible ?: true &&
                 javaGetter?.isAccessible ?: true
+            is KProperty.Getter ->
+                property.javaField?.isAccessible ?: true &&
+                javaMethod?.isAccessible ?: true
+            is KMutableProperty.Setter<*> ->
+                property.javaField?.isAccessible ?: true &&
+                javaMethod?.isAccessible ?: true
             is KFunction ->
                 javaMethod?.isAccessible ?: true &&
                 this.javaConstructor?.isAccessible ?: true
@@ -58,6 +64,14 @@ public var KCallable<*>.isAccessible: Boolean
             is KProperty -> {
                 javaField?.isAccessible = value
                 javaGetter?.isAccessible = value
+            }
+            is KProperty.Getter -> {
+                property.javaField?.isAccessible = value
+                javaMethod?.isAccessible = value
+            }
+            is KMutableProperty.Setter<*> -> {
+                property.javaField?.isAccessible = value
+                javaMethod?.isAccessible = value
             }
             is KFunction -> {
                 javaMethod?.isAccessible = value

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.FUN
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAL
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind.VAR
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
+import org.jetbrains.kotlin.utils.toReadOnlyList
 
 public class MemberDeserializer(private val c: DeserializationContext) {
     public fun loadCallable(proto: Callable): CallableMemberDescriptor {
@@ -187,7 +188,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                     if (proto.hasVarargElementType()) c.typeDeserializer.type(proto.getVarargElementType()) else null,
                     SourceElement.NO_SOURCE
             )
-        }
+        }.toReadOnlyList()
     }
 
     private fun getParameterAnnotations(

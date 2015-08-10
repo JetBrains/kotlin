@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.frontend.java.di.DiPackage;
-import org.jetbrains.kotlin.incremental.components.UsageCollector;
+import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
@@ -124,15 +124,15 @@ public enum TopDownAnalyzerFacadeForJVM {
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
-        UsageCollector usageCollector =
-                incrementalCompilationComponents != null ? incrementalCompilationComponents.getUsageCollector() : UsageCollector.DO_NOTHING;
+        LookupTracker lookupTracker =
+                incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.DO_NOTHING;
 
         ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 providerFactory,
                 GlobalSearchScope.allScope(project),
-                usageCollector
+                lookupTracker
         );
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();

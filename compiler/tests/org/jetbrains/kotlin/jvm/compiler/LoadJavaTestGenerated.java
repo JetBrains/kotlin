@@ -283,6 +283,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("WildcardBounds.java")
+        public void testWildcardBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/WildcardBounds.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1374,6 +1380,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("LoadIterableWithPropagation.java")
             public void testLoadIterableWithPropagation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("ReadOnlyExtendsWildcard.java")
+            public void testReadOnlyExtendsWildcard() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
                 doTestCompiledJava(fileName);
             }
         }

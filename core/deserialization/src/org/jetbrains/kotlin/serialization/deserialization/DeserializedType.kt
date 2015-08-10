@@ -16,18 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractLazyType
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.LazyType
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
-        c: DeserializationContext,
+        private val c: DeserializationContext,
         private val typeProto: ProtoBuf.Type
 ) : AbstractLazyType(c.storageManager), LazyType {
     private val typeDeserializer = c.typeDeserializer
@@ -40,28 +38,11 @@ class DeserializedType(
             typeDeserializer.typeArgument(getConstructor().getParameters().getOrNull(index), proto)
         }.toReadOnlyList()
 
-    override fun computeMemberScope() =
-        if (isError()) {
-            ErrorUtils.createErrorScope(getConstructor().toString())
-        }
-        else {
-            getTypeMemberScope(getConstructor(), getArguments())
-        }
-
     private val annotations = DeserializedAnnotations(c.storageManager) {
         c.components.annotationAndConstantLoader.loadTypeAnnotations(typeProto, c.nameResolver)
     }
 
     override fun isMarkedNullable(): Boolean = typeProto.getNullable()
-
-    private fun getTypeMemberScope(constructor: TypeConstructor, typeArguments: List<TypeProjection>): JetScope {
-        val descriptor = constructor.getDeclarationDescriptor()
-        return when (descriptor) {
-            is TypeParameterDescriptor -> descriptor.getDefaultType().getMemberScope()
-            is ClassDescriptor -> descriptor.getMemberScope(typeArguments)
-            else -> throw IllegalStateException("Unsupported classifier: $descriptor")
-        }
-    }
 
     override fun isError(): Boolean {
         val descriptor = getConstructor().getDeclarationDescriptor()
@@ -69,6 +50,8 @@ class DeserializedType(
     }
 
     override fun getAnnotations(): Annotations = annotations
+
+    override fun getCapabilities() = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
 
     private fun <E: Any> List<E>.getOrNull(index: Int): E? {
         return if (index in indices) this[index] else null

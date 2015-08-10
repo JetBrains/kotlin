@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.psi.*
 public class KotlinPullUpDialog(
         project: Project,
         private val classOrObject: JetClassOrObject,
-        superClasses: List<JetClass>,
+        superClasses: List<PsiNamedElement>,
         memberInfoStorage: KotlinMemberInfoStorage
 ) : KotlinPullUpDialogBase(
         project, classOrObject, superClasses, memberInfoStorage, PULL_MEMBERS_UP
@@ -52,30 +54,35 @@ public class KotlinPullUpDialog(
          * Classes do not have abstractness
          */
         override fun isAbstractEnabled(memberInfo: KotlinMemberInfo): Boolean {
-            val superClass = getSuperClass() ?: return false
+            val superClass = superClass ?: return false
+            if (superClass is PsiClass) return false
             if (!superClass.isInterface()) return true
 
-            val member = memberInfo.getMember()
+            val member = memberInfo.member
             return member is JetNamedFunction || (member is JetProperty && !member.mustBeAbstractInInterface())
         }
 
         override fun isAbstractWhenDisabled(memberInfo: KotlinMemberInfo): Boolean {
-            return memberInfo.getMember() is JetProperty
+            val member = memberInfo.member
+            return (member is JetProperty && superClass !is PsiClass) || (member is JetNamedFunction && superClass is PsiClass)
         }
 
         override fun isMemberEnabled(memberInfo: KotlinMemberInfo): Boolean {
-            val superClass = getSuperClass() ?: return false
+            val superClass = superClass ?: return false
+            val member = memberInfo.member
+
+            if (superClass is PsiClass && !member.canMoveMemberToJavaClass(superClass)) return false
             if (memberInfo in memberInfoStorage.getDuplicatedMemberInfos(superClass)) return false
-            if (memberInfo.getMember() in memberInfoStorage.getExtending(superClass)) return false
+            if (member in memberInfoStorage.getExtending(superClass)) return false
             return true
         }
     }
 
     protected val memberInfoStorage: KotlinMemberInfoStorage get() = myMemberInfoStorage
 
-    protected val sourceClass: JetClassOrObject get() = myClass
+    protected val sourceClass: JetClassOrObject get() = myClass as JetClassOrObject
 
-    override fun getDimensionServiceKey() = "#" + javaClass.getName()
+    override fun getDimensionServiceKey() = "#" + javaClass.name
 
     override fun getSuperClass() = super.getSuperClass() as? JetClass
 
@@ -87,8 +94,8 @@ public class KotlinPullUpDialog(
             KotlinMemberSelectionTable(infos, null, "Make abstract")
 
     override fun doAction() {
-        val selectedMembers = getSelectedMemberInfos()
-        val targetClass = getSuperClass()!!
+        val selectedMembers = selectedMemberInfos
+        val targetClass = superClass!!
         checkConflicts(getProject(), sourceClass, targetClass, selectedMembers, { close(DialogWrapper.OK_EXIT_CODE) }) {
             invokeRefactoring(createProcessor(sourceClass, targetClass, selectedMembers))
         }
@@ -96,10 +103,11 @@ public class KotlinPullUpDialog(
 
     companion object {
         fun createProcessor(sourceClass: JetClassOrObject,
-                            targetClass: JetClass,
+                            targetClass: PsiNamedElement,
                             memberInfos: List<KotlinMemberInfo>): PullUpProcessor {
+            val targetPsiClass = targetClass as? PsiClass ?: (targetClass as JetClass).toLightClass()
             return PullUpProcessor(sourceClass.toLightClass(),
-                                   targetClass.toLightClass(),
+                                   targetPsiClass,
                                    memberInfos.map { it.toJavaMemberInfo() }.filterNotNull().toTypedArray(),
                                    DocCommentPolicy<PsiComment>(JavaRefactoringSettings.getInstance().PULL_UP_MEMBERS_JAVADOC))
         }

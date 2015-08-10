@@ -127,12 +127,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public JetType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 getAnnotations(),
-                getTypeConstructor(),
+                this,
                 false,
-                typeProjections,
-                getMemberScope(typeProjections));
+                typeProjections
+        );
     }
 
     @NotNull

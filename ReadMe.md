@@ -35,7 +35,7 @@ which will setup the dependencies on
 Then, you need to run
 
     ant -f build.xml
-    
+
 which will build the binaries of the compiler and put them into the 'dist' directory. You may need to increase the **heap size** for Ant using
 [ANT_OPTS](http://www.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
 
@@ -87,7 +87,7 @@ You can now open any Kotlin based projects.
 **Note for contributors**: If you are planning to contribute to Kotlin project you probably want to have locally the same version of plugin that build server is using for building.
 As this version is constantly moving, the best way to always be updated is to let IntelliJ IDEA notify you when it is time to renew your plugin.
 
-Open 
+Open
 
     Preferences -> Plugins -> Browse Repositories -> Manage Repositories...
 
@@ -145,8 +145,10 @@ Some of the code in the standard library is created by generating code from temp
 The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
 [pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
 
-If you create your own fork, it might help to [enable rebase by default when you pull](http://d.strelau.net/post/47338904/git-pull-rebase-by-default)
-which will avoid your local repo having too many merge commits which will help keep your pull request simple and easy to apply.
+If you create your own fork, it might help to enable rebase by default
+when you pull by executing `git config --global pull.rebase
+true`. This will avoid your local repo having too many merge commits
+which will help keep your pull request simple and easy to apply.
 
 ## Commit comments
 

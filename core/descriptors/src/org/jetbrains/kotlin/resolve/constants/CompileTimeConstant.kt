@@ -81,7 +81,7 @@ public class IntegerValueTypeConstant(
         }
     }
 
-    val unknownIntegerType = JetTypeImpl(
+    val unknownIntegerType = JetTypeImpl.create(
             Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(),
             ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true)
     )

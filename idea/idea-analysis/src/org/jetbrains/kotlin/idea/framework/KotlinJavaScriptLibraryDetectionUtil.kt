@@ -32,13 +32,15 @@ public object KotlinJavaScriptLibraryDetectionUtil {
             isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
 
     platformStatic
-    public fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean =
-            isJsLibraryWithAcceptedFile(classesRoots) { isJsFileWithMetadata(it) }
+    public fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
+        // Prevent clashing with java runtime
+        if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) return false
 
-    private fun isJsLibraryWithAcceptedFile(classesRoots: List<VirtualFile>, accept: (VirtualFile) -> Boolean): Boolean =
-        JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) == null // Prevent clashing with java runtime
-        && classesRoots.any { !VfsUtilCore.processFilesRecursively(it, { !accept(it) }) }
+        return classesRoots.any { !VfsUtilCore.processFilesRecursively(it, { isJsFileWithMetadata(it) }) }
+    }
 
     private fun isJsFileWithMetadata(file: VirtualFile): Boolean =
-            !file.isDirectory() && JavaScript.EXTENSION == file.getExtension() && KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
+            !file.isDirectory() &&
+            JavaScript.EXTENSION == file.getExtension() &&
+            KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
 }

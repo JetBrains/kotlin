@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
@@ -25,18 +26,18 @@ import java.lang.reflect.Modifier
 
 public interface JetScope {
 
-    public fun getClassifier(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): ClassifierDescriptor?
+    public fun getClassifier(name: Name, location: LookupLocation = LookupLocation.NO_LOCATION): ClassifierDescriptor?
 
     public fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getProperties(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<VariableDescriptor>
+    public fun getProperties(name: Name, location: LookupLocation = LookupLocation.NO_LOCATION): Collection<VariableDescriptor>
 
     public fun getLocalVariable(name: Name): VariableDescriptor?
 
-    public fun getFunctions(name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
+    public fun getFunctions(name: Name, location: LookupLocation = LookupLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<PropertyDescriptor>
-    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: UsageLocation = UsageLocation.NO_LOCATION): Collection<FunctionDescriptor>
+    public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation = LookupLocation.NO_LOCATION): Collection<PropertyDescriptor>
+    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation = LookupLocation.NO_LOCATION): Collection<FunctionDescriptor>
 
     public fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
     public fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
@@ -246,8 +247,3 @@ public interface DescriptorKindExclude {
     }
 }
 
-public interface UsageLocation {
-    companion object {
-        val NO_LOCATION = object : UsageLocation {}
-    }
-}

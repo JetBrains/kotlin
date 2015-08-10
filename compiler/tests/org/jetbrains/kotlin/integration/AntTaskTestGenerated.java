@@ -47,6 +47,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("failOnErrorByDefault")
+    public void testFailOnErrorByDefault() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
+        doTest(fileName);
+    }
+
     @TestMetadata("helloWorld")
     public void testHelloWorld() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/helloWorld/");

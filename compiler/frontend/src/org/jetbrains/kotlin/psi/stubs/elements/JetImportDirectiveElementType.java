@@ -22,6 +22,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetImportDirective;
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinImportDirectiveStubImpl;
@@ -35,15 +36,19 @@ public class JetImportDirectiveElementType extends JetStubElementType<KotlinImpo
 
     @Override
     public KotlinImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
+        FqName importedFqName = psi.getImportedFqName();
+        StringRef fqName = StringRef.fromString(importedFqName == null ? null : importedFqName.asString());
         StringRef aliasName = StringRef.fromString(psi.getAliasName());
         return new KotlinImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(),
-                                                 aliasName, psi.isValidImport());
+                                                 fqName, aliasName, psi.isValidImport());
     }
 
     @Override
     public void serialize(@NotNull KotlinImportDirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
         dataStream.writeBoolean(stub.isAllUnder());
+        FqName importedFqName = stub.getImportedFqName();
+        dataStream.writeName(importedFqName != null ? importedFqName.asString() : null);
         dataStream.writeName(stub.getAliasName());
         dataStream.writeBoolean(stub.isValid());
     }
@@ -53,8 +58,9 @@ public class JetImportDirectiveElementType extends JetStubElementType<KotlinImpo
     public KotlinImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isAbsoluteInRootPackage = dataStream.readBoolean();
         boolean isAllUnder = dataStream.readBoolean();
+        StringRef importedName = dataStream.readName();
         StringRef aliasName = dataStream.readName();
         boolean isValid = dataStream.readBoolean();
-        return new KotlinImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, aliasName, isValid);
+        return new KotlinImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, importedName, aliasName, isValid);
     }
 }

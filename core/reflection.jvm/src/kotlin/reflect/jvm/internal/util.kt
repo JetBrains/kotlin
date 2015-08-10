@@ -16,7 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.IllegalCallableAccessException
+
+internal val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =

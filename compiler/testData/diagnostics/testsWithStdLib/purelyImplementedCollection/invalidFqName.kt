@@ -14,8 +14,6 @@ public class A<T> extends AbstractList<T> {
     public int size() {
         return 0;
     }
-
-    static A rawField = null;
 }
 
 // FILE: B.java

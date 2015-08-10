@@ -119,7 +119,7 @@ public class FunctionClassDescriptor(
                     TypeProjectionImpl(it.getDefaultType())
                 }
 
-                result.add(JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, descriptor.getMemberScope(arguments)))
+                result.add(JetTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments))
             }
 
             // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}

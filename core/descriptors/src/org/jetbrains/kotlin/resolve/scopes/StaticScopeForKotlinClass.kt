@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
@@ -28,7 +29,7 @@ import java.util.ArrayList
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
 ) : JetScopeImpl() {
-    override fun getClassifier(name: Name, location: UsageLocation) = null // TODO
+    override fun getClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<FunctionDescriptor> by lazy {
         if (containingClass.getKind() != ClassKind.ENUM_CLASS) {
@@ -44,7 +45,7 @@ public class StaticScopeForKotlinClass(
 
     override fun getOwnDeclaredDescriptors() = functions
 
-    override fun getFunctions(name: Name, location: UsageLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
+    override fun getFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
 
     override fun getContainingDeclaration() = containingClass
 

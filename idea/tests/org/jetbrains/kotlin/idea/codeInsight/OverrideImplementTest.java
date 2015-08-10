@@ -63,6 +63,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doImplementFileTest();
     }
 
+    public void testImplementJavaRawSubclass() {
+        doImplementDirectoryTest();
+    }
+
     public void testProperty() {
         doImplementFileTest();
     }

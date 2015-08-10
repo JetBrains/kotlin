@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.calls.model;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArguments {
     private final Call call; //for better debug messages only
-    private final Map<ValueArgument, DataFlowInfo>  infoMap = Maps.newHashMap();
-    private final Map<ValueArgument, ValueArgument> nextArgument = Maps.newHashMap();
+    private Map<ValueArgument, DataFlowInfo> infoMap = null;
+    private Map<ValueArgument, ValueArgument> nextArgument = null;
     private DataFlowInfo initialInfo;
     private DataFlowInfo resultInfo;
 
@@ -44,6 +44,9 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
         while (iterator.hasNext()) {
             ValueArgument argument = iterator.next();
             if (prev != null) {
+                if (nextArgument == null) {
+                    nextArgument = new HashMap<ValueArgument, ValueArgument>();
+                }
                 nextArgument.put(prev, argument);
             }
             prev = argument;
@@ -59,7 +62,7 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
     @NotNull
     @Override
     public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
-        DataFlowInfo infoForArgument = infoMap.get(valueArgument);
+        DataFlowInfo infoForArgument = infoMap == null ? null : infoMap.get(valueArgument);
         if (infoForArgument == null) {
             return initialInfo;
         }
@@ -68,8 +71,11 @@ public class DataFlowInfoForArgumentsImpl implements MutableDataFlowInfoForArgum
 
     @Override
     public void updateInfo(@NotNull ValueArgument valueArgument, @NotNull DataFlowInfo dataFlowInfo) {
-        ValueArgument next = nextArgument.get(valueArgument);
+        ValueArgument next = nextArgument == null ? null : nextArgument.get(valueArgument);
         if (next != null) {
+            if (infoMap == null) {
+                infoMap = new HashMap<ValueArgument, DataFlowInfo>();
+            }
             infoMap.put(next, dataFlowInfo);
             return;
         }

@@ -16,30 +16,41 @@
 
 package org.jetbrains.kotlin.psi.addRemoveModifier
 
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.JetModifierListOwner
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetAnnotation
-import org.jetbrains.kotlin.psi.JetModifierList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
+private fun createModifierList(text: String, owner: JetModifierListOwner): JetModifierList {
+    val newModifierList = JetPsiFactory(owner).createModifierList(text)
+    val anchor = owner.firstChild!!
+            .siblings(forward = true)
+            .dropWhile { it is PsiComment || it is PsiWhiteSpace }
+            .first()
+    return owner.addBefore(newModifierList, anchor) as JetModifierList
+}
+
 internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywordToken, defaultVisibilityModifier: JetModifierKeywordToken) {
-    val modifierList = owner.getModifierList()
+    val modifierList = owner.modifierList
     if (modifierList == null) {
         if (modifier == defaultVisibilityModifier) return
-
-        val newModifierList = JetPsiFactory(owner).createModifierList(modifier)
-        val anchor = owner.getFirstChild()!!.siblings(forward = true)
-                .dropWhile { it is PsiComment || it is PsiWhiteSpace }
-                .first()
-        owner.addBefore(newModifierList, anchor)
+        createModifierList(modifier.value, owner)
     }
     else {
         addModifier(modifierList, modifier, defaultVisibilityModifier)
+    }
+}
+
+internal fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+    val modifierList = owner.modifierList
+    return if (modifierList == null) {
+        createModifierList(annotationEntry.text, owner).annotationEntries.first()
+    }
+    else {
+        modifierList.addBefore(annotationEntry, modifierList.firstChild) as JetAnnotationEntry
     }
 }
 

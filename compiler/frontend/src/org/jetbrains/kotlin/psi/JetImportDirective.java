@@ -99,8 +99,18 @@ public class JetImportDirective extends JetElementImplStub<KotlinImportDirective
 
     @Nullable
     @IfNotParsed
+    public FqName getImportedFqName() {
+        KotlinImportDirectiveStub stub = getStub();
+        if (stub != null) {
+            return stub.getImportedFqName();
+        }
+        return fqNameFromExpression(getImportedReference());
+    }
+
+    @Nullable
+    @IfNotParsed
     public ImportPath getImportPath() {
-        FqName importFqn = fqNameFromExpression(getImportedReference());
+        FqName importFqn = getImportedFqName();
         if (importFqn == null) {
             return null;
         }

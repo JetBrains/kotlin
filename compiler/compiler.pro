@@ -27,6 +27,7 @@ messages/**)
 -dontwarn apple.awt.*
 -dontwarn dk.brics.automaton.*
 -dontwarn org.fusesource.**
+-dontwarn org.imgscalr.Scalr**
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn com.intellij.util.CompressionUtil
 -dontwarn com.intellij.util.SnappyInitializer

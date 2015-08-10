@@ -212,12 +212,11 @@ public class CommonSupertypes {
         }
 
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
-        List<TypeProjection> newProjections = new ArrayList<TypeProjection>();
-        for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-            TypeParameterDescriptor parameterDescriptor = parameters.get(i);
+        List<TypeProjection> newProjections = new ArrayList<TypeProjection>(parameters.size());
+        for (TypeParameterDescriptor parameterDescriptor : parameters) {
             Set<TypeProjection> typeProjections = new HashSet<TypeProjection>();
             for (JetType type : types) {
-                typeProjections.add(type.getArguments().get(i));
+                typeProjections.add(type.getArguments().get(parameterDescriptor.getIndex()));
             }
             newProjections.add(computeSupertypeProjection(parameterDescriptor, typeProjections, recursionDepth, maxDepth));
         }
@@ -238,7 +237,7 @@ public class CommonSupertypes {
         else {
             newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);
         }
-        return new JetTypeImpl(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
+        return JetTypeImpl.create(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
     }
 
     @NotNull

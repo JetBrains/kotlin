@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 
 public class InnerClassesScopeWrapper(override val workerScope: JetScope) : AbstractScopeAdapter() {
-    override fun getClassifier(name: Name, location: UsageLocation) = workerScope.getClassifier(name, location) as? ClassDescriptor
+    override fun getClassifier(name: Name, location: LookupLocation) = workerScope.getClassifier(name, location) as? ClassDescriptor
 
     override fun getDeclarationsByLabel(labelName: Name) = workerScope.getDeclarationsByLabel(labelName).filterIsInstance<ClassDescriptor>()
 

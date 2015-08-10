@@ -149,3 +149,8 @@ private fun deleteElementWithDelimiters(element: PsiElement) {
 public fun PsiElement.deleteSingle() {
     CodeEditUtil.removeChild(getParent()?.getNode() ?: return, getNode() ?: return)
 }
+
+public fun JetClass.getOrCreateCompanionObject() : JetObjectDeclaration {
+    getCompanionObjects().firstOrNull()?.let { return it }
+    return addDeclaration(JetPsiFactory(this).createCompanionObject()) as JetObjectDeclaration
+}

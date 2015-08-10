@@ -1,4 +1,4 @@
 package test
 
-public interface RawUpperBound</*0*/ T : (test.RawUpperBound<test.RawUpperBound<*>>..test.RawUpperBound<out test.RawUpperBound<*>>?)> {
+public interface RawUpperBound</*0*/ T : test.RawUpperBound<(raw) test.RawUpperBound<*>>!> {
 }

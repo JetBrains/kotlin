@@ -3334,6 +3334,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("WildcardBounds.java")
+        public void testWildcardBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/WildcardBounds.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3969,6 +3975,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("LoadIterableWithPropagation.java")
             public void testLoadIterableWithPropagation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ReadOnlyExtendsWildcard.java")
+            public void testReadOnlyExtendsWildcard() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
                 doTest(fileName);
             }
         }

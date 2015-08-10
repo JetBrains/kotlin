@@ -99,6 +99,12 @@ public class TypeUtils {
             return null;
         }
 
+        @NotNull
+        @Override
+        public TypeCapabilities getCapabilities() {
+            return TypeCapabilities.NONE.INSTANCE$;
+        }
+
         @Override
         public String toString() {
             return name;
@@ -253,7 +259,7 @@ public class TypeUtils {
             i++;
         }
 
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
                 constructor,
                 allNullable,
@@ -409,7 +415,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return new JetTypeImpl(
+        return JetTypeImpl.create(
                 Annotations.EMPTY,
                 typeConstructor,
                 false,
@@ -419,12 +425,12 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static List<TypeProjection> getDefaultTypeProjections(List<TypeParameterDescriptor> parameters) {
-        List<TypeProjection> result = new ArrayList<TypeProjection>();
+    public static List<TypeProjection> getDefaultTypeProjections(@NotNull List<TypeParameterDescriptor> parameters) {
+        List<TypeProjection> result = new ArrayList<TypeProjection>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
-        return result;
+        return UtilsPackage.toReadOnlyList(result);
     }
 
     @NotNull
@@ -797,6 +803,18 @@ public class TypeUtils {
         @Override
         public TypeSubstitution getSubstitution() {
             return delegate.getSubstitution();
+        }
+
+        @Nullable
+        @Override
+        public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
+            return delegate.getCapability(capabilityClass);
+        }
+
+        @NotNull
+        @Override
+        public TypeCapabilities getCapabilities() {
+            return delegate.getCapabilities();
         }
     }
 

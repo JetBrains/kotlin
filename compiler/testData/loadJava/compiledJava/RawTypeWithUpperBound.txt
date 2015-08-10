@@ -3,8 +3,8 @@ package test
 public interface RawTypeWithUpperBound {
 
     public interface Bar {
-        public abstract fun f(/*0*/ p0: (test.RawTypeWithUpperBound.Foo<kotlin.CharSequence!>..test.RawTypeWithUpperBound.Foo<*>?)): kotlin.Unit
-        public abstract fun g(/*0*/ p0: kotlin.(Mutable)List<(test.RawTypeWithUpperBound.Foo<kotlin.CharSequence!>..test.RawTypeWithUpperBound.Foo<*>?)>!): kotlin.Unit
+        public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<(raw) kotlin.CharSequence!>!): kotlin.Unit
+        public abstract fun g(/*0*/ p0: kotlin.(Mutable)List<test.RawTypeWithUpperBound.Foo<(raw) kotlin.CharSequence!>!>!): kotlin.Unit
     }
 
     public interface Foo</*0*/ T : kotlin.CharSequence!> {

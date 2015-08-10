@@ -9,8 +9,8 @@ public/*package*/ open class A</*0*/ T : kotlin.CharSequence!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ open class B</*0*/ E : (A<kotlin.CharSequence!>..A<*>?)> {
-    public/*package*/ constructor B</*0*/ E : (A<kotlin.CharSequence!>..A<*>?)>()
+public/*package*/ open class B</*0*/ E : A<(raw) kotlin.CharSequence!>!> {
+    public/*package*/ constructor B</*0*/ E : A<(raw) kotlin.CharSequence!>!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -23,5 +23,5 @@ public/*package*/ open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ open fun foo(/*0*/ x: (B<(A<kotlin.CharSequence!>..A<*>?)>..B<out (A<kotlin.CharSequence!>..A<*>?)>?)): kotlin.Unit
+    public/*package*/ open fun foo(/*0*/ x: B<(raw) A<*>!>!): kotlin.Unit
 }

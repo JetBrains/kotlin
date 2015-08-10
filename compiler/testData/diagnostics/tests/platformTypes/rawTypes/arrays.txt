@@ -23,16 +23,16 @@ public/*package*/ open class Test {
 
     public/*package*/ open class RawADerived : A<kotlin.CharSequence!, kotlin.Any!> {
         public/*package*/ constructor RawADerived()
-        public/*package*/ final override /*1*/ /*fake_override*/ var arraysOfAny: kotlin.Array<(out) kotlin.Array<(out) kotlin.Any!>!>!
-        public/*package*/ final override /*1*/ /*fake_override*/ var arraysOfLists: kotlin.Array<(out) kotlin.Array<(out) (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>!>!
-        public/*package*/ final override /*1*/ /*fake_override*/ var charSequences: kotlin.Array<(out) kotlin.CharSequence!>!
-        public/*package*/ final override /*1*/ /*fake_override*/ var erasedLists: kotlin.Array<(out) (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>!
-        public/*package*/ final override /*1*/ /*fake_override*/ var maps: kotlin.Array<(out) (kotlin.MutableMap<kotlin.Any?, kotlin.Any?>..kotlin.Map<*, *>?)>!
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public/*package*/ final override /*1*/ /*fake_override*/ var arraysOfAny: kotlin.Array<(out) kotlin.Array<(out) kotlin.Any(raw)!>!>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var arraysOfLists: kotlin.Array<(out) kotlin.Array<(out) kotlin.(Mutable)List<(raw) kotlin.Any?>!>!>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var charSequences: kotlin.Array<(out) kotlin.CharSequence(raw)!>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var erasedLists: kotlin.Array<(out) kotlin.(Mutable)List<(raw) kotlin.Any?>!>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var maps: kotlin.Array<(out) kotlin.(Mutable)Map<(raw) kotlin.Any?, (raw) kotlin.Any?>!>!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
     }
 
     // Static members
-    public/*package*/ final var rawAField: (A<kotlin.CharSequence!, kotlin.Any!>..A<*, *>?)
+    public/*package*/ final var rawAField: A<(raw) kotlin.CharSequence!, (raw) kotlin.Any!>!
 }

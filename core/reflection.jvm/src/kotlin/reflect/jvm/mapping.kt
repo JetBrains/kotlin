@@ -16,10 +16,7 @@
 
 package kotlin.reflect.jvm
 
-import java.lang.reflect.Constructor
-import java.lang.reflect.Field
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
@@ -55,14 +52,14 @@ public val KProperty<*>.javaField: Field?
  * or `null` if the property has no getter, for example in case of a simple private `val` in a class.
  */
 public val KProperty<*>.javaGetter: Method?
-    get() = (this as? KPropertyImpl<*>)?.javaGetter
+    get() = getter.javaMethod
 
 /**
  * Returns a Java [Method] instance corresponding to the setter of the given mutable property,
  * or `null` if the property has no setter, for example in case of a simple private `var` in a class.
  */
 public val KMutableProperty<*>.javaSetter: Method?
-    get() = (this as? KMutablePropertyImpl<*>)?.javaSetter
+    get() = setter.javaMethod
 
 
 /**
@@ -70,12 +67,7 @@ public val KMutableProperty<*>.javaSetter: Method?
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
 public val KFunction<*>.javaMethod: Method?
-    get() = when (this) {
-        is KFunctionImpl -> (caller as? FunctionCaller.Method)?.method
-        is KPropertyImpl.Getter<*> -> property.javaGetter
-        is KMutablePropertyImpl.Setter<*> -> property.javaSetter
-        else -> null
-    }
+    get() = (this as? KCallableImpl<*>)?.caller?.member as? Method
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
@@ -83,10 +75,16 @@ public val KFunction<*>.javaMethod: Method?
  */
 @suppress("UNCHECKED_CAST")
 public val <T> KFunction<T>.javaConstructor: Constructor<T>?
-    get() = when (this) {
-        is KFunctionImpl -> (caller as? FunctionCaller.Constructor)?.constructor as? Constructor<T>
-        else -> null
-    }
+    get() = (this as? KCallableImpl<T>)?.caller?.member as? Constructor<T>
+
+
+/**
+ * Returns a Java [Type] instance corresponding to the given Kotlin type.
+ * Note that one Kotlin type may correspond to different JVM types depending on where it appears. For example, [Unit] corresponds to
+ * the JVM class [Unit] when it's the type of a parameter, or to `void` when it's the return type of a function.
+ */
+public val KType.javaType: Type
+    get() = (this as KTypeImpl).javaType
 
 
 

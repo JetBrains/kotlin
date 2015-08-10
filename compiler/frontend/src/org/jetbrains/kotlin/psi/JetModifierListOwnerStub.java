@@ -60,6 +60,12 @@ public class JetModifierListOwnerStub<T extends StubElement<?>> extends JetEleme
         AddRemoveModifierPackage.removeModifier(this, modifier);
     }
 
+    @NotNull
+    @Override
+    public JetAnnotationEntry addAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry) {
+        return AddRemoveModifierPackage.addAnnotationEntry(this, annotationEntry);
+    }
+
     @Override
     @NotNull
     public List<JetAnnotationEntry> getAnnotationEntries() {

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
-import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.types.DescriptorSubstitutor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -33,10 +32,9 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
-public class PropertyDescriptorImpl extends VariableDescriptorImpl implements PropertyDescriptor {
+public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
     private final Modality modality;
     private Visibility visibility;
-    private final boolean isVar;
     private final Set<PropertyDescriptor> overriddenProperties = new LinkedHashSet<PropertyDescriptor>(); // LinkedHashSet is essential here
     private final PropertyDescriptor original;
     private final Kind kind;
@@ -59,8 +57,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Kind kind,
             @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, null, source);
-        this.isVar = isVar;
+        super(containingDeclaration, annotations, name, null, isVar, source);
         this.modality = modality;
         this.visibility = visibility;
         this.original = original == null ? this : original;
@@ -140,11 +137,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @Override
     public JetType getReturnType() {
         return getType();
-    }
-
-    @Override
-    public boolean isVar() {
-        return isVar;
     }
 
     @NotNull
@@ -280,7 +272,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
         if (copyOverrides) {
             for (PropertyDescriptor propertyDescriptor : overriddenProperties) {
-                OverridingUtil.bindOverride(substitutedDescriptor, propertyDescriptor.substitute(substitutor));
+                substitutedDescriptor.addOverriddenDescriptor(propertyDescriptor.substitute(substitutor));
             }
         }
 
@@ -333,7 +325,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     @NotNull
     @Override
-    public Set<? extends PropertyDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends PropertyDescriptor> getOverriddenDescriptors() {
         return overriddenProperties;
     }
 

@@ -224,7 +224,7 @@ private fun JetType.substitute(substitution: JetTypeSubstitution, variance: Vari
             val (projection, typeParameter) = pair
             TypeProjectionImpl(Variance.INVARIANT, projection.getType().substitute(substitution, typeParameter.getVariance()))
         }
-        return JetTypeImpl(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
+        return JetTypeImpl.create(getAnnotations(), getConstructor(), isMarkedNullable(), newArguments, getMemberScope())
     }
 }
 

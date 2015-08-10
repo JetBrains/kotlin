@@ -12,8 +12,8 @@ public open class A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public open class B</*0*/ E : (A<kotlin.Any!>..A<*>?)> {
-    public constructor B</*0*/ E : (A<kotlin.Any!>..A<*>?)>()
+public open class B</*0*/ E : A<(raw) kotlin.Any!>!> {
+    public constructor B</*0*/ E : A<(raw) kotlin.Any!>!>()
     public/*package*/ final var field: E!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(): E!
@@ -28,5 +28,5 @@ public open class Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public/*package*/ final var rawB: (B<(A<kotlin.Any!>..A<*>?)>..B<out (A<kotlin.Any!>..A<*>?)>?)
+    public/*package*/ final var rawB: B<(raw) A<*>!>!
 }

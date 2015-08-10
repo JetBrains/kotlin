@@ -161,7 +161,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     val TypeParameterDescriptor.correspondingType: JetType
         get() = cachedTypeForVariable.getOrPut(this) {
-            JetTypeImpl(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), JetScope.Empty)
+            JetTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), JetScope.Empty)
         }
 
     fun JetType.isProper() = !TypeUtils.containsSpecialType(this) {
@@ -548,7 +548,7 @@ public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypePa
             if (descriptor !is TypeParameterDescriptor) return null
             val typeParameterDescriptor = conversion(descriptor) ?: return null
 
-            val type = JetTypeImpl(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), JetScope.Empty)
+            val type = JetTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), JetScope.Empty)
             return TypeProjectionImpl(type)
         }
     })

@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.kotlin.incremental.components.UsageCollector
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 
-public class IncrementalCompilationComponentsImpl(caches: Map<ModuleBuildTarget, IncrementalCache>): IncrementalCompilationComponents {
-    private val idToCache = caches.mapKeys { it.key.getId()!! }
+public class IncrementalCompilationComponentsImpl(
+        caches: Map<ModuleBuildTarget, IncrementalCache>,
+        private val lookupTracker: LookupTracker
+): IncrementalCompilationComponents {
+    private val idToCache = caches.mapKeys { it.key.id!! }
 
-    override fun getIncrementalCache(moduleId: String): IncrementalCache {
-        return idToCache[moduleId]!!
-    }
+    override fun getIncrementalCache(moduleId: String): IncrementalCache = idToCache[moduleId]!!
 
-    override fun getUsageCollector(): UsageCollector = UsageCollector.DO_NOTHING
+    override fun getLookupTracker(): LookupTracker = lookupTracker
 }

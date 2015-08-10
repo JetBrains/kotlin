@@ -3,8 +3,8 @@ package
 internal val strList: kotlin.List<kotlin.String>
 internal fun main(): kotlin.Unit
 
-public/*package*/ open class A</*0*/ T : (A<A<*, *, *>, A<*, *, *>, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>, out A<*, *, *>, out kotlin.(Mutable)List<*>!>?), /*1*/ E : T!, /*2*/ F : (kotlin.MutableList<out kotlin.Double!>..kotlin.List<kotlin.Double!>?)> {
-    public/*package*/ constructor A</*0*/ T : (A<A<*, *, *>, A<*, *, *>, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>, out A<*, *, *>, out kotlin.(Mutable)List<*>!>?), /*1*/ E : T!, /*2*/ F : (kotlin.MutableList<out kotlin.Double!>..kotlin.List<kotlin.Double!>?)>()
+public/*package*/ open class A</*0*/ T : A<(raw) A<*, *, *>, (raw) A<*, *, *>, (raw) kotlin.(Mutable)List<*>!>!, /*1*/ E : T!, /*2*/ F : (kotlin.MutableList<out kotlin.Double!>..kotlin.List<kotlin.Double!>?)> {
+    public/*package*/ constructor A</*0*/ T : A<(raw) A<*, *, *>, (raw) A<*, *, *>, (raw) kotlin.(Mutable)List<*>!>!, /*1*/ E : T!, /*2*/ F : (kotlin.MutableList<out kotlin.Double!>..kotlin.List<kotlin.Double!>?)>()
     public/*package*/ final var first: T!
     public/*package*/ final var listOfDoubles: F!
     public/*package*/ final var second: E!
@@ -21,14 +21,14 @@ public/*package*/ open class Test {
 
     public/*package*/ open class DerivedRawA : A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!> {
         public/*package*/ constructor DerivedRawA()
-        public/*package*/ final override /*1*/ /*fake_override*/ var first: (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?)
-        public/*package*/ final override /*1*/ /*fake_override*/ var listOfDoubles: (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)
-        public/*package*/ final override /*1*/ /*fake_override*/ var second: (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?)
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public/*package*/ final override /*1*/ /*fake_override*/ var first: A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.(Mutable)List<*>!>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var listOfDoubles: kotlin.(Mutable)List<(raw) kotlin.Any?>!
+        public/*package*/ final override /*1*/ /*fake_override*/ var second: A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.(Mutable)List<*>!>!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
     }
 
     // Static members
-    public/*package*/ final var rawAField: (A<(A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>..A<out (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), out (A<A<*, *, *>!, A<*, *, *>!, kotlin.(Mutable)List<*>!>..A<out A<*, *, *>!, out A<*, *, *>!, out kotlin.(Mutable)List<*>!>?), out (kotlin.MutableList<kotlin.Any?>..kotlin.List<*>?)>?)
+    public/*package*/ final var rawAField: A<(raw) A<*, *, *>!, (raw) A<*, *, *>!, (raw) kotlin.(Mutable)List<*>!>!
 }

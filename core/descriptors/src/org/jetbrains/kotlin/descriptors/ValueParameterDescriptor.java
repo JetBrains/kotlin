@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface ValueParameterDescriptor extends VariableDescriptor, ParameterDescriptor {
     @NotNull
@@ -36,21 +36,13 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
     int getIndex();
 
     /**
-     * The front-end relies on this property when resolving function calls
-     *
-     * @return {@code true} iff the parameter has a default value, i.e. declares it or inherits
-     *         by overriding a parameter in an overridden function.
-     */
-    boolean hasDefaultValue();
-
-    /**
-     * The back-end should relies on this property when generating function signatures
-     *
-     * @return {@code true} iff the parameter declares a default value, i.e. explicitly specifies it in the function header
+     * @return true iff this parameter belongs to a declared function (not a fake override) and declares the default value,
+     * i.e. explicitly specifies it in the function signature. Also see 'hasDefaultValue' extension in DescriptorUtils.kt
      */
     boolean declaresDefaultValue();
 
-    @Nullable JetType getVarargElementType();
+    @Nullable
+    JetType getVarargElementType();
 
     @NotNull
     @Override
@@ -66,7 +58,5 @@ public interface ValueParameterDescriptor extends VariableDescriptor, ParameterD
      */
     @NotNull
     @Override
-    Set<? extends ValueParameterDescriptor> getOverriddenDescriptors();
-
-    void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden);
+    Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors();
 }

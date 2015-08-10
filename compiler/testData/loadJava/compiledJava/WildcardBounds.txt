@@ -1,0 +1,10 @@
+package test
+
+public open class WildcardBounds {
+    public constructor WildcardBounds()
+    public/*package*/ open fun foo(/*0*/ p0: test.WildcardBounds.A<out kotlin.CharSequence!>!, /*1*/ p1: test.WildcardBounds.A<in kotlin.String!>!): kotlin.Unit
+
+    public/*package*/ open class A</*0*/ T : kotlin.Any!> {
+        public/*package*/ constructor A</*0*/ T : kotlin.Any!>()
+    }
+}

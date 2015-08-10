@@ -1,0 +1,28 @@
+import kotlin.platform.platformStatic
+
+abstract class A {
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    var x = 2 * 3
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    inner class X
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    class Y
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract fun foo(n: Int): Boolean
+
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    abstract fun bar(s: String): Int
+
+    companion object {
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        var X = "1" + "2"
+
+        // INFO: {"checked": "true", "toAbstract": "true"}
+        platformStatic fun foo2(n: Int): String {
+            return "_" + n + "_"
+        }
+    }
+}

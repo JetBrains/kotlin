@@ -43,4 +43,16 @@ public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
             addBefore(newModifierList, parameterList)
         }
     }
+
+    override fun addAnnotationEntry(annotationEntry: JetAnnotationEntry): JetAnnotationEntry {
+        val modifierList = getModifierList()
+        return if (modifierList != null) {
+            modifierList.addBefore(annotationEntry, modifierList.firstChild) as JetAnnotationEntry
+        }
+        else {
+            val parameterList = getValueParameterList()!!
+            val newModifierList = JetPsiFactory(getProject()).createModifierList(annotationEntry.text)
+            (addBefore(newModifierList, parameterList) as JetModifierList).annotationEntries.first()
+        }
+    }
 }

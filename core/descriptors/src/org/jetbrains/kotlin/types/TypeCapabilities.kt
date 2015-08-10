@@ -20,6 +20,16 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 public interface TypeCapability
 
+public interface TypeCapabilities {
+    object NONE : TypeCapabilities {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = null
+    }
+
+    fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
+}
+
+public inline fun <reified T : TypeCapability> JetType.getCapability(): T? = getCapability(javaClass<T>())
+
 public interface Specificity : TypeCapability {
 
     public enum class Relation {
@@ -73,4 +83,8 @@ public fun sameTypeConstructors(first: JetType, second: JetType): Boolean {
     val typeRangeCapability = javaClass<SubtypingRepresentatives>()
     return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
            || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
+}
+
+interface CustomSubstitutionCapability : TypeCapability {
+    public val substitution: TypeSubstitution
 }

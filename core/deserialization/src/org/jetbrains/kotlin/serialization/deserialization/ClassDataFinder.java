@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.serialization.deserialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.serialization.ClassData;
 
 public interface ClassDataFinder {
     @Nullable
-    ClassData findClassData(@NotNull ClassId classId);
+    ClassDataProvider findClassData(@NotNull ClassId classId);
 }

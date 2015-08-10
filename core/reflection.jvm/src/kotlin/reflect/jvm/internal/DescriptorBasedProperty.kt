@@ -17,17 +17,12 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
-import java.lang.reflect.Method
+import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
+import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
 abstract class DescriptorBasedProperty<out R> protected constructor(
-        container: KCallableContainerImpl,
+        internal val container: KCallableContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: PropertyDescriptor?
@@ -43,47 +38,19 @@ abstract class DescriptorBasedProperty<out R> protected constructor(
             descriptor
     )
 
-    private data class PropertyProtoData(
-            val proto: ProtoBuf.Callable,
-            val nameResolver: NameResolver,
-            val signature: JvmProtoBuf.JvmPropertySignature
-    )
-
     override val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
         container.findPropertyDescriptor(name, signature)
     }
 
-    // null if this is a property declared in a foreign (Java) class
-    private val protoData: PropertyProtoData? by ReflectProperties.lazyWeak {
-        val property = DescriptorUtils.unwrapFakeOverride(descriptor) as? DeserializedPropertyDescriptor
-        if (property != null) {
-            val proto = property.proto
-            if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
-                return@lazyWeak PropertyProtoData(proto, property.nameResolver, proto.getExtension(JvmProtoBuf.propertySignature))
+    internal val javaField: Field? by ReflectProperties.lazySoft {
+        val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
+        when (jvmSignature) {
+            is KotlinProperty -> {
+                if (!jvmSignature.signature.hasField()) null
+                else container.findFieldBySignature(jvmSignature.proto, jvmSignature.signature.field, jvmSignature.nameResolver)
             }
+            is JavaField -> jvmSignature.field
         }
-        null
-    }
-
-    open val javaField: Field? by ReflectProperties.lazySoft {
-        val proto = protoData
-        if (proto == null) container.jClass.getField(name)
-        else if (!proto.signature.hasField()) null
-        else container.findFieldBySignature(proto.proto, proto.signature.getField(), proto.nameResolver)
-    }
-
-    open val javaGetter: Method? by ReflectProperties.lazySoft {
-        val proto = protoData
-        if (proto == null || !proto.signature.hasGetter()) null
-        else container.findMethodBySignature(proto.proto, proto.signature.getGetter(), proto.nameResolver,
-                                             descriptor.getGetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
-    }
-
-    open val javaSetter: Method? by ReflectProperties.lazySoft {
-        val proto = protoData
-        if (proto == null || !proto.signature.hasSetter()) null
-        else container.findMethodBySignature(proto.proto, proto.signature.getSetter(), proto.nameResolver,
-                                             descriptor.getSetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
     override fun equals(other: Any?): Boolean =

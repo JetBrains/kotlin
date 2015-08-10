@@ -1,0 +1,4 @@
+class A: I {
+    // INFO: {"checked": "true"}
+    override fun foo(): Int = 1
+}

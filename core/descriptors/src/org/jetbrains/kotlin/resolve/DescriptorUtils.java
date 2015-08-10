@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.LazyType;
@@ -393,7 +393,7 @@ public class DescriptorUtils {
     @Nullable
     public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName) {
         ClassifierDescriptor classifier =
-                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), UsageLocation.NO_LOCATION);
+                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), LookupLocation.NO_LOCATION);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());
@@ -443,7 +443,7 @@ public class DescriptorUtils {
     @NotNull
     public static <D extends CallableMemberDescriptor> D unwrapFakeOverride(@NotNull D descriptor) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            Set<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            Collection<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
             if (overridden.isEmpty()) {
                 throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
             }

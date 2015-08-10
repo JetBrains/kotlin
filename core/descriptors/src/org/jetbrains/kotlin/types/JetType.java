@@ -52,4 +52,7 @@ public interface JetType extends Annotated {
     @KotlinSignature("fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?")
     @Nullable
     <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass);
+
+    @NotNull
+    TypeCapabilities getCapabilities();
 }

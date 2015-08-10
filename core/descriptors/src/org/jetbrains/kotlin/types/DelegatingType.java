@@ -73,6 +73,12 @@ public abstract class DelegatingType implements JetType {
         return getDelegate().getCapability(capabilityClass);
     }
 
+    @NotNull
+    @Override
+    public TypeCapabilities getCapabilities() {
+        return getDelegate().getCapabilities();
+    }
+
     @Override
     public int hashCode() {
         return getDelegate().hashCode();

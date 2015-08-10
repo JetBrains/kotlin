@@ -58,6 +58,12 @@ abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclar
 
     @NotNull
     @Override
+    public JetAnnotationEntry addAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry) {
+        return AddRemoveModifierPackage.addAnnotationEntry(this, annotationEntry);
+    }
+
+    @NotNull
+    @Override
     public List<JetAnnotationEntry> getAnnotationEntries() {
         JetModifierList modifierList = getModifierList();
         if (modifierList == null) return Collections.emptyList();

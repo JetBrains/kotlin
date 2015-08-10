@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
@@ -369,7 +370,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getUnsubstitutedMemberScope().getClassifier(name, UsageLocation.NO_LOCATION);
+        getUnsubstitutedMemberScope().getClassifier(name, LookupLocation.NO_LOCATION);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof LazyClassDescriptor) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
@@ -48,20 +49,23 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     @NotNull
     public static List<JsStatement> setDefaultValueForArguments(@NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext functionBodyContext) {
-        List<JsStatement> result = new ArrayList<JsStatement>();
-        for (ValueParameterDescriptor valueParameter : descriptor.getValueParameters()) {
-            if (valueParameter.hasDefaultValue()) {
-                JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
-                JetExpression defaultArgument = getDefaultArgument(valueParameter);
-                JsBlock defaultArgBlock = new JsBlock();
-                JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
-                JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
-                JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
-                JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
-                JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
-                result.add(jsIf);
-            }
+        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+
+        List<JsStatement> result = new ArrayList<JsStatement>(valueParameters.size());
+        for (ValueParameterDescriptor valueParameter : valueParameters) {
+            if (!DescriptorUtilPackage.hasDefaultValue(valueParameter)) continue;
+
+            JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
+            JetExpression defaultArgument = getDefaultArgument(valueParameter);
+            JsBlock defaultArgBlock = new JsBlock();
+            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
+            JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
+            JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
+            JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, functionBodyContext.namer().getUndefinedExpression());
+            JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
+            result.add(jsIf);
         }
+
         return result;
     }
 

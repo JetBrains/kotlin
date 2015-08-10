@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             JsExpression argumentValue;
             JsExpression parameterValue = new JsNameRef(paramName);
             if (!constructorParam.hasValOrVar()) {
-                assert !function.getValueParameters().get(i).hasDefaultValue();
+                assert !DescriptorUtilPackage.hasDefaultValue(function.getValueParameters().get(i));
                 // Caller cannot rely on default value and pass undefined here.
                 argumentValue = parameterValue;
             }

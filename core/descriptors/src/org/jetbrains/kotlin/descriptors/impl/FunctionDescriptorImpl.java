@@ -22,16 +22,13 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
-import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.types.DescriptorSubstitutor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
     private List<TypeParameterDescriptor> typeParameters;
@@ -68,7 +65,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
-        this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
+        this.typeParameters = UtilsPackage.toReadOnlyList(typeParameters);
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
@@ -121,7 +118,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public Set<? extends FunctionDescriptor> getOverriddenDescriptors() {
+    public Collection<? extends FunctionDescriptor> getOverriddenDescriptors() {
         return overriddenFunctions;
     }
 
@@ -278,11 +275,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 newModality,
                 newVisibility
         );
+
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                OverridingUtil.bindOverride(substitutedDescriptor, overriddenFunction.substitute(substitutor));
+                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
             }
         }
+
         return substitutedDescriptor;
     }
 
@@ -304,23 +303,25 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull TypeSubstitutor substitutor
     ) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(unsubstitutedValueParameters.size());
         for (ValueParameterDescriptor unsubstitutedValueParameter : unsubstitutedValueParameters) {
             // TODO : Lazy?
             JetType substitutedType = substitutor.substitute(unsubstitutedValueParameter.getType(), Variance.IN_VARIANCE);
             JetType varargElementType = unsubstitutedValueParameter.getVarargElementType();
-            JetType substituteVarargElementType = varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
+            JetType substituteVarargElementType =
+                    varargElementType == null ? null : substitutor.substitute(varargElementType, Variance.IN_VARIANCE);
             if (substitutedType == null) return null;
-            result.add(new ValueParameterDescriptorImpl(
-                    substitutedDescriptor,
-                    unsubstitutedValueParameter,
-                    unsubstitutedValueParameter.getIndex(),
-                    unsubstitutedValueParameter.getAnnotations(),
-                    unsubstitutedValueParameter.getName(),
-                    substitutedType,
-                    unsubstitutedValueParameter.declaresDefaultValue(),
-                    substituteVarargElementType,
-                    SourceElement.NO_SOURCE
+            result.add(
+                    new ValueParameterDescriptorImpl(
+                            substitutedDescriptor,
+                            unsubstitutedValueParameter,
+                            unsubstitutedValueParameter.getIndex(),
+                            unsubstitutedValueParameter.getAnnotations(),
+                            unsubstitutedValueParameter.getName(),
+                            substitutedType,
+                            unsubstitutedValueParameter.declaresDefaultValue(),
+                            substituteVarargElementType,
+                            SourceElement.NO_SOURCE
                     )
             );
         }

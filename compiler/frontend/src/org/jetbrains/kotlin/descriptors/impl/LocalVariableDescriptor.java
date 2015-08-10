@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-public class LocalVariableDescriptor extends VariableDescriptorImpl {
-    private final boolean isVar;
-
+public class LocalVariableDescriptor extends VariableDescriptorWithInitializerImpl {
     public LocalVariableDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -35,8 +33,7 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
             boolean mutable,
             @NotNull SourceElement source
     ) {
-        super(containingDeclaration, annotations, name, type, source);
-        isVar = mutable;
+        super(containingDeclaration, annotations, name, type, mutable, source);
     }
 
     @NotNull
@@ -49,11 +46,6 @@ public class LocalVariableDescriptor extends VariableDescriptorImpl {
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitVariableDescriptor(this, data);
-    }
-
-    @Override
-    public boolean isVar() {
-        return isVar;
     }
 
     @NotNull

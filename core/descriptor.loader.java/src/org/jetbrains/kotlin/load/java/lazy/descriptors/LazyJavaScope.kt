@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.resolve.scopes.UsageLocation
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -90,16 +90,7 @@ public abstract class LazyJavaScope(
 
         computeNonDeclaredFunctions(result, name)
 
-        val enhancedResult = enhanceSignatures(result)
-
-        // Make sure that lazy things are computed before we release the lock
-        for (f in enhancedResult) {
-            for (p in f.getValueParameters()) {
-                p.hasDefaultValue()
-            }
-        }
-
-        enhancedResult.toReadOnlyList()
+        enhanceSignatures(result).toReadOnlyList()
     }
 
     protected data class MethodSignatureData(
@@ -138,8 +129,7 @@ public abstract class LazyJavaScope(
                 method.getVisibility()
         )
 
-        functionDescriptorImpl.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
-        functionDescriptorImpl.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
+        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
 
         if (record) {
             c.javaResolverCache.recordMethod(method, functionDescriptorImpl)
@@ -220,7 +210,7 @@ public abstract class LazyJavaScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getFunctions(name: Name, location: UsageLocation) = functions(name)
+    override fun getFunctions(name: Name, location: LookupLocation) = functions(name)
 
     protected open fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = memberIndex().getMethodNames(nameFilter)
@@ -299,7 +289,7 @@ public abstract class LazyJavaScope(
         return propertyType
     }
 
-    override fun getProperties(name: Name, location: UsageLocation): Collection<VariableDescriptor> = properties(name)
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = properties(name)
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 

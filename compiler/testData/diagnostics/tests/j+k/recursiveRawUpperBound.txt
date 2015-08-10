@@ -1,9 +1,9 @@
 package
 
-internal fun foo(/*0*/ p: X): (Bad<(Bad<Bad<*>!>..Bad<out Bad<*>!>?)>..Bad<out (Bad<Bad<*>!>..Bad<out Bad<*>!>?)>?)
+internal fun foo(/*0*/ p: X): Bad<(raw) Bad<*>!>!
 
-public/*package*/ open class Bad</*0*/ T : (Bad<Bad<*>>..Bad<out Bad<*>>?)> {
-    public/*package*/ constructor Bad</*0*/ T : (Bad<Bad<*>>..Bad<out Bad<*>>?)>()
+public/*package*/ open class Bad</*0*/ T : Bad<(raw) Bad<*>>!> {
+    public/*package*/ constructor Bad</*0*/ T : Bad<(raw) Bad<*>>!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -12,7 +12,7 @@ public/*package*/ open class Bad</*0*/ T : (Bad<Bad<*>>..Bad<out Bad<*>>?)> {
 public/*package*/ open class X {
     public/*package*/ constructor X()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public/*package*/ open fun foo(): (Bad<(Bad<Bad<*>!>..Bad<out Bad<*>!>?)>..Bad<out (Bad<Bad<*>!>..Bad<out Bad<*>!>?)>?)
+    public/*package*/ open fun foo(): Bad<(raw) Bad<*>!>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

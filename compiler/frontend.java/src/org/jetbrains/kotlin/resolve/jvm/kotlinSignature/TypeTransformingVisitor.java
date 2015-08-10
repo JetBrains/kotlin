@@ -157,8 +157,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             throw new AssertionError("Unexpected class of type constructor classifier "
                                      + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
         }
-        return new JetTypeImpl(originalType.getAnnotations(), typeConstructor, false,
-                               altArguments, memberScope);
+        return JetTypeImpl.create(originalType.getAnnotations(), typeConstructor, false, altArguments, memberScope);
     }
 
     @NotNull

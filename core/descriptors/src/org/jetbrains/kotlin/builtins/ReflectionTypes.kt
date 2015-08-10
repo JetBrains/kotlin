@@ -63,7 +63,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         }
 
         val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
-        return JetTypeImpl(annotations, descriptor.getTypeConstructor(), false, arguments, descriptor.getMemberScope(arguments))
+        return JetTypeImpl.create(annotations, descriptor, false, arguments)
     }
 
     public fun getKFunctionType(
@@ -80,7 +80,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return classDescriptor.getDefaultType()
         }
 
-        return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
+        return JetTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
     public fun getKPropertyType(annotations: Annotations, receiverType: JetType?, returnType: JetType, mutable: Boolean): JetType {
@@ -105,7 +105,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             arguments.add(TypeProjectionImpl(receiverType))
         }
         arguments.add(TypeProjectionImpl(returnType))
-        return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
+        return JetTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
     companion object {

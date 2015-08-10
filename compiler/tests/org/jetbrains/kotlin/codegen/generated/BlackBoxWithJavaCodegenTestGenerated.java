@@ -267,6 +267,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
+        @TestMetadata("callInstanceJavaMethod")
+        public void testCallInstanceJavaMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/callInstanceJavaMethod/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("callStaticJavaMethod")
+        public void testCallStaticJavaMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/callStaticJavaMethod/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("functionReferenceErasedToKFunction")
         public void testFunctionReferenceErasedToKFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/functionReferenceErasedToKFunction/");
@@ -300,6 +312,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("kotlinPropertyInheritedInJava")
         public void testKotlinPropertyInheritedInJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/kotlinPropertyInheritedInJava/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("mutatePrivateJavaInstanceField")
+        public void testMutatePrivateJavaInstanceField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/mutatePrivateJavaInstanceField/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("mutatePrivateJavaStaticField")
+        public void testMutatePrivateJavaStaticField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/mutatePrivateJavaStaticField/");
             doTestWithJava(fileName);
         }
 

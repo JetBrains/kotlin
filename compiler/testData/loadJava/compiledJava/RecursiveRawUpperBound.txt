@@ -1,4 +1,4 @@
 package test
 
-public interface RecursiveRawUpperBound</*0*/ T : (test.RecursiveRawUpperBound<test.RecursiveRawUpperBound<*>>..test.RecursiveRawUpperBound<out test.RecursiveRawUpperBound<*>>?)> {
+public interface RecursiveRawUpperBound</*0*/ T : test.RecursiveRawUpperBound<(raw) test.RecursiveRawUpperBound<*>>!> {
 }

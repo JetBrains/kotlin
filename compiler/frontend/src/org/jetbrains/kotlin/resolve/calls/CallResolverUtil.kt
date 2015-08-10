@@ -64,7 +64,7 @@ public fun replaceReturnTypeByUnknown(type: JetType): JetType {
 }
 
 private fun replaceTypeArguments(type: JetType, newArguments: List<TypeProjection>) =
-        JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
+        JetTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
 
 private fun getParameterArgumentsOfCallableType(type: JetType) =
         type.getArguments().dropLast(1)
@@ -100,7 +100,7 @@ public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterD
     for (typeProjection in receiverType.getArguments()) {
         fakeTypeArguments.add(TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE))
     }
-    return JetTypeImpl(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
+    return JetTypeImpl.create(receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isMarkedNullable(), fakeTypeArguments,
                        ErrorUtils.createErrorScope("Error scope for erased receiver type", /*throwExceptions=*/true))
 }
 

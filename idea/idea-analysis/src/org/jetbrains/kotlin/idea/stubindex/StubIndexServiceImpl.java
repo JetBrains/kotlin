@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.UtilPackage;
+
+import java.util.List;
 
 public class StubIndexServiceImpl implements StubIndexService {
 
@@ -123,5 +126,24 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexAnnotation(KotlinAnnotationEntryStub stub, IndexSink sink) {
         sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), stub.getShortName());
+
+        KotlinFileStub fileStub = getContainingFileStub(stub);
+        if (fileStub != null) {
+            List<KotlinImportDirectiveStub> aliasImportStubs = fileStub.findImportsByAlias(stub.getShortName());
+            for (KotlinImportDirectiveStub importStub : aliasImportStubs) {
+                sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), importStub.getImportedFqName().shortName().asString());
+            }
+        }
+    }
+
+    private static KotlinFileStub getContainingFileStub(StubElement stub) {
+        StubElement parent = stub.getParentStub();
+        while (parent != null) {
+            if (parent instanceof KotlinFileStub) {
+                return (KotlinFileStub) parent;
+            }
+            parent = parent.getParentStub();
+        }
+        return null;
     }
 }

@@ -57,7 +57,7 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
 
         return approximation
     }
-    return JetTypeImpl(
+    return JetTypeImpl.create(
             jetType.getAnnotations(),
             jetType.getConstructor(),
             jetType.isMarkedNullable(),

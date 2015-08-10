@@ -42,7 +42,8 @@ import java.util.LinkedHashSet
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
         val classProto: ProtoBuf.Class,
-        nameResolver: NameResolver
+        nameResolver: NameResolver,
+        private val sourceElement: SourceElement
 ) : ClassDescriptor, AbstractClassDescriptor(
         outerContext.storageManager,
         nameResolver.getClassId(classProto.getFqName()).getShortClassName()
@@ -145,7 +146,7 @@ public class DeserializedClassDescriptor(
 
     override fun toString() = "deserialized class ${getName().toString()}" // not using descriptor render to preserve laziness
 
-    override fun getSource() = SourceElement.NO_SOURCE
+    override fun getSource() = sourceElement
 
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
         private val supertypes = computeSuperTypes()

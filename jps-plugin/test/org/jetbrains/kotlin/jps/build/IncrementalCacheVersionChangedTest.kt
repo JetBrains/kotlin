@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.jps.build
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import java.io.File
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.jps.incremental.CacheFormatVersion
 
-public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
+public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     fun testCacheVersionChanged() {
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChanged/")
     }
@@ -35,9 +34,6 @@ public class IncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest() {
     fun testCacheVersionChangedMultiModule() {
         doTest("jps-plugin/testData/incremental/custom/cacheVersionChangedMultiModule/")
     }
-
-    override val allowNoFilesWithSuffixInTestData: Boolean
-        get() = true
 
     override fun performAdditionalModifications() {
         val storageForTargetType = BuildDataPathsImpl(myDataStorageRoot).getTargetTypeDataRoot(JavaModuleBuildTargetType.PRODUCTION)

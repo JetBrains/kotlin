@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-abstract class JetTypeParameterListOwnerStub<T extends KotlinStubWithFqName<?>> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
+public abstract class JetTypeParameterListOwnerStub<T extends KotlinStubWithFqName<?>> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
     public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }

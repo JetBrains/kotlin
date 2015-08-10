@@ -79,17 +79,18 @@ sealed class JvmFunctionSignature {
     }
 }
 
-interface JvmPropertySignature {
+sealed class JvmPropertySignature {
     /**
      * Returns the JVM signature of the getter of this property. In case the property doesn't have a getter,
      * constructs the signature of its imaginary default getter. See CallableReference#getSignature for more information
      */
-    fun asString(): String
+    abstract fun asString(): String
 
     class KotlinProperty(
-            private val signature: JvmProtoBuf.JvmPropertySignature,
-            private val nameResolver: NameResolver
-    ) : JvmPropertySignature {
+            val proto: ProtoBuf.Callable,
+            val signature: JvmProtoBuf.JvmPropertySignature,
+            val nameResolver: NameResolver
+    ) : JvmPropertySignature() {
         private val string: String
 
         init {
@@ -106,7 +107,7 @@ interface JvmPropertySignature {
         override fun asString(): String = string
     }
 
-    class JavaImaginaryFieldGetter(private val field: Field) : JvmPropertySignature {
+    class JavaField(val field: Field) : JvmPropertySignature() {
         override fun asString(): String =
                 JvmAbi.getterName(field.name) +
                 "()" +
@@ -151,13 +152,13 @@ object RuntimeTypeMapper {
             if (!proto.hasExtension(JvmProtoBuf.propertySignature)) {
                 throw KotlinReflectionInternalError("No metadata found for $property")
             }
-            return JvmPropertySignature.KotlinProperty(proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver)
+            return JvmPropertySignature.KotlinProperty(proto, proto.getExtension(JvmProtoBuf.propertySignature), property.nameResolver)
         }
         else if (property is JavaPropertyDescriptor) {
             val field = ((property.source as? JavaSourceElement)?.javaElement as? ReflectJavaField)?.member ?:
                          throw KotlinReflectionInternalError("Incorrect resolution sequence for Java field $property")
 
-            return JvmPropertySignature.JavaImaginaryFieldGetter(field)
+            return JvmPropertySignature.JavaField(field)
         }
         else throw KotlinReflectionInternalError("Unknown origin of $property (${property.javaClass})")
     }

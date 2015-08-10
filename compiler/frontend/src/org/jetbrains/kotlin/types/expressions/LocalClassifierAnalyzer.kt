@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
-import org.jetbrains.kotlin.incremental.components.UsageCollector
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -130,7 +130,7 @@ class LocalClassDescriptorHolder(
 
                         }
                         override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
-                        override val usageCollector: UsageCollector = UsageCollector.DO_NOTHING
+                        override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
                     }
                     ,
                     containingDeclaration,

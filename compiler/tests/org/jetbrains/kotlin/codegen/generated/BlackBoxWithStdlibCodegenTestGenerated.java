@@ -2844,6 +2844,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("disallowNullValueForNotNullField.kt")
+            public void testDisallowNullValueForNotNullField() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/disallowNullValueForNotNullField.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("equalsHashCodeToString.kt")
             public void testEqualsHashCodeToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/equalsHashCodeToString.kt");
@@ -2853,6 +2859,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("exceptionHappened.kt")
             public void testExceptionHappened() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/exceptionHappened.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("incorrectNumberOfArguments.kt")
+            public void testIncorrectNumberOfArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/call/incorrectNumberOfArguments.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -3347,6 +3359,69 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/topLevelProperty.kt");
                 doTestWithStdlib(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Types extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInTypes() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("array.kt")
+                public void testArray() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/array.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("constructors.kt")
+                public void testConstructors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/constructors.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("memberFunctions.kt")
+                public void testMemberFunctions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/memberFunctions.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("overrideAnyWithPrimitive.kt")
+                public void testOverrideAnyWithPrimitive() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/overrideAnyWithPrimitive.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("parameterizedTypes.kt")
+                public void testParameterizedTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/parameterizedTypes.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("propertyAccessors.kt")
+                public void testPropertyAccessors() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/propertyAccessors.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("topLevelFunctions.kt")
+                public void testTopLevelFunctions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/topLevelFunctions.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("typeParameters.kt")
+                public void testTypeParameters() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/typeParameters.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("unit.kt")
+                public void testUnit() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types/unit.kt");
+                    doTestWithStdlib(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny")
@@ -3534,6 +3609,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("privateFakeOverrideFromSuperclass.kt")
             public void testPrivateFakeOverrideFromSuperclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateFakeOverrideFromSuperclass.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("privatePlatformStaticVarInObject.kt")
+            public void testPrivatePlatformStaticVarInObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privatePlatformStaticVarInObject.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("privatePropertyCallIsAccessibleOnAccessors.kt")
+            public void testPrivatePropertyCallIsAccessibleOnAccessors() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privatePropertyCallIsAccessibleOnAccessors.kt");
                 doTestWithStdlib(fileName);
             }
 

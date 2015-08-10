@@ -33,6 +33,8 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.model.JpsProject
+import org.jetbrains.jps.model.JpsSimpleElement
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -48,8 +50,7 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
@@ -60,6 +61,8 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -75,6 +78,7 @@ import java.util.ServiceLoader
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
+        public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
 
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     }
@@ -125,7 +129,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return NOTHING_DONE
         }
 
-        val dataManager = context.getProjectDescriptor().dataManager
+        val projectDescriptor = context.projectDescriptor
+
+        val dataManager = projectDescriptor.dataManager
 
         if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
             LOG.info("Clearing caches for " + chunk.getTargets().map { it.getPresentableName() }.join())
@@ -142,13 +148,20 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
 
-        val environment = createCompileEnvironment(incrementalCaches, context)
+        val project = projectDescriptor.project
+
+        val lookupTracker =
+                project.container.getChild(LOOKUP_TRACKER)?.let {
+                    assert("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true), "LOOKUP_TRACKER allowed only for jps tests")
+                    it.data
+                } ?: LookupTracker.DO_NOTHING
+
+        val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
             return ABORT
         }
 
-        val project = context.getProjectDescriptor().getProject()
         val commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project)
         commonArguments.verbose = true // Make compiler report source to output files mapping
 
@@ -210,7 +223,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         Class.forName("org.jetbrains.jps.incremental.fs.CompilationRound")
 
                         FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, { file -> file !in allCompiledFiles })
-                    } catch (e: ClassNotFoundException) {
+                    }
+                    catch (e: ClassNotFoundException) {
                         allCompiledFiles.clear()
                         FSOperations.markDirtyRecursively(context, chunk)
                     }
@@ -268,12 +282,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
     }
 
-    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>, context: CompileContext): CompilerEnvironment {
+    private fun createCompileEnvironment(
+            incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>,
+            lookupTracker: LookupTracker,
+            context: CompileContext
+    ): CompilerEnvironment {
         val compilerServices = Services.Builder()
-                .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches))
-                .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
+                .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
+                .register(javaClass<CompilationCanceledStatus>(), object : CompilationCanceledStatus {
                     override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
-                    })
+                })
                 .build()
 
         return CompilerEnvironment.getEnvironmentFor(
@@ -514,8 +532,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
 
         KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size()} files"
-                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                        + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
+                                + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                                + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
 
         runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
         moduleFile.delete()
@@ -603,7 +621,7 @@ private open class GeneratedFile(
         val outputFile: File
 )
 
-private class GeneratedJvmClass (
+private class GeneratedJvmClass(
         target: ModuleBuildTarget,
         sourceFiles: Collection<File>,
         outputFile: File

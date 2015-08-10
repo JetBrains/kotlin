@@ -60,9 +60,7 @@ public class ValueParameterResolver(
             jetParameter: JetParameter,
             context: ExpressionTypingContext
     ) {
-        if (!valueParameterDescriptor.hasDefaultValue()) {
-            return
-        }
+        if (!valueParameterDescriptor.declaresDefaultValue()) return
         val defaultValue = jetParameter.getDefaultValue() ?: return
         expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.getType()))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {

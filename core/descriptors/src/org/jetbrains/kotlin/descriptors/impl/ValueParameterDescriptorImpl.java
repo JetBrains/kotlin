@@ -16,27 +16,24 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Collection;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
-    private Boolean hasDefaultValue;
     private final boolean declaresDefaultValue;
     private final JetType varargElementType;
     private final int index;
     private final ValueParameterDescriptor original;
-    private final Set<ValueParameterDescriptor> overriddenDescriptors = new LinkedHashSet<ValueParameterDescriptor>(); // Linked is essential
-    private boolean overriddenDescriptorsLocked = false;
-    private final Set<? extends ValueParameterDescriptor> readOnlyOverriddenDescriptors = Collections.unmodifiableSet(overriddenDescriptors);
 
     public ValueParameterDescriptorImpl(
             @NotNull CallableDescriptor containingDeclaration,
@@ -62,41 +59,14 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         return (CallableDescriptor) super.getContainingDeclaration();
     }
 
-    public void setType(@NotNull JetType type) {
-        setOutType(type);
-    }
-
     @Override
     public int getIndex() {
         return index;
     }
 
     @Override
-    public boolean hasDefaultValue() {
-        computeDefaultValuePresence();
-        return hasDefaultValue;
-    }
-
-    @Override
     public boolean declaresDefaultValue() {
         return declaresDefaultValue && ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
-    }
-
-    private void computeDefaultValuePresence() {
-        if (hasDefaultValue != null) return;
-        overriddenDescriptorsLocked = true;
-        if (declaresDefaultValue) {
-            hasDefaultValue = true;
-        }
-        else {
-            for (ValueParameterDescriptor descriptor : overriddenDescriptors) {
-                if (descriptor.hasDefaultValue()) {
-                    hasDefaultValue = true;
-                    return;
-                }
-            }
-            hasDefaultValue = false;
-        }
     }
 
     @Nullable
@@ -128,6 +98,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         return false;
     }
 
+    @Nullable
+    @Override
+    public ConstantValue<?> getCompileTimeInitializer() {
+        return null;
+    }
+
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName) {
@@ -145,14 +121,14 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public Set<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
-        return readOnlyOverriddenDescriptors;
-    }
-
-    @Override
-    public void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden) {
-        assert !overriddenDescriptorsLocked : "Adding more overridden descriptors is not allowed at this point: " +
-                                              "the presence of the default value has already been calculated";
-        overriddenDescriptors.add(overridden);
+    public Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
+        return KotlinPackage.map(
+                getContainingDeclaration().getOverriddenDescriptors(),
+                new Function1<CallableDescriptor, ValueParameterDescriptor>() {
+                    @Override
+                    public ValueParameterDescriptor invoke(CallableDescriptor descriptor) {
+                        return descriptor.getValueParameters().get(getIndex());
+                    }
+                });
     }
 }

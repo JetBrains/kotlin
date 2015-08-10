@@ -95,6 +95,7 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
+import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.js.test.semantics.*
 import org.jetbrains.kotlin.jvm.compiler.*
@@ -658,7 +659,9 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractPullUpTest>()) {
-            model("refactoring/pullUp", extension = "kt", singleClass = true)
+            model("refactoring/pullUp/k2k", extension = "kt", singleClass = true, testClassName = "K2K", testMethod = "doKotlinTest")
+            model("refactoring/pullUp/k2j", extension = "kt", singleClass = true, testClassName = "K2J", testMethod = "doKotlinTest")
+            model("refactoring/pullUp/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
@@ -793,6 +796,9 @@ fun main(args: Array<String>) {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
+        }
+        testClass(javaClass<AbstractLookupTrackerTest>()) {
+            model("incremental/lookupTracker", extension = null, excludeParentDirs = true)
         }
     }
 
