@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-
 public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
@@ -41,15 +40,7 @@ public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: N
     if (containingJetFile.doNotAnalyze != null) return
 
     val containingFilePath = containingJetFile.virtualFile.path
-    val lookupLocationSuffix =
-            when {
-                verbose ->
-                    getLineAndColumnInPsiFile(containingJetFile, from.element.textRange).let {
-                        ":" + it.line + ":" + it.column
-                    }
-                else -> ""
-            }
-    val lookupLocation = "$containingFilePath$lookupLocationSuffix"
+    val lineAndColumn = if (requiresLookupLineAndColumn) getLineAndColumnInPsiFile(containingJetFile, from.element.textRange) else null
 
     val scopeContainingDeclaration = inScope.getContainingDeclaration()
     val scopeFilePath = DescriptorToSourceUtils.getContainingFile(scopeContainingDeclaration)?.virtualFile?.path
@@ -61,5 +52,7 @@ public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: N
                 else -> throw AssertionError("Unexpected containing declaration type: ${scopeContainingDeclaration.javaClass}")
             }
 
-    record(lookupLocation, scopeContainingDeclaration.fqNameUnsafe.asString(), scopeFilePath, scopeKind, name.asString())
+    record(containingFilePath, lineAndColumn?.line, lineAndColumn?.column,
+           scopeContainingDeclaration.fqNameUnsafe.asString(), scopeFilePath, scopeKind,
+           name.asString())
 }

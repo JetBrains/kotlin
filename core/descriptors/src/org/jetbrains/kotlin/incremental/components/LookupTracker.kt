@@ -17,14 +17,32 @@
 package org.jetbrains.kotlin.incremental.components
 
 public interface LookupTracker {
-    val verbose: Boolean
+    // used in tests for more accurate checks
+    val requiresLookupLineAndColumn: Boolean
         get() = false
 
-    fun record(lookupLocation: String, scopeFqName: String, scopeContainingFile: String?, scopeKind: ScopeKind, name: String)
+    fun record(
+            lookupContainingFile: String,
+            lookupLine: Int?,
+            lookupColumn: Int?,
+            scopeFqName: String,
+            scopeContainingFile: String?,
+            scopeKind: ScopeKind,
+            name: String
+    )
 
     companion object {
         val DO_NOTHING = object : LookupTracker {
-            override fun record(lookupLocation: String, scopeFqName: String, scopeContainingFile: String?, scopeKind: ScopeKind, name: String) {}
+            override fun record(
+                    lookupContainingFile: String,
+                    lookupLine: Int?,
+                    lookupColumn: Int?,
+                    scopeFqName: String,
+                    scopeContainingFile: String?,
+                    scopeKind: ScopeKind,
+                    name: String
+            ) {
+            }
         }
     }
 }
