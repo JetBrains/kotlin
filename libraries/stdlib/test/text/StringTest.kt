@@ -566,6 +566,10 @@ class StringTest {
                                       |123
                                       |456""".trimMargin())
 
+        assertEquals("  ABC\n  123\n  456", """ABC
+                                      |123
+                                      |456""".trimMargin(newIndent = "  "))
+
         assertEquals("ABC \n123\n456", """ABC${" "}
                                       |123
                                       |456""".trimMargin())
@@ -599,7 +603,6 @@ class StringTest {
         assertEquals("    a", """ |    a""".trimMargin())
 
         assertEquals("\u0000|ABC", "${"\u0000"}|ABC".trimMargin())
-        assertEquals("ABC", "${"\u0000"}|ABC".trimMargin { it < ' ' })
     }
 
     test fun trimIndent() {
@@ -619,6 +622,11 @@ class StringTest {
            123
         456
         """.trimIndent())
+
+        assertEquals("     123\n  456", """
+           123
+        456
+        """.trimIndent(newIndent = "  "))
 
         assertEquals("   123\n456", """
            123

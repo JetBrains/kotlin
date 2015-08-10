@@ -1,5 +1,6 @@
 package kotlin
 
+import java.lang
 import java.util.NoSuchElementException
 import kotlin.platform.platformName
 import kotlin.text.MatchResult
@@ -791,9 +792,25 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
 public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
+private fun getIndentFunction(indent: String) = when {
+    indent.isEmpty() -> { line: String -> line }
+    else -> { line: String -> "$indent$line" }
+}
+
+private inline fun List<String>.reindent(length: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String) = lastIndex.let { lastLineIndex ->
+    withIndex()
+            .dropWhile { it.index == 0 && it.value.isBlank() }
+            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
+            .map { indentCutFunction(it.value) }
+            .map(indentAddFunction)
+            .joinTo(StringBuilder(length), "\n")
+            .toString()
+}
+
 /**
- * Trims leading whitespace characters followed by [marginPrefix] from every line of a [java.lang.CharSequence].
- * Always creates a new string even if the original CharSequence is mutable
+ * Trims leading whitespace characters followed by [marginPrefix] from every line of a source string and removes
+ * first and last lines if they are blank (notice difference blank vs empty).
+ * Do not preserves original line endings
  *
  * Example
  * ```kotlin
@@ -807,24 +824,18 @@ public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
  * @see kotlin.isWhitespace
  * @since M13
  */
-public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredicate: (Char) -> Boolean = { it.isWhitespace() }): String {
-    val lines = toString().lineSequence()
+public fun String.trimMargin(marginPrefix: String = "|", newIndent: String = ""): String {
+    require(marginPrefix.isNotBlank()) { "marginPrefix should be non blank string but it is '$marginPrefix'" }
 
-    val lastLineIndex = lines.count() - 1
+    return lines().reindent(length(), getIndentFunction(newIndent)) { line ->
+        val firstNonWhitespaceIndex = line.indexOfFirst { !it.isWhitespace() }
 
-    return lines
-            .withIndex()
-            .dropWhile { it.index == 0 && it.value.isBlank() }
-            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
-            .map { it.value }
-            .map { line ->
-                val content = line.trimStart(whitespacePredicate)
-
-                when {
-                    content.startsWith(marginPrefix) -> content.removePrefix(marginPrefix)
-                    else -> line
-                }
-            }.joinTo(StringBuilder(length()), "\n").toString()
+        when {
+            firstNonWhitespaceIndex == -1 -> line
+            line.startsWith(marginPrefix, firstNonWhitespaceIndex) -> line.substring(firstNonWhitespaceIndex + marginPrefix.length())
+            else -> line
+        }
+    }
 }
 
 /**
@@ -834,7 +845,7 @@ public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredica
  * Please keep in mind that if there are non-blank lines with no leading whitespace characters (no indent at all) then the
  * common indent is 0 so this function may do nothing so it is recommended to keep first line empty (will be dropped).
  *
- * Always creates a new string even if the original CharSequence is mutable.
+ * Do not preserves original line endings
  *
  * Example
  * ```kotlin
@@ -848,23 +859,15 @@ public fun CharSequence.trimMargin(marginPrefix: String = "|", whitespacePredica
  * @see kotlin.isBlank
  * @since M13
  */
-public fun CharSequence.trimIndent(): String {
-    val lines = toString().lineSequence()
+public fun String.trimIndent(newIndent: String = ""): String {
+    val lines = lines()
 
     val minCommonIndent = lines
             .filter { it.isNotBlank() }
             .map { it.indentWidth() }
             .min() ?: 0
 
-    val lastLineIndex = lines.count() - 1
-
-    return lines
-            .withIndex()
-            .dropWhile { it.index == 0 && it.value.isBlank() }
-            .takeWhile { it.index != lastLineIndex || it.value.isNotBlank() }
-            .map { it.value.drop(minCommonIndent) }
-            .joinTo(StringBuilder(length()), "\n")
-            .toString()
+    return lines.reindent(length(), getIndentFunction(newIndent)) { line -> line.drop(minCommonIndent) }
 }
 
 private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length() else it }
