@@ -1,9 +1,9 @@
 import kotlin.test.assertEquals
 
 enum class Season {
-    WINTER
-    SPRING
-    SUMMER
+    WINTER,
+    SPRING,
+    SUMMER,
     AUTUMN
 }
 

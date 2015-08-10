@@ -17,24 +17,18 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.psi.JetEnumEntry
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.*
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
-        if (changeInfo.getNewParameters().size() > 0) {
+        if (changeInfo.newParameters.size() > 0) {
             val psiFactory = JetPsiFactory(element)
 
-            val enumClass = element.getStrictParentOfType<JetClass>()!!
-            val delegatorToSuperCall = element.addAfter(
-                    psiFactory.createDelegatorToSuperCall("${enumClass.getName()}()"),
+            val delegatorToSuperCall = (element.addAfter(
+                    psiFactory.createEnumEntryInitializerList(),
                     element.getNameAsDeclaration()
-            ) as JetDelegatorToSuperCall
-            element.addBefore(psiFactory.createColon(), delegatorToSuperCall)
+            ) as JetInitializerList).initializers[0] as JetDelegatorToSuperCall
 
             return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)
                     .processUsage(changeInfo, delegatorToSuperCall, allUsages)

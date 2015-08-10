@@ -1,5 +1,5 @@
 enum class En {
-    A
+    A,
     B
 }
 

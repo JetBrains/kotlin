@@ -1,7 +1,7 @@
 enum class Game {
-    ROCK
-    PAPER
-    SCISSORS
+    ROCK,
+    PAPER,
+    SCISSORS;
 
     companion object {
         fun foo() = ROCK

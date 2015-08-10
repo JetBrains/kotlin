@@ -1,9 +1,9 @@
 package foo
 
 enum class Type {
-    NUMBER
-    STRING
-    BOOLEAN
+    NUMBER,
+    STRING,
+    BOOLEAN,
     OBJECT
 }
 

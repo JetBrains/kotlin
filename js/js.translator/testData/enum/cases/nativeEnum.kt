@@ -2,8 +2,8 @@ package foo
 
 native
 enum class JsEnum {
-    Foo
-    Bar
+    Foo,
+    Bar,
     Baz
 }
 

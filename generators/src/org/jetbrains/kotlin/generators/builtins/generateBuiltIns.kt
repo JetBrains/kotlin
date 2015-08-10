@@ -43,7 +43,7 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected open val language: Language = Language.KOTLIN
 
     enum class Language {
-        KOTLIN
+        KOTLIN,
         JAVA
     }
 

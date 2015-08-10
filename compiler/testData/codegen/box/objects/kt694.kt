@@ -1,6 +1,6 @@
 enum class Test {
-    A
-    B
+    A,
+    B,
     C
 }
 

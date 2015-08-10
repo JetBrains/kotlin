@@ -1,4 +1,4 @@
 enum class E(n: Int) {
-    A : E(1)
-    B : E(1)
+    A(1),
+    B(1)
 }

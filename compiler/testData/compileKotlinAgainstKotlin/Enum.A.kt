@@ -1,6 +1,6 @@
 package aaa
 
 enum class E {
-    TRIVIAL_ENTRY
+    TRIVIAL_ENTRY,
     SUBCLASS { }
 }

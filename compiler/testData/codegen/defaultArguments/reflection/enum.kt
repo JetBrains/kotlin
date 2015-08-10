@@ -1,5 +1,5 @@
 enum class Foo(val a: Int = 1) {
-    A: Foo()
+    A()
 }
 
 // CLASS: Foo

@@ -5,6 +5,6 @@ package p
 fun foo() = X.A
 
 enum class X(n: Int) {
-    A : X()
+    A()
 
 }

@@ -7,12 +7,12 @@ enum class E {
         override fun f(): String {
             return super<E>.f() + "O"
         }
-    }
+    },
     E2 {
         override fun f(): String {
             return super.f() + "K"
         }
-    }
+    };
 
     open fun f() = ""
 }

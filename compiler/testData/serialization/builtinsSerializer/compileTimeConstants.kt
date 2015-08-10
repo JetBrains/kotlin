@@ -1,8 +1,8 @@
 package test
 
 enum class Weapon {
-    ROCK
-    PAPER
+    ROCK,
+    PAPER,
     SCISSORS
 }
 

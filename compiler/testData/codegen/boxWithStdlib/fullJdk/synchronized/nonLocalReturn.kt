@@ -15,12 +15,12 @@ val executorService = Executors.newFixedThreadPool(count)
 class MyException(message: String): Exception(message)
 
 enum class ExecutionType {
-    LOCAL
-    NON_LOCAL_SIMPLE
-    NON_LOCAL_EXCEPTION
-    NON_LOCAL_FINALLY
-    NON_LOCAL_EXCEPTION_AND_FINALLY
-    NON_LOCAL_EXCEPTION_AND_FINALLY_WITH_RETURN
+    LOCAL,
+    NON_LOCAL_SIMPLE,
+    NON_LOCAL_EXCEPTION,
+    NON_LOCAL_FINALLY,
+    NON_LOCAL_EXCEPTION_AND_FINALLY,
+    NON_LOCAL_EXCEPTION_AND_FINALLY_WITH_RETURN,
     NON_LOCAL_NESTED
 }
 

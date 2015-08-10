@@ -15,7 +15,7 @@ enum class E(val a: Int = 0) {
         val y = x ?: 4
 
         override fun value() = y
-    },
+    };
 
     val e = x ?: 3
 

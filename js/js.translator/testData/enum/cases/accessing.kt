@@ -1,12 +1,12 @@
 package foo
 
 enum class A {
-    FOO
+    FOO,
 
-    BAR : A() {
+    BAR() {
         fun explicitFromEntry() = A.FOO
         fun implicitFromEntry() = FOO
-    }
+    };
 
     fun explicit() = A.FOO
     fun implicit() = FOO

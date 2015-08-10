@@ -3,6 +3,6 @@
 interface A1
 
 enum class EnumTest {
-    ENTRY: EnumTest(),
+    ENTRY(),
     <caret>
 }

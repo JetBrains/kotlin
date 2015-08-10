@@ -1,5 +1,5 @@
 enum class A(val b: String) {
-    E1: A("OK"){ override fun t() = b }
+    E1("OK"){ override fun t() = b };
 
     abstract fun t(): String
 }

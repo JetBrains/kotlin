@@ -1,9 +1,9 @@
-enum class E1 { F S T }
+enum class E1 { F, S, T }
 
-enum class E2 { F S T }
+enum class E2 { F, S, T }
 
 enum class E3 {
-    F S T
+    F, S, T
 }
 
 class C1 {}
@@ -27,7 +27,7 @@ interface T2 {
 }
 
 enum class E1 {
-    EE1 {}
+    EE1 {},
     EE2 {
         val some = 1
     }

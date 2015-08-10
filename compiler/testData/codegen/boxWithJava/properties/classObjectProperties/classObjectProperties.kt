@@ -11,6 +11,7 @@ interface Trait {
 }
 
 enum class Enoom {
+    ;
     companion object {
         val NAME = "Enoom"
     }

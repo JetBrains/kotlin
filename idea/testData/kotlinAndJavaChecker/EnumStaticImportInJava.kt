@@ -1,7 +1,7 @@
 package test.kotlin
 
 public enum class KotlinEnum {
-    ENTRY
+    ENTRY;
 
     public fun foo(): String = "foo"
 }

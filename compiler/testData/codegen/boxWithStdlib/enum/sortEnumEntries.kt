@@ -1,10 +1,10 @@
 import Game.*
 
 enum class Game {
-    ROCK
-    PAPER
-    SCISSORS
-    LIZARD
+    ROCK,
+    PAPER,
+    SCISSORS,
+    LIZARD,
     SPOCK
 }
 

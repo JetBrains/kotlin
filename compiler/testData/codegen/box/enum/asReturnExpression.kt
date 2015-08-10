@@ -1,9 +1,9 @@
 // http://youtrack.jetbrains.com/issue/KT-2167
 
 enum class Season {
-    WINTER
-    SPRING
-    SUMMER
+    WINTER,
+    SPRING,
+    SUMMER,
     AUTUMN
 }
 

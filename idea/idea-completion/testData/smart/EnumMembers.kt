@@ -1,7 +1,7 @@
 package sample
 
 enum class Foo {
-    X
+    X,
     Y
 }
 

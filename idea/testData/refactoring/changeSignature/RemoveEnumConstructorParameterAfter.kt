@@ -1,4 +1,4 @@
 enum class Hi(a: Int) {
-    FOO : Hi(1)
-    BAR : Hi(3)
+    FOO(1),
+    BAR(3)
 }

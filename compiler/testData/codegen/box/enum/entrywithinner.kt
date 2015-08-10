@@ -7,14 +7,14 @@ enum class IssueState {
        inner class D {
           val k = ToString()
        }
-   }
+   },
    FIXED {
        override fun ToString() = "K"
 
        inner class D {
           val k = ToString()
        }
-   }
+   };
 
    open fun ToString() : String = "O"
 }

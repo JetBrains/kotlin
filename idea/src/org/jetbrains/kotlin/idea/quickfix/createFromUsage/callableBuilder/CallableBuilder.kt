@@ -481,7 +481,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 ClassKind.ENUM_ENTRY -> {
                                     if (!(targetParent is JetClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent.getText()}")
                                     val hasParameters = targetParent.getPrimaryConstructorParameters().isNotEmpty()
-                                    psiFactory.createEnumEntry("$name ${if (hasParameters) ": ${targetParent.getName()}()" else ""}")
+                                    psiFactory.createEnumEntry("$name${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
                                     val openMod = if (open) "open " else ""

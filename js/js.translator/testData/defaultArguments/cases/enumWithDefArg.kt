@@ -1,8 +1,8 @@
 package foo
 
 enum class A(val a: Int = 1) {
-    FIRST: A()
-    SECOND: A(2)
+    FIRST(),
+    SECOND(2)
 }
 
 fun box(): String {

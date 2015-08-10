@@ -38,7 +38,7 @@ class A7 {
 }
 
 enum class Enum1 {
-    FIRST
+    FIRST,
     SECOND
 }
 

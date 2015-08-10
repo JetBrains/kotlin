@@ -3,7 +3,7 @@ enum class Direction() {
         val someSpecialValue = "OK"
 
         override fun f() = someSpecialValue
-    }
+    };
 
 
     abstract fun f():String

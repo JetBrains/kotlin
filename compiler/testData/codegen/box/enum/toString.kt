@@ -1,5 +1,5 @@
 enum class State {
-  O
+  O,
   K
 }
 

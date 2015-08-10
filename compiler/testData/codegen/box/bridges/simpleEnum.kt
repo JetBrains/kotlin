@@ -3,8 +3,8 @@ interface A<T> {
 }
 
 enum class Z(val name: String) : A<String> {
-    Z1 : Z("Z1")
-    Z2 : Z("Z2")
+    Z1("Z1"),
+    Z2("Z2");
     override fun foo(t: String) = name
 }
 

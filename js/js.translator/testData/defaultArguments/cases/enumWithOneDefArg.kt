@@ -1,8 +1,8 @@
 package foo
 
 enum class Foo(val a: Int = 1, val b: String) {
-    B: Foo(2, "b")
-    C: Foo(b = "b")
+    B(2, "b"),
+    C(b = "b")
 }
 
 fun box(): String {

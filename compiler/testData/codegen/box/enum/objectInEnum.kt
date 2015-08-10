@@ -1,11 +1,11 @@
 enum class E {
-    ENTRY
+    ENTRY,
     SUBCLASS {
         object O {
             fun foo() = 2
         }
         override fun bar() = O.foo()
-    }
+    };
 
     object O {
         fun foo() = 1

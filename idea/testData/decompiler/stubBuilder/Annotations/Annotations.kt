@@ -34,4 +34,4 @@ target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CL
        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE)
 annotation(repeatable = true, retention = AnnotationRetention.SOURCE) class b(val e: E)
 
-enum class E { E1 E2 }
+enum class E { E1, E2 }

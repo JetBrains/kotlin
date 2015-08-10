@@ -1,9 +1,9 @@
 // KT-4423 Enum with function not compiled
 
 enum class Sign(val str: String, val func: (x: Int, y: Int) -> Int){
-    plus: Sign("+", { x, y -> x + y })
+    plus("+", { x, y -> x + y }),
 
-    mult: Sign("*", { x, y -> x * y }) {
+    mult("*", { x, y -> x * y }) {
         override fun toString() = "${func(4,5)}"
     }
 }
