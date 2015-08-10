@@ -70,6 +70,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
     }
 
     private fun searchNamedArguments(parameter: JetParameter, queryParameters: ReferencesSearch.SearchParameters) {
+        val parameterName = parameter.name ?: return
         val function = parameter.ownerFunction ?: return
         if (function.nameAsName?.isSpecial ?: true) return
         val project = function.project
@@ -83,7 +84,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             namedArgsScope = GlobalSearchScope.filesScope(project, filesWithFunctionName.asList())
         }
 
-        queryParameters.optimizer.searchWord(parameter.name!!,
+        queryParameters.optimizer.searchWord(parameterName,
                                              namedArgsScope,
                                              KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT,
                                              true,

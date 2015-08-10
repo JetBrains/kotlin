@@ -146,7 +146,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<JetClassOrObject>())
                             ?: error("Caret should be inside class or object")
 
-        val chooserObjects = handler.collectMethodsToGenerate(classOrObject).sortBy { it.member.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
+        val chooserObjects = handler.collectMethodsToGenerate(classOrObject).sortBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }
         performGenerateCommand(classOrObject, chooserObjects)
     }
 

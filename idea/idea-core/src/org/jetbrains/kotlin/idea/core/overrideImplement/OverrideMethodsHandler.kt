@@ -59,7 +59,7 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
                     else {
                         immediateSupers.singleOrNull { (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.CLASS } ?: immediateSupers.first()
                     }
-                    result.add(OverrideMemberChooserObject(project, realSuper, immediateSuperToUse))
+                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse))
                 }
             }
         }

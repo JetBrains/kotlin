@@ -101,6 +101,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         doTest(fileName);
     }
 
+    @TestMetadata("KT_8751")
+    public void testKT_8751() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/KT_8751/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoObjectDuplication")
     public void testNoObjectDuplication() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NoObjectDuplication/");

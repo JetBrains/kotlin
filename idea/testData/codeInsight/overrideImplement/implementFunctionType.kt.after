@@ -1,0 +1,5 @@
+class C : (String) -> Boolean {
+    override fun invoke(p1: String): Boolean {
+        <selection><caret>throw UnsupportedOperationException()</selection>
+    }
+}
