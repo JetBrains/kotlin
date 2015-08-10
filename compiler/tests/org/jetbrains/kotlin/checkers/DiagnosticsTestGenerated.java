@@ -2887,6 +2887,111 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/constructorConsistency")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConstructorConsistency extends AbstractDiagnosticsTest {
+            @TestMetadata("afterInitialization.kt")
+            public void testAfterInitialization() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/afterInitialization.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("aliencall.kt")
+            public void testAliencall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/aliencall.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInConstructorConsistency() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/constructorConsistency"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("assignment.kt")
+            public void testAssignment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/assignment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/basic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("companion.kt")
+            public void testCompanion() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/companion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("comparison.kt")
+            public void testComparison() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/comparison.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/delegate.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("derived.kt")
+            public void testDerived() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/derived.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("init.kt")
+            public void testInit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/init.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaInObject.kt")
+            public void testLambdaInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/lambdaInObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lateInit.kt")
+            public void testLateInit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/lateInit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localObject.kt")
+            public void testLocalObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/localObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nobacking.kt")
+            public void testNobacking() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/nobacking.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outer.kt")
+            public void testOuter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/outer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/property.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyAccess.kt")
+            public void testPropertyAccess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/propertyAccess.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

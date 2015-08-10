@@ -10,8 +10,8 @@ class Q {
         C()
     }
 
-    private var x = foo<CharSequence>()()
-    private var y = foo<String>()()
+    private var x = <!DEBUG_INFO_LEAKING_THIS!>foo<!><CharSequence>()()
+    private var y = <!DEBUG_INFO_LEAKING_THIS!>foo<!><String>()()
 
     fun bar() {
         x = <!TYPE_MISMATCH!>y<!>
