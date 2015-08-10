@@ -71,6 +71,7 @@ fun JetNamedDeclaration.addAnnotationWithSpace(annotationEntry: JetAnnotationEnt
 }
 
 fun JetClass.makeAbstract() {
-    if (isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)) return
-    addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+    if (!isInterface()) {
+        addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
+    }
 }

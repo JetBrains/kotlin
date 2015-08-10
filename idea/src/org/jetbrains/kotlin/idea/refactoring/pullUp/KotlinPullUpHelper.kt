@@ -540,7 +540,7 @@ class KotlinPullUpHelper(
         if (member.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
             member.delete()
         }
-        else if (!member.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+        else {
             member.addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
         }
     }

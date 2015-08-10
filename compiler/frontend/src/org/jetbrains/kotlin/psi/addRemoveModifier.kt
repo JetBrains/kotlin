@@ -55,6 +55,8 @@ internal fun addAnnotationEntry(owner: JetModifierListOwner, annotationEntry: Je
 }
 
 internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKeywordToken, defaultVisibilityModifier: JetModifierKeywordToken) {
+    if (modifierList.hasModifier(modifier)) return
+
     val newModifier = JetPsiFactory(modifierList).createModifier(modifier)
     val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
             ?.map { modifierList.getModifier(it) }
