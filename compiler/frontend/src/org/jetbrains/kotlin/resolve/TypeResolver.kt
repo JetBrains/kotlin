@@ -110,6 +110,12 @@ public class TypeResolver(
         val type = resolveTypeElement(c, annotations, typeElement)
         c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope)
 
+        if (!type.isBare) {
+            for (argument in type.actualType.arguments) {
+                ForceResolveUtil.forceResolveAllContents(argument.type)
+            }
+        }
+
         return type
     }
 
@@ -251,12 +257,6 @@ public class TypeResolver(
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
         })
-
-        if (result != null && !result!!.isBare) {
-            for (argument in result!!.actualType.arguments) {
-                ForceResolveUtil.forceResolveAllContents(argument.type)
-            }
-        }
 
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
