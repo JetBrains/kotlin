@@ -21,6 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
+object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
@@ -86,7 +87,7 @@ object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     private fun qualifiedNameToInsert(item: LookupElement): String {
         val lookupObject = item.getObject() as DeclarationLookupObject
         if (lookupObject.descriptor != null) {
-            return IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassDescriptor)
+            return IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
         }
         else {
             val qualifiedName = (lookupObject.psiElement as PsiClass).getQualifiedName()!!

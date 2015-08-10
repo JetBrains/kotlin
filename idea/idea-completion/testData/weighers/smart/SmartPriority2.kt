@@ -15,11 +15,11 @@ fun foo(pFoo: C, s: String) {
 }
 
 
-// ORDER: "pFoo, s"
 // ORDER: pFoo
 // ORDER: nullableFoo
 // ORDER: nullableFoo
 // ORDER: INSTANCE_FOO
+// ORDER: "pFoo, s"
 // ORDER: local
 // ORDER: nonNullable
 // ORDER: nullableX

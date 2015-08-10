@@ -18,9 +18,13 @@
 	<div id="qunit-fixture">test markup</div>
 
         <script>
-          document.getElementById("qunit").className = "running";
+          var qunitDiv = document.getElementById("qunit");
+          qunitDiv.className = "running";
+          QUnit.testStart(function (details) {
+            qunitDiv.className = "" + details.name;
+          });
           QUnit.done(function () {
-            document.getElementById("qunit").className = "done"
+            qunitDiv.className = "done";
           });
         </script>
 </body>

@@ -67,6 +67,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("AutopopupInFunExtensionReceiver.kt")
+        public void testAutopopupInFunExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/AutopopupInFunExtensionReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BasicAny.kt");
@@ -1302,6 +1308,57 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("WrongImplicitReceiver.kt")
             public void testWrongImplicitReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/WrongImplicitReceiver.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/fromSmart")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromSmart extends AbstractJvmBasicCompletionTest {
+            @TestMetadata("AfterAs.kt")
+            public void testAfterAs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/AfterAs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AfterAsNoDuplicates.kt")
+            public void testAfterAsNoDuplicates() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/AfterAsNoDuplicates.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInFromSmart() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/fromSmart"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("EnumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/EnumEntries.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("JavaStaticMethods.kt")
+            public void testJavaStaticMethods() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/JavaStaticMethods.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("JavaStaticMethods2.kt")
+            public void testJavaStaticMethods2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/JavaStaticMethods2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MultipleArgs.kt")
+            public void testMultipleArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/MultipleArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("WhenByEnum.kt")
+            public void testWhenByEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/fromSmart/WhenByEnum.kt");
                 doTest(fileName);
             }
         }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion
+package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
+import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
@@ -46,39 +45,36 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         }
 
         if (expression != null) {
-            val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
-
             addFunctionLiteralArgumentCompletions()
 
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
                                              bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
-                                             mapper, lookupElementFactory)
-            val result = completion.execute()
-            if (result != null) {
-                collector.addElements(result.additionalItems)
+                                             toFromOriginalFileMapper, lookupElementFactory)
 
-                if (nameExpression != null) {
-                    val filter = result.declarationFilter
-                    if (filter != null) {
-                        referenceVariants.forEach { collector.addElements(filter(it)) }
-                        flushToResultSet()
+            val (additionalItems, inheritanceSearcher) = completion.additionalItems()
+            collector.addElements(additionalItems)
 
-                        processNonImported { collector.addElements(filter(it)) }
-                        flushToResultSet()
+            if (nameExpression != null) {
+                val filter = completion.descriptorFilter
+                if (filter != null) {
+                    referenceVariants.forEach { collector.addElements(filter(it)) }
+                    flushToResultSet()
 
-                        if (position.getContainingFile() is JetCodeFragment) {
-                            getRuntimeReceiverTypeReferenceVariants().forEach {
-                                collector.addElements(filter(it).map { it.withReceiverCast() })
-                            }
-                            flushToResultSet()
+                    processNonImported { collector.addElements(filter(it)) }
+                    flushToResultSet()
+
+                    if (position.getContainingFile() is JetCodeFragment) {
+                        getRuntimeReceiverTypeReferenceVariants().forEach {
+                            collector.addElements(filter(it).map { it.withReceiverCast() })
                         }
-                    }
-
-                    // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
-                    result.inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
-                        collector.addElement(it)
                         flushToResultSet()
                     }
+                }
+
+                // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
+                inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+                    collector.addElement(it)
+                    flushToResultSet()
                 }
             }
         }
@@ -109,9 +105,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor)
                             .calculateForArgument(dummyCall, dummyArgument)
-                    if (expectedInfos != null) {
-                        collector.addElements(LambdaItems.collect(expectedInfos))
-                    }
+                    collector.addElements(LambdaItems.collect(expectedInfos))
                 }
             }
         }
@@ -125,5 +119,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (shouldRunTopLevelCompletion()) {
             getTopLevelCallables().forEach(processor)
         }
+    }
+
+    override fun createSorter(): CompletionSorter {
+        return super.createSorter()
+                .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher)
     }
 }

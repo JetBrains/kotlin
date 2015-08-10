@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.*
+import java.util.ArrayDeque
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 public enum class TypeNullability {
     NOT_NULL,
@@ -53,6 +53,7 @@ fun JetType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
 fun JetType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun JetType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun JetType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
+fun JetType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
 private fun JetType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()

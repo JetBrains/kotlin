@@ -1,8 +1,9 @@
-fun foo(a: Int, b: String, c: String) {}
+fun foo(xa: Int, xb: String, xc: Int) {}
 
-fun bar(b: String, a: Int, c: String) {
+fun bar(xb: String, xa: Int, xc: Int) {
     foo(<caret>)
 }
 
-// ORDER: "a, b, c"
-// ORDER: a
+// ORDER: xa
+// ORDER: "xa, xb, xc"
+// ORDER: xc

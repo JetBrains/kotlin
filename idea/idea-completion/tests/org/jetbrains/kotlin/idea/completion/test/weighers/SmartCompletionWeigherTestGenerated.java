@@ -185,6 +185,12 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NoExpectedType.kt")
+    public void testNoExpectedType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/NoExpectedType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoNameSimilarityForQualifier.kt")
     public void testNoNameSimilarityForQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/NoNameSimilarityForQualifier.kt");

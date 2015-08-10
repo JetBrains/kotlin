@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.psi.*
-import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupElementDecorator
+import org.jetbrains.kotlin.idea.completion.COMPARISON_TOKENS
+import org.jetbrains.kotlin.idea.completion.ExpectedInfo
+import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 
 object KeywordValues {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {
@@ -50,15 +52,27 @@ object KeywordValues {
 
         if (!skipTrueFalse) {
             val booleanInfoClassifier = { info: ExpectedInfo ->
-                if (info.fuzzyType.type == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches
+                if (info.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false) ExpectedInfoClassification.match(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.noMatch
             }
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) }
             collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) }
         }
 
-        val classifier = { info: ExpectedInfo -> if (info.fuzzyType.type.isMarkedNullable()) ExpectedInfoClassification.matches(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.notMatches }
-        collection.addLookupElements(null, expectedInfos, classifier) {
-            LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)
+        if (!shouldSkipNull(expressionWithType)) {
+            val classifier = { info: ExpectedInfo ->
+                if (info.fuzzyType != null && info.fuzzyType!!.type.isMarkedNullable())
+                    ExpectedInfoClassification.match(TypeSubstitutor.EMPTY)
+                else
+                    ExpectedInfoClassification.noMatch
+            }
+            collection.addLookupElements(null, expectedInfos, classifier) {
+                LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)
+            }
         }
+    }
+
+    private fun shouldSkipNull(expressionWithType: JetExpression): Boolean {
+        val binaryExpression = expressionWithType.parent as? JetBinaryExpression ?: return false
+        return binaryExpression.operationToken in COMPARISON_TOKENS
     }
 }

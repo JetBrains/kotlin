@@ -179,6 +179,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ImplicitlyTypedValInitializerUnknownType.kt")
+    public void testImplicitlyTypedValInitializerUnknownType() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializerUnknownType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InClassObject.kt")
     public void testInClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InClassObject.kt");
@@ -350,6 +356,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("Null.kt")
     public void testNull() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Null.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NullableBooleanExpected.kt")
+    public void testNullableBooleanExpected() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NullableBooleanExpected.kt");
         doTest(fileName);
     }
 
@@ -1237,6 +1249,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("AutoNotNullTypeWithQualifier.kt")
         public void testAutoNotNullTypeWithQualifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeWithQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SmartCastThisType1.kt")
+        public void testSmartCastThisType1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SmartCastThisType2.kt")
+        public void testSmartCastThisType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType2.kt");
             doTest(fileName);
         }
 

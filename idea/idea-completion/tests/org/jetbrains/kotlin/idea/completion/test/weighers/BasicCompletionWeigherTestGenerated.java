@@ -143,6 +143,105 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExpectedInfo extends AbstractBasicCompletionWeigherTest {
+        @TestMetadata("AfterAs.kt")
+        public void testAfterAs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/AfterAs.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInExpectedInfo() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("CompanionObjectMethod.kt")
+        public void testCompanionObjectMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/CompanionObjectMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EnumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/EnumEntries.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedType.kt")
+        public void testExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedType2.kt")
+        public void testExpectedType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/ExpectedType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LambdaValue.kt")
+        public void testLambdaValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/LambdaValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultiArgsItem.kt")
+        public void testMultiArgsItem() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/MultiArgsItem.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NameSimilarity.kt")
+        public void testNameSimilarity() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarity.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NameSimilarityAndNoExpectedType.kt")
+        public void testNameSimilarityAndNoExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarityAndNoExpectedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NameSimilarityAndNoExpectedType2.kt")
+        public void testNameSimilarityAndNoExpectedType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NameSimilarityAndNoExpectedType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoStupidComparison.kt")
+        public void testNoStupidComparison() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/NoStupidComparison.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Null.kt")
+        public void testNull() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/Null.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PreferMatchingThis.kt")
+        public void testPreferMatchingThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/PreferMatchingThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TrueFalse.kt")
+        public void testTrueFalse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/TrueFalse.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WhenByEnum.kt")
+        public void testWhenByEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo/WhenByEnum.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

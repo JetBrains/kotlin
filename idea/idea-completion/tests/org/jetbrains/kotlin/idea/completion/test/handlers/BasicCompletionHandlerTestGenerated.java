@@ -77,6 +77,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NoTailFromSmart.kt")
+    public void testNoTailFromSmart() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/NoTailFromSmart.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("PlatformStaticInClass.kt")
     public void testPlatformStaticInClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInClass.kt");
@@ -310,6 +316,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeParameter.kt")
+        public void testTypeParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/TypeParameter.kt");
             doTest(fileName);
         }
 

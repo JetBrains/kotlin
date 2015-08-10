@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.ArrayList
 import java.util.HashSet
 
 class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
-                                    val smartCastTypes: (VariableDescriptor) -> Collection<JetType>) {
+                                    val smartCastCalculator: SmartCastCalculator) {
 
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
@@ -44,8 +43,8 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
-            if (expectedInfo is ArgumentExpectedInfo && expectedInfo.position == ArgumentPosition(0)) {
-                val parameters = expectedInfo.function.getValueParameters()
+            if (expectedInfo.additionalData is ArgumentAdditionalData && expectedInfo.additionalData.position == ArgumentPosition(0)) {
+                val parameters = expectedInfo.additionalData.function.valueParameters
                 if (parameters.size() > 1) {
                     val variables = ArrayList<VariableDescriptor>()
                     for ((i, parameter) in parameters.withIndex()) {
@@ -84,14 +83,14 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                 }
                 .withIcon(compoundIcon)
                 .addTail(Tail.RPARENTH) //TODO: support square brackets
-                .assignPriority(ItemPriority.MULTIPLE_ARGUMENTS_ITEM)
+                .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: JetScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.getLocalVariable(name) ?: scope.getProperties(name).singleOrNull() ?: return null
-        return if (smartCastTypes(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
+        return if (smartCastCalculator.types(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else
             null

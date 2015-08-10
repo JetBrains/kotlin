@@ -56,11 +56,11 @@ public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
  * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
  */
 public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
-    val baseExpression: JetElement = (getParent() as? JetCallExpression) ?: this
-    val parent = baseExpression.getParent()
+    val baseExpression = (parent as? JetCallExpression) ?: this
+    val parent = baseExpression.parent
     return when (parent) {
-        is JetQualifiedExpression -> if (parent.getSelectorExpression().isAncestor(baseExpression)) parent else baseExpression
-        is JetUserType -> if (parent.getReferenceExpression().isAncestor(baseExpression)) parent else baseExpression
+        is JetQualifiedExpression -> if (parent.selectorExpression == baseExpression) parent else baseExpression
+        is JetUserType -> if (parent.referenceExpression == baseExpression) parent else baseExpression
         else -> baseExpression
     }
 }

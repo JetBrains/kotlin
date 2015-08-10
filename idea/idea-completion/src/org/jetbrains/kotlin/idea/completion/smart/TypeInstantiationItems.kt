@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.resolve.PossiblyBareType
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class TypeInstantiationItems(
@@ -57,15 +57,17 @@ class TypeInstantiationItems(
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,
         val inheritorSearchScope: GlobalSearchScope,
-        val lookupElementFactory: LookupElementFactory
+        val lookupElementFactory: LookupElementFactory,
+        val forOrdinaryCompletion: Boolean
 ) {
     public fun addTo(
             items: MutableCollection<LookupElement>,
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
     ) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType.type.makeNotNullable() }
+        val expectedInfosGrouped: Map<JetType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
         for ((type, infos) in expectedInfosGrouped) {
+            if (type == null) continue
             val tail = mergeTails(infos.map { it.tail })
             addTo(items, inheritanceSearchers, type, tail)
         }
@@ -87,7 +89,7 @@ class TypeInstantiationItems(
         val typeArgs = type.getArguments()
         items.addIfNotNull(createTypeInstantiationItem(classifier, typeArgs, tail))
 
-        if (!KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
+        if (!forOrdinaryCompletion && !KotlinBuiltIns.isAny(classifier)) { // do not search inheritors of Any
             inheritanceSearchers.addInheritorSearcher(classifier, classifier, typeArgs, tail)
 
             val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classifier))
@@ -132,6 +134,8 @@ class TypeInstantiationItems(
         if (classifier.isInner()) return null
 
         val isAbstract = classifier.getModality() == Modality.ABSTRACT
+        if (forOrdinaryCompletion && isAbstract) return null
+
         val allConstructors = classifier.getConstructors()
         val visibleConstructors = allConstructors.filter {
             if (isAbstract)

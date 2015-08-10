@@ -18,16 +18,21 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
@@ -90,6 +95,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
     else
         null
+
+    private val smartCompletion = expression?.let {
+        SmartCompletion(it, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
+                        GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true)
+    }
 
     private fun calcCompletionKind(): CompletionKind {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
@@ -185,6 +195,20 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
+            if (smartCompletion != null) {
+                @suppress("UNUSED_VARIABLE") // we don't use InheritanceSearcher
+                val (additionalItems, inheritanceSearcher) = smartCompletion.additionalItems()
+
+                // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
+                for (item in additionalItems) {
+                    if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
+                        item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                    }
+                }
+
+                collector.addElements(additionalItems)
+            }
+
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
@@ -194,7 +218,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 // if "this" is parsed correctly in the current context - insert it and all this@xxx items
                     "this" -> {
                         if (expression != null) {
-                            collector.addElements(thisExpressionItems(bindingContext, expression, prefix).map { it.factory() })
+                            collector.addElements(thisExpressionItems(bindingContext, expression, prefix).map { it.createLookupElement() })
                         }
                         else {
                             // for completion in secondary constructor delegation call
@@ -272,6 +296,20 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
+    }
+
+    override fun createSorter(): CompletionSorter {
+        var sorter = super.createSorter()
+
+        if (shouldCompleteParameterNameAndType()) {
+            sorter = sorter.weighBefore(DeprecatedWeigher.toString(), ParameterNameAndTypeCompletion.Weigher)
+        }
+
+        if (smartCompletion != null) {
+            sorter = sorter.weighBefore(KindWeigher.toString(), SmartCompletionInBasicWeigher(smartCompletion), SmartCompletionPriorityWeigher)
+        }
+
+        return sorter
     }
 
     private companion object {

@@ -28,11 +28,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.ExpectedInfos
+import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -80,8 +79,12 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, resolutionFacade.findModuleDescriptor(file), useHeuristicSignatures = false)
-                                .calculate(expression) ?: return false
-    val functionTypes = expectedInfos.map { it.fuzzyType.type }.filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }.toSet()
+                                .calculate(expression)
+    val functionTypes = expectedInfos
+            .map { it.fuzzyType?.type }
+            .filterNotNull()
+            .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
+            .toSet()
     if (functionTypes.size() <= 1) return false
 
     val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size()

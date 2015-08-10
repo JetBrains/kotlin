@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-object KeywordLookupObject
+open class KeywordLookupObject
 
 object KeywordCompletion {
     private val NON_ACTUAL_KEYWORDS = setOf(CAPITALIZED_THIS_KEYWORD,
@@ -72,7 +72,7 @@ object KeywordCompletion {
             }
 
             if (keyword.startsWith(prefix)/* use simple matching by prefix, not prefix matcher from completion*/ && parserFilter(keywordToken)) {
-                val element = LookupElementBuilder.create(KeywordLookupObject, keyword)
+                val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
                         .bold()
                         .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
                                                KotlinKeywordInsertHandler

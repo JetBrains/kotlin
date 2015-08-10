@@ -5,25 +5,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 
-/**
-* Waits up to a *maxMills* time for a predicate to be true, sleeping for *sleepMillis*
-* and retrying until the timeout fails
-*/
-public fun waitFor(maxMillis: Long, sleepMillis: Long = 100, predicate: () -> Boolean): Boolean {
-    val end = System.currentTimeMillis() + maxMillis
-    while (true) {
-        if (predicate()) {
-            return true
-        }
-        val now = System.currentTimeMillis()
-        if (now >= end) break
-        val delay = sleepMillis
-        Thread.sleep(delay)
-    }
-    return false
-}
-
-val TIMEOUT: Long = 10000
+private val TIMEOUT_PER_TEST: Long = 1000
 
 /**
  * Helper class to find QUnit tests using Selenium
@@ -36,10 +18,26 @@ public class SeleniumQUnit(val driver: WebDriver) {
     public fun findTests(): List<WebElement> {
         val qunitContainer = driver.findElement(By.id("qunit"))!!
 
-        val success = waitFor(TIMEOUT) {
-            qunitContainer.getAttribute("class") == "done"
+        var current = ""
+
+        var end = System.currentTimeMillis() + TIMEOUT_PER_TEST
+        while (true) {
+            val prev = current
+            current = qunitContainer.getAttribute("class")
+            val now = System.currentTimeMillis()
+
+            if (current != prev) {
+                end = now + TIMEOUT_PER_TEST
+                continue
+            }
+
+            if (now >= end) break
+
+            Thread.sleep(100)
         }
-        assertTrue(success, "Tests timed out after $TIMEOUT milliseconds.")
+
+        val success = qunitContainer.getAttribute("class") == "done"
+        assertTrue(success, """Test "$current" works too long (broken after $TIMEOUT_PER_TEST milliseconds)""")
 
         var resultsElement = driver.findElement(By.id("qunit-tests"))
         assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.getCurrentUrl()}")
@@ -59,10 +57,7 @@ public class SeleniumQUnit(val driver: WebDriver) {
 
     public fun runTest(element: WebElement): Unit {
         var result: String = ""
-        waitFor(TIMEOUT) {
-            result = element.getAttribute("class") ?: "no result"
-            !result.startsWith("run")
-        }
+        result = element.getAttribute("class") ?: "no result"
         if ("pass" != result) {
             val testName = "${findTestName(element)} result: $result"
             val failMessages =
