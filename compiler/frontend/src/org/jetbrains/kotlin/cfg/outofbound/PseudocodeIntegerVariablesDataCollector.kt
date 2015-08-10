@@ -189,14 +189,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             if (beforePreviousInstruction.nextOnFalse == previousInstruction) {
                                 // We are in "else" block and condition evaluated to "true" so this block will not
                                 // be processed (dead code block). To indicate this we will make all variables dead
-                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerValues.Dead) }
+                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                             }
                         }
                         is BooleanVariableValue.False -> {
                             if (beforePreviousInstruction.nextOnTrue == previousInstruction) {
                                 // We are in "then" block and condition evaluated to "false" so this block will not
                                 // be processed (dead code block). To indicate this we will make all variables dead
-                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerValues.Dead) }
+                                edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                             }
                         }
                         is BooleanVariableValue.Undefined -> {
@@ -212,7 +212,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                                 }
                             for ((variable, unrestrictedValues) in restrictions) {
                                 val values = edgeData.intVarsToValues[variable]
-                                if (values is IntegerValues.Defined) {
+                                if (values is IntegerVariableValues.Defined) {
                                     edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                                 }
                             }
@@ -255,8 +255,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun mergeCorrespondingIntegerVariables<K>(
-            targetVariablesMap: MutableMap<K, IntegerValues>,
-            variablesToConsume: MutableMap<K, IntegerValues>
+            targetVariablesMap: MutableMap<K, IntegerVariableValues>,
+            variablesToConsume: MutableMap<K, IntegerVariableValues>
     ) = MapUtils.mergeMapsIntoFirst(targetVariablesMap, variablesToConsume) { value1, value2 -> value1 merge value2 }
 
     private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData {
@@ -287,7 +287,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             is SizeMethod ->
                                 processSizeMethodCallOnCollection(instruction, updatedData)
                             is IncrSizeByConstantNumberMethod -> {
-                                val numberOfElementsToAdd = IntegerValues.Defined(pseudoAnnotation.increaseBy)
+                                val numberOfElementsToAdd = IntegerVariableValues.Defined(pseudoAnnotation.increaseBy)
                                 processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
                             }
                             is IncrSizeByPassedCollectionSizeMethod -> {
@@ -333,12 +333,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variableType = variableDescriptor.type
         when {
             KotlinBuiltIns.isInt(variableType) ->
-                updatedData.intVarsToValues.put(variableDescriptor, IntegerValues.Uninitialized)
+                updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.Uninitialized)
             KotlinBuiltIns.isBoolean(variableType) ->
                 updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
             KotlinArrayUtils.isGenericOrPrimitiveArray(variableType),
             KotlinListUtils.isKotlinList(variableType) ->
-                updatedData.collectionsToSizes.put(variableDescriptor, IntegerValues.Uninitialized)
+                updatedData.collectionsToSizes.put(variableDescriptor, IntegerVariableValues.Uninitialized)
         }
     }
 
@@ -353,7 +353,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetNodeTypes.INTEGER_CONSTANT ->
                 try {
                     val literalValue = valueAsText.toInt()
-                    updatedData.intFakeVarsToValues[fakeVariable] = IntegerValues.Defined(literalValue)
+                    updatedData.intFakeVarsToValues[fakeVariable] = IntegerVariableValues.Defined(literalValue)
                 } catch (e: NumberFormatException) { /* not an int literal, so we don't need to do anything with it */ }
             JetNodeTypes.BOOLEAN_CONSTANT -> {
                 val booleanValue = valueAsText.toBoolean()
@@ -370,7 +370,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 variableDescriptor, { updatedData.boolVarsToValues.getOrElse(
                 variableDescriptor, { updatedData.collectionsToSizes[variableDescriptor] }) })
         when (referencedVariableValue) {
-            is IntegerValues ->
+            is IntegerVariableValues ->
                 // we have the information about value, so it is definitely of integer type
                 // (assuming there are no undeclared variables)
                 updatedData.intFakeVarsToValues.put(newFakeVariable, referencedVariableValue.copy())
@@ -390,9 +390,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                          ?: return
         when {
             KotlinBuiltIns.isInt(targetType) -> {
-                if (updatedData.intVarsToValues[variableDescriptor] !is IntegerValues.Dead) {
+                if (updatedData.intVarsToValues[variableDescriptor] !is IntegerVariableValues.Dead) {
                     val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
-                    updatedData.intVarsToValues[variableDescriptor] = valuesToAssign?.let { it.copy() } ?: IntegerValues.Undefined
+                    updatedData.intVarsToValues[variableDescriptor] = valuesToAssign?.let { it.copy() } ?: IntegerVariableValues.Undefined
                 }
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
@@ -402,9 +402,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             KotlinArrayUtils.isGenericOrPrimitiveArray(targetType),
             KotlinListUtils.isKotlinList(targetType) -> {
-                if (updatedData.collectionsToSizes[variableDescriptor] !is IntegerValues.Dead) {
+                if (updatedData.collectionsToSizes[variableDescriptor] !is IntegerVariableValues.Dead) {
                     val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]
-                    updatedData.collectionsToSizes[variableDescriptor] = valuesToAssign?.let { it.copy() } ?: IntegerValues.Undefined
+                    updatedData.collectionsToSizes[variableDescriptor] = valuesToAssign?.let { it.copy() } ?: IntegerVariableValues.Undefined
                 }
             }
         }
@@ -443,10 +443,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 resultMap[resultVariable] = valueToUseIfNoOperands
             }
         }
-        fun intIntOperation(operation: (IntegerValues, IntegerValues) -> IntegerValues) =
+        fun intIntOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> IntegerVariableValues) =
             performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues,
-                             IntegerValues.Undefined, operation)
-        fun intBoolOperation(operation: (IntegerValues, IntegerValues) -> BooleanVariableValue) =
+                             IntegerVariableValues.Undefined, operation)
+        fun intBoolOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> BooleanVariableValue) =
                 performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues,
                                  BooleanVariableValue.undefinedWithNoRestrictions, operation)
         fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue) -> BooleanVariableValue) =
@@ -481,8 +481,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             fakeVariablesMap[resultVariable] = operandValues?.let { operation(it) } ?: valueToUseIfNoOperands
         }
         when (operationToken) {
-            JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerValues.Undefined) { -it }
-            JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerValues.Undefined) { it.copy() }
+            JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { -it }
+            JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { it.copy() }
             JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.undefinedWithNoRestrictions) { !it }
         }
     }
@@ -499,10 +499,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             pseudoAnnotation: PseudoAnnotation,
             instruction: CallInstruction,
             valuesData: ValuesData
-    ): IntegerValues? =
+    ): IntegerVariableValues? =
             when (pseudoAnnotation) {
                 is ConstructorWithElementsAsArgs ->
-                    IntegerValues.Defined(instruction.arguments.size())
+                    IntegerVariableValues.Defined(instruction.arguments.size())
                 is ConstructorWithSizeAsArg -> {
                     if (instruction.inputValues.size() > pseudoAnnotation.sizeArgPosition && pseudoAnnotation.sizeArgPosition >= 0) {
                         valuesData.intFakeVarsToValues[instruction.inputValues[pseudoAnnotation.sizeArgPosition]]
@@ -527,7 +527,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun processIncreaseSizeMethodCallOnCollection(
-            numberOfElementsToAdd: IntegerValues?,
+            numberOfElementsToAdd: IntegerVariableValues?,
             instruction: CallInstruction,
             updatedData: ValuesData
     ) {
@@ -539,12 +539,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             ) ?: return
             val collectionSizes = updatedData.collectionsToSizes[collectionVariableDescriptor]
                                   ?: return
-            if (collectionSizes is IntegerValues.Dead) {
+            if (collectionSizes is IntegerVariableValues.Dead) {
                 return
             }
             updatedData.collectionsToSizes[collectionVariableDescriptor] =
                     numberOfElementsToAdd?.let { collectionSizes + it }
-                    ?: IntegerValues.Undefined
+                    ?: IntegerVariableValues.Undefined
         }
     }
 
@@ -552,9 +552,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             pseudoAnnotation: IncrSizeByPassedCollectionSizeMethod,
             instruction: CallInstruction,
             updatedData: ValuesData
-    ): IntegerValues? {
+    ): IntegerVariableValues? {
         // This function is used to handle the code like `lst.addAll(lst2)`, when we know both `lst` and `lst2` sizes
-        fun tryExtractFromKnownCollections(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerValues? {
+        fun tryExtractFromKnownCollections(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerVariableValues? {
             val passedCollectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
                     passedCollectionValueSourceInstruction, false, bindingContext
             ) ?: return null
@@ -562,7 +562,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
         // This function is used to handle the code like `lst.addAll(arrayOf(...))`
         // so we check if the passed value is collection creation
-        fun tryExtractFromInstruction(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerValues? {
+        fun tryExtractFromInstruction(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerVariableValues? {
             if (passedCollectionValueSourceInstruction is CallInstruction) {
                 val pseudoAnnotationForCall = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(passedCollectionValueSourceInstruction)
                                               ?: return null
@@ -595,12 +595,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             val collectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
                     collectionVariableValueSourceInstruction, false, bindingContext
             ) ?: return
-            if (updatedData.collectionsToSizes[collectionVariableDescriptor] is IntegerValues.Dead) {
+            if (updatedData.collectionsToSizes[collectionVariableDescriptor] is IntegerVariableValues.Dead) {
                 return
             }
             when(pseudoAnnotation) {
                 is DecrSizeToZeroMethod ->
-                    updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerValues.Defined(0)
+                    updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerVariableValues.Defined(0)
             }
         }
     }

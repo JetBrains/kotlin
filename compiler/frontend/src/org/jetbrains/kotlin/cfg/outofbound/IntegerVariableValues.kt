@@ -19,36 +19,36 @@ package org.jetbrains.kotlin.cfg.outofbound
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.*
 
-public interface IntegerValues {
-    public fun copy(): IntegerValues = this
-    public fun merge(values: IntegerValues): IntegerValues
+public interface IntegerVariableValues {
+    public fun copy(): IntegerVariableValues = this
+    public fun merge(values: IntegerVariableValues): IntegerVariableValues
     // operators
-    public fun plus(others: IntegerValues): IntegerValues = Undefined
-    public fun minus(others: IntegerValues): IntegerValues = Undefined
-    public fun times(others: IntegerValues): IntegerValues = Undefined
-    public fun div(others: IntegerValues): IntegerValues = Undefined
-    public fun rangeTo(others: IntegerValues): IntegerValues = Undefined
-    public fun minus(): IntegerValues = Undefined
+    public fun plus(others: IntegerVariableValues): IntegerVariableValues = Undefined
+    public fun minus(others: IntegerVariableValues): IntegerVariableValues = Undefined
+    public fun times(others: IntegerVariableValues): IntegerVariableValues = Undefined
+    public fun div(others: IntegerVariableValues): IntegerVariableValues = Undefined
+    public fun rangeTo(others: IntegerVariableValues): IntegerVariableValues = Undefined
+    public fun minus(): IntegerVariableValues = Undefined
 
     // special operators (IntegerValues, IntegerValues) -> BooleanVariableValue
-    public fun eq(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun eq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
-    public fun notEq(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun notEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
-    public fun lessThan(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun lessThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
-    public fun greaterThan(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun greaterThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
-    public fun greaterOrEq(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun greaterOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
-    public fun lessOrEq(other: IntegerValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
+    public fun lessOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData): BooleanVariableValue =
             BooleanVariableValue.undefinedWithNoRestrictions
 
     // Represents a value of Integer variable that is not initialized
-    public object Uninitialized : IntegerValues {
+    public object Uninitialized : IntegerVariableValues {
         override fun toString(): String = "-"
 
-        override fun merge(values: IntegerValues): IntegerValues =
+        override fun merge(values: IntegerVariableValues): IntegerVariableValues =
                 when (values) {
                     is Defined -> values.merge(this)
                     is Dead -> Uninitialized
@@ -58,10 +58,10 @@ public interface IntegerValues {
 
     // Represents a value of Integer variable that is obtained from constructions analysis don't process
     // (for ex, in `a = foo()` `a` has an Undefined value, because function calls are not processed)
-    public object Undefined : IntegerValues {
+    public object Undefined : IntegerVariableValues {
         override fun toString(): String = "?"
 
-        override fun merge(values: IntegerValues): IntegerValues =
+        override fun merge(values: IntegerVariableValues): IntegerVariableValues =
                 when (values) {
                     is Defined -> values.merge(this)
                     else -> Undefined
@@ -69,17 +69,17 @@ public interface IntegerValues {
     }
 
     // Represent a value of Integer variable inside the block of dead code
-    public object Dead : IntegerValues {
-        override fun plus(others: IntegerValues): IntegerValues = Dead
-        override fun minus(others: IntegerValues): IntegerValues = Dead
-        override fun times(others: IntegerValues): IntegerValues = Dead
-        override fun div(others: IntegerValues): IntegerValues = Dead
-        override fun rangeTo(others: IntegerValues): IntegerValues = Dead
-        override fun minus(): IntegerValues = Dead
+    public object Dead : IntegerVariableValues {
+        override fun plus(others: IntegerVariableValues): IntegerVariableValues = Dead
+        override fun minus(others: IntegerVariableValues): IntegerVariableValues = Dead
+        override fun times(others: IntegerVariableValues): IntegerVariableValues = Dead
+        override fun div(others: IntegerVariableValues): IntegerVariableValues = Dead
+        override fun rangeTo(others: IntegerVariableValues): IntegerVariableValues = Dead
+        override fun minus(): IntegerVariableValues = Dead
 
         override fun toString(): String = "#"
 
-        override fun merge(values: IntegerValues): IntegerValues =
+        override fun merge(values: IntegerVariableValues): IntegerVariableValues =
                 when (values) {
                     is Defined -> values.merge(this)
                     is Dead ->
@@ -90,7 +90,7 @@ public interface IntegerValues {
     }
 
     // Represent a set of values Integer variable can have
-    public class Defined private constructor() : IntegerValues {
+    public class Defined private constructor() : IntegerVariableValues {
         public constructor(value: Int) : this() {
             // the `values` set is always non empty
             this.add(value)
@@ -108,14 +108,14 @@ public interface IntegerValues {
         public var allPossibleValuesKnown: Boolean = true
             private set
 
-        override fun copy(): IntegerValues.Defined {
+        override fun copy(): IntegerVariableValues.Defined {
             val copy = Defined()
             copy.values.addAll(this.values)
             copy.allPossibleValuesKnown = this.allPossibleValuesKnown
             return copy
         }
 
-        override fun merge(values: IntegerValues): IntegerValues {
+        override fun merge(values: IntegerVariableValues): IntegerVariableValues {
             when (values) {
                 is Uninitialized,
                 is Undefined -> this.allPossibleValuesKnown = false
@@ -134,7 +134,7 @@ public interface IntegerValues {
 
         public fun getValues(): List<Int> = values.toList()
 
-        public fun leaveOnlyValuesInSet(valuesToLeave: Set<Int>): IntegerValues {
+        public fun leaveOnlyValuesInSet(valuesToLeave: Set<Int>): IntegerVariableValues {
             val currentAvailableValues = LinkedList<Int>()
             currentAvailableValues.addAll(values)
             currentAvailableValues.forEach {
@@ -170,17 +170,17 @@ public interface IntegerValues {
         }
 
         // operators overloading
-        override fun plus(others: IntegerValues): IntegerValues = applyEachToEach(others) { x, y -> x + y }
-        override fun minus(others: IntegerValues): IntegerValues = applyEachToEach(others) { x, y -> x - y }
-        override fun times(others: IntegerValues): IntegerValues = applyEachToEach(others) { x, y -> x * y }
-        override fun div(others: IntegerValues): IntegerValues =
+        override fun plus(others: IntegerVariableValues): IntegerVariableValues = applyEachToEach(others) { x, y -> x + y }
+        override fun minus(others: IntegerVariableValues): IntegerVariableValues = applyEachToEach(others) { x, y -> x - y }
+        override fun times(others: IntegerVariableValues): IntegerVariableValues = applyEachToEach(others) { x, y -> x * y }
+        override fun div(others: IntegerVariableValues): IntegerVariableValues =
                 if (others is Defined) {
                     val nonZero = others.values.filter { it != 0 }
                     if (nonZero.isEmpty()) Undefined
                     else applyEachToEach(Defined(nonZero), { x, y -> x / y })
                 }
                 else Undefined
-        override fun rangeTo(others: IntegerValues): IntegerValues {
+        override fun rangeTo(others: IntegerVariableValues): IntegerVariableValues {
             if (others is Defined) {
                 val minOfLeftOperand = values.min() as Int
                 val maxOfRightOperand = others.values.max() as Int
@@ -193,9 +193,9 @@ public interface IntegerValues {
             return Undefined
         }
 
-        override fun minus(): IntegerValues = Defined(this.values.map { -1 * it })
+        override fun minus(): IntegerVariableValues = Defined(this.values.map { -1 * it })
 
-        private fun applyEachToEach(others: IntegerValues, operation: (Int, Int) -> Int): IntegerValues =
+        private fun applyEachToEach(others: IntegerVariableValues, operation: (Int, Int) -> Int): IntegerVariableValues =
                 if (others is Defined) {
                     val results = values.map { leftOp ->
                         others.values.map { rightOp -> operation(leftOp, rightOp) }
@@ -205,7 +205,7 @@ public interface IntegerValues {
                 else Undefined
 
         override fun eq(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
@@ -227,14 +227,14 @@ public interface IntegerValues {
                 }
 
         override fun notEq(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
                 applyNot(eq(other, thisVarDescriptor, valuesData))
 
         override fun lessThan(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
@@ -260,7 +260,7 @@ public interface IntegerValues {
                 }
 
         override fun greaterThan(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
@@ -285,14 +285,14 @@ public interface IntegerValues {
                 }
 
         override fun greaterOrEq(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
                 applyNot(lessThan(other, thisVarDescriptor, valuesData))
 
         override fun lessOrEq(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
                 valuesData: ValuesData
         ): BooleanVariableValue =
@@ -317,7 +317,7 @@ public interface IntegerValues {
         }
 
         private fun applyComparisonIfArgsAreAppropriate(
-                other: IntegerValues,
+                other: IntegerVariableValues,
                 valuesData: ValuesData,
                 comparison: (Int) -> BooleanVariableValue
         ): BooleanVariableValue {
