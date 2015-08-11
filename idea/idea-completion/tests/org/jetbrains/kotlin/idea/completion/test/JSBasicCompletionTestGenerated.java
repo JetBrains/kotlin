@@ -901,6 +901,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("TypeArgCompletionBug.kt")
+        public void testTypeArgCompletionBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgCompletionBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeArgFromTheSameFile.kt")
         public void testTypeArgFromTheSameFile() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgFromTheSameFile.kt");
