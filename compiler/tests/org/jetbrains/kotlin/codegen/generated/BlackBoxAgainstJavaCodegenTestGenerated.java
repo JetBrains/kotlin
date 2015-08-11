@@ -894,6 +894,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/setter.kt");
             doTestAgainstJava(fileName);
         }
+
+        @TestMetadata("_protected.kt")
+        public void test_protected() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/_protected.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("_protectedSetter.kt")
+        public void test_protectedSetter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/syntheticExtensions/_protectedSetter.kt");
+            doTestAgainstJava(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
