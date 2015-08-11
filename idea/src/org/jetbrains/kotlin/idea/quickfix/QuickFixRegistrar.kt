@@ -300,12 +300,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         DEPRECATED_ANNOTATION_METHOD_CALL.registerFactory(MigrateAnnotationMethodCallFix, MigrateAnnotationMethodCallInWholeFile)
 
-        ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.registerFactory(DeprecatedEnumEntrySuperConstructorSyntaxFix,
-                                                                DeprecatedEnumEntrySuperConstructorSyntaxFix.createWholeProjectFixFactory())
-
-        ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER.registerFactory(DeprecatedEnumEntryDelimiterSyntaxFix,
-                                                              DeprecatedEnumEntryDelimiterSyntaxFix.createWholeProjectFixFactory())
-
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
                                                MissingConstructorKeywordFix.createWholeProjectFixFactory())
 

@@ -21,9 +21,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +32,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JetDeclarationMover extends AbstractJetUpDownMover {
-    public JetDeclarationMover() {
+
+    private boolean moveEnumConstant = false;
+
+    private static int findNearestNonWhitespace(@NotNull CharSequence sequence, int index) {
+        char ch = sequence.charAt(--index);
+        while (Character.isWhitespace(ch)) {
+            ch = sequence.charAt(--index);
+        }
+        return index;
+    }
+
+    @Override
+    public void afterMove(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
+        super.afterMove(editor, file, info, down);
+        if (moveEnumConstant) {
+            Document document = editor.getDocument();
+            CharSequence cs = document.getCharsSequence();
+            int end1 = findNearestNonWhitespace(cs, info.range1.getEndOffset());
+            char c1 = cs.charAt(end1);
+            int end2 = findNearestNonWhitespace(cs, info.range2.getEndOffset());
+            char c2 = cs.charAt(end2);
+            if (c1 == c2 || (c1 != ',' && c2 != ',')) return;
+            if (c1 == ';' || c2 == ';') {
+                // Replace comma with semicolon and vice versa
+                document.replaceString(end1, end1 + 1, String.valueOf(c2));
+                document.replaceString(end2, end2 + 1, String.valueOf(c1));
+            }
+            else if (c1 == ',') {
+                // Move comma from the end of range1 to the end of range2
+                document.deleteString(end1, end1 + 1);
+                document.insertString(end2 + 1, ",");
+            }
+            else {
+                // Move comma from the end of range2 to the end of range1
+                document.deleteString(end2, end2 + 1);
+                document.insertString(end1 + 1, ",");
+            }
+        }
     }
 
     @NotNull
@@ -180,6 +215,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
             // elements which aren't immediately placed in class body can't leave the block
             PsiElement parent = sibling.getParent();
             if (!(parent instanceof JetClassBody)) return null;
+            if (target instanceof JetEnumEntry) return null;
 
             JetClassOrObject jetClassOrObject = (JetClassOrObject) parent.getParent();
             assert jetClassOrObject != null;
@@ -226,10 +262,6 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
     }
 
-    private static boolean isEmptyPackageDirective(PsiElement adjustedSibling) {
-        return adjustedSibling instanceof JetPackageDirective && adjustedSibling.getTextLength() == 0;
-    }
-
     @Override
     public boolean checkAvailable(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
         if (!super.checkAvailable(editor, file, info, down)) return false;
@@ -241,6 +273,8 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
         JetDeclaration firstDecl = getMovableDeclaration(psiRange.getFirst());
         if (firstDecl == null) return false;
+
+        moveEnumConstant = firstDecl instanceof JetEnumEntry;
 
         JetDeclaration lastDecl = getMovableDeclaration(psiRange.getSecond());
         if (lastDecl == null) return false;

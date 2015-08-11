@@ -451,12 +451,6 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest(fileName);
         }
 
-        @TestMetadata("SpaceAroundExtendColonInEnums.after.kt")
-        public void testSpaceAroundExtendColonInEnums() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
@@ -865,12 +859,6 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpaceAroundExtendColon.after.inv.kt")
         public void testSpaceAroundExtendColon() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
-            doTestInverted(fileName);
-        }
-
-        @TestMetadata("SpaceAroundExtendColonInEnums.after.inv.kt")
-        public void testSpaceAroundExtendColonInEnums() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.inv.kt");
             doTestInverted(fileName);
         }
 

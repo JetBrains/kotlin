@@ -219,10 +219,12 @@ JetFile: DefaultKeyword.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('A')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
@@ -326,10 +328,12 @@ JetFile: DefaultKeyword.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('A')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
@@ -353,10 +357,12 @@ JetFile: DefaultKeyword.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('A')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST

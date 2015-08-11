@@ -78,7 +78,7 @@ JetFile: EnumShortWithOverload.kt
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
@@ -129,7 +129,7 @@ JetFile: EnumShortWithOverload.kt
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
@@ -180,7 +180,7 @@ JetFile: EnumShortWithOverload.kt
               PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
-      PsiElement(SEMICOLON)(';')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    \n    ')
       FUN
         MODIFIER_LIST

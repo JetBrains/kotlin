@@ -211,27 +211,75 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumEntryCommaAnnotatedMember.kt")
+        public void testEnumEntryCommaAnnotatedMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntryCommaAnnotatedMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntryCommaInlineMember.kt")
+        public void testEnumEntryCommaInlineMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntryCommaInlineMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntryCommaMember.kt")
+        public void testEnumEntryCommaMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntryCommaMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntryCommaPublicMember.kt")
+        public void testEnumEntryCommaPublicMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntryCommaPublicMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntrySemicolonInlineMember.kt")
+        public void testEnumEntrySemicolonInlineMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntrySemicolonInlineMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntrySemicolonMember.kt")
+        public void testEnumEntrySemicolonMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntrySemicolonMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntrySpaceInlineMember.kt")
+        public void testEnumEntrySpaceInlineMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntrySpaceInlineMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntrySpaceMember.kt")
+        public void testEnumEntrySpaceMember() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntrySpaceMember.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumEntryTwoCommas.kt")
+        public void testEnumEntryTwoCommas() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumEntryTwoCommas.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumIn.kt")
+        public void testEnumIn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumIn.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("EnumMissingName.kt")
         public void testEnumMissingName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumMissingName.kt");
             doParsingTest(fileName);
         }
 
-        @TestMetadata("EnumNoAnnotations.kt")
-        public void testEnumNoAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumNoAnnotations.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("EnumSemicolonBetween.kt")
-        public void testEnumSemicolonBetween() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumSemicolonBetween.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("EnumSemicolonBetweenWithMembers.kt")
-        public void testEnumSemicolonBetweenWithMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumSemicolonBetweenWithMembers.kt");
+        @TestMetadata("EnumOldConstructorSyntax.kt")
+        public void testEnumOldConstructorSyntax() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumOldConstructorSyntax.kt");
             doParsingTest(fileName);
         }
 
@@ -241,21 +289,9 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("EnumShortNoCommas.kt")
-        public void testEnumShortNoCommas() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumShortNoCommas.kt");
-            doParsingTest(fileName);
-        }
-
         @TestMetadata("EnumShortWithOverload.kt")
         public void testEnumShortWithOverload() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumShortWithOverload.kt");
-            doParsingTest(fileName);
-        }
-
-        @TestMetadata("EnumShortWithOverloadNoCommas.kt")
-        public void testEnumShortWithOverloadNoCommas() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumShortWithOverloadNoCommas.kt");
             doParsingTest(fileName);
         }
 
@@ -1794,12 +1830,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("DoWhileWithoutLPar.kt")
             public void testDoWhileWithoutLPar() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/DoWhileWithoutLPar.kt");
-                doParsingTest(fileName);
-            }
-
-            @TestMetadata("EnumEntryInitList.kt")
-            public void testEnumEntryInitList() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/EnumEntryInitList.kt");
                 doParsingTest(fileName);
             }
 

@@ -323,6 +323,18 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum6.kt");
                 doTestClassBodyDeclaration(fileName);
             }
+
+            @TestMetadata("enum7.kt")
+            public void testEnum7() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum7.kt");
+                doTestClassBodyDeclaration(fileName);
+            }
+
+            @TestMetadata("enum8.kt")
+            public void testEnum8() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/enums/enum8.kt");
+                doTestClassBodyDeclaration(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function")

@@ -5,7 +5,6 @@ import foo
 public protected private internal
 abstract
 open
-enum
 open
 annotation
 override

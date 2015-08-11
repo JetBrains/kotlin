@@ -1,15 +1,6 @@
 trait Foo {
 }
 
-enum class E {
-    First Second
-}
-
-enum class F(val name: String) {
-    First: F("First")
-    Second: F("Second")
-}
-
 val f = { (a: Int, b: Int) -> a + b }
 
 class A private()

@@ -19,7 +19,7 @@ JetFile: annotation.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('CLASSIFIER')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
@@ -41,12 +41,12 @@ JetFile: annotation.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('SOURCE')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('BINARY')
-      PsiElement(COMMA)(',')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME

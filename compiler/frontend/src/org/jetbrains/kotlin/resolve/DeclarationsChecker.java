@@ -502,95 +502,14 @@ public class DeclarationsChecker {
         }
     }
 
-    // Temporary
-    // Returns true if deprecated constructor is in use, like
-    // ENTRY: Enum(arguments) instead of
-    // ENTRY(arguments)
-    public static boolean enumEntryUsesDeprecatedSuperConstructor(@NotNull JetEnumEntry enumEntry) {
-        JetInitializerList initializerList = enumEntry.getInitializerList();
-        if (initializerList == null || initializerList.getInitializers().isEmpty()) return false;
-        JetTypeReference typeReference = initializerList.getInitializers().get(0).getTypeReference();
-        if (typeReference == null) return false;
-        JetUserType userType = (JetUserType) typeReference.getTypeElement();
-        if (userType == null || userType.getReferenceExpression() instanceof JetEnumEntrySuperclassReferenceExpression) return false;
-        return true;
-    }
-
-    // Temporary
-    // Returns comma if it's an enum entry without following comma (entry is not last in enum),
-    // or semicolon if it's an enum entry without following semicolon, may be after comma (entry is last in enum),
-    // or empty string if an enum entry has the necessary following delimiter
-    @NotNull
-    private static String enumEntryExpectedDelimiter(@NotNull JetEnumEntry enumEntry) {
-        PsiElement next = enumEntry.getNextSibling();
-        while (next != null) {
-            if (next instanceof JetDeclaration) break;
-            next = next.getNextSibling();
-        }
-        JetDeclaration nextDeclaration = (JetDeclaration) next;
-        next = PsiUtilPackage.getNextSiblingIgnoringWhitespaceAndComments(enumEntry);
-        IElementType nextType = next != null ? next.getNode().getElementType() : null;
-        if (nextDeclaration instanceof JetEnumEntry) {
-            // Not last
-            return nextType != JetTokens.COMMA ? "," : "";
-        }
-        else {
-            // Last: after it we can have semicolon, just closing brace, or comma followed by semicolon / closing brace
-            if (nextType == JetTokens.COMMA) {
-                next = PsiUtilPackage.getNextSiblingIgnoringWhitespaceAndComments(next);
-                nextType = next != null ? next.getNode().getElementType() : null;
-            }
-            return nextType != JetTokens.SEMICOLON && nextType != JetTokens.RBRACE ? ";" : "";
-        }
-    }
-
-    public static boolean enumEntryUsesDeprecatedOrNoDelimiter(@NotNull JetEnumEntry enumEntry) {
-        return !enumEntryExpectedDelimiter(enumEntry).isEmpty();
-    }
-
-    static public boolean enumEntryAfterEnumMember(@NotNull JetEnumEntry enumEntry) {
-        PsiElement previous = enumEntry.getPrevSibling();
-        while (previous != null) {
-            if (previous instanceof JetEnumEntry) return false;
-            if (previous instanceof JetDeclaration) return true;
-            previous = previous.getPrevSibling();
-        }
-        return false;
-    }
-
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
-        if (enumEntryUsesDeprecatedSuperConstructor(enumEntry)) {
-            trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.on(enumEntry, classDescriptor));
-        }
-        String neededDelimiter = enumEntryExpectedDelimiter(enumEntry);
-        if (!neededDelimiter.isEmpty()) {
-            trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER.on(enumEntry, classDescriptor, neededDelimiter));
-        }
-        if (enumEntryAfterEnumMember(enumEntry)) {
-            trace.report(Errors.ENUM_ENTRY_AFTER_ENUM_MEMBER.on(enumEntry, classDescriptor));
-        }
-
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
         if (DescriptorUtils.isEnumClass(declaration)) {
             ClassDescriptor enumClass = (ClassDescriptor) declaration;
 
-            List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
             ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
-            if ((constructor == null || !constructor.getValueParameters().isEmpty()) && delegationSpecifiers.isEmpty()) {
-                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
-            }
-
-            for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
-                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-                if (typeReference != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
-                    if (type != null) {
-                        JetType enumType = enumClass.getDefaultType();
-                        if (!type.getConstructor().equals(enumType.getConstructor())) {
-                            trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
-                        }
-                    }
-                }
+            if ((constructor == null || !constructor.getValueParameters().isEmpty()) && !enumEntry.hasInitializer()) {
+                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry));
             }
         }
         else {

@@ -2,7 +2,6 @@ package foo.bar.goo
 
 abstract
 open
-enum
 open
 annotation
 override

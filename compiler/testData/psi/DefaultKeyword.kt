@@ -44,7 +44,7 @@ interface A {
 }
 
 enum class D {
-    A B
+    A, B;
 
     companion object
 }
@@ -68,15 +68,15 @@ val t = companion object {
 }
 
 enum class I {
-    A
-    B
+    A,
+    B;
 
     companion object
 }
 
 enum class I {
-    A
-    B
+    A,
+    B;
 
     companion object {}
 }

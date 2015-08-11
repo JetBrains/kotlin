@@ -2,7 +2,7 @@
 package test
 
 enum class Enum {
-    ENTRY1 ENTRY2
+    ENTRY1, ENTRY2;
 
     inner class Inner
 

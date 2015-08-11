@@ -5,7 +5,7 @@ class A {
     // class B
     enum class B {
         // X
-        X
+        X,
         // Y
         <caret>Y
     }

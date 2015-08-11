@@ -4,17 +4,17 @@
 package test
 
 internal final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
-    A
+    A,
 
-    B
+    B,
 
-    C
+    C,
 
-    D
+    D,
 
-    E
+    E,
 
-    F
+    F;
 
     public companion object {
         internal final val c: kotlin.Int /* compiled code */

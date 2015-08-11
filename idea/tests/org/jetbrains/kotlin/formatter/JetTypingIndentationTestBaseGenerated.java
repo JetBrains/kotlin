@@ -175,12 +175,6 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest(fileName);
         }
 
-        @TestMetadata("InEnumInitializerListAfterColon.after.kt")
-        public void testInEnumInitializerListAfterColon() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterColon.after.kt");
-            doNewlineTest(fileName);
-        }
-
         @TestMetadata("InEnumInitializerListAfterComma.after.kt")
         public void testInEnumInitializerListAfterComma() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.kt");
@@ -394,12 +388,6 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         @TestMetadata("InEnumAfterSemicolon.after.inv.kt")
         public void testInEnumAfterSemicolon() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumAfterSemicolon.after.inv.kt");
-            doNewlineTestWithInvert(fileName);
-        }
-
-        @TestMetadata("InEnumInitializerListAfterColon.after.inv.kt")
-        public void testInEnumInitializerListAfterColon() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterColon.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 

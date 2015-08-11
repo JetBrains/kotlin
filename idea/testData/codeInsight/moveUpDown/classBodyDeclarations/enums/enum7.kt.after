@@ -1,0 +1,10 @@
+// MOVE: down
+// class My
+enum class My {
+    // first
+    FIRST,
+    // last
+    LAST,
+    // second
+    <caret>SECOND;
+}

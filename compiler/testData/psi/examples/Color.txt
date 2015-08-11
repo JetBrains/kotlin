@@ -58,16 +58,13 @@ JetFile: Color.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('RED')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Color')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -84,20 +81,18 @@ JetFile: Color.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0')
               PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n  ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('GREEN')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Color')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT
@@ -114,20 +109,18 @@ JetFile: Color.kt
                 INTEGER_CONSTANT
                   PsiElement(INTEGER_LITERAL)('0')
               PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n  ')
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('BLUE')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('Color')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               VALUE_ARGUMENT

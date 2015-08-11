@@ -43,19 +43,17 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('X')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       ENUM_ENTRY
         MODIFIER_LIST
@@ -69,16 +67,13 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('Y')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
@@ -86,6 +81,7 @@ JetFile: enumEntries.kt
         CLASS_BODY
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       ENUM_ENTRY
         MODIFIER_LIST
@@ -104,19 +100,17 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('Z')
-        PsiWhiteSpace(' ')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('A')
+                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+                    <empty list>
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       ENUM_ENTRY
         MODIFIER_LIST
@@ -132,24 +126,26 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('Q')
+        PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('Ann')
-        INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+        PsiComment(EOL_COMMENT)('// TODO: try to make Ann() working here (?)')
+        PsiWhiteSpace('\n    ')
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
-                  ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
-                    <empty list>
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      ENUM_ENTRY
+        PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('W')
+        PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       FUN
         MODIFIER_LIST

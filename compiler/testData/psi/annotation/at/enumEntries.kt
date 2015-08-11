@@ -1,13 +1,14 @@
 enum class A {
-    @[Ann] @Ann(1) X : A()
+    @[Ann] @Ann(1) X(),
 
-    @Ann Y : A() {}
+    @Ann Y() {},
 
-    private @Ann() Z : A()
+    private @Ann() Z(),
 
-    @Ann @private Q
+    @Ann @private Q,
 
-    Ann() W
+    // TODO: try to make Ann() working here (?)
+    @Ann() W;
 
     @Ann fun foo() {}
 }

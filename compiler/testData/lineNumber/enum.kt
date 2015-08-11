@@ -1,5 +1,5 @@
 enum class E {
-    E1
+    E1;
     
     fun foo() = {
         test.lineNumber()

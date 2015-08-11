@@ -1,15 +1,6 @@
 interface Foo {
 }
 
-enum class E {
-    First, Second
-}
-
-enum class F(val name: String) {
-    First("First"),
-    Second("Second")
-}
-
 val f = { a: Int, b: Int -> a + b }
 
 class A private constructor()

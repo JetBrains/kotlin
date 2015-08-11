@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
@@ -138,13 +139,13 @@ public fun buildDecompiledText(
         renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
     }
 
-    fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String) {
+    fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean = false) {
         if (descriptor is MissingDependencyErrorClass) {
             throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
         val startOffset = builder.length()
         val header = if (isEnumEntry(descriptor))
-            descriptor.getName().asString()
+            descriptor.name.asString() + if (lastEnumEntry) ";" else ","
         else
             descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
         builder.append(header)
@@ -169,8 +170,8 @@ public fun buildDecompiledText(
                 endOffset = builder.length()
             }
         }
-        else
-            if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
+        else if (descriptor is ClassDescriptor) {
+            if (!isEnumEntry(descriptor)) {
                 builder.append(" {\n")
                 var firstPassed = false
                 val subindent = indent + "    "
@@ -185,32 +186,36 @@ public fun buildDecompiledText(
                         firstPassed = true
                     }
                 }
+                val enumEntryCount = if (isEnumClass(descriptor)) allDescriptors.count { isEnumEntry(it) } else 0
+                var enumEntryIndex = 0
                 for (member in allDescriptors) {
-                    if (member.getContainingDeclaration() != descriptor) {
+                    if (member.containingDeclaration != descriptor) {
                         continue
                     }
                     if (member == companionObject) {
                         continue
                     }
-                    if (companionNeeded && !isEnumEntry(member)) {
+                    val isEnumEntry = isEnumEntry(member)
+                    if (companionNeeded && !isEnumEntry) {
                         companionNeeded = false
                         newlineExceptFirst()
                         builder.append(subindent)
                         appendDescriptor(companionObject!!, subindent)
                     }
                     if (member is CallableMemberDescriptor
-                        && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
+                        && member.kind != CallableMemberDescriptor.Kind.DECLARATION
                         //TODO: not synthesized and component like
-                        && !isComponentLike(member.getName())) {
+                        && !isComponentLike(member.name)) {
                         continue
                     }
                     newlineExceptFirst()
                     builder.append(subindent)
-                    appendDescriptor(member, subindent)
+                    appendDescriptor(member, subindent, isEnumEntry && ++enumEntryIndex == enumEntryCount)
                 }
                 builder.append(indent).append("}")
                 endOffset = builder.length()
             }
+        }
 
         builder.append("\n")
         saveDescriptorToRange(descriptor, startOffset, endOffset)

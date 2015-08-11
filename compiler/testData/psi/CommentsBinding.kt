@@ -57,9 +57,9 @@ public fun foo() {
 } // end
 
 enum class E {
-    A // this is A
-    /** This is B */ B
-    /* And this is C */ C
+    A, // this is A
+    /** This is B */ B,
+    /* And this is C */ C,
     /** This is X */
     X {
         override fun toString() = "X"
