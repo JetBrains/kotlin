@@ -145,6 +145,10 @@ public interface IntegerVariableValues {
             return this
         }
 
+        public fun setNotAllPossibleValuesKnown() {
+            this.allPossibleValuesKnown = false
+        }
+
         private fun add(value: Int) {
             if (!values.contains(value)) {
                 if (values.size() == possibleValuesThreshold) {

@@ -21,9 +21,9 @@ L0:
     v(a)                                                                                              in: INTS{}            BOOLS{} ARRS{}    out: INTS{a:-}         BOOLS{} ARRS{}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                                                          in: INTS{a:-}         BOOLS{} ARRS{}    out: INTS{a:-}         BOOLS{} ARRS{}
-    magic[LOOP_RANGE_ITERATION](1..5|<v2>) -> <v3>                                                    in: INTS{a:-}         BOOLS{} ARRS{}    out: INTS{a:-}         BOOLS{} ARRS{}
-    w(a|<v3>)                                                                                         in: INTS{a:-}         BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
+    jmp?(L3)                                                                                          in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](1..5|<v2>) -> <v3>                                                    in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
+    w(a|<v3>)                                                                                         in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
     mark(for (a in 1..5) { if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 } })           in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
 L4 [body entry point]:
   4 mark({ if (!(a > 0 && a < 3 || a >= 4 && a < 10)) { 42 } else { 43 } })                           in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
@@ -68,7 +68,7 @@ L11 ['if' expression result]:
   3 jmp(L2)                                                                                           in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                                                                       in: INTS{a:-}         BOOLS{} ARRS{}    out: INTS{a:-}         BOOLS{} ARRS{}
+    read (Unit)                                                                                       in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
   2 r(44) -> <v23>                                                                                    in: INTS{}            BOOLS{} ARRS{}    out: INTS{}            BOOLS{} ARRS{}
 L1:
   1 <END>                                                                                             in: INTS{}            BOOLS{} ARRS{}    out: INTS{}            BOOLS{} ARRS{}
@@ -112,9 +112,9 @@ L0:
     v(a)                                                                                                                             in: INTS{}             BOOLS{} ARRS{}    out: INTS{a:-}          BOOLS{} ARRS{}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                                                                                         in: INTS{a:-}          BOOLS{} ARRS{}    out: INTS{a:-}          BOOLS{} ARRS{}
-    magic[LOOP_RANGE_ITERATION](-1..6|<v3>) -> <v4>                                                                                  in: INTS{a:-}          BOOLS{} ARRS{}    out: INTS{a:-}          BOOLS{} ARRS{}
-    w(a|<v4>)                                                                                                                        in: INTS{a:-}          BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
+    jmp?(L3)                                                                                                                         in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](-1..6|<v3>) -> <v4>                                                                                  in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
+    w(a|<v4>)                                                                                                                        in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
     mark(for (a in -1..6) { if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 } 45 })        in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
 L4 [body entry point]:
   4 mark({ if (a < 5) { if (a > 0) { if (a == 1) { 41 } else { if (a == 2) { 42 } } } 43 } else { 44 } 45 })                         in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
@@ -174,7 +174,7 @@ L14 ['if' expression result]:
   3 jmp(L2)                                                                                                                          in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
 L3 [loop exit point]:
 L5 [body exit point]:
-    read (Unit)                                                                                                                      in: INTS{a:-}          BOOLS{} ARRS{}    out: INTS{a:-}          BOOLS{} ARRS{}
+    read (Unit)                                                                                                                      in: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}    out: INTS{a:[-1, 6, ?]} BOOLS{} ARRS{}
 L1:
   1 <END>                                                                                                                            in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
 error:

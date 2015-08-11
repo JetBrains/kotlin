@@ -16,7 +16,7 @@ fun simpleFor() {
 }
 
 fun arraySizeMethodCall() {
-    val arr = IntArray(3)
+    val arr = IntArray(5)
     for (i in 0 .. arr.size()) {
         println(<!OUT_OF_BOUND_ACCESS!>arr[i]<!>)
     }
@@ -41,7 +41,7 @@ fun listAccessWithLiteral(): Int {
 }
 
 fun listSizeMethodCall() {
-    val lst = listOf(1, 2, 3)
+    val lst = listOf(1, 2, 3, 4, 5)
     for (i in 0 .. lst.size()) {
         println(<!OUT_OF_BOUND_ACCESS!>lst[i]<!>)
     }
