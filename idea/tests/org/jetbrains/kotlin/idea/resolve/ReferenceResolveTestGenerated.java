@@ -377,6 +377,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TypeArgumentUnresolvedConstructor.kt")
+    public void testTypeArgumentUnresolvedConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentUnresolvedConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeArgumentWrongNumber.kt")
     public void testTypeArgumentWrongNumber() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentWrongNumber.kt");
