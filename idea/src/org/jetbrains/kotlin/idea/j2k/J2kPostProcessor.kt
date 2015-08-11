@@ -21,66 +21,23 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
-import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.HashSet
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.LinkedHashMap
 
 public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
-    override fun analyzeFile(file: JetFile, range: TextRange?): BindingContext {
-        val elements = if (range == null) {
-            listOf(file)
-        }
-        else {
-            file.elementsInRange(range).filterIsInstance<JetElement>()
-        }
-        if (elements.isEmpty()) return BindingContext.EMPTY
-        return file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext
-    }
-
     override fun insertImport(file: JetFile, fqName: FqName) {
         val descriptors = file.resolveImportReference(fqName)
-        descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.getProject()).importDescriptor(file, it) }
-    }
-
-    override fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
-        val psiElement = problem.getPsiElement()
-        return when (problem.getFactory()) {
-            Errors.USELESS_CAST -> { ->
-                val expression = RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
-
-                val variable = expression.getParent() as? JetProperty
-                if (variable != null && expression == variable.getInitializer() && variable.isLocal()) {
-                    val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.getContainingFile())).findAll()
-                    for (ref in refs) {
-                        val usage = ref.getElement() as? JetSimpleNameExpression ?: continue
-                        usage.replace(expression)
-                    }
-                    variable.delete()
-                }
-            }
-
-            Errors.REDUNDANT_PROJECTION -> { ->
-                val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(problem).single() as RemoveModifierFix
-                fix.invoke()
-            }
-
-            else -> super.fixForProblem(problem)
-        }
+        descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }
     }
 
     private enum class RangeFilterResult {
@@ -93,7 +50,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         var elementToActions = collectAvailableActions(file, rangeMarker)
 
         while (elementToActions.isNotEmpty()) {
-            val processingsToRerun = HashSet<J2kPostProcessing>()
+            var modificationStamp: Long? = file.modificationStamp
 
             for ((element, actions) in elementToActions) {
                 for ((action, processing) in actions) {
@@ -101,21 +58,21 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                         action()
                     }
                     else {
-                        processingsToRerun.add(processing)
+                        modificationStamp = null
                     }
                 }
             }
 
-            if (processingsToRerun.isEmpty()) break
-            //TODO: it looks like there are no such cases currently, add tests later on or drop this
-            elementToActions = collectAvailableActions(file, rangeMarker, processingFilter = { it in processingsToRerun })
+            if (modificationStamp == file.modificationStamp) break
+
+            elementToActions = collectAvailableActions(file, rangeMarker)
         }
 
         if (formatCode) {
-            val codeStyleManager = CodeStyleManager.getInstance(file.getProject())
+            val codeStyleManager = CodeStyleManager.getInstance(file.project)
             if (rangeMarker != null) {
-                if (rangeMarker.isValid()) {
-                    codeStyleManager.reformatRange(file, rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                if (rangeMarker.isValid) {
+                    codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
                 }
             }
             else {
@@ -126,12 +83,9 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
     private data class ActionData(val action: () -> Unit, val processing: J2kPostProcessing)
 
-    private fun collectAvailableActions(
-            file: JetFile,
-            rangeMarker: RangeMarker?,
-            processingFilter: (J2kPostProcessing) -> Boolean = { true }
-    ): LinkedHashMap<JetElement, SmartList<ActionData>> {
-        val processings = J2KPostProcessingRegistrar.processings.filter(processingFilter)
+    private fun collectAvailableActions(file: JetFile, rangeMarker: RangeMarker?): LinkedHashMap<JetElement, SmartList<ActionData>> {
+        val diagnostics = analyzeFileRange(file, rangeMarker)
+
         val elementToActions = LinkedHashMap<JetElement, SmartList<ActionData>>()
 
         file.accept(object : PsiRecursiveElementVisitor(){
@@ -143,8 +97,8 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                     super.visitElement(element)
 
                     if (rangeResult == RangeFilterResult.PROCESS) {
-                        processings.forEach { processing ->
-                            val action = processing.createAction(element)
+                        J2KPostProcessingRegistrar.processings.forEach { processing ->
+                            val action = processing.createAction(element, diagnostics)
                             if (action != null) {
                                 elementToActions.getOrPut(element) { SmartList() }.add(ActionData(action, processing))
                             }
@@ -155,6 +109,18 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         })
 
         return elementToActions
+    }
+
+    private fun analyzeFileRange(file: JetFile, rangeMarker: RangeMarker?): Diagnostics {
+        val elements = if (rangeMarker == null)
+            listOf(file)
+        else
+            file.elementsInRange(rangeMarker.range!!).filterIsInstance<JetElement>()
+
+        return if (elements.isNotEmpty())
+            file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext.diagnostics
+        else
+            Diagnostics.EMPTY
     }
 
     private fun rangeFilter(element: PsiElement, rangeMarker: RangeMarker?): RangeFilterResult {
@@ -168,6 +134,4 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             else -> RangeFilterResult.SKIP
         }
     }
-
-    override fun simpleNameReference(nameExpression: JetSimpleNameExpression) = nameExpression.mainReference
 }

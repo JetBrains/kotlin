@@ -17,59 +17,28 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import java.util.Comparator
 import java.util.LinkedHashMap
 
 public interface PostProcessor {
-    public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
-
     public fun insertImport(file: JetFile, fqName: FqName)
 
-    public open fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
-        val psiElement = problem.getPsiElement()
-        return when (problem.getFactory()) {
-            Errors.UNNECESSARY_NOT_NULL_ASSERTION -> { ->
-                val exclExclOp = psiElement as JetSimpleNameExpression
-                val exclExclExpr = exclExclOp.getParent() as JetUnaryExpression
-                exclExclExpr.replace(exclExclExpr.getBaseExpression()!!)
-            }
-
-            Errors.VAL_REASSIGNMENT -> { ->
-                if (psiElement is JetSimpleNameExpression) {
-                    val property = simpleNameReference(psiElement).resolve() as? JetProperty
-                    if (property != null && !property.isVar()) {
-                        val factory = JetPsiFactory(psiElement.getProject())
-                        property.getValOrVarKeyword().replace(factory.createVarKeyword())
-                    }
-                }
-            }
-
-            else -> null
-        }
-    }
-
     public fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?)
-
-    public fun simpleNameReference(nameExpression: JetSimpleNameExpression): PsiReference
 }
 
 public enum class ParseContext {

@@ -16,14 +16,23 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
+import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.util.ArrayList
 
 interface J2kPostProcessing {
-    fun createAction(element: JetElement): (() -> Unit)?
+    fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)?
 }
 
 object J2KPostProcessingRegistrar {
@@ -37,19 +46,51 @@ object J2KPostProcessingRegistrar {
         _processings.add(MoveLambdaOutsideParenthesesProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
 
-        registerTypicalIntentionBasedProcessing(UsePropertyAccessSyntaxIntention()) { applyTo(it) }
-        registerTypicalIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
-        registerTypicalIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
-        registerTypicalIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
-        registerTypicalIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(UsePropertyAccessSyntaxIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
+
+        registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
+            val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()
+
+            val variable = expression.parent as? JetProperty
+            if (variable != null && expression == variable.initializer && variable.isLocal) {
+                val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll()
+                for (ref in refs) {
+                    val usage = ref.element as? JetSimpleNameExpression ?: continue
+                    usage.replace(expression)
+                }
+                variable.delete()
+            }
+        }
+
+        registerDiagnosticBasedProcessing<JetTypeProjection>(Errors.REDUNDANT_PROJECTION) { element, diagnostic ->
+            val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
+            fix.invoke()
+        }
+
+        registerDiagnosticBasedProcessing<JetSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, diagnostic ->
+            val exclExclExpr = element.parent as JetUnaryExpression
+            exclExclExpr.replace(exclExclExpr.baseExpression!!)
+        }
+
+        registerDiagnosticBasedProcessing<JetSimpleNameExpression>(Errors.VAL_REASSIGNMENT) { element, diagnostic ->
+            val property = element.mainReference.resolve() as? JetProperty
+            if (property != null && !property.isVar) {
+                val factory = JetPsiFactory(element.project)
+                property.valOrVarKeyword.replace(factory.createVarKeyword())
+            }
+        }
     }
 
-    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerTypicalIntentionBasedProcessing(
+    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
             inlineOptions(InlineOption.ONLY_LOCAL_RETURN) apply: TIntention.(TElement) -> Unit
     ) {
         _processings.add(object : J2kPostProcessing {
-            override fun createAction(element: JetElement): (() -> Unit)? {
+            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
                 @suppress("UNCHECKED_CAST")
                 if (intention.applicabilityRange(element as TElement) == null) return null
@@ -58,8 +99,21 @@ object J2KPostProcessingRegistrar {
         })
     }
 
+    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessing(
+            diagnosticFactory: DiagnosticFactory<*>,
+            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fix: (TElement, Diagnostic) -> Unit
+    ) {
+        _processings.add(object : J2kPostProcessing {
+            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+                if (!javaClass<TElement>().isInstance(element)) return null
+                val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
+                return { fix(element as TElement, diagnostic) }
+            }
+        })
+    }
+
     private class RemoveExplicitTypeArgumentsProcessing : J2kPostProcessing {
-        override fun createAction(element: JetElement): (() -> Unit)? {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is JetTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
 
             return { element.delete() }
@@ -69,7 +123,7 @@ object J2KPostProcessingRegistrar {
     private class MoveLambdaOutsideParenthesesProcessing : J2kPostProcessing {
         private val intention = MoveLambdaOutsideParenthesesIntention()
 
-        override fun createAction(element: JetElement): (() -> Unit)? {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is JetCallExpression) return null
             val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
             if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
@@ -80,7 +134,7 @@ object J2KPostProcessingRegistrar {
     private class ConvertToStringTemplateProcessing : J2kPostProcessing {
         private val intention = ConvertToStringTemplateIntention()
 
-        override fun createAction(element: JetElement): (() -> Unit)? {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element is JetBinaryExpression && intention.isApplicableTo(element) && intention.isConversionResultSimple(element)) {
                 return { intention.applyTo(element) }
             }
@@ -89,5 +143,4 @@ object J2KPostProcessingRegistrar {
             }
         }
     }
-
 }

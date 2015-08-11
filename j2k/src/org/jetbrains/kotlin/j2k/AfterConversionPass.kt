@@ -18,42 +18,19 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.JetFile
 
 public class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
     public fun run(kotlinFile: JetFile, range: TextRange?) {
-        val bindingContext = postProcessor.analyzeFile(kotlinFile, range)
-
-        fun fixForProblem(diagnostic: Diagnostic): (() -> Unit)? {
-            val psiElement = diagnostic.getPsiElement()
-            if (range != null && psiElement.getTextRange() !in range) return null
-            return postProcessor.fixForProblem(diagnostic)
-        }
-
-        val fixes = bindingContext.getDiagnostics()
-                .map {
-                    val fix = fixForProblem(it)
-                    if (fix != null) Pair(it.getPsiElement(), fix) else null
-                }
-                .filterNotNull()
-
         val rangeMarker = if (range != null) {
-            val document = kotlinFile.getViewProvider().getDocument()!!
-            val marker = document.createRangeMarker(range.getStartOffset(), range.getEndOffset())
-            marker.setGreedyToLeft(true)
-            marker.setGreedyToRight(true)
+            val document = kotlinFile.viewProvider.document!!
+            val marker = document.createRangeMarker(range.startOffset, range.endOffset)
+            marker.isGreedyToLeft = true
+            marker.isGreedyToRight = true
             marker
         }
         else {
             null
-        }
-
-        for ((psiElement, fix) in fixes) {
-            if (psiElement.isValid()) {
-                fix()
-            }
         }
 
         postProcessor.doAdditionalProcessing(kotlinFile, rangeMarker)
