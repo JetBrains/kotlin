@@ -82,9 +82,6 @@ public interface IntegerVariableValues {
         override fun merge(values: IntegerVariableValues): IntegerVariableValues =
                 when (values) {
                     is Defined -> values.merge(this)
-                    is Dead ->
-                        throw IllegalArgumentException(
-                                "Attempt to merge dead code with dead code indicates logic error - two blocks can't be dead simultaneously")
                     else -> values
                 }
     }
@@ -188,7 +185,7 @@ public interface IntegerVariableValues {
                 for (value in minOfLeftOperand..maxOfRightOperand) {
                     rangeValues.add(value)
                 }
-                return Defined(rangeValues)
+                return if (rangeValues.isEmpty()) Undefined else Defined(rangeValues)
             }
             return Undefined
         }
