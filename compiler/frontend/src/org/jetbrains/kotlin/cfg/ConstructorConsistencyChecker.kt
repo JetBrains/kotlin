@@ -34,6 +34,8 @@ sealed class LeakingThisDescriptor(val classOrObject: KtClassOrObject) {
     class PropertyIsNull(val property: PropertyDescriptor, classOrObject: KtClassOrObject) : LeakingThisDescriptor(classOrObject)
 
     class NonFinalClass(val klass: ClassDescriptor, classOrObject: KtClassOrObject): LeakingThisDescriptor(classOrObject)
+
+    class NonFinalProperty(val property: PropertyDescriptor, classOrObject: KtClassOrObject): LeakingThisDescriptor(classOrObject)
 }
 
 class ConstructorConsistencyChecker private constructor(
@@ -45,12 +47,26 @@ class ConstructorConsistencyChecker private constructor(
 ) {
     private val finalClass = classDescriptor.isFinalClass
 
+    private fun checkOpenPropertyAccess(reference: KtReferenceExpression) {
+        if (!finalClass) {
+            val descriptor = trace.get(BindingContext.REFERENCE_TARGET, reference)
+            if (descriptor is PropertyDescriptor && descriptor.isOverridable) {
+                trace.record(BindingContext.LEAKING_THIS, reference, LeakingThisDescriptor.NonFinalProperty(descriptor, classOrObject))
+            }
+        }
+    }
+
     private fun safeThisUsage(expression: KtThisExpression): Boolean {
         val referenceDescriptor = trace.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
         if (referenceDescriptor != classDescriptor) return true
         val parent = expression.parent
         return when (parent) {
-            is KtQualifiedExpression -> parent.selectorExpression is KtSimpleNameExpression
+            is KtQualifiedExpression ->
+                if (parent.selectorExpression is KtSimpleNameExpression) {
+                    checkOpenPropertyAccess(parent.selectorExpression as KtSimpleNameExpression)
+                    true
+                }
+                else false
             is KtBinaryExpression -> OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(parent.operationToken)
             else -> false
         }
@@ -109,9 +125,14 @@ class ConstructorConsistencyChecker private constructor(
                             }
                         }
                     is MagicInstruction ->
-                        if (instruction.kind == MagicKind.IMPLICIT_RECEIVER && element is KtCallExpression) {
-                            if (!safeCallUsage(element)) {
-                                handleLeakingThis(element)
+                        if (instruction.kind == MagicKind.IMPLICIT_RECEIVER) {
+                            if (element is KtCallExpression) {
+                                if (!safeCallUsage(element)) {
+                                    handleLeakingThis(element)
+                                }
+                            }
+                            else if (element is KtReferenceExpression) {
+                                checkOpenPropertyAccess(element)
                             }
                         }
                 }
