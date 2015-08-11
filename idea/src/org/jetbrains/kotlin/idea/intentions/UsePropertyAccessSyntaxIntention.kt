@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
@@ -49,6 +47,10 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
+        applyTo(element)
+    }
+
+    public fun applyTo(element: JetCallExpression) {
         val propertyName = findExtensionPropertyToUse(element)!!.getName()
         val arguments = element.getValueArguments()
         when (arguments.size()) {
