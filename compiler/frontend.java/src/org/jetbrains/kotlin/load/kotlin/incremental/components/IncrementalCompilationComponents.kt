@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.load.kotlin.incremental.components
 
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.modules.Module
 
 public interface IncrementalCompilationComponents {
-    public fun getIncrementalCache(moduleId: String): IncrementalCache
+    public fun getIncrementalCache(target: Module): IncrementalCache
     public fun getLookupTracker(): LookupTracker
 }

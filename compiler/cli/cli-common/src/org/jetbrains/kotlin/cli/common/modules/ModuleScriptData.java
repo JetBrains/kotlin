@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.modules;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.modules.Module;
 
 import java.util.Collections;
 import java.util.List;

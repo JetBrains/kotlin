@@ -122,10 +122,10 @@ public class KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        String targetDescription = "in modules [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
+        String targetDescription = "in targets [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
             @Override
             public String apply(@Nullable Module input) {
-                return input != null ? input.getModuleName() : "<null>";
+                return input != null ? input.getModuleName() + "-" + input.getModuleType() : "<null>";
             }
         })) + "] ";
         AnalysisResult result = analyze(environment, targetDescription);
@@ -148,7 +148,7 @@ public class KotlinToJVMBytecodeCompiler {
                     }
             );
             GenerationState generationState =
-                    generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()),
+                    generate(environment, result, jetFiles, module, new File(module.getOutputDirectory()),
                              module.getModuleName());
             outputFiles.put(module, generationState.getFactory());
         }
@@ -189,7 +189,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
             }
 
-            configuration.add(JVMConfigurationKeys.MODULE_IDS, module.getModuleName());
+            configuration.add(JVMConfigurationKeys.MODULES, module);
         }
 
         return configuration;
@@ -326,7 +326,7 @@ public class KotlinToJVMBytecodeCompiler {
                                 moduleContext,
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
+                                environment.getConfiguration().get(JVMConfigurationKeys.MODULES),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
                                 new JvmPackagePartProvider(environment)
                         );
@@ -357,7 +357,7 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull KotlinCoreEnvironment environment,
             @NotNull AnalysisResult result,
             @NotNull List<JetFile> sourceFiles,
-            @Nullable String moduleId,
+            @Nullable Module target,
             File outputDirectory,
             String moduleName
     ) {
@@ -365,11 +365,11 @@ public class KotlinToJVMBytecodeCompiler {
         IncrementalCompilationComponents incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS);
 
         Collection<FqName> packagesWithObsoleteParts;
-        if (moduleId == null || incrementalCompilationComponents == null) {
+        if (target == null || incrementalCompilationComponents == null) {
             packagesWithObsoleteParts = Collections.emptySet();
         }
         else {
-            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+            IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
             packagesWithObsoleteParts = new HashSet<FqName>();
             for (String internalName : incrementalCache.getObsoletePackageParts()) {
                 packagesWithObsoleteParts.add(JvmClassName.byInternalName(internalName).getPackageFqName());
@@ -389,7 +389,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 diagnosticHolder,
                 packagesWithObsoleteParts,
-                moduleId,
+                target,
                 moduleName,
                 outputDirectory,
                 incrementalCompilationComponents
@@ -401,7 +401,7 @@ public class KotlinToJVMBytecodeCompiler {
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         long generationNanos = PerformanceCounter.Companion.currentTime() - generationStart;
-        String desc = moduleId != null ? "module " + moduleId + " " : "";
+        String desc = target != null ? "target " + target.getModuleName() + "-" + target.getModuleType() + " " : "";
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);

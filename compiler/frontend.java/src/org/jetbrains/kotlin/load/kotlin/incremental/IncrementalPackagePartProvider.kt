@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -46,14 +47,13 @@ internal class IncrementalPackagePartProvider private constructor(
         public fun create(
                 parent: PackagePartProvider,
                 sourceFiles: Collection<JetFile>,
-                moduleIds: List<String>?,
+                modules: List<Module>?,
                 incrementalCompilationComponents: IncrementalCompilationComponents?,
                 storageManager: StorageManager
         ): PackagePartProvider {
-            if (moduleIds == null || incrementalCompilationComponents == null) return parent
+            if (modules == null || incrementalCompilationComponents == null) return parent
 
-            val incrementalCaches = moduleIds.map { incrementalCompilationComponents.getIncrementalCache(it) }
-
+            val incrementalCaches = modules.map { incrementalCompilationComponents.getIncrementalCache(it) }
             return IncrementalPackagePartProvider(parent, sourceFiles, incrementalCaches, storageManager)
         }
     }

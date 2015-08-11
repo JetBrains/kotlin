@@ -20,14 +20,42 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
+import org.jetbrains.kotlin.modules.Module
 
 public class IncrementalCompilationComponentsImpl(
         caches: Map<ModuleBuildTarget, IncrementalCache>,
         private val lookupTracker: LookupTracker
 ): IncrementalCompilationComponents {
-    private val idToCache = caches.mapKeys { it.key.id!! }
+    private val caches = caches.mapKeys { ModuleToModuleBuildTargetAdapter(it.key) }
 
-    override fun getIncrementalCache(moduleId: String): IncrementalCache = idToCache[moduleId]!!
+    override fun getIncrementalCache(target: Module): IncrementalCache =
+            caches[target]!!
 
     override fun getLookupTracker(): LookupTracker = lookupTracker
+}
+
+private class ModuleToModuleBuildTargetAdapter(
+        private val moduleBuildTarget: ModuleBuildTarget
+) : Module {
+
+    override fun getModuleName(): String =
+            moduleBuildTarget.id
+
+    override fun getModuleType(): String =
+            moduleBuildTarget.targetType.typeId
+
+    override fun getAnnotationsRoots(): List<String> =
+            throw UnsupportedOperationException()
+
+    override fun getClasspathRoots(): List<String> =
+            throw UnsupportedOperationException()
+
+    override fun getJavaSourceRoots(): List<String> =
+            throw UnsupportedOperationException()
+
+    override fun getOutputDirectory(): String =
+            throw UnsupportedOperationException()
+
+    override fun getSourceFiles(): List<String> =
+            throw UnsupportedOperationException()
 }

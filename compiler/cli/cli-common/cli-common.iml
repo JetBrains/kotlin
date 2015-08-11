@@ -11,5 +11,6 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="library" exported="" name="cli-parser" level="project" />
     <orderEntry type="library" name="jps" level="project" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>

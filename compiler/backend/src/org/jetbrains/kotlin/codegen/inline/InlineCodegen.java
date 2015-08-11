@@ -30,10 +30,14 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.kotlin.*;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -746,9 +750,9 @@ public class InlineCodegen extends CallGenerator {
             @NotNull FunctionDescriptor targetDescriptor
     ) {
         IncrementalCompilationComponents incrementalCompilationComponents = state.getIncrementalCompilationComponents();
-        String moduleId = state.getModuleId();
+        Module target = state.getTarget();
 
-        if (incrementalCompilationComponents == null || moduleId == null) return;
+        if (incrementalCompilationComponents == null || target == null) return;
 
         String sourceFile = getFilePath(sourceDescriptor);
         String targetFile = getFilePath(targetDescriptor);
@@ -765,7 +769,7 @@ public class InlineCodegen extends CallGenerator {
         assert sourceFile != null: "No source file for inline fun: " + jvmSignature;
         assert targetFile != null: "No target file for inline fun: " + jvmSignature;
 
-        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
         InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
         inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }

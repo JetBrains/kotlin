@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.cli.common.modules
 
+import org.jetbrains.kotlin.modules.Module
 import java.util.ArrayList
 
 public class ModuleBuilder(
         private val name: String,
         private val outputDir: String,
         private val type: String
-) : org.jetbrains.kotlin.modules.Module {
+) : Module {
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<String>()

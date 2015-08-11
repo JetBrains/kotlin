@@ -321,6 +321,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     || className.startsWith("org.apache.log4j.") // For logging from compiler
                     || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
                     || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
+                    || className == "org.jetbrains.kotlin.modules.Module"
                 },
                 compilerServices
         )

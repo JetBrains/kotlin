@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentPr
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
+import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -100,12 +101,12 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull ModuleContext moduleContext,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @Nullable List<String> moduleIds,
+            @Nullable List<Module> targets,
             @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
             @NotNull PackagePartProvider packagePartProvider
     ) {
         return analyzeFilesWithJavaIntegration(
-                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, moduleIds, incrementalCompilationComponents,
+                moduleContext, files, trace, TopDownAnalysisMode.TopLevelDeclarations, targets, incrementalCompilationComponents,
                 packagePartProvider);
     }
 
@@ -115,7 +116,7 @@ public enum TopDownAnalyzerFacadeForJVM {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @Nullable List<String> moduleIds,
+            @Nullable List<Module> targets,
             @Nullable IncrementalCompilationComponents incrementalCompilationComponents,
             @NotNull PackagePartProvider packagePartProvider
     ) {
@@ -128,7 +129,7 @@ public enum TopDownAnalyzerFacadeForJVM {
         LookupTracker lookupTracker =
                 incrementalCompilationComponents != null ? incrementalCompilationComponents.getLookupTracker() : LookupTracker.DO_NOTHING;
 
-        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, moduleIds, incrementalCompilationComponents, moduleContext.getStorageManager());
+        packagePartProvider = IncrementalPackagePartProvider.create(packagePartProvider, files, targets, incrementalCompilationComponents, moduleContext.getStorageManager());
 
         ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
@@ -141,15 +142,15 @@ public enum TopDownAnalyzerFacadeForJVM {
 
         List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
-        if (moduleIds != null && incrementalCompilationComponents != null) {
-            for (String moduleId : moduleIds) {
-                IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(moduleId);
+        if (targets != null && incrementalCompilationComponents != null) {
+            for (Module target : targets) {
+                IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
 
                 additionalProviders.add(
                         new IncrementalPackageFragmentProvider(
                                 files, moduleContext.getModule(), moduleContext.getStorageManager(),
                                 container.getDeserializationComponentsForJava().getComponents(),
-                                incrementalCache, moduleId
+                                incrementalCache, target
                         )
                 );
             }
