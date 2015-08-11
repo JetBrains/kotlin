@@ -23,10 +23,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.decompiler.DecompilerPackage;
 import org.jetbrains.kotlin.idea.decompiler.KotlinClsFileBase;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
@@ -51,7 +48,8 @@ public final class DecompiledNavigationUtils {
             @NotNull Project project,
             @NotNull DeclarationDescriptor referencedDescriptor
     ) {
-        if (DescriptorUtils.isLocal(referencedDescriptor)) return null;
+        if (isLocal(referencedDescriptor)) return null;
+
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor);
 
         if (virtualFile == null ||
@@ -64,6 +62,15 @@ public final class DecompiledNavigationUtils {
         }
 
         return ((KotlinClsFileBase) psiFile).getDeclarationForDescriptor(referencedDescriptor);
+    }
+
+    private static boolean isLocal(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ParameterDescriptor) {
+            return isLocal(descriptor.getContainingDeclaration());
+        }
+        else {
+            return DescriptorUtils.isLocal(descriptor);
+        }
     }
 
     /*
