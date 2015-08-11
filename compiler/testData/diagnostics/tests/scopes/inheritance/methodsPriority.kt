@@ -10,7 +10,7 @@ fun foo() = ""
 
 open class B: A() {
     init {
-        val a: Int = foo()
+        val a: Int = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
     }
 }
 
