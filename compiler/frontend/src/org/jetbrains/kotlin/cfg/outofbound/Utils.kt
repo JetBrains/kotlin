@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -84,7 +85,7 @@ public object KotlinListUtils {
     public fun isKotlinList(type: JetType): Boolean =
         if (type.constructor is TypeConstructor) {
             type.constructor.declarationDescriptor?.let {
-                val typeName = it.fqNameSafe.asString()
+                val typeName = it.fqNameUnsafe.asString()
                 typeName == "kotlin.List" || typeName == "java.util.ArrayList"
             } ?: false
         }
@@ -104,6 +105,9 @@ public object KotlinCollectionsUtils {
     public val sizeMethodName: String = "size"
     public val getMethodName: String = "get"
     public val setMethodName: String = "set"
+    // only 1d collections are supported
+    public val getMethodArgumentsNumber: Int = 2
+    public val setMethodArgumentsNumber: Int = 3
 }
 
 public interface PseudoAnnotation
@@ -122,7 +126,8 @@ public object CallInstructionUtils {
     public data class CallSignature (
             val calledName: String?,
             val receiverType: JetType?,
-            val returnType: JetType?
+            val returnType: JetType?,
+            val argumentsNumber: Int
     ): CallInfo
 
     public data class RawInfo (val callInstruction: CallInstruction): CallInfo
@@ -167,16 +172,20 @@ public object CallInstructionUtils {
     )
 
     private val accessPseudoAnnotationExtractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?> = listOf(
-            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.getMethodName }, GetMethod) },
-            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.setMethodName }, SetMethod) }
+            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.getMethodName },
+                                                  { it == KotlinCollectionsUtils.getMethodArgumentsNumber }, GetMethod) },
+            { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.setMethodName },
+                                                  { it == KotlinCollectionsUtils.setMethodArgumentsNumber }, SetMethod) }
     )
 
     private fun tryExtractCallInfo(instruction: CallInstruction): CallInfo? =
             if (instruction.element is JetCallExpression) {
-                val calledName = instruction.element.calleeExpression?.node?.text
-                val receiverType = tryExtractReceiverType(instruction)
-                val returnType = instruction.resolvedCall.candidateDescriptor.returnType
-                CallSignature(calledName, receiverType, returnType)
+                CallSignature(
+                        calledName = instruction.element.calleeExpression?.node?.text,
+                        receiverType = tryExtractReceiverType(instruction),
+                        returnType = instruction.resolvedCall.candidateDescriptor.returnType,
+                        argumentsNumber = instruction.inputValues.size()
+                )
             }
             else null
 
@@ -285,20 +294,25 @@ public object CallInstructionUtils {
     private fun checkCollectionAccessMethod(
             callInfo: CallInstructionUtils.CallInfo,
             isExpectedMethodName: (String) -> Boolean,
+            isExpectedNumberOfArgs: (Int) -> Boolean,
             onSuccess: PseudoAnnotation
     ): PseudoAnnotation? =
             if (callInfo is CallInstructionUtils.CallSignature &&
                 callInfo.calledName != null && isExpectedMethodName(callInfo.calledName) &&
-                callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType)
+                callInfo.receiverType != null && receiverIsCollection(callInfo.receiverType) &&
+                isExpectedNumberOfArgs(callInfo.argumentsNumber)
             ) {
                 onSuccess
             }
             else null
 
     private fun accessOperatorChecker(rawInfo: RawInfo): PseudoAnnotation? {
-        val isAccessOperation = rawInfo.callInstruction.element is JetArrayAccessExpression ||
+        val isAccessOperation = rawInfo.callInstruction.element is JetArrayAccessExpression &&
+                                rawInfo.callInstruction.inputValues.size() == 2
+                                ||
                                 rawInfo.callInstruction.element is JetBinaryExpression &&
-                                rawInfo.callInstruction.element.left is JetArrayAccessExpression
+                                rawInfo.callInstruction.element.left is JetArrayAccessExpression &&
+                                rawInfo.callInstruction.inputValues.size() == 3
         val receiverType = tryExtractReceiverType(rawInfo.callInstruction)
         if (isAccessOperation && receiverType != null && receiverIsCollection(receiverType)) {
             return AccessOperator
