@@ -1,12 +1,12 @@
 open class <caret>A {
     // INFO: {"checked": "true", "toAbstract": "true"}
-    private fun foo() {
+    private open fun foo() {
 
     }
-}
 
-class B : A {
-    fun foo() {
+    inner class B : A() {
+        override fun foo() {
 
+        }
     }
 }

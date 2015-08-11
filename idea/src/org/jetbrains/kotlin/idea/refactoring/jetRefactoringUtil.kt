@@ -29,6 +29,7 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.popup.JBPopup
@@ -638,4 +639,10 @@ public fun JetElement.validateElement(errorMessage: String) {
     catch(e: Exception) {
         throw ConfigurationException(errorMessage)
     }
+}
+
+public fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
+    var result: T? = null
+    ProgressManager.getInstance().runProcessWithProgressSynchronously( { result = action() }, progressTitle, canBeCanceled, this)
+    return result
 }

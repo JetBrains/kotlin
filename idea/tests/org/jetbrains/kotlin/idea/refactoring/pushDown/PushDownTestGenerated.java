@@ -31,8 +31,32 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PushDownTestGenerated extends AbstractPushDownTest {
+    @TestMetadata("accidentalOverrides.kt")
+    public void testAccidentalOverrides() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/accidentalOverrides.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInPushDown() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown"), Pattern.compile("^(.+)\\.kt$"));
+    }
+
+    @TestMetadata("clashingMembers.kt")
+    public void testClashingMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/clashingMembers.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("classToInterface.kt")
+    public void testClassToInterface() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/classToInterface.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("conflictingSuperCall.kt")
+    public void testConflictingSuperCall() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/conflictingSuperCall.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("finalClass.kt")
@@ -44,6 +68,12 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @TestMetadata("implicitCompanionUsages.kt")
     public void testImplicitCompanionUsages() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/implicitCompanionUsages.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinToJava.kt")
+    public void testKotlinToJava() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/kotlinToJava.kt");
         doTest(fileName);
     }
 
@@ -98,6 +128,18 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @TestMetadata("pushInterfaceMembersAndMakeAbstract.kt")
     public void testPushInterfaceMembersAndMakeAbstract() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/pushInterfaceMembersAndMakeAbstract.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("pushMembersUsingPrivates.kt")
+    public void testPushMembersUsingPrivates() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/pushMembersUsingPrivates.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("pushMembersWithExternalUsages.kt")
+    public void testPushMembersWithExternalUsages() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/pushMembersWithExternalUsages.kt");
         doTest(fileName);
     }
 

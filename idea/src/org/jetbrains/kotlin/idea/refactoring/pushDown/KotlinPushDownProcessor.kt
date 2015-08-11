@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.pushDown
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
@@ -31,10 +33,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.pullUp.*
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -45,25 +49,32 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.ArrayList
 
-public class KotlinPushDownProcessor(
-        project: Project,
-        private val sourceClass: JetClass,
-        private val membersToMove: List<KotlinMemberInfo>
-) : BaseRefactoringProcessor(project) {
-    private val resolutionFacade = sourceClass.getResolutionFacade()
+public class KotlinPushDownContext(
+        val sourceClass: JetClass,
+        val membersToMove: List<KotlinMemberInfo>
+) {
+    val resolutionFacade = sourceClass.getResolutionFacade()
 
-    private val sourceClassContext = resolutionFacade.analyzeFullyAndGetResult(listOf(sourceClass)).bindingContext
+    val sourceClassContext = resolutionFacade.analyzeFullyAndGetResult(listOf(sourceClass)).bindingContext
 
-    private val sourceClassDescriptor = sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, sourceClass] as ClassDescriptor
+    val sourceClassDescriptor = sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, sourceClass] as ClassDescriptor
 
-    private val memberDescriptors = membersToMove
+    val memberDescriptors = membersToMove
             .map { it.member }
             .keysToMap { sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!! }
+}
+
+public class KotlinPushDownProcessor(
+        project: Project,
+        sourceClass: JetClass,
+        membersToMove: List<KotlinMemberInfo>
+) : BaseRefactoringProcessor(project) {
+    private val context = KotlinPushDownContext(sourceClass, membersToMove)
 
     inner class UsageViewDescriptorImpl : UsageViewDescriptor {
         override fun getProcessedElementsHeader() = RefactoringBundle.message("push.down.members.elements.header")
 
-        override fun getElements() = arrayOf(sourceClass)
+        override fun getElements() = arrayOf(context.sourceClass)
 
         override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
                 RefactoringBundle.message("classes.to.push.down.members.to", UsageViewBundle.getReferencesString(usagesCount, filesCount))
@@ -78,8 +89,8 @@ public class KotlinPushDownProcessor(
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = UsageViewDescriptorImpl()
 
     override fun getBeforeData() = RefactoringEventData().apply {
-        addElement(sourceClass)
-        addElements(membersToMove.map { it.member }.toTypedArray())
+        addElement(context.sourceClass)
+        addElements(context.membersToMove.map { it.member }.toTypedArray())
     }
 
     override fun getAfterData(usages: Array<out UsageInfo>) = RefactoringEventData().apply {
@@ -87,7 +98,7 @@ public class KotlinPushDownProcessor(
     }
 
     override fun findUsages(): Array<out UsageInfo> {
-        return HierarchySearchRequest(sourceClass, sourceClass.useScope, false)
+        return HierarchySearchRequest(context.sourceClass, context.sourceClass.useScope, false)
                 .searchInheritors()
                 .map { it.unwrapped }
                 .filterNotNull()
@@ -95,13 +106,29 @@ public class KotlinPushDownProcessor(
                 .toTypedArray()
     }
 
+    override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
+        val usages = refUsages.get() ?: UsageInfo.EMPTY_ARRAY
+        if (usages.isEmpty()) {
+            val message = "${context.sourceClassDescriptor.renderForConflicts()} doesn't have inheritors\n" +
+                          "Pushing members down will result in them being deleted. Would you like to proceed?"
+            val answer = Messages.showYesNoDialog(message.capitalize(), PUSH_MEMBERS_DOWN, Messages.getWarningIcon())
+            if (answer == Messages.NO) return false
+        }
+
+        val conflicts = myProject.runSynchronouslyWithProgress(RefactoringBundle.message("detecting.possible.conflicts"), true) {
+            runReadAction { analyzePushDownConflicts(context, usages) }
+        } ?: return false
+
+        return showConflicts(conflicts, usages)
+    }
+
     private fun pushDownToClass(targetClass: JetClassOrObject) {
-        val targetClassDescriptor = resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
-        val substitutor = getTypeSubstitutor(sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
+        val targetClassDescriptor = context.resolutionFacade.resolveToDescriptor(targetClass) as ClassDescriptor
+        val substitutor = getTypeSubstitutor(context.sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
                           ?: TypeSubstitutor.EMPTY
-        members@ for (memberInfo in membersToMove) {
+        members@ for (memberInfo in context.membersToMove) {
             val member = memberInfo.member
-            val memberDescriptor = memberDescriptors[member] ?: continue
+            val memberDescriptor = context.memberDescriptors[member] ?: continue
 
             val movedMember = when (member) {
                 is JetProperty, is JetNamedFunction -> {
@@ -122,7 +149,7 @@ public class KotlinPushDownProcessor(
                             addModifierWithSpace(JetTokens.OVERRIDE_KEYWORD)
                         }
                     } ?: addMemberToTarget(member, targetClass).apply {
-                        if (sourceClassDescriptor.kind == ClassKind.INTERFACE) {
+                        if (context.sourceClassDescriptor.kind == ClassKind.INTERFACE) {
                             if (targetClassDescriptor.kind != ClassKind.INTERFACE && memberDescriptor.modality == Modality.ABSTRACT) {
                                 addModifierWithSpace(JetTokens.ABSTRACT_KEYWORD)
                             }
@@ -138,8 +165,11 @@ public class KotlinPushDownProcessor(
 
                 is JetClassOrObject -> {
                     if (memberInfo.overrides != null) {
-                        sourceClass.getDelegatorToSuperClassByDescriptor(memberDescriptor as ClassDescriptor, sourceClassContext)?.let {
-                            addDelegatorToSuperClass(it, targetClass, targetClassDescriptor, sourceClassContext, substitutor)
+                        context.sourceClass.getDelegatorToSuperClassByDescriptor(
+                                memberDescriptor as ClassDescriptor,
+                                context.sourceClassContext
+                        )?.let {
+                            addDelegatorToSuperClass(it, targetClass, targetClassDescriptor, context.sourceClassContext, substitutor)
                         }
                         continue@members
                     }
@@ -155,9 +185,9 @@ public class KotlinPushDownProcessor(
     }
 
     private fun removeOriginalMembers() {
-        for (memberInfo in membersToMove) {
+        for (memberInfo in context.membersToMove) {
             val member = memberInfo.member
-            val memberDescriptor = memberDescriptors[member] ?: continue
+            val memberDescriptor = context.memberDescriptors[member] ?: continue
             when (member) {
                 is JetProperty, is JetNamedFunction -> {
                     member as JetCallableDeclaration
@@ -167,7 +197,7 @@ public class KotlinPushDownProcessor(
                         if (member.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                             member.addModifierWithSpace(JetTokens.PROTECTED_KEYWORD)
                         }
-                        makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, sourceClass)
+                        makeAbstract(member, memberDescriptor, TypeSubstitutor.EMPTY, context.sourceClass)
                         member.typeReference?.addToShorteningWaitSet()
                     }
                     else {
@@ -176,8 +206,11 @@ public class KotlinPushDownProcessor(
                 }
                 is JetClassOrObject -> {
                     if (memberInfo.overrides != null) {
-                        sourceClass.getDelegatorToSuperClassByDescriptor(memberDescriptor as ClassDescriptor, sourceClassContext)?.let {
-                            sourceClass.removeDelegationSpecifier(it)
+                        context.sourceClass.getDelegatorToSuperClassByDescriptor(
+                                memberDescriptor as ClassDescriptor,
+                                context.sourceClassContext
+                        )?.let {
+                            context.sourceClass.removeDelegationSpecifier(it)
                         }
                     }
                     else {
@@ -191,7 +224,9 @@ public class KotlinPushDownProcessor(
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         val markedElements = ArrayList<JetElement>()
         try {
-            membersToMove.forEach { markedElements += markElements(it.member, sourceClassContext, sourceClassDescriptor, null) }
+            context.membersToMove.forEach {
+                markedElements += markElements(it.member, context.sourceClassContext, context.sourceClassDescriptor, null)
+            }
             usages.forEach { (it.element as? JetClassOrObject)?.let { pushDownToClass(it) } }
             removeOriginalMembers()
         }
