@@ -16,12 +16,12 @@ abstract class My(val v: Int) {
         set(arg) { w = 2 * arg }
 
     constructor(): this(0) {
-        z = v        
+        <!DEBUG_INFO_LEAKING_THIS!>z<!> = v
     }
 
     init {
-        x = 1
-        y = 2
-        u = 3
+        <!DEBUG_INFO_LEAKING_THIS!>x<!> = 1
+        <!DEBUG_INFO_LEAKING_THIS!>y<!> = 2
+        <!DEBUG_INFO_LEAKING_THIS!>u<!> = 3
     }
 }
