@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.MODALITY
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBILITY
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.MemberKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
+import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 
@@ -101,10 +101,24 @@ private class CallableClsStubBuilder(
         val relevantModifiers = if (isModalityIrrelevant) listOf(VISIBILITY) else listOf(VISIBILITY, MODALITY)
 
         val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, callableProto.getFlags(), relevantModifiers)
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-                protoContainer, callableProto, c.nameResolver, callableProto.annotatedCallableKind
-        )
-        createAnnotationStubs(annotationIds, modifierListStubImpl, needWrappingAnnotationEntries = isPrimaryConstructor)
+
+        fun createAnnotationStubs(kind: AnnotatedCallableKind) {
+            val annotationIds = c.components.annotationLoader.loadCallableAnnotations(protoContainer, callableProto, c.nameResolver, kind)
+            val target = if (kind == AnnotatedCallableKind.PROPERTY_FIELD) AnnotationUseSiteTarget.FIELD else null
+            createAnnotationStubs(annotationIds,
+                                  modifierListStubImpl,
+                                  needWrappingAnnotationEntries = isPrimaryConstructor,
+                                  target = target)
+        }
+
+        val kind = callableProto.annotatedCallableKind
+        if (kind == AnnotatedCallableKind.PROPERTY) {
+            createAnnotationStubs(AnnotatedCallableKind.PROPERTY_SYNTHETIC_FUNCTION)
+            createAnnotationStubs(AnnotatedCallableKind.PROPERTY_FIELD)
+        }
+        else {
+            createAnnotationStubs(kind)
+        }
     }
 
     private fun doCreateCallableStub(): StubElement<out PsiElement> {
