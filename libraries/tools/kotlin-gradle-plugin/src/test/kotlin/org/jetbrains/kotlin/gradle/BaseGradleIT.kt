@@ -27,7 +27,7 @@ abstract class BaseGradleIT {
         deleteRecursively(workingDir)
     }
 
-    internal class BuildOptions(val withDaemon: Boolean = false)
+    class BuildOptions(val withDaemon: Boolean = false)
 
     class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG)
 

@@ -50,7 +50,7 @@ class KotlinGradleIT: BaseGradleIT() {
             assertSuccessful()
         }
 
-        for (i in 1..3)
+        for (i in 1..3) {
             project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
                 assertSuccessful()
                 val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(([+-]?\\d+) kb\\)".toRegex().match(output)
@@ -58,6 +58,7 @@ class KotlinGradleIT: BaseGradleIT() {
                 val reportedGrowth = matches!!.groups.get(2)!!.value.toInt()
                 assert(reportedGrowth <= 500, "Used memory growth $reportedGrowth > 500")
             }
+        }
 
         project.stopDaemon {
             assertSuccessful()
