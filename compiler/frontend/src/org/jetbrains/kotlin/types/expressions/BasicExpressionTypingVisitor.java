@@ -554,6 +554,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             JetType actualType = possiblyBareType.getActualType();
+            if (actualType.isError()) return null;
             if (isAllowedInClassLiteral(actualType)) {
                 type = actualType;
             }

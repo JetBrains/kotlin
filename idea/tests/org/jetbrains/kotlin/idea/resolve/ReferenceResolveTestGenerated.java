@@ -77,6 +77,12 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("ClassNameBeforeDot.kt")
+    public void testClassNameBeforeDot() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassNameBeforeDot.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ClassObjectClassLiteralReference.kt")
     public void testClassObjectClassLiteralReference() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ClassObjectClassLiteralReference.kt");
@@ -350,6 +356,30 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("SyntheticProperty.kt")
     public void testSyntheticProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/SyntheticProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeArgumentBeforeDot.kt")
+    public void testTypeArgumentBeforeDot() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeArgumentBeforeDot2.kt")
+    public void testTypeArgumentBeforeDot2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentBeforeDot2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeArgumentUnresolvedClass.kt")
+    public void testTypeArgumentUnresolvedClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentUnresolvedClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TypeArgumentWrongNumber.kt")
+    public void testTypeArgumentWrongNumber() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeArgumentWrongNumber.kt");
         doTest(fileName);
     }
 

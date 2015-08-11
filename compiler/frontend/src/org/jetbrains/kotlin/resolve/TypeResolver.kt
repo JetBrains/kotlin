@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -111,6 +110,12 @@ public class TypeResolver(
         val type = resolveTypeElement(c, annotations, typeElement)
         c.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, c.scope)
 
+        if (!type.isBare) {
+            for (argument in type.actualType.arguments) {
+                ForceResolveUtil.forceResolveAllContents(argument.type)
+            }
+        }
+
         return type
     }
 
@@ -118,15 +123,16 @@ public class TypeResolver(
         var result: PossiblyBareType? = null
         typeElement?.accept(object : JetVisitorVoid() {
             override fun visitUserType(type: JetUserType) {
+                val classifierDescriptor = resolveClass(c.scope, type, c.trace)
+                if (classifierDescriptor == null) {
+                    val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
+                    result = type(ErrorUtils.createErrorTypeWithArguments(type.getDebugText(), arguments))
+                    return
+                }
+
                 val referenceExpression = type.getReferenceExpression()
                 val referencedName = type.getReferencedName()
                 if (referenceExpression == null || referencedName == null) return
-
-                val classifierDescriptor = resolveClass(c.scope, type, c.trace)
-                if (classifierDescriptor == null) {
-                    resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
-                    return
-                }
 
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor)
 
@@ -162,7 +168,7 @@ public class TypeResolver(
                         val expectedArgumentCount = parameters.size()
                         val actualArgumentCount = arguments.size()
                         if (ErrorUtils.isError(classifierDescriptor)) {
-                            result = type(ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]"))
+                            result = type(ErrorUtils.createErrorTypeWithArguments("[Error type: " + typeConstructor + "]", arguments))
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
@@ -251,6 +257,7 @@ public class TypeResolver(
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
         })
+
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
 
@@ -301,6 +308,14 @@ public class TypeResolver(
     }
 
     public fun resolveClass(scope: JetScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
+        if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
+            for (typeArgument in userType.qualifier!!.typeArguments) {
+                typeArgument.typeReference?.let {
+                    ForceResolveUtil.forceResolveAllContents(resolveType(scope, it, trace, true))
+                }
+            }
+        }
+
         val classifierDescriptor = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace, true)
                                         .firstIsInstanceOrNull<ClassifierDescriptor>()
         if (classifierDescriptor != null) {

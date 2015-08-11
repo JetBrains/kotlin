@@ -16,7 +16,7 @@ val n2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A.Nested<*>::class<!>
 
 val i1 = A.Inner::class
 val i2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A<*>.Inner<*>::class<!>
-val i3 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A<<!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>>.Inner<CharSequence>::class<!>
+val i3 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>A<Int>.Inner<CharSequence>::class<!>
 
 val m1 = Map::class
 val m2 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Map<Int, *>::class<!>

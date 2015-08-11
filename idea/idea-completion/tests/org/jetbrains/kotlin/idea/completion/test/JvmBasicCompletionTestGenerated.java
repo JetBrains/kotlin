@@ -901,6 +901,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("TypeArgCompletionBug.kt")
+        public void testTypeArgCompletionBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgCompletionBug.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeArgFromTheSameFile.kt")
+        public void testTypeArgFromTheSameFile() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgFromTheSameFile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeArgOfOwnerClass.kt")
+        public void testTypeArgOfOwnerClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgOfOwnerClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeParameterFromOuterClass.kt")
         public void testTypeParameterFromOuterClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeParameterFromOuterClass.kt");

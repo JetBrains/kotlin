@@ -11541,6 +11541,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("CycleInTypeArgs.kt")
+            public void testCycleInTypeArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/CycleInTypeArgs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("incompleteConstructorInvocation.kt")
             public void testIncompleteConstructorInvocation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/incompleteConstructorInvocation.kt");
