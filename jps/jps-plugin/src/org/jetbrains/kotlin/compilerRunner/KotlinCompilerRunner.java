@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
+import org.jetbrains.kotlin.rmi.CompilerFacade;
+import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import java.io.*;
@@ -38,6 +41,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -54,13 +58,14 @@ public class KotlinCompilerRunner {
             CompilerSettings compilerSettings,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
-            File moduleFile,
+            Map<String, IncrementalCache> incrementalCaches, File moduleFile,
             OutputItemsCollector collector
     ) {
         K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
         setupK2JvmArguments(moduleFile, arguments);
 
-        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
+        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment,
+                    incrementalCaches);
     }
 
     public static void runK2JsCompiler(
@@ -69,7 +74,7 @@ public class KotlinCompilerRunner {
             @NotNull CompilerSettings compilerSettings,
             @NotNull MessageCollector messageCollector,
             @NotNull CompilerEnvironment environment,
-            @NotNull OutputItemsCollector collector,
+            Map<String, IncrementalCache> incrementalCaches, @NotNull OutputItemsCollector collector,
             @NotNull Collection<File> sourceFiles,
             @NotNull List<String> libraryFiles,
             @NotNull File outputFile
@@ -77,7 +82,8 @@ public class KotlinCompilerRunner {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
         setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments);
 
-        runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
+        runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment,
+                    incrementalCaches);
     }
 
     private static void runCompiler(
@@ -86,12 +92,13 @@ public class KotlinCompilerRunner {
             String additionalArguments,
             MessageCollector messageCollector,
             OutputItemsCollector collector,
-            CompilerEnvironment environment
+            CompilerEnvironment environment,
+            Map<String, IncrementalCache> incrementalCaches
     ) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(stream);
 
-        String exitCode = execCompiler(compilerClassName, arguments, additionalArguments, environment, out, messageCollector);
+        String exitCode = execCompiler(compilerClassName, arguments, additionalArguments, environment, incrementalCaches, out, messageCollector);
 
         BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
         CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, collector);
@@ -107,6 +114,7 @@ public class KotlinCompilerRunner {
             CommonCompilerArguments arguments,
             String additionalArguments,
             CompilerEnvironment environment,
+            Map<String, IncrementalCache> incrementalCaches,
             PrintStream out,
             MessageCollector messageCollector
     ) {
@@ -116,13 +124,27 @@ public class KotlinCompilerRunner {
             List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments);
             argumentsList.addAll(StringUtil.split(additionalArguments, " "));
 
+            String[] argsArray = ArrayUtil.toStringArray(argumentsList);
+
+            // trying the daemon first
+            if (incrementalCaches != null) {
+                CompilerFacade daemon = KotlinCompilerClient.Companion.connectToCompilerServer();
+                if (daemon != null) {
+                    Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, out);
+                    return res.toString();
+                }
+            }
+
+            // otherwise fallback to in-process
+
             Object rc = CompilerRunnerUtil.invokeExecMethod(
-                    compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, messageCollector, out
+                    compilerClassName, argsArray, environment, messageCollector, out
             );
 
             // exec() returns an ExitCode object, class of which is loaded with a different class loader,
             // so we take it's contents through reflection
             return getReturnCodeFromObject(rc);
+
         }
         catch (Throwable e) {
             MessageCollectorUtil.reportException(messageCollector, e);

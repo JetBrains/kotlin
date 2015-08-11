@@ -247,9 +247,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             messageCollector: MessageCollectorAdapter, project: JpsProject
     ): OutputItemsCollectorImpl? {
+
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             LOG.debug("Compiling to JS ${filesToCompile.values().size()} files in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
-            return compileToJs(chunk, commonArguments, environment, messageCollector, project)
+            return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
         }
 
         if (IncrementalCompilation.ENABLED) {
@@ -279,7 +280,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             )
         }
 
-        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
+        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment,
+                            incrementalCaches.mapKeysTo(HashMap<String, IncrementalCache>(incrementalCaches.size()), { it.getKey().id }),
+                            filesToCompile, messageCollector)
     }
 
     private fun createCompileEnvironment(
@@ -436,8 +439,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun compileToJs(chunk: ModuleChunk,
                             commonArguments: CommonCompilerArguments,
                             environment: CompilerEnvironment,
-                            messageCollector: KotlinBuilder.MessageCollectorAdapter,
-                            project: JpsProject
+                            incrementalCaches: MutableMap<String, IncrementalCache>?,
+                            messageCollector: MessageCollectorAdapter, project: JpsProject
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
@@ -468,7 +471,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
 
-        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
+        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, incrementalCaches, outputItemCollector, sourceFiles, libraryFiles, outputFile)
         return outputItemCollector
     }
 
@@ -491,8 +494,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                              context: CompileContext,
                              dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
                              environment: CompilerEnvironment,
-                             filesToCompile: MultiMap<ModuleBuildTarget, File>,
-                             messageCollector: KotlinBuilder.MessageCollectorAdapter
+                             incrementalCaches: MutableMap<String, IncrementalCache>?,
+                             filesToCompile: MultiMap<ModuleBuildTarget, File>, messageCollector: MessageCollectorAdapter
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
@@ -535,7 +538,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                 + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
 
-        runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
+        runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, incrementalCaches, moduleFile, outputItemCollector)
         moduleFile.delete()
 
         return outputItemCollector
