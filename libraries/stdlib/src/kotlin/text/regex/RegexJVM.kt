@@ -123,7 +123,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
      */
-    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex)
+    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
@@ -216,38 +216,39 @@ public fun Pattern.toRegex(): Regex = Regex(this)
 
 // implementation
 
-private fun Matcher.findNext(from: Int): MatchResult? {
-    if (!find(from))
-        return null
+private fun Matcher.findNext(from: Int, input: CharSequence): MatchResult? {
+    return if (!find(from)) null else MatcherMatchResult(this, input)
+}
 
-    val matchResult = this.toMatchResult()
+private class MatcherMatchResult(private val matcher: Matcher, private val input: CharSequence) : MatchResult {
+    private val matchResult = matcher.toMatchResult()
+    override val range: IntRange
+        get() = matchResult.range()
+    override val value: String
+        get() = matchResult.group()
 
-    return object: MatchResult {
-        override val range: IntRange
-            get() = matchResult.range()
-        override val value: String
-            get() = matchResult.group()
+    override val groups: MatchGroupCollection = object : MatchGroupCollection {
+        override fun size(): Int = matchResult.groupCount() + 1
+        override fun isEmpty(): Boolean = false
+        override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
+        override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
 
-        override val groups: MatchGroupCollection = object : MatchGroupCollection {
-            override fun size(): Int = matchResult.groupCount() + 1
-            override fun isEmpty(): Boolean = false
-            override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
-            override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
-
-            override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
-            override fun get(index: Int): MatchGroup? {
-                val range = matchResult.range(index)
-                return if (range.start >= 0)
-                    MatchGroup(matchResult.group(index), range)
-                else
-                    null
-            }
+        override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
+        override fun get(index: Int): MatchGroup? {
+            val range = matchResult.range(index)
+            return if (range.start >= 0)
+                MatchGroup(matchResult.group(index), range)
+            else
+                null
         }
+    }
 
-
-        override fun next(): MatchResult? = this@findNext.findNext(matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0)
+    override fun next(): MatchResult? {
+        val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
+        return if (nextIndex <= input.length()) matcher.findNext(nextIndex, input) else null
     }
 }
+
 
 private fun java.util.regex.MatchResult.range(): IntRange = start()..end()-1
 private fun java.util.regex.MatchResult.range(groupIndex: Int): IntRange = start(groupIndex)..end(groupIndex)-1
