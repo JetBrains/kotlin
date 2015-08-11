@@ -27,17 +27,42 @@ abstract class BaseGradleIT {
         deleteRecursively(workingDir)
     }
 
+    internal class BuildOptions(val withDaemon: Boolean = false)
+
     class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG)
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int)
 
-    fun Project.build(vararg tasks: String, check: CompiledProject.() -> Unit) {
+    fun Project.setupWorkingDir() {
         copyRecursively(File(resourcesRootFile, "testProject/$projectName"), workingDir)
-        val projectDir = File(workingDir, projectName)
-        copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
-        val cmd = createCommand(tasks)
+        copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), File(workingDir, projectName))
+    }
+
+    fun Project.build(vararg tasks: String, options: BuildOptions = BuildOptions(), check: CompiledProject.() -> Unit) {
+        val cmd = createBuildCommand(tasks, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
+
+        runAndCheck(cmd, check)
+    }
+
+    fun stopDaemon(ver: String) {
+        val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
+        val cmd = createGradleCommand(arrayListOf("-stop"))
+        createProcess(cmd, wrapperDir)
+    }
+
+    fun Project.stopDaemon(check: CompiledProject.() -> Unit) {
+        val cmd = createGradleCommand(arrayListOf("-stop"))
+        println("<=== Stop daemon: $cmd ===>")
+
+        runAndCheck(cmd, check)
+    }
+
+    private fun Project.runAndCheck(cmd: List<String>, check: CompiledProject.() -> Unit) {
+        val projectDir = File(workingDir, projectName)
+        if (!projectDir.exists())
+            setupWorkingDir()
 
         val process = createProcess(cmd, projectDir)
 
@@ -94,14 +119,21 @@ abstract class BaseGradleIT {
         return this
     }
 
-    private fun Project.createCommand(params: Array<out String>): List<String> {
+    private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()
         val tailParameters = params.asList() +
-                listOf(pathToKotlinPlugin, "--no-daemon", "--${minLogLevel.name().toLowerCase()}", "-Pkotlin.gradle.test=true")
+                listOf( pathToKotlinPlugin,
+                        if (options.withDaemon) "--daemon" else "--no-daemon",
+                        "--${minLogLevel.name().toLowerCase()}",
+                        "-Pkotlin.gradle.test=true")
 
+        return createGradleCommand(tailParameters)
+    }
+
+    private fun createGradleCommand(tailParameters: List<String>): List<String> {
         return if (isWindows())
             listOf("cmd", "/C", "gradlew.bat") + tailParameters
-         else
+        else
             listOf("/bin/bash", "./gradlew") + tailParameters
     }
 
