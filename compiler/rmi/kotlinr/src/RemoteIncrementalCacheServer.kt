@@ -16,30 +16,26 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
-import org.jetbrains.kotlin.rmi.RemoteOutputStream
-import java.io.OutputStream
+import org.jetbrains.kotlin.rmi.CompilerFacade
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import java.rmi.server.UnicastRemoteObject
 
 
-class RemoteOutputStreamServer(val out: OutputStream) : RemoteOutputStream {
+public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : CompilerFacade.RemoteIncrementalCache {
 
     init {
         UnicastRemoteObject.exportObject(this, 0)
     }
 
-    public fun disconnect() {
-        UnicastRemoteObject.unexportObject(this, true)
-    }
+    override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
+
+    override fun getPackageData(fqName: String): ByteArray? = cache.getPackageData(fqName)
 
     override fun close() {
-        out.close()
+        cache.close()
     }
 
-    override fun write(data: ByteArray, start: Int, length: Int) {
-        out.write(data, start, length)
-    }
-
-    override fun write(dataByte: Int) {
-        out.write(dataByte)
+    public fun disconnect() {
+        UnicastRemoteObject.unexportObject(this, true)
     }
 }

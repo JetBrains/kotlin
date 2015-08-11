@@ -16,14 +16,17 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.rmi.CompilerFacade
+import java.io.OutputStream
 import java.rmi.registry.LocateRegistry
 import kotlin.platform.platformStatic
 
 public class KotlinCompilerClient {
 
     companion object {
-        platformStatic public fun main(vararg args: String) {
+
+        public fun connectToCompilerServer(): CompilerFacade? {
             val compilerObj = LocateRegistry.getRegistry("localhost", 17031).lookup("KotlinJvmCompilerService")
             if (compilerObj == null)
                 println("Unable to find compiler service")
@@ -31,19 +34,39 @@ public class KotlinCompilerClient {
                 val compiler = compilerObj as? CompilerFacade
                 if (compiler == null)
                     println("Unable to cast compiler service: ${compilerObj.javaClass}")
-                else {
+                return compiler
+            }
+            return null
+        }
+
+        public fun incrementalCompile(compiler: CompilerFacade, args: Array<String>, caches: Map<String, IncrementalCache>, out: OutputStream): Int {
+
+            val outStrm = RemoteOutputStreamServer(out)
+            val cacheServers = hashMapOf<String, RemoteIncrementalCacheServer>()
+            try {
+                caches.forEach { cacheServers.put( it.getKey(), RemoteIncrementalCacheServer( it.getValue())) }
+                val res = compiler.remoteIncrementalCompile(args, cacheServers, outStrm, CompilerFacade.OutputFormat.XML)
+                return res
+            }
+            finally {
+                cacheServers.forEach { it.getValue().disconnect() }
+                outStrm.disconnect()
+            }
+        }
+
+        platformStatic public fun main(vararg args: String) {
+            connectToCompilerServer()?.let {
                     println("Executing daemon compilation with args: " + args.joinToString(" "))
                     val outStrm = RemoteOutputStreamServer(System.out)
                     try {
-                        val res = compiler.remoteCompile(args, outStrm, CompilerFacade.OutputFormat.PLAIN)
+                        val res = it.remoteCompile(args, outStrm, CompilerFacade.OutputFormat.PLAIN)
                         println("Compilation result code: $res")
                     }
                     finally {
-                        outStrm.close()
+                        outStrm.disconnect()
                     }
                 }
             }
-        }
     }
 }
 
