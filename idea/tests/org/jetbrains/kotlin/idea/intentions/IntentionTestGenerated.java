@@ -7630,5 +7630,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/superCall.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("typeParameterReceiver.kt")
+        public void testTypeParameterReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/typeParameterReceiver.kt");
+            doTest(fileName);
+        }
     }
 }
