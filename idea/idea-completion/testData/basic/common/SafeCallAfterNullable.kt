@@ -11,4 +11,4 @@ fun foo(s: String?) {
 // EXIST: { lookupString: "forNullableAny", attributes: "" }
 // EXIST: { lookupString: "forString", attributes: "bold" }
 // EXIST: { lookupString: "forAny", attributes: "" }
-// EXIST: { lookupString: "compareTo", attributes: "bold" }
+// EXIST: { lookupString: "compareTo", attributes: "" }

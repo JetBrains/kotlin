@@ -325,6 +325,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InExtensionForNullable.kt")
+        public void testInExtensionForNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InExtensionForNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InFileWithMultiDeclaration.kt")
         public void testInFileWithMultiDeclaration() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InFileWithMultiDeclaration.kt");
@@ -712,6 +718,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("NoTopLevelCompletionInQualifiedUserTypes.kt")
         public void testNoTopLevelCompletionInQualifiedUserTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoTopLevelCompletionInQualifiedUserTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NonPredictableSmartCast.kt")
+        public void testNonPredictableSmartCast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NonPredictableSmartCast.kt");
             doTest(fileName);
         }
 

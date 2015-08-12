@@ -16,7 +16,7 @@ fun foo(d: Derived) {
     d.<caret>
 }
 
-// EXIST: { itemText: "fromTrait", attributes: "bold" }
+// EXIST: { itemText: "fromTrait", attributes: "" }
 // EXIST: { itemText: "fromDerived", attributes: "bold" }
 // EXIST: { itemText: "fromBase", attributes: "" }
 // EXIST: { itemText: "hashCode", attributes: "" }

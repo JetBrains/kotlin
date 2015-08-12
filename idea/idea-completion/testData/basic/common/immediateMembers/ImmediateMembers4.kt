@@ -11,6 +11,6 @@ fun foo(b: B) {
     b.<caret>
 }
 
-// EXIST: { itemText: "foo1", attributes: "bold" }
+// EXIST: { itemText: "foo1", attributes: "" }
 // EXIST: { itemText: "foo2", attributes: "" }
 // EXIST: { itemText: "equals", attributes: "" }

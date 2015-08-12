@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
     override val psiElement: PsiElement? get() = null
@@ -87,7 +87,7 @@ public class LookupElementFactory(
     private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
         val style = when (weight) {
             CallableWeight.thisClassMember, CallableWeight.thisTypeExtension -> Style.BOLD
-            CallableWeight.notApplicableReceiverNullable -> Style.GRAYED
+            CallableWeight.receiverCastRequired -> Style.GRAYED
             else -> Style.NORMAL
         }
         return if (style != Style.NORMAL) {
@@ -327,41 +327,24 @@ public class LookupElementFactory(
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
         if (descriptor !is CallableDescriptor) return null
 
-        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.nullability() == TypeNullability.NULLABLE }
-        val receiverParameter = descriptor.getExtensionReceiverParameter()
-
-        if (receiverParameter != null) {
-            val receiverParamType = receiverParameter.getType()
-            return if (isReceiverNullable && receiverParamType.nullability() == TypeNullability.NOT_NULL)
-                CallableWeight.notApplicableReceiverNullable
-            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
-                CallableWeight.thisTypeExtension
-            else
-                CallableWeight.baseTypeExtension
+        val overridden = descriptor.overriddenDescriptors
+        if (overridden.isNotEmpty()) {
+            return overridden.map { callableWeight(it)!! }.min()!!
         }
-        else {
-            if (isReceiverNullable) {
-                return CallableWeight.notApplicableReceiverNullable
-            }
-            else {
-                if (descriptor !is CallableMemberDescriptor) {
-                    return CallableWeight.local
-                }
 
-                val container = descriptor.getContainingDeclaration()
-                return when (container) {
-                    is PackageFragmentDescriptor -> CallableWeight.global
+        val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
+        if (receiverParameter != null) {
+            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) })
+                if (descriptor.isExtension) CallableWeight.thisTypeExtension else CallableWeight.thisClassMember
+            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) })
+                if (descriptor.isExtension) CallableWeight.baseTypeExtension else CallableWeight.baseClassMember
+            else
+                CallableWeight.receiverCastRequired
+        }
 
-                    is ClassifierDescriptor -> {
-                        if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
-                            CallableWeight.thisClassMember
-                        else
-                            CallableWeight.baseClassMember
-                    }
-
-                    else -> CallableWeight.local
-                }
-            }
+        return when (descriptor.containingDeclaration) {
+            is PackageFragmentDescriptor, is ClassifierDescriptor -> CallableWeight.globalOrStatic
+            else -> CallableWeight.local
         }
     }
 
