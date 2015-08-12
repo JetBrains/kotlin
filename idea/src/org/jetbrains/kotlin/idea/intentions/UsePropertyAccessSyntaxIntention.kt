@@ -17,24 +17,30 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.types.TypeUtils
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention())
 
@@ -69,21 +75,27 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val resolutionScope = callExpression.getResolutionScope(bindingContext, callExpression.getResolutionFacade())
         val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
-        val moduleDescriptor = callExpression.getResolutionFacade().findModuleDescriptor(callExpression)
-        val inDescriptor = resolutionScope.getContainingDeclaration()
+        val newCall = object : DelegatingCall(resolvedCall.call) {
+            private val newCallee = JetPsiFactory(callElement).createExpressionByPattern("$0", property.name)
 
-        fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            return if (descriptor is DeclarationDescriptorWithVisibility)
-                descriptor.isVisible(inDescriptor, bindingContext, callee)
-            else
-                true
+            override fun getCalleeExpression() = newCallee
+            override fun getValueArgumentList(): JetValueArgumentList? = null
+            override fun getValueArguments(): List<ValueArgument> = emptyList()
+            override fun getFunctionLiteralArguments(): List<FunctionLiteralArgument> = emptyList()
         }
 
-        val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, callExpression.getProject(), ::isVisible)
-        val propertyName = property.getName()
-        val accessibleVariables = referenceVariantsHelper.getReferenceVariants(callee, DescriptorKindFilter.VARIABLES, { it == propertyName })
-                .map { it.original }
-        if (property !in accessibleVariables) return null // shadowed by something else
+        val project = callExpression.project
+        val moduleDescriptor = callExpression.getResolutionFacade().findModuleDescriptor(callExpression)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
+        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression.getQualifiedExpressionForSelectorOrThis()] ?: TypeUtils.NO_EXPECTED_TYPE
+
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
+                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                                                        CallChecker.DoNothing, false)
+        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val result = callResolver.resolveSimpleProperty(context)
+        if (!result.isSuccess || result.resultingDescriptor.original != property) return null
 
         return property.name
     }
