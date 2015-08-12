@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.lang.resolve.android
 
 import com.intellij.openapi.project.Project
+import org.xml.sax.Attributes
+import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import java.io.FileInputStream
-import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.Attributes
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
-import kotlin.properties.Delegates
 
 public class CliAndroidResourceManager(
         project: Project,
@@ -31,7 +30,7 @@ public class CliAndroidResourceManager(
         private val resDirectories: List<String>
 ) : AndroidResourceManager(project) {
 
-    override val androidModuleInfo by Delegates.lazy {
+    override val androidModuleInfo by lazy {
         AndroidModuleInfo(getApplicationPackage(manifestPath), resDirectories)
     }
 
@@ -39,7 +38,7 @@ public class CliAndroidResourceManager(
 
     protected fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()
-        saxFactory.setNamespaceAware(true)
+        saxFactory.isNamespaceAware = true
         return saxFactory.newSAXParser()
     }
 
