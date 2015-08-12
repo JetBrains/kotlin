@@ -7601,6 +7601,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyTypeIsMoreSpecific1.kt")
+        public void testPropertyTypeIsMoreSpecific1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/propertyTypeIsMoreSpecific1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyTypeIsMoreSpecific2.kt")
+        public void testPropertyTypeIsMoreSpecific2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/propertyTypeIsMoreSpecific2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/set.kt");
