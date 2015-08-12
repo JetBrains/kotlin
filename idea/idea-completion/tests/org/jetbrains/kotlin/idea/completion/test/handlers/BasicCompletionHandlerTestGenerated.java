@@ -143,6 +143,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("TypeParameter.kt")
+    public void testTypeParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/TypeParameter.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/exclChar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

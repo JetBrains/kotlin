@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
 
 public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
     val nameString = descriptor.getName().render()
+    if (descriptor is TypeParameterDescriptor) {
+        return nameString
+    }
     val qualifier = qualifierName(descriptor.getContainingDeclaration())
     return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
 }
