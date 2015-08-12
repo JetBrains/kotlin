@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -47,13 +50,30 @@ class ConstructorConsistencyChecker private constructor(
 ) {
     private val finalClass = classDescriptor.isFinalClass
 
-    private fun checkOpenPropertyAccess(reference: KtReferenceExpression) {
-        if (!finalClass) {
-            val descriptor = trace.get(BindingContext.REFERENCE_TARGET, reference)
-            if (descriptor is PropertyDescriptor && descriptor.isOverridable) {
-                trace.record(BindingContext.LEAKING_THIS, reference, LeakingThisDescriptor.NonFinalProperty(descriptor, classOrObject))
+    private fun insideLValue(reference: KtReferenceExpression): Boolean {
+        val binary = reference.getStrictParentOfType<KtBinaryExpression>() ?: return false
+        if (binary.operationToken in KtTokens.ALL_ASSIGNMENTS) {
+            val binaryLeft = binary.left
+            var current: PsiElement = reference
+            while (current !== binaryLeft && current !== binary) {
+                current = current.parent ?: return false
             }
+            return current === binaryLeft
         }
+        return false
+    }
+
+    private fun safeReferenceUsage(reference: KtReferenceExpression): Boolean {
+        val descriptor = trace.get(BindingContext.REFERENCE_TARGET, reference)
+        if (descriptor is PropertyDescriptor) {
+            if (!finalClass && descriptor.isOverridable) {
+                trace.record(BindingContext.LEAKING_THIS, reference, LeakingThisDescriptor.NonFinalProperty(descriptor, classOrObject))
+                return true
+            }
+            if (descriptor.containingDeclaration != classDescriptor) return true
+            if (insideLValue(reference)) return descriptor.setter?.isDefault != false else return descriptor.getter?.isDefault != false
+        }
+        return true
     }
 
     private fun safeThisUsage(expression: KtThisExpression): Boolean {
@@ -61,12 +81,7 @@ class ConstructorConsistencyChecker private constructor(
         if (referenceDescriptor != classDescriptor) return true
         val parent = expression.parent
         return when (parent) {
-            is KtQualifiedExpression ->
-                if (parent.selectorExpression is KtSimpleNameExpression) {
-                    checkOpenPropertyAccess(parent.selectorExpression as KtSimpleNameExpression)
-                    true
-                }
-                else false
+            is KtQualifiedExpression -> (parent.selectorExpression as? KtSimpleNameExpression)?.let { safeReferenceUsage(it) } ?: false
             is KtBinaryExpression -> OperatorConventions.IDENTITY_EQUALS_OPERATIONS.contains(parent.operationToken)
             else -> false
         }
@@ -132,7 +147,9 @@ class ConstructorConsistencyChecker private constructor(
                                 }
                             }
                             else if (element is KtReferenceExpression) {
-                                checkOpenPropertyAccess(element)
+                                if (!safeReferenceUsage(element)) {
+                                    handleLeakingThis(element)
+                                }
                             }
                         }
                 }

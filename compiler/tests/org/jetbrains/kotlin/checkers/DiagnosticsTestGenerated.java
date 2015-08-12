@@ -2910,6 +2910,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("backing.kt")
+            public void testBacking() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/backing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("basic.kt")
             public void testBasic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/basic.kt");
@@ -2946,9 +2952,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("getset.kt")
+            public void testGetset() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/getset.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("init.kt")
             public void testInit() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/init.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("initwithgetter.kt")
+            public void testInitwithgetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/initwithgetter.kt");
                 doTest(fileName);
             }
 
