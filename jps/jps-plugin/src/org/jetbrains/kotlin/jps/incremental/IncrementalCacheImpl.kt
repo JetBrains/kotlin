@@ -149,6 +149,7 @@ public class IncrementalCacheImpl(
 
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
+    private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
 
     private val inlineRegistering = object : InlineRegistering {
         override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
@@ -181,7 +182,6 @@ public class IncrementalCacheImpl(
 
     public fun getFilesToReinline(): Collection<File> {
         val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
-        val outPath = target?.outputDir!!
 
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
             val sourceFiles = classToSourcesMap[className]
@@ -199,17 +199,20 @@ public class IncrementalCacheImpl(
                 internalName = packageJvmName.internalName
             }
 
-            val classFile = File(outPath, "$internalName.class")
-            val classFileName = classFile.normalizedPath
+            val classFilePath = getClassFilePath(internalName)
 
             for (dependent in dependents) {
-                val targetFiles = functions.flatMap { dependent.hasInlineTo[classFileName, it] }
+                val targetFiles = functions.flatMap { dependent.hasInlineTo[classFilePath, it] }
                 result.addAll(targetFiles)
             }
         }
 
         dirtyInlineFunctionsMap.clean()
         return result.map { File(it) }
+    }
+
+    override fun getClassFilePath(internalClassName: String): String {
+        return File(outputDir, "$internalClassName.class").canonicalPath
     }
 
     private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean) =
