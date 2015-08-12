@@ -566,9 +566,9 @@ class StringTest {
                                       |123
                                       |456""".trimMargin())
 
-        assertEquals("  ABC\n  123\n  456", """ABC
+        assertEquals("ABC\n  123\n  456", """ABC
                                       |123
-                                      |456""".trimMargin(newIndent = "  "))
+                                      |456""".replaceIndentByMargin(newIndent = "  "))
 
         assertEquals("ABC \n123\n456", """ABC${" "}
                                       |123
@@ -626,7 +626,7 @@ class StringTest {
         assertEquals("     123\n  456", """
            123
         456
-        """.trimIndent(newIndent = "  "))
+        """.replaceIndent(newIndent = "  "))
 
         assertEquals("   123\n456", """
            123
@@ -667,5 +667,13 @@ ${"    "}
         assertEquals(0, indents.min())
         assertEquals(42, indents.max())
         assertEquals(1, deindented.lines().count { it.isEmpty() })
+    }
+
+    test fun testIndent() {
+        assertEquals("  ABC\n  123", "ABC\n123".prependIndent("  "))
+        assertEquals("  ABC\n  \n  123", "ABC\n\n123".prependIndent("  "))
+        assertEquals("  ABC\n  \n  123", "ABC\n \n123".prependIndent("  "))
+        assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
+        assertEquals("  ", "".prependIndent("  "))
     }
 }
