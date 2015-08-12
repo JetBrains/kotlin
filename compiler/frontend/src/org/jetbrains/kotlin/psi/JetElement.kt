@@ -29,3 +29,11 @@ public interface JetElement : NavigatablePsiElement {
     @deprecated("Don't use getReference() on JetElement for the choice is unpredictable")
     override fun getReference(): PsiReference?
 }
+
+public fun JetElement.getModificationStamp(): Long {
+    return when (this) {
+        is JetFile -> this.modificationStamp
+        is JetDeclarationStub<*> -> this.modificationStamp
+        else -> (parent as JetElement).getModificationStamp()
+    }
+}

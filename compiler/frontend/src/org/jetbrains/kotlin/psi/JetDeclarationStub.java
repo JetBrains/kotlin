@@ -28,12 +28,24 @@ import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 
 abstract class JetDeclarationStub<T extends StubElement<?>> extends JetModifierListOwnerStub<T> implements JetDeclaration {
+    private long modificationStamp = 0;
+
     public JetDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
     public JetDeclarationStub(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        modificationStamp++;
+    }
+
+    public long getModificationStamp() {
+        return modificationStamp;
     }
 
     @Nullable
