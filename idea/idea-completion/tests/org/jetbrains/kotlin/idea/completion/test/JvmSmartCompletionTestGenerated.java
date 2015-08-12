@@ -1258,6 +1258,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("CheckCorrectThis.kt")
+        public void testCheckCorrectThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/CheckCorrectThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SmartCastThisType1.kt")
         public void testSmartCastThisType1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType1.kt");

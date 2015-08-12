@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.util.Pair
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -29,8 +31,10 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.HashMap
 
@@ -39,9 +43,11 @@ class SmartCastCalculator(
         val containingDeclarationOrModule: DeclarationDescriptor,
         expression: JetExpression
 ) {
+    private val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
+
     // keys are VariableDescriptor's and ThisReceiver's
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo>
-            = processDataFlowInfo(bindingContext.getDataFlowInfo(expression), if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null)
+            = processDataFlowInfo(bindingContext.getDataFlowInfo(expression), bindingContext[BindingContext.RESOLUTION_SCOPE, expression], receiver)
 
     fun types(descriptor: VariableDescriptor): Collection<JetType> {
         val type = descriptor.returnType ?: return emptyList()
@@ -70,7 +76,7 @@ class SmartCastCalculator(
         constructor() : this(emptyList(), false)
     }
 
-    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo, receiver: JetExpression?): Map<Any, SmartCastInfo> {
+    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo, resolutionScope: JetScope?, receiver: JetExpression?): Map<Any, SmartCastInfo> {
         if (dataFlowInfo == DataFlowInfo.EMPTY) return emptyMap()
 
         val dataFlowValueToEntity: (DataFlowValue) -> Any?
@@ -83,12 +89,20 @@ class SmartCastCalculator(
             }
         }
         else {
-            dataFlowValueToEntity = { value ->
+            dataFlowValueToEntity = fun (value: DataFlowValue): Any? {
                 val id = value.id
                 when(id) {
-                    is VariableDescriptor, is ThisReceiver -> id
-                    is Pair<*, *> -> if (id.first is ThisReceiver) id.second as? VariableDescriptor else null
-                    else -> null
+                    is VariableDescriptor, is ThisReceiver -> return id
+
+                    is Pair<*, *> -> {
+                        val first = id.first
+                        val second = id.second
+                        if (first !is ThisReceiver || second !is VariableDescriptor) return null
+                        if (resolutionScope?.findNearestReceiverForVariable(second)?.value != first) return null
+                        return second
+                    }
+
+                    else -> return null
                 }
             }
         }
@@ -110,5 +124,11 @@ class SmartCastCalculator(
         }
 
         return entityToInfo
+    }
+
+    private fun JetScope.findNearestReceiverForVariable(variableDescriptor: VariableDescriptor): ReceiverParameterDescriptor? {
+        val classifier = variableDescriptor.containingDeclaration as? ClassifierDescriptor ?: return null
+        val type = classifier.defaultType
+        return getImplicitReceiversWithInstance().firstOrNull { it.type.isSubtypeOf(type) }
     }
 }
