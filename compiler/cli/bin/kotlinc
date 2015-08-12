@@ -71,5 +71,5 @@ fi
   "${java_args[@]}" \
   -cp "${KOTLIN_HOME}/lib/kotlin-preloader.jar" \
   org.jetbrains.kotlin.preloading.Preloader \
-  "${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
-  $KOTLIN_COMPILER 4096 notime "$@"
+  -cp "${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
+  $KOTLIN_COMPILER "$@"

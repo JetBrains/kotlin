@@ -19,87 +19,150 @@ package org.jetbrains.kotlin.preloading;
 import org.jetbrains.kotlin.preloading.instrumentation.Instrumenter;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
+@SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
 public class Preloader {
-
-    public static final int PRELOADER_ARG_COUNT = 4;
-    private static final String INSTRUMENT_PREFIX = "instrument=";
+    public static final int DEFAULT_CLASS_NUMBER_ESTIMATE = 4096;
 
     public static void main(String[] args) throws Exception {
-        if (args.length < PRELOADER_ARG_COUNT) {
-            printUsageAndExit();
-        }
-
-        List<File> files = parseClassPath(args[0]);
-
-        String mainClassCanonicalName = args[1];
-
-        int classNumber;
         try {
-            classNumber = Integer.parseInt(args[2]);
+            run(args);
         }
-        catch (NumberFormatException e) {
-            System.err.println("error: number expected: " + e.getMessage());
-            printUsageAndExit();
-            return;
+        catch (Throwable e) {
+            System.err.println("error: " + e.toString());
+            e.printStackTrace();
+            System.err.println();
+            printUsage(System.err);
+            System.exit(1);
         }
+    }
 
-        final Mode mode = parseMode(args[3]);
-
+    private static void run(String[] args) throws Exception {
         final long startTime = System.nanoTime();
 
-        ClassLoader parent = Preloader.class.getClassLoader();
+        final Options options = parseOptions(args);
 
-        ClassLoader withInstrumenter =
-            mode instanceof Mode.Instrument ? new URLClassLoader(((Mode.Instrument) mode).classpath, parent) : parent;
+        ClassLoader classLoader = createClassLoader(options);
 
-        final Handler handler = getHandler(mode, withInstrumenter);
-        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, null, handler);
+        final Handler handler = getHandler(options, classLoader);
+        ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(options.classpath, options.estimate, classLoader, null, handler);
 
-        Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
+        Class<?> mainClass = preloaded.loadClass(options.mainClass);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
         Runtime.getRuntime().addShutdownHook(
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if (mode != Mode.NO_TIME) {
+                        if (options.measure) {
                             System.out.println();
                             System.out.println("=== Preloader's measurements: ");
-                            long dt = System.nanoTime() - startTime;
-                            System.out.format("Total time: %.3fs\n", dt / 1e9);
+                            System.out.format("Total time: %.3fs\n", (System.nanoTime() - startTime) / 1e9);
                         }
                         handler.done();
                     }
                 })
         );
 
-        mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
+        //noinspection SSBasedInspection
+        mainMethod.invoke(0, (Object) options.arguments.toArray(new String[options.arguments.size()]));
+    }
+
+    private static ClassLoader createClassLoader(Options options) throws MalformedURLException {
+        ClassLoader parent = Preloader.class.getClassLoader();
+
+        List<File> instrumenters = options.instrumenters;
+        if (instrumenters.isEmpty()) return parent;
+
+        URL[] classpath = new URL[instrumenters.size()];
+        for (int i = 0; i < instrumenters.size(); i++) {
+            classpath[i] = instrumenters.get(i).toURI().toURL();
+        }
+
+        return new URLClassLoader(classpath, parent);
+    }
+
+    @SuppressWarnings({"AssignmentToForLoopParameter", "ConstantConditions"})
+    private static Options parseOptions(String[] args) throws Exception {
+        // TODO: remove this temporary workaround as soon as the new command-line interface is bootstrapped
+        if (args.length >= 3 && "4096".equals(args[2])) {
+            //noinspection deprecation
+            return oldOptions(args);
+        }
+
+        List<File> classpath = Collections.emptyList();
+        boolean measure = false;
+        List<File> instrumenters = Collections.emptyList();
+        int estimate = DEFAULT_CLASS_NUMBER_ESTIMATE;
+        String mainClass = null;
+        List<String> arguments = new ArrayList<String>();
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            boolean end = i == args.length - 1;
+
+            if ("-help".equals(arg) || "-h".equals(arg)) {
+                printUsage(System.out);
+                System.exit(0);
+            }
+            else if ("-cp".equals(arg) || "-classpath".equals(arg)) {
+                if (end) throw new RuntimeException("no argument provided to " + arg);
+                classpath = parseClassPath(args[++i]);
+            }
+            else if ("-estimate".equals(arg)) {
+                if (end) throw new RuntimeException("no argument provided to " + arg);
+                estimate = Integer.parseInt(args[++i]);
+            }
+            else if ("-instrument".equals(arg)) {
+                if (end) throw new RuntimeException("no argument provided to " + arg);
+                instrumenters = parseClassPath(args[++i]);
+            }
+            else if ("-measure".equals(arg)) {
+                measure = true;
+            }
+            else {
+                mainClass = arg;
+                arguments.addAll(Arrays.asList(args).subList(i + 1, args.length));
+                break;
+            }
+        }
+
+        if (mainClass == null) throw new RuntimeException("no main class name provided");
+
+        return new Options(classpath, measure, instrumenters, estimate, mainClass, arguments);
+    }
+
+    @Deprecated
+    private static Options oldOptions(String[] args) {
+        return new Options(
+                parseClassPath(args[0]), false, Collections.<File>emptyList(), 4096, args[1],
+                Arrays.asList(Arrays.copyOfRange(args, 4, args.length))
+        );
     }
 
     private static List<File> parseClassPath(String classpath) {
-        String[] paths = classpath.split("\\" + File.pathSeparator);
+        String[] paths = classpath.split(File.pathSeparator);
         List<File> files = new ArrayList<File>(paths.length);
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                System.err.println("error: file does not exist: " + file);
-                printUsageAndExit();
+                throw new RuntimeException("file does not exist: " + file);
             }
             files.add(file);
         }
         return files;
     }
 
-    private static Handler getHandler(Mode mode, ClassLoader withInstrumenter) {
-        if (mode == Mode.NO_TIME) return new Handler();
+    private static Handler getHandler(Options options, ClassLoader withInstrumenter) {
+        if (!options.measure) return new Handler();
 
-        final Instrumenter instrumenter = mode instanceof Mode.Instrument ? loadInstrumenter(withInstrumenter) : Instrumenter.DO_NOTHING;
+        final Instrumenter instrumenter = options.instrumenters.isEmpty() ? Instrumenter.DO_NOTHING : loadInstrumenter(withInstrumenter);
 
         final int[] counter = new int[1];
         final int[] size = new int[1];
@@ -143,47 +206,40 @@ public class Preloader {
         }
     }
 
-    private interface Mode {
-        Mode NO_TIME = new Mode() {};
-        Mode TIME = new Mode() {};
-
-        class Instrument implements Mode {
-            public final URL[] classpath;
-
-            Instrument(URL[] classpath) {
-                this.classpath = classpath;
-            }
-        }
+    private static void printUsage(PrintStream out) {
+        out.println("usage: java -jar kotlin-preloader.jar [<preloader-options>] <main-class> [<main-class-arguments>]");
+        out.println("where possible options include:");
+        out.println("  -classpath (-cp) <paths>    Paths where to find class files");
+        out.println("  -measure                    Record and output the total time taken by the program and number of loaded classes");
+        out.println("  -instrument <paths>         Paths where the instrumenter will be looked up by java.util.ServiceLoader");
+        out.println("                              (the class must implement " + Instrumenter.class.getCanonicalName() + " interface)");
+        out.println("  -estimate <number>          Class number estimate (" + DEFAULT_CLASS_NUMBER_ESTIMATE + " by default)");
+        out.println("  -help (-h)                  Output this help message");
     }
 
-    private static Mode parseMode(String arg) {
-        if ("time".equals(arg)) return Mode.TIME;
-        if ("notime".equals(arg)) return Mode.NO_TIME;
+    private static class Options {
+        public final List<File> classpath;
+        public final boolean measure;
+        public final List<File> instrumenters;
+        public final int estimate;
+        public final String mainClass;
+        public final List<String> arguments;
 
-        if (arg.startsWith(INSTRUMENT_PREFIX)) {
-            List<File> files = parseClassPath(arg.substring(INSTRUMENT_PREFIX.length()));
-            URL[] classpath = new URL[files.size()];
-            for (int i = 0; i < files.size(); i++) {
-                File file = files.get(i);
-                try {
-                    classpath[i] = file.toURI().toURL();
-                }
-                catch (MalformedURLException e) {
-                    System.err.println("error: malformed URL: " + e.getMessage());
-                    printUsageAndExit();
-                }
-            }
-            return new Mode.Instrument(classpath);
+        private Options(
+                List<File> classpath,
+                boolean measure,
+                List<File> instrumenters,
+                int estimate,
+                String mainClass,
+                List<String> arguments
+        ) {
+            this.classpath = classpath;
+            this.measure = measure;
+            this.instrumenters = instrumenters;
+            this.estimate = estimate;
+            this.mainClass = mainClass;
+            this.arguments = arguments;
         }
-
-        System.err.println("error: unrecognized argument: " + arg);
-        printUsageAndExit();
-        return Mode.NO_TIME;
-    }
-
-    private static void printUsageAndExit() {
-        System.out.println("Usage: Preloader <paths to jars> <main class> <class number estimate> <notime|time|instrument=<instrumenters class path>> <parameters to pass to the main class>");
-        System.exit(1);
     }
 
     private static class Handler extends ClassHandler {
