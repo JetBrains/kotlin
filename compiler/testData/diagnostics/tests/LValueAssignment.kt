@@ -91,6 +91,11 @@ class Test() {
         s += (a@ 2)
     }
 
+    fun testIncompleteSyntax() {
+        val s = "s"
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>++<!>s.<!SYNTAX!><!>
+    }
+
     fun testVariables() {
         var a: Int = 34
         val b: Int = 34

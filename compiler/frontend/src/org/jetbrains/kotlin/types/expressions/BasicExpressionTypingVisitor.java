@@ -913,8 +913,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         boolean result = true;
         JetExpression reportOn = expression != null ? expression : expressionWithParenthesis;
-        if (reportOn instanceof JetQualifiedExpression)
-            reportOn = ((JetQualifiedExpression)reportOn).getSelectorExpression();
+        if (reportOn instanceof JetQualifiedExpression) {
+            JetExpression selector = ((JetQualifiedExpression) reportOn).getSelectorExpression();
+            if (selector != null)
+                reportOn = selector;
+        }
 
         if (variable instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
