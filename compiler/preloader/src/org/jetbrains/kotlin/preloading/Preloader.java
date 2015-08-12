@@ -34,9 +34,8 @@ public class Preloader {
         try {
             run(args);
         }
-        catch (Throwable e) {
+        catch (PreloaderException e) {
             System.err.println("error: " + e.toString());
-            e.printStackTrace();
             System.err.println();
             printUsage(System.err);
             System.exit(1);
@@ -112,15 +111,15 @@ public class Preloader {
                 System.exit(0);
             }
             else if ("-cp".equals(arg) || "-classpath".equals(arg)) {
-                if (end) throw new RuntimeException("no argument provided to " + arg);
+                if (end) throw new PreloaderException("no argument provided to " + arg);
                 classpath = parseClassPath(args[++i]);
             }
             else if ("-estimate".equals(arg)) {
-                if (end) throw new RuntimeException("no argument provided to " + arg);
+                if (end) throw new PreloaderException("no argument provided to " + arg);
                 estimate = Integer.parseInt(args[++i]);
             }
             else if ("-instrument".equals(arg)) {
-                if (end) throw new RuntimeException("no argument provided to " + arg);
+                if (end) throw new PreloaderException("no argument provided to " + arg);
                 instrumenters = parseClassPath(args[++i]);
             }
             else if ("-measure".equals(arg)) {
@@ -133,7 +132,7 @@ public class Preloader {
             }
         }
 
-        if (mainClass == null) throw new RuntimeException("no main class name provided");
+        if (mainClass == null) throw new PreloaderException("no main class name provided");
 
         return new Options(classpath, measure, instrumenters, estimate, mainClass, arguments);
     }
@@ -152,7 +151,7 @@ public class Preloader {
         for (String path : paths) {
             File file = new File(path);
             if (!file.exists()) {
-                throw new RuntimeException("file does not exist: " + file);
+                throw new PreloaderException("file does not exist: " + file);
             }
             files.add(file);
         }
@@ -239,6 +238,12 @@ public class Preloader {
             this.estimate = estimate;
             this.mainClass = mainClass;
             this.arguments = arguments;
+        }
+    }
+
+    private static class PreloaderException extends RuntimeException {
+        public PreloaderException(String message) {
+            super(message);
         }
     }
 
