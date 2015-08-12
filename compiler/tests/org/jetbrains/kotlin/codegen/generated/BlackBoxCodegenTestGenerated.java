@@ -7185,6 +7185,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithLocalClass.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("unqualifiedSuperWithMethodsOfAny.kt")
+        public void testUnqualifiedSuperWithMethodsOfAny() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/super/unqualifiedSuperWithMethodsOfAny.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/superConstructorCall")

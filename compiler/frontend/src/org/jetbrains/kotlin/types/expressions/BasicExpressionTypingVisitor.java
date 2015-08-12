@@ -392,9 +392,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            if (supertypes.size() > 1) {
+            if (UnqualifiedSuperPackage.isPossiblyAmbiguousUnqualifiedSuper(expression, supertypes)) {
                 Collection<JetType> supertypesResolvedFromContext =
-                        UnqualifiedSuperPackage.resolveUnqualifiedSuperFromExpressionContext(expression, supertypes);
+                        UnqualifiedSuperPackage.resolveUnqualifiedSuperFromExpressionContext(
+                                expression, supertypes, components.builtIns.getAnyType());
                 if (supertypesResolvedFromContext.size() == 1) {
                     JetType singleResolvedType = supertypesResolvedFromContext.iterator().next();
                     result = substitutor.substitute(singleResolvedType, Variance.INVARIANT);
