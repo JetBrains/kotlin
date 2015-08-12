@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
@@ -41,17 +40,14 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpres
 
 class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(javaClass(), "Use property access syntax") {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
-        if (element.getQualifiedExpressionForSelector()?.getReceiverExpression() is JetSuperExpression) return false // cannot call extensions on "super"
-
-        return findExtensionPropertyToUse(element) != null
+        return detectPropertyNameToUse(element) != null
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        applyTo(element)
+        applyTo(element, detectPropertyNameToUse(element)!!)
     }
 
-    public fun applyTo(element: JetCallExpression) {
-        val propertyName = findExtensionPropertyToUse(element)!!.getName()
+    public fun applyTo(element: JetCallExpression, propertyName: Name) {
         val arguments = element.getValueArguments()
         when (arguments.size()) {
             0 -> replaceWithPropertyGet(element, propertyName)
@@ -60,7 +56,9 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         }
     }
 
-    private fun findExtensionPropertyToUse(callExpression: JetCallExpression): PropertyDescriptor? {
+    public fun detectPropertyNameToUse(callExpression: JetCallExpression): Name? {
+        if (callExpression.getQualifiedExpressionForSelector()?.getReceiverExpression() is JetSuperExpression) return null // cannot call extensions on "super"
+
         val callee = callExpression.getCalleeExpression() as? JetSimpleNameExpression ?: return null
 
         val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
@@ -87,7 +85,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
                 .map { it.original }
         if (property !in accessibleVariables) return null // shadowed by something else
 
-        return property
+        return property.name
     }
 
     private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {

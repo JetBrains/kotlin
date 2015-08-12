@@ -45,8 +45,8 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
         _processings.add(MoveLambdaOutsideParenthesesProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
+        _processings.add(UsePropertyAccessSyntaxProcessing())
 
-        registerIntentionBasedProcessing(UsePropertyAccessSyntaxIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
@@ -141,6 +141,16 @@ object J2KPostProcessingRegistrar {
             else {
                 return null
             }
+        }
+    }
+
+    private class UsePropertyAccessSyntaxProcessing : J2kPostProcessing {
+        private val intention = UsePropertyAccessSyntaxIntention()
+
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallExpression) return null
+            val propertyName = intention.detectPropertyNameToUse(element) ?: return null
+            return { intention.applyTo(element, propertyName) }
         }
     }
 }
