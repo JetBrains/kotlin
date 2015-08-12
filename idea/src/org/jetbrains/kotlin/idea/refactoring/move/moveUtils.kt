@@ -17,18 +17,15 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
-import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesDialog
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
@@ -40,12 +37,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Function
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -172,14 +167,14 @@ fun createMoveUsageInfoIfPossible(
     return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
 }
 
-public fun guessNewFileName(sourceFile: JetFile, declarationsToMove: Collection<JetNamedDeclaration>): String? {
-    assert(sourceFile.getDeclarations().containsAll(declarationsToMove))
-
+public fun guessNewFileName(declarationsToMove: Collection<JetNamedDeclaration>): String? {
     if (declarationsToMove.isEmpty()) return null
-    if (sourceFile.getDeclarations().size() == declarationsToMove.size()) return sourceFile.getName()
 
-    val representative = declarationsToMove.firstOrNull { it is JetClassOrObject } ?: declarationsToMove.first()
-    return "${representative.getName()}.${JetFileType.EXTENSION}"
+    val representative = declarationsToMove.singleOrNull()
+                         ?: declarationsToMove.filterIsInstance<JetClassOrObject>().singleOrNull()
+    representative?.let { return "${it.name}.${JetFileType.EXTENSION}" }
+
+    return declarationsToMove.first().containingFile.name
 }
 
 // returns true if successful
