@@ -1425,6 +1425,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("ImmediateExtensionMembersGeneric.kt")
+            public void testImmediateExtensionMembersGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateExtensionMembersGeneric.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ImmediateMembers1.kt")
             public void testImmediateMembers1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/immediateMembers/ImmediateMembers1.kt");

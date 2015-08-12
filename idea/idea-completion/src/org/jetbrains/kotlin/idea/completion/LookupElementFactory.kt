@@ -334,18 +334,31 @@ public class LookupElementFactory(
 
         val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
         if (receiverParameter != null) {
-            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) })
-                if (descriptor.isExtension) CallableWeight.thisTypeExtension else CallableWeight.thisClassMember
-            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) })
+            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) }) {
+                when {
+                    descriptor.isExtensionForTypeParameter() -> CallableWeight.typeParameterExtension
+                    descriptor.isExtension -> CallableWeight.thisTypeExtension
+                    else -> CallableWeight.thisClassMember
+                }
+            }
+            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) }) {
                 if (descriptor.isExtension) CallableWeight.baseTypeExtension else CallableWeight.baseClassMember
-            else
+            }
+            else {
                 CallableWeight.receiverCastRequired
+            }
         }
 
         return when (descriptor.containingDeclaration) {
             is PackageFragmentDescriptor, is ClassifierDescriptor -> CallableWeight.globalOrStatic
             else -> CallableWeight.local
         }
+    }
+
+    private fun CallableDescriptor.isExtensionForTypeParameter(): Boolean {
+        val receiverParameter = original.extensionReceiverParameter ?: return false
+        val typeParameter = receiverParameter.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+        return typeParameter.containingDeclaration == original
     }
 
     companion object {

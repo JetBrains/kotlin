@@ -135,6 +135,7 @@ enum class CallableWeight {
     thisTypeExtension,
     baseTypeExtension,
     globalOrStatic, // global non-extension
+    typeParameterExtension,
     receiverCastRequired
 }
 
