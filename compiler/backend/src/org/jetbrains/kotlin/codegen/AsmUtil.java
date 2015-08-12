@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypesPackage;
 import org.jetbrains.org.objectweb.asm.*;
@@ -308,19 +309,38 @@ public class AsmUtil {
         if (isInterface(containingDeclaration)) {
             return ACC_PUBLIC;
         }
+
         Visibility memberVisibility = memberDescriptor.getVisibility();
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
         }
+
         if (isEnumEntry(memberDescriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
+
         if (memberDescriptor instanceof ConstructorDescriptor && isAnonymousObject(memberDescriptor.getContainingDeclaration())) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
+
+        if (memberDescriptor instanceof SyntheticJavaPropertyDescriptor) {
+            return getVisibilityAccessFlag(((SyntheticJavaPropertyDescriptor) memberDescriptor).getGetMethod());
+        }
+        if (memberDescriptor instanceof PropertyAccessorDescriptor) {
+            PropertyDescriptor property = ((PropertyAccessorDescriptor) memberDescriptor).getCorrespondingProperty();
+            if (property instanceof SyntheticJavaPropertyDescriptor) {
+                FunctionDescriptor method = memberDescriptor == property.getGetter()
+                                                ? ((SyntheticJavaPropertyDescriptor) property).getGetMethod()
+                                                : ((SyntheticJavaPropertyDescriptor) property).getSetMethod();
+                assert method != null : "No setMethod in SyntheticJavaPropertyDescriptor";
+                return getVisibilityAccessFlag(method);
+            }
+        }
+
         if (!Visibilities.isPrivate(memberVisibility)) {
             return null;
         }
+
         // the following code is only for PRIVATE visibility of member
         if (memberDescriptor instanceof ConstructorDescriptor) {
             if (isNonCompanionObject(containingDeclaration) || isEnumEntry(containingDeclaration)) {
@@ -332,6 +352,7 @@ public class AsmUtil {
                 return ACC_PROTECTED;
             }
         }
+
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;
         }

@@ -24,13 +24,11 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
-import org.jetbrains.kotlin.test.util.trimIndent
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 
 public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
@@ -119,12 +117,12 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val result = methodToKotlin("void main() {" + text + "}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirstLiteral("fun main() {", "").trim()
+        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main() {", "").trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =" + code + "}", settings, project)
-        return result.replaceFirstLiteral("val o:Any? = ", "").replaceFirstLiteral("val o:Any = ", "").replaceFirstLiteral("val o = ", "").trim()
+        return result.replaceFirst("val o:Any? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
     }
 
     override fun getProjectDescriptor()
@@ -140,5 +138,34 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
 
     private fun createKotlinFile(text: String): JetFile {
         return myFixture.configureByText("converterTestFile.kt", text) as JetFile
+    }
+
+    deprecated("use kotlin.trimIndent instead")
+    private fun String.trimIndent(): String {
+        val lines = split('\n')
+
+        val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
+        if (firstNonEmpty == null) {
+            return this
+        }
+
+        val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
+        if (trimmedPrefix.isEmpty()) {
+            return this
+        }
+
+        return lines.map { line ->
+            if (line.trim().isEmpty()) {
+                ""
+            }
+            else {
+                if (!line.startsWith(trimmedPrefix)) {
+                    throw IllegalArgumentException(
+                            """Invalid line "$line", ${trimmedPrefix.length()} whitespace character are expected""")
+                }
+
+                line.substring(trimmedPrefix.length())
+            }
+        }.joinToString(separator = "\n")
     }
 }

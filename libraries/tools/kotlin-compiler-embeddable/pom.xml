@@ -100,6 +100,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <createDependencyReducedPom>true</createDependencyReducedPom>
                             <filters>

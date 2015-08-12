@@ -791,7 +791,6 @@ public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Bool
 public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
-
 // rangesDelimitedBy
 
 

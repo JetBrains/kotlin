@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.codeInsight.smartEnter
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.test.util.trimIndent
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 
@@ -1041,4 +1040,33 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     private fun String.removeFirstEmptyLines() = this.split("\n").dropWhile { it.isEmpty() }.joinToString(separator = "\n")
+
+    deprecated("use kotlin.trimIndent instead")
+    private fun String.trimIndent(): String {
+        val lines = split('\n')
+
+        val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
+        if (firstNonEmpty == null) {
+            return this
+        }
+
+        val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
+        if (trimmedPrefix.isEmpty()) {
+            return this
+        }
+
+        return lines.map { line ->
+            if (line.trim().isEmpty()) {
+                ""
+            }
+            else {
+                if (!line.startsWith(trimmedPrefix)) {
+                    throw IllegalArgumentException(
+                            """Invalid line "$line", ${trimmedPrefix.length()} whitespace character are expected""")
+                }
+
+                line.substring(trimmedPrefix.length())
+            }
+        }.joinToString(separator = "\n")
+    }
 }

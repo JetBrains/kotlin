@@ -47,34 +47,6 @@ public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg ex
     configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
 }
 
-public fun String.trimIndent(): String {
-    val lines = split('\n')
-
-    val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
-    if (firstNonEmpty == null) {
-        return this
-    }
-
-    val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
-    if (trimmedPrefix.isEmpty()) {
-        return this
-    }
-
-    return lines.map { line ->
-        if (line.trim().isEmpty()) {
-            ""
-        }
-        else {
-            if (!line.startsWith(trimmedPrefix)) {
-                throw IllegalArgumentException(
-                        """Invalid line "$line", ${trimmedPrefix.length()} whitespace character are expected""")
-            }
-
-            line.substring(trimmedPrefix.length())
-        }
-    }.joinToString(separator = "\n")
-}
-
 public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keySet().singleOrNull()
 
