@@ -26,12 +26,11 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -67,18 +66,25 @@ public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestC
         with(myFixture) {
             setTestDataPath("${JetTestUtils.getHomeDirectory()}/$srcDir")
 
-            val psiFiles = srcDir
-                    .listFiles { it.getName().endsWith(".kt") || it.getName().endsWith(".txt") || it.getName().endsWith(".xml") || it.getName().endsWith(".java") }!!
-                    .map {
-                        file ->
-                        val text = FileUtil.loadFile(file, true)
-                        val fileText =
-                                if (text.startsWith("package") || !file.getName().endsWith(".kt"))
-                                    text
-                                else
-                                    "package ${file.getName().removeSuffix(".kt")};$text"
-                        configureByText(file.getName(), fileText)!!
-                    }
+            val psiFiles = srcDir.walkTopDown().filter { it.name != "inspectionData" }.map {
+                file ->
+                if (file.isDirectory) {
+                     null
+                }
+                else if (file.extension != "kt") {
+                    val filePath = file.getPath().substringAfter(srcDir.getPath()).replace("\\", "/")
+                    configureByFile(filePath)
+                }
+                else {
+                    val text = FileUtil.loadFile(file, true)
+                    val fileText =
+                            if (text.startsWith("package"))
+                                text
+                            else
+                                "package ${file.getName().removeSuffix(".kt")};$text"
+                    configureByText(file.getName(), fileText)!!
+                }
+            }.filterNotNull().toArrayList()
 
             val isJs = srcDir.endsWith("js")
 
