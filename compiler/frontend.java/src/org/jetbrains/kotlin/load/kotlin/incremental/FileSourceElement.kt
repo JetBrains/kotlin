@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin.incremental.components
+package org.jetbrains.kotlin.load.kotlin.incremental
 
-public interface IncrementalCache {
-    public fun getInlineRegistering(): InlineRegistering
+import org.jetbrains.kotlin.descriptors.SourceElement
+import java.io.File
 
-    public fun getObsoletePackageParts(): Collection<String>
-
-    public fun getPackagePartData(fqName: String): ByteArray?
-
-    public fun getModuleMappingData(): ByteArray?
-
-    public fun getClassFilePath(internalClassName: String): String
-
-    public fun close()
+public class FileSourceElement(private val file: File) : SourceElement {
+    public val path: String
+        get() = file.canonicalPath
 }

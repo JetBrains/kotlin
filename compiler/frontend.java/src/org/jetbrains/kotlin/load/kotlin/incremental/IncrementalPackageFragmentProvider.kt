@@ -21,8 +21,10 @@ import org.apache.log4j.Logger
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.Module
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.io.File
 import java.util.*
 
 public class IncrementalPackageFragmentProvider(
@@ -97,6 +100,13 @@ public class IncrementalPackageFragmentProvider(
         public val target: Module
             get() = this@IncrementalPackageFragmentProvider.target
 
+        private val sourceElement: SourceElement by lazy {
+            val incrementalCache = this@IncrementalPackageFragmentProvider.incrementalCache
+            val packageClassName = PackageClassUtils.getPackageClassName(fqName)
+            val classFilePath = incrementalCache.getClassFilePath(packageClassName)
+            FileSourceElement(File(classFilePath))
+        }
+
         val memberScope: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
                 JetScope.Empty
@@ -135,6 +145,8 @@ public class IncrementalPackageFragmentProvider(
                 }
             }
         }
+
+        override fun getSource(): SourceElement = sourceElement
 
         override fun getMemberScope(): JetScope = memberScope()
 

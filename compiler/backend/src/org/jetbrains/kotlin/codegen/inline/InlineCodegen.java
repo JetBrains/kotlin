@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.kotlin.load.kotlin.incremental.FileSourceElement;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
@@ -777,11 +778,17 @@ public class InlineCodegen extends CallGenerator {
     @Nullable
     private static String getFilePath(@NotNull DeclarationDescriptorWithSource descriptor) {
         SourceElement source = descriptor.getSource();
+
+        if (source instanceof FileSourceElement) {
+            return ((FileSourceElement) source).getPath();
+        }
+
         VirtualFile file = null;
 
         if (source instanceof PsiSourceElement) {
             file = getFile((PsiSourceElement) source);
-        } else if (source instanceof KotlinJvmBinarySourceElement) {
+        }
+        else if (source instanceof KotlinJvmBinarySourceElement) {
             file = getFile((KotlinJvmBinarySourceElement) source);
         }
 
