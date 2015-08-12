@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
+import org.jetbrains.kotlin.preloading.Preloader;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
@@ -45,7 +46,7 @@ public class CompilerRunnerUtil {
         if (classLoader == null) {
             classLoader = ClassPreloadingUtils.preloadClasses(
                     Collections.singletonList(new File(libPath, "kotlin-compiler.jar")),
-                    /* estimatedClassNumber = */ 4096,
+                    Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
                     CompilerRunnerUtil.class.getClassLoader(),
                     environment.getClassesToLoadByParent()
             );
