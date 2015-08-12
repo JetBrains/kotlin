@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.rmi.service
+package org.jetbrains.kotlin.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.components.UsageCollector
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.rmi.CompilerFacade
 import org.jetbrains.kotlin.rmi.RemoteOutputStream
+import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
+import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
 import java.io.PrintStream
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.TimeUnit
@@ -31,8 +33,9 @@ import java.util.concurrent.TimeUnit
 class CompilerFacadeImpl<Compiler: CLICompiler<*>>(val compiler: Compiler) : CompilerFacade, UnicastRemoteObject() {
 
     public class IncrementalCompilationComponentsImpl(val idToCache: Map<String, CompilerFacade.RemoteIncrementalCache>): IncrementalCompilationComponents {
-        override fun getIncrementalCache(moduleId: String): IncrementalCache = idToCache[moduleId]!!
-        override fun getUsageCollector(): UsageCollector = UsageCollector.DO_NOTHING
+        // perf: cheap object, but still the pattern may be costy if there are too many calls to cache with the same id (which seems not to be the case now)
+        override fun getIncrementalCache(moduleId: String): IncrementalCache = RemoteIncrementalCacheClient(idToCache[moduleId]!!)
+        override fun getLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
     }
 
     private fun createCompileServices(incrementalCaches: Map<String, CompilerFacade.RemoteIncrementalCache>): Services =

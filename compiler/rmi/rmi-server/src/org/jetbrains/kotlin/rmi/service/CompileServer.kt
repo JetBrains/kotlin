@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.rmi.CompilerFacade
+import org.jetbrains.kotlin.service.CompilerFacadeImpl
 import java.rmi.RMISecurityManager
 import java.rmi.registry.LocateRegistry
 import java.rmi.server.UnicastRemoteObject

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.rmi;
 
-import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -29,7 +29,13 @@ public interface CompilerFacade extends Remote {
         XML
     }
 
-    interface RemoteIncrementalCache extends Remote, IncrementalCache {}
+    interface RemoteIncrementalCache extends Remote {
+        Collection<String> getObsoletePackageParts() throws RemoteException;;
+
+        byte[] getPackageData(String fqName) throws RemoteException;;
+
+        void close() throws RemoteException;
+    }
 
 
     int remoteCompile(String[] args, RemoteOutputStream errStream, OutputFormat outputFormat) throws RemoteException;

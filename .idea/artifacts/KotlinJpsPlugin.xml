@@ -19,6 +19,8 @@
       <element id="module-output" name="util" />
       <element id="module-output" name="util.runtime" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/kotlinManifest.properties" />
+      <element id="module-output" name="kotlinr" />
+      <element id="module-output" name="rmi-interface" />
     </root>
   </artifact>
 </component>
