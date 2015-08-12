@@ -76,13 +76,17 @@ object J2KPostProcessingRegistrar {
             exclExclExpr.replace(exclExclExpr.baseExpression!!)
         }
 
-        registerDiagnosticBasedProcessing<JetSimpleNameExpression>(Errors.VAL_REASSIGNMENT) { element, diagnostic ->
-            val property = element.mainReference.resolve() as? JetProperty
-            if (property != null && !property.isVar) {
-                val factory = JetPsiFactory(element.project)
-                property.valOrVarKeyword.replace(factory.createVarKeyword())
-            }
-        }
+        registerDiagnosticBasedProcessingFactory(
+                Errors.VAL_REASSIGNMENT,
+                fun (element: JetSimpleNameExpression, diagnostic: Diagnostic): (() -> Unit)? {
+                    val property = element.mainReference.resolve() as? JetProperty ?: return null
+                    return {
+                        if (!property.isVar) {
+                            property.valOrVarKeyword.replace(JetPsiFactory(element.project).createVarKeyword())
+                        }
+                    }
+                }
+        )
     }
 
     private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
@@ -103,11 +107,18 @@ object J2KPostProcessingRegistrar {
             diagnosticFactory: DiagnosticFactory<*>,
             inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fix: (TElement, Diagnostic) -> Unit
     ) {
+        registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
+    }
+
+    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessingFactory(
+            diagnosticFactory: DiagnosticFactory<*>,
+            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+    ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
                 if (!javaClass<TElement>().isInstance(element)) return null
                 val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
-                return { fix(element as TElement, diagnostic) }
+                return fixFactory(element as TElement, diagnostic)
             }
         })
     }
