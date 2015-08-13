@@ -31,3 +31,17 @@ fun nestedIf() {
         45
     }
 }
+
+fun failMerge1(): Unit {
+    val a = IntArray(999)
+    var n = 0
+    while (n < a.size()) {
+        ++n
+    }
+    var k = 1
+    if (n >= a.size()) {
+        for (i in k .. a.size() ) {
+            a[i]
+        }
+    }
+}
