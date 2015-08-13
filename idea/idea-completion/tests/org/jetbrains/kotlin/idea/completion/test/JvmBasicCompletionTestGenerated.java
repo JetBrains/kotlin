@@ -757,12 +757,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("SAMAdaptersStatic.kt")
-        public void testSAMAdaptersStatic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SAMAdaptersStatic.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("SetPrefixForProperties.kt")
         public void testSetPrefixForProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SetPrefixForProperties.kt");
@@ -1242,12 +1236,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
-            @TestMetadata("DoNotHideGetterWhenExtensionCannotBeUsed.kt")
-            public void testDoNotHideGetterWhenExtensionCannotBeUsed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/DoNotHideGetterWhenExtensionCannotBeUsed.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ExtensionInExtendedClass.kt")
             public void testExtensionInExtendedClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ExtensionInExtendedClass.kt");
@@ -1350,51 +1338,9 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
-            @TestMetadata("ShowGetSetOnSecondCompletion.kt")
-            public void testShowGetSetOnSecondCompletion() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ShowGetSetOnSecondCompletion.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("StarTypeArg.kt")
             public void testStarTypeArg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/StarTypeArg.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensions1.kt")
-            public void testSyntheticExtensions1() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensions2.kt")
-            public void testSyntheticExtensions2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensions2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsInGenericClass.kt")
-            public void testSyntheticExtensionsInGenericClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensionsInGenericClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSafeCall.kt")
-            public void testSyntheticExtensionsSafeCall() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensionsSafeCall.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSmartCast.kt")
-            public void testSyntheticExtensionsSmartCast() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensionsSmartCast.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSmartCast2.kt")
-            public void testSyntheticExtensionsSmartCast2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/SyntheticExtensionsSmartCast2.kt");
                 doTest(fileName);
             }
 
@@ -2101,6 +2047,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SAMAdaptersStatic.kt")
+        public void testSAMAdaptersStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/SAMAdaptersStatic.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelFromStandardLibrary.kt")
         public void testTopLevelFromStandardLibrary() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/TopLevelFromStandardLibrary.kt");
@@ -2148,6 +2100,63 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("SyntheticJavaProperties2.kt")
             public void testSyntheticJavaProperties2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/boldOrGrayed/SyntheticJavaProperties2.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticExtensions extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInSyntheticExtensions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/java/syntheticExtensions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("DoNotHideGetterWhenExtensionCannotBeUsed.kt")
+            public void testDoNotHideGetterWhenExtensionCannotBeUsed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/DoNotHideGetterWhenExtensionCannotBeUsed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ShowGetSetOnSecondCompletion.kt")
+            public void testShowGetSetOnSecondCompletion() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/ShowGetSetOnSecondCompletion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensions1.kt")
+            public void testSyntheticExtensions1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensions1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensions2.kt")
+            public void testSyntheticExtensions2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensions2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensionsInGenericClass.kt")
+            public void testSyntheticExtensionsInGenericClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsInGenericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensionsSafeCall.kt")
+            public void testSyntheticExtensionsSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensionsSmartCast.kt")
+            public void testSyntheticExtensionsSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SyntheticExtensionsSmartCast2.kt")
+            public void testSyntheticExtensionsSmartCast2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSmartCast2.kt");
                 doTest(fileName);
             }
         }
