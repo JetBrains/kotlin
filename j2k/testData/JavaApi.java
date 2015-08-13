@@ -49,6 +49,9 @@ public enum E {
 
 public class Base {
     public @Nullable String foo(@Nullable String s) { return s; }
+
+    public int getProperty() { return 1; }
+    public void setProperty(int value) {}
 }
 
 public class Derived extends Base {

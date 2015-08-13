@@ -19,68 +19,25 @@ package org.jetbrains.kotlin.idea.j2k
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.search.LocalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.intentions.*
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
-import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
-import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.PostProcessor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.resolve.BindingContext
-import java.util.ArrayList
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import java.util.LinkedHashMap
 
 public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
-    override fun analyzeFile(file: JetFile, range: TextRange?): BindingContext {
-        val elements = if (range == null) {
-            listOf(file)
-        }
-        else {
-            file.elementsInRange(range).filterIsInstance<JetElement>()
-        }
-        if (elements.isEmpty()) return BindingContext.EMPTY
-        return file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext
-    }
-
     override fun insertImport(file: JetFile, fqName: FqName) {
         val descriptors = file.resolveImportReference(fqName)
-        descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.getProject()).importDescriptor(file, it) }
-    }
-
-    override fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
-        val psiElement = problem.getPsiElement()
-        return when (problem.getFactory()) {
-            Errors.USELESS_CAST -> { ->
-                val expression = RemoveRightPartOfBinaryExpressionFix(psiElement as JetBinaryExpressionWithTypeRHS, "").invoke()
-
-                val variable = expression.getParent() as? JetProperty
-                if (variable != null && expression == variable.getInitializer() && variable.isLocal()) {
-                    val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.getContainingFile())).findAll()
-                    for (ref in refs) {
-                        val usage = ref.getElement() as? JetSimpleNameExpression ?: continue
-                        usage.replace(expression)
-                    }
-                    variable.delete()
-                }
-            }
-
-            Errors.REDUNDANT_PROJECTION -> { ->
-                val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(problem).single() as RemoveModifierFix
-                fix.invoke()
-            }
-
-            else -> super.fixForProblem(problem)
-        }
+        descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.project).importDescriptor(file, it) }
     }
 
     private enum class RangeFilterResult {
@@ -90,108 +47,32 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     override fun doAdditionalProcessing(file: JetFile, rangeMarker: RangeMarker?) {
-        fun rangeFilter(element: PsiElement): RangeFilterResult {
-            if (rangeMarker == null) return RangeFilterResult.PROCESS
-            if (!rangeMarker.isValid()) return RangeFilterResult.SKIP
-            val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-            val elementRange = element.getTextRange()
-            return when {
-                range.contains(elementRange) -> RangeFilterResult.PROCESS
-                range.intersects(elementRange) -> RangeFilterResult.GO_INSIDE
-                else -> RangeFilterResult.SKIP
-            }
-        }
+        var elementToActions = collectAvailableActions(file, rangeMarker)
 
-        val redundantTypeArgs = ArrayList<JetTypeArgumentList>()
-        file.accept(object : JetTreeVisitorVoid(){
-            override fun visitElement(element: PsiElement) {
-                if (rangeFilter(element) != RangeFilterResult.SKIP) {
-                    super.visitElement(element)
-                }
-            }
+        while (elementToActions.isNotEmpty()) {
+            var modificationStamp: Long? = file.modificationStamp
 
-            override fun visitTypeArgumentList(typeArgumentList: JetTypeArgumentList) {
-                if (rangeFilter(typeArgumentList) == RangeFilterResult.PROCESS && RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, approximateFlexible = true)) {
-                    redundantTypeArgs.add(typeArgumentList)
-                    return
-                }
-
-                super.visitTypeArgumentList(typeArgumentList)
-            }
-
-            override fun visitPrefixExpression(expression: JetPrefixExpression) {
-                super.visitPrefixExpression(expression)
-
-                val intention = SimplifyNegatedBinaryExpressionIntention()
-                if (rangeFilter(expression) == RangeFilterResult.PROCESS && intention.isApplicableTo(expression)) {
-                    intention.applyTo(expression)
-                }
-            }
-
-            override fun visitIfExpression(expression: JetIfExpression) {
-                super.visitIfExpression(expression)
-
-                if (rangeFilter(expression) == RangeFilterResult.PROCESS) {
-                    run {
-                        val intention = IfThenToSafeAccessIntention()
-                        if (intention.isApplicableTo(expression)) {
-                            intention.applyTo(expression)
-                            return
-                        }
+            for ((element, actions) in elementToActions) {
+                for ((action, processing) in actions) {
+                    if (element.isValid) {
+                        action()
                     }
-
-                    run {
-                        val intention = IfThenToElvisIntention()
-                        if (intention.isApplicableTo(expression)) {
-                            intention.applyTo(expression)
-                            return
-                        }
-                    }
-
-                    run {
-                        val intention = IfNullToElvisIntention()
-                        if (intention.applicabilityRange(expression) != null) {
-                            intention.applyTo(expression)
-                            return
-                        }
-                    }
-
-                }
-            }
-
-            override fun visitBinaryExpression(expression: JetBinaryExpression) {
-                val intention = ConvertToStringTemplateIntention()
-                if (intention.isApplicableTo(expression) && intention.isConversionResultSimple(expression)) {
-                    val result = intention.applyTo(expression)
-                    result.accept(this)
-                }
-                else {
-                    super.visitBinaryExpression(expression)
-                }
-            }
-
-            override fun visitCallExpression(expression: JetCallExpression) {
-                super.visitCallExpression(expression)
-
-                val literalArgument = expression.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
-                if (literalArgument != null) {
-                    val intention = MoveLambdaOutsideParenthesesIntention()
-                    if (intention.isApplicableTo(expression, literalArgument.textOffset)) {
-                        intention.applyTo(expression)
+                    else {
+                        modificationStamp = null
                     }
                 }
             }
-        })
 
-        for (typeArgs in redundantTypeArgs) {
-            typeArgs.delete()
+            if (modificationStamp == file.modificationStamp) break
+
+            elementToActions = collectAvailableActions(file, rangeMarker)
         }
 
         if (formatCode) {
-            val codeStyleManager = CodeStyleManager.getInstance(file.getProject())
+            val codeStyleManager = CodeStyleManager.getInstance(file.project)
             if (rangeMarker != null) {
-                if (rangeMarker.isValid()) {
-                    codeStyleManager.reformatRange(file, rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
+                if (rangeMarker.isValid) {
+                    codeStyleManager.reformatRange(file, rangeMarker.startOffset, rangeMarker.endOffset)
                 }
             }
             else {
@@ -200,5 +81,57 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         }
     }
 
-    override fun simpleNameReference(nameExpression: JetSimpleNameExpression) = nameExpression.mainReference
+    private data class ActionData(val action: () -> Unit, val processing: J2kPostProcessing)
+
+    private fun collectAvailableActions(file: JetFile, rangeMarker: RangeMarker?): LinkedHashMap<JetElement, SmartList<ActionData>> {
+        val diagnostics = analyzeFileRange(file, rangeMarker)
+
+        val elementToActions = LinkedHashMap<JetElement, SmartList<ActionData>>()
+
+        file.accept(object : PsiRecursiveElementVisitor(){
+            override fun visitElement(element: PsiElement) {
+                if (element is JetElement) {
+                    val rangeResult = rangeFilter(element, rangeMarker)
+                    if (rangeResult == RangeFilterResult.SKIP) return
+
+                    super.visitElement(element)
+
+                    if (rangeResult == RangeFilterResult.PROCESS) {
+                        J2KPostProcessingRegistrar.processings.forEach { processing ->
+                            val action = processing.createAction(element, diagnostics)
+                            if (action != null) {
+                                elementToActions.getOrPut(element) { SmartList() }.add(ActionData(action, processing))
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        return elementToActions
+    }
+
+    private fun analyzeFileRange(file: JetFile, rangeMarker: RangeMarker?): Diagnostics {
+        val elements = if (rangeMarker == null)
+            listOf(file)
+        else
+            file.elementsInRange(rangeMarker.range!!).filterIsInstance<JetElement>()
+
+        return if (elements.isNotEmpty())
+            file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext.diagnostics
+        else
+            Diagnostics.EMPTY
+    }
+
+    private fun rangeFilter(element: PsiElement, rangeMarker: RangeMarker?): RangeFilterResult {
+        if (rangeMarker == null) return RangeFilterResult.PROCESS
+        if (!rangeMarker.isValid) return RangeFilterResult.SKIP
+        val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
+        val elementRange = element.textRange
+        return when {
+            range.contains(elementRange) -> RangeFilterResult.PROCESS
+            range.intersects(elementRange) -> RangeFilterResult.GO_INSIDE
+            else -> RangeFilterResult.SKIP
+        }
+    }
 }

@@ -1,0 +1,167 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.idea.j2k
+
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
+import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
+import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import java.util.ArrayList
+
+interface J2kPostProcessing {
+    fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)?
+}
+
+object J2KPostProcessingRegistrar {
+    private val _processings = ArrayList<J2kPostProcessing>()
+
+    val processings: Collection<J2kPostProcessing>
+        get() = _processings
+
+    init {
+        _processings.add(RemoveExplicitTypeArgumentsProcessing())
+        _processings.add(MoveLambdaOutsideParenthesesProcessing())
+        _processings.add(ConvertToStringTemplateProcessing())
+        _processings.add(UsePropertyAccessSyntaxProcessing())
+
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(IfNullToElvisIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention()) { applyTo(it) }
+
+        registerDiagnosticBasedProcessing<JetBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
+            val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()
+
+            val variable = expression.parent as? JetProperty
+            if (variable != null && expression == variable.initializer && variable.isLocal) {
+                val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll()
+                for (ref in refs) {
+                    val usage = ref.element as? JetSimpleNameExpression ?: continue
+                    usage.replace(expression)
+                }
+                variable.delete()
+            }
+        }
+
+        registerDiagnosticBasedProcessing<JetTypeProjection>(Errors.REDUNDANT_PROJECTION) { element, diagnostic ->
+            val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
+            fix.invoke()
+        }
+
+        registerDiagnosticBasedProcessing<JetSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, diagnostic ->
+            val exclExclExpr = element.parent as JetUnaryExpression
+            exclExclExpr.replace(exclExclExpr.baseExpression!!)
+        }
+
+        registerDiagnosticBasedProcessingFactory(
+                Errors.VAL_REASSIGNMENT,
+                fun (element: JetSimpleNameExpression, diagnostic: Diagnostic): (() -> Unit)? {
+                    val property = element.mainReference.resolve() as? JetProperty ?: return null
+                    return {
+                        if (!property.isVar) {
+                            property.valOrVarKeyword.replace(JetPsiFactory(element.project).createVarKeyword())
+                        }
+                    }
+                }
+        )
+    }
+
+    private inline fun <reified TElement : JetElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+            intention: TIntention,
+            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) apply: TIntention.(TElement) -> Unit
+    ) {
+        _processings.add(object : J2kPostProcessing {
+            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+                if (!javaClass<TElement>().isInstance(element)) return null
+                @suppress("UNCHECKED_CAST")
+                if (intention.applicabilityRange(element as TElement) == null) return null
+                return { intention.apply(element) }
+            }
+        })
+    }
+
+    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessing(
+            diagnosticFactory: DiagnosticFactory<*>,
+            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fix: (TElement, Diagnostic) -> Unit
+    ) {
+        registerDiagnosticBasedProcessingFactory(diagnosticFactory) { element: TElement, diagnostic: Diagnostic -> { fix(element, diagnostic) } }
+    }
+
+    private inline fun <reified TElement : JetElement> registerDiagnosticBasedProcessingFactory(
+            diagnosticFactory: DiagnosticFactory<*>,
+            inlineOptions(InlineOption.ONLY_LOCAL_RETURN) fixFactory: (TElement, Diagnostic) -> (() -> Unit)?
+    ) {
+        _processings.add(object : J2kPostProcessing {
+            override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+                if (!javaClass<TElement>().isInstance(element)) return null
+                val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
+                return fixFactory(element as TElement, diagnostic)
+            }
+        })
+    }
+
+    private class RemoveExplicitTypeArgumentsProcessing : J2kPostProcessing {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetTypeArgumentList || !RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)) return null
+
+            return { element.delete() }
+        }
+    }
+
+    private class MoveLambdaOutsideParenthesesProcessing : J2kPostProcessing {
+        private val intention = MoveLambdaOutsideParenthesesIntention()
+
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallExpression) return null
+            val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
+            if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
+            return { intention.applyTo(element) }
+        }
+    }
+
+    private class ConvertToStringTemplateProcessing : J2kPostProcessing {
+        private val intention = ConvertToStringTemplateIntention()
+
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element is JetBinaryExpression && intention.isApplicableTo(element) && intention.isConversionResultSimple(element)) {
+                return { intention.applyTo(element) }
+            }
+            else {
+                return null
+            }
+        }
+    }
+
+    private class UsePropertyAccessSyntaxProcessing : J2kPostProcessing {
+        private val intention = UsePropertyAccessSyntaxIntention()
+
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallExpression) return null
+            val propertyName = intention.detectPropertyNameToUse(element) ?: return null
+            return { intention.applyTo(element, propertyName) }
+        }
+    }
+}

@@ -990,6 +990,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/RedundantTypeCastAndInline.java");
             doTest(fileName);
         }
+
+        @TestMetadata("SyntheticExtensionPropertyAccess.java")
+        public void testSyntheticExtensionPropertyAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/SyntheticExtensionPropertyAccess.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/comments")
