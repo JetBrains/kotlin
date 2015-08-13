@@ -21,29 +21,26 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
-        if (descriptors.none { it.original is SyntheticJavaPropertyDescriptor }) return emptyList()
+        if (descriptors.none { it is SyntheticJavaPropertyDescriptor }) return emptyList()
 
         val result = SmartList<FunctionDescriptor>()
         for (descriptor in descriptors) {
-            val original = descriptor.original
-            if (original is SyntheticJavaPropertyDescriptor) {
+            if (descriptor is SyntheticJavaPropertyDescriptor) {
                 if (getter) {
-                    result.add(original.getMethod)
+                    result.add(descriptor.getMethod)
                 }
                 else {
-                    result.addIfNotNull(original.setMethod)
+                    result.addIfNotNull(descriptor.setMethod)
                 }
             }
         }

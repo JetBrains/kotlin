@@ -258,9 +258,9 @@ public class LookupElementFactory(
             val original = descriptor.original
             val extensionReceiver = original.extensionReceiverParameter
             when {
-                original is SyntheticJavaPropertyDescriptor -> {
-                    var from = original.getMethod.getName().asString() + "()"
-                    original.setMethod?.let { from += "/" + it.getName().asString() + "()" }
+                descriptor is SyntheticJavaPropertyDescriptor -> {
+                    var from = descriptor.getMethod.getName().asString() + "()"
+                    descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
                     element = element.appendTailText(" (from $from)", true)
                 }
 
@@ -330,6 +330,11 @@ public class LookupElementFactory(
         val overridden = descriptor.overriddenDescriptors
         if (overridden.isNotEmpty()) {
             return overridden.map { callableWeight(it)!! }.min()!!
+        }
+
+        // don't treat synthetic extensions as real extensions
+        if (descriptor is SyntheticJavaPropertyDescriptor) {
+            return callableWeight(descriptor.getMethod)
         }
 
         val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
