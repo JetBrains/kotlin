@@ -19,7 +19,4 @@ package org.jetbrains.kotlin.load.kotlin.incremental
 import org.jetbrains.kotlin.descriptors.SourceElement
 import java.io.File
 
-public class FileSourceElement(private val file: File) : SourceElement {
-    public val path: String
-        get() = file.canonicalPath
-}
+public class FileSourceElement(public val file: File) : SourceElement

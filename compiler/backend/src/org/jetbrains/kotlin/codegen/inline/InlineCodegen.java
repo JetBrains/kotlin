@@ -30,11 +30,7 @@ import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.kotlin.load.kotlin.incremental.FileSourceElement;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.InlineRegistering;
@@ -52,7 +48,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.kotlin.types.expressions.LabelResolver;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -73,6 +68,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
+import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getClassFilePath;
+import static org.jetbrains.kotlin.codegen.inline.InlinePackage.getSourceFilePath;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
@@ -755,64 +752,13 @@ public class InlineCodegen extends CallGenerator {
 
         if (incrementalCompilationComponents == null || target == null) return;
 
-        String sourceFile = getFilePath(sourceDescriptor);
-        String targetFile = getFilePath(targetDescriptor);
-
-        if (sourceFile == null) {
-            DeclarationDescriptor containingDeclaration = sourceDescriptor.getContainingDeclaration();
-
-            if (containingDeclaration instanceof DeclarationDescriptorWithSource) {
-                DeclarationDescriptorWithSource withSource = (DeclarationDescriptorWithSource) containingDeclaration;
-                sourceFile = getFilePath(withSource);
-            }
-        }
-
+        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
+        String sourceFile = getClassFilePath(sourceDescriptor, incrementalCache);
+        String targetFile = getSourceFilePath(targetDescriptor);
         assert sourceFile != null: "No source file for inline fun: " + jvmSignature;
         assert targetFile != null: "No target file for inline fun: " + jvmSignature;
 
-        IncrementalCache incrementalCache = incrementalCompilationComponents.getIncrementalCache(target);
         InlineRegistering inlineRegistering = incrementalCache.getInlineRegistering();
         inlineRegistering.registerInline(sourceFile, jvmSignature.toString(), targetFile);
     }
-
-    @Nullable
-    private static String getFilePath(@NotNull DeclarationDescriptorWithSource descriptor) {
-        SourceElement source = descriptor.getSource();
-
-        if (source instanceof FileSourceElement) {
-            return ((FileSourceElement) source).getPath();
-        }
-
-        VirtualFile file = null;
-
-        if (source instanceof PsiSourceElement) {
-            file = getFile((PsiSourceElement) source);
-        }
-        else if (source instanceof KotlinJvmBinarySourceElement) {
-            file = getFile((KotlinJvmBinarySourceElement) source);
-        }
-
-        if (file == null) return null;
-
-        return file.getCanonicalPath();
-    }
-
-    @Nullable
-    private static VirtualFile getFile(@NotNull PsiSourceElement sourceElement) {
-        PsiElement psi = sourceElement.getPsi();
-        if (psi == null) return null;
-
-        return psi.getContainingFile().getVirtualFile();
-    }
-
-    @Nullable
-    private static VirtualFile getFile(@NotNull KotlinJvmBinarySourceElement sourceElement) {
-        KotlinJvmBinaryClass binaryClass = sourceElement.getBinaryClass();
-        if (binaryClass instanceof VirtualFileKotlinClass) {
-            return ((VirtualFileKotlinClass) binaryClass).getFile();
-        }
-
-        return null;
-    }
-
 }

@@ -102,8 +102,9 @@ public class IncrementalPackageFragmentProvider(
 
         private val sourceElement: SourceElement by lazy {
             val incrementalCache = this@IncrementalPackageFragmentProvider.incrementalCache
-            val packageClassName = PackageClassUtils.getPackageClassName(fqName)
-            val classFilePath = incrementalCache.getClassFilePath(packageClassName)
+            val classId = PackageClassUtils.getPackageClassId(fqName)
+            val className = JvmClassName.byClassId(classId)
+            val classFilePath = incrementalCache.getClassFilePath(className.internalName)
             FileSourceElement(File(classFilePath))
         }
 
