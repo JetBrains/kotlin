@@ -189,7 +189,15 @@ public interface IntegerVariableValues {
                 for (value in minOfLeftOperand..maxOfRightOperand) {
                     rangeValues.add(value)
                 }
-                return if (rangeValues.isEmpty()) Undefined else Defined(rangeValues)
+                return if (rangeValues.isEmpty())
+                    Undefined
+                else {
+                    val defined = Defined(rangeValues)
+                    if (!this.allPossibleValuesKnown || !others.allPossibleValuesKnown) {
+                        defined.setNotAllPossibleValuesKnown()
+                    }
+                    defined
+                }
             }
             return Undefined
         }
