@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public abstract class AbstractJvmWithLibBasicCompletionTest : JetFixtureCompletionBaseTestCase() {
-    private val TEST_PATH = COMPLETION_TEST_DATA_BASE_PATH + "/basic/custom"
+    private val TEST_PATH = COMPLETION_TEST_DATA_BASE_PATH + "/basic/withLib"
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
