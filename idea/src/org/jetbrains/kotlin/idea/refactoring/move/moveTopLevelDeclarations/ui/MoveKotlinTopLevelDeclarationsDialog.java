@@ -347,12 +347,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     @Nullable
-    private MoveDestination selectPackageBasedMoveDestination() {
+    private MoveDestination selectPackageBasedMoveDestination(boolean askIfDoesNotExist) {
         String packageName = getTargetPackage();
 
         RecentsManager.getInstance(myProject).registerRecentEntry(RECENTS_KEY, packageName);
         PackageWrapper targetPackage = new PackageWrapper(PsiManager.getInstance(myProject), packageName);
-        if (!targetPackage.exists()) {
+        if (!targetPackage.exists() && askIfDoesNotExist) {
             int ret = Messages.showYesNoDialog(myProject, RefactoringBundle.message("package.does.not.exist", packageName),
                                                RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
             if (ret != Messages.YES) return null;
@@ -378,7 +378,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         setErrorText(null);
 
         if (isMoveToPackage()) {
-            final MoveDestination moveDestination = selectPackageBasedMoveDestination();
+            final MoveDestination moveDestination = selectPackageBasedMoveDestination(true);
             if (moveDestination == null) return null;
 
             final String targetFileName = tfFileNameInPackage.getText();
@@ -541,7 +541,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             
             if (elementsToMove.size() == sourceFile.getDeclarations().size()) {
                 if (isMoveToPackage()) {
-                    final MoveDestination moveDestination = selectPackageBasedMoveDestination();
+                    final MoveDestination moveDestination = selectPackageBasedMoveDestination(false);
                     //noinspection ConstantConditions
                     PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceFile);
                     final String targetFileName = tfFileNameInPackage.getText();
