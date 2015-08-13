@@ -47,9 +47,15 @@ public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBa
         doTest(fileName);
     }
 
-    @TestMetadata("SAMAdapters.kt")
-    public void testSAMAdapters() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/custom/SAMAdapters.kt");
+    @TestMetadata("SamAdapter.kt")
+    public void testSamAdapter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/custom/SamAdapter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SamAdapterAndGenerics.kt")
+    public void testSamAdapterAndGenerics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/custom/SamAdapterAndGenerics.kt");
         doTest(fileName);
     }
 

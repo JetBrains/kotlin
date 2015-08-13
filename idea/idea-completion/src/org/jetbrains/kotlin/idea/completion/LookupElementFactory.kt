@@ -255,8 +255,7 @@ public class LookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
-            val original = descriptor.original
-            val extensionReceiver = original.extensionReceiverParameter
+            val extensionReceiver = descriptor.original.extensionReceiverParameter
             when {
                 descriptor is SyntheticJavaPropertyDescriptor -> {
                     var from = descriptor.getMethod.getName().asString() + "()"
@@ -265,7 +264,7 @@ public class LookupElementFactory(
                 }
 
                 // no need to show them as extensions
-                original is SamAdapterExtensionFunctionDescriptor -> {}
+                descriptor is SamAdapterExtensionFunctionDescriptor -> {}
 
                 extensionReceiver != null -> {
                     val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
@@ -335,6 +334,9 @@ public class LookupElementFactory(
         // don't treat synthetic extensions as real extensions
         if (descriptor is SyntheticJavaPropertyDescriptor) {
             return callableWeight(descriptor.getMethod)
+        }
+        if (descriptor is SamAdapterExtensionFunctionDescriptor) {
+            return callableWeight(descriptor.sourceFunction)
         }
 
         val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter

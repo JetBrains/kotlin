@@ -29,15 +29,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.DescriptorSubstitutor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeSubstitution
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.LinkedHashSet
+import kotlin.properties.Delegates
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
-    val originalFunction: FunctionDescriptor
+    val sourceFunction: FunctionDescriptor
 }
 
 class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by JetScope.Empty {
@@ -52,7 +51,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
         if (function.returnType == null) return null
         //TODO: it's a temporary hack while original returns a function with platform types
         val enhancedFunction = function.enhanceSignature()
-        return MyFunctionDescriptor(enhancedFunction)
+        return MyFunctionDescriptor.create(enhancedFunction)
     }
 
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
@@ -85,38 +84,101 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : JetScope by Jet
     }
 
     private class MyFunctionDescriptor(
-            override val originalFunction: FunctionDescriptor
-    ) : SamAdapterExtensionFunctionDescriptor, SimpleFunctionDescriptorImpl(
-            DescriptorUtils.getContainingModule(originalFunction),
-            null,
-            Annotations.EMPTY, //TODO
-            originalFunction.name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            originalFunction.source
-    ) {
-        init {
-            val typeParamsSum = (originalFunction.typeParameters).toArrayList()
-            val ownerClass = originalFunction.containingDeclaration as ClassDescriptor
-            //TODO: should we go up parents for getters/setters too?
-            for (parent in ownerClass.parentsWithSelf) {
-                if (parent !is ClassDescriptor) break
-                typeParamsSum += parent.typeConstructor.parameters
+            containingDeclaration: DeclarationDescriptor,
+            original: SimpleFunctionDescriptor?,
+            annotations: Annotations,
+            name: Name,
+            kind: CallableMemberDescriptor.Kind,
+            source: SourceElement
+    ) : SamAdapterExtensionFunctionDescriptor, SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, source) {
+
+        override var sourceFunction: FunctionDescriptor by Delegates.notNull()
+            private set
+
+        private var toSourceFunctionTypeParameters: Map<TypeParameterDescriptor, TypeParameterDescriptor>? = null
+
+        companion object {
+            fun create(sourceFunction: FunctionDescriptor): MyFunctionDescriptor {
+                val descriptor = MyFunctionDescriptor(DescriptorUtils.getContainingModule(sourceFunction),
+                                                      null,
+                                                      Annotations.EMPTY, //TODO
+                                                      sourceFunction.name,
+                                                      CallableMemberDescriptor.Kind.SYNTHESIZED,
+                                                      sourceFunction.source)
+                descriptor.sourceFunction = sourceFunction
+
+                val sourceTypeParams = (sourceFunction.typeParameters).toArrayList()
+                val ownerClass = sourceFunction.containingDeclaration as ClassDescriptor
+                //TODO: should we go up parents for getters/setters too?
+                //TODO: non-inner classes
+                for (parent in ownerClass.parentsWithSelf) {
+                    if (parent !is ClassDescriptor) break
+                    sourceTypeParams += parent.typeConstructor.parameters
+                }
+                //TODO: duplicated parameter names
+
+                val typeParameters = ArrayList<TypeParameterDescriptor>(sourceTypeParams.size())
+                val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(sourceTypeParams, TypeSubstitution.EMPTY, descriptor, typeParameters)
+
+                descriptor.toSourceFunctionTypeParameters = typeParameters.zip(sourceTypeParams).toMap()
+
+                val returnType = typeSubstitutor.safeSubstitute(sourceFunction.returnType!!, Variance.INVARIANT)
+                val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
+                val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(sourceFunction, descriptor, typeSubstitutor)
+
+                val visibility = syntheticExtensionVisibility(sourceFunction)
+
+                descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, visibility)
+
+                return descriptor
             }
-            //TODO: duplicated parameter names
-
-            val typeParameters = ArrayList<TypeParameterDescriptor>(typeParamsSum.size())
-            val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(typeParamsSum, TypeSubstitution.EMPTY, this, typeParameters)
-
-            val returnType = typeSubstitutor.safeSubstitute(originalFunction.returnType!!, Variance.INVARIANT)
-            val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
-            val valueParameters = SingleAbstractMethodUtils.createValueParametersForSamAdapter(originalFunction, this, typeSubstitutor)
-
-            val visibility = syntheticExtensionVisibility(originalFunction)
-
-            initialize(receiverType, null, typeParameters, valueParameters, returnType, Modality.FINAL, visibility)
         }
 
-        override fun hasStableParameterNames() = originalFunction.hasStableParameterNames()
-        override fun hasSynthesizedParameterNames() = originalFunction.hasSynthesizedParameterNames()
+        override fun hasStableParameterNames() = sourceFunction.hasStableParameterNames()
+        override fun hasSynthesizedParameterNames() = sourceFunction.hasSynthesizedParameterNames()
+
+        override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, original: FunctionDescriptor?, kind: CallableMemberDescriptor.Kind): MyFunctionDescriptor {
+            return MyFunctionDescriptor(containingDeclaration, original as SimpleFunctionDescriptor?, annotations, name, kind, source).apply {
+                sourceFunction = this@MyFunctionDescriptor.sourceFunction
+            }
+        }
+
+        override fun doSubstitute(
+                originalSubstitutor: TypeSubstitutor,
+                newOwner: DeclarationDescriptor,
+                newModality: Modality,
+                newVisibility: Visibility,
+                original: FunctionDescriptor?,
+                copyOverrides: Boolean,
+                kind: CallableMemberDescriptor.Kind,
+                newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
+                newExtensionReceiverParameterType: JetType?,
+                newReturnType: JetType
+        ): FunctionDescriptor? {
+            val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
+                    originalSubstitutor, newOwner, newModality, newVisibility, original,
+                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType)
+                as MyFunctionDescriptor? ?: return null
+
+            if (original == null) {
+                throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")
+            }
+
+            original as MyFunctionDescriptor
+            assert(original.original == original, "original in doSubstitute should have no other original")
+
+            val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
+            for (typeParameter in original.typeParameters) {
+                val typeProjection = originalSubstitutor.substitution[typeParameter.defaultType] ?: continue
+                val sourceTypeParameter = original.toSourceFunctionTypeParameters!![typeParameter]!!
+                substitutionMap[sourceTypeParameter.typeConstructor] = typeProjection
+
+            }
+
+            val sourceFunctionSubstitutor = TypeSubstitutor.create(substitutionMap)
+            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)!!
+
+            return descriptor
+        }
     }
 }
