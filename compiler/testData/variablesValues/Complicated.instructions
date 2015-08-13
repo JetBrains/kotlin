@@ -182,3 +182,100 @@ error:
 sink:
     <SINK>                                                                                                                           in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
 =====================
+== failMerge1 ==
+fun failMerge1(): Unit {
+    val a = IntArray(999)
+    var n = 0
+    while (n < a.size()) {
+        ++n
+    }
+    var k = 1
+    if (n >= a.size()) {
+        for (i in k .. a.size() ) {
+            a[i]
+        }
+    }
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                       in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{}
+  2 mark({ val a = IntArray(999) var n = 0 while (n < a.size()) { ++n } var k = 1 if (n >= a.size()) { for (i in k .. a.size() ) { a[i] } } })    in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{}
+    v(val a = IntArray(999))                                                                                                                      in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{a:-}
+    r(999) -> <v0>                                                                                                                                in: INTS{}                        BOOLS{} ARRS{a:-}        out: INTS{}                        BOOLS{} ARRS{a:-}
+    mark(IntArray(999))                                                                                                                           in: INTS{}                        BOOLS{} ARRS{a:-}        out: INTS{}                        BOOLS{} ARRS{a:-}
+    call(IntArray(999), <init>|<v0>) -> <v1>                                                                                                      in: INTS{}                        BOOLS{} ARRS{a:-}        out: INTS{}                        BOOLS{} ARRS{a:-}
+    w(a|<v1>)                                                                                                                                     in: INTS{}                        BOOLS{} ARRS{a:-}        out: INTS{}                        BOOLS{} ARRS{a:[999]}
+    v(var n = 0)                                                                                                                                  in: INTS{}                        BOOLS{} ARRS{a:[999]}    out: INTS{n:-}                     BOOLS{} ARRS{a:[999]}
+    r(0) -> <v2>                                                                                                                                  in: INTS{n:-}                     BOOLS{} ARRS{a:[999]}    out: INTS{n:-}                     BOOLS{} ARRS{a:[999]}
+    w(n|<v2>)                                                                                                                                     in: INTS{n:-}                     BOOLS{} ARRS{a:[999]}    out: INTS{n:[0]}                   BOOLS{} ARRS{a:[999]}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(n) -> <v3>                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    mark(a.size())                                                                                                                                in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    r(a) -> <v4>                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    mark(size())                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    call(size(), size|<v4>) -> <v5>                                                                                                               in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    mark(n < a.size())                                                                                                                            in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    call(n < a.size(), compareTo|<v3>, <v5>) -> <v6>                                                                                              in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    mark(while (n < a.size()) { ++n })                                                                                                            in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    jf(L3|<v6>)                                                                                                                                   in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+L4 [body entry point]:
+  3 mark({ ++n })                                                                                                                                 in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    r(n) -> <v7>                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    mark(++n)                                                                                                                                     in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    call(++n, inc|<v7>) -> <v8>                                                                                                                   in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    w(n|<v8>)                                                                                                                                     in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+  2 jmp(L2)                                                                                                                                       in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                                   in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
+    v(var k = 1)                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{k:-,n:[0, ?]}            BOOLS{} ARRS{a:[999]}
+    r(1) -> <v9>                                                                                                                                  in: INTS{k:-,n:[0, ?]}            BOOLS{} ARRS{a:[999]}    out: INTS{k:-,n:[0, ?]}            BOOLS{} ARRS{a:[999]}
+    w(k|<v9>)                                                                                                                                     in: INTS{k:-,n:[0, ?]}            BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    mark(if (n >= a.size()) { for (i in k .. a.size() ) { a[i] } })                                                                               in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    r(n) -> <v10>                                                                                                                                 in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    mark(a.size())                                                                                                                                in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    r(a) -> <v11>                                                                                                                                 in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    mark(size())                                                                                                                                  in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    call(size(), size|<v11>) -> <v12>                                                                                                             in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    mark(n >= a.size())                                                                                                                           in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    call(n >= a.size(), compareTo|<v10>, <v12>) -> <v13>                                                                                          in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+    jf(L7|<v13>)                                                                                                                                  in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+  3 mark({ for (i in k .. a.size() ) { a[i] } })                                                                                                  in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+  4 r(k) -> <v14>                                                                                                                                 in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    mark(a.size())                                                                                                                                in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    r(a) -> <v15>                                                                                                                                 in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    mark(size())                                                                                                                                  in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    call(size(), size|<v15>) -> <v16>                                                                                                             in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    mark(k .. a.size())                                                                                                                           in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    call(k .. a.size(), rangeTo|<v14>, <v16>) -> <v17>                                                                                            in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+    v(i)                                                                                                                                          in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{i:-,k:[1],n:?}           BOOLS{} ARRS{a:[999]}
+L8 [loop entry point]:
+L12 [condition entry point]:
+    jmp?(L9)                                                                                                                                      in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    magic[LOOP_RANGE_ITERATION](k .. a.size()|<v17>) -> <v18>                                                                                     in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    w(i|<v18>)                                                                                                                                    in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    mark(for (i in k .. a.size() ) { a[i] })                                                                                                      in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+L10 [body entry point]:
+  5 mark({ a[i] })                                                                                                                                in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    mark(a[i])                                                                                                                                    in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    r(a) -> <v19>                                                                                                                                 in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    r(i) -> <v20>                                                                                                                                 in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    mark(a[i])                                                                                                                                    in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+    call(a[i], get|<v19>, <v20>) -> <v21>                                                                                                         in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+  4 jmp(L8)                                                                                                                                       in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+L9 [loop exit point]:
+L11 [body exit point]:
+    read (Unit)                                                                                                                                   in: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}    out: INTS{i:[1, 999, ?],k:[1],n:?} BOOLS{} ARRS{a:[999]}
+  2 jmp(L13)                                                                                                                                      in: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:?}               BOOLS{} ARRS{a:[999]}
+L7 [else branch]:
+    read (Unit)                                                                                                                                   in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+L13 ['if' expression result]:
+    merge(if (n >= a.size()) { for (i in k .. a.size() ) { a[i] } }|!<v22>) -> <v23>                                                              in: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}    out: INTS{k:[1],n:[0, ?]}          BOOLS{} ARRS{a:[999]}
+L1:
+  1 <END>                                                                                                                                         in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                       in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                        in: INTS{}                        BOOLS{} ARRS{}           out: INTS{}                        BOOLS{} ARRS{}
+=====================
