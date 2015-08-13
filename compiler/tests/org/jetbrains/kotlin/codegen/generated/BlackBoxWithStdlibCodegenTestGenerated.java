@@ -3503,6 +3503,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/propertyToString.kt");
                 doTestWithStdlib(fileName);
             }
+
+            @TestMetadata("typeEqualsHashCode.kt")
+            public void testTypeEqualsHashCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/typeEqualsHashCode.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("typeToString.kt")
+            public void testTypeToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/typeToString.kt");
+                doTestWithStdlib(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect")

@@ -21,20 +21,21 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.types.JetType
 
 object ReflectionObjectRenderer {
     private val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
     private fun StringBuilder.appendReceiverType(receiver: ReceiverParameterDescriptor?) {
         if (receiver != null) {
-            append(renderer.renderType(receiver.getType()))
+            append(renderType(receiver.type))
             append(".")
         }
     }
 
     private fun StringBuilder.appendReceiversAndName(callable: CallableDescriptor) {
-        val dispatchReceiver = callable.getDispatchReceiverParameter()
-        val extensionReceiver = callable.getExtensionReceiverParameter()
+        val dispatchReceiver = callable.dispatchReceiverParameter
+        val extensionReceiver = callable.extensionReceiverParameter
 
         appendReceiverType(dispatchReceiver)
 
@@ -43,13 +44,13 @@ object ReflectionObjectRenderer {
         appendReceiverType(extensionReceiver)
         if (addParentheses) append(")")
 
-        append(renderer.renderName(callable.getName()))
+        append(renderer.renderName(callable.name))
     }
 
     // TODO: include visibility, return type
     fun renderProperty(descriptor: PropertyDescriptor): String {
         return StringBuilder {
-            append(if (descriptor.isVar()) "var " else "val ")
+            append(if (descriptor.isVar) "var " else "val ")
             appendReceiversAndName(descriptor)
         }.toString()
     }
@@ -59,12 +60,16 @@ object ReflectionObjectRenderer {
             append("fun ")
             appendReceiversAndName(descriptor)
 
-            descriptor.getValueParameters().joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
-                renderer.renderType(it.getType()) // TODO: vararg
+            descriptor.valueParameters.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
+                renderType(it.type) // TODO: vararg
             }
 
             append(": ")
-            append(renderer.renderType(descriptor.getReturnType()!!))
+            append(renderType(descriptor.returnType!!))
         }.toString()
+    }
+
+    fun renderType(type: JetType): String {
+        return renderer.renderType(type)
     }
 }

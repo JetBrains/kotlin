@@ -345,6 +345,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("platformTypeNotEqualToKotlinType")
+        public void testPlatformTypeNotEqualToKotlinType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/platformTypeNotEqualToKotlinType/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("platformTypeToString")
+        public void testPlatformTypeToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/platformTypeToString/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("referenceToJavaFieldOfKotlinSubclass")
         public void testReferenceToJavaFieldOfKotlinSubclass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/referenceToJavaFieldOfKotlinSubclass/");

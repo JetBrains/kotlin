@@ -28,4 +28,13 @@ class KTypeImpl(
 
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
+
+    override fun equals(other: Any?) =
+            other is KTypeImpl && type.equals(other.type)
+
+    override fun hashCode() =
+            type.hashCode()
+
+    override fun toString() =
+            ReflectionObjectRenderer.renderType(type)
 }
