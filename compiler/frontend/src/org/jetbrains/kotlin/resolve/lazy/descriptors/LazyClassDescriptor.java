@@ -89,6 +89,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final MemoizedFunctionToNotNull<JetObjectDeclaration, ClassDescriptor> extraCompanionObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
+    private final JetScope staticScope;
 
     private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
@@ -118,6 +119,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.declarationProvider = c.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
         this.unsubstitutedMemberScope = createMemberScope(c, this.declarationProvider);
+        this.staticScope = new StaticScopeForKotlinClass(this);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -314,7 +316,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public JetScope getStaticScope() {
-        return resolutionScopesSupport.getStaticScope();
+        return staticScope;
     }
 
     @NotNull

@@ -25,12 +25,8 @@ class ClassResolutionScopesSupport(
         storageManager: StorageManager,
         private val getOuterScope: () -> JetScope
 ) {
-    private val staticScope = StaticScopeForKotlinClass(classDescriptor)
-
     private val scopeForClassHeaderResolution = storageManager.createLazyValue { computeScopeForClassHeaderResolution() }
     private val scopeForMemberDeclarationResolution = storageManager.createLazyValue { computeScopeForMemberDeclarationResolution() }
-
-    fun getStaticScope(): JetScope = staticScope
 
     fun getScopeForClassHeaderResolution(): JetScope = scopeForClassHeaderResolution()
 
