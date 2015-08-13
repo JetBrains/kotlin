@@ -89,6 +89,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
         doTest(fileName);
     }
 
+    @TestMetadata("IncDec.kt")
+    public void testIncDec() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/IncDec.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Lists.kt")
     public void testLists() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/Lists.kt");
@@ -104,6 +110,12 @@ public class VariableValuesTestGenerated extends AbstractVariableValuesTest {
     @TestMetadata("VariablesInitialization.kt")
     public void testVariablesInitialization() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/VariablesInitialization.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("When.kt")
+    public void testWhen() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/variablesValues/When.kt");
         doTest(fileName);
     }
 

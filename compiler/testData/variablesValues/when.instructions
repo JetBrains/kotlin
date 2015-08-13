@@ -1,0 +1,378 @@
+== simpleWhen ==
+fun simpleWhen() {
+    var count = 0
+    when (count) {
+        1 -> 32
+        is Int -> 42
+        in 1..3 -> 45
+        else -> 44
+    }
+
+}
+---------------------
+L0:
+  1 <START>                                                                                                    in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
+  2 mark({ var count = 0 when (count) { 1 -> 32 is Int -> 42 in 1..3 -> 45 else -> 44 } })                     in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
+    v(var count = 0)                                                                                           in: INTS{}          BOOLS{} ARRS{}    out: INTS{count:-}   BOOLS{} ARRS{}
+    r(0) -> <v0>                                                                                               in: INTS{count:-}   BOOLS{} ARRS{}    out: INTS{count:-}   BOOLS{} ARRS{}
+    w(count|<v0>)                                                                                              in: INTS{count:-}   BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(when (count) { 1 -> 32 is Int -> 42 in 1..3 -> 45 else -> 44 })                                       in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    r(count) -> <v1>                                                                                           in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(1 -> 32)                                                                                              in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(1)                                                                                                    in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    r(1) -> <v2>                                                                                               in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    magic[EQUALS_IN_WHEN_CONDITION](1|<v1>, <v2>) -> <v3>                                                      in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp?(L4|<v3>)                                                                                              in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L3 ['when' entry body]:
+    r(32) -> <v4>                                                                                              in: INTS{count:#}   BOOLS{} ARRS{}    out: INTS{count:#}   BOOLS{} ARRS{}
+    jmp(L2)                                                                                                    in: INTS{count:#}   BOOLS{} ARRS{}    out: INTS{count:#}   BOOLS{} ARRS{}
+L4 [next 'when' entry]:
+    mark(is Int -> 42)                                                                                         in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(is Int)                                                                                               in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    magic[IS](is Int|<v1>) -> <v5>                                                                             in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp?(L6|<v5>)                                                                                              in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L5 ['when' entry body]:
+    r(42) -> <v6>                                                                                              in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp(L2)                                                                                                    in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L6 [next 'when' entry]:
+    mark(in 1..3 -> 45)                                                                                        in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    r(1) -> <v7>                                                                                               in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    r(3) -> <v8>                                                                                               in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(1..3)                                                                                                 in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    call(1..3, rangeTo|<v7>, <v8>) -> <v9>                                                                     in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    mark(in 1..3)                                                                                              in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    call(in 1..3, contains|<v9>, <v1>) -> <v10>                                                                in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp?(L8|<v10>)                                                                                             in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L7 ['when' entry body]:
+    r(45) -> <v11>                                                                                             in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp(L2)                                                                                                    in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L8 [next 'when' entry]:
+    mark(else -> 44)                                                                                           in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L9 ['when' entry body]:
+    r(44) -> <v12>                                                                                             in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+    jmp(L2)                                                                                                    in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L2 [after 'when' expression]:
+    merge(when (count) { 1 -> 32 is Int -> 42 in 1..3 -> 45 else -> 44 }|<v4>, <v6>, <v11>, <v12>) -> <v13>    in: INTS{count:[0]} BOOLS{} ARRS{}    out: INTS{count:[0]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                                      in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                    in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                     in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
+=====================
+== complexWhen ==
+fun complexWhen() {
+    var count = 0
+    while (count > 0) {
+        count++
+    }
+
+    when (count) {
+        1 -> if (count == 1) count++ else print("123")
+        else -> if (count == 1) count++ else print("123")
+    }
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                    in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+  2 mark({ var count = 0 while (count > 0) { count++ } when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") } })    in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+    v(var count = 0)                                                                                                                                                           in: INTS{}             BOOLS{} ARRS{}    out: INTS{count:-}      BOOLS{} ARRS{}
+    r(0) -> <v0>                                                                                                                                                               in: INTS{count:-}      BOOLS{} ARRS{}    out: INTS{count:-}      BOOLS{} ARRS{}
+    w(count|<v0>)                                                                                                                                                              in: INTS{count:-}      BOOLS{} ARRS{}    out: INTS{count:[0]}    BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(count) -> <v1>                                                                                                                                                           in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(0) -> <v2>                                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count > 0)                                                                                                                                                            in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count > 0, compareTo|<v1>, <v2>) -> <v3>                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(while (count > 0) { count++ })                                                                                                                                        in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jf(L3|<v3>)                                                                                                                                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L4 [body entry point]:
+  3 mark({ count++ })                                                                                                                                                          in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v4>                                                                                                                                                           in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count++, inc|<v4>) -> <v5>                                                                                                                                            in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    w(count|<v5>)                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+  2 jmp(L2)                                                                                                                                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") })                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v6>                                                                                                                                                           in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(1 -> if (count == 1) count++ else print("123"))                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(1)                                                                                                                                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(1) -> <v7>                                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    magic[EQUALS_IN_WHEN_CONDITION](1|<v6>, <v7>) -> <v8>                                                                                                                      in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jmp?(L9|<v8>)                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L8 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                            in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(count) -> <v9>                                                                                                                                                           in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(1) -> <v10>                                                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                           in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count == 1, equals|<v9>, <v10>) -> <v11>                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jf(L10|<v11>)                                                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(count) -> <v12>                                                                                                                                                          in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count++, inc|<v12>) -> <v13>                                                                                                                                          in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    w(count|<v13>)                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L11)                                                                                                                                                                   in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L10 [else branch]:
+    mark("123")                                                                                                                                                                in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r("123") -> <v14>                                                                                                                                                          in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                         in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(print("123"), print|<v14>) -> <v15>                                                                                                                                   in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L11 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v12>, <v15>) -> <v16>                                                                                                     in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L7)                                                                                                                                                                    in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L9 [next 'when' entry]:
+    mark(else -> if (count == 1) count++ else print("123"))                                                                                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L12 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                            in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v17>                                                                                                                                                          in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(1) -> <v18>                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                           in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count == 1, equals|<v17>, <v18>) -> <v19>                                                                                                                             in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jf(L13|<v19>)                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v20>                                                                                                                                                          in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count++, inc|<v20>) -> <v21>                                                                                                                                          in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    w(count|<v21>)                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L14)                                                                                                                                                                   in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L13 [else branch]:
+    mark("123")                                                                                                                                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r("123") -> <v22>                                                                                                                                                          in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                         in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(print("123"), print|<v22>) -> <v23>                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L14 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v20>, <v23>) -> <v24>                                                                                                     in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jmp(L7)                                                                                                                                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L7 [after 'when' expression]:
+    merge(when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") }|<v16>, <v24>) -> <v25>                             in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                                                                                                      in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                                                    in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                                                     in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+=====================
+== whenInsideFor ==
+fun whenInsideFor() {
+    var count = 0
+    while (count > 0) {
+        count++
+    }
+
+    for (element in 0..4)
+        when (element) {
+            1 -> if (count == 1) count++ else print("123")
+            else -> if (count == 1) count++ else print("123")
+        }
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                            in: INTS{}                               BOOLS{} ARRS{}    out: INTS{}                               BOOLS{} ARRS{}
+  2 mark({ var count = 0 while (count > 0) { count++ } for (element in 0..4) when (element) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") } })    in: INTS{}                               BOOLS{} ARRS{}    out: INTS{}                               BOOLS{} ARRS{}
+    v(var count = 0)                                                                                                                                                                                   in: INTS{}                               BOOLS{} ARRS{}    out: INTS{count:-}                        BOOLS{} ARRS{}
+    r(0) -> <v0>                                                                                                                                                                                       in: INTS{count:-}                        BOOLS{} ARRS{}    out: INTS{count:-}                        BOOLS{} ARRS{}
+    w(count|<v0>)                                                                                                                                                                                      in: INTS{count:-}                        BOOLS{} ARRS{}    out: INTS{count:[0]}                      BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(count) -> <v1>                                                                                                                                                                                   in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    r(0) -> <v2>                                                                                                                                                                                       in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    mark(count > 0)                                                                                                                                                                                    in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    call(count > 0, compareTo|<v1>, <v2>) -> <v3>                                                                                                                                                      in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    mark(while (count > 0) { count++ })                                                                                                                                                                in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    jf(L3|<v3>)                                                                                                                                                                                        in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+L4 [body entry point]:
+  3 mark({ count++ })                                                                                                                                                                                  in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    r(count) -> <v4>                                                                                                                                                                                   in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                      in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    call(count++, inc|<v4>) -> <v5>                                                                                                                                                                    in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    w(count|<v5>)                                                                                                                                                                                      in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+  2 jmp(L2)                                                                                                                                                                                            in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                                                                                        in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+  3 r(0) -> <v6>                                                                                                                                                                                       in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    r(4) -> <v7>                                                                                                                                                                                       in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    mark(0..4)                                                                                                                                                                                         in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    call(0..4, rangeTo|<v6>, <v7>) -> <v8>                                                                                                                                                             in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?]}                   BOOLS{} ARRS{}
+    v(element)                                                                                                                                                                                         in: INTS{count:[0, ?]}                   BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:-}         BOOLS{} ARRS{}
+L7 [loop entry point]:
+L11 [condition entry point]:
+    jmp?(L8)                                                                                                                                                                                           in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    magic[LOOP_RANGE_ITERATION](0..4|<v8>) -> <v9>                                                                                                                                                     in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    w(element|<v9>)                                                                                                                                                                                    in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    mark(for (element in 0..4) when (element) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") })                                                    in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L9 [body entry point]:
+    mark(when (element) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") })                                                                          in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r(element) -> <v10>                                                                                                                                                                                in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    mark(1 -> if (count == 1) count++ else print("123"))                                                                                                                                               in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    mark(1)                                                                                                                                                                                            in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r(1) -> <v11>                                                                                                                                                                                      in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    magic[EQUALS_IN_WHEN_CONDITION](1|<v10>, <v11>) -> <v12>                                                                                                                                           in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    jmp?(L14|<v12>)                                                                                                                                                                                    in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L13 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                                                    in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    r(count) -> <v13>                                                                                                                                                                                  in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    r(1) -> <v14>                                                                                                                                                                                      in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                                                   in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    call(count == 1, equals|<v13>, <v14>) -> <v15>                                                                                                                                                     in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    jf(L15|<v15>)                                                                                                                                                                                      in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    r(count) -> <v16>                                                                                                                                                                                  in: INTS{count:?,element:?}              BOOLS{} ARRS{}    out: INTS{count:?,element:?}              BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                      in: INTS{count:?,element:?}              BOOLS{} ARRS{}    out: INTS{count:?,element:?}              BOOLS{} ARRS{}
+    call(count++, inc|<v16>) -> <v17>                                                                                                                                                                  in: INTS{count:?,element:?}              BOOLS{} ARRS{}    out: INTS{count:?,element:?}              BOOLS{} ARRS{}
+    w(count|<v17>)                                                                                                                                                                                     in: INTS{count:?,element:?}              BOOLS{} ARRS{}    out: INTS{count:?,element:?}              BOOLS{} ARRS{}
+    jmp(L16)                                                                                                                                                                                           in: INTS{count:?,element:?}              BOOLS{} ARRS{}    out: INTS{count:?,element:?}              BOOLS{} ARRS{}
+L15 [else branch]:
+    mark("123")                                                                                                                                                                                        in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    r("123") -> <v18>                                                                                                                                                                                  in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                                                 in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    call(print("123"), print|<v18>) -> <v19>                                                                                                                                                           in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+L16 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v16>, <v19>) -> <v20>                                                                                                                             in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+    jmp(L12)                                                                                                                                                                                           in: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:?}         BOOLS{} ARRS{}
+L14 [next 'when' entry]:
+    mark(else -> if (count == 1) count++ else print("123"))                                                                                                                                            in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L17 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                                                    in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r(count) -> <v21>                                                                                                                                                                                  in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r(1) -> <v22>                                                                                                                                                                                      in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                                                   in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    call(count == 1, equals|<v21>, <v22>) -> <v23>                                                                                                                                                     in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    jf(L18|<v23>)                                                                                                                                                                                      in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r(count) -> <v24>                                                                                                                                                                                  in: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}    out: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                      in: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}    out: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}
+    call(count++, inc|<v24>) -> <v25>                                                                                                                                                                  in: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}    out: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}
+    w(count|<v25>)                                                                                                                                                                                     in: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}    out: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}
+    jmp(L19)                                                                                                                                                                                           in: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}    out: INTS{count:?,element:[0, 4, ?]}      BOOLS{} ARRS{}
+L18 [else branch]:
+    mark("123")                                                                                                                                                                                        in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    r("123") -> <v26>                                                                                                                                                                                  in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                                                 in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    call(print("123"), print|<v26>) -> <v27>                                                                                                                                                           in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L19 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v24>, <v27>) -> <v28>                                                                                                                             in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    jmp(L12)                                                                                                                                                                                           in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L12 [after 'when' expression]:
+    merge(when (element) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") }|<v20>, <v28>) -> <v29>                                                   in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+    jmp(L7)                                                                                                                                                                                            in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L8 [loop exit point]:
+L10 [body exit point]:
+    read (Unit)                                                                                                                                                                                        in: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?],element:[0, 4, ?]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                                                                                                                              in: INTS{}                               BOOLS{} ARRS{}    out: INTS{}                               BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                                                                            in: INTS{}                               BOOLS{} ARRS{}    out: INTS{}                               BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                                                                             in: INTS{}                               BOOLS{} ARRS{}    out: INTS{}                               BOOLS{} ARRS{}
+=====================
+== whenInsideWhile ==
+fun whenInsideWhile() {
+    var count = 0
+    while (count < 3) {
+        count++
+    }
+
+    while (count < 10)
+        when (count) {
+            1 -> if (count == 1) count++ else print("123")
+            else -> if (count == 1) count++ else print("123")
+        }
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                       in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+  2 mark({ var count = 0 while (count < 3) { count++ } while (count < 10) when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") } })    in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+    v(var count = 0)                                                                                                                                                                              in: INTS{}             BOOLS{} ARRS{}    out: INTS{count:-}      BOOLS{} ARRS{}
+    r(0) -> <v0>                                                                                                                                                                                  in: INTS{count:-}      BOOLS{} ARRS{}    out: INTS{count:-}      BOOLS{} ARRS{}
+    w(count|<v0>)                                                                                                                                                                                 in: INTS{count:-}      BOOLS{} ARRS{}    out: INTS{count:[0]}    BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(count) -> <v1>                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(3) -> <v2>                                                                                                                                                                                  in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count < 3)                                                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count < 3, compareTo|<v1>, <v2>) -> <v3>                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(while (count < 3) { count++ })                                                                                                                                                           in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jf(L3|<v3>)                                                                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L4 [body entry point]:
+  3 mark({ count++ })                                                                                                                                                                             in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v4>                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count++, inc|<v4>) -> <v5>                                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    w(count|<v5>)                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+  2 jmp(L2)                                                                                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L7 [loop entry point]:
+L11 [condition entry point]:
+    r(count) -> <v6>                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(10) -> <v7>                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count < 10)                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count < 10, compareTo|<v6>, <v7>) -> <v8>                                                                                                                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(while (count < 10) when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") })                                                    in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jf(L8|<v8>)                                                                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L9 [body entry point]:
+    mark(when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") })                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v9>                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(1 -> if (count == 1) count++ else print("123"))                                                                                                                                          in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(1)                                                                                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(1) -> <v10>                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    magic[EQUALS_IN_WHEN_CONDITION](1|<v9>, <v10>) -> <v11>                                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jmp?(L14|<v11>)                                                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L13 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                                               in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(count) -> <v12>                                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(1) -> <v13>                                                                                                                                                                                 in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                                              in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count == 1, equals|<v12>, <v13>) -> <v14>                                                                                                                                                in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jf(L15|<v14>)                                                                                                                                                                                 in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r(count) -> <v15>                                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                 in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count++, inc|<v15>) -> <v16>                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    w(count|<v16>)                                                                                                                                                                                in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L16)                                                                                                                                                                                      in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L15 [else branch]:
+    mark("123")                                                                                                                                                                                   in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    r("123") -> <v17>                                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                                            in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(print("123"), print|<v17>) -> <v18>                                                                                                                                                      in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L16 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v15>, <v18>) -> <v19>                                                                                                                        in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L12)                                                                                                                                                                                      in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L14 [next 'when' entry]:
+    mark(else -> if (count == 1) count++ else print("123"))                                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L17 ['when' entry body]:
+    mark(if (count == 1) count++ else print("123"))                                                                                                                                               in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v20>                                                                                                                                                                             in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(1) -> <v21>                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(count == 1)                                                                                                                                                                              in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(count == 1, equals|<v20>, <v21>) -> <v22>                                                                                                                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jf(L18|<v22>)                                                                                                                                                                                 in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r(count) -> <v23>                                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    mark(count++)                                                                                                                                                                                 in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    call(count++, inc|<v23>) -> <v24>                                                                                                                                                             in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    w(count|<v24>)                                                                                                                                                                                in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+    jmp(L19)                                                                                                                                                                                      in: INTS{count:?}      BOOLS{} ARRS{}    out: INTS{count:?}      BOOLS{} ARRS{}
+L18 [else branch]:
+    mark("123")                                                                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    r("123") -> <v25>                                                                                                                                                                             in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    mark(print("123"))                                                                                                                                                                            in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    call(print("123"), print|<v25>) -> <v26>                                                                                                                                                      in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L19 ['if' expression result]:
+    merge(if (count == 1) count++ else print("123")|<v23>, <v26>) -> <v27>                                                                                                                        in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jmp(L12)                                                                                                                                                                                      in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L12 [after 'when' expression]:
+    merge(when (count) { 1 -> if (count == 1) count++ else print("123") else -> if (count == 1) count++ else print("123") }|<v19>, <v27>) -> <v28>                                                in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+    jmp(L7)                                                                                                                                                                                       in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L8 [loop exit point]:
+L10 [body exit point]:
+    read (Unit)                                                                                                                                                                                   in: INTS{count:[0, ?]} BOOLS{} ARRS{}    out: INTS{count:[0, ?]} BOOLS{} ARRS{}
+L1:
+  1 <END>                                                                                                                                                                                         in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                                                                       in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                                                                        in: INTS{}             BOOLS{} ARRS{}    out: INTS{}             BOOLS{} ARRS{}
+=====================
