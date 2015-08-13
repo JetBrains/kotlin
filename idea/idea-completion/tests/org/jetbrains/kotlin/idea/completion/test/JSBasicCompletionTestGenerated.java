@@ -49,12 +49,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("AutopopupInFunExtensionReceiver.kt")
-        public void testAutopopupInFunExtensionReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/AutopopupInFunExtensionReceiver.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("BasicAny.kt")
         public void testBasicAny() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/BasicAny.kt");
@@ -100,18 +94,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("CompletionInSetter.kt")
         public void testCompletionInSetter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/CompletionInSetter.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DoNotCompleteForErrorReceivers.kt")
-        public void testDoNotCompleteForErrorReceivers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/DoNotCompleteForErrorReceivers.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("DoNotCompleteForErrorReceiversForce.kt")
-        public void testDoNotCompleteForErrorReceiversForce() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/DoNotCompleteForErrorReceiversForce.kt");
             doTest(fileName);
         }
 
@@ -220,18 +202,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("GenericExtensionFunReceiver2.kt")
         public void testGenericExtensionFunReceiver2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/GenericExtensionFunReceiver2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("GenericExtensionFunTypeArgument.kt")
-        public void testGenericExtensionFunTypeArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/GenericExtensionFunTypeArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("GenericExtensionFunTypeArgument2.kt")
-        public void testGenericExtensionFunTypeArgument2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/GenericExtensionFunTypeArgument2.kt");
             doTest(fileName);
         }
 
@@ -397,12 +367,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("InPackageBegin.kt")
-        public void testInPackageBegin() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InPackageBegin.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("InParametersTypes.kt")
         public void testInParametersTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InParametersTypes.kt");
@@ -547,87 +511,9 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
-        public void testNoAutoPopupAfterNumberLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutoPopupAfterNumberLiteral.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutoPopupInValName.kt")
-        public void testNoAutoPopupInValName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutoPopupInValName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInExtFunName.kt")
-        public void testNoAutopopupInExtFunName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInExtFunName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInFunName.kt")
-        public void testNoAutopopupInFunName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInFunName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInGenericExtFunName.kt")
-        public void testNoAutopopupInGenericExtFunName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInGenericExtFunName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInGenericFunName.kt")
-        public void testNoAutopopupInGenericFunName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInGenericFunName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInGenericValName.kt")
-        public void testNoAutopopupInGenericValName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInGenericValName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInGenericVarName.kt")
-        public void testNoAutopopupInGenericVarName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInGenericVarName.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoAutopopupInVarName.kt")
-        public void testNoAutopopupInVarName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoAutopopupInVarName.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoClassNameDuplication.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoCompletionAfterBigFloat.kt")
-        public void testNoCompletionAfterBigFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionAfterBigFloat.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoCompletionAfterFloat.kt")
-        public void testNoCompletionAfterFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionAfterFloat.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoCompletionAfterInt.kt")
-        public void testNoCompletionAfterInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionAfterInt.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("NoCompletionAfterLong.kt")
-        public void testNoCompletionAfterLong() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionAfterLong.kt");
             doTest(fileName);
         }
 
@@ -685,12 +571,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("NoSecondPressCompletionInAutoPopup.kt")
-        public void testNoSecondPressCompletionInAutoPopup() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoSecondPressCompletionInAutoPopup.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("NoTopLevelCompletionInQualifiedUserTypes.kt")
         public void testNoTopLevelCompletionInQualifiedUserTypes() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoTopLevelCompletionInQualifiedUserTypes.kt");
@@ -718,12 +598,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("ObjectRedeclaration2.kt")
         public void testObjectRedeclaration2() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/ObjectRedeclaration2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("OnlyScopedClassesWithoutExplicit.kt")
-        public void testOnlyScopedClassesWithoutExplicit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/OnlyScopedClassesWithoutExplicit.kt");
             doTest(fileName);
         }
 
@@ -769,36 +643,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("SmartCastAfterIf.kt")
-        public void testSmartCastAfterIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastAfterIf.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SmartCastAfterIfMethod.kt")
-        public void testSmartCastAfterIfMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastAfterIfMethod.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SmartCastForThis.kt")
-        public void testSmartCastForThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastForThis.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SmartCastInWhen.kt")
-        public void testSmartCastInWhen() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastInWhen.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SmartCastThis.kt")
-        public void testSmartCastThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastThis.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("StandardJetArrayFirst.kt")
         public void testStandardJetArrayFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/StandardJetArrayFirst.kt");
@@ -826,42 +670,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("SubpackageInFun.kt")
         public void testSubpackageInFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubpackageInFun.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature1.kt")
-        public void testSubstitutedSignature1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature2.kt")
-        public void testSubstitutedSignature2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature2.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature3.kt")
-        public void testSubstitutedSignature3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature3.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature4.kt")
-        public void testSubstitutedSignature4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature4.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature5.kt")
-        public void testSubstitutedSignature5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature5.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SubstitutedSignature6.kt")
-        public void testSubstitutedSignature6() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubstitutedSignature6.kt");
             doTest(fileName);
         }
 
@@ -1056,6 +864,99 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("TopLevelAnnotationArg2.kt")
             public void testTopLevelAnnotationArg2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TopLevelAnnotationArg2.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/autoPopup")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AutoPopup extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInAutoPopup() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/autoPopup"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("AutopopupInFunExtensionReceiver.kt")
+            public void testAutopopupInFunExtensionReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/AutopopupInFunExtensionReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GenericExtensionFunTypeArgument.kt")
+            public void testGenericExtensionFunTypeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/GenericExtensionFunTypeArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("GenericExtensionFunTypeArgument2.kt")
+            public void testGenericExtensionFunTypeArgument2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/GenericExtensionFunTypeArgument2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutoPopupAfterNumberLiteral.kt")
+            public void testNoAutoPopupAfterNumberLiteral() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutoPopupAfterNumberLiteral.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutoPopupInValName.kt")
+            public void testNoAutoPopupInValName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutoPopupInValName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInExtFunName.kt")
+            public void testNoAutopopupInExtFunName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInExtFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInFunName.kt")
+            public void testNoAutopopupInFunName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInGenericExtFunName.kt")
+            public void testNoAutopopupInGenericExtFunName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInGenericExtFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInGenericFunName.kt")
+            public void testNoAutopopupInGenericFunName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInGenericFunName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInGenericValName.kt")
+            public void testNoAutopopupInGenericValName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInGenericValName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInGenericVarName.kt")
+            public void testNoAutopopupInGenericVarName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInGenericVarName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoAutopopupInVarName.kt")
+            public void testNoAutopopupInVarName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoAutopopupInVarName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoSecondPressCompletionInAutoPopup.kt")
+            public void testNoSecondPressCompletionInAutoPopup() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/NoSecondPressCompletionInAutoPopup.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnlyScopedClassesWithoutExplicit.kt")
+            public void testOnlyScopedClassesWithoutExplicit() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/autoPopup/OnlyScopedClassesWithoutExplicit.kt");
                 doTest(fileName);
             }
         }
@@ -1570,6 +1471,57 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/noCompletion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NoCompletion extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInNoCompletion() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/noCompletion"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("DoNotCompleteForErrorReceivers.kt")
+            public void testDoNotCompleteForErrorReceivers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/DoNotCompleteForErrorReceivers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("DoNotCompleteForErrorReceiversForce.kt")
+            public void testDoNotCompleteForErrorReceiversForce() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/DoNotCompleteForErrorReceiversForce.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InPackageBegin.kt")
+            public void testInPackageBegin() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/InPackageBegin.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoCompletionAfterBigFloat.kt")
+            public void testNoCompletionAfterBigFloat() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/NoCompletionAfterBigFloat.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoCompletionAfterFloat.kt")
+            public void testNoCompletionAfterFloat() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/NoCompletionAfterFloat.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoCompletionAfterInt.kt")
+            public void testNoCompletionAfterInt() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/NoCompletionAfterInt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoCompletionAfterLong.kt")
+            public void testNoCompletionAfterLong() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/noCompletion/NoCompletionAfterLong.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1836,6 +1788,90 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("PreferMoreSpecificExtensionGenericWithParam.kt")
             public void testPreferMoreSpecificExtensionGenericWithParam() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGenericWithParam.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/smartCast")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SmartCast extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInSmartCast() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/smartCast"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("SmartCastAfterIf.kt")
+            public void testSmartCastAfterIf() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/SmartCastAfterIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastAfterIfMethod.kt")
+            public void testSmartCastAfterIfMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/SmartCastAfterIfMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastForThis.kt")
+            public void testSmartCastForThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/SmartCastForThis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastInWhen.kt")
+            public void testSmartCastInWhen() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/SmartCastInWhen.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCastThis.kt")
+            public void testSmartCastThis() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/SmartCastThis.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/substitutedSignature")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SubstitutedSignature extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInSubstitutedSignature() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/substitutedSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("SubstitutedSignature1.kt")
+            public void testSubstitutedSignature1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SubstitutedSignature2.kt")
+            public void testSubstitutedSignature2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SubstitutedSignature3.kt")
+            public void testSubstitutedSignature3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SubstitutedSignature4.kt")
+            public void testSubstitutedSignature4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SubstitutedSignature5.kt")
+            public void testSubstitutedSignature5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SubstitutedSignature6.kt")
+            public void testSubstitutedSignature6() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/substitutedSignature/SubstitutedSignature6.kt");
                 doTest(fileName);
             }
         }
