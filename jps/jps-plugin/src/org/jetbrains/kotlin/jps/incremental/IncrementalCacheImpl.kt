@@ -184,27 +184,25 @@ public class IncrementalCacheImpl(
         val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
 
         for ((className, functions) in dirtyInlineFunctionsMap.getEntries()) {
-            val sourceFiles = classToSourcesMap[className]
-
-            for (sourceFile in sourceFiles) {
-                val targetFiles = functions.flatMap { hasInlineTo[sourceFile, it] }
-                result.addAll(targetFiles)
-            }
-
-            var internalName = className.internalName
-
-            if (packagePartMap.isPackagePart(className)) {
-                val packageInternalName = PackageClassUtils.getPackageClassInternalName(className.packageFqName)
-                val packageJvmName = JvmClassName.byInternalName(packageInternalName)
-                internalName = packageJvmName.internalName
-            }
+            val internalName =
+                if (packagePartMap.isPackagePart(className)) {
+                    val packageInternalName = PackageClassUtils.getPackageClassInternalName(className.packageFqName)
+                    val packageJvmName = JvmClassName.byInternalName(packageInternalName)
+                    packageJvmName.internalName
+                }
+                else {
+                    className.internalName
+                }
 
             val classFilePath = getClassFilePath(internalName)
 
-            for (dependent in dependents) {
-                val targetFiles = functions.flatMap { dependent.hasInlineTo[classFilePath, it] }
+            fun addFilesAffectedByChangedInlineFuns(cache: IncrementalCacheImpl) {
+                val targetFiles = functions.flatMap { cache.hasInlineTo[classFilePath, it] }
                 result.addAll(targetFiles)
             }
+
+            addFilesAffectedByChangedInlineFuns(this)
+            dependents.forEach(::addFilesAffectedByChangedInlineFuns)
         }
 
         dirtyInlineFunctionsMap.clean()
