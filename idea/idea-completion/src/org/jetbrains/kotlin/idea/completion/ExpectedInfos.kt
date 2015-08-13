@@ -266,8 +266,8 @@ class ExpectedInfos(
 
             //TODO: we can loose partially inferred substitution here but what to do?
             if (parameter.type.containsError()) {
-                parameter = parameter.original
                 descriptor = descriptor.original
+                parameter = descriptor.valueParameters[parameter.index]
                 argumentToParameter = call.mapArgumentsToParameters(descriptor)
             }
 
