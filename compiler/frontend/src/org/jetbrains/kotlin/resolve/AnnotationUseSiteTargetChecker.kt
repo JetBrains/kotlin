@@ -16,13 +16,8 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 
@@ -44,101 +39,89 @@ public object AnnotationUseSiteTargetChecker {
     private fun BindingTrace.checkReceiverAnnotations(descriptor: CallableDescriptor) {
         val extensionReceiver = descriptor.extensionReceiverParameter ?: return
         for (annotationWithTarget in extensionReceiver.type.annotations.getUseSiteTargetedAnnotations()) {
-            val annotation = annotationWithTarget.annotation
             val target = annotationWithTarget.target ?: continue
+            fun annotationEntry() = DescriptorToSourceUtils.getSourceFromAnnotation(annotationWithTarget.annotation)
 
             when (target) {
                 AnnotationUseSiteTarget.RECEIVER -> {}
                 AnnotationUseSiteTarget.FIELD,
-                    AnnotationUseSiteTarget.PROPERTY,
-                    AnnotationUseSiteTarget.PROPERTY_GETTER,
-                    AnnotationUseSiteTarget.PROPERTY_SETTER,
-                    AnnotationUseSiteTarget.SETTER_PARAMETER -> report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> report(annotation, INAPPLICABLE_PARAM_TARGET)
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.PROPERTY_GETTER,
+                AnnotationUseSiteTarget.PROPERTY_SETTER,
+                AnnotationUseSiteTarget.SETTER_PARAMETER -> {
+                    annotationEntry()?.let { report(INAPPLICABLE_TARGET_ON_PROPERTY.on(it, target.renderName)) }
+                }
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> annotationEntry()?.let { report(INAPPLICABLE_PARAM_TARGET.on(it)) }
                 AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
             }
         }
     }
 
     private fun BindingTrace.checkDeclaration(annotated: JetAnnotated, descriptor: DeclarationDescriptor) {
-        for (annotationWithTarget in descriptor.annotations.getUseSiteTargetedAnnotations()) {
-            val annotation = annotationWithTarget.annotation
-            val target = annotationWithTarget.target ?: continue
+        for (annotation in annotated.annotationEntries) {
+            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, descriptor, annotationWithTarget)
-                AnnotationUseSiteTarget.PROPERTY -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfPropertyDescriptor(descriptor, annotationWithTarget)
-                AnnotationUseSiteTarget.PROPERTY_SETTER -> checkMutableProperty(descriptor, annotationWithTarget)
+                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, annotation, descriptor)
+                AnnotationUseSiteTarget.PROPERTY -> checkIfProperty(annotated, annotation)
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(annotated, annotation)
+                AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
                     if (annotated !is JetParameter) {
-                        report(annotation, INAPPLICABLE_PARAM_TARGET)
+                        report(INAPPLICABLE_PARAM_TARGET.on(annotation))
                     }
                     else {
                         val containingDeclaration = bindingContext[BindingContext.VALUE_PARAMETER, annotated]?.containingDeclaration
                         if (containingDeclaration !is ConstructorDescriptor || !containingDeclaration.isPrimary) {
-                            report(annotation, INAPPLICABLE_PARAM_TARGET)
+                            report(INAPPLICABLE_PARAM_TARGET.on(annotation))
                         }
                         else if (!annotated.hasValOrVar()) {
-                            report(annotationWithTarget, REDUNDANT_ANNOTATION_TARGET)
+                            report(REDUNDANT_ANNOTATION_TARGET.on(annotation, target.renderName))
                         }
                     }
                 }
-                AnnotationUseSiteTarget.SETTER_PARAMETER -> checkMutableProperty(descriptor, annotationWithTarget)
+                AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
-                AnnotationUseSiteTarget.RECEIVER -> report(annotation, INAPPLICABLE_RECEIVER_TARGET)
+                AnnotationUseSiteTarget.RECEIVER -> report(INAPPLICABLE_RECEIVER_TARGET.on(annotation))
             }
         }
     }
 
     private fun BindingTrace.checkFieldTargetApplicability(
-            modifierListOwner: JetAnnotated,
-            descriptor: DeclarationDescriptor,
-            annotationWithTarget: AnnotationWithTarget) {
-        val propertyDescriptor = checkIfPropertyDescriptor(descriptor, annotationWithTarget) ?: return
+            annotated: JetAnnotated,
+            annotation: JetAnnotationEntry,
+            descriptor: DeclarationDescriptor
+    ) {
+        if (!checkIfProperty(annotated, annotation)) return
 
-        val hasDelegate = modifierListOwner is JetProperty && modifierListOwner.hasDelegate()
-
-        if (!hasDelegate && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false)) {
-            report(annotationWithTarget.annotation, INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD)
-        }
-    }
-
-    private fun BindingTrace.checkMutableProperty(descriptor: DeclarationDescriptor, annotationWIthTarget: AnnotationWithTarget) {
-        val propertyDescriptor = checkIfPropertyDescriptor(descriptor, annotationWIthTarget) ?: return
-
-        if (!propertyDescriptor.isVar) {
-            report(annotationWIthTarget.annotation, INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE)
-        }
-    }
-
-    private fun BindingTrace.checkIfPropertyDescriptor(
-            descriptor: DeclarationDescriptor,
-            annotationWithTarget: AnnotationWithTarget): PropertyDescriptor? {
-        if (descriptor is PropertyDescriptor) {
-            return descriptor
-        }
-        else if (descriptor is ValueParameterDescriptor) {
-            val jetParameter = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetParameter
-            if (jetParameter != null && jetParameter.hasValOrVar()) {
-                val propertyDescriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
-                if (propertyDescriptor != null) return propertyDescriptor
+        if (annotated is JetProperty && descriptor is PropertyDescriptor) {
+            if (!annotated.hasDelegate() && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false)) {
+                report(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD.on(annotation))
             }
         }
-
-        report(annotationWithTarget, INAPPLICABLE_TARGET_ON_PROPERTY)
-        return null
     }
 
-    private fun BindingTrace.report(annotation: AnnotationDescriptor, diagnosticFactory: DiagnosticFactory0<PsiElement>) {
-        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-        report(diagnosticFactory.on(annotationEntry))
+    private fun BindingTrace.checkIfMutableProperty(annotated: JetAnnotated, annotation: JetAnnotationEntry) {
+        if (!checkIfProperty(annotated, annotation)) return
+
+        val isMutable = if (annotated is JetProperty)
+            annotated.isVar
+        else if (annotated is JetParameter)
+            annotated.isMutable
+        else false
+
+        if (!isMutable) report(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE.on(annotation))
     }
 
-    private fun BindingTrace.report(annotationWithTarget: AnnotationWithTarget, diagnosticFactory: DiagnosticFactory1<PsiElement, String>) {
-        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotationWithTarget.annotation) ?: return
-        report(diagnosticFactory.on(annotationEntry, annotationWithTarget.target?.renderName ?: "invalid target"))
+    private fun BindingTrace.checkIfProperty(annotated: JetAnnotated, annotation: JetAnnotationEntry): Boolean {
+        val isProperty = if (annotated is JetProperty)
+            !annotated.isLocal
+        else if (annotated is JetParameter)
+            annotated.hasValOrVar()
+        else false
+
+        val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
+        if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, target))
+        return isProperty
     }
-
-
 }
