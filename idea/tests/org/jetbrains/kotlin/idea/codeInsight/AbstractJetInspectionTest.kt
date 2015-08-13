@@ -22,7 +22,9 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
@@ -31,10 +33,12 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import kotlin.test.assertFalse
+import java.util.*
 
 public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestCase() {
     companion object {
@@ -66,6 +70,7 @@ public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestC
         with(myFixture) {
             setTestDataPath("${JetTestUtils.getHomeDirectory()}/$srcDir")
 
+            val afterFiles = srcDir.listFiles { it.name == "inspectionData" }?.single()?.listFiles { it.extension == "after" } ?: emptyArray()
             val psiFiles = srcDir.walkTopDown().filter { it.name != "inspectionData" }.map {
                 file ->
                 if (file.isDirectory) {
@@ -115,6 +120,23 @@ public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestC
 
                 InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
                 InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.getPath())
+
+                if (afterFiles.isNotEmpty()) {
+                    globalContext.getPresentation(toolWrapper).problemDescriptors.forEach {
+                        problem ->
+                        problem.fixes?.forEach {
+                            CommandProcessor.getInstance().executeCommand(project, {
+                                runWriteAction { it.applyFix(project, problem) }
+                            }, it.name, it.familyName)
+                        }
+                    }
+
+                    for (filePath in afterFiles) {
+                        val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
+                        JetTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
+                    }
+                }
+
             }
             finally {
                 if (isWithRuntime) {
