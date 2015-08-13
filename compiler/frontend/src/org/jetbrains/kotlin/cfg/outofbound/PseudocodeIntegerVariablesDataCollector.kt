@@ -124,7 +124,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
         val updatedEdgeData = edgeData.copy()
         val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
-        removeUnavailableValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+        applyRestrictionsOnValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
         return filteredEdgeData
     }
 
@@ -188,47 +188,70 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun removeUnavailableValuesIfNeeded(
+    private fun applyRestrictionsOnValuesIfNeeded(
             previousInstruction: Instruction,
             currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
         if (previousInstruction is ConditionalJumpInstruction && previousInstruction.element !is JetBinaryExpression) {
-            val conditionFakeVariable = previousInstruction.conditionValue
-            val conditionBoolValue = edgeData.boolFakeVarsToValues.remove(conditionFakeVariable)
+            val conditionBoolValue = edgeData.boolFakeVarsToValues.remove(previousInstruction.conditionValue)
             if (conditionBoolValue != null && previousInstruction.element is JetIfExpression) {
-                when (conditionBoolValue) {
-                    is BooleanVariableValue.True -> {
-                        if (previousInstruction.nextOnFalse == currentInstruction) {
-                            // We are in "else" block and condition evaluated to "true" so this block will not
-                            // be processed (dead code block). To indicate this we will make all variables dead
-                            edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
+                                          previousInstruction.nextOnFalse, edgeData)
+            }
+        }
+        if (previousInstruction is NondeterministicJumpInstruction &&
+            previousInstruction.element is JetWhenExpression &&
+            previousInstruction.inputValue != null
+        ) {
+            val nextOnTrue = previousInstruction.next
+            val nextOnFalse =
+                    if (previousInstruction.resolvedTargets.size() > 0)
+                        previousInstruction.resolvedTargets.values().first()
+                    else return
+            val conditionBoolValue = edgeData.boolFakeVarsToValues.remove(previousInstruction.inputValue)
+            if (conditionBoolValue != null) {
+                applyRestrictionsOnValues(conditionBoolValue, currentInstruction, nextOnTrue, nextOnFalse, edgeData)
+            }
+        }
+    }
+
+    private fun applyRestrictionsOnValues(
+            conditionBoolValue: BooleanVariableValue,
+            currentInstruction: Instruction,
+            onTrueInstruction: Instruction,
+            onFalseInstruction: Instruction,
+            edgeData: ValuesData) {
+        when (conditionBoolValue) {
+            is BooleanVariableValue.True -> {
+                if (onFalseInstruction == currentInstruction) {
+                    // We are in "else" block and condition evaluated to "true" so this block will not
+                    // be processed (dead code block). To indicate this we will make all variables dead
+                    edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                }
+            }
+            is BooleanVariableValue.False -> {
+                if (onTrueInstruction == currentInstruction) {
+                    // We are in "then" block and condition evaluated to "false" so this block will not
+                    // be processed (dead code block). To indicate this we will make all variables dead
+                    edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                }
+            }
+            is BooleanVariableValue.Undefined -> {
+                val restrictions =
+                        if (onTrueInstruction == currentInstruction) {
+                            // We are in "then" block and need to apply onTrue restrictions
+                            conditionBoolValue.onTrueRestrictions
                         }
-                    }
-                    is BooleanVariableValue.False -> {
-                        if (previousInstruction.nextOnTrue == currentInstruction) {
-                            // We are in "then" block and condition evaluated to "false" so this block will not
-                            // be processed (dead code block). To indicate this we will make all variables dead
-                            edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                        else {
+                            assert(onFalseInstruction == currentInstruction)
+                            // We are in "else" block and need to apply onFalse restrictions
+                            conditionBoolValue.onFalseRestrictions
                         }
-                    }
-                    is BooleanVariableValue.Undefined -> {
-                        val restrictions =
-                                if (previousInstruction.nextOnTrue == currentInstruction) {
-                                    // We are in "then" block and need to apply onTrue restrictions
-                                    conditionBoolValue.onTrueRestrictions
-                                }
-                                else {
-                                    assert(previousInstruction.nextOnFalse == currentInstruction)
-                                    // We are in "else" block and need to apply onFalse restrictions
-                                    conditionBoolValue.onFalseRestrictions
-                                }
-                        for ((variable, unrestrictedValues) in restrictions) {
-                            val values = edgeData.intVarsToValues[variable]
-                            if (values is IntegerVariableValues.Defined) {
-                                edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
-                            }
-                        }
+                for ((variable, unrestrictedValues) in restrictions) {
+                    val values = edgeData.intVarsToValues[variable]
+                    if (values is IntegerVariableValues.Defined) {
+                        edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                     }
                 }
             }
@@ -258,8 +281,18 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val unitedArrayVariables = headData.collectionsToSizes
         for (data in tailData) {
             mergeCorrespondingIntegerVariables(unitedIntVariables, data.intVarsToValues)
+            assert(unitedIntFakeVariables.all { data.intFakeVarsToValues[it.key]?.equals(it.value) ?: true },
+                   "intFake variables assumption failed")
+//            if(!(unitedIntFakeVariables.all { data.intFakeVarsToValues[it.key]?.equals(it.value) ?: true })) {
+//                Unit
+//            }
             unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
             MapUtils.mergeMapsIntoFirst(unitedBoolVariables, data.boolVarsToValues) { value1, value2 -> value1.or(value2) }
+            assert(unitedBoolFakeVariables.all { data.boolFakeVarsToValues[it.key]?.equals(it.value) ?: true },
+                   "boolFake variables assumption failed")
+//            if(!(unitedBoolFakeVariables.all { data.boolFakeVarsToValues[it.key]?.equals(it.value) ?: true })) {
+//                Unit
+//            }
             unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
             mergeCorrespondingIntegerVariables(unitedArrayVariables, data.collectionsToSizes)
         }
@@ -288,6 +321,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     instruction.element is JetBinaryExpression -> // todo: make this check stronger, check args types
                         processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                     instruction.element is JetPrefixExpression -> // todo: make this check stronger, check args types
+                        processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
+                    instruction.element is JetPostfixExpression -> // todo: make this check stronger, check args types
                         processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
                     else -> {
                         val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
@@ -331,6 +366,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         if (instruction.element is JetBinaryExpression) {
                             processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
                         }
+                    }
+                    MagicKind.EQUALS_IN_WHEN_CONDITION -> {
+                        processBinaryOperation(JetTokens.EQEQ, instruction, updatedData)
                     }
                     else -> Unit
                 }
@@ -495,6 +533,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { -it }
             JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { it.copy() }
             JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.undefinedWithNoRestrictions) { !it }
+            JetTokens.PLUSPLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) {
+                it + IntegerVariableValues.Defined(1)
+            }
+            JetTokens.MINUSMINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) {
+                it - IntegerVariableValues.Defined(1)
+            }
         }
     }
 

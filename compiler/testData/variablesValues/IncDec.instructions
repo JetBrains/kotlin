@@ -1,0 +1,120 @@
+== simpleInc ==
+fun simpleInc() {
+    var a = 0
+    a++
+    ++a
+}
+---------------------
+L0:
+  1 <START>                        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+  2 mark({ var a = 0 a++ ++a })    in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+    v(var a = 0)                   in: INTS{}      BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    r(0) -> <v0>                   in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:-}   BOOLS{} ARRS{}
+    w(a|<v0>)                      in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
+    r(a) -> <v1>                   in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
+    mark(a++)                      in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
+    call(a++, inc|<v1>) -> <v2>    in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
+    w(a|<v2>)                      in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    r(a) -> <v3>                   in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    mark(++a)                      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    call(++a, inc|<v3>) -> <v4>    in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
+    w(a|<v4>)                      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[2]} BOOLS{} ARRS{}
+L1:
+  1 <END>                          in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+error:
+    <ERROR>                        in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+sink:
+    <SINK>                         in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+=====================
+== simpleDec ==
+fun simpleDec() {
+    var a = 0
+    a--
+    --a
+}
+---------------------
+L0:
+  1 <START>                        in: INTS{}       BOOLS{} ARRS{}    out: INTS{}       BOOLS{} ARRS{}
+  2 mark({ var a = 0 a-- --a })    in: INTS{}       BOOLS{} ARRS{}    out: INTS{}       BOOLS{} ARRS{}
+    v(var a = 0)                   in: INTS{}       BOOLS{} ARRS{}    out: INTS{a:-}    BOOLS{} ARRS{}
+    r(0) -> <v0>                   in: INTS{a:-}    BOOLS{} ARRS{}    out: INTS{a:-}    BOOLS{} ARRS{}
+    w(a|<v0>)                      in: INTS{a:-}    BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
+    r(a) -> <v1>                   in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
+    mark(a--)                      in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
+    call(a--, dec|<v1>) -> <v2>    in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
+    w(a|<v2>)                      in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
+    r(a) -> <v3>                   in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
+    mark(--a)                      in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
+    call(--a, dec|<v3>) -> <v4>    in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
+    w(a|<v4>)                      in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-2]} BOOLS{} ARRS{}
+L1:
+  1 <END>                          in: INTS{}       BOOLS{} ARRS{}    out: INTS{}       BOOLS{} ARRS{}
+error:
+    <ERROR>                        in: INTS{}       BOOLS{} ARRS{}    out: INTS{}       BOOLS{} ARRS{}
+sink:
+    <SINK>                         in: INTS{}       BOOLS{} ARRS{}    out: INTS{}       BOOLS{} ARRS{}
+=====================
+== incInExpr ==
+fun incInExpr() {
+    var a = 0
+    val b = a++
+    val c = ++a
+}
+---------------------
+L0:
+  1 <START>                                        in: INTS{}              BOOLS{} ARRS{}    out: INTS{}              BOOLS{} ARRS{}
+  2 mark({ var a = 0 val b = a++ val c = ++a })    in: INTS{}              BOOLS{} ARRS{}    out: INTS{}              BOOLS{} ARRS{}
+    v(var a = 0)                                   in: INTS{}              BOOLS{} ARRS{}    out: INTS{a:-}           BOOLS{} ARRS{}
+    r(0) -> <v0>                                   in: INTS{a:-}           BOOLS{} ARRS{}    out: INTS{a:-}           BOOLS{} ARRS{}
+    w(a|<v0>)                                      in: INTS{a:-}           BOOLS{} ARRS{}    out: INTS{a:[0]}         BOOLS{} ARRS{}
+    v(val b = a++)                                 in: INTS{a:[0]}         BOOLS{} ARRS{}    out: INTS{a:[0],b:-}     BOOLS{} ARRS{}
+    r(a) -> <v1>                                   in: INTS{a:[0],b:-}     BOOLS{} ARRS{}    out: INTS{a:[0],b:-}     BOOLS{} ARRS{}
+    mark(a++)                                      in: INTS{a:[0],b:-}     BOOLS{} ARRS{}    out: INTS{a:[0],b:-}     BOOLS{} ARRS{}
+    call(a++, inc|<v1>) -> <v2>                    in: INTS{a:[0],b:-}     BOOLS{} ARRS{}    out: INTS{a:[0],b:-}     BOOLS{} ARRS{}
+    w(a|<v2>)                                      in: INTS{a:[0],b:-}     BOOLS{} ARRS{}    out: INTS{a:[1],b:-}     BOOLS{} ARRS{}
+    w(b|<v1>)                                      in: INTS{a:[1],b:-}     BOOLS{} ARRS{}    out: INTS{a:[1],b:?}     BOOLS{} ARRS{}
+    v(val c = ++a)                                 in: INTS{a:[1],b:?}     BOOLS{} ARRS{}    out: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}
+    r(a) -> <v3>                                   in: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}
+    mark(++a)                                      in: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}
+    call(++a, inc|<v3>) -> <v4>                    in: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}
+    w(a|<v4>)                                      in: INTS{a:[1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[2],b:?,c:-} BOOLS{} ARRS{}
+    w(c|<v4>)                                      in: INTS{a:[2],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[2],b:?,c:?} BOOLS{} ARRS{}
+L1:
+  1 <END>                                          in: INTS{}              BOOLS{} ARRS{}    out: INTS{}              BOOLS{} ARRS{}
+error:
+    <ERROR>                                        in: INTS{}              BOOLS{} ARRS{}    out: INTS{}              BOOLS{} ARRS{}
+sink:
+    <SINK>                                         in: INTS{}              BOOLS{} ARRS{}    out: INTS{}              BOOLS{} ARRS{}
+=====================
+== decInExpr ==
+fun decInExpr() {
+    var a = 0
+    val b = a--
+    val c = --a
+}
+---------------------
+L0:
+  1 <START>                                        in: INTS{}               BOOLS{} ARRS{}    out: INTS{}               BOOLS{} ARRS{}
+  2 mark({ var a = 0 val b = a-- val c = --a })    in: INTS{}               BOOLS{} ARRS{}    out: INTS{}               BOOLS{} ARRS{}
+    v(var a = 0)                                   in: INTS{}               BOOLS{} ARRS{}    out: INTS{a:-}            BOOLS{} ARRS{}
+    r(0) -> <v0>                                   in: INTS{a:-}            BOOLS{} ARRS{}    out: INTS{a:-}            BOOLS{} ARRS{}
+    w(a|<v0>)                                      in: INTS{a:-}            BOOLS{} ARRS{}    out: INTS{a:[0]}          BOOLS{} ARRS{}
+    v(val b = a--)                                 in: INTS{a:[0]}          BOOLS{} ARRS{}    out: INTS{a:[0],b:-}      BOOLS{} ARRS{}
+    r(a) -> <v1>                                   in: INTS{a:[0],b:-}      BOOLS{} ARRS{}    out: INTS{a:[0],b:-}      BOOLS{} ARRS{}
+    mark(a--)                                      in: INTS{a:[0],b:-}      BOOLS{} ARRS{}    out: INTS{a:[0],b:-}      BOOLS{} ARRS{}
+    call(a--, dec|<v1>) -> <v2>                    in: INTS{a:[0],b:-}      BOOLS{} ARRS{}    out: INTS{a:[0],b:-}      BOOLS{} ARRS{}
+    w(a|<v2>)                                      in: INTS{a:[0],b:-}      BOOLS{} ARRS{}    out: INTS{a:[-1],b:-}     BOOLS{} ARRS{}
+    w(b|<v1>)                                      in: INTS{a:[-1],b:-}     BOOLS{} ARRS{}    out: INTS{a:[-1],b:?}     BOOLS{} ARRS{}
+    v(val c = --a)                                 in: INTS{a:[-1],b:?}     BOOLS{} ARRS{}    out: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}
+    r(a) -> <v3>                                   in: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}
+    mark(--a)                                      in: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}
+    call(--a, dec|<v3>) -> <v4>                    in: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}
+    w(a|<v4>)                                      in: INTS{a:[-1],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[-2],b:?,c:-} BOOLS{} ARRS{}
+    w(c|<v4>)                                      in: INTS{a:[-2],b:?,c:-} BOOLS{} ARRS{}    out: INTS{a:[-2],b:?,c:?} BOOLS{} ARRS{}
+L1:
+  1 <END>                                          in: INTS{}               BOOLS{} ARRS{}    out: INTS{}               BOOLS{} ARRS{}
+error:
+    <ERROR>                                        in: INTS{}               BOOLS{} ARRS{}    out: INTS{}               BOOLS{} ARRS{}
+sink:
+    <SINK>                                         in: INTS{}               BOOLS{} ARRS{}    out: INTS{}               BOOLS{} ARRS{}
+=====================
