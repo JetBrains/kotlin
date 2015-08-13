@@ -31,7 +31,7 @@ public class KotlinClassHeader(
 
     init {
         if (isCompatibleAbiVersion) {
-            assert((annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)) {
+            assert((annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE && syntheticClassKind != KotlinSyntheticClass.Kind.PACKAGE_PART)) {
                 "Annotation data should be not null only for CLASS and PACKAGE_FACADE (kind=$kind)"
             }
             assert((syntheticClassKind == null) == (kind != Kind.SYNTHETIC_CLASS)) {

@@ -287,11 +287,12 @@ public class PackageCodegen {
         ProtoBuf.Package packageProto = serializer.packageProto(packageFragments, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
-                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
+//                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
+                return true;
             }
         }).build();
 
-        if (packageProto.getMemberCount() == 0) return;
+        //if (packageProto.getMemberCount() == 0) return;
 
         StringTable strings = serializer.getStringTable();
         NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
