@@ -287,9 +287,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
-        JetScope resolutionScope = lazyDeclarationResolver.resolutionScopeToResolveDeclaration(script);
+        JetScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
+        ClassifierDescriptor classifier = memberScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
         return (ClassDescriptor) classifier;
     }
