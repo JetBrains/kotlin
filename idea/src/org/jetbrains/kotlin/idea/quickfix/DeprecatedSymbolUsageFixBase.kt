@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -679,11 +679,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     if (usages.isNotEmpty()) {
                         var explicitType: JetType? = null
                         if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                            val valueTypeWithoutExpectedType = value.analyzeInContext(
+                            val valueTypeWithoutExpectedType = value.computeTypeInContext(
                                     resolutionScope!!,
                                     dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
-                            ).getType(value)
-                            if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
+                            )
+                            if (ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
                                 explicitType = valueType
                             }
                         }
