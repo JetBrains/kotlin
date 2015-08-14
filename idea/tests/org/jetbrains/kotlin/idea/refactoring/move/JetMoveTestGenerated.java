@@ -227,6 +227,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveDirectory/moveDirectory.test")
+    public void testKotlin_moveDirectory_MoveDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveDirectory/moveDirectory.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveFile/addExtensionImport/addExtensionImport.test")
     public void testKotlin_moveFile_addExtensionImport_AddExtensionImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/addExtensionImport/addExtensionImport.test");

@@ -23,7 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
-import java.util.*
+import java.util.HashMap
 
 public interface KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
@@ -32,6 +32,13 @@ public interface KotlinMoveTarget {
 
     // Check possible errors and return corresponding message, or null if no errors are detected
     fun verify(file: PsiFile): String?
+}
+
+public object EmptyKotlinMoveTarget: KotlinMoveTarget {
+    override val packageWrapper: PackageWrapper? get() = null
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = null
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
+    override fun verify(file: PsiFile) = null
 }
 
 public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget {

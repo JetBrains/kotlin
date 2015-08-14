@@ -58,7 +58,7 @@ public class KotlinChangePackageRefactoring(val file: JetFile) {
         )
 
         val declarationUsages = declarationProcessor.findUsages().toList()
-        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(PackageNameInfo(currentFqName, newFqName))
+        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(PackageNameInfo(currentFqName, newFqName.toUnsafe()))
 
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
             packageDirective.setFqName(newFqName)

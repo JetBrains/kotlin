@@ -184,6 +184,8 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         }
 
         fun collectConflictsInDeclarations() {
+            if (newPackageName == UNKNOWN_PACKAGE_FQ_NAME.asString()) return
+
             val declarationToReferenceTargets = HashMap<JetNamedDeclaration, MutableSet<PsiElement>>()
             for (declaration in elementsToMove) {
                 val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, resolveQualifiers = false)
@@ -251,7 +253,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                              ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.getText()}")
 
             if (options.updateInternalReferences) {
-                val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), targetFile.getPackageFqName())
+                val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), targetFile.getPackageFqName().toUnsafe())
                 val (usagesToProcessLater, usagesToProcessNow) = declaration
                         .getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
                         .partition { it is MoveRenameUsageInfoForExtension }

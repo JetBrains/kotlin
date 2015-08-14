@@ -22,6 +22,9 @@ import com.intellij.codeInsight.unwrap.UnwrapHandler
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandAdapter
+import com.intellij.openapi.command.CommandEvent
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
@@ -110,6 +113,8 @@ public fun File.toPsiDirectory(project: Project): PsiDirectory? {
 }
 
 public fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(project).findFile(this)
+
+public fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
 
 public fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
@@ -645,4 +650,15 @@ public fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String,
     var result: T? = null
     ProgressManager.getInstance().runProcessWithProgressSynchronously( { result = action() }, progressTitle, canBeCanceled, this)
     return result
+}
+
+public fun invokeOnceOnCommandFinish(action: () -> Unit) {
+    val commandProcessor = CommandProcessor.getInstance()
+    val listener = object: CommandAdapter() {
+        override fun beforeCommandFinished(event: CommandEvent?) {
+            action()
+            commandProcessor.removeCommandListener(this)
+        }
+    }
+    commandProcessor.addCommandListener(listener)
 }

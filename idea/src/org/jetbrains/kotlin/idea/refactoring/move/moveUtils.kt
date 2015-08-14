@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -65,7 +66,9 @@ import java.util.ArrayList
 import java.util.Collections
 import java.util.Comparator
 
-public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
+val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
+
+public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqNameUnsafe)
 
 public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
     val file = getContainingFile() as? JetFile ?: return listOf()
@@ -113,7 +116,7 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
         return when {
             isExtension,
             packageName == packageNameInfo.oldPackageName,
-            packageName == packageNameInfo.newPackageName,
+            packageName?.asString() == packageNameInfo.newPackageName.asString(),
             isImported(descriptor) -> {
                 createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
             }
