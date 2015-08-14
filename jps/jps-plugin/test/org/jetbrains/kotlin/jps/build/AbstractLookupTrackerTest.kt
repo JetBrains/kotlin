@@ -28,7 +28,8 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
         allowNoFilesWithSuffixInTestData = true,
         allowNoBuildLogFileInTestData = true
 ) {
-    val MULTILINE_COMMENT = "/\\*[^\\*]*\\*/".toRegex()
+    // ignore KDoc like comments which starts with `/**`, example: /** text */
+    val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
 
     override fun createLookupTracker() = TestLookupTracker()
 
@@ -45,7 +46,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
             val text = file.readText()
 
-            val matchResult = MULTILINE_COMMENT.match(text)
+            val matchResult = COMMENT_WITH_LOOKUP_INFO.match(text)
             if (matchResult != null) {
                 matchResult.groups
                 fail("File $file unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
@@ -90,7 +91,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     private fun dropBlockComments(workSrcDir: File) {
         for (file in workSrcDir.walkTopDown()) {
             if (!file.isFile) continue
-            file.writeText(file.readText().replace(MULTILINE_COMMENT, ""))
+            file.writeText(file.readText().replace(COMMENT_WITH_LOOKUP_INFO, ""))
         }
     }
 }
