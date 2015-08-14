@@ -37,12 +37,16 @@ import com.intellij.usageView.UsageViewUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
+import gnu.trove.THashMap
+import gnu.trove.TObjectHashingStrategy
+import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -52,7 +56,6 @@ import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
@@ -266,7 +269,26 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         try {
             val usageList = usages.toArrayList()
 
-            val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
+            val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(
+                    object: TObjectHashingStrategy<PsiElement> {
+                        override fun equals(e1: PsiElement?, e2: PsiElement?): Boolean {
+                            if (e1 === e2) return true
+                            // Name should be enough to distinguish different light elements based on the same original declaration
+                            if (e1 is KotlinLightElement<*, *> && e2 is KotlinLightElement<*, *>) {
+                                return e1.getOrigin() == e2.getOrigin() && e1.name == e2.name
+                            }
+                            return e1 == e2
+                        }
+
+                        override fun computeHashCode(e: PsiElement?): Int {
+                            return when (e) {
+                                null -> 0
+                                is KotlinLightElement<*, *> -> e.getOrigin().hashCode()*31 + (e.name?.hashCode() ?: 0)
+                                else -> e.hashCode()
+                            }
+                        }
+                    }
+            )
             for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
                 for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
                     val newDeclaration = moveDeclaration(oldDeclaration, options.moveTarget, usageList)
