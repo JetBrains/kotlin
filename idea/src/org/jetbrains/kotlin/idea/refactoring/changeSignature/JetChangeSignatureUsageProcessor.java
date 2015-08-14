@@ -747,7 +747,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                                                      new BindingTraceContext(),
                                                      DataFlowInfo.EMPTY,
                                                      TypeUtils.NO_EXPECTED_TYPE,
-                                                     DescriptorUtils.getContainingModule(scope.getContainingDeclaration()));
+                                                     DescriptorUtils.getContainingModule(scope.getContainingDeclaration()),
+                                                     false);
             if (newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                         originalExpr,

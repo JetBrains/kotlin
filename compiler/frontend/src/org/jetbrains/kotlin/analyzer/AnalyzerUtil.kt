@@ -35,10 +35,11 @@ public fun JetExpression.computeTypeInfoInContext(
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule()
+        module: ModuleDescriptor = scope.getModule(),
+        isStatement: Boolean = false
 ): JetTypeInfo {
     val expressionTypingServices = createContainerForMacros(getProject(), module).expressionTypingServices
-    return expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
+    return expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
 public fun JetExpression.analyzeInContext(
@@ -46,9 +47,10 @@ public fun JetExpression.analyzeInContext(
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule()
+        module: ModuleDescriptor = scope.getModule(),
+        isStatement: Boolean = false
 ): BindingContext {
-    computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module)
+    computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module, isStatement)
     return trace.getBindingContext()
 }
 

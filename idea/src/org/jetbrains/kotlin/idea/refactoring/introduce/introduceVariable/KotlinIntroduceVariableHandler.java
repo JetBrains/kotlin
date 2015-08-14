@@ -137,7 +137,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
             JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
-                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, analysisResult.getModuleDescriptor()
+                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, analysisResult.getModuleDescriptor(), false
             ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.DEFAULT.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {
