@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.completion.handlers
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.AutoPopupController
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.codeInsight.AutoPopupController
-import com.intellij.codeInsight.lookup.Lookup
-import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
-import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 
 class WithTailInsertHandler(val tailText: String,
                             val spaceBefore: Boolean,
@@ -55,16 +55,13 @@ class WithTailInsertHandler(val tailText: String,
         //TODO: analyze parenthesis balance to decide whether to replace or not
         var insert = true
         if (overwriteText) {
-            fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
-            fun isTextAt(offset: Int, text: String) = offset + text.length() <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length())) == text
-
             var offset = document.charsSequence.skipSpacesAndLineBreaks(tailOffset)
-            if (isTextAt(offset, tailText)) {
+            if (document.isTextAt(offset, tailText)) {
                 insert = false
                 offset += tailText.length()
                 tailOffset = offset
 
-                if (spaceAfter && isCharAt(offset, ' ')) {
+                if (spaceAfter && document.charsSequence.isCharAt(offset, ' ')) {
                     document.deleteString(offset, offset + 1)
                 }
             }

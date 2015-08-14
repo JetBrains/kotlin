@@ -92,7 +92,7 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
         val document = context.getDocument()
         val chars = document.getCharsSequence()
 
-        val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.charAt(offset) == '(')
+        val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.isCharAt(offset, '('))
 
         val openingBracket = if (insertLambda) '{' else '('
         val closingBracket = if (insertLambda) '}' else ')'
