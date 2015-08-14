@@ -20,10 +20,11 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public class ReplaceInfixCallFix(element: JetBinaryExpression) : JetIntentionAction<JetBinaryExpression>(element) {
 
@@ -32,25 +33,18 @@ public class ReplaceInfixCallFix(element: JetBinaryExpression) : JetIntentionAct
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        val left = element.getLeft()
-        val right = element.getRight()
-        assert(left != null && right != null, "Preconditions checked by factory")
-        val newText = left!!.getText() + "?." + element.getOperationReference().getText() + "(" + right!!.getText() + ")"
-        element.replace(JetPsiFactory(file).createExpression(newText))
+        val newExpression = JetPsiFactory(file).createExpressionByPattern(
+                "$0?.$1($2)", element.left!!, element.operationReference, element.right!!)
+        element.replace(newExpression)
     }
 
     override fun startInWriteAction() = true
 
-    companion object {
-        public fun createFactory(): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
-                override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                    val expression = QuickFixUtil.getParentElementOfType<JetBinaryExpression>(diagnostic, javaClass<JetBinaryExpression>()) ?: return null
-                    if (expression.getLeft() == null) return null
-                    if (expression.getRight() == null) return null
-                    return ReplaceInfixCallFix(expression)
-                }
-            }
+    companion object : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val expression = diagnostic.psiElement.getNonStrictParentOfType<JetBinaryExpression>()!!
+            if (expression.left == null || expression.right == null) return null
+            return ReplaceInfixCallFix(expression)
         }
     }
 }
