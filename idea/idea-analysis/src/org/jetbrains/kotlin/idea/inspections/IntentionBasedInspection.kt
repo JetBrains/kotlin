@@ -25,6 +25,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
@@ -103,6 +104,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
             applyFix()
         }
 
