@@ -128,7 +128,7 @@ public class ExpectedCompletionUtils {
     private static final String NOTHING_ELSE_PREFIX = "NOTHING_ELSE";
 
     private static final String INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:";
-    private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
+    private static final String WITH_ORDER_PREFIX = "WITH_ORDER";
     private static final String AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:";
 
     public static final String RUNTIME_TYPE = "RUNTIME_TYPE:";
@@ -234,7 +234,7 @@ public class ExpectedCompletionUtils {
     }
 
     public static boolean isWithOrder(String fileText) {
-        return Boolean.TRUE.equals(InTextDirectivesUtils.getPrefixedBoolean(fileText, WITH_ORDER_PREFIX));
+        return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, WITH_ORDER_PREFIX).isEmpty();
     }
 
     public static void assertDirectivesValid(String fileText) {
