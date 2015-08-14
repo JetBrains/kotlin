@@ -732,7 +732,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
-            model("basic/custom", recursive = false)
+            model("basic/withLib", recursive = false)
         }
 
         testClass(javaClass<AbstractBasicCompletionHandlerTest>()) {

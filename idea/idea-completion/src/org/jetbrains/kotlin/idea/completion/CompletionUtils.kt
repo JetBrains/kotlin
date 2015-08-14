@@ -134,8 +134,9 @@ enum class CallableWeight {
     baseClassMember,
     thisTypeExtension,
     baseTypeExtension,
-    global, // global non-extension
-    notApplicableReceiverNullable
+    globalOrStatic, // global non-extension
+    typeParameterExtension,
+    receiverCastRequired
 }
 
 val CALLABLE_WEIGHT_KEY = Key<CallableWeight>("CALLABLE_WEIGHT_KEY")

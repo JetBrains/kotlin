@@ -2,9 +2,9 @@ fun foo(klass: Class<*>) {
     klass.<caret>
 }
 
-// EXIST_JAVA_ONLY: simpleName
+// EXIST: simpleName
 // ABSENT: getSimpleName
-// EXIST_JAVA_ONLY: enclosingClass
+// EXIST: enclosingClass
 // ABSENT: getEnclosingClass
-// EXIST_JAVA_ONLY: annotations
+// EXIST: annotations
 // ABSENT: getAnnotations

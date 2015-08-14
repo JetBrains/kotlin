@@ -18,11 +18,13 @@ class Derived : Base() {
     }
 }
 
-fun Any.aAnyExtensionFun(){}
+fun Any.aaAnyExtensionFun(){}
 fun Derived.aaExtensionFun(){}
 
-val Any.aAnyExtensionProp: Int get() = 1
+val Any.aaAnyExtensionProp: Int get() = 1
 val Derived.aaExtensionProp: Int get() = 1
+
+fun <T> T.aaTypeParamExt(){}
 
 // ORDER: aaLocalVal
 // ORDER: aaLocalFun
@@ -32,7 +34,8 @@ val Derived.aaExtensionProp: Int get() = 1
 // ORDER: aaBaseFun
 // ORDER: aaExtensionProp
 // ORDER: aaExtensionFun
-// ORDER: aAnyExtensionProp
-// ORDER: aAnyExtensionFun
+// ORDER: aaAnyExtensionProp
+// ORDER: aaAnyExtensionFun
 // ORDER: aaGlobalProp
 // ORDER: aaGlobalFun
+// ORDER: aaTypeParamExt

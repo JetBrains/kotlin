@@ -32,7 +32,7 @@ public class SamCodegenUtil {
         }
 
         if (original instanceof SamAdapterExtensionFunctionDescriptor) {
-            return ((SamAdapterExtensionFunctionDescriptor) original).getOriginalFunction();
+            return ((SamAdapterExtensionFunctionDescriptor) original).getSourceFunction();
         }
 
         if (original.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {

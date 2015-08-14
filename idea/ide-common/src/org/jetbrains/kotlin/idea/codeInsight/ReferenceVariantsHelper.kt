@@ -76,10 +76,9 @@ public class ReferenceVariantsHelper(
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
             for (variant in variants) {
-                val original = variant.original
-                if (original is SyntheticJavaPropertyDescriptor) {
-                    accessorMethodsToRemove.add(original.getMethod)
-                    accessorMethodsToRemove.addIfNotNull(original.setMethod)
+                if (variant is SyntheticJavaPropertyDescriptor) {
+                    accessorMethodsToRemove.add(variant.getMethod.original)
+                    accessorMethodsToRemove.addIfNotNull(variant.setMethod?.original)
                 }
             }
 

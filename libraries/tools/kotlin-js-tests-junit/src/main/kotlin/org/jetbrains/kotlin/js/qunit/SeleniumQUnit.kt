@@ -1,11 +1,15 @@
 package org.jetbrains.kotlin.js.qunit
 
-import kotlin.test.*
 import org.openqa.selenium.By
+import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.WebDriverWait
+import kotlin.test.assertNotNull
+import kotlin.test.fail
 
-private val TIMEOUT_PER_TEST: Long = 1000
+private val TIMEOUT_PER_INIT: Long = 10
+private val TIMEOUT_PER_TEST: Long = 10
 
 /**
  * Helper class to find QUnit tests using Selenium
@@ -18,52 +22,56 @@ public class SeleniumQUnit(val driver: WebDriver) {
     public fun findTests(): List<WebElement> {
         val qunitContainer = driver.findElement(By.id("qunit"))!!
 
-        var current = ""
-
-        var end = System.currentTimeMillis() + TIMEOUT_PER_TEST
-        while (true) {
-            val prev = current
-            current = qunitContainer.getAttribute("class")
-            val now = System.currentTimeMillis()
-
-            if (current != prev) {
-                end = now + TIMEOUT_PER_TEST
-                continue
-            }
-
-            if (now >= end) break
-
-            Thread.sleep(100)
-        }
-
-        val success = qunitContainer.getAttribute("class") == "done"
-        assertTrue(success, """Test "$current" works too long (broken after $TIMEOUT_PER_TEST milliseconds)""")
+        waitWhileInit(qunitContainer)
+        waitWhileTestsRunning(qunitContainer)
 
         var resultsElement = driver.findElement(By.id("qunit-tests"))
-        assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.getCurrentUrl()}")
+        assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.currentUrl}")
 
         return resultsElement!!.findElements(By.xpath("li"))?.filterNotNull() ?: arrayListOf<WebElement>()
+    }
+
+    private fun waitWhileInit(qunitContainer: WebElement) {
+        try {
+            WebDriverWait(driver, TIMEOUT_PER_INIT).until { qunitContainer.classAttribute !in listOf(null, "running") }
+        } catch (e: TimeoutException) {
+            fail("Tests initialization timeout ($TIMEOUT_PER_INIT s)")
+        }
+    }
+
+    private fun waitWhileTestsRunning(qunitContainer: WebElement) {
+        val wait = WebDriverWait(driver, TIMEOUT_PER_TEST)
+
+        var currentTest = qunitContainer.classAttribute
+        try {
+            while (currentTest != "done") {
+                wait.until { qunitContainer.classAttribute != currentTest }
+                currentTest = qunitContainer.classAttribute
+            }
+        } catch (e: TimeoutException) {
+            fail("Test $currentTest timeout ($TIMEOUT_PER_TEST s)")
+        }
     }
 
     public fun findTestName(element: WebElement): String {
         fun defaultName(name: String?) = name ?: "unknown test name for $element"
         try {
             val testNameElement = element.findElement(By.xpath("descendant::*[@class = 'test-name']"))
-            return defaultName(testNameElement!!.getText())
+            return defaultName(testNameElement!!.text)
         } catch (e: Exception) {
-            return defaultName(element.getAttribute("id"))
+            return defaultName(element["id"])
         }
     }
 
     public fun runTest(element: WebElement): Unit {
-        var result: String = ""
-        result = element.getAttribute("class") ?: "no result"
+        var result: String
+        result = element.classAttribute ?: "no result"
         if ("pass" != result) {
             val testName = "${findTestName(element)} result: $result"
             val failMessages =
                 try {
                     element.findElements(By.xpath("descendant::li[@class!='pass']/*[@class = 'test-message']"))
-                            .map { "$testName. ${it.getText()}" }
+                            .map { "$testName. ${it.text}" }
                 } catch (e: Exception) {
                     listOf("test result for test case $testName")
                 }
@@ -73,4 +81,9 @@ public class SeleniumQUnit(val driver: WebDriver) {
             fail(failMessages.join("\n"))
         }
     }
+
+    private fun WebElement.get(id: String): String? = getAttribute(id)
+
+    private val WebElement.classAttribute: String?
+        get() = this["class"]
 }

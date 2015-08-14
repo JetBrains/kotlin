@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.nullability
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
     override val psiElement: PsiElement? get() = null
@@ -87,7 +87,7 @@ public class LookupElementFactory(
     private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
         val style = when (weight) {
             CallableWeight.thisClassMember, CallableWeight.thisTypeExtension -> Style.BOLD
-            CallableWeight.notApplicableReceiverNullable -> Style.GRAYED
+            CallableWeight.receiverCastRequired -> Style.GRAYED
             else -> Style.NORMAL
         }
         return if (style != Style.NORMAL) {
@@ -255,17 +255,16 @@ public class LookupElementFactory(
         }
 
         if (descriptor is CallableDescriptor) {
-            val original = descriptor.original
-            val extensionReceiver = original.extensionReceiverParameter
+            val extensionReceiver = descriptor.original.extensionReceiverParameter
             when {
-                original is SyntheticJavaPropertyDescriptor -> {
-                    var from = original.getMethod.getName().asString() + "()"
-                    original.setMethod?.let { from += "/" + it.getName().asString() + "()" }
+                descriptor is SyntheticJavaPropertyDescriptor -> {
+                    var from = descriptor.getMethod.getName().asString() + "()"
+                    descriptor.setMethod?.let { from += "/" + it.getName().asString() + "()" }
                     element = element.appendTailText(" (from $from)", true)
                 }
 
                 // no need to show them as extensions
-                original is SamAdapterExtensionFunctionDescriptor -> {}
+                descriptor is SamAdapterExtensionFunctionDescriptor -> {}
 
                 extensionReceiver != null -> {
                     val receiverPresentation = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(extensionReceiver.type)
@@ -327,42 +326,46 @@ public class LookupElementFactory(
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {
         if (descriptor !is CallableDescriptor) return null
 
-        val isReceiverNullable = receiverTypes.isNotEmpty() && receiverTypes.all { it.nullability() == TypeNullability.NULLABLE }
-        val receiverParameter = descriptor.getExtensionReceiverParameter()
-
-        if (receiverParameter != null) {
-            val receiverParamType = receiverParameter.getType()
-            return if (isReceiverNullable && receiverParamType.nullability() == TypeNullability.NOT_NULL)
-                CallableWeight.notApplicableReceiverNullable
-            else if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParamType) })
-                CallableWeight.thisTypeExtension
-            else
-                CallableWeight.baseTypeExtension
+        val overridden = descriptor.overriddenDescriptors
+        if (overridden.isNotEmpty()) {
+            return overridden.map { callableWeight(it)!! }.min()!!
         }
-        else {
-            if (isReceiverNullable) {
-                return CallableWeight.notApplicableReceiverNullable
+
+        // don't treat synthetic extensions as real extensions
+        if (descriptor is SyntheticJavaPropertyDescriptor) {
+            return callableWeight(descriptor.getMethod)
+        }
+        if (descriptor is SamAdapterExtensionFunctionDescriptor) {
+            return callableWeight(descriptor.sourceFunction)
+        }
+
+        val receiverParameter = descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
+        if (receiverParameter != null) {
+            return if (receiverTypes.any { TypeUtils.equalTypes(it, receiverParameter.type) }) {
+                when {
+                    descriptor.isExtensionForTypeParameter() -> CallableWeight.typeParameterExtension
+                    descriptor.isExtension -> CallableWeight.thisTypeExtension
+                    else -> CallableWeight.thisClassMember
+                }
+            }
+            else if (receiverTypes.any { it.isSubtypeOf(receiverParameter.type) }) {
+                if (descriptor.isExtension) CallableWeight.baseTypeExtension else CallableWeight.baseClassMember
             }
             else {
-                if (descriptor !is CallableMemberDescriptor) {
-                    return CallableWeight.local
-                }
-
-                val container = descriptor.getContainingDeclaration()
-                return when (container) {
-                    is PackageFragmentDescriptor -> CallableWeight.global
-
-                    is ClassifierDescriptor -> {
-                        if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
-                            CallableWeight.thisClassMember
-                        else
-                            CallableWeight.baseClassMember
-                    }
-
-                    else -> CallableWeight.local
-                }
+                CallableWeight.receiverCastRequired
             }
         }
+
+        return when (descriptor.containingDeclaration) {
+            is PackageFragmentDescriptor, is ClassifierDescriptor -> CallableWeight.globalOrStatic
+            else -> CallableWeight.local
+        }
+    }
+
+    private fun CallableDescriptor.isExtensionForTypeParameter(): Boolean {
+        val receiverParameter = original.extensionReceiverParameter ?: return false
+        val typeParameter = receiverParameter.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+        return typeParameter.containingDeclaration == original
     }
 
     companion object {

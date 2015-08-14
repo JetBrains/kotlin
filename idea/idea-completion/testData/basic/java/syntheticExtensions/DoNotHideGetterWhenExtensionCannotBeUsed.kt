@@ -4,5 +4,5 @@ fun File.foo(absolutePath: String?) {
     <caret>
 }
 
-// EXIST_JAVA_ONLY: getAbsolutePath
+// EXIST: getAbsolutePath
 // ABSENT: { itemText: "absolutePath", typeText: "String" }

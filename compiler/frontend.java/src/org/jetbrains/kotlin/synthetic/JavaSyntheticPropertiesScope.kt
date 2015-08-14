@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
+import java.util.HashMap
 import java.util.HashSet
+import kotlin.properties.Delegates
 
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
@@ -107,7 +109,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
                 .singleOrNull { isGoodSetMethod(it, getMethod) }
 
         val propertyType = getMethod.returnType ?: return null
-        return MyPropertyDescriptor(ownerClass, getMethod.original, setMethod?.original, name, propertyType)
+        return MyPropertyDescriptor.create(ownerClass, getMethod.original, setMethod?.original, name, propertyType)
     }
 
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
@@ -248,57 +250,100 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
     }
 
     private class MyPropertyDescriptor(
-            ownerClass: ClassDescriptor,
-            override val getMethod: FunctionDescriptor,
-            override val setMethod: FunctionDescriptor?,
+            containingDeclaration: DeclarationDescriptor,
+            original: PropertyDescriptor?,
+            annotations: Annotations,
+            modality: Modality,
+            visibility: Visibility,
+            isVar: Boolean,
             name: Name,
-            type: JetType
-    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
-            DescriptorUtils.getContainingModule(ownerClass),
-            null,
-            Annotations.EMPTY,
-            Modality.FINAL,
-            syntheticExtensionVisibility(getMethod),
-            setMethod != null,
-            name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            SourceElement.NO_SOURCE
-    ) {
-        init {
-            val classTypeParams = ownerClass.typeConstructor.parameters
-            val typeParameters = ArrayList<TypeParameterDescriptor>(classTypeParams.size())
-            val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(classTypeParams, TypeSubstitution.EMPTY, this, typeParameters)
+            kind: CallableMemberDescriptor.Kind,
+            source: SourceElement
+    ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source) {
 
-            val propertyType = typeSubstitutor.safeSubstitute(type, Variance.INVARIANT)
-            val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
-            setType(propertyType, typeParameters, null, receiverType)
+        override var getMethod: FunctionDescriptor by Delegates.notNull()
+            private set
 
-            val getter = PropertyGetterDescriptorImpl(this,
+        override var setMethod: FunctionDescriptor? = null
+            private set
+
+        companion object {
+            fun create(ownerClass: ClassDescriptor, getMethod: FunctionDescriptor, setMethod: FunctionDescriptor?, name: Name, type: JetType): MyPropertyDescriptor {
+                val visibility = syntheticExtensionVisibility(getMethod)
+                val descriptor = MyPropertyDescriptor(DescriptorUtils.getContainingModule(ownerClass),
+                                                      null,
                                                       Annotations.EMPTY,
                                                       Modality.FINAL,
                                                       visibility,
-                                                      false,
-                                                      false,
+                                                      setMethod != null,
+                                                      name,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
-                                                      null,
                                                       SourceElement.NO_SOURCE)
-            getter.initialize(null)
+                descriptor.getMethod = getMethod
+                descriptor.setMethod = setMethod
 
-            val setter = if (setMethod != null)
-                PropertySetterDescriptorImpl(this,
-                                             Annotations.EMPTY,
-                                             Modality.FINAL,
-                                             syntheticExtensionVisibility(setMethod),
-                                             false,
-                                             false,
-                                             CallableMemberDescriptor.Kind.SYNTHESIZED,
-                                             null,
-                                             SourceElement.NO_SOURCE)
-            else
-                null
-            setter?.initializeDefault()
+                val classTypeParams = ownerClass.typeConstructor.parameters
+                val typeParameters = ArrayList<TypeParameterDescriptor>(classTypeParams.size())
+                val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(classTypeParams, TypeSubstitution.EMPTY, descriptor, typeParameters)
 
-            initialize(getter, setter)
+                val propertyType = typeSubstitutor.safeSubstitute(type, Variance.INVARIANT)
+                val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
+                descriptor.setType(propertyType, typeParameters, null, receiverType)
+
+                val getter = PropertyGetterDescriptorImpl(descriptor,
+                                                          Annotations.EMPTY,
+                                                          Modality.FINAL,
+                                                          visibility,
+                                                          false,
+                                                          false,
+                                                          CallableMemberDescriptor.Kind.SYNTHESIZED,
+                                                          null,
+                                                          SourceElement.NO_SOURCE)
+                getter.initialize(null)
+
+                val setter = if (setMethod != null)
+                    PropertySetterDescriptorImpl(descriptor,
+                                                 Annotations.EMPTY,
+                                                 Modality.FINAL,
+                                                 syntheticExtensionVisibility(setMethod),
+                                                 false,
+                                                 false,
+                                                 CallableMemberDescriptor.Kind.SYNTHESIZED,
+                                                 null,
+                                                 SourceElement.NO_SOURCE)
+                else
+                    null
+                setter?.initializeDefault()
+
+                descriptor.initialize(getter, setter)
+
+                return descriptor
+            }
+        }
+
+        override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, newModality: Modality, newVisibility: Visibility, original: PropertyDescriptor?, kind: CallableMemberDescriptor.Kind): PropertyDescriptorImpl {
+            return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, name, kind, source).apply {
+                getMethod = this@MyPropertyDescriptor.getMethod
+                setMethod = this@MyPropertyDescriptor.setMethod
+            }
+        }
+
+        override fun substitute(originalSubstitutor: TypeSubstitutor): PropertyDescriptor? {
+            val descriptor = super<PropertyDescriptorImpl>.substitute(originalSubstitutor) as MyPropertyDescriptor
+            if (descriptor == this) return descriptor
+
+            val classTypeParameters = (getMethod.containingDeclaration as ClassDescriptor).typeConstructor.parameters
+            val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
+            for ((typeParameter, classTypeParameter) in typeParameters.zip(classTypeParameters)) {
+                val typeProjection = originalSubstitutor.substitution[typeParameter.defaultType] ?: continue
+                substitutionMap[classTypeParameter.typeConstructor] = typeProjection
+
+            }
+            val classParametersSubstitutor = TypeSubstitutor.create(substitutionMap)
+
+            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)!!
+            descriptor.setMethod = setMethod?.substitute(classParametersSubstitutor)
+            return descriptor
         }
     }
 }

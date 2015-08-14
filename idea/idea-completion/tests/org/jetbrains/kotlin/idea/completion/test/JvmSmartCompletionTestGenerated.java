@@ -1228,6 +1228,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("AutoNotNullThisType.kt")
+        public void testAutoNotNullThisType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullThisType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("AutoNotNullType.kt")
         public void testAutoNotNullType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullType.kt");
@@ -1249,6 +1255,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("AutoNotNullTypeWithQualifier.kt")
         public void testAutoNotNullTypeWithQualifier() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeWithQualifier.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CheckCorrectThis.kt")
+        public void testCheckCorrectThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/CheckCorrectThis.kt");
             doTest(fileName);
         }
 

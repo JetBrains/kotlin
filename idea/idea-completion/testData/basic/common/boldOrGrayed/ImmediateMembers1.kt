@@ -12,13 +12,11 @@ class Derived : Base() {
     fun fromDerived(){}
 }
 
-fun foo(o: Any) {
-    if (o is Derived) {
-        o.<caret>
-    }
+fun foo(d: Derived) {
+    d.<caret>
 }
 
-// EXIST: { itemText: "fromTrait", attributes: "bold" }
+// EXIST: { itemText: "fromTrait", attributes: "" }
 // EXIST: { itemText: "fromDerived", attributes: "bold" }
 // EXIST: { itemText: "fromBase", attributes: "" }
 // EXIST: { itemText: "hashCode", attributes: "" }
