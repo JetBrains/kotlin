@@ -17,24 +17,40 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention())
 
@@ -47,9 +63,9 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         applyTo(element, detectPropertyNameToUse(element)!!)
     }
 
-    public fun applyTo(element: JetCallExpression, propertyName: Name) {
+    public fun applyTo(element: JetCallExpression, propertyName: Name): JetExpression {
         val arguments = element.getValueArguments()
-        when (arguments.size()) {
+        return when (arguments.size()) {
             0 -> replaceWithPropertyGet(element, propertyName)
             1 -> replaceWithPropertySet(element, propertyName, arguments.single())
             else -> error("More than one argument in call to accessor")
@@ -70,22 +86,51 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
         val moduleDescriptor = callExpression.getResolutionFacade().findModuleDescriptor(callExpression)
-        val inDescriptor = resolutionScope.getContainingDeclaration()
+        val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
+        val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
+        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
-        fun isVisible(descriptor: DeclarationDescriptor): Boolean {
-            return if (descriptor is DeclarationDescriptorWithVisibility)
-                descriptor.isVisible(inDescriptor, bindingContext, callee)
-            else
-                true
+        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, moduleDescriptor)) return null
+
+        val isSetUsage = callExpression.valueArguments.size() == 1
+        if (isSetUsage && property.type != function.valueParameters.single().type) {
+            val qualifiedExpressionCopy = qualifiedExpression.copied()
+            val callExpressionCopy = ((qualifiedExpressionCopy as? JetQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as JetCallExpression
+            val newExpression = applyTo(callExpressionCopy, property.name)
+            val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+            val newBindingContext = newExpression.analyzeInContext(resolutionScope, bindingTrace, dataFlowInfo, expectedType, moduleDescriptor)
+            if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR && it.factory != Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT }) return null
         }
 
-        val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, callExpression.getProject(), ::isVisible)
-        val propertyName = property.getName()
-        val accessibleVariables = referenceVariantsHelper.getReferenceVariants(callee, DescriptorKindFilter.VARIABLES, { it == propertyName })
-                .map { it.original }
-        if (property !in accessibleVariables) return null // shadowed by something else
-
         return property.name
+    }
+
+    private fun checkWillResolveToProperty(
+            resolvedCall: ResolvedCall<out CallableDescriptor>,
+            property: SyntheticJavaPropertyDescriptor,
+            bindingContext: BindingContext,
+            resolutionScope: JetScope,
+            dataFlowInfo: DataFlowInfo,
+            expectedType: JetType,
+            moduleDescriptor: ModuleDescriptor
+    ): Boolean {
+        val project = resolvedCall.call.callElement.project
+        val newCall = object : DelegatingCall(resolvedCall.call) {
+            private val newCallee = JetPsiFactory(project).createExpressionByPattern("$0", property.name)
+
+            override fun getCalleeExpression() = newCallee
+            override fun getValueArgumentList(): JetValueArgumentList? = null
+            override fun getValueArguments(): List<ValueArgument> = emptyList()
+            override fun getFunctionLiteralArguments(): List<FunctionLiteralArgument> = emptyList()
+        }
+
+        val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
+                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                                                        CallChecker.DoNothing, false)
+        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val result = callResolver.resolveSimpleProperty(context)
+        return result.isSuccess && result.resultingDescriptor.original == property
     }
 
     private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: JetScope): SyntheticJavaPropertyDescriptor? {
@@ -98,13 +143,13 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return null
     }
 
-    private fun replaceWithPropertyGet(callExpression: JetCallExpression, propertyName: Name) {
+    private fun replaceWithPropertyGet(callExpression: JetCallExpression, propertyName: Name): JetExpression {
         val newExpression = JetPsiFactory(callExpression).createExpression(propertyName.render())
-        callExpression.replace(newExpression)
+        return callExpression.replaced(newExpression)
     }
 
     //TODO: what if it was used as expression (of type Unit)?
-    private fun replaceWithPropertySet(callExpression: JetCallExpression, propertyName: Name, argument: JetValueArgument) {
+    private fun replaceWithPropertySet(callExpression: JetCallExpression, propertyName: Name, argument: JetValueArgument): JetExpression {
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
         if (qualifiedExpression != null) {
             val pattern = when (qualifiedExpression) {
@@ -118,11 +163,11 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
                     propertyName,
                     argument.getArgumentExpression()!!
             )
-            qualifiedExpression.replace(newExpression)
+            return qualifiedExpression.replaced(newExpression)
         }
         else {
             val newExpression = JetPsiFactory(callExpression).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
-            callExpression.replace(newExpression)
+            return callExpression.replaced(newExpression)
         }
     }
 }
