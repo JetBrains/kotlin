@@ -51,3 +51,8 @@ fun forWithUpdate() {
     }
     42
 }
+
+for infiniteWhile() {
+    var i = 1
+    while (i > 0) ++i
+}
