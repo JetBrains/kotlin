@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -256,17 +255,17 @@ public class ModifiersChecker {
         }
 
         @NotNull
-        public Map<JetModifierKeywordToken, ASTNode> getNodesCorrespondingToModifiers(
+        public Map<JetModifierKeywordToken, PsiElement> getTokensCorrespondingToModifiers(
                 @NotNull JetModifierList modifierList,
                 @NotNull Collection<JetModifierKeywordToken> possibleModifiers
         ) {
-            Map<JetModifierKeywordToken, ASTNode> nodes = Maps.newHashMap();
+            Map<JetModifierKeywordToken, PsiElement> tokens = Maps.newHashMap();
             for (JetModifierKeywordToken modifier : possibleModifiers) {
                 if (modifierList.hasModifier(modifier)) {
-                    nodes.put(modifier, modifierList.getModifierNode(modifier));
+                    tokens.put(modifier, modifierList.getModifier(modifier));
                 }
             }
-            return nodes;
+            return tokens;
         }
 
 
