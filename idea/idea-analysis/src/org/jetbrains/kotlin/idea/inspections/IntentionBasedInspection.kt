@@ -108,6 +108,8 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
 
         override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
             assert(startElement == endElement)
+            if (!isAvailable(project, file, startElement, endElement)) return
+
             startElement.getOrCreateEditor()?.let { editor ->
                 editor.getCaretModel().moveToOffset(startElement.getTextOffset())
                 intention.applyTo(startElement as TElement, editor)
