@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger;
 
 import com.intellij.debugger.impl.DescriptorTestCase;
 import com.intellij.debugger.impl.OutputChecker;
+import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -28,24 +29,26 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.testFramework.IdeaTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,7 +65,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected OutputChecker initOutputChecker() {
-        return new KotlinOutputChecker(TINY_APP);
+        return new KotlinOutputChecker(getTestAppPath(), getAppOutputPath());
     }
 
     @NotNull
@@ -75,26 +78,6 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected void setUp() throws Exception {
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
         super.setUp();
-
-        UsefulTestCase.edt(new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
-
-                        projectDescriptor.configureModule(getModule(), model);
-
-                        VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
-                        assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
-                        configureCustomLibrary(model, customLibrarySources);
-
-                        model.commit();
-                    }
-                });
-            }
-        });
     }
 
     private static void configureCustomLibrary(@NotNull ModifiableRootModel model, @NotNull VirtualFile customLibrarySources) {
@@ -116,22 +99,46 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @Override
-    protected void ensureCompiledAppExists() throws Exception {
+    protected void setUpModule() {
+        super.setUpModule();
+
+        IdeaTestUtil.setModuleLanguageLevel(myModule, LanguageLevel.JDK_1_6);
+
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
 
             CUSTOM_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(CUSTOM_LIBRARY_SOURCES.getPath(), "debuggerCustomLibrary", false);
 
-            String outputDir = modulePath + File.separator + "classes";
+            String outputDir = getAppOutputPath();
             String sourcesDir = modulePath + File.separator + "src";
 
             MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
 
             List<String> options = Arrays.asList("-d", outputDir, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
-            JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+            try {
+                JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             IS_TINY_APP_COMPILED = true;
         }
+
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+
+                projectDescriptor.configureModule(getModule(), model);
+
+                VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
+                assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
+                configureCustomLibrary(model, customLibrarySources);
+
+                model.commit();
+            }
+        });
     }
 
     private static List<File> findJavaFiles(@NotNull File directory) {
@@ -154,27 +161,31 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     private static class KotlinOutputChecker extends OutputChecker {
 
-        public KotlinOutputChecker(@NotNull String appPath) {
-            super(appPath);
+        public KotlinOutputChecker(@NotNull String appPath, @NotNull String outputPath) {
+            super(appPath, outputPath);
         }
 
         @Override
         protected String replaceAdditionalInOutput(String str) {
             //noinspection ConstantConditions
-            String jdkPath = PluginTestCaseBase.fullJdk().getHomePath().replace('/', File.separatorChar);
-            return super.replaceAdditionalInOutput(
-                    str.replace(ForTestCompileRuntime.runtimeJarForTests().getPath(), "!KOTLIN_RUNTIME!")
-                            .replace(CUSTOM_LIBRARY_JAR.getPath(), "!CUSTOM_LIBRARY!")
-                            .replace(jdkPath, "!JDK_HOME!")
-            );
+            try {
+                return super.replaceAdditionalInOutput(
+                        str.replace(ForTestCompileRuntime.runtimeJarForTests().getCanonicalPath(), "!KOTLIN_RUNTIME!")
+                           .replace(CUSTOM_LIBRARY_JAR.getCanonicalPath(), "!CUSTOM_LIBRARY!")
+                );
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     @Override
-    protected String getAppClassesPath() {
-        return super.getAppClassesPath() + File.pathSeparator +
-                    ForTestCompileRuntime.runtimeJarForTests().getPath() + File.pathSeparator +
-                    CUSTOM_LIBRARY_JAR.getPath();
+    protected JavaParameters createJavaParameters(String mainClass) {
+        JavaParameters parameters = super.createJavaParameters(mainClass);
+        parameters.getClassPath().add(ForTestCompileRuntime.runtimeJarForTests());
+        parameters.getClassPath().add(CUSTOM_LIBRARY_JAR);
+        return parameters;
     }
 
     @Override
