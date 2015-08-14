@@ -152,13 +152,12 @@ public class JavaToKotlinPreconversionPullUpHelper(
 
         if (originalMember is PsiField) {
             val usages = fieldsToUsages[originalMember] ?: return
-            val firstUsage = usages.firstOrNull() ?: return
-            val fieldDescriptor = firstUsage.fieldDescriptor
-            val targetLightClass = (firstUsage.reference?.resolve() as? PsiField)?.containingClass ?: return
-            val getter = targetLightClass.findMethodBySignature(fieldDescriptor.getterPrototype, false)
-            val setter = targetLightClass.findMethodBySignature(fieldDescriptor.setterPrototype, false)
-
             for (usage in usages) {
+                val fieldDescriptor = usage.fieldDescriptor
+                val targetLightClass = (usage.reference?.resolve() as? PsiField)?.containingClass ?: return
+                val getter = targetLightClass.findMethodBySignature(fieldDescriptor.getterPrototype, false)
+                val setter = targetLightClass.findMethodBySignature(fieldDescriptor.setterPrototype, false)
+
                 EncapsulateFieldHelper
                         .getHelper(usage.element!!.language)
                         ?.processUsage(usage, encapsulateFieldsDescriptor, setter, getter)
