@@ -33,10 +33,8 @@ import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -213,103 +211,86 @@ public class IncrementalCacheImpl(
         return File(outputDir, "$internalClassName.class").canonicalPath
     }
 
-    private fun getRecompilationDecision(protoChanged: Boolean, constantsChanged: Boolean) =
-            when {
-                constantsChanged -> RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
-                protoChanged -> RECOMPILE_OTHER_KOTLIN_IN_CHUNK
-                else -> DO_NOTHING
-            }
-
     public fun saveCacheFormatVersion() {
         cacheFormatVersion.saveIfNeeded()
     }
 
-    public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): RecompilationDecision {
+    public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): ChangesInfo {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
-        protoMap.put(jvmClassName, file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
+        protoMap.process(jvmClassName, file.readBytes(), isPackage = false, checkChangesIsOpenPart = false)
         dirtyOutputClassesMap.notDirty(MODULE_MAPPING_FILE_NAME)
         sourceFiles.forEach { sourceToClassesMap.add(it, jvmClassName) }
-        return DO_NOTHING
+        return ChangesInfo.NO_CHANGES
     }
 
-    public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
-        val fileBytes = kotlinClass.getFileContents()
-        val className = JvmClassName.byClassId(kotlinClass.getClassId())
-        val header = kotlinClass.getClassHeader()
+    public fun saveFileToCache(generatedClass: GeneratedJvmClass): ChangesInfo {
+        val sourceFiles: Collection<File> = generatedClass.sourceFiles
+        val kotlinClass: LocalFileKotlinClass = generatedClass.outputClass
+        val className = JvmClassName.byClassId(kotlinClass.classId)
 
-        dirtyOutputClassesMap.notDirty(className.getInternalName())
+        dirtyOutputClassesMap.notDirty(className.internalName)
         sourceFiles.forEach {
             sourceToClassesMap.add(it, className)
             classToSourcesMap.add(className, it)
         }
 
-        inlineFunctionsMap.process(className, fileBytes)
-
-        val decision = when {
+        val header = kotlinClass.classHeader
+        val changesInfo = when {
             header.isCompatiblePackageFacadeKind() ->
-                getRecompilationDecision(
-                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
-                        constantsChanged = false
-                )
+                protoMap.process(kotlinClass, isPackage = true)
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
-                getRecompilationDecision(
-                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = true),
-                        constantsChanged = constantsMap.process(className, fileBytes)
-                )
-            }
-            header.isCompatibleClassKind() ->
-                when (header.classKind!!) {
-                    JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
-                            protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData!!), isPackage = false),
-                            constantsChanged = constantsMap.process(className, fileBytes)
-                    )
 
-                    JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
-                }
+                protoMap.process(kotlinClass, isPackage = true) +
+                constantsMap.process(kotlinClass)
+            }
+            header.isCompatibleClassKind() && JvmAnnotationNames.KotlinClass.Kind.CLASS == header.classKind ->
+                protoMap.process(kotlinClass, isPackage = false) +
+                constantsMap.process(kotlinClass) +
+                inlineFunctionsMap.process(kotlinClass)
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
-
                 packagePartMap.addPackagePart(className)
 
-                getRecompilationDecision(
-                        protoChanged = false,
-                        constantsChanged = constantsMap.process(className, fileBytes)
-                )
+                constantsMap.process(kotlinClass) +
+                inlineFunctionsMap.process(kotlinClass)
             }
-            else -> {
-                DO_NOTHING
-            }
+            else -> ChangesInfo.NO_CHANGES
         }
-        if (decision != DO_NOTHING) {
-            KotlinBuilder.LOG.debug("$decision because $className is changed")
-        }
-        return decision
+
+        changesInfo.logIfSomethingChanged(className)
+        return changesInfo
     }
 
-    public fun clearCacheForRemovedClasses(): RecompilationDecision {
-        var recompilationDecision = DO_NOTHING
-        for (internalClassName in dirtyOutputClassesMap.getDirtyOutputClasses()) {
-            val className = JvmClassName.byInternalName(internalClassName)
+    private fun ChangesInfo.logIfSomethingChanged(className: JvmClassName) {
+        if (this == ChangesInfo.NO_CHANGES) return
 
-            val newDecision = getRecompilationDecision(
-                    protoChanged = internalClassName in protoMap,
-                    constantsChanged = internalClassName in constantsMap
-            )
-            if (newDecision != DO_NOTHING) {
-                KotlinBuilder.LOG.debug("$newDecision because $internalClassName is removed")
-            }
+        KotlinBuilder.LOG.debug("$className is changed: $this")
+    }
 
-            recompilationDecision = recompilationDecision.merge(newDecision)
+    public fun clearCacheForRemovedClasses(): ChangesInfo {
+        val dirtyClasses = dirtyOutputClassesMap
+                                .getDirtyOutputClasses()
+                                .map(JvmClassName::byInternalName)
+                                .toList()
 
-            protoMap.remove(className)
-            packagePartMap.remove(className)
-            constantsMap.remove(className)
-            inlineFunctionsMap.remove(className)
+        val changesInfo = dirtyClasses.fold(ChangesInfo.NO_CHANGES) { info, className ->
+            val internalName = className.internalName
+            val newInfo = ChangesInfo(protoChanged = internalName in protoMap,
+                                      constantsChanged = internalName in constantsMap)
+            newInfo.logIfSomethingChanged(className)
+            info + newInfo
+        }
+
+        dirtyClasses.forEach {
+            protoMap.remove(it)
+            packagePartMap.remove(it)
+            constantsMap.remove(it)
+            inlineFunctionsMap.remove(it)
         }
         dirtyOutputClassesMap.clean()
-        return recompilationDecision
+        return changesInfo
     }
 
     override fun getObsoletePackageParts(): Collection<String> {
@@ -342,19 +323,27 @@ public class IncrementalCacheImpl(
 
     private inner class ProtoMap(storageFile: File) : BasicMap<ByteArray>(storageFile, ByteArrayExternalizer) {
 
-        public fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): Boolean {
-            val key = className.getInternalName()
+        public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
+            val header = kotlinClass.classHeader
+            val bytes = BitEncoding.decodeBytes(header.annotationData!!)
+            return put(kotlinClass.className, bytes, isPackage, checkChangesIsOpenPart)
+        }
+
+        public fun process(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
+            return put(className, data, isPackage, checkChangesIsOpenPart)
+        }
+
+        private fun put(className: JvmClassName, data: ByteArray, isPackage: Boolean, checkChangesIsOpenPart: Boolean): ChangesInfo {
+            val key = className.internalName
             val oldData = storage[key]
-            if (Arrays.equals(data, oldData)) {
-                return false
-            }
-            storage.put(key, data)
 
-            if (oldData != null && checkChangesIsOpenPart && isOpenPartNotChanged(oldData, data, isPackage)) {
-                return false
+            if (!Arrays.equals(data, oldData)) {
+                storage.put(key, data)
             }
 
-            return true
+            return ChangesInfo(protoChanged = oldData == null ||
+                                              !checkChangesIsOpenPart ||
+                                              !isOpenPartNotChanged(oldData, data, isPackage))
         }
 
         public fun get(className: JvmClassName): ByteArray? {
@@ -434,24 +423,24 @@ public class IncrementalCacheImpl(
             return if (result.isEmpty()) null else result
         }
 
-        public fun process(className: JvmClassName, bytes: ByteArray): Boolean {
-            return put(className, getConstantsMap(bytes))
+        public fun process(kotlinClass: LocalFileKotlinClass): ChangesInfo {
+            return put(kotlinClass.className, getConstantsMap(kotlinClass.fileContents))
         }
 
-        private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): Boolean {
+        private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): ChangesInfo {
             val key = className.getInternalName()
 
             val oldMap = storage[key]
-            if (oldMap == constantsMap) {
-                return false
-            }
+            if (oldMap == constantsMap) return ChangesInfo.NO_CHANGES
+
             if (constantsMap != null) {
                 storage.put(key, constantsMap)
             }
             else {
                 storage.remove(key)
             }
-            return true
+
+            return ChangesInfo(constantsChanged = true)
         }
 
         public fun remove(className: JvmClassName) {
@@ -553,11 +542,11 @@ public class IncrementalCacheImpl(
             return result
         }
 
-        public fun process(className: JvmClassName, bytes: ByteArray): Boolean {
-            return put(className, getInlineFunctionsMap(bytes))
+        public fun process(kotlinClass: LocalFileKotlinClass): ChangesInfo {
+            return put(kotlinClass.className, getInlineFunctionsMap(kotlinClass.fileContents))
         }
 
-        private fun put(className: JvmClassName, newMap: Map<String, Long>): Boolean {
+        private fun put(className: JvmClassName, newMap: Map<String, Long>): ChangesInfo {
             val internalName = className.internalName
             val oldMap = storage[internalName] ?: emptyMap()
 
@@ -580,10 +569,9 @@ public class IncrementalCacheImpl(
 
             if (changed.isNotEmpty()) {
                 dirtyInlineFunctionsMap.put(className, changed.toList())
-                return true
             }
 
-            return false
+            return ChangesInfo(inlineChanged = changed.isNotEmpty())
         }
 
         public fun remove(className: JvmClassName) {
@@ -736,18 +724,23 @@ public class IncrementalCacheImpl(
             return mutableMapping
         }
     }
-
-    enum class RecompilationDecision {
-        DO_NOTHING,
-        RECOMPILE_OTHER_KOTLIN_IN_CHUNK,
-        RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS,
-        RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS;
-
-        fun merge(other: RecompilationDecision): RecompilationDecision {
-            return if (other.ordinal() > this.ordinal()) other else this
-        }
-    }
 }
+
+data class ChangesInfo(
+        public val protoChanged: Boolean = false,
+        public val constantsChanged: Boolean = false,
+        public val inlineChanged: Boolean = false
+) {
+    companion object {
+        public val NO_CHANGES: ChangesInfo = ChangesInfo()
+    }
+
+    public fun plus(other: ChangesInfo): ChangesInfo =
+            ChangesInfo(protoChanged || other.protoChanged,
+                        constantsChanged || other.constantsChanged,
+                        inlineChanged || other.inlineChanged)
+}
+
 
 public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
 
