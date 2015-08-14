@@ -22,18 +22,28 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
+import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-public class JetAnnotationUseSiteTarget : JetElementImplStub<KotlinPlaceHolderStub<JetAnnotationUseSiteTarget>> {
+public class JetAnnotationUseSiteTarget : JetElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<JetAnnotationUseSiteTarget>) : super(stub, JetStubElementTypes.ANNOTATION_TARGET)
+    constructor(stub: KotlinAnnotationUseSiteTargetStub) : super(stub, JetStubElementTypes.ANNOTATION_TARGET)
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitAnnotationUseSiteTarget(this, data)
 
     public fun getAnnotationUseSiteTarget(): AnnotationUseSiteTarget {
+        val targetString = stub?.getUseSiteTarget()
+        if (targetString != null) {
+            try {
+                return AnnotationUseSiteTarget.valueOf(targetString)
+            } catch (e: IllegalArgumentException) {
+                // Ok, resolve via node tree
+            }
+        }
+
         val node = getFirstChild().getNode()
         return when (node.getElementType()) {
             JetTokens.FIELD_KEYWORD -> AnnotationUseSiteTarget.FIELD

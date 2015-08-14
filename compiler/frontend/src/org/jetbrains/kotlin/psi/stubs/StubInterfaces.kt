@@ -57,6 +57,10 @@ public interface KotlinAnnotationEntryStub : StubElement<JetAnnotationEntry> {
     public fun hasValueArguments(): Boolean
 }
 
+public interface KotlinAnnotationUseSiteTargetStub : StubElement<JetAnnotationUseSiteTarget> {
+    public fun getUseSiteTarget(): String
+}
+
 public interface KotlinFunctionStub : KotlinCallableStubBase<JetNamedFunction> {
     public fun hasBlockBody(): Boolean
     public fun hasBody(): Boolean
