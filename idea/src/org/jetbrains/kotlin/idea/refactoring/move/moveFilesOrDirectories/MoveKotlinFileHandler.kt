@@ -38,11 +38,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
+    private class InternalUsagesWrapper(file: JetFile, val usages: List<UsageInfo>) : UsageInfo(file)
+
     // This is special 'PsiElement' whose purpose is to wrap MoveKotlinTopLevelDeclarationsProcessor
     // so that it can be kept in the transition map
-    class MoveContext(
+    private class MoveContext(
             psiManager: PsiManager,
             val declarationMoveProcessor: MoveKotlinTopLevelDeclarationsProcessor
     ): LightElement(psiManager, JetLanguage.INSTANCE) {
@@ -88,27 +91,38 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
     }
 
-    override fun findUsages(psiFile: PsiFile, newParent: PsiDirectory, searchInComments: Boolean, searchInNonJavaFiles: Boolean) =
-            initMoveProcessor(psiFile, newParent)?.findUsages()?.toList() ?: emptyList()
+    override fun findUsages(
+            psiFile: PsiFile,
+            newParent: PsiDirectory,
+            searchInComments: Boolean,
+            searchInNonJavaFiles: Boolean
+    ): List<UsageInfo> {
+        if (psiFile !is JetFile) return emptyList()
+
+        val usages = ArrayList<UsageInfo>()
+        initMoveProcessor(psiFile, newParent)?.findUsages()?.let { usages += it }
+        val packageNameInfo = psiFile.getPackageNameInfo(newParent, false)
+        if (packageNameInfo != null) {
+            usages += InternalUsagesWrapper(psiFile, psiFile.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo))
+        }
+        return usages
+    }
 
     override fun prepareMovedFile(file: PsiFile, moveDestination: PsiDirectory, oldToNewMap: MutableMap<PsiElement, PsiElement>) {
         val moveProcessor = initMoveProcessor(file, moveDestination) ?: return
-        val moveContext = MoveContext(file.getManager(), moveProcessor)
+        val moveContext = MoveContext(file.manager, moveProcessor)
         oldToNewMap[moveContext] = moveContext
     }
 
     override fun updateMovedFile(file: PsiFile) {
         if (file !is JetFile) return
-
-        val newDirectory = file.getParent() ?: return
+        val newDirectory = file.parent ?: return
         val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
-
-        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
-        file.getPackageDirective()?.setFqName(packageNameInfo.newPackageName)
-        postProcessMoveUsages(internalUsages)
+        file.packageDirective?.fqName = packageNameInfo.newPackageName
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
+        postProcessMoveUsages(usageInfos?.firstIsInstanceOrNull<InternalUsagesWrapper>()?.usages ?: emptyList())
         val moveContext = oldToNewMap.keySet().firstIsInstanceOrNull<MoveContext>() ?: return
         val processor = moveContext.declarationMoveProcessor
         processor.project.runWithElementsToShortenIsEmptyIgnored {
