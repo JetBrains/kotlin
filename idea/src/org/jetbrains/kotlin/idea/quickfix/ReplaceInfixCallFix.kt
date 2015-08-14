@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetFile
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class ReplaceInfixCallFix(element: JetBinaryExpression) : JetIntentionAction<JetBinaryExpression>(element) {
 
-    override fun getText() = JetBundle.message("replace.with.safe.call")
+    override fun getText() = "Replace with safe (?.) call"
 
     override fun getFamilyName() = text
 
