@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -96,8 +96,12 @@ public class NewDeclarationNameValidator(
         }
 
         return when(target) {
-            Target.VARIABLES -> getProperties(name).any { !it.isExtension && it.isVisible() } || getLocalVariable(name) != null
-            Target.FUNCTIONS_AND_CLASSES -> getFunctions(name).any { !it.isExtension && it.isVisible() } || getClassifier(name)?.let { it.isVisible() } ?: false
+            Target.VARIABLES ->
+                getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE).any { !it.isExtension && it.isVisible() } ||
+                getLocalVariable(name) != null
+            Target.FUNCTIONS_AND_CLASSES ->
+                getFunctions(name, LookupLocation.NO_LOCATION_FROM_IDE).any { !it.isExtension && it.isVisible() } ||
+                getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE)?.let { it.isVisible() } ?: false
         }
     }
 

@@ -623,8 +623,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? callableScope.getFunctions(newName, LookupLocation.NO_LOCATION)
-                                                                 : callableScope.getProperties(newName, LookupLocation.NO_LOCATION);
+                                                                 ? callableScope.getFunctions(newName, LookupLocation.NO_LOCATION_FROM_IDE)
+                                                                 : callableScope.getProperties(newName, LookupLocation.NO_LOCATION_FROM_IDE);
             for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;
 
@@ -647,7 +647,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
             if (parametersScope != null) {
                 if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
-                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), LookupLocation.NO_LOCATION)) {
+                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), LookupLocation.NO_LOCATION_FROM_IDE)) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
                         if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof JetParameterList)) {

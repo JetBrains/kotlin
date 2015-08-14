@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -453,6 +454,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
                                    ? getBuiltIns(elementDescriptor).getFunction(arity)
                                    : getBuiltIns(elementDescriptor).getExtensionFunction(arity);
-        return elementClass.getDefaultType().getMemberScope().getFunctions(OperatorConventions.INVOKE, LookupLocation.NO_LOCATION).iterator().next();
+        JetScope scope = elementClass.getDefaultType().getMemberScope();
+        return scope.getFunctions(OperatorConventions.INVOKE, LookupLocation.NO_LOCATION_FROM_BACKEND).iterator().next();
     }
 }

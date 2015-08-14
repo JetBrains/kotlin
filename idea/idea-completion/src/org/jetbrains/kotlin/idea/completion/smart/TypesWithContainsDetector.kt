@@ -16,21 +16,21 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import java.util.HashMap
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.nullability
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.HeuristicSignatures
+import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.TypeNullability
+import java.util.HashMap
 
 class TypesWithContainsDetector(
         private val scope: JetScope,
@@ -43,7 +43,7 @@ class TypesWithContainsDetector(
     private val containsName = Name.identifier("contains")
     private val booleanType = KotlinBuiltIns.getInstance().getBooleanType()
 
-    private val typesWithExtensionContains: Collection<JetType> = scope.getFunctions(containsName)
+    private val typesWithExtensionContains: Collection<JetType> = scope.getFunctions(containsName, LookupLocation.NO_LOCATION_FROM_IDE)
             .filter { it.getExtensionReceiverParameter() != null && isGoodContainsFunction(it, listOf()) }
             .map { it.getExtensionReceiverParameter()!!.getType() }
 
@@ -52,7 +52,8 @@ class TypesWithContainsDetector(
     }
 
     private fun hasContainsNoCache(type: FuzzyType): Boolean {
-        return type.nullability() != TypeNullability.NULLABLE && type.type.getMemberScope().getFunctions(containsName).any { isGoodContainsFunction(it, type.freeParameters) }
+        return type.nullability() != TypeNullability.NULLABLE &&
+               type.type.memberScope.getFunctions(containsName, LookupLocation.NO_LOCATION_FROM_IDE).any { isGoodContainsFunction(it, type.freeParameters) }
                || typesWithExtensionContains.any { type.checkIsSubtypeOf(it) != null }
     }
 

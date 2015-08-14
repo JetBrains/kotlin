@@ -42,9 +42,13 @@ import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.idea.references.JetMultiReference
+import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
@@ -234,10 +238,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val originalFqName = FqName(refData.fqName)
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
-            if (fileResolutionScope.getFunctions(originalFqName.shortName()).any { it.importableFqName == originalFqName }) return null // already imported
+            val functions = fileResolutionScope.getFunctions(originalFqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+            if (functions.any { it.importableFqName == originalFqName }) return null // already imported
         }
         else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
-            if (fileResolutionScope.getProperties(originalFqName.shortName()).any { it.importableFqName == originalFqName }) return null // already imported
+            val properties = fileResolutionScope.getProperties(originalFqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+            if (properties.any { it.importableFqName == originalFqName }) return null // already imported
         }
 
         val referencedDescriptors = try {

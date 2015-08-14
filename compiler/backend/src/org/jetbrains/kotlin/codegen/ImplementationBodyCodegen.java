@@ -403,7 +403,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private boolean isGenericToArrayPresent() {
         Collection<FunctionDescriptor> functions =
-                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"), LookupLocation.NO_LOCATION);
+                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"), LookupLocation.NO_LOCATION_FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (CallResolverUtilPackage.isOrOverridesSynthesized(function)) {
                 continue;
@@ -817,7 +817,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type type = typeMapper.mapType(getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         FunctionDescriptor valuesFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES, LookupLocation.NO_LOCATION), new Function1<FunctionDescriptor, Boolean>() {
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUES, LookupLocation.NO_LOCATION_FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValuesMethod(descriptor);
@@ -837,7 +837,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, LookupLocation.NO_LOCATION), new Function1<FunctionDescriptor, Boolean>() {
+                KotlinPackage.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, LookupLocation.NO_LOCATION_FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValueOfMethod(descriptor);

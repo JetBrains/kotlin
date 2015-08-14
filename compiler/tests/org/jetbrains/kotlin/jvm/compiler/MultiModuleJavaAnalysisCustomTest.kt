@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -113,7 +114,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     private fun checkClassInPackage(moduleDescriptor: ModuleDescriptor, packageName: String, className: String) {
         val kotlinPackage = moduleDescriptor.getPackage(FqName(packageName))
         val kotlinClassName = Name.identifier(className)
-        val kotlinClass = kotlinPackage.memberScope.getClassifier(kotlinClassName) as ClassDescriptor
+        val kotlinClass = kotlinPackage.memberScope.getClassifier(kotlinClassName, LookupLocation.NO_LOCATION_FROM_TEST) as ClassDescriptor
         checkClass(kotlinClass)
     }
 

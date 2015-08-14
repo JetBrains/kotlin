@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.util
 
-import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -33,6 +31,7 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -121,11 +120,24 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             // check if import is not needed
             when (target) {
-                is ClassDescriptor -> { if (topLevelScope.getClassifier(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is PackageViewDescriptor -> { if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is FunctionDescriptor -> { if (topLevelScope.getFunctions(name).map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED }
-                is PropertyDescriptor -> { if (topLevelScope.getProperties(name).map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED }
-                else -> return ImportDescriptorResult.FAIL
+                is ClassDescriptor -> {
+                    val classifier = topLevelScope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE)
+                    if (classifier?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
+                }
+                is PackageViewDescriptor -> {
+                    if (topLevelScope.getPackage(name)?.importableFqName == targetFqName) return ImportDescriptorResult.ALREADY_IMPORTED
+                }
+                is FunctionDescriptor -> {
+                    val functions = topLevelScope.getFunctions(name, LookupLocation.NO_LOCATION_FROM_IDE)
+                    if (functions.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
+                }
+                is PropertyDescriptor -> {
+                    val properties = topLevelScope.getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE)
+                    if (properties.map { it.importableFqName }.contains(targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
+                }
+                else -> {
+                    return ImportDescriptorResult.FAIL
+                }
             }
 
             if (!mayImportByCodeStyle(descriptor)) {
@@ -139,7 +151,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             // check there is an explicit import of a class/package with the same name already
             val conflict = when (target) {
-                is ClassDescriptor -> topLevelScope.getClassifier(name)
+                is ClassDescriptor -> topLevelScope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE)
                 is PackageViewDescriptor -> topLevelScope.getPackage(name)
                 else -> null
             }
@@ -156,7 +168,9 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val tryStarImport = shouldTryStarImport(packageFqName, imports)
                                     && when (target) {
-                                        is ClassDescriptor -> topLevelScope.getClassifier(name) == null // this check does not give a guarantee that import with * will import the class - for example, there can be classes with conflicting name in more than one import with *
+                                        // this check does not give a guarantee that import with * will import the class - for example,
+                                        // there can be classes with conflicting name in more than one import with *
+                                        is ClassDescriptor -> topLevelScope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE) == null
                                         is PackageViewDescriptor -> false
                                         is FunctionDescriptor, is PropertyDescriptor -> true
                                         else -> throw Exception()
@@ -222,12 +236,14 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
             val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
-                        importedScopes.map { scope -> scope.getClassifier(it) }.filterNotNull()
+                        importedScopes.map { scope -> scope.getClassifier(it, LookupLocation.NO_LOCATION_FROM_IDE) }.filterNotNull()
                     }
                     .filter { importedClass ->
                         isVisible(importedClass)
-                            && topLevelScope.getClassifier(importedClass.getName()) == importedClass /* check that class is really imported */
-                            && imports.all { it.getImportPath() != ImportPath(importedClass.importableFqNameSafe, false)  } /* and not yet imported explicitly */
+                            // check that class is really imported
+                            && topLevelScope.getClassifier(importedClass.name, LookupLocation.NO_LOCATION_FROM_IDE) == importedClass
+                            // and not yet imported explicitly
+                            && imports.all { it.importPath != ImportPath(importedClass.importableFqNameSafe, false)  }
                     }
             val conflicts = detectNeededImports(conflictCandidates)
 
@@ -235,7 +251,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             if (target is ClassDescriptor) {
                 val newTopLevelScope = resolutionFacade.getFileTopLevelScope(file)
-                val resolvedTo = newTopLevelScope.getClassifier(target.getName())
+                val resolvedTo = newTopLevelScope.getClassifier(target.name, LookupLocation.NO_LOCATION_FROM_IDE)
                 if (resolvedTo?.importableFqNameSafe != targetFqName) {
                     addedImport.delete()
                     return ImportDescriptorResult.FAIL
@@ -258,7 +274,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             val parentScope = getMemberScope(fqName.parent(), moduleDescriptor) ?: return null
-            val classDescriptor = parentScope.getClassifier(fqName.shortName()) as? ClassDescriptor ?: return null
+            val classifier = parentScope.getClassifier(fqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+            val classDescriptor = classifier as? ClassDescriptor ?: return null
             return classDescriptor.getDefaultType().getMemberScope()
         }
 
@@ -269,7 +286,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
                 // check if there is a conflicting class imported with * import
                 // (not with explicit import - explicit imports are checked before this method invocation)
-                val classifier = topLevelScope.getClassifier(name)
+                val classifier = topLevelScope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE)
                 if (classifier != null && detectNeededImports(listOf(classifier)).isNotEmpty()) {
                     return ImportDescriptorResult.FAIL
                 }
@@ -298,7 +315,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             if (importsToCheck.isNotEmpty()) {
                 val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
                 for (classFqName in importsToCheck) {
-                    if (topLevelScope.getClassifier(classFqName.shortName())?.importableFqNameSafe != classFqName) {
+                    val classifier = topLevelScope.getClassifier(classFqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+                    if (classifier?.importableFqNameSafe != classFqName) {
                         addImport(classFqName, false) // restore explicit import
                     }
                 }

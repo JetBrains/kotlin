@@ -140,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
-                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION);
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION_FROM_IDE);
                     for (FunctionDescriptor descriptor : functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
@@ -148,7 +148,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 else if (declaration instanceof JetProperty) {
                     JetProperty jetProperty = (JetProperty) declaration;
                     Name name = jetProperty.getNameAsSafeName();
-                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, LookupLocation.NO_LOCATION);
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE);
                     for (VariableDescriptor descriptor : properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }

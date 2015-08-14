@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.junit.Assert
@@ -42,7 +43,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val overriddenFunctionDescriptor = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("xyzzy")).single()
+        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), LookupLocation.NO_LOCATION_FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
@@ -51,7 +52,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val overriddenFunctionDescriptor = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("xyzzy")).single()
+        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), LookupLocation.NO_LOCATION_FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
@@ -60,7 +61,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as JetFile).getDeclarations().single { it.getName() == "Foo" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val propertyDescriptor = descriptor.getDefaultType().getMemberScope().getProperties(Name.identifier("xyzzy")).single()
+        val propertyDescriptor = descriptor.defaultType.memberScope.getProperties(Name.identifier("xyzzy"), LookupLocation.NO_LOCATION_FROM_TEST).single()
         val doc = KDocFinder.findKDoc(propertyDescriptor)
         Assert.assertEquals("Doc for property xyzzy", doc!!.getContent())
     }

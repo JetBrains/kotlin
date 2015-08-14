@@ -74,7 +74,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         Collection<FunctionDescriptor> functions =
-                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), LookupLocation.NO_LOCATION);
+                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), LookupLocation.NO_LOCATION_FROM_TEST);
         assert functions.size() == 1 : "Many functions defined";
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
 

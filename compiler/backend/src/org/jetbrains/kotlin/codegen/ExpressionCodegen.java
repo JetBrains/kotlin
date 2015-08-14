@@ -1075,7 +1075,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type asmLoopRangeType = asmType(loopRangeType);
 
             Collection<VariableDescriptor> incrementProp =
-                    loopRangeType.getMemberScope().getProperties(Name.identifier("increment"), LookupLocation.NO_LOCATION);
+                    loopRangeType.getMemberScope().getProperties(Name.identifier("increment"), LookupLocation.NO_LOCATION_FROM_BACKEND);
             assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
             incrementType = asmType(incrementProp.iterator().next().getType());
 

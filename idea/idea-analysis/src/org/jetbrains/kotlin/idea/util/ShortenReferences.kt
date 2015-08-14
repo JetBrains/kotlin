@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,10 +30,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -275,7 +273,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
             val scope = bindingContext[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
             val name = target.getName()
-            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name) else scope.getPackage(name)
+            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE) else scope.getPackage(name)
             val canShortenNow = targetByName?.asString() == target.asString()
 
             processQualifiedElement(type, target, canShortenNow)

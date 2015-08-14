@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -65,7 +66,7 @@ private fun JetType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor
 
 private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: JetScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
-        val classifier = scope.getClassifier(typeParameter.getName())
+        val classifier = scope.getClassifier(typeParameter.name, LookupLocation.NO_LOCATION_FROM_IDE)
         classifier == null || classifier != typeParameter
     }
 }
