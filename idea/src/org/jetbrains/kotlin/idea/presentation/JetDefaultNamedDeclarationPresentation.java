@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.presentation;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.util.Iconable;
 import org.jetbrains.kotlin.idea.JetIconProvider;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
@@ -58,6 +59,6 @@ public class JetDefaultNamedDeclarationPresentation implements ColoredItemPresen
 
     @Override
     public Icon getIcon(boolean unused) {
-        return JetIconProvider.INSTANCE.getIcon(declaration, 0);
+        return JetIconProvider.INSTANCE.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS);
     }
 }
