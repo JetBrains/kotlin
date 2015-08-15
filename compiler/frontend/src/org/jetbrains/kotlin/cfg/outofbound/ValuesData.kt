@@ -36,14 +36,12 @@ public data class ValuesData(
     }
 
     public fun copy(): ValuesData {
-        fun copyIntsMap<K>(m: MutableMap<K, IntegerVariableValues>) =
-                HashMap(m.map { Pair(it.getKey(), it.getValue().copy()) }.toMap())
         return ValuesData(
-                copyIntsMap(intVarsToValues),
-                copyIntsMap(intFakeVarsToValues),
+                HashMap(intVarsToValues),
+                HashMap(intFakeVarsToValues),
                 HashMap(boolVarsToValues),
                 HashMap(boolFakeVarsToValues),
-                copyIntsMap(collectionsToSizes)
+                HashMap(collectionsToSizes)
         )
     }
 }

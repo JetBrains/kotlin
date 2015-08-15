@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.NondeterministicJumpInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.UnconditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
@@ -54,7 +53,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     // The map below is used to define indices of instructions. To achieve O(1) operation time cost
     // the map is created with capacity = instructions number (+ constant) and load factor = 1
     private val instructionsToTheirIndices: HashMap<Instruction, Int> = createInstructionsToTheirIndicesMap()
-    // todo: description
+    // `loopsInfoMap` contains the following mapping: (loop enter instruction) to (set of variables updated inside loop)
     private val loopsInfoMap: HashMap<Instruction, Set<VariableDescriptor>> = createLoopsInfoMap()
 
     // this function is fully copied from PseudocodeVariableDataCollector
@@ -401,21 +400,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun processVariablesUpdatedInLoop(variablesUpdatedInLoop: Set<VariableDescriptor>, edgeData: ValuesData) {
-        for (variable in variablesUpdatedInLoop) {
-            val intValue = edgeData.intVarsToValues.getOrElse(variable) { edgeData.collectionsToSizes[variable] }
-            if (intValue != null) {
-                when (intValue) {
-                    is IntegerVariableValues.Defined -> intValue.setNotAllPossibleValuesKnown()
-                    is IntegerVariableValues.Uninitialized ->
-                        edgeData.intVarsToValues[variable] = IntegerVariableValues.Undefined
-                }
+        fun processIntValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, IntegerVariableValues>): Boolean {
+            val value = varsMap[descriptor] ?: return false
+            when (value) {
+                is IntegerVariableValues.Defined -> varsMap[descriptor] = value.toValueWithNotAllPossibleValuesKnown()
+                is IntegerVariableValues.Uninitialized -> varsMap[descriptor] = IntegerVariableValues.Undefined
             }
-            else if (edgeData.boolVarsToValues.contains(variable)) {
-                val boolVariable = edgeData.boolVarsToValues[variable]
-                if (boolVariable is BooleanVariableValue.True || boolVariable is BooleanVariableValue.False) {
-                    edgeData.boolVarsToValues[variable] = BooleanVariableValue.undefinedWithNoRestrictions
-                }
-            }
+            return true
+        }
+        fun processBoolValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, BooleanVariableValue>): Boolean {
+            val value = varsMap[descriptor] ?: return false
+            if (value is BooleanVariableValue.True || value is BooleanVariableValue.False)
+                edgeData.boolVarsToValues[descriptor] = BooleanVariableValue.undefinedWithNoRestrictions
+            return true
+        }
+        variablesUpdatedInLoop.forEach {
+            if (processIntValues(it, edgeData.intVarsToValues))
+            else if (processBoolValues(it, edgeData.boolVarsToValues))
+            else processIntValues(it, edgeData.collectionsToSizes)
         }
     }
 
@@ -425,12 +427,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variableType = variableDescriptor.type
         when {
             KotlinBuiltIns.isInt(variableType) ->
-                updatedData.intVarsToValues.put(variableDescriptor, IntegerVariableValues.Uninitialized)
+                updatedData.intVarsToValues[variableDescriptor] = IntegerVariableValues.Uninitialized
             KotlinBuiltIns.isBoolean(variableType) ->
-                updatedData.boolVarsToValues.put(variableDescriptor, BooleanVariableValue.undefinedWithNoRestrictions)
+                updatedData.boolVarsToValues[variableDescriptor] = BooleanVariableValue.undefinedWithNoRestrictions
             KotlinArrayUtils.isGenericOrPrimitiveArray(variableType),
             KotlinListUtils.isKotlinList(variableType) ->
-                updatedData.collectionsToSizes.put(variableDescriptor, IntegerVariableValues.Uninitialized)
+                updatedData.collectionsToSizes[variableDescriptor] = IntegerVariableValues.Uninitialized
         }
     }
 
@@ -457,20 +459,15 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processVariableReference(instruction: ReadValueInstruction, updatedData: ValuesData) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
-        val newFakeVariable = instruction.outputValue
-        val referencedVariableValue = updatedData.intVarsToValues.getOrElse(
-                variableDescriptor, { updatedData.boolVarsToValues.getOrElse(
-                variableDescriptor, { updatedData.collectionsToSizes[variableDescriptor] }) })
-        when (referencedVariableValue) {
-            is IntegerVariableValues ->
-                // we have the information about value, so it is definitely of integer type
-                // (assuming there are no undeclared variables)
-                updatedData.intFakeVarsToValues.put(newFakeVariable, referencedVariableValue.copy())
-            is BooleanVariableValue ->
-                // we have the information about value, so it is definitely of boolean type
-                // (assuming there are no undeclared variables)
-                updatedData.boolFakeVarsToValues.put(newFakeVariable, referencedVariableValue.copy())
+        fun copyToFakes<V>(from: Map<VariableDescriptor, V>, to: MutableMap<PseudoValue, V>, copy: (V) -> V): Boolean {
+            val valueToCopy = from[variableDescriptor] ?: return false
+            val newFakeVariable = instruction.outputValue
+            to[newFakeVariable] = copy(valueToCopy)
+            return true
         }
+        if (copyToFakes(updatedData.intVarsToValues, updatedData.intFakeVarsToValues) { it.copy() }) return
+        else if (copyToFakes(updatedData.boolVarsToValues, updatedData.boolFakeVarsToValues) { it.copy() }) return
+        else (copyToFakes(updatedData.collectionsToSizes, updatedData.intFakeVarsToValues) { it.copy() })
     }
 
     private fun processAssignmentToVariable(instruction: WriteValueInstruction, updatedData: ValuesData) {
@@ -487,7 +484,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 updateIntegerValueIfNeeded(updatedData.intVarsToValues, variableDescriptor, valuesToAssign)
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
-
                 val valueToAssign = updatedData.boolFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                     ?: BooleanVariableValue.undefinedWithNoRestrictions
                 updateBooleanVariableIfNeeded(updatedData.boolVarsToValues, variableDescriptor, valueToAssign)

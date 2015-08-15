@@ -224,8 +224,8 @@ L4 [body entry point]:
     r(n) -> <v7>                                                                                                                                  in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
     mark(++n)                                                                                                                                     in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
     call(++n, inc|<v7>) -> <v8>                                                                                                                   in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
-    w(n|<v8>)                                                                                                                                     in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[1]}                   BOOLS{} ARRS{a:[999]}
-  2 jmp(L2)                                                                                                                                       in: INTS{n:[1]}                   BOOLS{} ARRS{a:[999]}    out: INTS{n:[1]}                   BOOLS{} ARRS{a:[999]}
+    w(n|<v8>)                                                                                                                                     in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[1, ?]}                BOOLS{} ARRS{a:[999]}
+  2 jmp(L2)                                                                                                                                       in: INTS{n:[1, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[1, ?]}                BOOLS{} ARRS{a:[999]}
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                                                                                                                   in: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}    out: INTS{n:[0, ?]}                BOOLS{} ARRS{a:[999]}
