@@ -350,20 +350,20 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
                         when (pseudoAnnotation) {
                             null -> Unit
-                            is ConstructorWithSizeAsArg,
-                            is ConstructorWithElementsAsArgs ->
+                            is PseudoAnnotation.ConstructorWithSizeAsArg,
+                            is PseudoAnnotation.ConstructorWithElementsAsArgs ->
                                 processCollectionCreation(pseudoAnnotation, instruction, updatedData)
-                            is SizeMethod ->
+                            is PseudoAnnotation.SizeMethod ->
                                 processSizeMethodCallOnCollection(instruction, updatedData)
-                            is IncrSizeByConstantNumberMethod -> {
+                            is PseudoAnnotation.IncreaseSizeByConstantMethod -> {
                                 val numberOfElementsToAdd = IntegerVariableValues.Defined(pseudoAnnotation.increaseBy)
                                 processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
                             }
-                            is IncrSizeByPassedCollectionSizeMethod -> {
+                            is PseudoAnnotation.IncreaseSizeByPassedCollectionMethod -> {
                                 val numberOfElementsToAdd = tryExtractPassedCollectionSizes(pseudoAnnotation, instruction, updatedData)
                                 processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
                             }
-                            is DecrSizeToZeroMethod ->
+                            is PseudoAnnotation.DecreaseSizeToZeroMethod ->
                                 processDecreaseSizeMethodCallOnCollection(pseudoAnnotation, instruction, updatedData)
                             else -> Unit
                         }
@@ -594,9 +594,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             valuesData: ValuesData
     ): IntegerVariableValues? =
             when (pseudoAnnotation) {
-                is ConstructorWithElementsAsArgs ->
+                is PseudoAnnotation.ConstructorWithElementsAsArgs ->
                     IntegerVariableValues.Defined(instruction.arguments.size())
-                is ConstructorWithSizeAsArg -> {
+                is PseudoAnnotation.ConstructorWithSizeAsArg -> {
                     if (instruction.inputValues.size() > pseudoAnnotation.sizeArgPosition && pseudoAnnotation.sizeArgPosition >= 0) {
                         valuesData.intFakeVarsToValues[instruction.inputValues[pseudoAnnotation.sizeArgPosition]]
                     }
@@ -638,7 +638,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun tryExtractPassedCollectionSizes(
-            pseudoAnnotation: IncrSizeByPassedCollectionSizeMethod,
+            pseudoAnnotation: PseudoAnnotation.IncreaseSizeByPassedCollectionMethod,
             instruction: CallInstruction,
             updatedData: ValuesData
     ): IntegerVariableValues? {
@@ -688,7 +688,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 return
             }
             when(pseudoAnnotation) {
-                is DecrSizeToZeroMethod ->
+                is PseudoAnnotation.DecreaseSizeToZeroMethod ->
                     updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerVariableValues.Defined(0)
             }
         }

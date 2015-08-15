@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.cfg.outofbound
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.HashSet
 
-public sealed class IntegerVariableValues private constructor() {
+public sealed class IntegerVariableValues {
     public abstract fun merge(other: IntegerVariableValues): IntegerVariableValues
     public fun copy(): IntegerVariableValues = this // if some subclass is mutable, it should override this method
 

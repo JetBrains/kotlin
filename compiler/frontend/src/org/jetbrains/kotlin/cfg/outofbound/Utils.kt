@@ -110,16 +110,22 @@ public object KotlinCollectionsUtils {
     public val setMethodArgumentsNumber: Int = 3
 }
 
-public interface PseudoAnnotation
-public object ConstructorWithElementsAsArgs : PseudoAnnotation
-public data class ConstructorWithSizeAsArg(val sizeArgPosition: Int) : PseudoAnnotation
-public data class IncrSizeByConstantNumberMethod(val increaseBy: Int) : PseudoAnnotation
-public data class IncrSizeByPassedCollectionSizeMethod(val collectionArgPosition: Int) : PseudoAnnotation
-public object DecrSizeToZeroMethod : PseudoAnnotation
-public object SizeMethod : PseudoAnnotation
-public object GetMethod : PseudoAnnotation
-public object SetMethod : PseudoAnnotation
-public object AccessOperator : PseudoAnnotation
+public sealed class PseudoAnnotation {
+    public object ConstructorWithElementsAsArgs : PseudoAnnotation()
+
+    public data class ConstructorWithSizeAsArg(val sizeArgPosition: Int) : PseudoAnnotation()
+    public data class IncreaseSizeByConstantMethod(val increaseBy: Int) : PseudoAnnotation()
+    public data class IncreaseSizeByPassedCollectionMethod(val collectionArgPosition: Int) : PseudoAnnotation()
+
+    public object DecreaseSizeToZeroMethod : PseudoAnnotation()
+
+    public object SizeMethod : PseudoAnnotation()
+
+    public object GetMethod : PseudoAnnotation()
+    public object SetMethod : PseudoAnnotation()
+
+    public object AccessOperator : PseudoAnnotation()
+}
 
 public object CallInstructionUtils {
     public interface CallInfo
@@ -147,15 +153,8 @@ public object CallInstructionUtils {
             instruction: CallInstruction,
             extractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?>
     ): PseudoAnnotation? {
-        val callInfo = tryExtractCallInfo(instruction)
-        if(callInfo != null) {
-            for (extractor in extractors) {
-                val res = extractor(callInfo)
-                if (res != null) {
-                    return res
-                }
-            }
-        }
+        val callInfo = tryExtractCallInfo(instruction) ?: return null
+        extractors.forEach { it(callInfo)?.let { return it } }
         return null
     }
 
@@ -173,9 +172,9 @@ public object CallInstructionUtils {
 
     private val accessPseudoAnnotationExtractors: List<(CallInstructionUtils.CallInfo) -> PseudoAnnotation?> = listOf(
             { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.getMethodName },
-                                                  { it == KotlinCollectionsUtils.getMethodArgumentsNumber }, GetMethod) },
+                                                  { it == KotlinCollectionsUtils.getMethodArgumentsNumber }, PseudoAnnotation.GetMethod) },
             { info -> checkCollectionAccessMethod(info, { it == KotlinCollectionsUtils.setMethodName },
-                                                  { it == KotlinCollectionsUtils.setMethodArgumentsNumber }, SetMethod) }
+                                                  { it == KotlinCollectionsUtils.setMethodArgumentsNumber }, PseudoAnnotation.SetMethod) }
     )
 
     private fun tryExtractCallInfo(instruction: CallInstruction): CallInfo? =
@@ -203,7 +202,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == functionName },
                     { KotlinBuiltIns.isArray(it) },
-                    ConstructorWithElementsAsArgs
+                    PseudoAnnotation.ConstructorWithElementsAsArgs
             )
 
     private fun listOfElementsCreationFunctionChecker(callInfo: CallInfo, functionName: String): PseudoAnnotation? =
@@ -211,7 +210,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == functionName },
                     { KotlinListUtils.isKotlinList(it) },
-                    ConstructorWithElementsAsArgs
+                    PseudoAnnotation.ConstructorWithElementsAsArgs
             )
 
     private fun arrayConstructorChecker(callInfo: CallInfo): PseudoAnnotation? =
@@ -219,7 +218,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == KotlinArrayUtils.arrayConstructorName },
                     { KotlinBuiltIns.isArray(it) },
-                    ConstructorWithSizeAsArg(0)
+                    PseudoAnnotation.ConstructorWithSizeAsArg(0)
             )
 
     private fun primitiveArrayConstructorChecker(callInfo: CallInfo): PseudoAnnotation? =
@@ -227,7 +226,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it in KotlinArrayUtils.primitiveArrayConstructorNames },
                     { KotlinBuiltIns.isPrimitiveArray(it) },
-                    ConstructorWithSizeAsArg(0)
+                    PseudoAnnotation.ConstructorWithSizeAsArg(0)
             )
 
     private fun sizeMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
@@ -235,7 +234,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == KotlinCollectionsUtils.sizeMethodName },
                     { KotlinBuiltIns.isInt(it) },
-                    SizeMethod
+                    PseudoAnnotation.SizeMethod
             )
 
     private fun addMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
@@ -243,7 +242,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == KotlinListUtils.addMethodName },
                     { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) },
-                    IncrSizeByConstantNumberMethod(1)
+                    PseudoAnnotation.IncreaseSizeByConstantMethod(1)
             )
 
     private fun addAllMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
@@ -251,7 +250,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == KotlinListUtils.addAllMethodName },
                     { KotlinBuiltIns.isBoolean(it) || KotlinBuiltIns.isUnit(it) },
-                    IncrSizeByPassedCollectionSizeMethod(0) // todo: method addAll(index, collection) should be tested
+                    PseudoAnnotation.IncreaseSizeByPassedCollectionMethod(0) // todo: method addAll(index, collection) should be tested
             )
 
     private fun clearMethodChecker(callInfo: CallInstructionUtils.CallInfo): PseudoAnnotation? =
@@ -259,7 +258,7 @@ public object CallInstructionUtils {
                     callInfo,
                     { it == KotlinListUtils.clearMethodName },
                     { KotlinBuiltIns.isUnit(it) },
-                    DecrSizeToZeroMethod
+                    PseudoAnnotation.DecreaseSizeToZeroMethod
             )
 
     private inline fun checkCollectionCreationFunction(
@@ -315,7 +314,7 @@ public object CallInstructionUtils {
                                 rawInfo.callInstruction.inputValues.size() == 3
         val receiverType = tryExtractReceiverType(rawInfo.callInstruction)
         if (isAccessOperation && receiverType != null && receiverIsCollection(receiverType)) {
-            return AccessOperator
+            return PseudoAnnotation.AccessOperator
         }
         else return null
     }
