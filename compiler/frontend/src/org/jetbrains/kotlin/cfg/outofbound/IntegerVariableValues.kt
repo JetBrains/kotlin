@@ -17,17 +17,17 @@ public sealed class IntegerVariableValues private constructor() {
 
     // special operators (IntegerValues, IntegerValues) -> BooleanVariableValue
     public open fun eq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
     public open fun notEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
     public open fun lessThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
     public open fun greaterThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
     public open fun greaterOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
     public open fun lessOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
-            : BooleanVariableValue = BooleanVariableValue.undefinedWithNoRestrictions
+            : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
 
     // Represents a value of Integer variable that is not initialized
     public object Uninitialized : IntegerVariableValues() {
@@ -212,7 +212,7 @@ public sealed class IntegerVariableValues private constructor() {
                                 return@applyComparisonIfArgsAreAppropriate BooleanVariableValue.True
                             }
                         }
-                        BooleanVariableValue.Undefined(mapOf(it to onTrueValues), mapOf(it to thisValues))
+                        BooleanVariableValue.Undefined.create(mapOf(it to onTrueValues), mapOf(it to thisValues))
                     } ?: undefinedWithFullRestrictions(valuesData)
                 }
 
@@ -240,7 +240,7 @@ public sealed class IntegerVariableValues private constructor() {
                                            return@comparison BooleanVariableValue.True
                                        }
                                    }
-                                   BooleanVariableValue.Undefined (
+                                   BooleanVariableValue.Undefined.create(
                                            mapOf(varDescriptor to valuesWithLessIndices),
                                            mapOf(varDescriptor to valuesWithGreaterOrEqIndices)
                                    )
@@ -266,7 +266,7 @@ public sealed class IntegerVariableValues private constructor() {
                                            return@comparison BooleanVariableValue.False
                                        }
                                    }
-                                   BooleanVariableValue.Undefined(
+                                   BooleanVariableValue.Undefined.create(
                                            mapOf(varDescriptor to valuesWithGreaterOrEqIndices),
                                            mapOf(varDescriptor to valuesWithLessIndices)
                                    )
@@ -320,7 +320,7 @@ public sealed class IntegerVariableValues private constructor() {
 
         private fun applyNot(booleanValue: BooleanVariableValue): BooleanVariableValue =
                 if (booleanValue is BooleanVariableValue.Undefined)
-                    BooleanVariableValue.Undefined(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
+                    BooleanVariableValue.Undefined.create(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
                 else if (booleanValue is BooleanVariableValue.False)
                     BooleanVariableValue.True
                 else {
@@ -332,7 +332,7 @@ public sealed class IntegerVariableValues private constructor() {
             val restrictions = valuesData.intVarsToValues.keySet()
                     .map { Pair(it, setOf<Int>()) }
                     .toMap()
-            return BooleanVariableValue.Undefined(restrictions, restrictions)
+            return BooleanVariableValue.Undefined.create(restrictions, restrictions)
         }
     }
 }

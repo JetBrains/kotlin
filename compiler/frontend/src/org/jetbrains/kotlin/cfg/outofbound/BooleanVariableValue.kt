@@ -18,13 +18,18 @@ package org.jetbrains.kotlin.cfg.outofbound
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
-public interface BooleanVariableValue {
+public sealed class BooleanVariableValue {
     // Logic operators, (BoolVariableValue, BoolVariableValue) -> BoolVariableValue
-    public fun and(other: BooleanVariableValue): BooleanVariableValue
-    public fun or(other: BooleanVariableValue): BooleanVariableValue
-    public fun not(): BooleanVariableValue
+    public abstract fun and(other: BooleanVariableValue): BooleanVariableValue
+    public abstract fun or(other: BooleanVariableValue): BooleanVariableValue
+    public abstract fun not(): BooleanVariableValue
 
-    public object True : BooleanVariableValue {
+    // For now derived classes of BooleanVariableValue are immutable,
+    // so copy returns this. In the future, if some class become mutable
+    // the implementation of this method may change
+    public fun copy(): BooleanVariableValue = this
+
+    public object True : BooleanVariableValue() {
         override fun toString(): String = "T"
 
         override fun and(other: BooleanVariableValue): BooleanVariableValue =
@@ -38,7 +43,7 @@ public interface BooleanVariableValue {
         override fun not(): BooleanVariableValue = False
     }
 
-    public object False : BooleanVariableValue {
+    public object False : BooleanVariableValue() {
         override fun toString(): String = "F"
 
         override fun and(other: BooleanVariableValue): BooleanVariableValue = False
@@ -48,10 +53,10 @@ public interface BooleanVariableValue {
         override fun not(): BooleanVariableValue = True
     }
 
-    public data class Undefined (
+    public data class Undefined private constructor(
             val onTrueRestrictions: Map<VariableDescriptor, Set<Int>>,
             val onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
-    ): BooleanVariableValue {
+    ): BooleanVariableValue() {
         override fun toString(): String {
             val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
             val setToString: (Set<Int>) -> String = { it.sort().toString() }
@@ -71,7 +76,7 @@ public interface BooleanVariableValue {
                     )
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
-                        BooleanVariableValue.undefinedWithNoRestrictions
+                        BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
                     }
                 }
 
@@ -86,7 +91,7 @@ public interface BooleanVariableValue {
                     )
                     else -> {
                         assert(false, "Unexpected derived type of BooleanVariableValue")
-                        BooleanVariableValue.undefinedWithNoRestrictions
+                        BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
                     }
                 }
 
@@ -101,15 +106,19 @@ public interface BooleanVariableValue {
             val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeOnFalseValues)
             return Undefined(onTrueIntersected, onFalseIntersected)
         }
+
+        companion object {
+            public val WITH_NO_RESTRICTIONS: Undefined = Undefined(mapOf(), mapOf())
+            public fun create(
+                    onTrueRestrictions: Map<VariableDescriptor, Set<Int>>,
+                    onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
+            ): Undefined =
+                    if (onTrueRestrictions.isEmpty() && onFalseRestrictions.isEmpty()) WITH_NO_RESTRICTIONS
+                    else Undefined(onTrueRestrictions, onFalseRestrictions)
+        }
     }
 
-    // For now derived classes of BooleanVariableValue are immutable,
-    // so copy returns this. In the future, if some class become mutable
-    // the implementation of this method may change
-    public fun copy(): BooleanVariableValue = this
-
     companion object {
-        public val undefinedWithNoRestrictions: Undefined = Undefined(mapOf(), mapOf())
         public fun create(value: Boolean): BooleanVariableValue = if(value) True else False
     }
 }

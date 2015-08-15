@@ -411,7 +411,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         fun processBoolValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, BooleanVariableValue>): Boolean {
             val value = varsMap[descriptor] ?: return false
             if (value is BooleanVariableValue.True || value is BooleanVariableValue.False)
-                edgeData.boolVarsToValues[descriptor] = BooleanVariableValue.undefinedWithNoRestrictions
+                edgeData.boolVarsToValues[descriptor] = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
             return true
         }
         variablesUpdatedInLoop.forEach {
@@ -429,7 +429,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             KotlinBuiltIns.isInt(variableType) ->
                 updatedData.intVarsToValues[variableDescriptor] = IntegerVariableValues.Uninitialized
             KotlinBuiltIns.isBoolean(variableType) ->
-                updatedData.boolVarsToValues[variableDescriptor] = BooleanVariableValue.undefinedWithNoRestrictions
+                updatedData.boolVarsToValues[variableDescriptor] = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
             KotlinArrayUtils.isGenericOrPrimitiveArray(variableType),
             KotlinListUtils.isKotlinList(variableType) ->
                 updatedData.collectionsToSizes[variableDescriptor] = IntegerVariableValues.Uninitialized
@@ -485,7 +485,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
                 val valueToAssign = updatedData.boolFakeVarsToValues[fakeVariable]?.let { it.copy() }
-                                    ?: BooleanVariableValue.undefinedWithNoRestrictions
+                                    ?: BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
                 updateBooleanVariableIfNeeded(updatedData.boolVarsToValues, variableDescriptor, valueToAssign)
             }
             KotlinArrayUtils.isGenericOrPrimitiveArray(targetType),
@@ -535,10 +535,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                              IntegerVariableValues.Undefined, operation)
         fun intBoolOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> BooleanVariableValue) =
                 performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues,
-                                 BooleanVariableValue.undefinedWithNoRestrictions, operation)
+                                 BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
         fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue) -> BooleanVariableValue) =
                 performOperation(updatedData.boolFakeVarsToValues, updatedData.boolFakeVarsToValues,
-                                 BooleanVariableValue.undefinedWithNoRestrictions, operation)
+                                 BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
         val leftOperandDescriptor =
                 leftOperandVariable.createdAt?.let { PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) }
         when (token) {
@@ -570,7 +570,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         when (operationToken) {
             JetTokens.MINUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { -it }
             JetTokens.PLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) { it.copy() }
-            JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.undefinedWithNoRestrictions) { !it }
+            JetTokens.EXCL -> performOperation(updatedData.boolFakeVarsToValues, BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS) { !it }
             JetTokens.PLUSPLUS -> performOperation(updatedData.intFakeVarsToValues, IntegerVariableValues.Undefined) {
                 it + IntegerVariableValues.Defined(1)
             }
