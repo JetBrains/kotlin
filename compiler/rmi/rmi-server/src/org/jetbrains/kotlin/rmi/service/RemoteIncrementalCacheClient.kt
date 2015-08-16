@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import org.jetbrains.kotlin.rmi.CompilerFacade
+import org.jetbrains.kotlin.rmi.CompileService
 
-public class RemoteIncrementalCacheClient(val cache: CompilerFacade.RemoteIncrementalCache): IncrementalCache {
+public class RemoteIncrementalCacheClient(val cache: CompileService.RemoteIncrementalCache): IncrementalCache {
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
-    override fun getPackageData(fqName: String): ByteArray = cache.getPackageData(fqName)
+    override fun getPackageData(fqName: String): ByteArray? = cache.getPackageData(fqName)
 
     override fun close(): Unit = cache.close()
 }

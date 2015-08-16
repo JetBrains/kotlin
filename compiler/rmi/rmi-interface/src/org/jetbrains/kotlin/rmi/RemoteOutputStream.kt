@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.rmi;
+package org.jetbrains.kotlin.rmi
 
-import java.io.IOException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
+import java.io.IOException
+import java.rmi.Remote
+import java.rmi.RemoteException
 
-public interface RemoteOutputStream extends Remote {
+public interface RemoteOutputStream : Remote {
 
-    void close() throws IOException, RemoteException;
+    throws(IOException::class, RemoteException::class)
+    public fun close()
 
-    void write(byte[] data, int offset, int length) throws IOException, RemoteException;
+    throws(IOException::class, RemoteException::class)
+    public fun write(data: ByteArray, offset: Int, length: Int)
 
-    void write(int dataByte) throws IOException, RemoteException;
+    throws(IOException::class, RemoteException::class)
+    public fun write(dataByte: Int)
 }

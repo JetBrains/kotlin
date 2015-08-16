@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
-import org.jetbrains.kotlin.rmi.CompilerFacade
+import org.jetbrains.kotlin.rmi.CompileService
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import java.rmi.server.UnicastRemoteObject
 
 
-public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : CompilerFacade.RemoteIncrementalCache {
+public class RemoteIncrementalCacheServer(val cache: IncrementalCache) : CompileService.RemoteIncrementalCache {
 
     init {
         UnicastRemoteObject.exportObject(this, 0)
