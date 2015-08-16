@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.rmi.CompilerFacade;
+import org.jetbrains.kotlin.rmi.CompileService;
+import org.jetbrains.kotlin.rmi.CompilerId;
+import org.jetbrains.kotlin.rmi.DaemonOptions;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -42,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -127,8 +130,13 @@ public class KotlinCompilerRunner {
             String[] argsArray = ArrayUtil.toStringArray(argumentsList);
 
             // trying the daemon first
-            if (incrementalCaches != null) {
-                CompilerFacade daemon = KotlinCompilerClient.Companion.connectToCompilerServer();
+            if (incrementalCaches != null && KotlinCompilerClient.Companion.isDaemonEnabled()) {
+                File libPath = CompilerRunnerUtil.getLibPath(environment.getKotlinPaths(), messageCollector);
+                CompilerId compilerId = CompilerId.makeCompilerId(libPath);
+                DaemonOptions daemonOptions = new DaemonOptions();
+                // TODO: find a proper logger
+                Logger log = Logger.getAnonymousLogger();
+                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonOptions, log);
                 if (daemon != null) {
                     Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, out);
                     return res.toString();
