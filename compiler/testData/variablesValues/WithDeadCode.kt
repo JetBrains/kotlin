@@ -30,3 +30,22 @@ fun andWithDeadCode() {
     lst.size() > 3 && lst[3] > 0
     42
 }
+
+fun whileWithDeadCode() {
+    var a = 2
+    while (false) {
+        42
+    }
+    while (a < 0) {
+        ++a
+    }
+    while (a > 0) {
+        while (a < 0) {
+            ++a
+        }
+    }
+    while (++a <= 2) {
+        ++a
+    }
+    42
+}

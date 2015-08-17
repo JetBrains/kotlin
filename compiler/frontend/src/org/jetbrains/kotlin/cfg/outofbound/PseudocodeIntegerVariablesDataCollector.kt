@@ -90,18 +90,25 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val instructions = pseudocode.instructionsIncludingDeadCode
         val loopInfoMap = HashMap<Instruction, Set<VariableDescriptor>>(labels.size(), 1f)
         val variablesStack = linkedListOf<Pair<Instruction, HashSet<VariableDescriptor>>>()
+        val loopEntryPointText = "loop entry point"
+        val loopExitPointText = "loop exit point"
         instructions.forEachIndexed { i, instruction ->
             val instructionLabels = instructionIndexToLabels[i]
             if (instructionLabels != null) {
                 val labelsAsStrings = instructionLabels.map { it.toString() }
-                if (labelsAsStrings.any { it.contains("loop entry point") }) {
+                if (labelsAsStrings.any { it contains loopEntryPointText }) {
                     variablesStack.push(instruction to hashSetOf())
                 }
-                else if (labelsAsStrings.any { it.contains("loop exit point") }) {
-                    val topInfo = variablesStack.first()
+                else if (labelsAsStrings.any { it contains loopExitPointText }) {
+                    val topInfo = variablesStack.removeFirst()
                     loopInfoMap[topInfo.first] = topInfo.second
-                    variablesStack.pop()
                 }
+            }
+            if (instruction is ConditionalJumpInstruction &&
+                (instruction.element is JetWhileExpression || instruction.element is JetDoWhileExpression)) {
+                assert(variablesStack.isNotEmpty(), "Jump in while is met but there is still no loop info")
+                val topInfo = variablesStack.removeFirst()
+                variablesStack.push(instruction to topInfo.second)
             }
             if (!variablesStack.isEmpty()) {
                 if (instruction is WriteValueInstruction) {
@@ -218,10 +225,15 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     ) {
         if (previousInstruction is ConditionalJumpInstruction) {
             val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.conditionValue]
-            if (conditionBoolValue != null &&
-                (previousInstruction.element is JetIfExpression || previousInstruction.element is JetBinaryExpression)) {
-                applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
-                                          previousInstruction.nextOnFalse, edgeData)
+            if (conditionBoolValue != null) {
+                if (previousInstruction.element is JetIfExpression || previousInstruction.element is JetBinaryExpression) {
+                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
+                                              previousInstruction.nextOnFalse, edgeData)
+                }
+                else if (previousInstruction.element is JetDoWhileExpression || previousInstruction.element is JetWhileExpression){
+                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
+                                              previousInstruction.nextOnFalse, edgeData, applyOnlyForThenBlock = true)
+                }
             }
         }
         if (previousInstruction is NondeterministicJumpInstruction &&
@@ -245,10 +257,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             currentInstruction: Instruction,
             onTrueInstruction: Instruction,
             onFalseInstruction: Instruction,
-            edgeData: ValuesData) {
+            edgeData: ValuesData,
+            applyOnlyForThenBlock: Boolean = false
+    ) {
         when (conditionBoolValue) {
             is BooleanVariableValue.True -> {
-                if (onFalseInstruction == currentInstruction) {
+                if (onFalseInstruction == currentInstruction && !applyOnlyForThenBlock) {
                     // We are in "else" block and condition evaluated to "true" so this block will not
                     // be processed (dead code block). To indicate this we will make all variables dead
                     edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
@@ -264,26 +278,26 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
             }
             is BooleanVariableValue.Undefined -> {
-                val restrictions =
-                        if (onTrueInstruction == currentInstruction) {
-                            // We are in "then" block and need to apply onTrue restrictions
-                            conditionBoolValue.onTrueRestrictions
+                fun processUndefinedCase(edgeData: ValuesData, restrictions: Map<VariableDescriptor, Set<Int>>) {
+                    for ((variable, unrestrictedValues) in restrictions) {
+                        val values = edgeData.intVarsToValues[variable]
+                        if (values is IntegerVariableValues.Defined) {
+                            edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                         }
-                        else {
-                            assert(onFalseInstruction == currentInstruction)
-                            // We are in "else" block and need to apply onFalse restrictions
-                            conditionBoolValue.onFalseRestrictions
-                        }
-                for ((variable, unrestrictedValues) in restrictions) {
-                    val values = edgeData.intVarsToValues[variable]
-                    if (values is IntegerVariableValues.Defined) {
-                        edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                     }
+                }
+                if (onTrueInstruction == currentInstruction) {
+                    // We are in "then" block and need to apply onTrue restrictions
+                    processUndefinedCase(edgeData, conditionBoolValue.onTrueRestrictions)
+                }
+                else if (!applyOnlyForThenBlock) {
+                    assert(onFalseInstruction == currentInstruction)
+                    // We are in "else" block (and it's processing is required) and need to apply onFalse restrictions
+                    processUndefinedCase(edgeData, conditionBoolValue.onFalseRestrictions)
                 }
             }
         }
     }
-
 
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
         if (instruction is SubroutineSinkInstruction) {
@@ -330,7 +344,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val variablesUpdatedInLoop = loopsInfoMap[instruction]
         if (variablesUpdatedInLoop != null) {
             // we meet the loop enter instruction
-            processVariablesUpdatedInLoop(variablesUpdatedInLoop, updatedData)
+            processVariablesUpdatedInLoop(instruction, variablesUpdatedInLoop, updatedData)
         }
         when (instruction) {
             is VariableDeclarationInstruction -> processVariableDeclaration(instruction, updatedData)
@@ -402,20 +416,29 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return updatedData
     }
 
-    private fun processVariablesUpdatedInLoop(variablesUpdatedInLoop: Set<VariableDescriptor>, edgeData: ValuesData) {
-        fun processIntValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, IntegerVariableValues>): Boolean {
-            val value = varsMap[descriptor] ?: return false
-            when (value) {
-                is IntegerVariableValues.Defined -> varsMap[descriptor] = value.toValueWithNotAllPossibleValuesKnown()
-                is IntegerVariableValues.Uninitialized -> varsMap[descriptor] = IntegerVariableValues.Undefined
+    private fun processVariablesUpdatedInLoop(instruction: Instruction, variablesUpdatedInLoop: Set<VariableDescriptor>, edgeData: ValuesData) {
+        fun processIntValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, IntegerVariableValues>): Boolean =
+            if (varsMap.contains(descriptor)) {
+                varsMap[descriptor] = IntegerVariableValues.Undefined
+                true
             }
-            return true
-        }
+            else false
         fun processBoolValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, BooleanVariableValue>): Boolean {
             val value = varsMap[descriptor] ?: return false
             if (value is BooleanVariableValue.True || value is BooleanVariableValue.False)
                 edgeData.boolVarsToValues[descriptor] = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
             return true
+        }
+        if (instruction is ConditionalJumpInstruction &&
+            (instruction.element is JetWhileExpression || instruction.element is JetDoWhileExpression) &&
+            instruction.conditionValue != null) {
+            val conditionBooleanValue = edgeData.boolFakeVarsToValues[instruction.conditionValue]
+            if (conditionBooleanValue is BooleanVariableValue.False) {
+                // In case of while, it's body will be executed 0 times.
+                // In case of do-while, it's body will be executed ones.
+                // In both cases we no need to do anything with variables updated in this loop (see below).
+                return
+            }
         }
         variablesUpdatedInLoop.forEach {
             if (processIntValues(it, edgeData.intVarsToValues))
