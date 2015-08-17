@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -39,7 +39,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.WritableScope;
+import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -520,7 +523,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = scope.getClassifier(name, LookupLocation.NO_LOCATION);
+            ClassifierDescriptor classifier = scope.getClassifier(name, NoLookupLocation.UNSORTED);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {

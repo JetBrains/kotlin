@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
@@ -58,7 +58,8 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.*;
 
 import static kotlin.KotlinPackage.firstOrNull;
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
+import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 import static org.jetbrains.kotlin.resolve.source.SourcePackage.toSourceElement;
@@ -370,7 +371,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getUnsubstitutedMemberScope().getClassifier(name, LookupLocation.NO_LOCATION);
+        getUnsubstitutedMemberScope().getClassifier(name, NoLookupLocation.UNSORTED);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof LazyClassDescriptor) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;

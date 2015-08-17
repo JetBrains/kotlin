@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
@@ -102,7 +102,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         val functions = scope.getFunctions(name)
         val (extensions, nonExtensions) = functions.partition { it.extensionReceiverParameter != null }
-        val syntheticExtensions = scope.getSyntheticExtensionFunctions(receiverTypes, name, LookupLocation.NO_LOCATION)
+        val syntheticExtensions = scope.getSyntheticExtensionFunctions(receiverTypes, name, NoLookupLocation.UNSORTED)
 
         if (name == OperatorConventions.INVOKE) {
             // Create synthesized "invoke" extensions for each non-extension "invoke" found in the scope
@@ -161,7 +161,7 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
         return scope.getLocalVariable(name).singletonOrEmptyList() +
                scope.getProperties(name) +
-               scope.getSyntheticExtensionProperties(receiverTypes, name, LookupLocation.NO_LOCATION)
+               scope.getSyntheticExtensionProperties(receiverTypes, name, NoLookupLocation.UNSORTED)
     }
 
     override fun toString() = "VARIABLES"

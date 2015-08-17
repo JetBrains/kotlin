@@ -23,10 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -200,7 +204,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         @NotNull
         @SuppressWarnings("unchecked")
         private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
-            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, LookupLocation.NO_LOCATION));
+            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, NoLookupLocation.UNSORTED));
         }
 
         @NotNull
@@ -211,7 +215,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, LookupLocation.NO_LOCATION));
+            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, NoLookupLocation.UNSORTED));
         }
 
         @NotNull
@@ -267,8 +271,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         private Collection<DeclarationDescriptor> computeAllDeclarations() {
             Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
             for (Name name : enumMemberNames.invoke()) {
-                result.addAll(getFunctions(name, LookupLocation.NO_LOCATION));
-                result.addAll(getProperties(name, LookupLocation.NO_LOCATION));
+                result.addAll(getFunctions(name, NoLookupLocation.UNSORTED));
+                result.addAll(getProperties(name, NoLookupLocation.UNSORTED));
             }
             return result;
         }

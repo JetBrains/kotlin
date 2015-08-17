@@ -17,11 +17,6 @@
 package org.jetbrains.kotlin.incremental.components
 
 public interface LookupLocation {
-
-    companion object {
-        @deprecated("Use more suitable constant if possible")
-        val NO_LOCATION = NoLookupLocation.UNSORTED
-    }
 }
 
 public enum class NoLookupLocation : LookupLocation {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
@@ -47,12 +48,12 @@ public interface JetScope {
     public fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor>
 
     // Temporary overloads which will be dropped when all usages will be processed
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, LookupLocation.NO_LOCATION)"))
-    public final fun getClassifier(name: Name): ClassifierDescriptor? = getClassifier(name, LookupLocation.NO_LOCATION)
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, LookupLocation.NO_LOCATION)"))
-    public final fun getProperties(name: Name): Collection<VariableDescriptor> = getProperties(name, LookupLocation.NO_LOCATION)
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, LookupLocation.NO_LOCATION)"))
-    public final fun getFunctions(name: Name): Collection<FunctionDescriptor> = getFunctions(name, LookupLocation.NO_LOCATION)
+    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
+    public final fun getClassifier(name: Name): ClassifierDescriptor? = getClassifier(name, NoLookupLocation.UNSORTED)
+    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
+    public final fun getProperties(name: Name): Collection<VariableDescriptor> = getProperties(name, NoLookupLocation.UNSORTED)
+    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
+    public final fun getFunctions(name: Name): Collection<FunctionDescriptor> = getFunctions(name, NoLookupLocation.UNSORTED)
 
     /**
      * All visible descriptors from current scope.

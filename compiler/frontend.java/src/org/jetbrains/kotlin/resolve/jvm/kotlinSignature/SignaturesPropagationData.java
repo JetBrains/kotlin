@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.components.TypeUsage;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmSignaturePackage;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -303,7 +303,7 @@ public class SignaturesPropagationData {
         Name name = method.getName();
         JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
         for (JetType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION);
+            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, NoLookupLocation.UNSORTED);
             for (FunctionDescriptor candidate : superFunctionCandidates) {
                 JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (JvmSignaturePackage.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
