@@ -281,6 +281,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
+
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
         if (instruction is SubroutineSinkInstruction) {
             // this instruction is assumed to be the last one in function so it is not processed
@@ -365,7 +366,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                             }
                             is PseudoAnnotation.DecreaseSizeToZeroMethod ->
                                 processDecreaseSizeMethodCallOnCollection(pseudoAnnotation, instruction, updatedData)
-                            else -> Unit
                         }
                     }
                 }

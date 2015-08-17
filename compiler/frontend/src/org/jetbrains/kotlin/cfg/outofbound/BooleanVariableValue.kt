@@ -74,10 +74,6 @@ public sealed class BooleanVariableValue {
                             { value1, value2 -> value1.intersect(value2) },
                             { value1, value2 -> value1.union(value2) }
                     )
-                    else -> {
-                        assert(false, "Unexpected derived type of BooleanVariableValue")
-                        BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-                    }
                 }
 
         override fun or(other: BooleanVariableValue): BooleanVariableValue =
@@ -89,10 +85,6 @@ public sealed class BooleanVariableValue {
                             { value1, value2 -> value1.union(value2) },
                             { value1, value2 -> value1.intersect(value2) }
                     )
-                    else -> {
-                        assert(false, "Unexpected derived type of BooleanVariableValue")
-                        BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-                    }
                 }
 
         override fun not(): BooleanVariableValue = Undefined(onFalseRestrictions, onTrueRestrictions)

@@ -319,13 +319,11 @@ public sealed class IntegerVariableValues {
         }
 
         private fun applyNot(booleanValue: BooleanVariableValue): BooleanVariableValue =
-                if (booleanValue is BooleanVariableValue.Undefined)
-                    BooleanVariableValue.Undefined.create(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
-                else if (booleanValue is BooleanVariableValue.False)
-                    BooleanVariableValue.True
-                else {
-                    assert(booleanValue is BooleanVariableValue.True, "Unexpected derived type of BooleanVariableValue")
-                    BooleanVariableValue.False
+                when (booleanValue) {
+                    is BooleanVariableValue.Undefined ->
+                        BooleanVariableValue.Undefined.create(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
+                    is BooleanVariableValue.False -> BooleanVariableValue.True
+                    is BooleanVariableValue.True -> BooleanVariableValue.False
                 }
 
         private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {
