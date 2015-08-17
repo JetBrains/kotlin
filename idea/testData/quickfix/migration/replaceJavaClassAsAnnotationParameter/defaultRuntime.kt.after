@@ -4,10 +4,10 @@ import kotlin.reflect.KClass
 // WITH_RUNTIME
 
 annotation class Ann(
-    val arg1: Int,
-    val arg2: KClass<*> = Int::class,
-    val arg3: Array<KClass<out Any?>> = array(String::class),
-    vararg val arg4: KClass<out Any?> = array(Double::class)
+        val arg1: Int,
+        val arg2: KClass<*> = Int::class,
+        val arg3: Array<KClass<out Any?>> = array(String::class),
+        vararg val arg4: KClass<out Any?> = array(Double::class)
 )
 
 Ann(arg1 = 1) class MyClass1
