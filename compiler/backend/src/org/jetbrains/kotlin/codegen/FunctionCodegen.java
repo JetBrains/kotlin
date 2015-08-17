@@ -163,6 +163,10 @@ public class FunctionCodegen {
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
         }
         else {
+            if (owner instanceof PackageContext) {
+                Type ownerType = ((PackageContext) owner).getPackagePartType();
+                v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, shortNameByAsmType(ownerType));
+            }
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }
 
