@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -79,6 +80,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.CollectingNodeHandler
@@ -703,7 +705,15 @@ private fun ExtractionData.inferParametersInfo(
                             }
                             else {
                                 val argumentExpr = (thisExpr ?: ref).getQualifiedExpressionForSelectorOrThis()
-                                argumentExpr.getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
+                                if (argumentExpr is JetOperationReferenceExpression) {
+                                    val nameElement = argumentExpr.getReferencedNameElement()
+                                    val nameElementType = nameElement.node.elementType
+                                    (nameElementType as? JetToken)?.let {
+                                        OperatorConventions.getNameForOperationSymbol(it)?.asString()
+                                    } ?: nameElement.getText()
+                                }
+                                else argumentExpr.getText()
+                                     ?: throw AssertionError("reference shouldn't be empty: code fragment = $codeFragmentText")
                             }
                     if (extractFunctionRef) {
                         val receiverTypeText = (originalDeclaration as JetCallableDeclaration).getReceiverTypeReference()?.getText() ?: ""

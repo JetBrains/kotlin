@@ -456,6 +456,24 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("convertBinaryExpression.kt")
+            public void testConvertBinaryExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertBinaryExpression.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("convertInfixExpression.kt")
+            public void testConvertInfixExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertInfixExpression.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("convertUnaryExpression.kt")
+            public void testConvertUnaryExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertUnaryExpression.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("delegatingFunction.kt")
             public void testDelegatingFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/delegatingFunction.kt");

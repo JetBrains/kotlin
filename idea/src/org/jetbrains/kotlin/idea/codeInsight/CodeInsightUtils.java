@@ -42,10 +42,12 @@ public class CodeInsightUtils {
     @Nullable
     public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
         PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
-        if (element == null) {
-            return null;
-        }
-        else if (!(element instanceof JetExpression)) {
+        if (element == null) return null;
+
+        // TODO: Support binary operations in "Introduce..." refactorings
+        if (element instanceof JetOperationReferenceExpression
+            && ((JetOperationReferenceExpression) element).getReferencedNameElementType() != JetTokens.IDENTIFIER
+            && element.getParent() instanceof JetBinaryExpression) {
             return null;
         }
 
