@@ -550,6 +550,7 @@ public class IncrementalCacheImpl(
             val internalName = className.internalName
             val oldMap = storage[internalName] ?: emptyMap()
 
+            val added = hashSetOf<String>()
             val changed = hashSetOf<String>()
             val allFunctions = oldMap.keySet() + newMap.keySet()
 
@@ -557,8 +558,9 @@ public class IncrementalCacheImpl(
                 val oldHash = oldMap[fn]
                 val newHash = newMap[fn]
 
-                if (oldHash != newHash) {
-                    changed.add(fn)
+                when {
+                    oldHash == null -> added.add(fn)
+                    oldHash != newHash -> changed.add(fn)
                 }
             }
 
@@ -571,7 +573,8 @@ public class IncrementalCacheImpl(
                 dirtyInlineFunctionsMap.put(className, changed.toList())
             }
 
-            return ChangesInfo(inlineChanged = changed.isNotEmpty())
+            return ChangesInfo(inlineChanged = changed.isNotEmpty(),
+                               inlineAdded = added.isNotEmpty())
         }
 
         public fun remove(className: JvmClassName) {
@@ -729,7 +732,8 @@ public class IncrementalCacheImpl(
 data class ChangesInfo(
         public val protoChanged: Boolean = false,
         public val constantsChanged: Boolean = false,
-        public val inlineChanged: Boolean = false
+        public val inlineChanged: Boolean = false,
+        public val inlineAdded: Boolean = false
 ) {
     companion object {
         public val NO_CHANGES: ChangesInfo = ChangesInfo()
@@ -738,7 +742,8 @@ data class ChangesInfo(
     public fun plus(other: ChangesInfo): ChangesInfo =
             ChangesInfo(protoChanged || other.protoChanged,
                         constantsChanged || other.constantsChanged,
-                        inlineChanged || other.inlineChanged)
+                        inlineChanged || other.inlineChanged,
+                        inlineAdded || other.inlineAdded)
 }
 
 

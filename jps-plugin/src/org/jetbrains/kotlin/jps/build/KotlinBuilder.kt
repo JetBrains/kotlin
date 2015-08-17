@@ -233,6 +233,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         private fun ChangesInfo.doProcessChanges() {
             when {
+                inlineAdded -> {
+                    recompileEverything()
+                    return
+                }
                 constantsChanged -> recompileOtherAndDependents()
                 protoChanged -> recompileOtherKotlinInChunk()
             }
