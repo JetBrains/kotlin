@@ -33,16 +33,24 @@ public val COMPILE_DAEMON_ENABLED_PROPERTY: String ="kotlin.daemon.enabled"
 fun<C, V, P: KProperty1<C,V>> C.propToParams(p: P, conv: ((v: V) -> String) = { it.toString() } ) =
         listOf("--daemon-" + p.name, conv(p.get(this)))
 
-class PropParser<C, V, P: KMutableProperty1<C, V>>(val dest: C, val prop: P, val parse: (s: String) -> V) {
+open class PropParser<C, V, P: KMutableProperty1<C, V>>(val dest: C, val prop: P, val parse: (s: String) -> V) {
     fun apply(s: String) = prop.set(dest, parse(s))
 }
+
+class BoolPropParser<C, P: KMutableProperty1<C, Boolean>>(dest: C, prop: P): PropParser<C, Boolean, P>(dest, prop, { true })
 
 fun Iterable<String>.propParseFilter(parsers: List<PropParser<*,*,*>>) : Iterable<String>  {
     var currentParser: PropParser<*,*,*>? = null
     return filter { param ->
         if (currentParser == null) {
             currentParser = parsers.find { param.equals("--daemon-" + it.prop.name) }
-            if (currentParser != null) false
+            if (currentParser != null) {
+                if (currentParser is BoolPropParser<*,*>) {
+                    currentParser!!.apply("")
+                    currentParser = null
+                }
+                false
+            }
             else true
         }
         else {
