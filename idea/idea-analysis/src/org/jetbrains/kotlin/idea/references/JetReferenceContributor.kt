@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.ReferenceAccess
-import org.jetbrains.kotlin.psi.psiUtil.readWriteAccess
 
 public class JetReferenceContributor() : PsiReferenceContributor() {
     public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -36,7 +34,7 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             registerMultiProvider(javaClass<JetNameReferenceExpression>()) {
                 if (it.getReferencedNameElementType() != JetTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
-                when (it.readWriteAccess()) {
+                when (it.readWriteAccess(useResolveForReadWrite = false)) {
                     ReferenceAccess.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
                     ReferenceAccess.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
                     ReferenceAccess.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))

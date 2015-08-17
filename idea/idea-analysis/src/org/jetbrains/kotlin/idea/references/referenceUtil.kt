@@ -18,12 +18,20 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
@@ -132,3 +140,40 @@ val JetElement.mainReference: JetReference?
             else -> getReferences().firstIsInstanceOrNull<JetReference>()
         }
     }
+
+// ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
+
+public enum class ReferenceAccess {
+    READ, WRITE, READ_WRITE
+}
+
+public fun JetExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess {
+    var expression = getQualifiedExpressionForSelectorOrThis()
+    while (expression.parent is JetParenthesizedExpression || expression.parent is JetAnnotatedExpression) {
+        expression = expression.parent as JetExpression
+    }
+
+    val assignment = expression.getAssignmentByLHS()
+    if (assignment != null) {
+        when (assignment.operationToken) {
+            JetTokens.EQ -> return ReferenceAccess.WRITE
+
+            else -> {
+                if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE
+
+                val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
+                val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE
+                if (!resolvedCall.status.isSuccess) return ReferenceAccess.READ_WRITE
+                return if (resolvedCall.resultingDescriptor.name.asString().endsWith("Assign"))
+                    ReferenceAccess.READ
+                else
+                    ReferenceAccess.READ_WRITE
+            }
+        }
+    }
+
+    return if ((expression.parent as? JetUnaryExpression)?.operationToken in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
+        ReferenceAccess.READ_WRITE
+    else
+        ReferenceAccess.READ
+}

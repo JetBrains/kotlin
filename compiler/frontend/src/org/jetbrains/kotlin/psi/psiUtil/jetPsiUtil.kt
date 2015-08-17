@@ -308,29 +308,6 @@ public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(ac
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
 
-// ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
-
-public enum class ReferenceAccess {
-    READ, WRITE, READ_WRITE
-}
-
-public fun JetExpression.readWriteAccess(): ReferenceAccess {
-    var expression = getQualifiedExpressionForSelectorOrThis()
-    while (expression.parent is JetParenthesizedExpression || expression.parent is JetAnnotatedExpression) {
-        expression = expression.parent as JetExpression
-    }
-
-    val assignment = expression.getAssignmentByLHS()
-    if (assignment != null) {
-        return if (assignment.operationToken == JetTokens.EQ) ReferenceAccess.WRITE else ReferenceAccess.READ_WRITE
-    }
-
-    return if ((expression.parent as? JetUnaryExpression)?.operationToken in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
-        ReferenceAccess.READ_WRITE
-    else
-        ReferenceAccess.READ
-}
-
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
 public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> {

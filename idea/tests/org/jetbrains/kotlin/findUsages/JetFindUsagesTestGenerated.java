@@ -1035,6 +1035,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/variable"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("plusAssignFun.0.kt")
+            public void testPlusAssignFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/plusAssignFun.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("readAccess.0.kt")
             public void testReadAccess() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/readAccess.0.kt");

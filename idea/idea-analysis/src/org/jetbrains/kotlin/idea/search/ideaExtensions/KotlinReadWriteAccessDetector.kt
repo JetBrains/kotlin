@@ -20,11 +20,11 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.ReferenceAccess
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.readWriteAccess
 
 public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
     override fun isReadWriteAccessible(element: PsiElement) = element is JetVariableDeclaration || element is JetParameter
@@ -58,7 +58,7 @@ public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
     override fun getExpressionAccess(expression: PsiElement): ReadWriteAccessDetector.Access {
         if (expression !is JetExpression) return ReadWriteAccessDetector.Access.Read
 
-        return when (expression.readWriteAccess()) {
+        return when (expression.readWriteAccess(useResolveForReadWrite = true)) {
             ReferenceAccess.READ -> ReadWriteAccessDetector.Access.Read
             ReferenceAccess.WRITE -> ReadWriteAccessDetector.Access.Write
             ReferenceAccess.READ_WRITE -> ReadWriteAccessDetector.Access.ReadWrite
