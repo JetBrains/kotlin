@@ -43,3 +43,7 @@ compileKotlin {
 task wrapper(type: Wrapper) {
   gradleVersion="1.4"
 }
+
+task exit << {
+    System.exit(0)
+}

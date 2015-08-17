@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
-import org.junit.Ignore
 import org.junit.Test
 
 class KotlinGradleIT: BaseGradleIT() {
@@ -37,31 +35,42 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
-    // This test isn't safe enough: gradle daemon is a singleton process (for a chosen version) and stopping it may
-    // affect the build environment in an unpredictable way. Therefore it is now disabled.
-    // TODO research the possibility to run isolated daemon build
-    Ignore Test fun testKotlinOnlyDaemonMemory() {
+    // For corresponding documentation, see https://docs.gradle.org/current/userguide/gradle_daemon.html
+    // Setting user.variant to different value implies a new daemon process will be created.
+    // In order to stop daemon process, special exit task is used ( System.exit(0) ).
+    Test fun testKotlinOnlyDaemonMemory() {
         val project = Project("kotlinProject", "2.4")
+        val VARIANT_CONSTANT = "ForTest"
+        val userVariantArg = "-Duser.variant=$VARIANT_CONSTANT"
 
-        project.stopDaemon {}
-
-        // build to "warm up" the daemon, if it is not started yet
-        project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-            assertSuccessful()
-        }
-
-        for (i in 1..3) {
-            project.build("build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
-                assertSuccessful()
-                val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(([+-]?\\d+) kb\\)".toRegex().match(output)
-                assert(matches != null && matches.groups.size() == 3, "Used memory after build is not reported by plugin")
-                val reportedGrowth = matches!!.groups.get(2)!!.value.toInt()
-                assert(reportedGrowth <= 500, "Used memory growth $reportedGrowth > 500")
+        fun exitTestDaemon() {
+            project.build(userVariantArg, "exit", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                assertFailed()
+                assertContains("The daemon has exited normally or was terminated in response to a user interrupt.")
             }
         }
 
-        project.stopDaemon {
-            assertSuccessful()
+        exitTestDaemon()
+
+        try {
+            // build to "warm up" the daemon, if it is not started yet
+            project.build(userVariantArg, "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                assertSuccessful()
+            }
+
+            for (i in 1..3) {
+                project.build(userVariantArg, "build", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
+                    assertSuccessful()
+                    val matches = "\\[PERF\\] Used memory after build: (\\d+) kb \\(([+-]?\\d+) kb\\)".toRegex().match(output)
+                    assert(matches != null && matches.groups.size() == 3, "Used memory after build is not reported by plugin")
+                    val reportedGrowth = matches!!.groups.get(2)!!.value.removePrefix("+").toInt()
+                    assert(reportedGrowth <= 700, "Used memory growth $reportedGrowth > 700")
+                }
+            }
+
+        }
+        finally {
+            exitTestDaemon()
         }
     }
 
