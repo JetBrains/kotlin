@@ -1,0 +1,53 @@
+package
+
+internal fun classMutableField(): kotlin.Int
+internal fun withLocalClass(): kotlin.Int
+
+public final class A {
+    public constructor A(/*0*/ a: kotlin.Int = ...)
+    public constructor A(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int = ..., /*2*/ arr: kotlin.Array<kotlin.Int>, /*3*/ lst: java.util.ArrayList<kotlin.String> = ...)
+    internal final val a: kotlin.Int
+    internal final val arr: kotlin.Array<kotlin.Int>
+    internal final var arr2: kotlin.IntArray
+    internal final var b: kotlin.Int
+    internal final val c: kotlin.Int
+    internal final val lst: java.util.ArrayList<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun withLocalArray(): kotlin.Int
+    public final fun with_ARR(): kotlin.Int
+    public final fun with_arr(): kotlin.Int
+    public final fun with_arr2(): kotlin.Int
+    public final fun with_lst(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val ARR: kotlin.IntArray
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+kotlin.data() public final class WithVarC {
+    public constructor WithVarC(/*0*/ c: kotlin.Int)
+    internal final var c: kotlin.Int
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ c: kotlin.Int = ...): WithVarC
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.data() public final class WithVarCAndArray {
+    public constructor WithVarCAndArray(/*0*/ c: kotlin.Int, /*1*/ array: kotlin.IntArray)
+    internal final var array: kotlin.IntArray
+    internal final var c: kotlin.Int
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun component2(): kotlin.IntArray
+    public final /*synthesized*/ fun copy(/*0*/ c: kotlin.Int = ..., /*1*/ array: kotlin.IntArray = ...): WithVarCAndArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
