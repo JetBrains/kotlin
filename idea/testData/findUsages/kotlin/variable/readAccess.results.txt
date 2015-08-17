@@ -1,6 +1,6 @@
 Value read (10: 12) print(-v)
 Value read (7: 11) print(v)
 Value write (11: 5) v += 1
-Value write (12: 5) v -= 1
-Value write (8: 7) ++v
+Value write (12: 6) (v) -= 1
+Value write (8: 11) ++ @X v
 Value write (9: 5) v--

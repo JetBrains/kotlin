@@ -316,8 +316,8 @@ public enum class ReferenceAccess {
 
 public fun JetExpression.readWriteAccess(): ReferenceAccess {
     var expression = getQualifiedExpressionForSelectorOrThis()
-    while (expression.parent is JetParenthesizedExpression) {
-        expression = expression.parent as JetParenthesizedExpression
+    while (expression.parent is JetParenthesizedExpression || expression.parent is JetAnnotatedExpression) {
+        expression = expression.parent as JetExpression
     }
 
     val assignment = expression.getAssignmentByLHS()

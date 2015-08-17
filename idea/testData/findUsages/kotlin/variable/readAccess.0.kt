@@ -3,11 +3,11 @@
 // OPTIONS: skipWrite
 fun foo() {
     var <caret>v = 1
-    v = 2
+    (@X v) = 2
     print(v)
-    ++v
+    ++ @X v
     v--
     print(-v)
     v += 1
-    v -= 1
+    (v) -= 1
 }
