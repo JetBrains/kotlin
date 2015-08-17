@@ -31,12 +31,21 @@ import kotlin.concurrent.thread
 import kotlin.concurrent.write
 import kotlin.platform.platformStatic
 
-val DAEMON_STARTUP_TIMEOUT_MS = 10000L
-val DAEMON_STARTUP_CHECK_INTERVAL_MS = 100L
+fun Process.isAlive() =
+        try {
+            this.exitValue()
+            false
+        }
+        catch (e: IllegalThreadStateException) {
+            true
+        }
 
 public class KotlinCompilerClient {
 
     companion object {
+
+        val DAEMON_STARTUP_TIMEOUT_MS = 10000L
+        val DAEMON_STARTUP_CHECK_INTERVAL_MS = 100L
 
         private fun connectToService(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream): CompileService? {
 
@@ -59,16 +68,6 @@ public class KotlinCompilerClient {
             }
             return null
         }
-
-
-        fun Process.isAlive() =
-            try {
-                this.exitValue()
-                false
-            }
-            catch (e: IllegalThreadStateException) {
-                true
-            }
 
 
         private fun startDaemon(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream) {
@@ -128,7 +127,8 @@ public class KotlinCompilerClient {
             errStream.println("[daemon client] remoteId = " + remoteId.toString())
             errStream.println("[daemon client] localId = " + localId.toString())
             return (localId.compilerVersion.isEmpty() || localId.compilerVersion == remoteId.compilerVersion) &&
-                   (localId.compilerClasspath.all { remoteId.compilerClasspath.contains(it) })
+                   (localId.compilerClasspath.all { remoteId.compilerClasspath.contains(it) }) &&
+                   (localId.compilerDigest.isEmpty() || remoteId.compilerDigest.isEmpty() || localId.compilerDigest == remoteId.compilerDigest)
         }
 
         public fun connectToCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream, autostart: Boolean = true, checkId: Boolean = true): CompileService? {
@@ -210,6 +210,8 @@ public class KotlinCompilerClient {
                     throw IllegalArgumentException("Cannot find compiler jar")
                 else
                     println("desired compiler classpath: " + compilerId.compilerClasspath.joinToString(File.pathSeparator))
+
+                compilerId.updateDigest()
             }
 
             connectToCompileService(compilerId, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)?.let {
@@ -220,12 +222,12 @@ public class KotlinCompilerClient {
                         println("Daemon shut down successfully")
                     }
                     else -> {
-                        println("Executing daemon compilation with args: " + args.joinToString(" "))
+                        println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                         val outStrm = RemoteOutputStreamServer(System.out)
                         try {
                             val memBefore = it.getUsedMemory() / 1024
                             val startTime = System.nanoTime()
-                            val res = it.remoteCompile(args, outStrm, CompileService.OutputFormat.PLAIN)
+                            val res = it.remoteCompile(filteredArgs.toArrayList().toTypedArray(), outStrm, CompileService.OutputFormat.PLAIN)
                             val endTime = System.nanoTime()
                             println("Compilation result code: $res")
                             val memAfter = it.getUsedMemory() / 1024

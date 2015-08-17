@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.rmi.COMPILER_SERVICE_RMI_NAME
-import org.jetbrains.kotlin.rmi.CompileService
-import org.jetbrains.kotlin.rmi.CompilerId
-import org.jetbrains.kotlin.rmi.RemoteOutputStream
+import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.service.RemoteIncrementalCacheClient
 import org.jetbrains.kotlin.rmi.service.RemoteOutputStreamClient
 import java.io.File
@@ -43,22 +41,28 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 
-class CompileServiceImpl<Compiler: CLICompiler<*>>(val registry: Registry, val compiler: Compiler) : CompileService, UnicastRemoteObject() {
+class CompileServiceImpl<Compiler: CLICompiler<*>>(
+        val registry: Registry,
+        val compiler: Compiler,
+        val selfCompilerId: CompilerId,
+        val daemonOptions: DaemonOptions
+) : CompileService, UnicastRemoteObject() {
 
     private val rwlock = ReentrantReadWriteLock()
     private var alive = false
-    private val selfCompilerId by lazy {
-        // TODO: add classpath checksum calculated on init, add it to the interface and use to decide whether it was changed during the lifetime of the daemon
-        CompilerId(
-                compilerClasspath = System.getProperty("java.class.path")
-                                            ?.split(File.pathSeparator)
-                                            ?.map { File(it) }
-                                            ?.filter { it.exists() }
-                                            ?.map { it.absolutePath }
-                                    ?: listOf(),
-                compilerVersion = loadKotlinVersionFromResource()
-        )
-    }
+
+    // TODO: consider matching compilerId coming from outside with actual one
+//    private val selfCompilerId by lazy {
+//        CompilerId(
+//                compilerClasspath = System.getProperty("java.class.path")
+//                                            ?.split(File.pathSeparator)
+//                                            ?.map { File(it) }
+//                                            ?.filter { it.exists() }
+//                                            ?.map { it.absolutePath }
+//                                    ?: listOf(),
+//                compilerVersion = loadKotlinVersionFromResource()
+//        )
+//    }
 
     init {
         // assuming logically synchronized

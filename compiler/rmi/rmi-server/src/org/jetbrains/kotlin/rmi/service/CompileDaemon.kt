@@ -48,8 +48,9 @@ public class CompileDaemon {
 //            setDaemonPpermissions(daemonOptions.port)
 
             val registry = LocateRegistry.createRegistry(daemonOptions.port);
+            val compiler = K2JVMCompiler()
 
-            val server = CompileServiceImpl(registry, K2JVMCompiler())
+            val server = CompileServiceImpl(registry, compiler, compilerId, daemonOptions)
 
             if (daemonOptions.startEcho.isNotEmpty())
                 println(daemonOptions.startEcho)

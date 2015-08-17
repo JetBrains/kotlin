@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.rmi
 
 import java.io.File
 import java.io.Serializable
+import java.security.DigestInputStream
+import java.security.MessageDigest
 import kotlin.platform.platformStatic
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
@@ -98,8 +100,44 @@ public data class DaemonOptions(
 }
 
 
+val COMPILER_ID_DIGEST = "MD5"
+
+
+fun updateSingleFileDigest(file: File, md: MessageDigest) {
+    val stream = DigestInputStream(file.inputStream(), md)
+    val buf = ByteArray(1024)
+    while (stream.read(buf) == buf.size()) {}
+    stream.close()
+}
+
+fun updateForAllClasses(dir: File, md: MessageDigest) {
+    dir.walk().forEach { updateEntryDigest(it, md) }
+}
+
+fun updateEntryDigest(entry: File, md: MessageDigest) {
+    when {
+        entry.isDirectory
+            -> updateForAllClasses(entry, md)
+        entry.isFile &&
+                (entry.getName().endsWith(".class", ignoreCase = true) ||
+                entry.getName().endsWith(".jar", ignoreCase = true))
+            -> updateSingleFileDigest(entry, md)
+        // else skip
+    }
+}
+
+fun Iterable<File>.getFilesClasspathDigest(): String {
+    val md = MessageDigest.getInstance(COMPILER_ID_DIGEST)
+    this.forEach { updateEntryDigest(it, md) }
+    return md.digest().joinToString("", transform = { "%02x".format(it) })
+}
+
+fun Iterable<String>.getClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
+
+
 public data class CompilerId(
         public var compilerClasspath: List<String> = listOf(),
+        public var compilerDigest: String = "",
         public var compilerVersion: String = ""
         // TODO: checksum
 ) : CmdlineParams {
@@ -107,17 +145,25 @@ public data class CompilerId(
     override val asParams: Iterable<String>
         get() =
             propToParams(::compilerClasspath, { it.joinToString(File.pathSeparator) }) +
+            propToParams(::compilerDigest) +
             propToParams(::compilerVersion)
 
     override val parsers: List<PropParser<*,*,*>>
         get() =
             listOf( PropParser(this, ::compilerClasspath, { it.trim('"').split(File.pathSeparator)}),
+                    PropParser(this, ::compilerDigest, { it.trim('"') }),
                     PropParser(this, ::compilerVersion, { it.trim('"') }))
 
+    public fun updateDigest() {
+        compilerDigest = compilerClasspath.getClasspathDigest()
+    }
+
     companion object {
-        public platformStatic fun makeCompilerId(libPath: File): CompilerId =
+        public platformStatic fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
+
+        public platformStatic fun makeCompilerId(paths: Iterable<File>): CompilerId =
                 // TODO consider reading version and calculating checksum here
-                CompilerId(compilerClasspath = listOf(libPath.absolutePath))
+                CompilerId(compilerClasspath = paths.map { it.absolutePath }, compilerDigest = paths.getFilesClasspathDigest())
     }
 }
 
