@@ -16,8 +16,24 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import kotlin.platform.platformStatic
+
 public interface LookupLocation {
+
     companion object {
-        val NO_LOCATION = object : LookupLocation {}
+        @deprecated("Use more suitable constant if possible")
+        val NO_LOCATION = NoLookupLocation.create("(unsorted)")
+        val NO_LOCATION_FROM_IDE = NoLookupLocation.create("from IDE")
+        val NO_LOCATION_FROM_BACKEND = NoLookupLocation.create("from backend")
+        val NO_LOCATION_FROM_TEST = NoLookupLocation.create("from test")
+    }
+}
+
+public class NoLookupLocation private constructor(private val reason: String) : LookupLocation {
+    override fun toString() = "NO LOCATION $reason"
+
+    companion object {
+        platformStatic
+        public fun create(reason: String): LookupLocation = NoLookupLocation(reason)
     }
 }

@@ -20,23 +20,28 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
-import org.jetbrains.kotlin.utils.*
-
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.keysToMap
 import java.util.HashSet
 
-import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
-import kotlin.properties.Delegates
+public class DeclarationResolver(
+        private val annotationResolver: AnnotationResolver,
+        private val trace: BindingTrace
+) {
 
-public class DeclarationResolver(private val annotationResolver: AnnotationResolver,
-                                 private val trace: BindingTrace) {
+    private val NO_LOCATION_WHEN_CHECK_REDECLARATIONS = NoLookupLocation.create("when check redeclarations")
 
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
         val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScope(it) }
@@ -112,7 +117,7 @@ public class DeclarationResolver(private val annotationResolver: AnnotationResol
         val parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName)
         if (parentFragment != null) {
             // Filter out extension properties
-            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName()).filter {
+            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), NO_LOCATION_WHEN_CHECK_REDECLARATIONS).filter {
                 it.getExtensionReceiverParameter() == null
             })
         }

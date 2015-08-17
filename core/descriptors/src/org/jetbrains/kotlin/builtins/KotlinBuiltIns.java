@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -54,6 +55,8 @@ public class KotlinBuiltIns {
 
     private static volatile boolean initializing;
     private static Throwable initializationFailed;
+
+    private static final LookupLocation NO_LOCATION_FROM_BUILTINS = NoLookupLocation.create("from BuiltIns");
 
     private static synchronized void initialize() {
         if (instance == null) {
@@ -239,7 +242,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, LookupLocation.NO_LOCATION);
+        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName, NO_LOCATION_FROM_BUILTINS);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
                                                        (classifier == null ? "null" : classifier.toString());
         return (ClassDescriptor) classifier;
@@ -254,7 +257,7 @@ public class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, LookupLocation.NO_LOCATION);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName, NO_LOCATION_FROM_BUILTINS);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -399,7 +402,7 @@ public class KotlinBuiltIns {
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
         ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(
-                Name.identifier(target.name()), LookupLocation.NO_LOCATION
+                Name.identifier(target.name()), NO_LOCATION_FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
@@ -412,7 +415,7 @@ public class KotlinBuiltIns {
     @Nullable
     public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
         ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getClassifier(
-                Name.identifier(retention.name()), LookupLocation.NO_LOCATION
+                Name.identifier(retention.name()), NO_LOCATION_FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
@@ -1042,6 +1045,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), LookupLocation.NO_LOCATION));
+        return KotlinPackage.first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"), NO_LOCATION_FROM_BUILTINS));
     }
 }
