@@ -582,6 +582,121 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
     }
 
+    override fun visitMethodReferenceExpression(expression: PsiMethodReferenceExpression) {
+        val qualifierType = PsiMethodReferenceUtil.getQualifierType(expression)
+        if (qualifierType is PsiArrayType) {
+            result = DummyStringExpression(expression.text + "  /* Currently unsupported in Kotlin */ ")
+            return
+        }
+
+        val qualifier = expression.qualifier
+        if (qualifier == null) {
+            // Reference should be qualified
+            result = DummyStringExpression(expression.text)
+            return
+        }
+
+        // todo: For inner classes receiver can be omitted
+        val contextClass = expression.getParentOfType<PsiClass>(false)
+        val functionalType = expression.functionalInterfaceType
+
+        val isTypeInQualifier = (qualifier as? PsiReference)?.resolve() is PsiClass
+        val isKotlinFunctionType = functionalType?.canonicalText?.startsWith("kotlin.jvm.functions.Function") ?: false
+
+        // method can be null in case of default constructor
+        val method = expression.resolve() as? PsiMethod
+
+        val hasStaticModifier = method?.hasModifierProperty(PsiModifier.STATIC) ?: false
+        val needThis = !hasStaticModifier && !expression.isConstructor && isTypeInQualifier
+
+        val parameters = method?.getParametersForMethodReference(needThis, isKotlinFunctionType) ?: emptyList()
+
+        val receiver = when {
+            expression.isConstructor -> null
+            needThis -> parameters.firstOrNull()
+            isTypeInQualifier && method?.containingClass == contextClass -> null
+            qualifier is PsiExpression -> codeConverter.convertExpression(qualifier) to null
+            else -> null
+        }
+
+        val callParams = if (needThis) parameters.drop(1) else parameters
+        val statement = if (expression.isConstructor) {
+            MethodCallExpression.build(null, convertMethodReferenceQualifier(qualifier), callParams.map { it.first }, emptyList(), false).assignNoPrototype()
+        }
+        else {
+            val referenceName = expression.referenceName!!
+            MethodCallExpression.build(receiver?.first, referenceName, callParams.map { it.first }, emptyList(), false).assignNoPrototype()
+        }
+
+        val lambdaParameterList = ParameterList(
+                if (parameters.size() == 1 && !isKotlinFunctionType) {
+                    // for lambdas all parameters with types should be present
+                    emptyList()
+                } else {
+                    parameters.map { LambdaParameter(it.first, it.second).assignNoPrototype() }
+                }).assignNoPrototype()
+
+        val lambdaExpression = LambdaExpression(
+                lambdaParameterList,
+                Block(listOf(statement),
+                      LBrace().assignNoPrototype(),
+                      RBrace().assignNoPrototype()).assignNoPrototype()
+        ).assignNoPrototype()
+
+        if (isKotlinFunctionType) {
+            result = lambdaExpression
+        }
+        else {
+            val convertedFunctionalType = converter.typeConverter.convertType(functionalType)
+            result = MethodCallExpression.build(
+                    null,
+                    convertedFunctionalType.canonicalCode(),
+                    listOf(lambdaExpression),
+                    emptyList(),
+                    false
+            )
+        }
+    }
+
+    private fun convertMethodReferenceQualifier(qualifier: PsiElement): String {
+        return when(qualifier) {
+            is PsiExpression -> codeConverter.convertExpression(qualifier).canonicalCode()
+            is PsiTypeElement -> converter.convertTypeElement(qualifier).type.canonicalCode()
+            else -> qualifier.text
+        }
+    }
+
+    private fun PsiMethod.getParametersForMethodReference(needThis: Boolean, isKotlinFunctionType: Boolean): List<Pair<Identifier, Type?>> {
+        val newParameters = arrayListOf<Pair<Identifier, Type?>>()
+
+        var thisClassType: ClassType? = null
+        val thisClass = containingClass
+        if (thisClass != null && isKotlinFunctionType) {
+            val containingClassName = thisClass.qualifiedName ?: containingClass!!.name
+            if (containingClassName != null) {
+                val fqName = FqName(containingClassName)
+                val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
+                thisClassType = ClassType(
+                        ReferenceElement(identifier, converter.convertTypeParameterList(thisClass.typeParameterList).parameters).assignNoPrototype(),
+                        Nullability.NotNull,
+                        converter.settings).assignNoPrototype()
+            }
+        }
+        if (needThis) newParameters.add(Identifier("obj", false).assignNoPrototype() to thisClassType)
+
+        parameterList.parameters.forEach {
+            val parameterType = if (isKotlinFunctionType) converter.typeConverter.convertType(it.type, Nullability.NotNull) else null
+            newParameters.add(Identifier(it.name ?: "p", false).assignNoPrototype() to parameterType)
+        }
+
+        if (newParameters.size() == 1 && !isKotlinFunctionType) {
+            newParameters.clear()
+            newParameters.add(Identifier("it", false).assignNoPrototype() to null)
+        }
+
+        return newParameters
+    }
+
     override fun visitExpression(expression: PsiExpression) {
         result = DummyStringExpression(expression.text)
     }

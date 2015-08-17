@@ -2254,6 +2254,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("java8MRKFunctionExpectedType.java")
+        public void testJava8MRKFunctionExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRKFunctionExpectedType.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("java8MRSamConstructor.java")
+        public void testJava8MRSamConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRSamConstructor.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("lineBreaksBetweenParameters.java")
         public void testLineBreaksBetweenParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
