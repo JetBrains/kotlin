@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
@@ -74,7 +74,7 @@ fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
 }
 
 public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
-    return getContainingScope(method)?.getFunctions(method.name, LookupLocation.NO_LOCATION_FROM_IDE)?.findByJavaElement(method)
+    return getContainingScope(method)?.getFunctions(method.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(method)
 }
 
 public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
@@ -82,7 +82,7 @@ public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructo
 }
 
 public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getProperties(field.name, LookupLocation.NO_LOCATION_FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
+    return getContainingScope(field)?.getProperties(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetScope? {

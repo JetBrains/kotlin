@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -273,7 +273,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val typeReference = type.getStrictParentOfType<JetTypeReference>()!!
             val scope = bindingContext[BindingContext.TYPE_RESOLUTION_SCOPE, typeReference]!!
             val name = target.getName()
-            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, LookupLocation.NO_LOCATION_FROM_IDE) else scope.getPackage(name)
+            val targetByName = if (target is ClassifierDescriptor) scope.getClassifier(name, NoLookupLocation.FROM_IDE) else scope.getPackage(name)
             val canShortenNow = targetByName?.asString() == target.asString()
 
             processQualifiedElement(type, target, canShortenNow)

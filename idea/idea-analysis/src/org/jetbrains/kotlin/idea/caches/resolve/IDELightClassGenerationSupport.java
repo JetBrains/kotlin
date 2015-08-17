@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex;
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -60,7 +61,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 
 import java.io.IOException;
 import java.util.*;
@@ -140,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 if (declaration instanceof JetFunction) {
                     JetFunction jetFunction = (JetFunction) declaration;
                     Name name = jetFunction.getNameAsSafeName();
-                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION_FROM_IDE);
+                    Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name, NoLookupLocation.FROM_IDE);
                     for (FunctionDescriptor descriptor : functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
@@ -148,7 +148,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 else if (declaration instanceof JetProperty) {
                     JetProperty jetProperty = (JetProperty) declaration;
                     Name name = jetProperty.getNameAsSafeName();
-                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE);
+                    Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name, NoLookupLocation.FROM_IDE);
                     for (VariableDescriptor descriptor : properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor);
                     }

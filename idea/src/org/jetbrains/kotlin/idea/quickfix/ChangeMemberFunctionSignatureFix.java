@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -54,7 +55,6 @@ import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.VisibilityUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -268,7 +268,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
         Name name = functionDescriptor.getName();
         for (JetType type : TypeUtils.getAllSupertypes(classDescriptor.getDefaultType())) {
             JetScope scope = type.getMemberScope();
-            for (FunctionDescriptor function : scope.getFunctions(name, LookupLocation.NO_LOCATION_FROM_IDE)) {
+            for (FunctionDescriptor function : scope.getFunctions(name, NoLookupLocation.FROM_IDE)) {
                 if (!function.getKind().isReal()) continue;
                 if (function.getModality().isOverridable())
                     superFunctions.add(function);

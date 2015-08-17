@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -42,7 +42,7 @@ public class IterableTypesDetector(
     private val cache = HashMap<FuzzyType, FuzzyType?>()
     private val iteratorName = Name.identifier("iterator")
 
-    private val typesWithExtensionIterator: Collection<JetType> = scope.getFunctions(iteratorName, LookupLocation.NO_LOCATION_FROM_IDE)
+    private val typesWithExtensionIterator: Collection<JetType> = scope.getFunctions(iteratorName, NoLookupLocation.FROM_IDE)
             .map { it.getExtensionReceiverParameter() }
             .filterNotNull()
             .map { it.getType() }
@@ -75,7 +75,7 @@ public class IterableTypesDetector(
     }
 
     private fun canBeIterable(type: FuzzyType): Boolean {
-        return type.type.memberScope.getFunctions(iteratorName, LookupLocation.NO_LOCATION_FROM_IDE).isNotEmpty() ||
+        return type.type.memberScope.getFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
                typesWithExtensionIterator.any { type.checkIsSubtypeOf(it) != null }
     }
 }

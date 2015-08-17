@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -97,7 +97,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
 
                 if (callable is JetProperty) {
                     callableDescriptor.getContainingScope(bindingContext)
-                            ?.getFunctions(callableDescriptor.name, LookupLocation.NO_LOCATION_FROM_IDE)
+                            ?.getFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE)
                             ?.firstOrNull { it.getValueParameters().isEmpty() }
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
 import org.jetbrains.kotlin.idea.references.ReferencesPackage;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -74,7 +75,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
@@ -623,8 +623,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         if (!kind.getIsConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
             Name newName = Name.identifier(info.getNewName());
             Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? callableScope.getFunctions(newName, LookupLocation.NO_LOCATION_FROM_IDE)
-                                                                 : callableScope.getProperties(newName, LookupLocation.NO_LOCATION_FROM_IDE);
+                                                                 ? callableScope.getFunctions(newName, NoLookupLocation.FROM_IDE)
+                                                                 : callableScope.getProperties(newName, NoLookupLocation.FROM_IDE);
             for (CallableDescriptor conflict : conflicts) {
                 if (conflict == oldDescriptor) continue;
 
@@ -647,7 +647,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
             if (parametersScope != null) {
                 if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
-                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), LookupLocation.NO_LOCATION_FROM_IDE)) {
+                    for (VariableDescriptor property : parametersScope.getProperties(Name.identifier(parameterName), NoLookupLocation.FROM_IDE)) {
                         PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
                         if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof JetParameterList)) {

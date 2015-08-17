@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -650,7 +650,7 @@ private fun ExtractionData.inferParametersInfo(
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
                     && originalDeclaration is JetNamedFunction && originalDeclaration.isLocal()
-                    && (targetScope == null || originalDescriptor !in targetScope.getFunctions(originalDescriptor.name, LookupLocation.NO_LOCATION_FROM_IDE))
+                    && (targetScope == null || originalDescriptor !in targetScope.getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 

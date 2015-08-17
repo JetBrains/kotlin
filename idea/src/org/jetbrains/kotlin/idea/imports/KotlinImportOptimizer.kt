@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -199,7 +199,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
-                if (scope.getClassifier(fqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)?.importableFqNameSafe != fqName) {
+                if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqNameSafe != fqName) {
                     // add explicit import if failed to import with * (or from current package)
                     importsToGenerate.add(ImportPath(fqName, false))
 

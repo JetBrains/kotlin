@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTyp
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -137,5 +137,5 @@ fun JetType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, conte
                 else -> null
             } ?: return true
 
-    return typeParametersToAdd.any { scope.getClassifier(it.name, LookupLocation.NO_LOCATION_FROM_IDE) != it }
+    return typeParametersToAdd.any { scope.getClassifier(it.name, NoLookupLocation.FROM_IDE) != it }
 }

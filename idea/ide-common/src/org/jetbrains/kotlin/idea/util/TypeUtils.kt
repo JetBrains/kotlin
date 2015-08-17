@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
@@ -82,7 +82,7 @@ fun JetType.isResolvableInScope(scope: JetScope?, checkTypeParameters: Boolean):
     if (descriptor == null || descriptor.getName().isSpecial()) return false
     if (!checkTypeParameters && descriptor is TypeParameterDescriptor) return true
 
-    return scope != null && scope.getClassifier(descriptor.name, LookupLocation.NO_LOCATION_FROM_IDE) == descriptor
+    return scope != null && scope.getClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
 
 public fun JetType.approximateWithResolvableType(scope: JetScope?, checkTypeParameters: Boolean): JetType {

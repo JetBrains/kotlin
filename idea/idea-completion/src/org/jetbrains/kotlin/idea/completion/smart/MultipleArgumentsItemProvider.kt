@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -90,7 +90,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: JetScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
-        val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE).singleOrNull() ?: return null
+        val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull() ?: return null
         return if (smartCastCalculator.types(variable).any { JetTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else

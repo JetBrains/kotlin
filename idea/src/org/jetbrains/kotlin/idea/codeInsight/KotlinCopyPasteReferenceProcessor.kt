@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
@@ -238,11 +238,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val originalFqName = FqName(refData.fqName)
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
-            val functions = fileResolutionScope.getFunctions(originalFqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+            val functions = fileResolutionScope.getFunctions(originalFqName.shortName(), NoLookupLocation.FROM_IDE)
             if (functions.any { it.importableFqName == originalFqName }) return null // already imported
         }
         else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
-            val properties = fileResolutionScope.getProperties(originalFqName.shortName(), LookupLocation.NO_LOCATION_FROM_IDE)
+            val properties = fileResolutionScope.getProperties(originalFqName.shortName(), NoLookupLocation.FROM_IDE)
             if (properties.any { it.importableFqName == originalFqName }) return null // already imported
         }
 

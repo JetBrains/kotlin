@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -254,7 +254,7 @@ class TypeInstantiationItems(
                 is ClassDescriptor -> container.getStaticScope()
                 else -> return
             }
-            val samConstructor = scope.getFunctions(`class`.name, LookupLocation.NO_LOCATION_FROM_IDE)
+            val samConstructor = scope.getFunctions(`class`.name, NoLookupLocation.FROM_IDE)
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
             val lookupElement = lookupElementFactory.createLookupElement(samConstructor, bindingContext, false)

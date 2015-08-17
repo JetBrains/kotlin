@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
@@ -62,8 +62,8 @@ fun findPackagePartInternalNameForLibraryFile(topLevelDeclaration: JetDeclaratio
     val descFromSourceText = render(descriptor)
 
     val descriptors: Collection<CallableDescriptor> = when (descriptor) {
-        is FunctionDescriptor -> packageDescriptor.memberScope.getFunctions(descriptor.name, LookupLocation.NO_LOCATION_FROM_IDE)
-        is PropertyDescriptor -> packageDescriptor.memberScope.getProperties(descriptor.name, LookupLocation.NO_LOCATION_FROM_IDE)
+        is FunctionDescriptor -> packageDescriptor.memberScope.getFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
+        is PropertyDescriptor -> packageDescriptor.memberScope.getProperties(descriptor.name, NoLookupLocation.FROM_IDE)
         else -> {
             reportError(topLevelDeclaration, descriptor)
             listOf()

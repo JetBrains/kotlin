@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -400,7 +401,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     SourceElement.NO_SOURCE
             )
 
-            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), LookupLocation.NO_LOCATION_FROM_IDE) == null }
+            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
             val parameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
             val typeParameters = (0..typeParameterCount - 1).map {
                 TypeParameterDescriptorImpl.createWithDefaultBound(
@@ -620,7 +621,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
             }
 
-            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), LookupLocation.NO_LOCATION_FROM_IDE) == null }
+            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
             val typeParameterNames = allTypeParametersNotInScope.map { KotlinNameSuggester.suggestNameByName(it.getName().asString(), validator) }
 
             return allTypeParametersNotInScope.zip(typeParameterNames).toMap()

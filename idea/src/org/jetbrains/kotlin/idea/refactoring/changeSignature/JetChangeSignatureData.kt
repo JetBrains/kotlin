@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetClass
@@ -81,7 +81,7 @@ public class JetChangeSignatureData(
         val validator = bodyScope?.let { bodyScope ->
             CollectingNameValidator(paramNames) {
                 val name = Name.identifier(it)
-                bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name, LookupLocation.NO_LOCATION_FROM_IDE).isEmpty()
+                bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name, NoLookupLocation.FROM_IDE).isEmpty()
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
