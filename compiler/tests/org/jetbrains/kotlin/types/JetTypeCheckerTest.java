@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -624,7 +624,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             else {
                 Name shortName = fqName.shortName();
                 assert shortName.equals(defaultImport.getImportedName());
-                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName, LookupLocation.NO_LOCATION_FROM_TEST));
+                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName, NoLookupLocation.FROM_TEST));
             }
         }
         scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());

@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -186,13 +186,13 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     private fun renameKotlinFunctionTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldMethodName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getFunctions(oldMethodName, LookupLocation.NO_LOCATION_FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinPropertyTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldPropertyName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getProperties(oldPropertyName, LookupLocation.NO_LOCATION_FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getProperties(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {

@@ -22,7 +22,6 @@ public interface LookupLocation {
         @deprecated("Use more suitable constant if possible")
         val NO_LOCATION = NoLookupLocation.UNSORTED
         val NO_LOCATION_FROM_BACKEND = NoLookupLocation.FROM_BACKEND
-        val NO_LOCATION_FROM_TEST = NoLookupLocation.FROM_TEST
     }
 }
 

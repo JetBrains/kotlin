@@ -20,13 +20,13 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.util.Collection;
@@ -74,7 +74,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         JetFile jetFile = JetPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         Collection<FunctionDescriptor> functions =
-                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), LookupLocation.NO_LOCATION_FROM_TEST);
+                module.getPackage(FqName.ROOT).getMemberScope().getFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Many functions defined";
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
 
