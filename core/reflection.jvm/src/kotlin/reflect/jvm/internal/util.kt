@@ -16,13 +16,10 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.IllegalCallableAccessException
 
 internal val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
-
-internal val NO_LOCATION_FROM_REFLECTION = NoLookupLocation.create("from reflection")
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =

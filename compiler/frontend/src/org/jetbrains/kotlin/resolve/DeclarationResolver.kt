@@ -41,8 +41,6 @@ public class DeclarationResolver(
         private val trace: BindingTrace
 ) {
 
-    private val NO_LOCATION_WHEN_CHECK_REDECLARATIONS = NoLookupLocation.create("when check redeclarations")
-
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
         val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScope(it) }
         for ((file, fileScope) in filesToScope) {
@@ -117,7 +115,7 @@ public class DeclarationResolver(
         val parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName)
         if (parentFragment != null) {
             // Filter out extension properties
-            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), NO_LOCATION_WHEN_CHECK_REDECLARATIONS).filter {
+            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filter {
                 it.getExtensionReceiverParameter() == null
             })
         }

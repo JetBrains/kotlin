@@ -22,18 +22,21 @@ public interface LookupLocation {
 
     companion object {
         @deprecated("Use more suitable constant if possible")
-        val NO_LOCATION = NoLookupLocation.create("(unsorted)")
-        val NO_LOCATION_FROM_IDE = NoLookupLocation.create("from IDE")
-        val NO_LOCATION_FROM_BACKEND = NoLookupLocation.create("from backend")
-        val NO_LOCATION_FROM_TEST = NoLookupLocation.create("from test")
+        val NO_LOCATION = NoLookupLocation.UNSORTED
+        val NO_LOCATION_FROM_IDE = NoLookupLocation.FROM_IDE
+        val NO_LOCATION_FROM_BACKEND = NoLookupLocation.FROM_BACKEND
+        val NO_LOCATION_FROM_TEST = NoLookupLocation.FROM_TEST
     }
 }
 
-public class NoLookupLocation private constructor(private val reason: String) : LookupLocation {
-    override fun toString() = "NO LOCATION $reason"
-
-    companion object {
-        platformStatic
-        public fun create(reason: String): LookupLocation = NoLookupLocation(reason)
-    }
+public enum class NoLookupLocation : LookupLocation {
+    @deprecated("Use more suitable constant if possible")
+    UNSORTED,
+    FROM_IDE,
+    FROM_BACKEND,
+    FROM_TEST,
+    FROM_BUILTINS,
+    WHEN_CHECK_REDECLARATIONS,
+    FOR_SCRIPT,
+    FROM_REFLECTION
 }

@@ -27,7 +27,6 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
@@ -51,8 +50,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
-    private static final LookupLocation NO_LOCATION_FOR_SCRIPT = NoLookupLocation.create("for script");
-
     private final LazyResolveStorageManager storageManager;
     private final ExceptionTracker exceptionTracker;
 
@@ -292,7 +289,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
         JetScope resolutionScope = lazyDeclarationResolver.resolutionScopeToResolveDeclaration(script);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), NO_LOCATION_FOR_SCRIPT);
+        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
         return (ClassDescriptor) classifier;
     }
