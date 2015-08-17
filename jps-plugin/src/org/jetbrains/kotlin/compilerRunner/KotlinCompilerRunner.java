@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -132,11 +132,10 @@ public class KotlinCompilerRunner {
             // trying the daemon first
             if (incrementalCaches != null && KotlinCompilerClient.Companion.isDaemonEnabled()) {
                 File libPath = CompilerRunnerUtil.getLibPath(environment.getKotlinPaths(), messageCollector);
-                CompilerId compilerId = CompilerId.makeCompilerId(libPath);
+                CompilerId compilerId = CompilerId.makeCompilerId(new File(libPath, "kotlin-compiler.jar"));
                 DaemonOptions daemonOptions = new DaemonOptions();
-                // TODO: find a proper logger
-                Logger log = Logger.getAnonymousLogger();
-                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonOptions, log);
+                // TODO: find proper stream to report daemon connection progress
+                CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonOptions, System.out);
                 if (daemon != null) {
                     Integer res = KotlinCompilerClient.Companion.incrementalCompile(daemon, argsArray, incrementalCaches, out);
                     return res.toString();
