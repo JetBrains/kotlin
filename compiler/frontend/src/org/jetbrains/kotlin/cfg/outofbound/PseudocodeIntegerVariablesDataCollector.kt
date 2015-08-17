@@ -562,7 +562,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
-        assert(instruction.inputValues.size() > 0, "Prefix operation is expected to have at least one input value")
+        if(instruction.inputValues.size() < 1) {
+            // If the code under processing contains error (for example val a = ++)
+            // the unary operation may have less than 1 argument
+            return;
+        }
         val operandVariable = instruction.inputValues[0]
         val resultVariable = instruction.outputValue
                              ?: return
