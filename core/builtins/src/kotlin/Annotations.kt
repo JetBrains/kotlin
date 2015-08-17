@@ -36,7 +36,7 @@ public annotation(mustBeDocumented = true) class data
  *     the deprecated API usage.
  */
 target(CLASSIFIER, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER,
-       LOCAL_VARIABLE, FIELD, VALUE_PARAMETER)
+       LOCAL_VARIABLE, VALUE_PARAMETER)
 public annotation(mustBeDocumented = true) class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
 /**
