@@ -119,7 +119,7 @@ public class ControlStructureTypingUtils {
         }
         function.initialize(
                 null,
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
+                null,
                 Lists.newArrayList(typeParameter),
                 valueParameters,
                 type,

@@ -46,7 +46,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class DescriptorUtils {
@@ -66,7 +65,7 @@ public class DescriptorUtils {
             ScriptDescriptor scriptDescriptor = (ScriptDescriptor) containingDeclaration;
             return scriptDescriptor.getThisAsReceiverParameter();
         }
-        return NO_RECEIVER_PARAMETER;
+        return null;
     }
 
     /**

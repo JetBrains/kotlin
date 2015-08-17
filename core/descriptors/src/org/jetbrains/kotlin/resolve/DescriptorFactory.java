@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.types.Variance;
 
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getDefaultConstructorVisibility;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
@@ -88,7 +87,7 @@ public class DescriptorFactory {
         SimpleFunctionDescriptorImpl values =
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.EMPTY, DescriptorUtils.ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
-        return values.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
+        return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()), Modality.FINAL,
                                  Visibilities.PUBLIC);
@@ -103,7 +102,7 @@ public class DescriptorFactory {
                 valueOf, null, 0, Annotations.EMPTY, Name.identifier("value"), getBuiltIns(enumClass).getStringType(), false, null,
                 enumClass.getSource()
         );
-        return valueOf.initialize(null, NO_RECEIVER_PARAMETER, Collections.<TypeParameterDescriptor>emptyList(),
+        return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(), Modality.FINAL,
                                   Visibilities.PUBLIC);
     }
@@ -114,7 +113,7 @@ public class DescriptorFactory {
             @Nullable JetType receiverParameterType
     ) {
         return receiverParameterType == null
-               ? NO_RECEIVER_PARAMETER
+               ? null
                : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType));
     }
 }

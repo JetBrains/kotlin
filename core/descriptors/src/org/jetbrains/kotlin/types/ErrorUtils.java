@@ -416,7 +416,7 @@ public class ErrorUtils {
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),
-                           ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
+                           null,
                            (JetType) null
         );
 
@@ -428,7 +428,7 @@ public class ErrorUtils {
         ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ERROR_CLASS, ownerScope);
         function.initialize(
                 null,
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
+                null,
                 Collections.<TypeParameterDescriptorImpl>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),

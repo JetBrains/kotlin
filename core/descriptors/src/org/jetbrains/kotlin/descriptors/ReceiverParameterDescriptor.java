@@ -23,10 +23,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 public interface ReceiverParameterDescriptor extends ParameterDescriptor {
 
-    // This field exists for better readability of the client code
-    @Nullable
-    ReceiverParameterDescriptor NO_RECEIVER_PARAMETER = null;
-
     @NotNull
     ReceiverValue getValue();
 

@@ -103,7 +103,7 @@ public class LazyScriptClassMemberScope protected constructor(
                 returnType,
                 listOf<TypeParameterDescriptor>(),
                 scriptDescriptor.getThisAsReceiverParameter(),
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
+                null as ReceiverParameterDescriptor?
         )
         propertyDescriptor.initialize(null, null)
 
@@ -138,7 +138,7 @@ public class LazyScriptClassMemberScope protected constructor(
                 parameter.getType(),
                 listOf(),
                 scriptDescriptor.getThisAsReceiverParameter(),
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER
+                null as ReceiverParameterDescriptor?
         )
         propertyDescriptor.initialize(null, null)
         return propertyDescriptor

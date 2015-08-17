@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.OVERRIDE_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.VARARG_KEYWORD;
@@ -735,7 +734,7 @@ public class DescriptorResolver {
         ReceiverParameterDescriptor receiverDescriptor =
                 DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
-        ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? NO_RECEIVER_PARAMETER : receiverDescriptor;
+        ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? null : receiverDescriptor;
 
         JetScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
                                                                                 implicitInitializerReceiver, trace);
@@ -1055,7 +1054,7 @@ public class DescriptorResolver {
                 toSourceElement(parameter)
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
-                                   getDispatchReceiverParameterIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
+                                   getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null);
 
         PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter =
