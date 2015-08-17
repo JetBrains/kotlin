@@ -710,16 +710,20 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
             Pair("#hashCode()", Pair("java.lang", "java/lang/Object.html#hashCode()"))
     )
 
+    private fun Rendering.withNewHRef(href: String): Rendering {
+        val result = Rendering(href, text)
+        attributes.forEach { result.withAttribute(it) }
+        return result
+    }
+
     override fun render(node: WikiLinkNode?): Rendering? {
-        val answer = super.render(node)
+        var answer = super.render(node)
         if (answer != null) {
             val text = answer.text
             if (text != null) {
                 val qualified = resolveToQualifiedName(text)
                 var href = resolveClassNameLink(qualified)
-                if (href != null) {
-                    answer.href = href
-                } else {
+                if (href == null) {
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
                     for (prefix in listOf("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
@@ -741,9 +745,9 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                     }
                 }
                 if (href != null) {
-                    answer.href = href
+                    answer = answer.withNewHRef(href)
                 } else {
-                    answer.href = "#NotImplementedYet"
+                    answer = answer.withNewHRef("#NotImplementedYet")
                     warning("could not resolve expression: $qualified into a wiki link")
                 }
             }
