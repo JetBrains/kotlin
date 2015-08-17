@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg.outofbound
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import java.util.*
+import java.util.HashMap
 
 public data class ValuesData(
         val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
