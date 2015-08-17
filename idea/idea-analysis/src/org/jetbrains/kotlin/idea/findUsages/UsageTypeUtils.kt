@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.findUsages
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -33,12 +30,12 @@ import com.intellij.psi.PsiReferenceExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.references.JetArrayAccessReference
 import org.jetbrains.kotlin.idea.references.JetInvokeFunctionReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public object UsageTypeUtils {
@@ -149,15 +146,9 @@ public object UsageTypeUtils {
                 }
             }
 
-            return when {
-                (refExpr.getParentOfTypesAndPredicate(false, javaClass<JetBinaryExpression>()) { JetPsiUtil.isAssignment(it) })
-                        ?.getLeft().isAncestor(refExpr) ->
-                    WRITE
-
-                refExpr.getNonStrictParentOfType<JetSimpleNameExpression>() != null ->
-                    READ
-
-                else -> null
+            return when (refExpr.readWriteAccess()) {
+                ReferenceAccess.READ -> READ
+                ReferenceAccess.WRITE, ReferenceAccess.READ_WRITE -> WRITE
             }
         }
 

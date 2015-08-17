@@ -22,18 +22,14 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.KotlinNoOriginLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum
-import org.jetbrains.kotlin.idea.findUsages.UsageTypeUtils
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -225,24 +221,4 @@ fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Bool
         && targetDescriptor is CallableDescriptor
         && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
     }
-}
-
-
-// Check if reference resolves to property getter
-// Works for JetProperty and JetParameter
-fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
-    if (UsageTypeUtils.getUsageType(getElement()) == UsageTypeEnum.READ) return true
-
-    val refTarget = resolve()
-    if (refTarget is KotlinLightMethod) {
-        val origin = refTarget.getOrigin()
-        val declaration: JetNamedDeclaration? = when (origin) {
-            is JetPropertyAccessor -> origin.getNonStrictParentOfType<JetProperty>()
-            is JetProperty, is JetParameter -> origin as JetNamedDeclaration
-            else -> null
-        }
-        return declaration != null && refTarget.getName() == JvmAbi.getterName(declaration.getName()!!)
-    }
-
-    return false
 }

@@ -23,9 +23,8 @@ import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.utils.addToStdlib.constant
+import org.jetbrains.kotlin.psi.psiUtil.ReferenceAccess
+import org.jetbrains.kotlin.psi.psiUtil.readWriteAccess
 
 public class JetReferenceContributor() : PsiReferenceContributor() {
     public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
@@ -37,10 +36,10 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             registerMultiProvider(javaClass<JetNameReferenceExpression>()) {
                 if (it.getReferencedNameElementType() != JetTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
 
-                when (it.access()) {
-                    Access.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
-                    Access.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
-                    Access.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
+                when (it.readWriteAccess()) {
+                    ReferenceAccess.READ -> arrayOf(SyntheticPropertyAccessorReference.Getter(it))
+                    ReferenceAccess.WRITE -> arrayOf(SyntheticPropertyAccessorReference.Setter(it))
+                    ReferenceAccess.READ_WRITE -> arrayOf(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
                 }
             }
 
@@ -72,28 +71,6 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
                 KDocReference(it)
             }
         }
-    }
-
-    //TODO: there should be some common util for that
-    private enum class Access {
-        READ, WRITE, READ_WRITE
-    }
-
-    private fun JetSimpleNameExpression.access(): Access {
-        var expression = getQualifiedExpressionForSelectorOrThis()
-        while (expression.getParent() is JetParenthesizedExpression) {
-            expression = expression.getParent() as JetParenthesizedExpression
-        }
-
-        val assignment = expression.getAssignmentByLHS()
-        if (assignment != null) {
-            return if (assignment.getOperationToken() == JetTokens.EQ) Access.WRITE else Access.READ_WRITE
-        }
-
-        return if ((expression.getParent() as? JetUnaryExpression)?.getOperationToken() in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
-            Access.READ_WRITE
-        else
-            Access.READ
     }
 
     private fun <E : JetElement> PsiReferenceRegistrar.registerProvider(elementClass: Class<E>, factory: (E) -> JetReference) {

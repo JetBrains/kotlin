@@ -1026,6 +1026,27 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("idea/testData/findUsages/kotlin/variable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Variable extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInVariable() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/variable"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("readAccess.0.kt")
+            public void testReadAccess() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/readAccess.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("writeAccess.0.kt")
+            public void testWriteAccess() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/variable/writeAccess.0.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/findUsages/java")

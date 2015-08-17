@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.matchesTarget
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.and
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.False
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchFilter.True
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
@@ -237,8 +239,6 @@ class FunctionUsagesSearchHelper(
     }
 }
 
-val isPropertyReadOnlyUsage = (PsiReference::isPropertyReadOnlyUsage).searchFilter
-
 // Used for JetProperty and JetParameter
 class PropertyUsagesSearchHelper(
         public val readUsages: Boolean = true,
@@ -294,12 +294,21 @@ class PropertyUsagesSearchHelper(
     }
 
     override fun makeFilter(target: UsagesSearchTarget<JetNamedDeclaration>): UsagesSearchFilter {
-        val readWriteFilter = when {
-            readUsages && writeUsages -> True
-            readUsages -> isPropertyReadOnlyUsage
-            writeUsages -> !isPropertyReadOnlyUsage
-            else -> False
+        val readWriteFilter = object: UsagesSearchFilter {
+            val detector = KotlinReadWriteAccessDetector()
+
+            override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean {
+                if (readUsages == writeUsages) return readUsages
+
+                val access = detector.getReferenceAccess(target.element, ref)
+                return when (access) {
+                    ReadWriteAccessDetector.Access.Read -> readUsages
+                    ReadWriteAccessDetector.Access.Write -> writeUsages
+                    ReadWriteAccessDetector.Access.ReadWrite -> true
+                }
+            }
         }
+
         var result = isTargetOrOverrideUsage and readWriteFilter and isFilteredImport
         if (!namedArgumentUsages) {
            result = result and !(PsiReference::isNamedArgumentUsage).searchFilter

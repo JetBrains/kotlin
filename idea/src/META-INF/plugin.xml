@@ -516,6 +516,8 @@
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodReferenceSearcher"/>
 
+    <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
+
     <exceptionFilter implementation="org.jetbrains.kotlin.idea.filters.JetExceptionFilterFactory" order="first"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.JetEditorOptions"

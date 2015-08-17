@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 import java.util.ArrayList
 import java.util.Collections
 import kotlin.test.assertTrue
@@ -305,6 +306,29 @@ public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinli
 
 public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
+}
+
+// ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
+
+public enum class ReferenceAccess {
+    READ, WRITE, READ_WRITE
+}
+
+public fun JetExpression.readWriteAccess(): ReferenceAccess {
+    var expression = getQualifiedExpressionForSelectorOrThis()
+    while (expression.parent is JetParenthesizedExpression) {
+        expression = expression.parent as JetParenthesizedExpression
+    }
+
+    val assignment = expression.getAssignmentByLHS()
+    if (assignment != null) {
+        return if (assignment.operationToken == JetTokens.EQ) ReferenceAccess.WRITE else ReferenceAccess.READ_WRITE
+    }
+
+    return if ((expression.parent as? JetUnaryExpression)?.operationToken in constant { setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) })
+        ReferenceAccess.READ_WRITE
+    else
+        ReferenceAccess.READ
 }
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
