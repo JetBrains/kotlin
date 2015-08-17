@@ -114,3 +114,46 @@ error:
 sink:
     <SINK>                                                             in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
 =====================
+== andWithDeadCode ==
+fun andWithDeadCode() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.size() > 3 && lst[3] > 0
+    42
+}
+---------------------
+L0:
+  1 <START>                                                                     in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+  2 mark({ val lst = arrayListOf(1, 2, 3) lst.size() > 3 && lst[3] > 0 42 })    in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+    v(val lst = arrayListOf(1, 2, 3))                                           in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{lst:-}
+    r(1) -> <v0>                                                                in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    r(2) -> <v1>                                                                in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    r(3) -> <v2>                                                                in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    mark(arrayListOf(1, 2, 3))                                                  in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    call(arrayListOf(1, 2, 3), arrayListOf|<v0>, <v1>, <v2>) -> <v3>            in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:-}
+    w(lst|<v3>)                                                                 in: INTS{} BOOLS{} ARRS{lst:-}      out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(lst.size())                                                            in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(lst) -> <v4>                                                              in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(size())                                                                in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    call(size(), size|<v4>) -> <v5>                                             in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(3) -> <v6>                                                                in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(lst.size() > 3)                                                        in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    call(lst.size() > 3, compareTo|<v5>, <v6>) -> <v7>                          in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    jf(L2|<v7>)                                                                 in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    mark(lst[3])                                                                in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    r(lst) -> <v8>                                                              in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    r(3) -> <v9>                                                                in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    mark(lst[3])                                                                in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    call(lst[3], get|<v8>, <v9>) -> <v10>                                       in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    r(0) -> <v11>                                                               in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    mark(lst[3] > 0)                                                            in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+    call(lst[3] > 0, compareTo|<v10>, <v11>) -> <v12>                           in: INTS{} BOOLS{} ARRS{lst:#}      out: INTS{} BOOLS{} ARRS{lst:#}
+L2 [result of boolean operation]:
+    magic[AND](lst.size() > 3 && lst[3] > 0|<v7>, <v12>) -> <v13>               in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+    r(42) -> <v14>                                                              in: INTS{} BOOLS{} ARRS{lst:[3]}    out: INTS{} BOOLS{} ARRS{lst:[3]}
+L1:
+  1 <END>                                                                       in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                     in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                      in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
+=====================

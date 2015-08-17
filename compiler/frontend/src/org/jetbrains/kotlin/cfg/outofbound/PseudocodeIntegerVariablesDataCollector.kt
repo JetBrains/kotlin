@@ -216,9 +216,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             currentInstruction: Instruction,
             edgeData: ValuesData
     ) {
-        if (previousInstruction is ConditionalJumpInstruction && previousInstruction.element !is JetBinaryExpression) {
+        if (previousInstruction is ConditionalJumpInstruction) {
             val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.conditionValue]
-            if (conditionBoolValue != null && previousInstruction.element is JetIfExpression) {
+            if (conditionBoolValue != null &&
+                (previousInstruction.element is JetIfExpression || previousInstruction.element is JetBinaryExpression)) {
                 applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
                                           previousInstruction.nextOnFalse, edgeData)
             }
@@ -251,6 +252,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     // We are in "else" block and condition evaluated to "true" so this block will not
                     // be processed (dead code block). To indicate this we will make all variables dead
                     edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                    edgeData.collectionsToSizes.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                 }
             }
             is BooleanVariableValue.False -> {
@@ -258,6 +260,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     // We are in "then" block and condition evaluated to "false" so this block will not
                     // be processed (dead code block). To indicate this we will make all variables dead
                     edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
+                    edgeData.collectionsToSizes.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
                 }
             }
             is BooleanVariableValue.Undefined -> {

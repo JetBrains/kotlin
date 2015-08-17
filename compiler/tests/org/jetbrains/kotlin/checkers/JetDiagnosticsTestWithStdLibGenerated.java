@@ -655,6 +655,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             doTest(fileName);
         }
 
+        @TestMetadata("booleanOperations.kt")
+        public void testBooleanOperations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outOfBoundAccessAnalysis/booleanOperations.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("merge.kt")
         public void testMerge() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outOfBoundAccessAnalysis/merge.kt");

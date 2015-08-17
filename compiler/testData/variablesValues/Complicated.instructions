@@ -41,17 +41,17 @@ L4 [body entry point]:
 L8 [result of boolean operation]:
     magic[AND](a > 0 && a < 3|<v6>, <v9>) -> <v10>                                                    in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
     jt(L7|<v10>)                                                                                      in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    r(a) -> <v11>                                                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    r(4) -> <v12>                                                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    mark(a >= 4)                                                                                      in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    call(a >= 4, compareTo|<v11>, <v12>) -> <v13>                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    jf(L9|<v13>)                                                                                      in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    r(a) -> <v14>                                                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    r(10) -> <v15>                                                                                    in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    mark(a < 10)                                                                                      in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
-    call(a < 10, compareTo|<v14>, <v15>) -> <v16>                                                     in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
+    r(a) -> <v11>                                                                                     in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    r(4) -> <v12>                                                                                     in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    mark(a >= 4)                                                                                      in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    call(a >= 4, compareTo|<v11>, <v12>) -> <v13>                                                     in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    jf(L9|<v13>)                                                                                      in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    r(a) -> <v14>                                                                                     in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    r(10) -> <v15>                                                                                    in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    mark(a < 10)                                                                                      in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
+    call(a < 10, compareTo|<v14>, <v15>) -> <v16>                                                     in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
 L9 [result of boolean operation]:
-    magic[AND](a >= 4 && a < 10|<v13>, <v16>) -> <v17>                                                in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
+    magic[AND](a >= 4 && a < 10|<v13>, <v16>) -> <v17>                                                in: INTS{a:[5, ?]}    BOOLS{} ARRS{}    out: INTS{a:[5, ?]}    BOOLS{} ARRS{}
 L7 [result of boolean operation]:
     magic[OR](a > 0 && a < 3 || a >= 4 && a < 10|<v10>, <v17>) -> <v18>                               in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}
     mark(!(a > 0 && a < 3 || a >= 4 && a < 10))                                                       in: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}    out: INTS{a:[1, 5, ?]} BOOLS{} ARRS{}

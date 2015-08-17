@@ -24,3 +24,9 @@ fun alwaysTrueIfWithElse() {
     }
     42
 }
+
+fun andWithDeadCode() {
+    val lst = arrayListOf(1, 2, 3)
+    lst.size() > 3 && lst[3] > 0
+    42
+}
