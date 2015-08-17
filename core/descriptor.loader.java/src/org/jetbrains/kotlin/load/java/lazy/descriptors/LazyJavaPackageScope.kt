@@ -48,17 +48,43 @@ public class LazyJavaPackageScope(
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
             = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
 
+    public val kotlinBinaryClasses: List<KotlinJvmBinaryClass>
+    init {
+        val pakage = jPackage.getFqName().asString().replace('.', '/')
+        val files = containingDeclaration.packageMapper.findPackageMembers(pakage)
+        val packageClassId = PackageClassUtils.getPackageClassId(packageFragment.fqName).packageFqName
+        val notFound = arrayListOf<String>()
+        val classFiles = files.map {
+            val classId = ClassId(packageClassId, Name.identifierNoValidate(it.substringAfterLast("/")))
+            val findKotlinClass = c.components.kotlinClassFinder.findKotlinClass(classId)
+            if (findKotlinClass == null) {
+                notFound.add("$classId")
+            }
+            findKotlinClass
+        }
+        kotlinBinaryClasses = classFiles.filterNotNull()
+        if (kotlinBinaryClasses.size() != classFiles.size()) {
+            println("package: $pakage")
+            println("files: " + files.join())
+            println("not found: " + notFound.join())
+            //assert(kotlinBinaryClasses.size() == classFiles.size(), "${kotlinBinaryClasses.size()} != ${classFiles.size()}")
+        }
+    }
+
     private val deserializedPackageScope = c.storageManager.createLazyValue {
         val kotlinBinaryClass = kotlinBinaryClass
-        if (kotlinBinaryClass == null)
+        if (kotlinBinaryClasses.isEmpty())
             JetScope.Empty
         else {
-            val pakage = jPackage.getFqName().asString()
-            val files = containingDeclaration.packageMapper.findPackageMembers(pakage.replace("\\.", "/"))
-//            println("package:" + pakage)
-//            println(files.join())
-            val jetScope = c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.Empty
-            jetScope
+
+            //if(!kotlinBinaryClasses.isEmpty()) {
+                c.components.deserializedDescriptorResolver.createKotlinNewPackageScope(packageFragment, kotlinBinaryClasses)
+                //print("deserializing " + packageFragment.getName())
+            //}
+
+//            val jetScope = c.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.Empty
+//            jetScope
+
         }
     }
 

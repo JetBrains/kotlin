@@ -115,6 +115,10 @@ public class PropertyCodegen {
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(ownerType));
         }
         else {
+            if (context instanceof PackageContext) {
+                Type ownerType = ((PackageContext) context).getPackagePartType();
+                v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(ownerType));
+            }
             assert declaration != null : "Declaration is null for different context: " + context;
 
             boolean hasBackingField = hasBackingField(declaration, descriptor);

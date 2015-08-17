@@ -29,15 +29,17 @@ import org.jetbrains.kotlin.serialization.PackageData;
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataProvider;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedNewPackageMemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.CLASS;
-import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
     private final ErrorReporter errorReporter;
@@ -67,7 +69,8 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, PACKAGE_FACADE);
+        //TODO add assertion from readData(kotlinClass, CLASS);
+        String[] data = kotlinClass.getClassHeader().getAnnotationData();
         if (data != null) {
             //all classes are included in java scope
             PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data);
@@ -82,6 +85,17 @@ public final class DeserializedDescriptorResolver {
             );
         }
         return null;
+    }
+
+    @NotNull
+    public JetScope createKotlinNewPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
+        List<JetScope> list = new ArrayList<JetScope>();
+        for (KotlinJvmBinaryClass callable : packageParts) {
+            JetScope scope = createKotlinPackageScope(descriptor, callable);
+            assert scope != null : "Can't create scope for " + callable;
+            list.add(scope);
+        }
+        return new DeserializedNewPackageMemberScope(descriptor, list);
     }
 
     @Nullable
