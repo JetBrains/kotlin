@@ -73,8 +73,27 @@ public class ErrorUtils {
         return false;
     }
 
+    private static abstract class AbstractErrorScope implements JetScope {
+        @Nullable
+        @Override
+        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+            return getClassifier(name, LookupLocation.NO_LOCATION);
+        }
 
-    public static class ErrorScope implements JetScope {
+        @NotNull
+        @Override
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
+            return getProperties(name, LookupLocation.NO_LOCATION);
+        }
+
+        @NotNull
+        @Override
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+            return getFunctions(name, LookupLocation.NO_LOCATION);
+        }
+    }
+
+    public static class ErrorScope extends AbstractErrorScope {
         private final String debugMessage;
 
         private ErrorScope(@NotNull String debugMessage) {
@@ -190,7 +209,7 @@ public class ErrorUtils {
         }
     }
 
-    private static class ThrowingScope implements JetScope {
+    private static class ThrowingScope extends AbstractErrorScope {
         private final String debugMessage;
 
         private ThrowingScope(@NotNull String message) {
