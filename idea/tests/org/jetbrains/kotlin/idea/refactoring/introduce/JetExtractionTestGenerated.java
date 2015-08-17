@@ -456,6 +456,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("classQualifier.kt")
+            public void testClassQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/classQualifier.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("convertBinaryExpression.kt")
             public void testConvertBinaryExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/convertBinaryExpression.kt");
@@ -477,6 +483,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("delegatingFunction.kt")
             public void testDelegatingFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/delegatingFunction.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("enumQualifier.kt")
+            public void testEnumQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/enumQualifier.kt");
                 doExtractFunctionTest(fileName);
             }
 
@@ -627,6 +639,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("noConflictWithInnerFunction.kt")
             public void testNoConflictWithInnerFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("objectQualifier.kt")
+            public void testObjectQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/objectQualifier.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("packageQualifier.kt")
+            public void testPackageQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/packageQualifier.kt");
                 doExtractFunctionTest(fileName);
             }
 
