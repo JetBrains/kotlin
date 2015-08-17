@@ -111,14 +111,29 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 variablesStack.push(instruction to topInfo.second)
             }
             if (!variablesStack.isEmpty()) {
-                if (instruction is WriteValueInstruction) {
-                    val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
-                    variableDescriptor?.let { variablesStack.first().second.add(it) }
+                extractTargetDescriptorIfUpdateInstruction(instruction)?.let {
+                    variablesStack.first().second.add(it)
                 }
             }
         }
         return loopInfoMap
     }
+
+    private fun extractTargetDescriptorIfUpdateInstruction(instruction: Instruction): VariableDescriptor? =
+            when (instruction) {
+                is WriteValueInstruction -> PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
+                is CallInstruction -> {
+                    val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
+                    when (pseudoAnnotation) {
+                        is PseudoAnnotation.IncreaseSizeByConstantMethod,
+                        is PseudoAnnotation.IncreaseSizeByPassedCollectionMethod,
+                        is PseudoAnnotation.DecreaseSizeToZeroMethod,
+                        is PseudoAnnotation.SetMethod -> tryExtractMethodCallReceiverDescriptor(instruction)
+                        else -> null
+                    }
+                }
+                else -> null
+            }
 
     // todo: improve implementation reducing traverses from 2 to 1
     private fun createInstructionsToTheirIndicesMap(): HashMap<Instruction, Int> {
@@ -654,17 +669,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             instruction: CallInstruction,
             updatedData: ValuesData
     ) {
-        if (instruction.inputValues.size() > 0) {
-            val collectionVariableValueSourceInstruction = instruction.inputValues[0].createdAt
-                                                           ?: return
-            val collectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                    collectionVariableValueSourceInstruction, false, bindingContext
-            ) ?: return
-            val collectionSizes = updatedData.collectionsToSizes[collectionVariableDescriptor]
-                                  ?: return
-            val updateValue = numberOfElementsToAdd?.let { collectionSizes + it } ?: IntegerVariableValues.Undefined
-            updateIntegerValueIfNeeded(updatedData.collectionsToSizes, collectionVariableDescriptor, updateValue)
-        }
+        val collectionVariableDescriptor = tryExtractMethodCallReceiverDescriptor(instruction)
+                                           ?: return
+        val collectionSizes = updatedData.collectionsToSizes[collectionVariableDescriptor]
+                              ?: return
+        val updateValue = numberOfElementsToAdd?.let { collectionSizes + it } ?: IntegerVariableValues.Undefined
+        updateIntegerValueIfNeeded(updatedData.collectionsToSizes, collectionVariableDescriptor, updateValue)
     }
 
     private fun tryExtractPassedCollectionSizes(
@@ -708,20 +718,22 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             instruction: CallInstruction,
             updatedData: ValuesData
     ) {
+        val collectionVariableDescriptor = tryExtractMethodCallReceiverDescriptor(instruction)
+                                           ?: return
+        when(pseudoAnnotation) {
+            is PseudoAnnotation.DecreaseSizeToZeroMethod ->
+                updateIntegerValueIfNeeded(updatedData.collectionsToSizes, collectionVariableDescriptor, IntegerVariableValues.Defined(0))
+        }
+    }
+
+    private fun tryExtractMethodCallReceiverDescriptor(instruction: CallInstruction): VariableDescriptor? {
         if (instruction.inputValues.size() > 0) {
             val collectionVariableValueSourceInstruction = instruction.inputValues[0].createdAt
-                                                           ?: return
-            val collectionVariableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                    collectionVariableValueSourceInstruction, false, bindingContext
-            ) ?: return
-            if (updatedData.collectionsToSizes[collectionVariableDescriptor] is IntegerVariableValues.Dead) {
-                return
-            }
-            when(pseudoAnnotation) {
-                is PseudoAnnotation.DecreaseSizeToZeroMethod ->
-                    updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerVariableValues.Defined(0)
-            }
+                                                           ?: return null
+            return PseudocodeUtil.extractVariableDescriptorIfAny(
+                    collectionVariableValueSourceInstruction, false, bindingContext)
         }
+        return null
     }
 
     private fun updateIntegerValueIfNeeded(
