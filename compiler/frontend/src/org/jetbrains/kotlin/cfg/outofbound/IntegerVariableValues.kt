@@ -229,9 +229,8 @@ public sealed class IntegerVariableValues {
                 valuesData: ValuesData
         ): BooleanVariableValue =
                 applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
-                    comparison(valueToCompareWith, thisVarDescriptor, valuesData,
-                               { array, value -> array.indexOfFirst { it >= value } },
-                               { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                    comparison(valueToCompareWith, { array, value -> array.indexOfFirst { it >= value } },
+                               { valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
                                    if (this.allPossibleValuesKnown) {
                                        if (valuesWithLessIndices.isEmpty()) {
                                            return@comparison BooleanVariableValue.False
@@ -240,11 +239,12 @@ public sealed class IntegerVariableValues {
                                            return@comparison BooleanVariableValue.True
                                        }
                                    }
-                                   BooleanVariableValue.Undefined.create(
-                                           mapOf(varDescriptor to valuesWithLessIndices),
-                                           mapOf(varDescriptor to valuesWithGreaterOrEqIndices)
-                                   )
-
+                                   return@comparison thisVarDescriptor?.let {
+                                       BooleanVariableValue.Undefined.create(
+                                               mapOf(it to valuesWithLessIndices),
+                                               mapOf(it to valuesWithGreaterOrEqIndices)
+                                       )
+                                   } ?: undefinedWithFullRestrictions(valuesData)
                                }
                     )
                 }
@@ -255,9 +255,8 @@ public sealed class IntegerVariableValues {
                 valuesData: ValuesData
         ): BooleanVariableValue =
                 applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
-                    comparison(valueToCompareWith, thisVarDescriptor, valuesData,
-                               { array, value -> array.indexOfFirst { it > value } },
-                               { varDescriptor, valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
+                    comparison(valueToCompareWith, { array, value -> array.indexOfFirst { it > value } },
+                               { valuesWithLessIndices, valuesWithGreaterOrEqIndices ->
                                    if (this.allPossibleValuesKnown) {
                                        if (valuesWithLessIndices.isEmpty()) {
                                            return@comparison BooleanVariableValue.True
@@ -266,10 +265,12 @@ public sealed class IntegerVariableValues {
                                            return@comparison BooleanVariableValue.False
                                        }
                                    }
-                                   BooleanVariableValue.Undefined.create(
-                                           mapOf(varDescriptor to valuesWithGreaterOrEqIndices),
-                                           mapOf(varDescriptor to valuesWithLessIndices)
-                                   )
+                                   return@comparison thisVarDescriptor?.let {
+                                       BooleanVariableValue.Undefined.create(
+                                               mapOf(it to valuesWithGreaterOrEqIndices),
+                                               mapOf(it to valuesWithLessIndices)
+                                       )
+                                   } ?: undefinedWithFullRestrictions(valuesData)
                                }
                     )
                 }
@@ -290,20 +291,16 @@ public sealed class IntegerVariableValues {
 
         private fun comparison(
                 otherValue: Int,
-                thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData,
                 findIndex: (IntArray, Int) -> Int,
-                createBoolean: (VariableDescriptor, Set<Int>, Set<Int>) -> BooleanVariableValue
+                createBoolean: (Set<Int>, Set<Int>) -> BooleanVariableValue
         ): BooleanVariableValue {
             val thisArray = this.values.toIntArray()
             thisArray.sort()
-            return thisVarDescriptor?.let {
-                val foundIndex = findIndex(thisArray, otherValue)
-                val bound = if (foundIndex < 0) thisArray.size() else foundIndex
-                val valuesWithLessIndices = thisArray.copyOfRange(0, bound).toSet()
-                val valuesWithGreaterOrEqIndices = thisArray.copyOfRange(bound, thisArray.size()).toSet()
-                createBoolean(it, valuesWithLessIndices, valuesWithGreaterOrEqIndices)
-            } ?: undefinedWithFullRestrictions(valuesData)
+            val foundIndex = findIndex(thisArray, otherValue)
+            val bound = if (foundIndex < 0) thisArray.size() else foundIndex
+            val valuesWithLessIndices = thisArray.copyOfRange(0, bound).toSet()
+            val valuesWithGreaterOrEqIndices = thisArray.copyOfRange(bound, thisArray.size()).toSet()
+            return createBoolean(valuesWithLessIndices, valuesWithGreaterOrEqIndices)
         }
 
         private fun applyComparisonIfArgsAreAppropriate(
