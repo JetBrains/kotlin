@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -149,7 +149,7 @@ public class SamWrapperCodegen {
                 (ClassDescriptor) erasedInterfaceFunction.getContainingDeclaration(), OwnerKind.IMPLEMENTATION, state), cv, state, parentCodegen);
 
         FunctionDescriptor invokeFunction =
-                functionJetType.getMemberScope().getFunctions(OperatorConventions.INVOKE, LookupLocation.NO_LOCATION_FROM_BACKEND).iterator().next().getOriginal();
+                functionJetType.getMemberScope().getFunctions(OperatorConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false, StackValue.none());
         codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
 

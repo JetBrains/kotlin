@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.BridgesPackage;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -60,7 +60,7 @@ public class CodegenUtil {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name, LookupLocation.NO_LOCATION_FROM_BACKEND);
+        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name, NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (!CallResolverUtilPackage.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()

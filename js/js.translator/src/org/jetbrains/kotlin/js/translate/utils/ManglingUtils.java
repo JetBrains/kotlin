@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 
 import java.util.*;
 
@@ -249,7 +249,7 @@ public class ManglingUtils {
     @NotNull
     public static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
         Collection<FunctionDescriptor> functions =
-                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName), LookupLocation.NO_LOCATION_FROM_BACKEND);
+                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
         return getSuggestedName((DeclarationDescriptor) functions.iterator().next());
     }

@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -455,6 +455,6 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
                                    ? getBuiltIns(elementDescriptor).getFunction(arity)
                                    : getBuiltIns(elementDescriptor).getExtensionFunction(arity);
         JetScope scope = elementClass.getDefaultType().getMemberScope();
-        return scope.getFunctions(OperatorConventions.INVOKE, LookupLocation.NO_LOCATION_FROM_BACKEND).iterator().next();
+        return scope.getFunctions(OperatorConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

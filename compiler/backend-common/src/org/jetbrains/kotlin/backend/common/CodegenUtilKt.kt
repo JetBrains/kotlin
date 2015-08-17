@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.types.JetType
@@ -58,7 +58,7 @@ public object CodegenUtilKt {
                             val name = overriddenDescriptor.getName()
 
                             // this is the actual member of delegateExpressionType that we are delegating to
-                            (scope.getFunctions(name, LookupLocation.NO_LOCATION_FROM_BACKEND) + scope.getProperties(name, LookupLocation.NO_LOCATION_FROM_BACKEND))
+                            (scope.getFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getProperties(name, NoLookupLocation.FROM_BACKEND))
                                     .first {
                                         (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it)).map { it.getOriginal() }.contains(overriddenDescriptor.getOriginal())
                                     }
