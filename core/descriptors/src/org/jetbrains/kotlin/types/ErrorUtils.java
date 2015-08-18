@@ -83,12 +83,6 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-            return getProperties(name, NoLookupLocation.UNSORTED);
-        }
-
-        @NotNull
-        @Override
         public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
             return getFunctions(name, NoLookupLocation.UNSORTED);
         }

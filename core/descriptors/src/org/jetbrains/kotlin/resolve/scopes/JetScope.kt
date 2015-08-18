@@ -50,9 +50,7 @@ public interface JetScope {
     // Temporary overloads which will be dropped when all usages will be processed
     @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
     public final fun getClassifier(name: Name): ClassifierDescriptor? = getClassifier(name, NoLookupLocation.UNSORTED)
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
-    public final fun getProperties(name: Name): Collection<VariableDescriptor> = getProperties(name, NoLookupLocation.UNSORTED)
-    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
+    @deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getFunctions(name, NoLookupLocation.UNSORTED)"))
     public final fun getFunctions(name: Name): Collection<FunctionDescriptor> = getFunctions(name, NoLookupLocation.UNSORTED)
 
     /**
