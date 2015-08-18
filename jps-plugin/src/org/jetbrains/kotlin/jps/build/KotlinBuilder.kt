@@ -198,7 +198,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             recompilationDecision = DO_NOTHING
         }
         else {
-            val generatedClasses = generatedFiles as List<GeneratedJvmClass>
+            val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
             recompilationDecision = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedClasses)
             updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
         }
