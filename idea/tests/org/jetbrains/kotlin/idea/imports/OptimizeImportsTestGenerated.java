@@ -253,6 +253,12 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PackagesToUseStarImport.kt")
+        public void testPackagesToUseStarImport() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/PackagesToUseStarImport.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/allUnderImports/Simple.kt");
