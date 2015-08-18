@@ -80,12 +80,6 @@ public class ErrorUtils {
         public ClassifierDescriptor getClassifier(@NotNull Name name) {
             return getClassifier(name, NoLookupLocation.UNSORTED);
         }
-
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-            return getFunctions(name, NoLookupLocation.UNSORTED);
-        }
     }
 
     public static class ErrorScope extends AbstractErrorScope {
