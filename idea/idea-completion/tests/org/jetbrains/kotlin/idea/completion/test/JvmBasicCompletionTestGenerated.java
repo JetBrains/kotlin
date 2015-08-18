@@ -2316,6 +2316,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NullableReceiver.kt")
+            public void testNullableReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/NullableReceiver.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SafeCall.kt")
             public void testSafeCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SafeCall.kt");
