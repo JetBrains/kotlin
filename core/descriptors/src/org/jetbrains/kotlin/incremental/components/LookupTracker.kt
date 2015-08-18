@@ -26,7 +26,6 @@ public interface LookupTracker {
             lookupLine: Int?,
             lookupColumn: Int?,
             scopeFqName: String,
-            scopeContainingFile: String?,
             scopeKind: ScopeKind,
             name: String
     )
@@ -38,7 +37,6 @@ public interface LookupTracker {
                     lookupLine: Int?,
                     lookupColumn: Int?,
                     scopeFqName: String,
-                    scopeContainingFile: String?,
                     scopeKind: ScopeKind,
                     name: String
             ) {

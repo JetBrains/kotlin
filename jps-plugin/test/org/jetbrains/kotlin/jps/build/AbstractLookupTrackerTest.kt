@@ -66,13 +66,10 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                     val end = column - 1
                     parts.add(lineContent.subSequence(start, end))
 
-                    val stringifyLookupInfo: LookupInfo.() -> String = {
-                        val scopeKindChar = scopeKind.toString()[0].toLowerCase()
-                        val scopeFileOrEmpty = scopeContainingFile?.let { "($it)" } ?: ""
-                        "$scopeKindChar:$scopeFqName$scopeFileOrEmpty"
+                    val lookups = lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/") {
+                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName
                     }
-
-                    parts.add(lookupsFromColumn.distinct().joinToString(separator = " ", prefix = "/*", postfix = "*/", transform = stringifyLookupInfo))
+                    parts.add(lookups)
 
                     start = end
                 }
@@ -101,7 +98,6 @@ private data class LookupInfo(
         val lookupLine: Int?,
         val lookupColumn: Int?,
         val scopeFqName: String,
-        val scopeContainingFile: String?,
         val scopeKind: ScopeKind,
         val name: String
 )
@@ -114,10 +110,9 @@ private class TestLookupTracker : LookupTracker {
 
     override fun record(
             lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?,
-            scopeFqName: String, scopeContainingFile: String?, scopeKind: ScopeKind,
-            name: String
+            scopeFqName: String, scopeKind: ScopeKind, name: String
     ) {
-        lookups.add(LookupInfo(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeContainingFile, scopeKind, name))
+        lookups.add(LookupInfo(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name))
     }
 }
 

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
@@ -43,7 +42,6 @@ public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: N
     val lineAndColumn = if (requiresLookupLineAndColumn) getLineAndColumnInPsiFile(containingJetFile, from.element.textRange) else null
 
     val scopeContainingDeclaration = inScope.getContainingDeclaration()
-    val scopeFilePath = DescriptorToSourceUtils.getContainingFile(scopeContainingDeclaration)?.virtualFile?.path
 
     val scopeKind =
             when (scopeContainingDeclaration) {
@@ -52,7 +50,5 @@ public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: N
                 else -> throw AssertionError("Unexpected containing declaration type: ${scopeContainingDeclaration.javaClass}")
             }
 
-    record(containingFilePath, lineAndColumn?.line, lineAndColumn?.column,
-           scopeContainingDeclaration.fqNameUnsafe.asString(), scopeFilePath, scopeKind,
-           name.asString())
+    record(containingFilePath, lineAndColumn?.line, lineAndColumn?.column, scopeContainingDeclaration.fqNameUnsafe.asString(), scopeKind, name.asString())
 }
