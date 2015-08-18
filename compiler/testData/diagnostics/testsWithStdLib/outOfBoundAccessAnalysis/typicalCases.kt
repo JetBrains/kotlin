@@ -52,3 +52,27 @@ fun listAppend2(resetNeeded: Boolean, notTwo: Boolean, appendLineEnd: Boolean) {
     <!OUT_OF_BOUND_ACCESS!>arr[1] = '?'<!>            // `arr` size can be 1
     println(arr)
 }
+
+fun informationLost(u: Int) {
+    val arr = Array(10, { it })
+    for (i in 0 .. arr.size()) {
+        if (i < u) {
+            println("fst: ${arr[i]}")
+        }
+        else {
+            println("snd: ${arr[i]}")
+        }
+        println("after: ${arr[i + 500] + 500}")     // no warning, because we lose info in such cases, `i` us undefined after such if-else =(
+    }
+}
+
+fun processingInLoop() {
+    val arr = Array(10, { it })
+    val bound = 5
+    for (i in 0 .. arr.size()) {
+        if (i > bound) {
+            break
+        }
+        println(arr[i])             // no alarm due to `break` above
+    }
+}

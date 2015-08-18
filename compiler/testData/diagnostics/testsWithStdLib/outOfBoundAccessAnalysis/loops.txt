@@ -1,0 +1,6 @@
+package
+
+internal fun forBreak(): kotlin.Unit
+internal fun forContinue(): kotlin.Unit
+internal fun whileBreak(/*0*/ cond: kotlin.Boolean): kotlin.Unit
+internal fun whileContinue(/*0*/ cond: kotlin.Boolean): kotlin.Unit
