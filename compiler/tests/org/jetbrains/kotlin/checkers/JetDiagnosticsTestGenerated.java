@@ -14627,6 +14627,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("GetA.kt")
+                public void testGetA() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/GetA.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("Getter.kt")
                 public void testGetter() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/Getter.kt");
