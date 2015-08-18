@@ -94,7 +94,7 @@ class TypeInstantiationItems(
 
             val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classifier))
             if (javaClassId != null) {
-                val javaAnalog = resolutionFacade.moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName())
+                val javaAnalog = resolutionFacade.moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName(), NoLookupLocation.FROM_IDE)
                 if (javaAnalog != null) {
                     inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
                 }

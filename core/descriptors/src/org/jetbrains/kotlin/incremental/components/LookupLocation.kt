@@ -35,5 +35,6 @@ public enum class NoLookupLocation : LookupLocation {
     // TODO replace with real location (e.g. FROM_IDE) where it possible
     WHEN_GET_ALL_DESCRIPTORS,
     WHEN_TYPING,
-    WHEN_GET_SUPER_MEMBERS
+    WHEN_GET_SUPER_MEMBERS,
+    FOR_NON_TRACKED_SCOPE
 }

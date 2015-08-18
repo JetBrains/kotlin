@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -35,9 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.Collections
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -170,7 +171,7 @@ fun JetExpression.guessTypes(
         parent is JetPropertyDelegate -> {
             val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as VariableDescriptor
             val delegateClassName = if (variableDescriptor.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
-            val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
+            val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"), NoLookupLocation.FROM_IDE)
                                 ?: return arrayOf(module.builtIns.getAnyType())
             val receiverType = (variableDescriptor.getExtensionReceiverParameter() ?: variableDescriptor.getDispatchReceiverParameter())?.getType()
                                ?: module.builtIns.getNullableNothingType()

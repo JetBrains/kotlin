@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -113,7 +114,7 @@ public class JetExpectedResolveDataUtil {
     @NotNull
     private static PsiClass findClass(String qualifiedName, Project project) {
         ModuleDescriptor module = LazyResolveTestUtil.resolveProject(project);
-        ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName));
+        ClassDescriptor classDescriptor = DescriptorUtilPackage.resolveTopLevelClass(module, new FqName(qualifiedName), NoLookupLocation.FROM_TEST);
         assertNotNull("Class descriptor wasn't resolved: " + qualifiedName, classDescriptor);
         PsiClass psiClass = (PsiClass) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
         assertNotNull("Class declaration wasn't found: " + classDescriptor, psiClass);

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_ENTRY
 import org.jetbrains.kotlin.descriptors.ClassKind.OBJECT
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -54,9 +55,9 @@ public val DeclarationDescriptor.isExtension: Boolean
 public val DeclarationDescriptor.module: ModuleDescriptor
     get() = DescriptorUtils.getContainingModule(this)
 
-public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName): ClassDescriptor? {
+public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName, location: LookupLocation): ClassDescriptor? {
     assert(!topLevelClassFqName.isRoot())
-    return getPackage(topLevelClassFqName.parent()).memberScope.getClassifier(topLevelClassFqName.shortName()) as? ClassDescriptor
+    return getPackage(topLevelClassFqName.parent()).memberScope.getClassifier(topLevelClassFqName.shortName(), location) as? ClassDescriptor
 }
 
 public val ClassDescriptor.classId: ClassId

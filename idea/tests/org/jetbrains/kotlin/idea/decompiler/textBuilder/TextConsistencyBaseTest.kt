@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -63,7 +64,7 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
 
 private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : ResolverForDecompiler {
     override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {
-        return module.resolveTopLevelClass(classId.asSingleFqName())
+        return module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {

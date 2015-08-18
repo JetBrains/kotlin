@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.isSpecialAnnotation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -141,7 +142,7 @@ class LazyJavaAnnotationDescriptor(
                 TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false))
         )
 
-        val jlClass = c.module.resolveTopLevelClass(FqName("java.lang.Class")) ?: return null
+        val jlClass = c.module.resolveTopLevelClass(FqName("java.lang.Class"), NoLookupLocation.FOR_NON_TRACKED_SCOPE) ?: return null
 
         val arguments = listOf(TypeProjectionImpl(type))
 
