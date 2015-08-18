@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea.res
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.psi.JavaPsiFacade
-import org.jetbrains.kotlin.plugin.android.IDEAndroidResourceManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
-import com.intellij.psi.impl.*
-import kotlin.properties.*
-import org.jetbrains.kotlin.lang.resolve.android.*
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
+import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
+import org.jetbrains.kotlin.android.synthetic.res.AndroidResource
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFile
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 
-class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(module.getProject()) {
+class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(module.project) {
+
+    private val supportV4: Boolean
 
     init {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(false)
@@ -36,26 +40,28 @@ class IDEAndroidUIXmlProcessor(val module: Module) : AndroidUIXmlProcessor(modul
                 .findClasses(AndroidConst.SUPPORT_FRAGMENT_FQNAME, scope).isNotEmpty()
     }
 
-    override val resourceManager: IDEAndroidResourceManager = IDEAndroidResourceManager(module)
+    override fun supportV4() = supportV4
 
-    private val psiTreeChangePreprocessor by Delegates.lazy {
-        module.getProject().getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    override val layoutXmlFileManager: IDEAndroidLayoutXmlFileManager = IDEAndroidLayoutXmlFileManager(module)
+
+    private val psiTreeChangePreprocessor by lazy {
+        module.project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {
+    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by lazy {
         cachedValue {
-            Result.create(parse(), psiTreeChangePreprocessor)
+            Result.create(generateSyntheticFiles(), psiTreeChangePreprocessor)
         }
     }
 
-    override fun parseLayout(files: List<PsiFile>): List<AndroidResource> {
+    override fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource> {
         val widgets = arrayListOf<AndroidResource>()
         val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
             widgets.add(parseAndroidResource(id, widgetType))
         }
 
         files.forEach { it.accept(visitor) }
-        return removeDuplicates(widgets)
+        return filterDuplicates(widgets)
     }
 
 }

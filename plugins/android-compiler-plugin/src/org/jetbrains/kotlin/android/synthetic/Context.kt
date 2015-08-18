@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic
 
 import java.util.ArrayList
-
 
 open class Context(val buffer: StringBuffer = StringBuffer(), private var indentDepth: Int = 0) {
     open class InvalidIndent(num: Int) : RuntimeException("Indentation level < 0: $num")

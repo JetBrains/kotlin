@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea
 
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.kotlin.lang.resolve.android
-import org.jetbrains.kotlin.lang.resolve.android.*
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.idToName
+import org.jetbrains.kotlin.android.synthetic.isWidgetTypeIgnored
 
 class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
 
@@ -35,7 +36,7 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
     }
 
     override fun visitXmlTag(tag: XmlTag?) {
-        val localName = tag?.getLocalName() ?: ""
+        val localName = tag?.localName ?: ""
         if (isWidgetTypeIgnored(localName)) {
             tag?.acceptChildren(this)
             return
@@ -43,9 +44,9 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
 
         val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE)
         if (idAttribute != null) {
-            val idAttributeValue = idAttribute.getValue()
+            val idAttributeValue = idAttribute.value
             if (idAttributeValue != null) {
-                val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.getValue() ?: localName
+                val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
                 val name = idToName(idAttributeValue)
                 if (name != null) elementCallback(name, xmlType, idAttribute)
             }

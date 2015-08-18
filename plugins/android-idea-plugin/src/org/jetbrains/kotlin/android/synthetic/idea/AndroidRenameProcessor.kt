@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea
 
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
-import org.jetbrains.kotlin.psi.moduleInfo
-import com.intellij.refactoring.rename.RenamePsiElementProcessor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetProperty
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiClass
-import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.psi.search.SearchScope
-import com.intellij.psi.impl.light.LightElement
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
-import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.kotlin.lang.resolve.android
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.android.util.AndroidResourceUtil
-import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
-import org.jetbrains.kotlin.lang.resolve.android.nameToIdDeclaration
-import org.jetbrains.kotlin.lang.resolve.android.idToName
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleServiceManager
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper
+import org.jetbrains.android.util.AndroidResourceUtil
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.idToName
+import org.jetbrains.kotlin.android.synthetic.isAndroidSyntheticElement
+import org.jetbrains.kotlin.android.synthetic.nameToIdDeclaration
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.psi.JetProperty
 
 public class AndroidRenameProcessor : RenamePsiElementProcessor() {
 
@@ -93,8 +90,8 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     ) {
         val module = jetProperty.getModule() ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())!!
-        val resourceManager = processor.resourceManager
+        val processor = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>())!!
+        val resourceManager = processor.layoutXmlFileManager
 
         val psiElements = resourceManager.propertyToXmlAttributes(jetProperty).map { it as? XmlAttribute }.filterNotNull()
 
@@ -120,7 +117,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
         val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
                 attribute.getContainingFile().getVirtualFile(), attribute.getProject()) ?: return
 
-        val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())!!
+        val processor = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>())!!
         if (element == null) return
         val oldPropName = AndroidResourceUtil.getResourceNameByReferenceText(attribute.getValue())
         val newPropName = idToName(newName)
@@ -133,9 +130,9 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             allRenames: MutableMap<PsiElement, String>,
             newPropName: String,
             oldPropName: String,
-            processor: AndroidUIXmlProcessor
+            processor: SyntheticFileGenerator
     ) {
-        val props = processor.parseToPsi()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
+        val props = processor.getSyntheticFiles()?.flatMap { it.findChildrenByClass(javaClass<JetProperty>()).toList() }
         val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
@@ -148,7 +145,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             allRenames: MutableMap<PsiElement, String>
     ) {
         val oldName = field.getName()!!
-        val processor = ServiceManager.getService(field.getProject(), javaClass<AndroidUIXmlProcessor>())
+        val processor = ServiceManager.getService(field.getProject(), javaClass<SyntheticFileGenerator>())
         renameSyntheticProperties(allRenames, newName, oldName, processor)
     }
 

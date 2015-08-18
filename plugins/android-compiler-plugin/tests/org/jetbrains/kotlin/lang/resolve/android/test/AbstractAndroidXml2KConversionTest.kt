@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import kotlin.test.*
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
@@ -35,10 +35,10 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
         val jetCoreEnvironment = getEnvironment()
         val layoutPaths = getResPaths(path)
-        val parser = CliAndroidUIXmlProcessor(jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths)
+        val parser = CliSyntheticFileGenerator(jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths)
         parser.supportV4 = testDirectory.name.startsWith("support")
 
-        val actual = parser.parse(false).toMap { it.name }
+        val actual = parser.generateSyntheticFiles(false).toMap { it.name }
 
         val expectedLayoutFiles = testDirectory.listFiles {
             it.isFile() && it.name.endsWith(".kt")
@@ -58,7 +58,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
             doTest(path)
             fail("NoAndroidManifestFound not thrown")
         }
-        catch (e: AndroidUIXmlProcessor.NoAndroidManifestFound) {
+        catch (e: SyntheticFileGenerator.NoAndroidManifestFound) {
         }
     }
 

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.lang.resolve.android.AndroidConst
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.plugin.android.AndroidXmlVisitor
-import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
-import org.jetbrains.kotlin.lang.resolve.android.AndroidModuleInfo
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
+import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.psi.JetProperty
 
-public class IDEAndroidResourceManager(val module: Module) : AndroidResourceManager(module.getProject()) {
+public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.getProject()) {
 
-    override val androidModuleInfo: AndroidModuleInfo? by Delegates.lazy { module.androidFacet?.toAndroidModuleInfo() }
+    override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
     override fun propertyToXmlAttributes(property: JetProperty): List<PsiElement> {
         val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
@@ -53,7 +52,7 @@ public class IDEAndroidResourceManager(val module: Module) : AndroidResourceMana
         get() = AndroidFacet.getInstance(this)
 
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
-        val applicationPackage = getManifest()?.getPackage()?.toString()
+        val applicationPackage = manifest?.getPackage()?.toString()
         val mainResDirectories = getAllResourceDirectories().map { it.getPath() }
 
         return if (applicationPackage != null) {

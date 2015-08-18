@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android
+package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -30,7 +29,10 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import org.jetbrains.kotlin.lang.resolve.android.*
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.psi.JetFile
 
 public object AndroidConfigurationKeys {
@@ -68,8 +70,8 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 
 public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = ServiceManager.getService(project, javaClass<AndroidUIXmlProcessor>())
-        return parser.parseToPsi() ?: listOf()
+        val parser = ServiceManager.getService(project, javaClass<SyntheticFileGenerator>())
+        return parser.getSyntheticFiles() ?: listOf()
     }
 }
 
@@ -81,11 +83,10 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
         val supportV4 = configuration.get(AndroidConfigurationKeys.SUPPORT_V4) ?: "false"
 
         if (androidResPath != null && androidManifest != null) {
-            val xmlProcessor = CliAndroidUIXmlProcessor(project, androidManifest, androidResPath)
-            if (supportV4 == "true") xmlProcessor.supportV4 = true
+            val xmlProcessor = CliSyntheticFileGenerator(project, androidManifest, androidResPath, supportV4 == "true")
 
-            project.registerService(javaClass<AndroidUIXmlProcessor>(), xmlProcessor)
-            project.registerService(javaClass<AndroidResourceManager>(), CliAndroidResourceManager(project, androidManifest, androidResPath))
+            project.registerService(javaClass<SyntheticFileGenerator>(), xmlProcessor)
+            project.registerService(javaClass<AndroidLayoutXmlFileManager>(), CliAndroidLayoutXmlFileManager(project, androidManifest, androidResPath))
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.openapi.util.*
-import com.intellij.openapi.vfs.impl.*
-import com.intellij.openapi.vfs.*
-import com.intellij.openapi.components.*
-import com.intellij.openapi.extensions.*
-import com.intellij.openapi.module.*
 import org.jetbrains.kotlin.psi.JetProperty
+import java.util.*
 
-public abstract class AndroidResourceManager(val project: Project) {
+public abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
     public abstract val androidModuleInfo: AndroidModuleInfo?
 
@@ -42,9 +41,9 @@ public abstract class AndroidResourceManager(val project: Project) {
 
         fun VirtualFile.getAllChildren(): List<VirtualFile> {
             val allChildren = arrayListOf<VirtualFile>()
-            val currentChildren = getChildren() ?: emptyArray()
+            val currentChildren = children ?: emptyArray()
             for (child in currentChildren) {
-                if (child.isDirectory()) {
+                if (child.isDirectory) {
                     allChildren.addAll(child.getAllChildren())
                 }
                 else {
@@ -57,20 +56,27 @@ public abstract class AndroidResourceManager(val project: Project) {
         val resDirectories = info.resDirectories.map { fileManager.findFileByUrl("file://$it") }
         val allChildren = resDirectories.flatMap { it?.getAllChildren() ?: listOf() }
 
-        return allChildren
-                .filter { it.getParent().getName().startsWith("layout") && it.getName().toLowerCase().endsWith(".xml") }
-                .map { psiManager.findFile(it) }
-                .filterNotNull()
-                .groupBy { it.getName().substringBeforeLast('.') }
-                .mapValues { it.getValue().sortBy { it.getParent()!!.getName().length() } }
+        val allLayoutFiles = allChildren.filter { it.parent.name.startsWith("layout") && it.name.toLowerCase().endsWith(".xml") }
+        val allLayoutPsiFiles = allLayoutFiles.fold(ArrayList<PsiFile>(allLayoutFiles.size())) { list, file ->
+            val psiFile = psiManager.findFile(file)
+            if (psiFile != null && psiFile.parent != null) {
+                list += psiFile
+            }
+            list
+        }
+
+        val layoutNameToXmls = allLayoutPsiFiles
+                .groupBy { it.name.substringBeforeLast('.') }
+                .mapValues { it.getValue().sortBy { it.parent!!.name.length() } }
+
+        return layoutNameToXmls
     }
 
     companion object {
-        public fun getInstance(module: Module): AndroidResourceManager {
-            val service = ModuleServiceManager.getService(module, javaClass<AndroidResourceManager>())
-            return service ?: module.getComponent(javaClass<AndroidResourceManager>())!!
+        public fun getInstance(module: Module): AndroidLayoutXmlFileManager {
+            val service = ModuleServiceManager.getService(module, javaClass<AndroidLayoutXmlFileManager>())
+            return service ?: module.getComponent(javaClass<AndroidLayoutXmlFileManager>())!!
         }
     }
 
 }
-

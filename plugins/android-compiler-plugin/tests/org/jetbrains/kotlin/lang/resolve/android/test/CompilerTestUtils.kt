@@ -20,16 +20,16 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import org.jetbrains.kotlin.android.AndroidConfigurationKeys
+import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.android.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import java.io.File
 
 private class AndroidTestExternalDeclarationsProvider(
@@ -39,9 +39,9 @@ private class AndroidTestExternalDeclarationsProvider(
         val supportV4: Boolean
 ) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = CliAndroidUIXmlProcessor(project, manifestPath, resPaths)
+        val parser = CliSyntheticFileGenerator(project, manifestPath, resPaths)
         parser.supportV4 = supportV4
-        return parser.parseToPsi() ?: listOf()
+        return parser.getSyntheticFiles() ?: listOf()
     }
 }
 

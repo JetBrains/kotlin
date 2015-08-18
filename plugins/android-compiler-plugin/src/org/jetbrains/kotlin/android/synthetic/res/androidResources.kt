@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic.res
+
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
 
 public data class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
     val resDirectories = resDirectories.sort()
@@ -40,7 +42,7 @@ public class AndroidWidget(id: String, override val className: String) : Android
 
         val MAIN_PROPERTIES_SUPPORT_V4 = listOf(AndroidConst.SUPPORT_FRAGMENT_FQNAME to "getView().findViewById(0)")
 
-        val VIEW_PROPERTIES = listOf("android.view.View" to "findViewById(0)")
+        val VIEW_PROPERTIES = listOf(AndroidConst.VIEW_FQNAME to "findViewById(0)")
     }
 
     override val mainProperties = MAIN_PROPERTIES

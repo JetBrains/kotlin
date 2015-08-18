@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.android.synthetic.toMap
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
@@ -24,11 +25,11 @@ import java.io.FileInputStream
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
-public class CliAndroidResourceManager(
+public class CliAndroidLayoutXmlFileManager(
         project: Project,
         private val manifestPath: String,
         private val resDirectories: List<String>
-) : AndroidResourceManager(project) {
+) : AndroidLayoutXmlFileManager(project) {
 
     override val androidModuleInfo by lazy {
         AndroidModuleInfo(getApplicationPackage(manifestPath), resDirectories)
@@ -60,7 +61,7 @@ public class CliAndroidResourceManager(
             return applicationPackage
         }
         catch (e: Exception) {
-            throw AndroidUIXmlProcessor.NoAndroidManifestFound()
+            throw SyntheticFileGenerator.NoAndroidManifestFound()
         }
     }
 

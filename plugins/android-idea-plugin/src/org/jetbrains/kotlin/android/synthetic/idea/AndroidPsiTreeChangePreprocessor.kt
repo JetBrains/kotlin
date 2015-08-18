@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea
 
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.roots.ProjectRootManager
@@ -25,7 +25,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.xml.XmlFile
-import org.jetbrains.kotlin.lang.resolve.android.AndroidResourceManager
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 
 public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
 
@@ -47,7 +47,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
                 val projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex()
                 val module = projectFileIndex.getModuleForFile(file.getVirtualFile())
                 if (module != null) {
-                    val resourceManager = AndroidResourceManager.getInstance(module)
+                    val resourceManager = AndroidLayoutXmlFileManager.getInstance(module)
                     val resDirectories = resourceManager.getModuleResDirectories()
                     val baseDirectory = file.getParent()?.getParent()?.getVirtualFile()
 
@@ -60,7 +60,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
         }
     }
 
-    private fun AndroidResourceManager.getModuleResDirectories(): List<VirtualFile> {
+    private fun AndroidLayoutXmlFileManager.getModuleResDirectories(): List<VirtualFile> {
         val info = androidModuleInfo ?: return listOf()
 
         val fileManager = VirtualFileManager.getInstance()

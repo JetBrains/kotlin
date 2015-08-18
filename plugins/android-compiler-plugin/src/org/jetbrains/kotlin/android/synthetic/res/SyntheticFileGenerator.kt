@@ -14,39 +14,38 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.KotlinStringWriter
+import org.jetbrains.kotlin.android.synthetic.escapeAndroidIdentifier
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.types.Flexibility
 
 public class AndroidSyntheticFile(val name: String, val contents: String)
 
-public abstract class AndroidUIXmlProcessor(protected val project: Project) {
+public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
     protected val LOG: Logger = Logger.getInstance(javaClass)
 
-    public abstract val resourceManager: AndroidResourceManager
+    public abstract val layoutXmlFileManager: AndroidLayoutXmlFileManager
 
     protected abstract val cachedSources: CachedValue<List<AndroidSyntheticFile>>
-
-    //MAKE CONSTANT (or abstract)
-    var supportV4 = false
 
     private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
         cachedValue {
             val psiManager = PsiManager.getInstance(project)
-            val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
+            val applicationPackage = layoutXmlFileManager.androidModuleInfo?.applicationPackage
 
             val jetFiles = cachedSources.value.mapIndexed { index, syntheticFile ->
                 val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"
@@ -62,15 +61,18 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }
     }
 
-    public fun parse(generateCommonFiles: Boolean = true): List<AndroidSyntheticFile> {
+    protected abstract fun supportV4(): Boolean
+
+    public fun generateSyntheticFiles(generateCommonFiles: Boolean = true): List<AndroidSyntheticFile> {
         val commonFiles = if (generateCommonFiles) {
-            val clearCacheFile = renderSyntheticFile("clearCache") {
+            val renderSyntheticFile = renderSyntheticFile("clearCache") {
                 writePackage(AndroidConst.SYNTHETIC_PACKAGE)
                 writeAndroidImports()
                 writeClearCacheFunction(AndroidConst.ACTIVITY_FQNAME)
                 writeClearCacheFunction(AndroidConst.FRAGMENT_FQNAME)
-                if (supportV4) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
+                if (supportV4()) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
             }
+            val clearCacheFile = renderSyntheticFile
 
             listOf(clearCacheFile,
                    FLEXIBLE_TYPE_FILE,
@@ -79,9 +81,9 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
                    FAKE_SUPPORT_V4_WIDGET_FILE)
         } else listOf()
 
-        return resourceManager.getLayoutXmlFiles().flatMap { entry ->
+        return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->
             val files = entry.getValue()
-            val resources = parseLayout(files)
+            val resources = extractLayoutResources(files)
 
             val layoutName = files[0].name.substringBefore('.')
 
@@ -92,15 +94,15 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }.filterNotNull() + commonFiles
     }
 
-    public fun parseToPsi(): List<JetFile>? = cachedJetFiles.value
+    public fun getSyntheticFiles(): List<JetFile>? = cachedJetFiles.value
 
-    protected abstract fun parseLayout(files: List<PsiFile>): List<AndroidResource>
+    protected abstract fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource>
 
     private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
         return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX,
                                 escapeAndroidIdentifier(layoutName), resources) {
             val properties = it.mainProperties.toArrayList()
-            if (supportV4) properties.addAll(it.mainPropertiesForSupportV4)
+            if (supportV4()) properties.addAll(it.mainPropertiesForSupportV4)
             properties
         }
     }
@@ -153,7 +155,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         writeText("public fun $receiver.${AndroidConst.CLEAR_FUNCTION_NAME}() {}\n")
     }
 
-    protected fun <T> cachedValue(result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
+    protected fun <T> cachedValue(result: () -> Result<T>): CachedValue<T> {
         return CachedValuesManager.getManager(project).createCachedValue(result, false)
     }
 
@@ -161,7 +163,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         return fqName.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)
     }
 
-    protected fun removeDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
+    protected fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
         val resourceMap = linkedMapOf<String, AndroidResource>()
         val resourcesToExclude = hashSetOf<String>()
 

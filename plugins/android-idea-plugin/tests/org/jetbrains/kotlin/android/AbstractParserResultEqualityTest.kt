@@ -16,16 +16,10 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.plugin.android.TestConst
-import org.jetbrains.kotlin.lang.resolve.android.CliAndroidUIXmlProcessor
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.kotlin.plugin.android.IDEAndroidUIXmlProcessor
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import java.io.File
+import org.jetbrains.kotlin.android.synthetic.idea.TestConst
+import org.jetbrains.kotlin.android.synthetic.idea.res.IDESyntheticFileGenerator
 import kotlin.test.assertEquals
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
@@ -37,11 +31,11 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
             "$path${it.name}/"
         }
 
-        val cliParser = CliAndroidUIXmlProcessor(project, path + "../AndroidManifest.xml", resDirs)
-        val ideParser = IDEAndroidUIXmlProcessor(ModuleManager.getInstance(project).getModules()[0])
+        val cliParser = CliSyntheticFileGenerator(project, path + "../AndroidManifest.xml", resDirs, false)
+        val ideParser = IDESyntheticFileGenerator(ModuleManager.getInstance(project).getModules()[0])
 
-        val cliResult = cliParser.parseToPsi()!!.joinToString("\n\n")
-        val ideResult = ideParser.parseToPsi()!!.joinToString("\n\n")
+        val cliResult = cliParser.getSyntheticFiles()!!.joinToString("\n\n")
+        val ideResult = ideParser.getSyntheticFiles()!!.joinToString("\n\n")
 
         assertEquals(cliResult, ideResult)
     }

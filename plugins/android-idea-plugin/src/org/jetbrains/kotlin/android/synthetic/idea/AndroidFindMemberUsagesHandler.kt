@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea
 
 import com.intellij.find.findUsages.FindUsagesHandler
+import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import com.intellij.find.findUsages.FindUsagesOptions
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.android.util.AndroidResourceUtil
-import java.util.ArrayList
-import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
-import com.intellij.openapi.module.ModuleServiceManager
+import org.jetbrains.kotlin.android.synthetic.isAndroidSyntheticElement
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.lang.resolve.android.isAndroidSyntheticElement
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import java.util.ArrayList
 
 class AndroidFindUsageHandlerDecorator : KotlinFindUsagesHandlerDecorator {
     override fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler {
@@ -56,9 +55,9 @@ class AndroidFindMemberUsagesHandler(
 
         val property = declaration as JetProperty
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
-        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())
 
-        val psiElements = parser?.resourceManager?.propertyToXmlAttributes(property)
+        val psiElements = parser?.layoutXmlFileManager?.propertyToXmlAttributes(property)
         val valueElements = psiElements?.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }?.filterNotNull()
         if (valueElements != null && valueElements.isNotEmpty()) return valueElements.toTypedArray()
 
@@ -74,9 +73,9 @@ class AndroidFindMemberUsagesHandler(
 
         val property = declaration as JetProperty
         val moduleInfo = declaration.getModuleInfo() as? ModuleSourceInfo ?: return super.getPrimaryElements()
-        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())
+        val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())
 
-        val psiElements = parser?.resourceManager?.propertyToXmlAttributes(property) ?: listOf()
+        val psiElements = parser?.layoutXmlFileManager?.propertyToXmlAttributes(property) ?: listOf()
 
         val res = ArrayList<PsiElement>()
         for (psiElement in psiElements) {
@@ -97,12 +96,17 @@ class AndroidFindMemberUsagesHandler(
     override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         assert(isAndroidSyntheticElement(declaration))
 
-        val findUsagesOptions = JavaVariableFindUsagesOptions(runReadAction { element.getProject() })
+        val findUsagesOptions = JavaVariableFindUsagesOptions(runReadAction { element.project })
         findUsagesOptions.isSearchForTextOccurrences = false
         findUsagesOptions.isSkipImportStatements = true
         findUsagesOptions.isUsages = true
         findUsagesOptions.isReadAccess = true
         findUsagesOptions.isWriteAccess = true
         return super.processElementUsages(element, processor, findUsagesOptions)
+    }
+
+    // Android extensions plugin has it's own runtime -> different function classes
+    private fun runReadAction<T>(action: () -> T): T {
+        return ApplicationManager.getApplication().runReadAction<T>(action)
     }
 }

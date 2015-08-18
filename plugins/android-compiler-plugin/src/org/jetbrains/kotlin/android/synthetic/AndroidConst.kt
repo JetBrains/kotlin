@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.android.synthetic.res.AndroidFragment
+import org.jetbrains.kotlin.android.synthetic.res.AndroidResource
+import org.jetbrains.kotlin.android.synthetic.res.AndroidWidget
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 

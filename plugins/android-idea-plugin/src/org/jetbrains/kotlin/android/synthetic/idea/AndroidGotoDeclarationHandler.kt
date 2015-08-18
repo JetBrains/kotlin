@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.plugin.android
+package org.jetbrains.kotlin.android.synthetic.idea
 
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.editor.Editor
-import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import com.intellij.psi.xml.XmlAttribute
 import com.intellij.openapi.actionSystem.DataContext
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleServiceManager
-import org.jetbrains.kotlin.lang.resolve.android.AndroidUIXmlProcessor
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.xml.XmlAttribute
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
+import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 
@@ -40,8 +40,8 @@ public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
             val moduleInfo = sourceElement.getModuleInfo()
             if (moduleInfo !is ModuleSourceInfo) return null
 
-            val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<AndroidUIXmlProcessor>())!!
-            val psiElements = parser.resourceManager.propertyToXmlAttributes(property)
+            val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())!!
+            val psiElements = parser.layoutXmlFileManager.propertyToXmlAttributes(property)
             val valueElements = psiElements.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }.filterNotNull()
             if (valueElements.isNotEmpty()) return valueElements.toTypedArray()
         }

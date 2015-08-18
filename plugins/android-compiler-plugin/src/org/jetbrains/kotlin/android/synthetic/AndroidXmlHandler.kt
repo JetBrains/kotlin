@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic
 
-import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
+import org.xml.sax.helpers.DefaultHandler
 import java.util.HashMap
 
 class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) : DefaultHandler() {

@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic
 
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiClass
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
-import com.intellij.openapi.module.ModuleServiceManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 
 fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
     return f?.getUserData(AndroidConst.ANDROID_USER_PACKAGE) != null
@@ -32,6 +27,6 @@ fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
 
 public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
     return isAndroidSyntheticFile(ApplicationManager.getApplication().runReadAction(Computable {
-        element?.getContainingFile()
+        element?.containingFile
     }))
 }

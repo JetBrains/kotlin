@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic
 
 interface KotlinWriter {
     fun toStringBuffer(): StringBuffer

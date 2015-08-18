@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.lang.resolve.android
+package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
@@ -22,33 +22,41 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import java.io.ByteArrayInputStream
+import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
+import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
+import kotlin.properties.Delegates
 
-public class CliAndroidUIXmlProcessor(
+public class CliSyntheticFileGenerator(
         project: Project,
         private val manifestPath: String,
-        private val resDirectories: List<String>
-) : AndroidUIXmlProcessor(project) {
+        private val resDirectories: List<String>,
+        private val supportV4: Boolean
+) : SyntheticFileGenerator(project) {
 
-    override val resourceManager: CliAndroidResourceManager by lazy {
-        CliAndroidResourceManager(project, manifestPath, resDirectories)
+    override fun supportV4(): Boolean {
+        return supportV4
+    }
+
+    override val layoutXmlFileManager: CliAndroidLayoutXmlFileManager by Delegates.lazy {
+        CliAndroidLayoutXmlFileManager(project, manifestPath, resDirectories)
     }
 
     override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by lazy {
         cachedValue {
-            Result.create(parse(), ModificationTracker.NEVER_CHANGED)
+            Result.create(generateSyntheticFiles(), ModificationTracker.NEVER_CHANGED)
         }
     }
 
-    override fun parseLayout(files: List<PsiFile>): List<AndroidResource> {
+    override fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource> {
         val resources = arrayListOf<AndroidResource>()
         val handler = AndroidXmlHandler { id, widgetType -> resources.add(parseAndroidResource(id, widgetType)) }
 
         try {
             for (file in files) {
-                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
-                resourceManager.saxParser.parse(inputStream, handler)
+                val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
+                layoutXmlFileManager.saxParser.parse(inputStream, handler)
             }
-            return removeDuplicates(resources)
+            return filterDuplicates(resources)
         }
         catch (e: Throwable) {
             LOG.error(e)
