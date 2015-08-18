@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.noSubstitutions
 import org.jetbrains.kotlin.psi.Call
@@ -39,9 +40,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
 
 private fun String.checkClassName(): Boolean = isNotEmpty() && Character.isUpperCase(first())
@@ -93,7 +92,7 @@ private fun JetExpression.getInheritableTypeInfo(
     val type = types.first()
     val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return TypeInfo.Empty to { classKind -> false }
 
-    val canHaveSubtypes = TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)
+    val canHaveSubtypes = !(type.constructor.isFinal || type.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
 
     if (!(canHaveSubtypes || isEnum)

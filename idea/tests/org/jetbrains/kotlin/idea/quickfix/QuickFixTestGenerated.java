@@ -1304,6 +1304,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("recursiveBound.kt")
+                public void testRecursiveBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/recursiveBound.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("traitByQualifier.kt")
                 public void testTraitByQualifier() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/referenceExpression/traitByQualifier.kt");
@@ -2666,6 +2672,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("recursiveBound.kt")
+                public void testRecursiveBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/recursiveBound.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("withPackageName.kt")
                 public void testWithPackageName() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/withPackageName.kt");
@@ -2744,6 +2756,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("qualifiedRefInStringTemplateRuntime.kt")
                 public void testQualifiedRefInStringTemplateRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/qualifiedRefInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveBound.kt")
+                public void testRecursiveBound() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/recursiveBound.kt");
                     doTest(fileName);
                 }
 
