@@ -101,7 +101,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
         val psiMethod: PsiMethod? = when (element) {
             is PsiMethod -> element
-            is JetConstructor<*> -> LightClassUtil.getLightClassMethod(element as JetFunction)
+            is JetConstructor<*> -> runReadAction { LightClassUtil.getLightClassMethod(element as JetFunction) }
             else -> null
         }
         if (psiMethod != null) {
