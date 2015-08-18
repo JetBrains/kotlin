@@ -48,6 +48,8 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         val daemonOptions: DaemonOptions
 ) : CompileService, UnicastRemoteObject() {
 
+    val log by lazy { Logger.getLogger("compiler") }
+
     private val rwlock = ReentrantReadWriteLock()
     private var alive = false
 
@@ -118,19 +120,19 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
         try {
             if (args.none())
                 throw IllegalArgumentException("Error: empty arguments list.")
-            println("Starting compilation with args: " + args.joinToString(" "))
+            log.info("Starting compilation with args: " + args.joinToString(" "))
             val startMem = usedMemory() / 1024
             val startTime = System.nanoTime()
             val res = body()
             val endTime = System.nanoTime()
             val endMem = usedMemory() / 1024
-            println("Done")
-            println("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
-            println("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
+            log.info("Done")
+            log.info("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
+            log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
             return res
         }
         catch (e: Exception) {
-            println("Error: $e")
+            log.info("Error: $e")
             throw e
         }
     }
@@ -147,7 +149,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     fun<R> spy(msg: String, body: () -> R): R {
         val res = body()
-        println(msg + " = " + res.toString())
+        log.info(msg + " = " + res.toString())
         return res
     }
 
@@ -157,10 +159,10 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
 
     override fun shutdown() {
         ifAliveExclusive {
-            println("Shutdown started")
+            log.info("Shutdown started")
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
-            println("Shutdown complete")
+            log.info("Shutdown complete")
         }
     }
 

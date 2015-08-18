@@ -78,6 +78,18 @@ public fun Iterable<String>.propParseFilter(vararg cs: CmdlineParams) : Iterable
     propParseFilter(cs.flatMap { it.parsers })
 
 
+public data class DaemonLaunchingOptions(
+        public var jvmParams: List<String> = listOf()
+) : CmdlineParams {
+
+    override val asParams: Iterable<String>
+        get() =
+            propToParams(::jvmParams, { it.joinToString("##") }) // TODO: consider some other options rather than using potentially dangerous delimiter
+
+    override val parsers: List<PropParser<*,*,*>>
+        get() = listOf( PropParser(this, ::jvmParams, { it.split("##")})) // TODO: see appropriate comment in asParams
+}
+
 public data class DaemonOptions(
         public var port: Int = COMPILE_DAEMON_DEFAULT_PORT,
         public var autoshutdownMemoryThreshold: Long = 0 /* 0 means unchecked */,

@@ -70,12 +70,13 @@ public class KotlinCompilerClient {
         }
 
 
-        private fun startDaemon(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream) {
+        private fun startDaemon(compilerId: CompilerId, daemonLaunchingOptions: DaemonLaunchingOptions, daemonOptions: DaemonOptions, errStream: PrintStream) {
             val javaExecutable = listOf(System.getProperty("java.home"), "bin", "java").joinToString(File.separator)
             // TODO: add some specific environment variables to the cp and may be command line, to allow some specific startup configs
             val args = listOf(javaExecutable,
-                              "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator),
-                              COMPILER_DAEMON_CLASS_FQN) +
+                              "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
+                       daemonLaunchingOptions.jvmParams +
+                       COMPILER_DAEMON_CLASS_FQN +
                        daemonOptions.asParams +
                        compilerId.asParams
             errStream.println("[daemon client] starting the daemon as: " + args.joinToString(" "))
@@ -131,7 +132,7 @@ public class KotlinCompilerClient {
                    (localId.compilerDigest.isEmpty() || remoteId.compilerDigest.isEmpty() || localId.compilerDigest == remoteId.compilerDigest)
         }
 
-        public fun connectToCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream, autostart: Boolean = true, checkId: Boolean = true): CompileService? {
+        public fun connectToCompileService(compilerId: CompilerId, daemonLaunchingOptions: DaemonLaunchingOptions, daemonOptions: DaemonOptions, errStream: PrintStream, autostart: Boolean = true, checkId: Boolean = true): CompileService? {
             val service = connectToService(compilerId, daemonOptions, errStream)
             if (service != null) {
                 if (!checkId || checkCompilerId(service, compilerId, errStream)) {
@@ -151,7 +152,7 @@ public class KotlinCompilerClient {
                 else errStream.println("[daemon client] cannot connect to Compile Daemon, trying to start")
             }
 
-            startDaemon(compilerId, daemonOptions, errStream)
+            startDaemon(compilerId, daemonLaunchingOptions, daemonOptions, errStream)
             errStream.println("[daemon client] daemon started, trying to connect")
             return connectToService(compilerId, daemonOptions, errStream)
         }
@@ -187,8 +188,9 @@ public class KotlinCompilerClient {
         platformStatic public fun main(vararg args: String) {
             val compilerId = CompilerId()
             val daemonOptions = DaemonOptions()
+            val daemonLaunchingOptions = DaemonLaunchingOptions()
             val clientOptions = ClientOptions()
-            val filteredArgs = args.asIterable().propParseFilter(compilerId, daemonOptions, clientOptions)
+            val filteredArgs = args.asIterable().propParseFilter(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions)
 
             if (!clientOptions.stop) {
                 if (compilerId.compilerClasspath.none()) {
@@ -214,7 +216,7 @@ public class KotlinCompilerClient {
                 compilerId.updateDigest()
             }
 
-            connectToCompileService(compilerId, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)?.let {
+            connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)?.let {
                 when {
                     clientOptions.stop -> {
                         println("Shutdown the daemon")
