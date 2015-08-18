@@ -74,11 +74,11 @@ public fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(fil
 private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {
 
     override fun getNonExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
-        return scope.getFunctions(name).filter { it.getExtensionReceiverParameter() == null } + getConstructors(scope, name)
+        return scope.getFunctions(name).filter { it.extensionReceiverParameter == null } + getConstructors(scope, name)
     }
 
     override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
-        val receiverScope = receiver.getMemberScope()
+        val receiverScope = receiver.memberScope
         val members = receiverScope.getFunctions(name)
         val constructors = getConstructors(receiverScope, name, { !isStaticNestedClass(it) })
 
@@ -88,7 +88,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
             // Otherwise confusing errors will be reported because the non-extension here beats the extension
             // (because declarations beat synthesized members)
             val (candidatesForReplacement, irrelevantInvokes) =
-                    members.partition { it is FunctionInvokeDescriptor && it.getValueParameters().isNotEmpty() }
+                    members.partition { it is FunctionInvokeDescriptor && it.valueParameters.isNotEmpty() }
             return createSynthesizedInvokes(candidatesForReplacement) + irrelevantInvokes + constructors
         }
 
@@ -96,7 +96,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     }
 
     override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
-        return getConstructors(receiver.getMemberScope(), name, { isStaticNestedClass(it) })
+        return getConstructors(receiver.memberScope, name, { isStaticNestedClass(it) })
     }
 
     override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
@@ -118,10 +118,10 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         val classifier = scope.getClassifier(name)
         if (classifier !is ClassDescriptor || ErrorUtils.isError(classifier) || !filterClassPredicate(classifier)
             // Constructors of singletons shouldn't be callable from the code
-            || classifier.getKind().isSingleton()) {
+            || classifier.kind.isSingleton) {
             return listOf()
         }
-        return classifier.getConstructors()
+        return classifier.constructors
     }
 
     override fun toString() = "FUNCTIONS"
