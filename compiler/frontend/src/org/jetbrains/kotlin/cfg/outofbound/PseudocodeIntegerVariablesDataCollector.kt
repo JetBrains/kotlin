@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.NondeterministicJumpInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.UnconditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
@@ -50,11 +51,7 @@ import java.util.HashSet
 
 public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode, val bindingContext: BindingContext) {
     private val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
-    // The map below is used to define indices of instructions. To achieve O(1) operation time cost
-    // the map is created with capacity = instructions number (+ constant) and load factor = 1
-    private val instructionsToTheirIndices: HashMap<Instruction, Int> = createInstructionsToTheirIndicesMap()
-    // `loopsInfoMap` contains the following mapping: (loop enter instruction) to (set of variables updated inside loop)
-    private val loopsInfoMap: HashMap<Instruction, Set<VariableDescriptor>> = createLoopsInfoMap()
+    private val loopsInfo: LoopsInfo = createLoopsInfoMap()
 
     // this function is fully copied from PseudocodeVariableDataCollector
     private fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
@@ -80,20 +77,31 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return lexicalScopeVariableInfo
     }
 
-    private fun createLoopsInfoMap(): HashMap<Instruction, Set<VariableDescriptor>> {
+    // Control flow graph's oriented edge
+    private data class OrientedEdge (val from: Instruction, val to: Instruction)
+    // Contains additional info about loops required for processing
+    private data class LoopsInfo(
+            // Contains the following mapping: (loop enter instruction) to (set of variables updated inside loop)
+            val updatedVariables: HashMap<Instruction, Set<VariableDescriptor>>,
+            // Contains loops' back edges, i.e. the edges that lead to loop enter from loop's body
+            // (such edges create cycles in control flow graph)
+            val backEdges: HashSet<OrientedEdge>
+    )
+
+    private fun createLoopsInfoMap(): LoopsInfo {
         if (pseudocode !is PseudocodeImpl) {
             throw IllegalArgumentException("Pseudocode is not a PseudocodeImpl so there is no labels info")
         }
         val labels = pseudocode.labels
         val instructionIndexToLabels = HashMap<Int, MutableSet<PseudocodeImpl.PseudocodeLabel>>(labels.size() + 5, 1f) // + 5 is chosen randomly
         labels.forEach { instructionIndexToLabels.getOrPut(it.targetInstructionIndex, { HashSet() }).add(it) }
-        val instructions = pseudocode.instructionsIncludingDeadCode
-        val loopInfoMap = HashMap<Instruction, Set<VariableDescriptor>>(labels.size(), 1f)
+        val updatedVariablesMap = HashMap<Instruction, Set<VariableDescriptor>>(labels.size(), 1f)
         val variablesStack = linkedListOf<Pair<Instruction, HashSet<VariableDescriptor>>>()
         val loopEntryPointText = "loop entry point"
         val loopExitPointText = "loop exit point"
-        instructions.forEachIndexed { i, instruction ->
-            val instructionLabels = instructionIndexToLabels[i]
+        val conditionEntryPointText = "condition entry point"
+        fun extractUpdatedVariablesInfo(index: Int, instruction: Instruction) {
+            val instructionLabels = instructionIndexToLabels[index]
             if (instructionLabels != null) {
                 val labelsAsStrings = instructionLabels.map { it.toString() }
                 if (labelsAsStrings.any { it contains loopEntryPointText }) {
@@ -101,7 +109,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
                 else if (labelsAsStrings.any { it contains loopExitPointText }) {
                     val topInfo = variablesStack.removeFirst()
-                    loopInfoMap[topInfo.first] = topInfo.second
+                    updatedVariablesMap[topInfo.first] = topInfo.second
                 }
             }
             if (instruction is ConditionalJumpInstruction &&
@@ -116,7 +124,35 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
             }
         }
-        return loopInfoMap
+        val backEdgesSet = HashSet<OrientedEdge>(labels.size() * 2)
+        fun extractBackEdgeInfo(instruction: Instruction) {
+            if (instruction is ConditionalJumpInstruction &&
+                instruction.element is JetDoWhileExpression &&
+                instruction.targetLabel.toString() contains loopEntryPointText) {
+                backEdgesSet.add(OrientedEdge(instruction, instruction.nextOnTrue))
+            }
+            if (instruction is UnconditionalJumpInstruction &&
+                (instruction.element is JetForExpression ||
+                 instruction.element is JetWhileExpression) &&
+                instruction.targetLabel.toString() contains loopEntryPointText) {
+                backEdgesSet.add(OrientedEdge(
+                        instruction,
+                        instruction.resolvedTarget ?: throw IllegalStateException("Jump instruction target in not resolved")
+                ))
+            }
+            if (instruction is UnconditionalJumpInstruction && instruction.element is JetContinueExpression &&
+                instruction.targetLabel.toString() contains conditionEntryPointText) {
+                backEdgesSet.add(OrientedEdge(
+                        instruction,
+                        instruction.resolvedTarget ?: throw IllegalStateException("Jump instruction target in not resolved")
+                ))
+            }
+        }
+        pseudocode.instructionsIncludingDeadCode.forEachIndexed { i, instruction ->
+            extractUpdatedVariablesInfo(i, instruction)
+            extractBackEdgeInfo(instruction)
+        }
+        return LoopsInfo(updatedVariablesMap, backEdgesSet)
     }
 
     private fun extractTargetDescriptorIfUpdateInstruction(instruction: Instruction): VariableDescriptor? =
@@ -135,16 +171,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 else -> null
             }
 
-    // todo: improve implementation reducing traverses from 2 to 1
-    private fun createInstructionsToTheirIndicesMap(): HashMap<Instruction, Int> {
-        var instructionsNumber = 0
-        pseudocode.traverse(TraversalOrder.FORWARD, { i -> ++instructionsNumber })
-        val resultingMap = HashMap<Instruction, Int>(instructionsNumber + 5, 1f) // + 5 is chosen randomly
-        var index = 0
-        pseudocode.traverse(TraversalOrder.FORWARD, { instruction -> resultingMap[instruction] = index; ++index })
-        return resultingMap
-    }
-
     public fun collectVariableValuesData(): Map<Instruction, Edges<ValuesData>> {
         return pseudocode.collectData(
                 TraversalOrder.FORWARD,
@@ -156,12 +182,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     }
 
     private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
-        assert(instructionsToTheirIndices.containsKey(previousInstruction), "Mapping from instructions to their indices is wrong")
-        assert(instructionsToTheirIndices.containsKey(currentInstruction), "Mapping from instructions to their indices is wrong")
-        val prevInstructionIndex = instructionsToTheirIndices[previousInstruction] as Int
-        val curInstructionIndex = instructionsToTheirIndices[currentInstruction] as Int
-        if (prevInstructionIndex > curInstructionIndex) {
-            // The edge we need to update leads from loop end to loop enter (for example, from while loop's body end
+        if (loopsInfo.backEdges.contains(OrientedEdge(previousInstruction, currentInstruction))) {
+            // The edge we need to update leads from loop's body to loop enter (for example, from while loop's body end
             // to while loop's condition). After the first traversal of all the instructions list, this edge will contain
             // the information that is computed after current instruction. In current implementation we don't process loop
             // bodies multiple times, so to avoid this computation we destroy the information on this edge.
@@ -356,7 +378,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
 
     private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData {
         val updatedData = mergedEdgesData.copy()
-        val variablesUpdatedInLoop = loopsInfoMap[instruction]
+        val variablesUpdatedInLoop = loopsInfo.updatedVariables[instruction]
         if (variablesUpdatedInLoop != null) {
             // we meet the loop enter instruction
             processVariablesUpdatedInLoop(instruction, variablesUpdatedInLoop, updatedData)
