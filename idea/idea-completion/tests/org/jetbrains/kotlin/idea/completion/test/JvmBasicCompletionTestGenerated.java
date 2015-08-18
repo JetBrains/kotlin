@@ -2310,9 +2310,33 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("InGenericClass.kt")
+            public void testInGenericClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/InGenericClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SafeCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ShowGetSetOnSecondCompletion.kt")
             public void testShowGetSetOnSecondCompletion() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/ShowGetSetOnSecondCompletion.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCast2.kt")
+            public void testSmartCast2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SmartCast2.kt");
                 doTest(fileName);
             }
 
@@ -2325,30 +2349,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("SyntheticExtensions2.kt")
             public void testSyntheticExtensions2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensions2.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsInGenericClass.kt")
-            public void testSyntheticExtensionsInGenericClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsInGenericClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSafeCall.kt")
-            public void testSyntheticExtensionsSafeCall() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSafeCall.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSmartCast.kt")
-            public void testSyntheticExtensionsSmartCast() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSmartCast.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("SyntheticExtensionsSmartCast2.kt")
-            public void testSyntheticExtensionsSmartCast2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/syntheticExtensions/SyntheticExtensionsSmartCast2.kt");
                 doTest(fileName);
             }
         }
