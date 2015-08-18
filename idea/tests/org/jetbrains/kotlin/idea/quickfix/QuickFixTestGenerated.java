@@ -920,6 +920,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("quotedName.kt")
+                public void testQuotedName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/quotedName.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("singleArgCallInAnnotationEntry.kt")
                 public void testSingleArgCallInAnnotationEntry() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createClass/callExpression/singleArgCallInAnnotationEntry.kt");
@@ -1544,6 +1550,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("plusOnUserTypeWithTypeParams.kt")
                 public void testPlusOnUserTypeWithTypeParams() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations/plusOnUserTypeWithTypeParams.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("quotedName.kt")
+                public void testQuotedName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations/quotedName.kt");
                     doTest(fileName);
                 }
 
@@ -2672,6 +2684,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("quotedName.kt")
+                public void testQuotedName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/quotedName.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("recursiveBound.kt")
                 public void testRecursiveBound() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/recursiveBound.kt");
@@ -2756,6 +2774,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("qualifiedRefInStringTemplateRuntime.kt")
                 public void testQualifiedRefInStringTemplateRuntime() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/qualifiedRefInStringTemplateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("quotedName.kt")
+                public void testQuotedName() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/quotedName.kt");
                     doTest(fileName);
                 }
 

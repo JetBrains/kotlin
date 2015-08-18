@@ -449,7 +449,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     CallableKind.PROPERTY -> ""
                 }
                 val returnTypeString = if (skipReturnType || assignmentToReplace != null) "" else ": Any"
-                val header = "$ownerTypeString${callableInfo.name}$paramList$returnTypeString"
+                val header = "$ownerTypeString${callableInfo.name.quoteIfNeeded()}$paramList$returnTypeString"
 
                 val psiFactory = JetPsiFactory(currentFile)
 
@@ -479,11 +479,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                 ClassKind.ANNOTATION_CLASS, ClassKind.ENUM_ENTRY -> ""
                                 else -> "{\n\n}"
                             }
+                            val safeName = name.quoteIfNeeded()
                             when (kind) {
                                 ClassKind.ENUM_ENTRY -> {
                                     if (!(targetParent is JetClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent.getText()}")
                                     val hasParameters = targetParent.getPrimaryConstructorParameters().isNotEmpty()
-                                    psiFactory.createEnumEntry("$name${if (hasParameters) "()" else " "}")
+                                    psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
                                     val openMod = if (open) "open " else ""
@@ -493,7 +494,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                         else -> ""
                                     }
                                     psiFactory.createDeclaration<JetClassOrObject>(
-                                            "$openMod$innerMod${kind.keyword} $name$typeParamList$paramList$returnTypeString $classBody"
+                                            "$openMod$innerMod${kind.keyword} $safeName$typeParamList$paramList$returnTypeString $classBody"
                                     )
                                 }
                             }
