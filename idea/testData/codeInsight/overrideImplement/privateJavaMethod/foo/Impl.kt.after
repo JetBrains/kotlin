@@ -1,0 +1,25 @@
+interface I {
+    fun z()
+}
+
+class C : A(), I {
+    override fun equals(other: Any?): Boolean {
+        <selection><caret>return super<A>.equals(other)</selection>
+    }
+
+    override fun hashCode(): Int {
+        return super<A>.hashCode()
+    }
+
+    override fun toString(): String {
+        return super<A>.toString()
+    }
+
+    override fun x() {
+        super<A>.x()
+    }
+
+    override fun z() {
+        throw UnsupportedOperationException()
+    }
+}

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
@@ -31,7 +28,7 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
             if (member is CallableMemberDescriptor
                 && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
                 val overridden = member.overriddenDescriptors
-                if (overridden.any { it.modality == Modality.FINAL }) continue
+                if (overridden.any { it.modality == Modality.FINAL || it.visibility.normalize() == Visibilities.PRIVATE }) continue
 
                 val realSuperToImmediates = LinkedHashMap<CallableMemberDescriptor, MutableCollection<CallableMemberDescriptor>>()
                 for (immediateSuper in overridden) {

@@ -70,6 +70,10 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         doDirectoryTest(OverrideMethodsHandler(), memberToImplement)
     }
 
+    protected fun doMultiOverrideDirectoryTest() {
+        doMultiDirectoryTest(OverrideMethodsHandler())
+    }
+
     protected fun doImplementJavaDirectoryTest(className: String, methodName: String) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/JavaClass.java")
@@ -107,6 +111,13 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doOverrideImplement(handler, memberToOverride)
+        checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
+    }
+
+    private fun doMultiDirectoryTest(handler: OverrideImplementMethodsHandler) {
+        myFixture.copyDirectoryToProject(getTestName(true), "")
+        myFixture.configureFromTempProjectFile("foo/Impl.kt")
+        doMultiOverrideImplement(handler)
         checkResultByFile(getTestName(true) + "/foo/Impl.kt.after")
     }
 
