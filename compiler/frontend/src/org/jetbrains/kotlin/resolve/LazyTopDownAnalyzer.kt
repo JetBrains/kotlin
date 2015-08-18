@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -99,7 +101,8 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitClassOrObject(classOrObject: JetClassOrObject) {
-                    val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes
+                    val location = if (classOrObject.isTopLevel()) KotlinLookupLocation(classOrObject) else NoLookupLocation.WHEN_RESOLVE_DECLARATION
+                    val descriptor = lazyDeclarationResolver.getClassDescriptor(classOrObject, location) as ClassDescriptorWithResolutionScopes
 
                     c.getDeclaredClasses().put(classOrObject, descriptor)
                     registerDeclarations(classOrObject.getDeclarations())

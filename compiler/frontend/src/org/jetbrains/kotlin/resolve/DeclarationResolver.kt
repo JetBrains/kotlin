@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.REDECLARATION
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -94,7 +95,7 @@ public class DeclarationResolver(
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
             if (fqName.isRoot()) continue
 
-            val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName)
+            val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
 
             if (descriptors.size() > 1) {
                 for (declarationOrPackageDirective in declarationsOrPackageDirectives) {
@@ -107,7 +108,7 @@ public class DeclarationResolver(
         }
     }
 
-    private fun getTopLevelDescriptorsByFqName(topLevelDescriptorProvider: TopLevelDescriptorProvider, fqName: FqName): Set<DeclarationDescriptor> {
+    private fun getTopLevelDescriptorsByFqName(topLevelDescriptorProvider: TopLevelDescriptorProvider, fqName: FqName, location: LookupLocation): Set<DeclarationDescriptor> {
         val parentFqName = fqName.parent()
 
         val descriptors = HashSet<DeclarationDescriptor>()
@@ -115,13 +116,13 @@ public class DeclarationResolver(
         val parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName)
         if (parentFragment != null) {
             // Filter out extension properties
-            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filter {
+            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), location).filter {
                 it.getExtensionReceiverParameter() == null
             })
         }
 
         descriptors.addIfNotNull(topLevelDescriptorProvider.getPackageFragment(fqName))
-        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName))
+        descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName, location))
         return descriptors
     }
 }

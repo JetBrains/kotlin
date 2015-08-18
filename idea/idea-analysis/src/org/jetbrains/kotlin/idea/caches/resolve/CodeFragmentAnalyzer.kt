@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -87,7 +88,7 @@ public class CodeFragmentAnalyzer(
 
         when (context) {
             is JetClassOrObject -> {
-                val descriptor = resolveSession.getClassDescriptor(context) as ClassDescriptorWithResolutionScopes
+                val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
                 scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
                 dataFlowInfo = DataFlowInfo.EMPTY

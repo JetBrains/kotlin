@@ -205,6 +205,15 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
         return !(parent instanceof JetFile || parent instanceof JetClassBody);
     }
 
+    public boolean isTopLevel() {
+        KotlinFunctionStub stub = getStub();
+        if (stub != null) {
+            return stub.isTopLevel();
+        }
+
+        return getParent() instanceof JetFile;
+    }
+
     @Override
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
