@@ -11,22 +11,12 @@ import java.io.File
 import org.gradle.api.Action
 import org.gradle.api.tasks.compile.AbstractCompile
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.LibraryExtension
-import org.gradle.api.internal.DefaultDomainObjectSet
-import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.AndroidSourceSet
-import java.util.ArrayList
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.api.LibraryVariant
-import com.android.build.gradle.api.ApkVariant
-import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
-import com.android.builder.core.VariantType
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import javax.inject.Inject
@@ -35,16 +25,15 @@ import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
 import org.gradle.api.logging.*
 import org.gradle.api.plugins.*
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
+import org.jetbrains.kotlin.gradle.internal.initKapt
 import java.net.URL
 import java.util.jar.Manifest
-import java.lang.ref.WeakReference
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -167,7 +156,7 @@ class Kotlin2JvmSourceSetProcessor(
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
                 if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile) {
-                    val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, sourceSetName)
+                    val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
@@ -432,7 +421,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             javaTask.dependsOn(kotlinTaskName)
 
-            val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, variantDataName)
+            val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
@@ -491,7 +480,7 @@ private fun loadSubplugins(project: Project): SubpluginEnvironment {
     }
 }
 
-private class SubpluginEnvironment(
+class SubpluginEnvironment(
     val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
     val subplugins: List<KotlinGradleSubplugin>
 ) {
@@ -518,7 +507,7 @@ private class SubpluginEnvironment(
             }
         }
 
-        val extraProperties = compileTask.extraProperties
+        val extraProperties = compileTask.extensions.extraProperties
         extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.toTypedArray())
         extraProperties.set("compilerPluginArguments", pluginArguments.toTypedArray())
     }
@@ -544,11 +533,11 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
 
-private fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
-    extraProperties.set("kaptAnnotationsFile", kapt.getAnnotationFile())
+fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
+    extensions.extraProperties.set("kaptAnnotationsFile", kapt.getAnnotationFile())
 }
 
-private fun Project.getAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): Pair<File, File> {
+private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, File> {
     val aptOutputDir = File(getBuildDir(), "generated/source/kapt")
     val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
 
@@ -569,83 +558,6 @@ private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotati
 
 private fun Project.createKaptExtension() {
     getExtensions().create("kapt", javaClass<KaptExtension>())
-}
-
-private fun Project.initKapt(
-        kotlinTask: AbstractCompile,
-        javaTask: AbstractCompile,
-        kaptManager: AnnotationProcessingManager,
-        variantName: String,
-        kotlinOutputDir: File,
-        subpluginEnvironment: SubpluginEnvironment,
-        taskFactory: (suffix: String) -> AbstractCompile
-): AbstractCompile? {
-    val kaptExtension = getExtensions().getByType(javaClass<KaptExtension>())
-    val kotlinAfterJavaTask: AbstractCompile?
-
-    if (kaptExtension.generateStubs) {
-        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinOutputDir, taskFactory)
-
-        kotlinTask.getLogger().kotlinDebug("kapt: Using class file stubs")
-
-        val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
-        kotlinTask.extraProperties.set("kaptStubsDir", stubsDir)
-
-        javaTask.setClasspath(javaTask.getClasspath() + files(stubsDir))
-
-        kotlinTask.doFirst {
-            kotlinAfterJavaTask.source(kotlinTask.getSource())
-        }
-
-        subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
-    } else {
-        kotlinAfterJavaTask = null
-        kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
-    }
-
-    if (kaptExtension.inheritedAnnotations) {
-        kotlinTask.extraProperties.set("kaptInheritedAnnotations", true)
-    }
-
-    kotlinTask.doFirst {
-        kaptManager.generateJavaHackFile()
-        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
-    }
-
-    javaTask.doFirst {
-        kaptManager.setupKapt()
-        kaptManager.generateJavaHackFile()
-        kotlinAfterJavaTask?.source(kaptManager.getGeneratedKotlinSourceDir())
-    }
-
-    javaTask.doLast {
-        kaptManager.afterJavaCompile()
-    }
-
-    kotlinTask.storeKaptAnnotationsFile(kaptManager)
-    return kotlinAfterJavaTask
-}
-
-private fun Project.createKotlinAfterJavaTask(
-        javaTask: AbstractCompile,
-        kotlinOutputDir: File,
-        taskFactory: (suffix: String) -> AbstractCompile
-): AbstractCompile {
-    val kotlinAfterJavaTask = with (taskFactory(KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
-        setProperty("kotlinDestinationDir", kotlinOutputDir)
-        setDestinationDir(javaTask.getDestinationDir())
-        setClasspath(javaTask.getClasspath())
-        this
-    }
-
-    getAllTasks(false)
-            .flatMap { it.getValue() }
-            .filter { javaTask in it.getTaskDependencies().getDependencies(it) }
-            .forEach { it.dependsOn(kotlinAfterJavaTask) }
-
-    kotlinAfterJavaTask.dependsOn(javaTask)
-
-    return kotlinAfterJavaTask
 }
 
 //copied from BasePlugin.getLocalVersion
@@ -670,9 +582,6 @@ private fun loadAndroidPluginVersion(): String? {
         return null;
     }
 }
-
-private val AbstractCompile.extraProperties: ExtraPropertiesExtension
-    get() = getExtensions().getExtraProperties()
 
 //Copied from StringUtil.compareVersionNumbers
 private fun compareVersionNumbers(v1: String?, v2: String?): Int {
