@@ -38,7 +38,8 @@ public class HierarchyUtils {
                    input instanceof JetFile ||
                    input instanceof JetNamedFunction ||
                    input instanceof JetSecondaryConstructor ||
-                   input instanceof JetClassOrObject ||
+                   input instanceof JetObjectDeclaration ||
+                   (input instanceof JetClass && !((JetClass) input).isInterface()) ||
                    input instanceof JetProperty;
         }
     };

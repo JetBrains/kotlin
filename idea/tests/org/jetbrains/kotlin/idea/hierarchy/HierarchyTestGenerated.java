@@ -316,6 +316,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest(fileName);
         }
 
+        @TestMetadata("kotlinInterface")
+        public void testKotlinInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinInterface/");
+            doCallerHierarchyTest(fileName);
+        }
+
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinLocalClass/");
@@ -454,6 +460,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinFunction/");
+            doCalleeHierarchyTest(fileName);
+        }
+
+        @TestMetadata("kotlinInterface")
+        public void testKotlinInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinInterface/");
             doCalleeHierarchyTest(fileName);
         }
 
