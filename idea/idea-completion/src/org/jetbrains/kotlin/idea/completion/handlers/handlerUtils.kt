@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.idea.completion.handlers
 
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.util.TextRange
+
 fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
     for (i in startIndex..this.length() - 1) {
         val currentChar = this[i]
@@ -31,3 +34,6 @@ fun CharSequence.skipSpaces(index: Int): Int
 fun CharSequence.skipSpacesAndLineBreaks(index: Int): Int
         = (index..length() - 1).firstOrNull { val c = this[it]; c != ' ' && c != '\t' && c != '\n' && c != '\r' } ?: this.length()
 
+fun CharSequence.isCharAt(offset: Int, c: Char) = offset < length() && charAt(offset) == c
+
+fun Document.isTextAt(offset: Int, text: String) = offset + text.length() <= getTextLength() && getText(TextRange(offset, offset + text.length())) == text

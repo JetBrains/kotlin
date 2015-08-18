@@ -47,6 +47,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("EA70229.kt")
+    public void testEA70229() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/EA70229.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionReceiverTypeArg.kt")
     public void testExtensionReceiverTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExtensionReceiverTypeArg.kt");

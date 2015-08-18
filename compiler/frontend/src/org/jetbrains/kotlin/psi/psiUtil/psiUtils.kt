@@ -263,6 +263,8 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
 public fun PsiElement.getElementTextWithContext(): String {
+    assert(isValid) { "Invalid element $this" }
+
     if (this is PsiFile) {
         return getContainingFile().getText()
     }

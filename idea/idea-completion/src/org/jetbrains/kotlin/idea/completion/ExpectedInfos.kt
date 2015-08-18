@@ -219,7 +219,7 @@ class ExpectedInfos(
     private fun calculateForArgument(call: Call, callExpectedType: JetType, argument: ValueArgument): Collection<ExpectedInfo> {
         val argumentIndex = call.getValueArguments().indexOf(argument)
         assert(argumentIndex >= 0) {
-            "Could not find argument '$argument' among arguments of call: $call"
+            "Could not find argument '$argument(${argument.asElement().text})' among arguments of call: $call"
         }
         val argumentName = argument.getArgumentName()?.asName
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument

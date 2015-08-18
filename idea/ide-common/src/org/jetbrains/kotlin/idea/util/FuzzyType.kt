@@ -77,7 +77,9 @@ class FuzzyType(
         }
 
         for (argument in type.getArguments()) {
-            addUsedTypeParameters(argument.getType())
+            if (!argument.isStarProjection) { // otherwise we can fall into infinite recursion
+                addUsedTypeParameters(argument.getType())
+            }
         }
     }
 

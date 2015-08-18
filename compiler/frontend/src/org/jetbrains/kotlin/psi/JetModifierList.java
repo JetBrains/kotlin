@@ -22,7 +22,6 @@ import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
@@ -54,30 +53,28 @@ public abstract class JetModifierList extends JetElementImplStub<KotlinModifierL
         return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
     }
 
-    public boolean hasModifier(@NotNull JetModifierKeywordToken token) {
+    public boolean hasModifier(@NotNull JetModifierKeywordToken tokenType) {
         KotlinModifierListStub stub = getStub();
         if (stub != null) {
-            return stub.hasModifier(token);
+            return stub.hasModifier(tokenType);
         }
-        return getModifierNode(token) != null;
+        return getModifier(tokenType) != null;
     }
 
     @Nullable
-    public PsiElement getModifier(@NotNull JetModifierKeywordToken token) {
-        return findChildByType(token);
-    }
-
-    @Nullable
-    public ASTNode getModifierNode(@NotNull JetToken token) {
-        ASTNode node = getNode().getFirstChildNode();
-        while (node != null) {
-            if (node.getElementType() == token) return node;
-            node = node.getTreeNext();
-        }
-        return null;
+    public PsiElement getModifier(@NotNull JetModifierKeywordToken tokenType) {
+        return findChildByType(tokenType);
     }
 
     public PsiElement getOwner() {
         return getParentByStub();
+    }
+
+    @Override
+    public void deleteChildInternal(@NotNull ASTNode child) {
+        super.deleteChildInternal(child);
+        if (getFirstChild() == null) {
+            delete();
+        }
     }
 }

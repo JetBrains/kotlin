@@ -20,7 +20,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -28,14 +27,16 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.SubstitutionUtils;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
@@ -352,9 +353,8 @@ public class DeclarationsChecker {
         JetPropertyAccessor getter = property.getGetter();
         JetPropertyAccessor setter = property.getSetter();
         JetModifierList modifierList = property.getModifierList();
-        ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
 
-        if (abstractNode != null) { //has abstract modifier
+        if (modifierList != null && modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) { //has abstract modifier
             if (!classCanHaveAbstractMembers(classDescriptor)) {
                 String name = property.getName();
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
@@ -486,17 +486,17 @@ public class DeclarationsChecker {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
         if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetModifierKeywordToken, ASTNode> nodes = modifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
+            Map<JetModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(getterModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
             if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                for (ASTNode node : nodes.values()) {
-                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(node.getPsi()));
+                for (PsiElement token : tokens.values()) {
+                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(token));
                 }
             }
             else {
-                for (ASTNode node : nodes.values()) {
-                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(node.getPsi()));
+                for (PsiElement token : tokens.values()) {
+                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(token));
                 }
             }
         }

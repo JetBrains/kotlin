@@ -24,6 +24,7 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -96,7 +97,8 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
     }
 
     final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
-        val target = getTarget(editor, file) ?: error("Intention is not applicable")
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        val target = getTarget(editor, file) ?: return
         applyTo(target, editor)
     }
 

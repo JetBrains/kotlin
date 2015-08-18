@@ -42,14 +42,14 @@ public class JetTypeProjection extends JetModifierListOwnerStub<KotlinTypeProjec
             return stub.getProjectionKind();
         }
 
-        ASTNode projectionNode = getProjectionNode();
-        IElementType token = projectionNode != null ? projectionNode.getElementType() : null;
+        PsiElement projectionToken = getProjectionToken();
+        IElementType token = projectionToken != null ? projectionToken.getNode().getElementType() : null;
         for (JetProjectionKind projectionKind : JetProjectionKind.values()) {
             if (projectionKind.getToken() == token) {
                 return projectionKind;
             }
         }
-        throw new IllegalStateException(projectionNode.getText());
+        throw new IllegalStateException(projectionToken.getText());
     }
 
     @Override
@@ -63,22 +63,19 @@ public class JetTypeProjection extends JetModifierListOwnerStub<KotlinTypeProjec
     }
 
     @Nullable
-    public ASTNode getProjectionNode() {
+    public PsiElement getProjectionToken() {
         PsiElement star = findChildByType(JetTokens.MUL);
         if (star != null) {
-            return star.getNode();
+            return star;
         }
 
         JetModifierList modifierList = getModifierList();
         if (modifierList != null) {
-            ASTNode node = modifierList.getModifierNode(JetTokens.IN_KEYWORD);
-            if (node != null) {
-                return node;
-            }
-            node = modifierList.getModifierNode(JetTokens.OUT_KEYWORD);
-            if (node != null) {
-                return node;
-            }
+            PsiElement element = modifierList.getModifier(JetTokens.IN_KEYWORD);
+            if (element != null) return element;
+
+            element = modifierList.getModifier(JetTokens.OUT_KEYWORD);
+            if (element != null) return element;
         }
 
         return null;

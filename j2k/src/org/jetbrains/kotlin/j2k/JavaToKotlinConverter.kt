@@ -25,6 +25,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.j2k.ast.Element
+import org.jetbrains.kotlin.j2k.usageProcessing.ExternalCodeProcessor
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
@@ -196,20 +197,22 @@ public class JavaToKotlinConverter(
                     else -> continue@ReferenceLoop
                 }
 
-                checkReferenceValid(reference)
+                checkReferenceValid(reference, null)
 
                 var references = listOf(reference)
                 for (processor in processors) {
                     references = references.flatMap { processor.processUsage(it)?.toList() ?: listOf(it) }
-                    references.forEach { checkReferenceValid(it) }
+                    references.forEach { checkReferenceValid(it, processor) }
                 }
             }
         }
     }
 
-    private fun checkReferenceValid(reference: PsiReference) {
+    private fun checkReferenceValid(reference: PsiReference, afterProcessor: ExternalCodeProcessor?) {
         val element = reference.getElement()
-        assert(element.isValid() && element.getContainingFile() !is DummyHolder) { "Reference $reference got invalidated" }
+        assert(element.isValid() && element.getContainingFile() !is DummyHolder) {
+            "Reference $reference got invalidated" + (if (afterProcessor != null) " after processing with $afterProcessor" else "")
+        }
     }
 
     private object ReferenceComparator : Comparator<ReferenceInfo> {

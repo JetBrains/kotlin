@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -238,15 +238,15 @@ public object PositioningStrategies {
     }
 
     platformStatic
-    public fun modifierSetPosition(vararg tokens: JetKeywordToken): PositioningStrategy<JetModifierListOwner> {
+    public fun modifierSetPosition(vararg tokens: JetModifierKeywordToken): PositioningStrategy<JetModifierListOwner> {
         return object : PositioningStrategy<JetModifierListOwner>() {
             override fun mark(element: JetModifierListOwner): List<TextRange> {
                 val modifierList = element.getModifierList().sure { "No modifier list, but modifier has been found by the analyzer" }
 
                 for (token in tokens) {
-                    val node = modifierList.getModifierNode(token)
-                    if (node != null) {
-                        return markNode(node)
+                    val element = modifierList.getModifier(token)
+                    if (element != null) {
+                        return markElement(element)
                     }
                 }
                 throw IllegalStateException("None of the modifiers is found: " + listOf(*tokens))
@@ -265,7 +265,7 @@ public object PositioningStrategies {
             val visibilityTokens = listOf(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD)
             val modifierList = element.getModifierList()
 
-            val result = visibilityTokens.map { modifierList?.getModifierNode(it)?.getTextRange() }.filterNotNull()
+            val result = visibilityTokens.map { modifierList?.getModifier(it)?.getTextRange() }.filterNotNull()
             if (!result.isEmpty()) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element
@@ -289,7 +289,7 @@ public object PositioningStrategies {
 
     public val VARIANCE_IN_PROJECTION: PositioningStrategy<JetTypeProjection> = object : PositioningStrategy<JetTypeProjection>() {
         override fun mark(element: JetTypeProjection): List<TextRange> {
-            return markNode(element.getProjectionNode()!!)
+            return markElement(element.getProjectionToken()!!)
         }
     }
 

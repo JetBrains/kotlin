@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.extapi.psi.ASTDelegatePsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -61,7 +60,7 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
 }
 
 public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
-    override fun getText(): String = JetBundle.message("replace.with.safe.call")
+    override fun getText(): String = "Replace with safe (?.) call"
     override val operation: String get() = "?."
     override val classToReplace: Class<out JetQualifiedExpression> get() = javaClass<JetDotQualifiedExpression>()
 
