@@ -105,9 +105,13 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
         return addDependency(type, modules, exported, "KotlinJavaScript", PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath());
     }
 
-    protected static JpsLibrary addDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported, String libraryName, File file) {
+    protected static JpsLibrary addDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported, String libraryName, File... file) {
         JpsLibrary library = modules.iterator().next().getProject().addLibrary(libraryName, JpsJavaLibraryType.INSTANCE);
-        library.addRoot(file, JpsOrderRootType.COMPILED);
+
+        for (File fileRoot : file) {
+            library.addRoot(fileRoot, JpsOrderRootType.COMPILED);
+        }
+
         for (JpsModule module : modules) {
             JpsModuleRootModificationUtil.addDependency(module, library, type, exported);
         }

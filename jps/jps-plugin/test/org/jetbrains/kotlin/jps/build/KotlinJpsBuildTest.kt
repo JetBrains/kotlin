@@ -49,6 +49,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.Assert
 import java.io.*
 import java.util.Arrays
 import java.util.Collections
@@ -590,6 +591,31 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertCanceled(buildResult)
 
         assertFilesNotExistInOutput(module, "foo/Bar.class")
+    }
+
+    public fun testFileDoesNotExistWarning() {
+        initProject()
+
+        AbstractKotlinJpsBuildTestCase.addDependency(
+                JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "LibraryWithBadRoots",
+                File("badroot.jar"),
+                File("test/other/file.xml"),
+                File("some/test.class"),
+                File("some/other/baddir"))
+
+        val result = makeAll()
+        result.assertSuccessful()
+
+        val warnings = result.getMessages(BuildMessage.Kind.WARNING)
+
+        Assert.assertArrayEquals(
+                arrayOf(
+                        """Classpath entry points to a non-existent location: TEST_PATH/badroot.jar""",
+                        """Classpath entry points to a non-existent location: TEST_PATH/some/test.class"""),
+                warnings.map {
+                    it.messageText.replace(File("").absolutePath, "TEST_PATH").replace("\\", "/")
+                }.sort().toTypedArray()
+        )
     }
 
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {
