@@ -26,9 +26,11 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
 
@@ -54,21 +56,30 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
                 @suppress("UNCHECKED_CAST")
                 val targetElement = element as TElement
 
-                val ranges = intentions
-                        .map {
-                            val range = it.intention.applicabilityRange(targetElement)?.let { range ->
-                                val elementRange = targetElement.getTextRange()
-                                assert(range in elementRange) { "Wrong applicabilityRange() result for $it - should be within element's range" }
-                                range.shiftRight(-elementRange.getStartOffset())
-                            }
-                            if (range != null && it.additionalChecker(targetElement)) range else null
-                        }
-                        .filterNotNull()
-                if (ranges.isEmpty()) return
+                var problemRange: TextRange? = null
+                var fixes: SmartList<IntentionBasedQuickFix<*>>? = null
 
-                val fixes = intentions.map { IntentionBasedQuickFix(it.intention, it.additionalChecker, targetElement) }.toTypedArray()
-                val rangeInElement = ranges.fold(ranges.first()) { result, range -> result.union(range) }
-                holder.registerProblem(targetElement, problemText ?: fixes.first().getName(), problemHighlightType, rangeInElement, *fixes)
+                for ((intention, additionalChecker) in intentions) {
+                    synchronized(intention) {
+                        val range = intention.applicabilityRange(targetElement)?.let { range ->
+                            val elementRange = targetElement.getTextRange()
+                            assert(range in elementRange) { "Wrong applicabilityRange() result for $intention - should be within element's range" }
+                            range.shiftRight(-elementRange.getStartOffset())
+                        }
+
+                        if (range != null && additionalChecker(targetElement)) {
+                            problemRange = problemRange?.union(range) ?: range
+                            if (fixes == null) {
+                                fixes = SmartList<IntentionBasedQuickFix<*>>()
+                            }
+                            fixes!!.add(IntentionBasedQuickFix(intention, intention.text, additionalChecker, targetElement))
+                        }
+                    }
+                }
+
+                if (problemRange != null) {
+                    holder.registerProblem(targetElement, problemText ?: fixes!!.first().name, problemHighlightType, problemRange, *fixes!!.toTypedArray())
+                }
             }
         }
     }
@@ -78,21 +89,16 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
 
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
     private class IntentionBasedQuickFix<TElement : JetElement>(
-            val intention: JetSelfTargetingRangeIntention<TElement>,
-            val additionalChecker: (TElement) -> Boolean,
+            private val intention: JetSelfTargetingRangeIntention<TElement>,
+            private val text: String,
+            private val additionalChecker: (TElement) -> Boolean,
             targetElement: TElement
     ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
 
         // store text into variable because intention instance is shared and may change its text later
-        private val _text = synchronized(intention) {
-            // Ensure that text will be valid for current element in multithreaded environment
-            intention.applicabilityRange(targetElement)
-            intention.getText()
-        }
-
         override fun getFamilyName() = intention.getFamilyName()
 
-        override fun getText(): String = _text
+        override fun getText(): String = text
 
         override fun startInWriteAction() = true
 
