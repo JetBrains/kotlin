@@ -219,7 +219,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
             return JetSourceNavigationHelper.getOriginalClass(classOrObject);
         }
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+        return KotlinLightClassForExplicitDeclaration.Companion.create(psiManager, classOrObject);
     }
 
     @Nullable

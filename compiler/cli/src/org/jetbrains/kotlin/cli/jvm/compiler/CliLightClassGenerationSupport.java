@@ -189,7 +189,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+        return KotlinLightClassForExplicitDeclaration.Companion.create(psiManager, classOrObject);
     }
 
     @NotNull

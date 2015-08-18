@@ -14,593 +14,482 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.NullableLazyValue;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.PsiPackage;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.light.LightClass;
-import com.intellij.psi.impl.light.LightMethod;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.stubs.PsiClassHolderFileStub;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.IncorrectOperationException;
-import kotlin.KotlinPackage;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.idea.JetLanguage;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.types.JetType;
+import com.google.common.collect.Lists
+import com.google.common.collect.Sets
+import com.intellij.openapi.util.Comparing
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NullableLazyValue
+import com.intellij.openapi.util.Pair
+import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.impl.light.LightClass
+import com.intellij.psi.impl.light.LightMethod
+import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.stubs.PsiClassHolderFileStub
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.ArrayUtil
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import javax.swing.Icon
 
-import javax.swing.*;
-import java.util.Collection;
-import java.util.List;
+public open class KotlinLightClassForExplicitDeclaration(
+        manager: PsiManager,
+        private val classFqName: FqName // FqName of (possibly inner) class
+        ,
+        protected val classOrObject: JetClassOrObject) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
+    private var delegate: PsiClass? = null
 
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
-
-public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements JetJavaMirrorMarker {
-    private final static Key<CachedValue<OutermostKotlinClassLightClassData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
-
-    @Nullable
-    public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
-        if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
-            return null;
-        }
-
-        FqName fqName = predictFqName(classOrObject);
-        if (fqName == null) return null;
-
-        if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isObjectLiteral()) {
-            return new KotlinLightClassForAnonymousDeclaration(manager, fqName, classOrObject);
-        }
-        return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
-    }
-
-    @Nullable
-    private static FqName predictFqName(@NotNull JetClassOrObject classOrObject) {
-        if (classOrObject.isLocal()) {
-            LightClassDataForKotlinClass data = getLightClassDataExactly(classOrObject);
-            return data == null ? null : data.getJvmQualifiedName();
-        }
-        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
-        return internalName == null ? null : JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars();
-    }
-
-    private final FqName classFqName; // FqName of (possibly inner) class
-    protected final JetClassOrObject classOrObject;
-    private PsiClass delegate;
-
-    private final NullableLazyValue<PsiElement> parent = new NullableLazyValue<PsiElement>() {
-        @Nullable
-        @Override
-        protected PsiElement compute() {
+    private val parent = object : NullableLazyValue<PsiElement>() {
+        override fun compute(): PsiElement? {
             if (classOrObject.isLocal()) {
                 //noinspection unchecked
-                PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(
+                var declaration: PsiElement? = JetPsiUtil.getTopmostParentOfTypes(
                         classOrObject,
-                        JetNamedFunction.class, JetConstructor.class, JetProperty.class, JetClassInitializer.class, JetParameter.class
-                );
+                        javaClass<JetNamedFunction>(), javaClass<JetConstructor<*>>(), javaClass<JetProperty>(), javaClass<JetClassInitializer>(), javaClass<JetParameter>())
 
-                if (declaration instanceof JetParameter) {
-                    declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
+                if (declaration is JetParameter) {
+                    declaration = PsiTreeUtil.getParentOfType(declaration, javaClass<JetNamedDeclaration>())
                 }
 
-                if (declaration instanceof JetFunction) {
-                    JetFunction function = (JetFunction) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod(function), function.getName(), false);
+                if (declaration is JetFunction) {
+                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod(declaration), declaration.name, false)
                 }
 
                 // Represent the property as a fake method with the same name
-                if (declaration instanceof JetProperty) {
-                    JetProperty property = (JetProperty) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName(), true);
+                if (declaration is JetProperty) {
+                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(declaration).getter, declaration.name, true)
                 }
 
-                if (declaration instanceof JetClassInitializer) {
-                    PsiElement parent = declaration.getParent();
-                    PsiElement grandparent = parent.getParent();
+                if (declaration is JetClassInitializer) {
+                    val parent = declaration.parent
+                    val grandparent = parent.parent
 
-                    if (parent instanceof JetClassBody && grandparent instanceof JetClassOrObject) {
-                        return LightClassUtil.getPsiClass((JetClassOrObject) grandparent);
+                    if (parent is JetClassBody && grandparent is JetClassOrObject) {
+                        return LightClassUtil.getPsiClass(grandparent)
                     }
                 }
 
-                if (declaration instanceof JetClass) {
-                    return LightClassUtil.getPsiClass((JetClass) declaration);
+                if (declaration is JetClass) {
+                    return LightClassUtil.getPsiClass(declaration)
                 }
             }
 
-            return classOrObject.getParent() == classOrObject.getContainingFile() ? getContainingFile() : getContainingClass();
+            return if (classOrObject.parent === classOrObject.containingFile) containingFile else containingClass
         }
 
-        private PsiElement getParentByPsiMethod(PsiMethod method, final String name, boolean forceMethodWrapping) {
-            if (method == null || name == null) return null;
+        private fun getParentByPsiMethod(method: PsiMethod?, name: String?, forceMethodWrapping: Boolean): PsiElement? {
+            if (method == null || name == null) return null
 
-            PsiClass containingClass = method.getContainingClass();
-            if (containingClass == null) return null;
+            var containingClass: com.intellij.psi.PsiClass? = method.containingClass ?: return null
 
-            final String currentFileName = classOrObject.getContainingFile().getName();
+            val currentFileName = classOrObject.containingFile.name
 
-            boolean createWrapper = forceMethodWrapping;
+            var createWrapper = forceMethodWrapping
             // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
-            if (containingClass instanceof KotlinLightClassForPackage) {
-                containingClass = new LightClass(containingClass, JetLanguage.INSTANCE) {
-                    @Nullable
-                    @Override
-                    public String getName() {
-                        return currentFileName;
+            if (containingClass is KotlinLightClassForPackage) {
+                containingClass = object : LightClass(containingClass as KotlinLightClassForPackage, JetLanguage.INSTANCE) {
+                    override fun getName(): String? {
+                        return currentFileName
                     }
-                };
-                createWrapper = true;
+                }
+                createWrapper = true
             }
 
             if (createWrapper) {
-                return new LightMethod(myManager, method, containingClass, JetLanguage.INSTANCE) {
-                    @Override
-                    public PsiElement getParent() {
-                        return getContainingClass();
+                return object : LightMethod(myManager, method, containingClass!!, JetLanguage.INSTANCE) {
+                    override fun getParent(): PsiElement {
+                        return getContainingClass()!!
                     }
 
-                    @NotNull
-                    @Override
-                    public String getName() {
-                        return name;
+                    override fun getName(): String {
+                        return name
                     }
-                };
+                }
             }
 
-            return method;
+            return method
         }
-    };
+    }
 
-    @Nullable
-    private PsiModifierList modifierList;
+    private var modifierList: PsiModifierList? = null
 
-    private final NullableLazyValue<PsiTypeParameterList> typeParameterList = new NullableLazyValue<PsiTypeParameterList>() {
-        @Nullable
-        @Override
-        protected PsiTypeParameterList compute() {
-            return LightClassUtil.buildLightTypeParameterList(KotlinLightClassForExplicitDeclaration.this, classOrObject);
+    private val typeParameterList = object : NullableLazyValue<PsiTypeParameterList>() {
+        override fun compute(): PsiTypeParameterList? {
+            return LightClassUtil.buildLightTypeParameterList(this@KotlinLightClassForExplicitDeclaration, classOrObject)
         }
-    };
-
-    KotlinLightClassForExplicitDeclaration(
-            @NotNull PsiManager manager,
-            @NotNull FqName name,
-            @NotNull JetClassOrObject classOrObject
-    ) {
-        super(manager);
-        this.classFqName = name;
-        this.classOrObject = classOrObject;
     }
 
-    @Override
-    @NotNull
-    public JetClassOrObject getOrigin() {
-        return classOrObject;
+    override fun getOrigin(): JetClassOrObject {
+        return classOrObject
     }
 
-    @NotNull
-    @Override
-    public FqName getFqName() {
-        return classFqName;
+    override fun getFqName(): FqName {
+        return classFqName
     }
 
-    @NotNull
-    @Override
-    public PsiElement copy() {
-        return new KotlinLightClassForExplicitDeclaration(getManager(), classFqName, (JetClassOrObject) classOrObject.copy());
+    override fun copy(): PsiElement {
+        return KotlinLightClassForExplicitDeclaration(manager, classFqName, classOrObject.copy() as JetClassOrObject)
     }
 
-    @NotNull
-    @Override
-    public PsiClass getDelegate() {
+    override fun getDelegate(): PsiClass {
         if (delegate == null) {
-            PsiJavaFileStub javaFileStub = getJavaFileStub();
+            val javaFileStub = getJavaFileStub()
 
-            PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);
+            val psiClass = LightClassUtil.findClass(classFqName, javaFileStub)
             if (psiClass == null) {
-                JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-                throw new IllegalStateException("Class was not found " + classFqName + "\n" +
-                                                "in " + outermostClassOrObject.getContainingFile().getText() + "\n" +
-                                                "stub: \n" + javaFileStub.getPsi().getText());
+                val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
+                throw IllegalStateException("Class was not found " + classFqName + "\n" + "in " + outermostClassOrObject.containingFile.text + "\n" + "stub: \n" + javaFileStub.psi.text)
             }
-            delegate = psiClass;
+            delegate = psiClass
         }
 
-        return delegate;
+        return delegate!!
     }
 
-    @NotNull
-    private PsiJavaFileStub getJavaFileStub() {
-        return getLightClassData().getJavaFileStub();
+    private fun getJavaFileStub(): PsiJavaFileStub {
+        return getLightClassData().javaFileStub
     }
 
-    @Nullable
-    protected final ClassDescriptor getDescriptor() {
-        LightClassDataForKotlinClass data = getLightClassDataExactly(classOrObject);
-        return data != null ? data.getDescriptor() : null;
+    protected fun getDescriptor(): ClassDescriptor? {
+        val data = getLightClassDataExactly(classOrObject)
+        return data?.descriptor
     }
 
-    @NotNull
-    private OutermostKotlinClassLightClassData getLightClassData() {
-        return getLightClassData(classOrObject);
+    private fun getLightClassData(): OutermostKotlinClassLightClassData {
+        return getLightClassData(classOrObject)
     }
 
-    @NotNull
-    public static OutermostKotlinClassLightClassData getLightClassData(@NotNull JetClassOrObject classOrObject) {
-        JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-        return CachedValuesManager.getManager(classOrObject.getProject()).getCachedValue(
-                outermostClassOrObject,
-                JAVA_API_STUB,
-                KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject),
-                /*trackValue = */false
-        );
-    }
-
-    @Nullable
-    private static LightClassDataForKotlinClass getLightClassDataExactly(JetClassOrObject classOrObject) {
-        OutermostKotlinClassLightClassData data = getLightClassData(classOrObject);
-        return data.getClassOrObject().equals(classOrObject) ? data : data.getAllInnerClasses().get(classOrObject);
-    }
-
-    @NotNull
-    private static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetClassOrObject outermostClass = JetPsiUtil.getOutermostClassOrObject(classOrObject);
-        if (outermostClass == null) {
-            throw new IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.getText());
-        }
-        else {
-            return outermostClass;
-        }
-    }
-
-    private final NullableLazyValue<PsiFile> _containingFile = new NullableLazyValue<PsiFile>() {
-        @Nullable
-        @Override
-        protected PsiFile compute() {
-            VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
-            assert virtualFile != null : "No virtual file for " + classOrObject.getText();
-            return new ClsFileImpl(new ClassFileViewProvider(getManager(), virtualFile)) {
-                @NotNull
-                @Override
-                public String getPackageName() {
-                    return classOrObject.getContainingJetFile().getPackageFqName().asString();
+    private val _containingFile = object : NullableLazyValue<PsiFile>() {
+        override fun compute(): PsiFile? {
+            val virtualFile = classOrObject.containingFile.virtualFile
+            assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
+            return object : ClsFileImpl(ClassFileViewProvider(getManager(), virtualFile)) {
+                override fun getPackageName(): String {
+                    return classOrObject.getContainingJetFile().packageFqName.asString()
                 }
 
-                @NotNull
-                @Override
-                public PsiClassHolderFileStub getStub() {
-                    return getJavaFileStub();
+                override fun getStub(): PsiClassHolderFileStub<PsiJavaFile> {
+                    return getJavaFileStub()
                 }
 
-                @SuppressWarnings("Contract")
-                @Override
-                public boolean processDeclarations(
-                        @NotNull PsiScopeProcessor processor,
-                        @NotNull ResolveState state,
-                        PsiElement lastParent,
-                        @NotNull PsiElement place
-                ) {
-                    if (!super.processDeclarations(processor, state, lastParent, place)) return false;
+                SuppressWarnings("Contract")
+                override fun processDeclarations(
+                        processor: PsiScopeProcessor,
+                        state: ResolveState,
+                        lastParent: PsiElement?,
+                        place: PsiElement): Boolean {
+                    if (!super.processDeclarations(processor, state, lastParent, place)) return false
 
                     // We have to explicitly process package declarations if current file belongs to default package
                     // so that Java resolve can find classes located in that package
-                    String packageName = getPackageName();
-                    if (!packageName.isEmpty()) return true;
+                    val packageName = packageName
+                    if (!packageName.isEmpty()) return true
 
-                    PsiPackage aPackage = JavaPsiFacade.getInstance(myManager.getProject()).findPackage(packageName);
-                    if (aPackage != null && !aPackage.processDeclarations(processor, state, null, place)) return false;
+                    val aPackage = JavaPsiFacade.getInstance(myManager.project).findPackage(packageName)
+                    if (aPackage != null && !aPackage.processDeclarations(processor, state, null, place)) return false
 
-                    return true;
+                    return true
                 }
-            };
+            }
         }
-    };
-
-    @Override
-    public PsiFile getContainingFile() {
-        return _containingFile.getValue();
     }
 
-    @NotNull
-    @Override
-    public PsiElement getNavigationElement() {
-        return classOrObject;
+    override fun getContainingFile(): PsiFile? {
+        return _containingFile.value
     }
 
-    @Override
-    public boolean isEquivalentTo(PsiElement another) {
-        return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+    override fun getNavigationElement(): PsiElement {
+        return classOrObject
     }
 
-    @Override
-    public Icon getElementIcon(int flags) {
-        throw new UnsupportedOperationException("This should be done byt JetIconProvider");
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        return another is PsiClass && Comparing.equal(another.getQualifiedName(), qualifiedName)
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        KotlinLightClassForExplicitDeclaration aClass = (KotlinLightClassForExplicitDeclaration) o;
-
-        if (!classFqName.equals(aClass.classFqName)) return false;
-
-        return true;
+    override fun getElementIcon(flags: Int): Icon? {
+        throw UnsupportedOperationException("This should be done byt JetIconProvider")
     }
 
-    @Override
-    public int hashCode() {
-        return classFqName.hashCode();
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+
+        val aClass = o as KotlinLightClassForExplicitDeclaration
+
+        if (classFqName != aClass.classFqName) return false
+
+        return true
     }
 
-    @Nullable
-    @Override
-    public PsiClass getContainingClass() {
-        if (classOrObject.getParent() == classOrObject.getContainingFile()) return null;
-        return super.getContainingClass();
+    override fun hashCode(): Int {
+        return classFqName.hashCode()
     }
 
-    @Nullable
-    @Override
-    public PsiElement getParent() {
-        return parent.getValue();
+    override fun getContainingClass(): PsiClass? {
+        if (classOrObject.parent === classOrObject.containingFile) return null
+        return super.getContainingClass()
     }
 
-    @Override
-    public PsiElement getContext() {
-        return getParent();
+    override fun getParent(): PsiElement? {
+        return parent.value
     }
 
-    @Nullable
-    @Override
-    public PsiTypeParameterList getTypeParameterList() {
-        return typeParameterList.getValue();
+    override fun getContext(): PsiElement? {
+        return getParent()
     }
 
-    @NotNull
-    @Override
-    public PsiTypeParameter[] getTypeParameters() {
-        PsiTypeParameterList typeParameterList = getTypeParameterList();
-        return typeParameterList == null ? PsiTypeParameter.EMPTY_ARRAY : typeParameterList.getTypeParameters();
+    override fun getTypeParameterList(): PsiTypeParameterList? {
+        return typeParameterList.value
     }
 
-    @Nullable
-    @Override
-    public String getName() {
-        return classFqName.shortName().asString();
+    override fun getTypeParameters(): Array<PsiTypeParameter> {
+        val typeParameterList = getTypeParameterList()
+        return if (typeParameterList == null) PsiTypeParameter.EMPTY_ARRAY else typeParameterList.typeParameters
     }
 
-    @Nullable
-    @Override
-    public String getQualifiedName() {
-        return classFqName.asString();
+    override fun getName(): String? {
+        return classFqName.shortName().asString()
     }
 
-    @NotNull
-    @Override
-    public PsiModifierList getModifierList() {
+    override fun getQualifiedName(): String? {
+        return classFqName.asString()
+    }
+
+    override fun getModifierList(): PsiModifierList {
         if (modifierList == null) {
-            modifierList = new KotlinLightModifierList(this.getManager(), computeModifiers()) {
-                @Override
-                public PsiAnnotationOwner getDelegate() {
-                    return KotlinLightClassForExplicitDeclaration.this.getDelegate().getModifierList();
+            modifierList = object : KotlinLightModifierList(this.manager, computeModifiers()) {
+                override fun getDelegate(): PsiModifierList {
+                    return this@KotlinLightClassForExplicitDeclaration.getDelegate().modifierList!!
                 }
-            };
+            }
         }
-        return modifierList;
+        return modifierList!!
     }
 
-    @NotNull
-    private String[] computeModifiers() {
-        Collection<String> psiModifiers = Sets.newHashSet();
+    private fun computeModifiers(): Array<String> {
+        val psiModifiers = Sets.newHashSet<String>()
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
         //noinspection unchecked
-        List<Pair<JetModifierKeywordToken, String>> jetTokenToPsiModifier = Lists.newArrayList(
+        val jetTokenToPsiModifier = Lists.newArrayList(
                 Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(PROTECTED_KEYWORD, PsiModifier.PROTECTED),
-                Pair.create(FINAL_KEYWORD, PsiModifier.FINAL));
+                Pair.create(FINAL_KEYWORD, PsiModifier.FINAL))
 
-        for (Pair<JetModifierKeywordToken, String> tokenAndModifier : jetTokenToPsiModifier) {
+        for (tokenAndModifier in jetTokenToPsiModifier) {
             if (classOrObject.hasModifier(tokenAndModifier.first)) {
-                psiModifiers.add(tokenAndModifier.second);
+                psiModifiers.add(tokenAndModifier.second)
             }
         }
 
         if (classOrObject.hasModifier(PRIVATE_KEYWORD)) {
             // Top-level private class has PUBLIC visibility in Java
             // Nested private class has PRIVATE visibility
-            psiModifiers.add(classOrObject.isTopLevel() ? PsiModifier.PUBLIC : PsiModifier.PRIVATE);
+            psiModifiers.add(if (classOrObject.isTopLevel()) PsiModifier.PUBLIC else PsiModifier.PRIVATE)
         }
 
         if (!psiModifiers.contains(PsiModifier.PRIVATE) && !psiModifiers.contains(PsiModifier.PROTECTED)) {
-            psiModifiers.add(PsiModifier.PUBLIC); // For internal (default) visibility
+            psiModifiers.add(PsiModifier.PUBLIC) // For internal (default) visibility
         }
 
 
         // FINAL
         if (isAbstract(classOrObject)) {
-            psiModifiers.add(PsiModifier.ABSTRACT);
+            psiModifiers.add(PsiModifier.ABSTRACT)
         }
-        else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject instanceof JetClass && ((JetClass) classOrObject).isEnum()))) {
-            psiModifiers.add(PsiModifier.FINAL);
+        else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject is JetClass && classOrObject.isEnum()))) {
+            psiModifiers.add(PsiModifier.FINAL)
         }
 
         if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(INNER_KEYWORD)) {
-            psiModifiers.add(PsiModifier.STATIC);
+            psiModifiers.add(PsiModifier.STATIC)
         }
 
-        return ArrayUtil.toStringArray(psiModifiers);
+        return ArrayUtil.toStringArray(psiModifiers)
     }
 
-    private boolean isAbstract(@NotNull JetClassOrObject object) {
-        return object.hasModifier(ABSTRACT_KEYWORD) || isInterface();
+    private fun isAbstract(`object`: JetClassOrObject): Boolean {
+        return `object`.hasModifier(ABSTRACT_KEYWORD) || isInterface
     }
 
-    @Override
-    public boolean hasModifierProperty(@NonNls @NotNull String name) {
-        return getModifierList().hasModifierProperty(name);
+    override fun hasModifierProperty(NonNls name: String): Boolean {
+        return getModifierList().hasModifierProperty(name)
     }
 
-    @Override
-    public boolean isDeprecated() {
-        JetModifierList jetModifierList = classOrObject.getModifierList();
-        if (jetModifierList == null) {
-            return false;
+    override fun isDeprecated(): Boolean {
+        val jetModifierList = classOrObject.modifierList ?: return false
+
+        val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+        val deprecatedName = deprecatedFqName.shortName().asString()
+
+        for (annotationEntry in jetModifierList.annotationEntries) {
+            val typeReference = annotationEntry.typeReference ?: continue
+
+            val typeElement = typeReference.typeElement
+            if (typeElement !is JetUserType) continue // If it's not a user type, it's definitely not a ref to deprecated
+
+            val fqName = JetPsiUtil.toQualifiedName(typeElement) ?: continue
+
+            if (deprecatedFqName == fqName) return true
+            if (deprecatedName == fqName.asString()) return true
         }
-
-        FqName deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated;
-        String deprecatedName = deprecatedFqName.shortName().asString();
-
-        for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
-            JetTypeReference typeReference = annotationEntry.getTypeReference();
-            if (typeReference == null) continue;
-
-            JetTypeElement typeElement = typeReference.getTypeElement();
-            if (!(typeElement instanceof JetUserType)) continue; // If it's not a user type, it's definitely not a ref to deprecated
-
-            FqName fqName = JetPsiUtil.toQualifiedName((JetUserType) typeElement);
-            if (fqName == null) continue;
-
-            if (deprecatedFqName.equals(fqName)) return true;
-            if (deprecatedName.equals(fqName.asString())) return true;
-        }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean isInterface() {
-        if (!(classOrObject instanceof JetClass)) return false;
-        JetClass jetClass = (JetClass) classOrObject;
-        return jetClass.isInterface() || jetClass.isAnnotation();
+    override fun isInterface(): Boolean {
+        if (classOrObject !is JetClass) return false
+        return classOrObject.isInterface() || classOrObject.isAnnotation()
     }
 
-    @Override
-    public boolean isAnnotationType() {
-        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isAnnotation();
+    override fun isAnnotationType(): Boolean {
+        return classOrObject is JetClass && classOrObject.isAnnotation()
     }
 
-    @Override
-    public boolean isEnum() {
-        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isEnum();
+    override fun isEnum(): Boolean {
+        return classOrObject is JetClass && classOrObject.isEnum()
     }
 
-    @Override
-    public boolean hasTypeParameters() {
-        return classOrObject instanceof JetClass && !((JetClass) classOrObject).getTypeParameters().isEmpty();
+    override fun hasTypeParameters(): Boolean {
+        return classOrObject is JetClass && !classOrObject.typeParameters.isEmpty()
     }
 
-    @Override
-    public boolean isValid() {
-        return classOrObject.isValid();
+    override fun isValid(): Boolean {
+        return classOrObject.isValid
     }
 
-    @Override
-    public boolean isInheritor(@NotNull PsiClass baseClass, boolean checkDeep) {
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         // Java inheritor check doesn't work when trait (interface in Java) subclasses Java class and for Kotlin local classes
-        if (baseClass instanceof KotlinLightClassForExplicitDeclaration || (isInterface() && !baseClass.isInterface())) {
-            String qualifiedName;
-            if (baseClass instanceof KotlinLightClassForExplicitDeclaration) {
-                ClassDescriptor baseDescriptor = ((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor();
-                qualifiedName = baseDescriptor != null ? DescriptorUtils.getFqName(baseDescriptor).asString() : null;
+        if (baseClass is KotlinLightClassForExplicitDeclaration || (isInterface && !baseClass.isInterface)) {
+            val qualifiedName: String?
+            if (baseClass is KotlinLightClassForExplicitDeclaration) {
+                val baseDescriptor = baseClass.getDescriptor()
+                qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
             }
             else {
-                qualifiedName = baseClass.getQualifiedName();
+                qualifiedName = baseClass.qualifiedName
             }
 
-            ClassDescriptor thisDescriptor = getDescriptor();
-            return qualifiedName != null
-                   && thisDescriptor != null
-                   && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep);
+            val thisDescriptor = getDescriptor()
+            return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
         }
 
-        return super.isInheritor(baseClass, checkDeep);
+        return super.isInheritor(baseClass, checkDeep)
     }
 
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        getOrigin().setName(name);
-        return this;
+    throws(IncorrectOperationException::class)
+    override fun setName(NonNls name: String): PsiElement {
+        getOrigin().setName(name)
+        return this
     }
 
-    @Override
-    public String toString() {
+    override fun toString(): String {
         try {
-            return KotlinLightClass.class.getSimpleName() + ":" + getQualifiedName();
+            return javaClass<KotlinLightClass>().simpleName + ":" + qualifiedName
         }
-        catch (Throwable e) {
-            return KotlinLightClass.class.getSimpleName() + ":" + e.toString();
+        catch (e: Throwable) {
+            return javaClass<KotlinLightClass>().simpleName + ":" + e.toString()
         }
+
     }
 
-    @NotNull
-    @Override
-    public List<PsiClass> getOwnInnerClasses() {
-        return KotlinPackage.filterNotNull(
-                KotlinPackage.map(
-                        getDelegate().getInnerClasses(),
-                        new Function1<PsiClass, PsiClass>() {
-                            @Override
-                            public PsiClass invoke(PsiClass aClass) {
-                                JetClassOrObject declaration = (JetClassOrObject) ClsWrapperStubPsiFactory.getOriginalDeclaration(aClass);
-                                return declaration != null ? create(myManager, declaration) : null;
-                            }
+    override fun getOwnInnerClasses(): List<PsiClass> {
+        return getDelegate().innerClasses
+            .map {
+                val declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(it) as JetClassOrObject?
+                if (declaration != null) create(myManager, declaration) else null
+            }
+            .filterNotNull()
+    }
+
+    override fun getUseScope(): SearchScope {
+        return getOrigin().useScope
+    }
+
+    companion object {
+        private val JAVA_API_STUB = Key.create<CachedValue<OutermostKotlinClassLightClassData>>("JAVA_API_STUB")
+
+        public fun create(manager: PsiManager, classOrObject: JetClassOrObject): KotlinLightClassForExplicitDeclaration? {
+            if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
+                return null
+            }
+
+            val fqName = predictFqName(classOrObject) ?: return null
+
+            if (classOrObject is JetObjectDeclaration && classOrObject.isObjectLiteral()) {
+                return KotlinLightClassForAnonymousDeclaration(manager, fqName, classOrObject)
+            }
+            return KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject)
+        }
+
+        private fun predictFqName(classOrObject: JetClassOrObject): FqName? {
+            if (classOrObject.isLocal()) {
+                val data = getLightClassDataExactly(classOrObject)
+                return data?.jvmQualifiedName
+            }
+            val internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject)
+            return if (internalName == null) null else JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
+        }
+
+        public fun getLightClassData(classOrObject: JetClassOrObject): OutermostKotlinClassLightClassData {
+            val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
+            return CachedValuesManager.getManager(classOrObject.project).getCachedValue(
+                    outermostClassOrObject,
+                    JAVA_API_STUB,
+                    KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject),
+                    /*trackValue = */false)
+        }
+
+        private fun getLightClassDataExactly(classOrObject: JetClassOrObject): LightClassDataForKotlinClass? {
+            val data = getLightClassData(classOrObject)
+            return if (data.classOrObject == classOrObject) data else data.allInnerClasses.get(classOrObject)
+        }
+
+        private fun getOutermostClassOrObject(classOrObject: JetClassOrObject): JetClassOrObject {
+            val outermostClass = JetPsiUtil.getOutermostClassOrObject(classOrObject)
+            if (outermostClass == null) {
+                throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
+            }
+            else {
+                return outermostClass
+            }
+        }
+
+        private fun checkSuperTypeByFQName(classDescriptor: ClassDescriptor, qualifiedName: String, deep: Boolean?): Boolean {
+            if (CommonClassNames.JAVA_LANG_OBJECT == qualifiedName) return true
+
+            if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
+
+            for (superType in classDescriptor.typeConstructor.supertypes) {
+                val superDescriptor = superType.constructor.declarationDescriptor
+
+                if (superDescriptor is ClassDescriptor) {
+                    if (qualifiedName == DescriptorUtils.getFqName(superDescriptor).asString()) return true
+
+                    if (deep!!) {
+                        if (checkSuperTypeByFQName(superDescriptor, qualifiedName, true)) {
+                            return true
                         }
-                )
-        );
-    }
-
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-        return getOrigin().getUseScope();
-    }
-
-    private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {
-        if (CommonClassNames.JAVA_LANG_OBJECT.equals(qualifiedName)) return true;
-
-        if (qualifiedName.equals(DescriptorUtils.getFqName(classDescriptor).asString())) return true;
-
-        for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
-            ClassifierDescriptor superDescriptor = superType.getConstructor().getDeclarationDescriptor();
-
-            if (superDescriptor instanceof ClassDescriptor) {
-                if (qualifiedName.equals(DescriptorUtils.getFqName(superDescriptor).asString())) return true;
-
-                if (deep) {
-                    if (checkSuperTypeByFQName((ClassDescriptor)superDescriptor, qualifiedName, true)) {
-                        return true;
                     }
                 }
             }
-        }
 
-        return false;
+            return false
+        }
     }
 }

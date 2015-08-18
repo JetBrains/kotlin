@@ -44,7 +44,7 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
     @NotNull
     @Override
     public PsiJavaCodeReferenceElement getBaseClassReference() {
-        return JavaPsiFacade.getElementFactory(classOrObject.getProject()).createReferenceElementByType(getBaseClassType());
+        return JavaPsiFacade.getElementFactory(getClassOrObject().getProject()).createReferenceElementByType(getBaseClassType());
     }
 
     @NotNull
@@ -85,7 +85,7 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
         }
 
         if (type == null) {
-            Project project = classOrObject.getProject();
+            Project project = getClassOrObject().getProject();
             type = PsiType.getJavaLangObject(PsiManager.getInstance(project), GlobalSearchScope.allScope(project));
         }
 
