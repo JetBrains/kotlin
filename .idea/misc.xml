@@ -45,11 +45,6 @@
         <option value="$PROJECT_DIR$/confluence/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/confluence/pom.xml" />
-      </set>
-    </option>
   </component>
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>

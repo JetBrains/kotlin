@@ -62,6 +62,7 @@ public fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemb
     val descriptorKind = if (signature is FunctionDescriptor) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
     return getDefaultType().getMemberScope()
             .getDescriptors(descriptorKind)
+            .filterIsInstance<CallableMemberDescriptor>()
             .firstOrNull {
                 it.getContainingDeclaration() == this
                 && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature).getResult() == OVERRIDABLE

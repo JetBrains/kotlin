@@ -805,8 +805,11 @@ public class JetPsiUtil {
                 return ((JetClassInitializer) current).getBody();
             }
             if (current instanceof JetProperty || current instanceof JetFunction) {
-                if (parent instanceof JetFile || (parent instanceof JetClassBody && !isMemberOfObjectExpression((JetCallableDeclaration) current))) {
+                if (parent instanceof JetFile) {
                     return (JetElement) current;
+                }
+                else if (parent instanceof JetClassBody && !isMemberOfObjectExpression((JetCallableDeclaration) current)) {
+                    return (JetElement) parent;
                 }
             }
             if (current instanceof JetBlockExpression || current instanceof JetParameter) {

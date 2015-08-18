@@ -1,0 +1,3 @@
+class B extends A {
+
+}

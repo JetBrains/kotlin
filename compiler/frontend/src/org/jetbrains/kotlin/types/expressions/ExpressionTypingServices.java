@@ -86,12 +86,13 @@ public class ExpressionTypingServices {
             @NotNull JetExpression expression,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean isStatement
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, scope, dataFlowInfo, expectedType
         );
-        return expressionTypingFacade.getTypeInfo(expression, context);
+        return expressionTypingFacade.getTypeInfo(expression, context, isStatement);
     }
 
     @NotNull
@@ -107,7 +108,7 @@ public class ExpressionTypingServices {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, false).getType();
     }
 
     /////////////////////////////////////////////////////////

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
+import kotlin.test.assertFalse
 
 public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestCase() {
     companion object {
@@ -79,10 +80,20 @@ public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestC
                         configureByText(file.getName(), fileText)!!
                     }
 
+            val isJs = srcDir.endsWith("js")
+
             val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// WITH_RUNTIME") != null }
             val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// FULL_JDK") != null }
 
+            if (isJs) {
+                assertFalse(isWithRuntime)
+                assertFalse(fullJdk)
+            }
+
             try {
+                if (isJs) {
+                    ConfigLibraryUtil.configureKotlinJsRuntime(myFixture.getModule())
+                }
                 if (isWithRuntime) {
                     ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
                             myFixture.getModule(),
@@ -102,6 +113,9 @@ public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestC
             finally {
                 if (isWithRuntime) {
                     ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
+                }
+                if (isJs) {
+                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
                 }
             }
         }

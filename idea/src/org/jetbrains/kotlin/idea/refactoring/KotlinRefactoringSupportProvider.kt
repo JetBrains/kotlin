@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.Kotlin
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.pullUp.KotlinPullUpHandler
+import org.jetbrains.kotlin.idea.refactoring.pushDown.KotlinPushDownHandler
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.*
 import org.jetbrains.kotlin.psi.*
 
@@ -73,4 +74,6 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun getChangeSignatureHandler() = JetChangeSignatureHandler()
 
     override fun getPullUpHandler() = KotlinPullUpHandler()
+
+    override fun getPushDownHandler() = KotlinPushDownHandler()
 }

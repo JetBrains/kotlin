@@ -292,6 +292,9 @@
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsHandler"
         order="before kotlin.moveFilesOrDirectories"/>
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
+    <refactoring.moveDirectoryWithClassesHelper
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.KotlinMoveDirectoryWithClassesHelper"
+        order="first" />
     <refactoring.moveInnerClassUsagesHandler
         implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
         language="jet" />
@@ -300,7 +303,8 @@
     <refactoring.introduceParameterMethodUsagesProcessor
         implementation="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterMethodUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
-    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider"/>
+    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider" order="last" />
+    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider" order="last"/>
 
     <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.KotlinColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
@@ -509,7 +513,6 @@
     <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.highlighter.ErrorDuringFileAnalyzeNotificationProvider"/>
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener"/>
-    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.caches.resolve.SubtreeModificationCountUpdater"/>
 
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
@@ -1128,8 +1131,6 @@
     <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
 
     <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
-
-    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider"/>
 
     <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
   </extensions>

@@ -39,6 +39,7 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     fun b() {
+        x(1)
     }
 
     fun c() {
@@ -56,45 +57,83 @@ class C(param1: String = "", param2: Int = 0) {
 
     private fun doTest(handler: Data.() -> Unit) {
         val file = myFixture.configureByText("Test.kt", FILE_TEXT) as JetFile
-        val klass = file.getDeclarations().single() as JetClass
-        val members = klass.getDeclarations()
-        val function = members.first() as JetNamedFunction
-        val statements = (function.getBodyExpression() as JetBlockExpression).getStatements()
-        myFixture.getProject().executeWriteCommand("") {
-            Data(file, klass, members, statements, JetPsiFactory(getProject())).handler()
-        }
+        val data = extractData(file)
+        myFixture.project.executeWriteCommand("") { data.handler() }
     }
 
-    public fun testResolveCaching() {
+    private fun extractData(file: JetFile): Data {
+        val klass = file.declarations.single() as JetClass
+        val members = klass.declarations
+        val function = members.first() as JetNamedFunction
+        val statements = (function.bodyExpression as JetBlockExpression).statements
+        return Data(file, klass, members, statements, JetPsiFactory(getProject()))
+    }
+
+    public fun testFullResolveCaching() {
+        doTest { this.testResolveCaching() }
+    }
+
+    private fun Data.testResolveCaching() {
+        // resolve statements in "a()"
+        val statement1 = statements[0]
+        val statement2 = statements[1]
+        val aFunBodyContext1 = statement1.analyze(BodyResolveMode.FULL)
+        val aFunBodyContext2 = statement2.analyze(BodyResolveMode.FULL)
+        assert(aFunBodyContext1 === aFunBodyContext2)
+
+        val aFunBodyContext3 = statement1.analyze(BodyResolveMode.FULL)
+        assert(aFunBodyContext3 === aFunBodyContext1)
+
+        val bFun = members[1] as JetNamedFunction
+        val bBody = bFun.bodyExpression as JetBlockExpression
+        val bStatement = bBody.statements[0]
+        val bFunBodyContext = bStatement.analyze(BodyResolveMode.FULL)
+
+        // modify body of "b()"
+        bBody.addAfter(factory.createExpression("x()"), bBody.lBrace)
+        val bFunBodyContextAfterChange1 = bStatement.analyze(BodyResolveMode.FULL)
+        assert(bFunBodyContext !== bFunBodyContextAfterChange1)
+
+        if (file.isPhysical) { // for non-physical files we reset caches for whole file
+            val aFunBodyContextAfterChange1 = statement1.analyze(BodyResolveMode.FULL)
+            assert(aFunBodyContextAfterChange1 === aFunBodyContext1) // change in other function's body should not affect resolve of other one
+        }
+
+        // add parameter to "b()" this should invalidate all resolve
+        bFun.valueParameterList!!.addParameter(factory.createParameter("p: Int"))
+
+        val aFunBodyContextAfterChange2 = statement1.analyze(BodyResolveMode.FULL)
+        assert(aFunBodyContextAfterChange2 !== aFunBodyContext1)
+
+        val bFunBodyContextAfterChange2 = bStatement.analyze(BodyResolveMode.FULL)
+        assert(bFunBodyContextAfterChange2 !== bFunBodyContextAfterChange1)
+    }
+
+    public fun testNonPhysicalFileFullResolveCaching() {
         doTest {
-            // resolve statements in "a()"
-            val statement1 = statements[0]
-            val statement2 = statements[1]
-            val bindingContext1 = statement1.analyze(BodyResolveMode.FULL)
-            val bindingContext2 = statement2.analyze(BodyResolveMode.FULL)
-            assert(bindingContext1 === bindingContext2)
+            val nonPhysicalFile = JetPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalData = extractData(nonPhysicalFile)
+            nonPhysicalData.testResolveCaching()
 
-            val bindingContext3 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext3 === bindingContext1)
+            // now check how changes in the physical file affect non-physical one
+            val statement = nonPhysicalData.statements[0]
+            val nonPhysicalContext1 = statement.analyze(BodyResolveMode.FULL)
 
-            // modify body of "b()"
-            val bFun = members[1] as JetNamedFunction
-            val bBody = bFun.bodyExpression as JetBlockExpression
-            bBody.addAfter(factory.createExpression("x()"), bBody.lBrace)
+            statements[0].delete()
 
-            val bindingContext4 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext4 === bindingContext1) // change in other function's body should not affect resolve of other one
+            val nonPhysicalContext2 = statement.analyze(BodyResolveMode.FULL)
+            assert(nonPhysicalContext2 === nonPhysicalContext1) // change inside function's body should not affect other files
 
-            // add parameter to "b()" this should invalidate all resolve
-            bFun.valueParameterList!!.addParameter(factory.createParameter("p: Int"))
+            members[2].delete()
 
-            val bindingContext5 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext5 !== bindingContext1)
+            val nonPhysicalContext3 = statement.analyze(BodyResolveMode.FULL)
+            assert(nonPhysicalContext3 !== nonPhysicalContext1)
 
-            statement1.parent.addAfter(factory.createExpression("x()"), statement1)
-
-            val bindingContext6 = statement1.analyze(BodyResolveMode.FULL)
-            assert(bindingContext6 !== bindingContext5)
+            // and now check that non-physical changes do not affect physical world
+            val physicalContext1 = statements[1].analyze(BodyResolveMode.FULL)
+            nonPhysicalData.members[0].delete()
+            val physicalContext2 = statements[1].analyze(BodyResolveMode.FULL)
+            assert(physicalContext1 === physicalContext2)
         }
     }
 
@@ -149,27 +188,37 @@ class C(param1: String = "", param2: Int = 0) {
     }
 
     public fun testPartialResolveCaching() {
+        doTest { this.testPartialResolveCaching() }
+    }
+
+    private fun Data.testPartialResolveCaching() {
+        val statement1 = statements[0]
+        val statement2 = statements[1]
+        val bindingContext1 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext2 = statement2.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext1 !== bindingContext2)
+
+        val bindingContext3 = statement1.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext3 === bindingContext1)
+        assert(bindingContext4 === bindingContext2)
+
+        file.add(factory.createFunction("fun foo(){}"))
+
+        val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext5 !== bindingContext1)
+
+        statement1.getParent().addAfter(factory.createExpression("x()"), statement1)
+
+        val bindingContext6 = statement1.analyze(BodyResolveMode.PARTIAL)
+        assert(bindingContext6 !== bindingContext5)
+    }
+
+    public fun testNonPhysicalFilePartialResolveCaching() {
         doTest {
-            val statement1 = statements[0]
-            val statement2 = statements[1]
-            val bindingContext1 = statement1.analyze(BodyResolveMode.PARTIAL)
-            val bindingContext2 = statement2.analyze(BodyResolveMode.PARTIAL)
-            assert(bindingContext1 !== bindingContext2)
-
-            val bindingContext3 = statement1.analyze(BodyResolveMode.PARTIAL)
-            val bindingContext4 = statement2.analyze(BodyResolveMode.PARTIAL)
-            assert(bindingContext3 === bindingContext1)
-            assert(bindingContext4 === bindingContext2)
-
-            file.add(factory.createFunction("fun foo(){}"))
-
-            val bindingContext5 = statement1.analyze(BodyResolveMode.PARTIAL)
-            assert(bindingContext5 !== bindingContext1)
-
-            statement1.getParent().addAfter(factory.createExpression("x()"), statement1)
-
-            val bindingContext6 = statement1.analyze(BodyResolveMode.PARTIAL)
-            assert(bindingContext6 !== bindingContext5)
+            val nonPhysicalFile = JetPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalData = extractData(nonPhysicalFile)
+            nonPhysicalData.testPartialResolveCaching()
         }
     }
 

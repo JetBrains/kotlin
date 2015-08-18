@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.move
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
@@ -31,6 +30,7 @@ import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
@@ -38,19 +38,22 @@ import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.DeferredJetFileKotlinMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
+import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
@@ -248,8 +251,7 @@ enum class MoveAction {
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 DeferredJetFileKotlinMoveTarget(project, FqName(packageName)) {
                     val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
-                    createKotlinFile(guessNewFileName(mainFile as JetFile, listOf(elementToMove))!!,
-                                     moveDestination.getTargetDirectory(mainFile))
+                    createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
                 JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)
@@ -263,6 +265,15 @@ enum class MoveAction {
     CHANGE_PACKAGE_DIRECTIVE {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             KotlinChangePackageRefactoring(mainFile as JetFile).run(FqName(config.getString("newPackageName")))
+        }
+    },
+
+    MOVE_DIRECTORY_WITH_CLASSES {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.project
+            val sourceDir = rootDir.findFileByRelativePath(config.getString("sourceDir"))!!.toPsiDirectory(project)!!
+            val targetDir = rootDir.findFileByRelativePath(config.getString("targetDir"))!!.toPsiDirectory(project)!!
+            MoveDirectoryWithClassesProcessor(project, arrayOf(sourceDir), targetDir, true, true, true, {}).run()
         }
     };
 

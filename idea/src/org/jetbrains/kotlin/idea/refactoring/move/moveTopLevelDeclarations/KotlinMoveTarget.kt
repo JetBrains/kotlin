@@ -23,6 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.PackageWrapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
+import java.util.HashMap
 
 public interface KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
@@ -31,6 +32,13 @@ public interface KotlinMoveTarget {
 
     // Check possible errors and return corresponding message, or null if no errors are detected
     fun verify(file: PsiFile): String?
+}
+
+public object EmptyKotlinMoveTarget: KotlinMoveTarget {
+    override val packageWrapper: PackageWrapper? get() = null
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = null
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
+    override fun verify(file: PsiFile) = null
 }
 
 public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget {
@@ -48,13 +56,16 @@ public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget 
 
 public class DeferredJetFileKotlinMoveTarget(
         project: Project,
-        val packageFqName: FqName,
-        createFile: () -> JetFile?): KotlinMoveTarget {
-    val createdFile: JetFile? by lazy(createFile)
+        private val packageFqName: FqName,
+        private val createFile: (JetFile) -> JetFile?): KotlinMoveTarget {
+    private val createdFiles = HashMap<JetFile, JetFile?>()
 
     override val packageWrapper: PackageWrapper = PackageWrapper(PsiManager.getInstance(project), packageFqName.asString())
 
-    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = createdFile
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiFile? {
+        val originalFile = originalPsi.containingFile as? JetFile ?: return null
+        return createdFiles.getOrPut(originalFile) { createFile(originalFile) }
+    }
 
     override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
 

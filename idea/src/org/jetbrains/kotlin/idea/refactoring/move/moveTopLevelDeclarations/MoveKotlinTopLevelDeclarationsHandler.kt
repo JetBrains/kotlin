@@ -20,41 +20,38 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
-import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.refactoring.move.guessNewFileName
-import java.util.HashSet
 import java.util.LinkedHashSet
 
 public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
+    private fun getSourceDirectories(elements: Array<out PsiElement>) = elements.mapTo(LinkedHashSet()) { it.containingFile?.parent }
+
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
-
-        @suppress("UNCHECKED_CAST")
-        val elementsToSearch = elements.toSet() as Set<JetNamedDeclaration>
-
-        val sourceFiles = elementsToSearch.mapTo(LinkedHashSet<JetFile>()) { it.getContainingJetFile() }
-        val sourceFile = sourceFiles.singleOrNull()
-        if (sourceFile == null) {
+        if (getSourceDirectories(elements).singleOrNull() == null) {
             CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("move.title"),
-                                                   "All declarations must belong to the same file",
+                                                   "All declarations must belong to the same directory",
                                                    null,
                                                    project)
             return false
         }
+
+        val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as JetNamedDeclaration }
 
         val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
@@ -64,7 +61,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val moveToPackage = targetContainer !is JetFile
 
         MoveKotlinTopLevelDeclarationsDialog(
-                project, sourceFile, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
+                project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
         ).show()
 
         return true
@@ -72,11 +69,11 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
 
     override fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?): Boolean {
         if (!super.canMove(elements, targetContainer)) return false
-        if (elements.map { it.getContainingFile() }.distinct().size() != 1) return false
+        if (getSourceDirectories(elements).singleOrNull() == null) return false
 
         return elements.all { e ->
             if (e is JetClass || (e is JetObjectDeclaration && !e.isObjectLiteral()) || e is JetNamedFunction || e is JetProperty) {
-                val parent = e.getParent()
+                val parent = e.parent
                 parent is JetFile && parent.isInJavaSourceRoot()
             }
             else false

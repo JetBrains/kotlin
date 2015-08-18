@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.storage.*;
 
 import javax.inject.Inject;
@@ -289,7 +289,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
         JetScope resolutionScope = lazyDeclarationResolver.resolutionScopeToResolveDeclaration(script);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), LookupLocation.NO_LOCATION);
+        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
         return (ClassDescriptor) classifier;
     }

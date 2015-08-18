@@ -23,8 +23,6 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.SubtreeModificationCountUpdater
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.psi.*
@@ -33,34 +31,53 @@ import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public class ResolveElementCache(resolveSession: ResolveSession, private val project: Project) : ElementResolver(resolveSession), BodyResolveCache {
-    private class CachedResolve(val bindingContext: BindingContext, resolveElement: JetElement) {
-        private val elementModificationCount: Int? =
-                if (resolveElement is JetDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement))
-                    SubtreeModificationCountUpdater.getModificationCount(resolveElement)
-                else
-                    null
+    private class CachedFullResolve(val bindingContext: BindingContext, resolveElement: JetElement) {
+        private val modificationStamp: Long? = modificationStamp(resolveElement)
 
-        fun isUpToDate(resolveElement: JetElement)
-                = elementModificationCount == null || elementModificationCount == SubtreeModificationCountUpdater.getModificationCount(resolveElement)
+        fun isUpToDate(resolveElement: JetElement) = modificationStamp == modificationStamp(resolveElement)
+
+        private fun modificationStamp(resolveElement: JetElement): Long? {
+            val file = resolveElement.containingFile
+            return if (!file.isPhysical) // for non-physical file we don't get OUT_OF_CODE_BLOCK_MODIFICATION_COUNT increased and must reset data on any modification of the file
+                file.modificationStamp
+            else if (resolveElement is JetDeclaration && KotlinCodeBlockModificationListener.isBlockDeclaration(resolveElement))
+                resolveElement.getModificationStamp()
+            else
+                null
+        }
     }
 
     // drop whole cache after change "out of code block"
-    private val fullResolveCache: CachedValue<MutableMap<JetElement, CachedResolve>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MutableMap<JetElement, CachedResolve>> {
-                override fun compute(): CachedValueProvider.Result<MutableMap<JetElement, CachedResolve>> {
-                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetElement, CachedResolve>(),
+    private val fullResolveCache: CachedValue<MutableMap<JetElement, CachedFullResolve>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MutableMap<JetElement, CachedFullResolve>> {
+                override fun compute(): CachedValueProvider.Result<MutableMap<JetElement, CachedFullResolve>> {
+                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetElement, CachedFullResolve>(),
                                                              PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                                                              resolveSession.exceptionTracker)
                 }
             },
             false)
 
-    private val partialBodyResolveCache: CachedValue<MutableMap<JetExpression, BindingContext>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MutableMap<JetExpression, BindingContext>> {
-                override fun compute(): CachedValueProvider.Result<MutableMap<JetExpression, BindingContext>> {
-                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetExpression, BindingContext>(),
+    private class CachedPartialResolve(val bindingContext: BindingContext, file: JetFile) {
+        private val modificationStamp: Long? = modificationStamp(file)
+
+        fun isUpToDate(file: JetFile) = modificationStamp == modificationStamp(file)
+
+        private fun modificationStamp(file: JetFile): Long? {
+            return if (!file.isPhysical) // for non-physical file we don't get MODIFICATION_COUNT increased and must reset data on any modification of the file
+                file.modificationStamp
+            else
+                null
+        }
+    }
+
+    private val partialBodyResolveCache: CachedValue<MutableMap<JetExpression, CachedPartialResolve>> = CachedValuesManager.getManager(project).createCachedValue(
+            object : CachedValueProvider<MutableMap<JetExpression, CachedPartialResolve>> {
+                override fun compute(): CachedValueProvider.Result<MutableMap<JetExpression, CachedPartialResolve>> {
+                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<JetExpression, CachedPartialResolve>(),
                                                              PsiModificationTracker.MODIFICATION_COUNT,
                                                              resolveSession.exceptionTracker)
                 }
@@ -83,7 +100,7 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
         when (bodyResolveMode) {
             BodyResolveMode.FULL -> {
                 val bindingContext = performElementAdditionalResolve(resolveElement, resolveElement, BodyResolveMode.FULL).first
-                fullResolveMap[resolveElement] = CachedResolve(bindingContext, resolveElement)
+                fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                 return bindingContext
             }
 
@@ -92,23 +109,28 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
                     return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
                 }
 
+                val file = resolveElement.getContainingJetFile()
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
                 val partialResolveMap = partialBodyResolveCache.value
-                partialResolveMap[statementToResolve ?: resolveElement]?.let { return it } // partial resolve is already cached for this statement
+                partialResolveMap[statementToResolve ?: resolveElement]
+                        ?.check { it.isUpToDate(file) }
+                        ?.let { return it.bindingContext } // partial resolve is already cached for this statement
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
                 if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
-                    fullResolveMap[resolveElement] = CachedResolve(bindingContext, resolveElement)
+                    fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                     return bindingContext
                 }
 
+                val resolveToCache = CachedPartialResolve(bindingContext, file)
+
                 for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
                     if (!partialResolveMap.containsKey(statement) && bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap[statement] = bindingContext
+                        partialResolveMap[statement] = resolveToCache
                     }
                 }
-                partialResolveMap[resolveElement] = bindingContext // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
+                partialResolveMap[resolveElement] = resolveToCache // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
 
                 return bindingContext
             }
@@ -136,3 +158,4 @@ public class ResolveElementCache(resolveSession: ResolveSession, private val pro
     override fun resolveFunctionBody(function: JetNamedFunction)
             = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
 }
+

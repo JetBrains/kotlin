@@ -107,6 +107,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest(fileName);
     }
 
+    @TestMetadata("ExtendsTypeRef.java")
+    public void testExtendsTypeRef() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ExtendsTypeRef.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("FieldWithNoEndComment.java")
     public void testFieldWithNoEndComment() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/FieldWithNoEndComment.java");
@@ -128,6 +134,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("HalfTheWhiteSpace.java")
     public void testHalfTheWhiteSpace() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/HalfTheWhiteSpace.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ImplementsTypeRef.java")
+    public void testImplementsTypeRef() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/ImplementsTypeRef.java");
         doTest(fileName);
     }
 
@@ -194,6 +206,12 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("OnlyQualifier.java")
     public void testOnlyQualifier() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/OnlyQualifier.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("RawTypeRef.java")
+    public void testRawTypeRef() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/copyPaste/conversion/RawTypeRef.java");
         doTest(fileName);
     }
 

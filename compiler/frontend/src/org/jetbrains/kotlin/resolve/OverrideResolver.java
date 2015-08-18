@@ -33,12 +33,12 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilPackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -730,9 +730,9 @@ public class OverrideResolver {
     ) {
         for (JetType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
-            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), LookupLocation.NO_LOCATION));
+            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.UNSORTED));
             //noinspection unchecked
-            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), LookupLocation.NO_LOCATION));
+            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), NoLookupLocation.UNSORTED));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSuper, declared)) {

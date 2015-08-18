@@ -98,8 +98,8 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             val callExpressionCopy = ((qualifiedExpressionCopy as? JetQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as JetCallExpression
             val newExpression = applyTo(callExpressionCopy, property.name)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
-            val newBindingContext = newExpression.analyzeInContext(resolutionScope, bindingTrace, dataFlowInfo, expectedType, moduleDescriptor)
-            if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR && it.factory != Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT }) return null
+            val newBindingContext = newExpression.analyzeInContext(resolutionScope, bindingTrace, dataFlowInfo, expectedType, moduleDescriptor, isStatement = true)
+            if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR }) return null
         }
 
         return property.name

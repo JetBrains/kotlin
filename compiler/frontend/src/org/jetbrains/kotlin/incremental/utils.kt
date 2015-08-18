@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.doNotAnalyze
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 
 public fun LookupTracker.record(from: LookupLocation, inScope: JetScope, name: Name) {
-    if (this == LookupTracker.DO_NOTHING || from == LookupLocation.NO_LOCATION) return
+    if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
     if (from !is KotlinLookupLocation) throw AssertionError("Unexpected location type: ${from.javaClass}")
 

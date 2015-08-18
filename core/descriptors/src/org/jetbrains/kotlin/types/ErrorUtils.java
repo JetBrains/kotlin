@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
@@ -73,8 +74,27 @@ public class ErrorUtils {
         return false;
     }
 
+    private static abstract class AbstractErrorScope implements JetScope {
+        @Nullable
+        @Override
+        public ClassifierDescriptor getClassifier(@NotNull Name name) {
+            return getClassifier(name, NoLookupLocation.UNSORTED);
+        }
 
-    public static class ErrorScope implements JetScope {
+        @NotNull
+        @Override
+        public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
+            return getProperties(name, NoLookupLocation.UNSORTED);
+        }
+
+        @NotNull
+        @Override
+        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
+            return getFunctions(name, NoLookupLocation.UNSORTED);
+        }
+    }
+
+    public static class ErrorScope extends AbstractErrorScope {
         private final String debugMessage;
 
         private ErrorScope(@NotNull String debugMessage) {
@@ -190,7 +210,7 @@ public class ErrorUtils {
         }
     }
 
-    private static class ThrowingScope implements JetScope {
+    private static class ThrowingScope extends AbstractErrorScope {
         private final String debugMessage;
 
         private ThrowingScope(@NotNull String message) {

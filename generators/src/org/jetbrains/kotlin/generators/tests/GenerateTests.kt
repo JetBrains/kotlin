@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractJetMoveTest
 import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
+import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
@@ -662,6 +663,10 @@ fun main(args: Array<String>) {
             model("refactoring/pullUp/k2k", extension = "kt", singleClass = true, testClassName = "K2K", testMethod = "doKotlinTest")
             model("refactoring/pullUp/k2j", extension = "kt", singleClass = true, testClassName = "K2J", testMethod = "doKotlinTest")
             model("refactoring/pullUp/j2k", extension = "java", singleClass = true, testClassName = "J2K", testMethod = "doJavaTest")
+        }
+
+        testClass(javaClass<AbstractPushDownTest>()) {
+            model("refactoring/pushDown", extension = "kt", singleClass = true)
         }
 
         testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
