@@ -100,7 +100,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val loopEntryPointText = "loop entry point"
         val loopExitPointText = "loop exit point"
         val conditionEntryPointText = "condition entry point"
-        fun extractUpdatedVariablesInfo(index: Int, instruction: Instruction) {
+        fun extractUpdatedVariablesInfoIfAny(index: Int, instruction: Instruction) {
             val instructionLabels = instructionIndexToLabels[index]
             if (instructionLabels != null) {
                 val labelsAsStrings = instructionLabels.map { it.toString() }
@@ -125,7 +125,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
         }
         val backEdgesSet = HashSet<OrientedEdge>(labels.size() * 2)
-        fun extractBackEdgeInfo(instruction: Instruction) {
+        fun extractBackEdgeInfoIfAny(instruction: Instruction) {
             if (instruction is ConditionalJumpInstruction &&
                 instruction.element is JetDoWhileExpression &&
                 instruction.targetLabel.toString() contains loopEntryPointText) {
@@ -148,9 +148,9 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 ))
             }
         }
-        pseudocode.instructionsIncludingDeadCode.forEachIndexed { i, instruction ->
-            extractUpdatedVariablesInfo(i, instruction)
-            extractBackEdgeInfo(instruction)
+        pseudocode.instructionsIncludingDeadCode.forEachIndexed { index, instruction ->
+            extractUpdatedVariablesInfoIfAny(index, instruction)
+            extractBackEdgeInfoIfAny(instruction)
         }
         return LoopsInfo(updatedVariablesMap, backEdgesSet)
     }
@@ -450,6 +450,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 }
             }
         }
+        removeFakeVariablesIfNeeded(instruction, updatedData)
         return updatedData
     }
 
@@ -775,5 +776,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             updateValue: BooleanVariableValue
     ) {
         collection[variableDescriptor] = updateValue
+    }
+
+    // For each input fake variable of current instruction checks if the instruction is the last one to
+    // use the variable as input. If this is true, the variable is removed (it will not be used anywhere anymore,
+    // so it is useless).
+    // Note that ConditionalJumpInstruction and NondeterministicJumpInstruction are not checked,
+    // because it's input value is used in `applyRestrictionsOnValuesIfNeeded` function above after the instruction
+    // of these types is processed. So in general it is impossible to determine when to remove the input value of these
+    // instructions using `pseudocode.getUsages` info.
+    private fun removeFakeVariablesIfNeeded(currentInstruction: Instruction, edgeData: ValuesData) {
+        if (currentInstruction !is ConditionalJumpInstruction && currentInstruction !is NondeterministicJumpInstruction) {
+            currentInstruction.inputValues.forEach {
+                val valueUsages = pseudocode.getUsages(it)
+                if (valueUsages.size() > 0 && valueUsages.last() == currentInstruction) {
+                    edgeData.intFakeVarsToValues.remove(it) ?:
+                    edgeData.boolFakeVarsToValues.remove(it)
+                }
+            }
+        }
     }
 }
