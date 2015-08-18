@@ -1300,6 +1300,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doJavaTest(new JavaRefactoringProvider());
     }
 
+    public void testOverrideInAnonymousObjectWithTypeParameters() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("bar");
+        doTest(changeInfo);
+    }
+
     private List<Editor> editors = null;
 
     private static final String[] EXTENSIONS = {".kt", ".java"};
