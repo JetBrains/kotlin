@@ -1071,6 +1071,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
                      displayName="Use property access syntax"
                      groupName="Kotlin"
+                     cleanupTool="true"
                      enabledByDefault="true"
                      level="WEAK WARNING"
     />

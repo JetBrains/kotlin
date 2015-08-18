@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -53,7 +54,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 
-class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention())
+class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<JetCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
 
 class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(javaClass(), "Use property access syntax") {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
