@@ -2735,6 +2735,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("localValDelegateRuntime.kt")
+                public void testLocalValDelegateRuntime() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/localValDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localValNoReceiver.kt")
                 public void testLocalValNoReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/localValNoReceiver.kt");

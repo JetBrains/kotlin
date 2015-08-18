@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -171,13 +168,13 @@ fun JetExpression.guessTypes(
             }
         }
         parent is JetPropertyDelegate -> {
-            val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
-            val delegateClassName = if (property.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
+            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as VariableDescriptor
+            val delegateClassName = if (variableDescriptor.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
                                 ?: return arrayOf(module.builtIns.getAnyType())
-            val receiverType = (property.getExtensionReceiverParameter() ?: property.getDispatchReceiverParameter())?.getType()
+            val receiverType = (variableDescriptor.getExtensionReceiverParameter() ?: variableDescriptor.getDispatchReceiverParameter())?.getType()
                                ?: module.builtIns.getNullableNothingType()
-            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))
+            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.getType()))
             arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
         parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
