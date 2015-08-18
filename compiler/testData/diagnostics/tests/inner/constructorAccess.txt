@@ -40,7 +40,7 @@ internal final class Outer1 {
 
     internal final class C5 {
         public constructor C5()
-        internal final val b: Outer1.Inner
+        internal final val b: [ERROR : Type for Inner()]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -103,7 +103,7 @@ internal final class Outer2 {
 
     internal final class Nested {
         public constructor Nested()
-        internal final fun bar(): Outer2.Inner
+        internal final fun bar(): [ERROR : Error function type]
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal final fun foo(): Outer2
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

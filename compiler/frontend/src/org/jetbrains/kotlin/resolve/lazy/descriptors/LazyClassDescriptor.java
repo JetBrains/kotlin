@@ -270,6 +270,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return resolutionScopesSupport.getScopeForMemberDeclarationResolution();
     }
 
+    public JetScope getScopeForStaticMemberDeclarationResolution() {
+        return resolutionScopesSupport.getScopeForStaticMemberDeclarationResolution();
+    }
+
     @Override
     @NotNull
     public JetScope getScopeForInitializerResolution() {

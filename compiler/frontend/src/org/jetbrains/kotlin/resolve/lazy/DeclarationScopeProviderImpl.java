@@ -63,6 +63,11 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
             if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
                 return classDescriptor.getScopeForInitializerResolution();
             }
+            if (jetDeclaration instanceof JetObjectDeclaration
+                || (jetDeclaration instanceof JetClass && !((JetClass) jetDeclaration).isInner())) {
+                return classDescriptor.getScopeForStaticMemberDeclarationResolution();
+            }
+
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
 

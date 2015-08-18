@@ -27,10 +27,14 @@ class ClassResolutionScopesSupport(
 ) {
     private val scopeForClassHeaderResolution = storageManager.createLazyValue { computeScopeForClassHeaderResolution() }
     private val scopeForMemberDeclarationResolution = storageManager.createLazyValue { computeScopeForMemberDeclarationResolution() }
+    private val scopeForStaticMemberDeclarationResolution = storageManager.createLazyValue {  computeScopeForStaticMemberDeclarationResolution() }
+
 
     fun getScopeForClassHeaderResolution(): JetScope = scopeForClassHeaderResolution()
 
     fun getScopeForMemberDeclarationResolution(): JetScope = scopeForMemberDeclarationResolution()
+
+    fun getScopeForStaticMemberDeclarationResolution(): JetScope = scopeForStaticMemberDeclarationResolution()
 
     private fun computeScopeForClassHeaderResolution(): JetScope {
         val scope = WritableScopeImpl(JetScope.Empty, classDescriptor, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + classDescriptor.getName())
@@ -60,6 +64,18 @@ class ClassResolutionScopesSupport(
                                           "Scope with 'this' for " + descriptor.getName(), descriptor.getThisAsReceiverParameter(), descriptor)
         thisScope.changeLockLevel(WritableScope.LockLevel.READING)
         return thisScope
+    }
+
+    private fun computeScopeForStaticMemberDeclarationResolution(): JetScope {
+        if (classDescriptor.getKind().isSingleton) return scopeForMemberDeclarationResolution()
+
+        return ChainedScope(
+                classDescriptor,
+                "ScopeForStaticMemberDeclarationResolution: " + classDescriptor.getName(),
+                classDescriptor.unsubstitutedInnerClassesScope,
+                getOuterScope(),
+                getCompanionObjectScope(),
+                classDescriptor.getStaticScope())
     }
 
     private fun getCompanionObjectScope(): JetScope {

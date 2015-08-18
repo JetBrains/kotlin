@@ -101,12 +101,6 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
-    @TestMetadata("inaccessibleOuterClassExpression.kt")
-    public void testInaccessibleOuterClassExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/inaccessibleOuterClassExpression.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("invisibleMember.kt")
     public void testInvisibleMember() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/invisibleMember.kt");
