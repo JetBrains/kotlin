@@ -426,17 +426,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             }
             is MagicInstruction -> {
                 when (instruction.kind) {
-                    MagicKind.LOOP_RANGE_ITERATION -> {
-                        // process range operator result storing in fake variable
-                        val rangeValues =
-                                if (!instruction.inputValues.isEmpty())
-                                    updatedData.intFakeVarsToValues[instruction.inputValues[0]]
-                                else null
-                        rangeValues?.let {
-                            val target = instruction.outputValue
-                            updatedData.intFakeVarsToValues.put(target, it)
-                        }
-                    }
+                    MagicKind.LOOP_RANGE_ITERATION -> processLoopRangeInstruction(instruction, updatedData)
                     MagicKind.AND, MagicKind.OR -> {
                         // && and || operations are represented as MagicInstruction for some reason (not as CallInstruction)
                         if (instruction.element is JetBinaryExpression) {
@@ -566,6 +556,26 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is AccessTarget.Declaration -> target.descriptor
             is AccessTarget.Call -> target.resolvedCall.resultingDescriptor
             else -> null
+        }
+    }
+
+    private fun processLoopRangeInstruction(instruction: MagicInstruction, updatedData: ValuesData) {
+        // process range operator result storing in fake variable
+        val rangeValues =
+                if (!instruction.inputValues.isEmpty()) {
+                    val rightOperandOfInExpr = instruction.inputValues[0]
+                    val sourceInstruction = rightOperandOfInExpr.createdAt ?: null
+                    if (sourceInstruction is CallInstruction &&
+                        sourceInstruction.element is JetBinaryExpression &&
+                        sourceInstruction.element.operationToken == JetTokens.RANGE)
+                        // in `i in something` expressions `something` can only be `x .. y`
+                        updatedData.intFakeVarsToValues[rightOperandOfInExpr]
+                    else null
+                }
+                else null
+        rangeValues?.let {
+            val target = instruction.outputValue
+            updatedData.intFakeVarsToValues.put(target, it)
         }
     }
 

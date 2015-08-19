@@ -99,3 +99,11 @@ fun notSimpleDoWhile() {
     while (a < 2)
     42
 }
+
+fun forInCollection() {
+    val lst = arrayListOf(1, 2)
+    for(elem in lst) {
+        42
+    }
+    43
+}
