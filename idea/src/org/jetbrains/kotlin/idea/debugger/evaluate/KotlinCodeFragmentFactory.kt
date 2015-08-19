@@ -127,7 +127,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         public val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
         public val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
 
-        fun getContextElement(elementAt: PsiElement?): PsiElement? {
+        fun getContextElement(elementAt: PsiElement?): JetElement? {
             if (elementAt == null) return null
 
             if (elementAt is PsiCodeBlock) {
@@ -170,7 +170,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
     }
 
-    private fun wrapContextIfNeeded(project: Project, originalContext: PsiElement?): PsiElement? {
+    private fun wrapContextIfNeeded(project: Project, originalContext: JetElement?): JetElement? {
         val session = XDebuggerManager.getInstance(project).getCurrentSession() as? XDebugSessionImpl
                                             ?: return originalContext
 
@@ -189,7 +189,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             labels: Map<String, ObjectReference>,
             originalContext: PsiElement?,
             project: Project
-    ): PsiElement? {
+    ): JetElement? {
         val codeFragment = JetPsiFactory(project).createBlockCodeFragment(newFragmentText, originalContext)
 
         codeFragment.accept(object : JetTreeVisitorVoid() {
