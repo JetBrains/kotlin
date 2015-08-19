@@ -87,7 +87,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         return !isIntentionBaseInspectionEnabled(project, target)
     }
 
-    private fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
+    protected fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
         val inspection = findInspection(javaClass) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)

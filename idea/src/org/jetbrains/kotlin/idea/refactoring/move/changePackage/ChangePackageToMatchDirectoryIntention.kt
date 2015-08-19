@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
-import org.jetbrains.kotlin.psi.JetPackageDirective
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.psi.JetPackageDirective
 
 public class ChangePackageToMatchDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(
         javaClass(), "", "Change file's package to match directory"
@@ -30,11 +30,23 @@ public class ChangePackageToMatchDirectoryIntention : JetSelfTargetingOffsetInde
         val file = element.getContainingJetFile()
         if (file.packageMatchesDirectory()) return false
 
-        setText("Change file's package to '${file.getFqNameByDirectory().asString()}'")
+        val fqNameByDirectory = file.getFqNameByDirectory()
+        if (!fqNameByDirectory.hasIdentifiersOnly()) {
+            if (isIntentionBaseInspectionEnabled(file.project, element)) {
+                text = "File package doesn't match directory"
+                return true
+            }
+            return false
+        }
+
+        text = "Change file's package to '${fqNameByDirectory.asString()}'"
         return true
     }
 
     override fun applyTo(element: JetPackageDirective, editor: Editor) {
-        KotlinChangePackageRefactoring(element.getContainingJetFile()).run(element.getContainingFile().getFqNameByDirectory())
+        val file = element.getContainingJetFile()
+        val newFqName = file.getFqNameByDirectory()
+        if (!newFqName.hasIdentifiersOnly()) return
+        KotlinChangePackageRefactoring(file).run(newFqName)
     }
 }

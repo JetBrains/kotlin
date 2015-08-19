@@ -24,8 +24,10 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -57,6 +59,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
         val newPackageName = FqNameUnsafe(newPackage.qualifiedName)
         if (oldPackageName.asString() == newPackageName.asString()) return null
+        if (newPackageName != UNKNOWN_PACKAGE_FQ_NAME && !newPackageName.hasIdentifiersOnly()) return null
 
         return PackageNameInfo(oldPackageName, newPackageName)
     }
