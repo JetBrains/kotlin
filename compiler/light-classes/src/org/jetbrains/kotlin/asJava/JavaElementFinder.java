@@ -118,7 +118,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         findClassesAndObjects(qualifiedName, scope, answer);
 
-        if (PackagePartClassUtils.isFacadeClassFqName(qualifiedName)) {
+        if (PackagePartClassUtils.isPartClassFqName(qualifiedName)) {
             answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
         }
         else if (PackageClassUtils.isPackageClassFqName(qualifiedName)) {

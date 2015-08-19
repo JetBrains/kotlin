@@ -228,7 +228,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         // TODO We need a way to plug some platform-dependent stuff into LazyTopDownAnalyzer.
         // It already performs some ad hoc stuff for packages->files mapping, anyway.
         Collection<JetFile> filesInPackage = findFilesForPackage(facadeFqName.parent(), scope);
-        return PackagePartClassUtils.getFilesForFacade(facadeFqName, filesInPackage);
+        return PackagePartClassUtils.getFilesForPart(facadeFqName, filesInPackage);
     }
 
     @NotNull
