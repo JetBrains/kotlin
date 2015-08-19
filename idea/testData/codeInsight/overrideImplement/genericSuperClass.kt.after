@@ -1,0 +1,7 @@
+import java.util.ArrayList
+
+class X : java.util.ArrayList<String>(), Runnable {
+    override fun size(): Int {
+        <selection><caret>return super<ArrayList>.size()</selection>
+    }
+}

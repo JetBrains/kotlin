@@ -237,7 +237,8 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
                 val builder = StringBuilder()
                 builder.append("super")
                 if (classOrObject.getDelegationSpecifiers().size() > 1) {
-                    builder.append("<").append(descriptor.containingDeclaration.escapedName()).append(">")
+                    val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
+                    builder.append("<").append(superClassFqName).append(">")
                 }
                 builder.append(".").append(descriptor.escapedName())
 

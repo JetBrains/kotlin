@@ -46,12 +46,12 @@ import kotlin.test.assertEquals
 public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
 
-    protected fun doImplementFileTest() {
-        doFileTest(ImplementMembersHandler())
+    protected fun doImplementFileTest(memberToOverride: String? = null) {
+        doFileTest(ImplementMembersHandler(), memberToOverride)
     }
 
-    protected fun doOverrideFileTest() {
-        doFileTest(OverrideMembersHandler())
+    protected fun doOverrideFileTest(memberToOverride: String? = null) {
+        doFileTest(OverrideMembersHandler(), memberToOverride)
     }
 
     protected fun doMultiImplementFileTest() {
@@ -62,11 +62,11 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         doMultiFileTest(OverrideMembersHandler())
     }
 
-    protected fun doImplementDirectoryTest() {
-        doDirectoryTest(ImplementMembersHandler())
+    protected fun doImplementDirectoryTest(memberToOverride: String? = null) {
+        doDirectoryTest(ImplementMembersHandler(), memberToOverride)
     }
 
-    protected fun doOverrideDirectoryTest(memberToImplement: String?) {
+    protected fun doOverrideDirectoryTest(memberToImplement: String? = null) {
         doDirectoryTest(OverrideMembersHandler(), memberToImplement)
     }
 
@@ -91,9 +91,9 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         myFixture.checkResultByFile(getTestName(true) + "/foo/JavaClass.java.after")
     }
 
-    private fun doFileTest(handler: OverrideImplementMembersHandler) {
+    private fun doFileTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
         myFixture.configureByFile(getTestName(true) + ".kt")
-        doOverrideImplement(handler, null)
+        doOverrideImplement(handler, memberToOverride)
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
@@ -103,11 +103,7 @@ public abstract class AbstractOverrideImplementTest : JetLightCodeInsightFixture
         checkResultByFile(getTestName(true) + ".kt.after")
     }
 
-    protected fun doDirectoryTest(handler: OverrideImplementMembersHandler) {
-        doDirectoryTest(handler, null)
-    }
-
-    private fun doDirectoryTest(handler: OverrideImplementMembersHandler, memberToOverride: String?) {
+    private fun doDirectoryTest(handler: OverrideImplementMembersHandler, memberToOverride: String? = null) {
         myFixture.copyDirectoryToProject(getTestName(true), "")
         myFixture.configureFromTempProjectFile("foo/Impl.kt")
         doOverrideImplement(handler, memberToOverride)
