@@ -38,12 +38,9 @@ public object KotlinJavaScriptLibraryDetectionUtil {
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) return false
 
         classesRoots.forEach { root ->
-            val cachedResult = JarUserDataManager.getValue(HasKotlinJSMetadataInJar, root)
-
-            @suppress("NON_EXHAUSTIVE_WHEN")
-            when (cachedResult) {
-                HasKotlinJSMetadataInJar.JsMetadataState.HAS_JS_METADATA -> return true
-                HasKotlinJSMetadataInJar.JsMetadataState.NO_JS_METADATA -> return false
+            val hasMetadata = HasKotlinJSMetadataInJar.hasMetadataFromCache(root)
+            if (hasMetadata != null) {
+                return hasMetadata
             }
 
             if (!VfsUtilCore.processFilesRecursively(root, { isJsFileWithMetadata(root) })) {
@@ -59,26 +56,9 @@ public object KotlinJavaScriptLibraryDetectionUtil {
             JavaScript.EXTENSION == file.getExtension() &&
             KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
 
-    public object HasKotlinJSMetadataInJar : JarUserDataManager.JarUserDataCollector<HasKotlinJSMetadataInJar.JsMetadataState> {
-        public enum class JsMetadataState {
-            HAS_JS_METADATA,
-            NO_JS_METADATA,
-            COUNTING
-        }
+    public object HasKotlinJSMetadataInJar : JarUserDataManager.JarBooleanPropertyCounter(HasKotlinJSMetadataInJar::class.simpleName!!) {
+        override fun hasProperty(file: VirtualFile) = KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file)
 
-        override val key = Key.create<Pair<HasKotlinJSMetadataInJar.JsMetadataState, Long>>(HasKotlinJSMetadataInJar::class.simpleName!!)
-        override val stateClass = javaClass<JsMetadataState>()
-
-        override val init = JsMetadataState.COUNTING
-        override val stopState = JsMetadataState.HAS_JS_METADATA
-        override val notFoundState = JsMetadataState.NO_JS_METADATA
-
-        override fun process(file: VirtualFile): JsMetadataState {
-            return if (KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file)) {
-                JsMetadataState.HAS_JS_METADATA
-            } else {
-                JsMetadataState.NO_JS_METADATA
-            }
-        }
+        fun hasMetadataFromCache(root: VirtualFile): Boolean? = JarUserDataManager.hasFileWithProperty(HasKotlinJSMetadataInJar, root)
     }
 }

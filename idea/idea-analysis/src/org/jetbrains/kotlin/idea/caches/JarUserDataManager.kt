@@ -24,32 +24,42 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public object JarUserDataManager {
-    val fileAttributeService: FileAttributeService? = ServiceManager.getService(javaClass<FileAttributeService>())
-
-    public fun register(collector: JarUserDataCollector<*>) {
-        fileAttributeService?.register(collector.key.toString(), collector.version)
+    enum class State {
+        INIT,
+        HAS_FILE,
+        NO_FILE
     }
 
-    public fun <T: Enum<T>> getValue(collector: JarUserDataCollector<T>, file: VirtualFile): T? {
+    val version = 1
+
+    val fileAttributeService: FileAttributeService? = ServiceManager.getService(javaClass<FileAttributeService>())
+
+    public fun register(counter: JarBooleanPropertyCounter) {
+        fileAttributeService?.register(counter.key.toString(), version)
+    }
+
+    public fun hasFileWithProperty(counter: JarBooleanPropertyCounter, file: VirtualFile): Boolean? {
         val jarFile = findJarRoot(file) ?: return null
 
-        val stored = jarFile.getUserData(collector.key)
-        if (stored != null && jarFile.timeStamp == stored.second) {
-            return stored.first
+        val stored = jarFile.getUserData(counter.key)
+        if (stored != null && jarFile.timeStamp == stored.timestamp) {
+            return stored.hasFileWithProperty
         }
 
         if (stored == null && fileAttributeService != null) {
-            val savedData = fileAttributeService.readAttribute(collector.key.toString(), jarFile, collector.stateClass)
+            val savedData = fileAttributeService.readAttribute(counter.key.toString(), jarFile, javaClass<State>())
             if (savedData != null && savedData.value != null) {
-                jarFile.putUserData(collector.key, savedData.value to savedData.timeStamp)
+                val hasFileWithProperty = savedData.value == State.HAS_FILE
+
+                jarFile.putUserData(counter.key, PropertyData(hasFileWithProperty, savedData.timeStamp))
 
                 if (jarFile.timeStamp == savedData.timeStamp) {
-                    return savedData.value
+                    return hasFileWithProperty
                 }
             }
         }
 
-        scheduleJarProcessing(collector, jarFile)
+        scheduleJarProcessing(counter, jarFile)
 
         return null
     }
@@ -63,44 +73,35 @@ public object JarUserDataManager {
         return jarFile
     }
 
-    private fun <T: Enum<T>> scheduleJarProcessing(collector: JarUserDataCollector<T>, jarFile: VirtualFile) {
-        if (jarFile.getUserData(collector.key) != null) return
+    private fun scheduleJarProcessing(counter: JarBooleanPropertyCounter, jarFile: VirtualFile) {
+        if (jarFile.getUserData(counter.key) != null) return
 
-        jarFile.putUserData(collector.key, collector.init to jarFile.timeStamp)
+        jarFile.putUserData(counter.key, PropertyData(null, jarFile.timeStamp))
 
         ApplicationManager.getApplication().executeOnPooledThread {
             runReadAction {
-                var result = collector.notFoundState
-
-                VfsUtilCore.processFilesRecursively(jarFile) { file ->
-                    if (collector.process(file) == collector.stopState) {
-                        result = collector.stopState
-
-                        // stop processing
-                        false
-                    }
-                    else {
-                        // continue processing
-                        true
-                    }
+                val hasFileWithProperty = !VfsUtilCore.processFilesRecursively(jarFile) { file ->
+                    !counter.hasProperty(file)
                 }
 
-                val savedData = fileAttributeService?.writeAttribute(collector.key.toString(), jarFile, result)
-                jarFile.putUserData(collector.key, result to (savedData?.timeStamp ?: jarFile.timeStamp))
+                val state = if (hasFileWithProperty) State.HAS_FILE else State.NO_FILE
+
+                val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), jarFile, state)
+
+                jarFile.putUserData(
+                        counter.key,
+                        PropertyData(hasFileWithProperty, (savedData?.timeStamp ?: jarFile.timeStamp)))
             }
         }
     }
 
-    interface JarUserDataCollector<State: Enum<State>> {
-        val key: Key<Pair<State, Long>>
-        val stateClass: Class<State>
+    data class PropertyData(val hasFileWithProperty: Boolean?, val timestamp: Long)
 
-        val version: Int get() = 1
+    abstract class JarBooleanPropertyCounter(keyName: String) {
+        val key: Key<PropertyData> = Key.create<PropertyData>(keyName)
 
-        val init: State
-        val stopState: State
-        val notFoundState: State
+        abstract fun hasProperty(file: VirtualFile): Boolean
 
-        fun process(file: VirtualFile): State
+        override fun toString() = "Counter: $key"
     }
 }
