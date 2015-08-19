@@ -22,7 +22,7 @@ import java.util.*
  * Concatenates the contents of this collection with the given collection, avoiding allocations if possible.
  * Can modify `this` if it is a mutable collection.
  */
-fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
+public fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
     if (collection.isEmpty()) {
         return this
     }
@@ -39,7 +39,7 @@ fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
     return result
 }
 
-fun concatInOrder<T>(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
+public fun concatInOrder<T>(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
     val result = if (c1 == null || c1.isEmpty())
         c2
     else if (c2 == null || c2.isEmpty())
@@ -51,4 +51,22 @@ fun concatInOrder<T>(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
         result
     }
     return result ?: emptySet()
+}
+
+public inline fun getFromAllScopes<Scope, T>(scopes: Array<out Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
+    if (scopes.isEmpty()) return emptySet()
+    var result: Collection<T>? = null
+    for (scope in scopes) {
+        result = result.concat(callback(scope))
+    }
+    return result ?: emptySet()
+}
+
+public inline fun getFirstMatch<Scope, T>(scopes: Array<out Scope>, callback: (Scope) -> T): T {
+    // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
+    for (scope in scopes) {
+        val result = callback(scope)
+        if (result != null) return result
+    }
+    return null
 }

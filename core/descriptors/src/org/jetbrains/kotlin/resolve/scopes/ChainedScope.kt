@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.util.collectionUtils.concat
+import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
+import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 import java.util.ArrayList
 
@@ -32,50 +33,32 @@ public open class ChainedScope(
     private val scopeChain = scopes.clone()
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
-    private inline fun getFirstMatch<T>(callback: (JetScope) -> T): T {
-        // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
-        for (scope in scopeChain) {
-            val result = callback(scope)
-            if (result != null) return result
-        }
-        return null
-    }
-
-    private inline fun getFromAllScopes<T>(callback: (JetScope) -> Collection<T>): Collection<T> {
-        if (scopeChain.isEmpty()) return emptySet()
-        var result: Collection<T>? = null
-        for (scope in scopeChain) {
-            result = result.concat(callback(scope))
-        }
-        return result ?: emptySet()
-    }
-
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
-            = getFirstMatch { it.getClassifier(name, location) }
+            = getFirstMatch(scopeChain) { it.getClassifier(name, location) }
 
     override fun getPackage(name: Name): PackageViewDescriptor?
-            = getFirstMatch { it.getPackage(name) }
+            = getFirstMatch(scopeChain) { it.getPackage(name) }
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor>
-            = getFromAllScopes { it.getProperties(name, location) }
+            = getFromAllScopes(scopeChain) { it.getProperties(name, location) }
 
     override fun getLocalVariable(name: Name): VariableDescriptor?
-            = getFirstMatch { it.getLocalVariable(name) }
+            = getFirstMatch(scopeChain) { it.getLocalVariable(name) }
 
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-            = getFromAllScopes { it.getFunctions(name, location) }
+            = getFromAllScopes(scopeChain) { it.getFunctions(name, location) }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
+            = getFromAllScopes(scopeChain) { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-            = getFromAllScopes { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
+            = getFromAllScopes(scopeChain) { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor>
-            = getFromAllScopes { it.getSyntheticExtensionProperties(receiverTypes) }
+            = getFromAllScopes(scopeChain) { it.getSyntheticExtensionProperties(receiverTypes) }
 
     override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor>
-            = getFromAllScopes { it.getSyntheticExtensionFunctions(receiverTypes) }
+            = getFromAllScopes(scopeChain) { it.getSyntheticExtensionFunctions(receiverTypes) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
@@ -92,7 +75,7 @@ public open class ChainedScope(
     override fun getDeclarationsByLabel(labelName: Name) = scopeChain.flatMap { it.getDeclarationsByLabel(labelName) }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = getFromAllScopes { it.getDescriptors(kindFilter, nameFilter) }
+            = getFromAllScopes(scopeChain) { it.getDescriptors(kindFilter, nameFilter) }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
         throw UnsupportedOperationException()
