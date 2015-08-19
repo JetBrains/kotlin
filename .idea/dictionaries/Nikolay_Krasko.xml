@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component name="ProjectDictionaryState">
   <dictionary name="Nikolay.Krasko">
     <words>
       <w>accessors</w>
+      <w>externalizer</w>
       <w>goto</w>
       <w>gradle</w>
       <w>intrinsics</w>
