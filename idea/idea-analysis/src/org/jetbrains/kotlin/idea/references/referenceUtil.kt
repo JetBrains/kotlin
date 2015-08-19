@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -149,8 +150,12 @@ public enum class ReferenceAccess {
 
 public fun JetExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess {
     var expression = getQualifiedExpressionForSelectorOrThis()
-    while (expression.parent is JetParenthesizedExpression || expression.parent is JetAnnotatedExpression) {
-        expression = expression.parent as JetExpression
+    loop@ while (true) {
+        val parent = expression.parent
+        when (parent) {
+            is JetParenthesizedExpression, is JetAnnotatedExpression, is JetLabeledExpression -> expression = parent as JetExpression
+            else -> break@loop
+        }
     }
 
     val assignment = expression.getAssignmentByLHS()
@@ -164,7 +169,7 @@ public fun JetExpression.readWriteAccess(useResolveForReadWrite: Boolean): Refer
                 val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE
                 if (!resolvedCall.status.isSuccess) return ReferenceAccess.READ_WRITE
-                return if (resolvedCall.resultingDescriptor.name.asString().endsWith("Assign"))
+                return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values())
                     ReferenceAccess.READ
                 else
                     ReferenceAccess.READ_WRITE

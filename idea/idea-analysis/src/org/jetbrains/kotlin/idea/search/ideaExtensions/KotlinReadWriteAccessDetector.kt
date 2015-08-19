@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
+import com.intellij.codeInsight.highlighting.JavaReadWriteAccessDetector
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -56,7 +57,9 @@ public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
     }
 
     override fun getExpressionAccess(expression: PsiElement): ReadWriteAccessDetector.Access {
-        if (expression !is JetExpression) return ReadWriteAccessDetector.Access.Read
+        if (expression !is JetExpression) { //TODO: there should be a more correct scheme of access type detection for cross-language references
+            return JavaReadWriteAccessDetector().getExpressionAccess(expression)
+        }
 
         return when (expression.readWriteAccess(useResolveForReadWrite = true)) {
             ReferenceAccess.READ -> ReadWriteAccessDetector.Access.Read
