@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
@@ -109,8 +110,10 @@ public class ReferenceVariantsHelper(
 
         val dataFlowInfo = context.getDataFlowInfo(expression)
 
+        val smartCastManager = resolutionFacade.frontendService<SmartCastManager>(expression)
         val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
-            SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
+            smartCastManager
+                    .getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
         }.toSet()
 
         val pair = getExplicitReceiverData(expression)
@@ -129,7 +132,8 @@ public class ReferenceVariantsHelper(
                                         context.getType(receiverExpression)
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                val explicitReceiverTypes = SmartCastManager().getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
+                val explicitReceiverTypes = smartCastManager
+                        .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
 
                 descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
             }
