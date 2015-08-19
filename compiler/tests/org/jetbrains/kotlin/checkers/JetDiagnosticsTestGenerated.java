@@ -5571,6 +5571,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionPropertyVsParameter.kt")
+            public void testExtensionPropertyVsParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/extensions/extensionPropertyVsParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExtensionsCalledOnSuper.kt")
             public void testExtensionsCalledOnSuper() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/extensions/ExtensionsCalledOnSuper.kt");
@@ -5640,6 +5646,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("throwOutCandidatesByReceiver2.kt")
             public void testThrowOutCandidatesByReceiver2() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/extensions/throwOutCandidatesByReceiver2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("variableInvoke.kt")
+            public void testVariableInvoke() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/extensions/variableInvoke.kt");
                 doTest(fileName);
             }
         }
