@@ -52,12 +52,12 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         if (contextElement == null) {
             LOG.warn("CodeFragment with null context created:\noriginalContext = ${context?.getElementTextWithContext()}")
         }
-        val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
+        val codeFragment = if (item.kind == CodeFragmentKind.EXPRESSION) {
             JetExpressionCodeFragment(
                     project,
                     "fragment.kt",
-                    item.getText(),
-                    item.getImports(),
+                    item.text,
+                    item.imports,
                     contextElement
             )
         }
@@ -65,8 +65,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             JetBlockCodeFragment(
                     project,
                     "fragment.kt",
-                    item.getText(),
-                    item.getImports(),
+                    item.text,
+                    item.imports,
                     contextElement
             )
         }
@@ -74,8 +74,8 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
             expression: JetExpression ->
 
-            val debuggerContext = DebuggerManagerEx.getInstanceEx(project).getContext()
-            val debuggerSession = debuggerContext.getDebuggerSession()
+            val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
+            val debuggerSession = debuggerContext.debuggerSession
             if (debuggerSession == null) {
                 null
             }
@@ -83,14 +83,14 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 val semaphore = Semaphore()
                 semaphore.down()
                 val nameRef = AtomicReference<JetType>()
-                val worker = object : KotlinRuntimeTypeEvaluator(null, expression, debuggerContext, ProgressManager.getInstance().getProgressIndicator()) {
+                val worker = object : KotlinRuntimeTypeEvaluator(null, expression, debuggerContext, ProgressManager.getInstance().progressIndicator) {
                     override fun typeCalculationFinished(type: JetType?) {
                         nameRef.set(type)
                         semaphore.up()
                     }
                 }
 
-                debuggerContext.getDebugProcess()?.getManagerThread()?.invoke(worker)
+                debuggerContext.debugProcess?.managerThread?.invoke(worker)
 
                 for (i in 0..50) {
                     ProgressManager.checkCanceled()
@@ -114,9 +114,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun isContextAccepted(contextElement: PsiElement?): Boolean {
         if (contextElement is PsiCodeBlock) {
             // PsiCodeBlock -> DummyHolder -> originalElement
-            return isContextAccepted(contextElement.getContext()?.getContext())
+            return isContextAccepted(contextElement.context?.context)
         }
-        return contextElement?.getLanguage() == JetFileType.INSTANCE.getLanguage()
+        return contextElement?.language == JetFileType.INSTANCE.language
     }
 
     override fun getFileType() = JetFileType.INSTANCE
@@ -131,17 +131,17 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             if (elementAt == null) return null
 
             if (elementAt is PsiCodeBlock) {
-                return getContextElement(elementAt.getContext()?.getContext())
+                return getContextElement(elementAt.context?.context)
             }
 
             if (elementAt is KotlinLightClass) {
                 return getContextElement(elementAt.getOrigin())
             }
 
-            val containingFile = elementAt.getContainingFile()
+            val containingFile = elementAt.containingFile
             if (containingFile !is JetFile) return null
 
-            val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
+            val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.textOffset, javaClass<JetExpression>(), false)
             if (expressionAtOffset != null && KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(elementAt)) {
                 return expressionAtOffset
             }
@@ -154,7 +154,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             val sb = StringBuilder()
             val labeledObjects = HashMap<String, ObjectReference>()
             for ((value, markup) in markupMap.entrySet()) {
-                val labelName = markup.getText()
+                val labelName = markup.text
                 if (!Name.isValidIdentifier(labelName)) continue
 
                 val objectRef = value as ObjectReference
@@ -171,10 +171,10 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     }
 
     private fun wrapContextIfNeeded(project: Project, originalContext: JetElement?): JetElement? {
-        val session = XDebuggerManager.getInstance(project).getCurrentSession() as? XDebugSessionImpl
+        val session = XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl
                                             ?: return originalContext
 
-        val markupMap = session.getValueMarkers()?.getAllMarkers()
+        val markupMap = session.valueMarkers?.getAllMarkers()
         if (markupMap == null || markupMap.isEmpty()) return originalContext
 
         val (text, labels) = createCodeFragmentForLabeledObjects(markupMap)
@@ -194,13 +194,13 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
         codeFragment.accept(object : JetTreeVisitorVoid() {
             override fun visitProperty(property: JetProperty) {
-                val reference = labels.get(property.getName())
+                val reference = labels.get(property.name)
                 if (reference != null) {
                     property.putUserData(LABEL_VARIABLE_VALUE_KEY, reference)
                 }
             }
         })
 
-        return getContextElement(codeFragment.findElementAt(codeFragment.getText().length() - 1))
+        return getContextElement(codeFragment.findElementAt(codeFragment.text.length() - 1))
     }
 }
