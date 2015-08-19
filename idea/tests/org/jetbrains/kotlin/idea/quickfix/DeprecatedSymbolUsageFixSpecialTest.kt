@@ -16,12 +16,16 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
-import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestDataPath
+import org.apache.commons.lang.SystemUtils
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -33,20 +37,29 @@ import org.junit.runner.RunWith
 TestMetadata("idea/testData/quickfix.special")
 TestDataPath("\$PROJECT_ROOT")
 RunWith(JUnit3RunnerWithInners::class)
-public class QuickFixSpecialTest : JetLightCodeInsightFixtureTestCase() {
+public class DeprecatedSymbolUsageFixSpecialTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
-    TestMetadata("deprecatedMemberInCompiledClass.kt")
-    public fun testDeprecatedMemberInCompiledClass() {
-        val testPath = JetTestUtils.navigationMetadata("idea/testData/quickfix.special/deprecatedMemberInCompiledClass.kt")
+    private val TEST_DATA_DIR = "idea/testData/quickfix.special/deprecatedSymbolUsage"
+
+    public fun testMemberInCompiledClass() {
+        doTest("matches(input)")
+    }
+
+    public fun testDefaultParameterValuesFromLibrary() {
+        doTest("""prefix + joinTo(StringBuilder(), separator, "", postfix, limit, truncated, transform)""")
+    }
+
+    private fun doTest(pattern: String) {
+        val testPath = JetTestUtils.navigationMetadata(TEST_DATA_DIR + "/" + getTestName(true) + ".kt")
         myFixture.configureByFile(testPath)
 
-        val offset = getEditor().getCaretModel().getOffset()
+        val offset = getEditor().caretModel.offset
         val element = getFile().findElementAt(offset)
         val nameExpression = element!!.parents.firstIsInstance<JetSimpleNameExpression>()
         getProject().executeWriteCommand("") {
-            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith("matches(input)")).invoke(getProject(), getEditor(), getFile())
+            DeprecatedSymbolUsageFix(nameExpression, ReplaceWith(pattern)).invoke(getProject(), getEditor(), getFile())
         }
 
         myFixture.checkResultByFile("$testPath.after")

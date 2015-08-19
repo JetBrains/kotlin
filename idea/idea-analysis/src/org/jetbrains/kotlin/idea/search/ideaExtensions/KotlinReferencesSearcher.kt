@@ -168,7 +168,8 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement?,
                                        name: String? = element?.getName()) {
             if (name != null && element != null) {
-                queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element)
+                val scope = runReadAction { queryParameters.getEffectiveSearchScope() }
+                queryParameters.getOptimizer().searchWord(name, scope, true, element)
             }
         }
     }
