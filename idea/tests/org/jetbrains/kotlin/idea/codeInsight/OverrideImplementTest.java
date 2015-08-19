@@ -151,6 +151,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doOverrideDirectoryTest("getFooBar");
     }
 
+    public void testPrivateJavaMethod() {
+        doMultiOverrideDirectoryTest();
+    }
+
     public void testInheritVisibilities() {
         doMultiOverrideFileTest();
     }

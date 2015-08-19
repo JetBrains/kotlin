@@ -170,6 +170,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 val descriptors = descriptorsByPackages[packageName]
                 val fqNames = descriptors.map { it.importableFqNameSafe }.toSet()
                 val explicitImports = fqNames.size() < codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
+                                      && packageName.asString() !in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS
                 if (explicitImports) {
                     for (fqName in fqNames) {
                         if (!isImportedByDefault(fqName)) {
