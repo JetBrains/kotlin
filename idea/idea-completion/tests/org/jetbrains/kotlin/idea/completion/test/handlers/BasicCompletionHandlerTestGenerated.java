@@ -400,4 +400,67 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeArgsForCall extends AbstractBasicCompletionHandlerTest {
+        public void testAllFilesPresentInTypeArgsForCall() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/typeArgsForCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("ExpectedTypeDoesNotHelp.kt")
+        public void testExpectedTypeDoesNotHelp() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/ExpectedTypeDoesNotHelp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedTypeDoesNotHelp2.kt")
+        public void testExpectedTypeDoesNotHelp2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/ExpectedTypeDoesNotHelp2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExplicitLambdaSignature.kt")
+        public void testExplicitLambdaSignature() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/ExplicitLambdaSignature.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionTypeParameter1.kt")
+        public void testFunctionTypeParameter1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/FunctionTypeParameter1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunctionTypeParameter2.kt")
+        public void testFunctionTypeParameter2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/FunctionTypeParameter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("HasExpectedType.kt")
+        public void testHasExpectedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/HasExpectedType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotAllTypeArgumentsFromParameters.kt")
+        public void testNotAllTypeArgumentsFromParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/NotAllTypeArgumentsFromParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeArgumentsFromParameters.kt")
+        public void testTypeArgumentsFromParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/typeArgsForCall/TypeArgumentsFromParameters.kt");
+            doTest(fileName);
+        }
+    }
 }

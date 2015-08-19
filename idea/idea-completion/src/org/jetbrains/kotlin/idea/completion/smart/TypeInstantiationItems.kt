@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.idea.completion.handlers.CaretPosition
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
@@ -185,9 +184,9 @@ class TypeInstantiationItems(
             }
 
             val baseInsertHandler = when (visibleConstructors.size()) {
-                0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
-                1 -> LookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
-                else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                0 -> KotlinFunctionInsertHandler(needTypeArguments = false, needValueArguments = false)
+                1 -> lookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
+                else -> KotlinFunctionInsertHandler(needTypeArguments = false, needValueArguments = true)
             }
 
             insertHandler = object : InsertHandler<LookupElement> {
@@ -200,7 +199,7 @@ class TypeInstantiationItems(
                     shortenReferences(context, context.getStartOffset(), context.getTailOffset())
                 }
             }
-            if (baseInsertHandler.caretPosition == CaretPosition.IN_BRACKETS) {
+            if (baseInsertHandler.needValueArguments) {
                 lookupElement = lookupElement.keepOldArgumentListOnTab()
             }
             if (baseInsertHandler.lambdaInfo != null) {

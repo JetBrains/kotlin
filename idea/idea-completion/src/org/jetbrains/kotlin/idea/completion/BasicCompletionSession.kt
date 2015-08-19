@@ -103,6 +103,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         )
     }
 
+    override val expectedInfos: Collection<ExpectedInfo>
+        get() = smartCompletion?.expectedInfos ?: emptyList()
+
     private fun calcCompletionKind(): CompletionKind {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
             return CompletionKind.NAMED_ARGUMENTS_ONLY

@@ -35,24 +35,18 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.JetType
 
-enum class CaretPosition {
-    IN_BRACKETS,
-    AFTER_BRACKETS
-}
-
 data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : KotlinCallableInsertHandler() {
-    init {
-        if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
-            throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
-        }
-    }
+class KotlinFunctionInsertHandler(
+        val needTypeArguments: Boolean,
+        val needValueArguments: Boolean,
+        val lambdaInfo: GenerateLambdaInfo? = null
+) : KotlinCallableInsertHandler() {
 
     public override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
-        val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
         psiDocumentManager.commitAllDocuments()
         psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
 
@@ -88,29 +82,44 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
             context.setAddCompletionChar(false)
         }
 
-        var offset = context.getTailOffset()
-        val document = context.getDocument()
-        val chars = document.getCharsSequence()
+        var offset = context.tailOffset
+        val document = context.document
+        val editor = context.editor
+        val project = context.project
+        val chars = document.charsSequence
 
         val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.isCharAt(offset, '('))
 
         val openingBracket = if (insertLambda) '{' else '('
         val closingBracket = if (insertLambda) '}' else ')'
 
+        var insertTypeArguments = needTypeArguments && (completionChar == '\n' || completionChar == '\r')
+
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
             val offset1 = chars.skipSpaces(offset)
             if (offset1 < chars.length()) {
                 if (chars[offset1] == '<') {
-                    PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
+                    PsiDocumentManager.getInstance(project).commitDocument(document)
                     val token = context.getFile().findElementAt(offset1)!!
                     if (token.getNode().getElementType() == JetTokens.LT) {
                         val parent = token.getParent()
                         if (parent is JetTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
                             offset = parent.endOffset
+                            insertTypeArguments = false
                         }
                     }
                 }
             }
+        }
+
+        if (insertLambda && lambdaInfo!!.explicitParameters) {
+            insertTypeArguments = false
+        }
+
+        if (insertTypeArguments) {
+            document.insertString(offset, "<>")
+            editor.caretModel.moveToOffset(offset + 1)
+            offset += 2
         }
 
         var openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)
@@ -127,7 +136,7 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
                     context.setAddCompletionChar(false)
                 }
 
-                if (isInsertSpacesInOneLineFunctionEnabled(context.getProject())) {
+                if (isInsertSpacesInOneLineFunctionEnabled(project)) {
                     document.insertString(offset, " {  }")
                     inBracketsShift = 1
                 }
@@ -138,22 +147,23 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
             else {
                 document.insertString(offset, "()")
             }
-            PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
+            PsiDocumentManager.getInstance(project).commitDocument(document)
 
             openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
             closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
         }
 
-        val editor = context.getEditor()
-        if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
-            editor.getCaretModel().moveToOffset(openingBracketOffset + 1 + inBracketsShift)
-            AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, offsetElement)
-        }
-        else {
-            editor.getCaretModel().moveToOffset(closeBracketOffset + 1)
+        if (!insertTypeArguments) {
+            if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
+                editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
+                AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
+            }
+            else {
+                editor.caretModel.moveToOffset(closeBracketOffset + 1)
+            }
         }
 
-        PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
+        PsiDocumentManager.getInstance(project).commitDocument(document)
 
         if (insertLambda && lambdaInfo!!.explicitParameters) {
             insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo!!.lambdaType)
@@ -163,14 +173,9 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
     private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
         if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
-        return caretPosition == CaretPosition.IN_BRACKETS
+        return needValueArguments
     }
 
-    companion object {
-        public val NO_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
-        public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
-
-        private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
-                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
-    }
+    private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
+            = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
 }

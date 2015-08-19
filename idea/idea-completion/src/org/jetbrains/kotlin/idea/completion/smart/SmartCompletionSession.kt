@@ -38,6 +38,17 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
     override val descriptorKindFilter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
+    private val smartCompletion by lazy {
+        expression?.let {
+            SmartCompletion(it, resolutionFacade,
+                            bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
+                            toFromOriginalFileMapper, lookupElementFactory)
+        }
+    }
+
+    override val expectedInfos: Collection<ExpectedInfo>
+        get() = smartCompletion?.expectedInfos ?: emptyList()
+
     override fun doComplete() {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
             NamedArgumentCompletion.complete(position, collector, bindingContext)
@@ -47,16 +58,11 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             addFunctionLiteralArgumentCompletions()
 
-            val completion = SmartCompletion(
-                    expression, resolutionFacade, bindingContext, isVisibleFilter, inDescriptor,
-                    prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory
-            )
-
-            val (additionalItems, inheritanceSearcher) = completion.additionalItems()
+            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems()
             collector.addElements(additionalItems)
 
             if (nameExpression != null) {
-                val filter = completion.descriptorFilter
+                val filter = smartCompletion!!.descriptorFilter
                 if (filter != null) {
                     referenceVariants.forEach { collector.addElements(filter(it)) }
                     flushToResultSet()

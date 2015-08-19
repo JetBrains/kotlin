@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,6 +43,8 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
     override val psiElement: PsiElement? get() = null
@@ -59,8 +62,11 @@ public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObj
 
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
-        private val receiverTypes: Collection<JetType>
+        private val receiverTypes: Collection<JetType>,
+        expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
+    private val expectedInfos by lazy { expectedInfosCalculator() }
+
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,
             boldImmediateMembers: Boolean,
@@ -368,36 +374,74 @@ public class LookupElementFactory(
         return typeParameter.containingDeclaration == original
     }
 
-    companion object {
-        public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
-            return when (descriptor) {
-                is FunctionDescriptor -> {
-                    val parameters = descriptor.getValueParameters()
-                    when (parameters.size()) {
-                        0 -> KotlinFunctionInsertHandler.NO_PARAMETERS_HANDLER
+    public fun getDefaultInsertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
+        return when (descriptor) {
+            is FunctionDescriptor -> {
+                val needTypeArguments = needTypeArguments(descriptor)
+                val parameters = descriptor.valueParameters
+                when (parameters.size()) {
+                    0 -> KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = false)
 
-                        1 -> {
-                            val parameterType = parameters.single().getType()
-                            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                                val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                                if (parameterCount <= 1) {
-                                    // otherwise additional item with lambda template is to be added
-                                    return KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, false))
-                                }
+                    1 -> {
+                        val parameterType = parameters.single().getType()
+                        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                            val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                            if (parameterCount <= 1) {
+                                // otherwise additional item with lambda template is to be added
+                                return KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = GenerateLambdaInfo(parameterType, false))
                             }
-                            KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
                         }
-
-                        else -> KotlinFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                        KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true)
                     }
+
+                    else -> KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true)
                 }
+            }
 
-                is PropertyDescriptor -> KotlinPropertyInsertHandler
+            is PropertyDescriptor -> KotlinPropertyInsertHandler
 
-                is ClassifierDescriptor -> KotlinClassifierInsertHandler
+            is ClassifierDescriptor -> KotlinClassifierInsertHandler
 
-                else -> BaseDeclarationInsertHandler()
+            else -> BaseDeclarationInsertHandler()
+        }
+    }
+
+    private fun needTypeArguments(function: FunctionDescriptor): Boolean {
+        if (function.typeParameters.isEmpty()) return false
+
+        val originalFunction = function.original
+        val typeParameters = originalFunction.typeParameters
+
+        val potentiallyInferred = HashSet<TypeParameterDescriptor>()
+
+        fun addPotentiallyInferred(type: JetType) {
+            val descriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor
+            if (descriptor != null && descriptor in typeParameters) {
+                potentiallyInferred.add(descriptor)
+            }
+
+            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type).size() <= 1) {
+                // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
+                addPotentiallyInferred(KotlinBuiltIns.getReturnTypeFromFunctionType(type))
+                return
+            }
+
+            for (argument in type.arguments) {
+                if (!argument.isStarProjection) { // otherwise we can fall into infinite recursion
+                    addPotentiallyInferred(argument.type)
+                }
             }
         }
+
+        originalFunction.extensionReceiverParameter?.type?.let { addPotentiallyInferred(it) }
+        originalFunction.valueParameters.forEach { addPotentiallyInferred(it.type) }
+
+        val returnType = originalFunction.returnType
+        // check that there is an expected type and return value from the function can potentially match it
+        if (returnType != null && expectedInfos.any { it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null }) {
+            addPotentiallyInferred(returnType)
+        }
+
+        return originalFunction.typeParameters.any { it !in potentiallyInferred }
     }
 }

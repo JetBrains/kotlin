@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -142,10 +143,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = nameExpression?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it) }
 
     protected val lookupElementFactory: LookupElementFactory = run {
+        var receiverTypes = emptyList<JetType>()
         if (receiversData != null) {
             val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
-            var receiverTypes = receiversData.receivers.flatMap { receiverValue ->
+            receiverTypes = receiversData.receivers.flatMap { receiverValue ->
                 val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
                 if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
                     resolutionFacade.frontendService<SmartCastManager>()
@@ -159,12 +161,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             if (receiversData.callType == CallType.SAFE) {
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
+        }
 
-            LookupElementFactory(resolutionFacade, receiverTypes)
-        }
-        else {
-            LookupElementFactory(resolutionFacade, emptyList())
-        }
+        LookupElementFactory(resolutionFacade, receiverTypes, { expectedInfos })
     }
 
     private val collectorContext = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
@@ -229,6 +228,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected abstract fun doComplete()
 
     protected abstract val descriptorKindFilter: DescriptorKindFilter?
+
+    protected abstract val expectedInfos: Collection<ExpectedInfo>
 
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!

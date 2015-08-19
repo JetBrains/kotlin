@@ -138,6 +138,8 @@ class LookupElementsCollector(
 
     private fun addSpecialFunctionDescriptorElement(descriptor: FunctionDescriptor, parameterType: JetType) {
         var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
+        val needTypeArguments = (lookupElementFactory.getDefaultInsertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
+        val lambdaInfo = GenerateLambdaInfo(parameterType, true)
 
         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
@@ -150,7 +152,7 @@ class LookupElementsCollector(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, GenerateLambdaInfo(parameterType, true)).handleInsert(context, this)
+                KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = lambdaInfo).handleInsert(context, this)
             }
         }
 
