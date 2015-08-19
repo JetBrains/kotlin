@@ -76,3 +76,26 @@ fun whileContinue(cond: Boolean) {
         arr[i]
     }
 }
+
+fun nestedLoopsWithWhen() {
+    val arr1 = Array(6, { it })
+    val arr2 = Array(11, { it })
+    val arr3 = Array(16, { it })
+    for (i in 0 .. arr1.size() - 1)
+        for (j in 0 .. arr2.size() - 1)
+            for (k in 0 .. arr3.size() - 1)
+                when {
+                    k <= 5 && j <= 5 -> println("cube: ${arr1[i]} ${arr2[j]} ${arr3[k]}")
+                    k <= 10 -> println("not cube: ${arr1[i]} ${arr2[j]} ${arr3[k]}")
+                    else -> println("not cube at all: ${arr1[i]} ${arr2[j]} ${arr3[k]}")
+                }
+
+    for (i in 0 .. arr1.size() - 1)
+        for (j in 0 .. arr2.size())             // `-1` is omitted
+            for (k in 0 .. arr3.size())         // `-1` is omitted
+                when {
+                    k <= 5 && j <= 5 -> println("cube: ${arr1[i]} ${arr2[j]} ${arr3[k]}")
+                    k <= 10 -> println("not cube: ${arr1[i]} ${<!OUT_OF_BOUND_ACCESS!>arr2[j]<!>} ${arr3[k]}")
+                    else -> println("not cube at all: ${arr1[i]} ${<!OUT_OF_BOUND_ACCESS!>arr2[j]<!>} ${<!OUT_OF_BOUND_ACCESS!>arr3[k]<!>}")
+                }
+}
