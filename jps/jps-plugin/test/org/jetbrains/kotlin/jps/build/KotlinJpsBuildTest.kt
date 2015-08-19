@@ -701,7 +701,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             }
         }
 
-        val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(FqName(packageClassFqName), fakeVirtualFile)
+        val packagePartFqName = PackagePartClassUtils.getDefaultPartFqName(FqName(packageClassFqName), fakeVirtualFile)
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName))
     }
 
