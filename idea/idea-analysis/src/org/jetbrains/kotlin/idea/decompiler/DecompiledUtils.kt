@@ -17,8 +17,15 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.impl.FilePropertyPusher
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.util.messages.MessageBus
+import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -29,6 +36,10 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
  */
 public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
     if (file.getExtension() != JavaClassFileType.INSTANCE!!.getDefaultExtension()) {
+        return false
+    }
+
+    if (JarUserDataManager.getValue(HasCompiledKotlinInJar, file) == HasCompiledKotlinInJar.JarKotlinState.NO_KOTLIN) {
         return false
     }
 
@@ -69,3 +80,20 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
 
 public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
         isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')
+
+public object HasCompiledKotlinInJar : JarUserDataManager.JarUserDataCollector<HasCompiledKotlinInJar.JarKotlinState> {
+    public enum class JarKotlinState {
+        HAS_KOTLIN,
+        NO_KOTLIN,
+        COUNTING
+    }
+
+    override val key = Key.create<Pair<HasCompiledKotlinInJar.JarKotlinState, Long>>(HasCompiledKotlinInJar::class.simpleName!!)
+    override val stateClass = javaClass<JarKotlinState>()
+
+    override val init = JarKotlinState.COUNTING
+    override val stopState = JarKotlinState.HAS_KOTLIN
+    override val notFoundState = JarKotlinState.NO_KOTLIN
+
+    override fun process(file: VirtualFile) = if (isKotlinJvmCompiledFile(file)) JarKotlinState.HAS_KOTLIN else JarKotlinState.NO_KOTLIN
+}
