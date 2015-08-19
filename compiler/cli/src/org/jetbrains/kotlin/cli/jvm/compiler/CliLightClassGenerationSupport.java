@@ -204,6 +204,12 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, scope, filesWithCallables));
     }
 
+    @Nullable
+    @Override
+    public ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject) {
+        return bindingContext.get(BindingContext.CLASS, classOrObject);
+    }
+
     @NotNull
     @Override
     public BindingTraceContext createTrace() {

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.name.FqName
 
 interface LightClassData
 
@@ -53,4 +53,9 @@ data class OutermostKotlinClassLightClassData(
         override val classOrObject: JetClassOrObject,
         override val descriptor: ClassDescriptor?,
         val allInnerClasses: Map<JetClassOrObject, InnerKotlinClassLightClassData>
-): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics
+): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics {
+
+    fun dataForClass(cls: JetClassOrObject): LightClassDataForKotlinClass? =
+            if (cls == classOrObject) this else allInnerClasses[cls]
+
+}

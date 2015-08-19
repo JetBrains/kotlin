@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -150,8 +151,12 @@ public open class KotlinLightClassForExplicitDeclaration(
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassData().javaFileStub
 
     protected fun getDescriptor(): ClassDescriptor? {
-        val data = getLightClassDataExactly(classOrObject)
-        return data?.descriptor
+        val cachedValue = getLightClassCachedValue(classOrObject)
+        if (cachedValue.hasUpToDateValue()) {
+            return cachedValue.value.dataForClass(classOrObject)?.descriptor
+        }
+
+        return LightClassGenerationSupport.getInstance(project).resolveClassToDescriptor(classOrObject)
     }
 
     private fun getLightClassData(): OutermostKotlinClassLightClassData {
@@ -321,22 +326,17 @@ public open class KotlinLightClassForExplicitDeclaration(
     override fun isValid(): Boolean = classOrObject.isValid
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
-        // Java inheritor check doesn't work when trait (interface in Java) subclasses Java class and for Kotlin local classes
-        if (baseClass is KotlinLightClassForExplicitDeclaration || (isInterface && !baseClass.isInterface)) {
-            val qualifiedName: String?
-            if (baseClass is KotlinLightClassForExplicitDeclaration) {
-                val baseDescriptor = baseClass.getDescriptor()
-                qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
-            }
-            else {
-                qualifiedName = baseClass.qualifiedName
-            }
-
-            val thisDescriptor = getDescriptor()
-            return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
+        val qualifiedName: String?
+        if (baseClass is KotlinLightClassForExplicitDeclaration) {
+            val baseDescriptor = baseClass.getDescriptor()
+            qualifiedName = if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
+        }
+        else {
+            qualifiedName = baseClass.qualifiedName
         }
 
-        return super.isInheritor(baseClass, checkDeep)
+        val thisDescriptor = getDescriptor()
+        return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
     }
 
     throws(IncorrectOperationException::class)
@@ -399,17 +399,23 @@ public open class KotlinLightClassForExplicitDeclaration(
         }
 
         public fun getLightClassData(classOrObject: JetClassOrObject): OutermostKotlinClassLightClassData {
+            return getLightClassCachedValue(classOrObject).value
+        }
+
+        public fun getLightClassCachedValue(classOrObject: JetClassOrObject): CachedValue<OutermostKotlinClassLightClassData> {
             val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-            return CachedValuesManager.getManager(classOrObject.project).getCachedValue(
-                    outermostClassOrObject,
-                    JAVA_API_STUB,
-                    KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject),
-                    /*trackValue = */false)
+            var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
+            if (value == null) {
+                value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
+                        KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject), false)
+                value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)!!
+            }
+            return value
         }
 
         private fun getLightClassDataExactly(classOrObject: JetClassOrObject): LightClassDataForKotlinClass? {
             val data = getLightClassData(classOrObject)
-            return if (data.classOrObject == classOrObject) data else data.allInnerClasses.get(classOrObject)
+            return data.dataForClass(classOrObject)
         }
 
         private fun getOutermostClassOrObject(classOrObject: JetClassOrObject): JetClassOrObject {
@@ -424,11 +430,16 @@ public open class KotlinLightClassForExplicitDeclaration(
 
             if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
 
+            val mappedDescriptor = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(qualifiedName))
+            val mappedQName = if (mappedDescriptor == null) null else DescriptorUtils.getFqName(mappedDescriptor).asString()
+            if (qualifiedName == mappedQName) return true
+
             for (superType in classDescriptor.typeConstructor.supertypes) {
                 val superDescriptor = superType.constructor.declarationDescriptor
 
                 if (superDescriptor is ClassDescriptor) {
-                    if (qualifiedName == DescriptorUtils.getFqName(superDescriptor).asString()) return true
+                    val superQName = DescriptorUtils.getFqName(superDescriptor).asString()
+                    if (superQName == qualifiedName || superQName == mappedQName) return true
 
                     if (deep) {
                         if (checkSuperTypeByFQName(superDescriptor, qualifiedName, true)) {

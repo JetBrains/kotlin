@@ -305,6 +305,17 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Nullable
+    @Override
+    public ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject) {
+        try {
+            return (ClassDescriptor) ResolvePackage.resolveToDescriptor(classOrObject);
+        }
+        catch (IllegalStateException e) {
+            return null;
+        }
+    }
+
+    @Nullable
     private static PsiClass getLightClassForDecompiledPackage(@NotNull FqName packageFqName, @NotNull List<JetFile> filesWithCallables) {
         JetFile firstFile = filesWithCallables.iterator().next();
         if (firstFile.isCompiled()) {
