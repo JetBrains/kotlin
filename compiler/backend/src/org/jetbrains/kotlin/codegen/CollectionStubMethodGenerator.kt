@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_ABSTRACT
@@ -193,7 +192,7 @@ class CollectionStubMethodGenerator(
     }
 
     private fun createSyntheticSubclass(): Pair<MutableClassDescriptor, List<TypeParameterDescriptor>> {
-        val child = MutableClassDescriptor(descriptor.getContainingDeclaration(), JetScope.Empty, ClassKind.CLASS, false,
+        val child = MutableClassDescriptor(descriptor.getContainingDeclaration(), ClassKind.CLASS, false,
                                            Name.special("<synthetic inheritor of ${descriptor.getName()}>"), descriptor.getSource())
         child.setModality(Modality.FINAL)
         child.setVisibility(Visibilities.PUBLIC)

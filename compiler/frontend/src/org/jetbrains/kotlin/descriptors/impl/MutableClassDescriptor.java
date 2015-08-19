@@ -16,20 +16,21 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import com.google.common.collect.Sets;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.types.TypeConstructorImpl;
+import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.*;
 
-public class MutableClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes {
+public class MutableClassDescriptor extends ClassDescriptorBase implements ClassDescriptor {
     private final ClassKind kind;
     private final boolean isInner;
 
@@ -37,26 +38,10 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private Visibility visibility;
     private TypeConstructor typeConstructor;
     private List<TypeParameterDescriptor> typeParameters;
-    private Collection<JetType> supertypes = new ArrayList<JetType>();
-
-    private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
-    private ConstructorDescriptor primaryConstructor;
-
-    private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newLinkedHashSet();
-    private final Set<PropertyDescriptor> properties = Sets.newLinkedHashSet();
-    private final Set<SimpleFunctionDescriptor> functions = Sets.newLinkedHashSet();
-
-    private final MutableScopeForMemberResolution mutableScopeForMemberResolution;
-    private final JetScope scopeForMemberResolution;
-    // This scope contains type parameters but does not contain inner classes
-    private final WritableScope scopeForSupertypeResolution;
-    private JetScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
-    private final JetScope unsubstitutedMemberScope;
-    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
+    private final Collection<JetType> supertypes = new ArrayList<JetType>();
 
     public MutableClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetScope outerScope,
             @NotNull ClassKind kind,
             boolean isInner,
             @NotNull Name name,
@@ -67,25 +52,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         this.kind = kind;
         this.isInner = isInner;
-
-        RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
-
-        this.unsubstitutedMemberScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
-                                        .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
-                .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.mutableScopeForMemberResolution = new MutableScopeForMemberResolution();
-
-        if (kind == ClassKind.INTERFACE) {
-            setUpScopeForInitializers(this);
-        }
-
-        this.scopeForMemberResolution = new ChainedScope(this, "MemberResolutionWithStatic", mutableScopeForMemberResolution, staticScope);
     }
 
     @Nullable
     @Override
-    public MutableClassDescriptor getCompanionObjectDescriptor() {
+    public ClassDescriptor getCompanionObjectDescriptor() {
         return null;
     }
 
@@ -137,15 +108,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return typeConstructor;
     }
 
-    @NotNull
-    public Collection<JetType> getSupertypes() {
-        return supertypes;
-    }
-
-    public void setSupertypes(@NotNull Collection<JetType> supertypes) {
-        this.supertypes = supertypes;
-    }
-
     public void addSupertype(@NotNull JetType supertype) {
         assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
@@ -154,50 +116,16 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         }
     }
 
-    public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
-        assert primaryConstructor == null : "Primary constructor assigned twice " + this;
-        primaryConstructor = constructorDescriptor;
-
-        constructors.add(constructorDescriptor);
-
-        ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(new DelegatingType() {
-            @Override
-            protected JetType getDelegate() {
-                return getDefaultType();
-            }
-        });
-
-        if (constructorDescriptor.isPrimary()) {
-            setUpScopeForInitializers(constructorDescriptor);
-        }
-    }
-
     @NotNull
     @Override
     public Set<ConstructorDescriptor> getConstructors() {
-        return constructors;
+        return Collections.emptySet();
     }
 
     @Override
     @Nullable
     public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
-        return primaryConstructor;
-    }
-
-    @NotNull
-    public Set<SimpleFunctionDescriptor> getFunctions() {
-        return functions;
-    }
-
-    @NotNull
-    public Set<PropertyDescriptor> getProperties() {
-        return properties;
-    }
-
-    @Override
-    @NotNull
-    public Set<CallableMemberDescriptor> getDeclaredCallableMembers() {
-        return declaredCallableMembers;
+        return null;
     }
 
     public void setTypeParameterDescriptors(@NotNull List<TypeParameterDescriptor> typeParameters) {
@@ -205,10 +133,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
             throw new IllegalStateException("Type parameters are already set for " + getName());
         }
         this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-            scopeForSupertypeResolution.addClassifierDescriptor(typeParameterDescriptor);
-        }
-        scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     public void createTypeConstructor() {
@@ -224,87 +148,22 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
-        mutableScopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
-    }
-
-    @Override
-    @NotNull
-    public JetScope getScopeForClassHeaderResolution() {
-        return scopeForSupertypeResolution;
-    }
-
-    @Override
-    @NotNull
-    public JetScope getScopeForMemberDeclarationResolution() {
-        return scopeForMemberResolution;
-    }
-
-    @Override
-    @NotNull
-    public JetScope getScopeForInitializerResolution() {
-        if (scopeForInitializers == null) {
-            throw new IllegalStateException("Scope for initializers queried before the primary constructor is set");
-        }
-        return scopeForInitializers;
-    }
-
-    private void setUpScopeForInitializers(@NotNull DeclarationDescriptor containingDeclaration) {
-        this.scopeForInitializers = new WritableScopeImpl(
-                scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Initializers")
-                    .changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
     @Override
     @NotNull
     public JetScope getUnsubstitutedMemberScope() {
-        return unsubstitutedMemberScope;
+        return JetScope.Empty.INSTANCE$; // used for getDefaultType
     }
 
     @NotNull
     @Override
     public JetScope getStaticScope() {
-        return staticScope;
+        return JetScope.Empty.INSTANCE$;
     }
 
     @Override
     public String toString() {
         return DeclarationDescriptorImpl.toString(this);
-    }
-
-    private class MutableScopeForMemberResolution extends AbstractScopeAdapter {
-        private ReceiverParameterDescriptor implicitReceiver = null;
-        private List<ReceiverParameterDescriptor> implicitReceiversHierarchy = null;
-
-        @NotNull
-        @Override
-        protected JetScope getWorkerScope() {
-            return scopeForSupertypeResolution;
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return MutableClassDescriptor.this;
-        }
-
-        public void setImplicitReceiver(@NotNull ReceiverParameterDescriptor implicitReceiver) {
-            if (this.implicitReceiver != null) {
-                throw new UnsupportedOperationException("Receiver redeclared");
-            }
-            if (this.implicitReceiversHierarchy != null) {
-                throw new UnsupportedOperationException("Receiver hierarchy already computed");
-            }
-            this.implicitReceiver = implicitReceiver;
-            this.implicitReceiversHierarchy = KotlinPackage.plus(Collections.singletonList(implicitReceiver), super.getImplicitReceiversHierarchy());
-        }
-
-        @NotNull
-        @Override
-        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-            if (implicitReceiversHierarchy != null)
-                return implicitReceiversHierarchy;
-            else
-                return super.getImplicitReceiversHierarchy();
-        }
     }
 }
