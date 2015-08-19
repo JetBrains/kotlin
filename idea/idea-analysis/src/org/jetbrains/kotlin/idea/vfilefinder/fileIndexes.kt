@@ -32,7 +32,7 @@ import java.util.Collections
 abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
     public val KEY: ID<FqName, Void> = ID.create(classOfIndex.getCanonicalName())
 
-    private val KEY_DESCRIPTOR = object : KeyDescriptor<FqName> {
+    private val KEY_DESCRIPTOR : KeyDescriptor<FqName> = object : KeyDescriptor<FqName> {
         override fun save(output: DataOutput, value: FqName) = output.writeUTF(value.asString())
 
         override fun read(input: DataInput) = FqName(input.readUTF())
