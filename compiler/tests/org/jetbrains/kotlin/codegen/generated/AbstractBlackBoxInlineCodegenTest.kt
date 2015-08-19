@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.codegen.generated
 
 import org.jetbrains.kotlin.codegen.InlineTestUtil
+import org.jetbrains.kotlin.codegen.filterClassFiles
+import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.jvm.compiler.AbstractSMAPBaseTest
 import java.io.File
 
@@ -28,8 +30,8 @@ public abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodege
 
         doTestMultiFile(inputFiles)
         try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles(), myFiles.getPsiFiles())
-            checkSMAP(myFiles.getPsiFiles(), generateClassesInFile().asList())
+            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.getPsiFiles())
+            checkSMAP(myFiles.getPsiFiles(), generateClassesInFile().getClassFiles())
         }
         catch (e: Throwable) {
             System.out.println(generateToText())

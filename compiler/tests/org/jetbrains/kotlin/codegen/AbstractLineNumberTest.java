@@ -117,7 +117,7 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
-        for (OutputFile outputFile : factory.asList()) {
+        for (OutputFile outputFile : CodegenPackage.getClassFiles(factory)) {
             if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(outputFile.getRelativePath())))) {
                 // Don't test line numbers in *Package facade classes
                 continue;

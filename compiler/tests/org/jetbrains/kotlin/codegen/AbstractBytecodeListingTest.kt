@@ -29,7 +29,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         val ktFile = File(filename)
         val txtFile = File(ktFile.parent, ktFile.nameWithoutExtension + ".txt")
         val generatedFiles = CodegenTestUtil.generateFiles(myEnvironment, myFiles)
-                .asList()
+                .getClassFiles()
                 .sortedBy { it.relativePath }
                 .map {
                     val cr = ClassReader(it.asByteArray())

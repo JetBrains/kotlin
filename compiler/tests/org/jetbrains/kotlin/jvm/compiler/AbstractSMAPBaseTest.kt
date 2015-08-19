@@ -32,7 +32,7 @@ import java.io.File
 
 public trait AbstractSMAPBaseTest {
 
-    private fun extractSMAPFromClasses(outputFiles: List<OutputFile>): List<SMAPAndFile> {
+    private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
         return outputFiles.map { outputFile ->
             if (PackageClassUtils.isPackageClassFqName(FqName(FileUtil.getNameWithoutExtension(outputFile.relativePath).replace('/', '.')))) {
                 // Don't test line numbers in *Package facade classes
@@ -65,7 +65,7 @@ public trait AbstractSMAPBaseTest {
         return null;
     }
 
-    fun checkSMAP(inputFiles: List<JetFile>, outputFiles: List<OutputFile>) {
+    fun checkSMAP(inputFiles: List<JetFile>, outputFiles: Iterable<OutputFile>) {
         if (!InlineCodegenUtil.GENERATE_SMAP) {
             return
         }

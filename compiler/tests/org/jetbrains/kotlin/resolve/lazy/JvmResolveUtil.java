@@ -52,11 +52,20 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
+        return analyzeFilesWithJavaIntegrationAndCheckForErrors(project, files, PackageMappingProvider.EMPTY);
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeFilesWithJavaIntegrationAndCheckForErrors(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files,
+            @NotNull PackageMappingProvider packageMappingProvider
+    ) {
         for (JetFile file : files) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
 
-        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files);
+        AnalysisResult analysisResult = analyzeFilesWithJavaIntegration(project, files, packageMappingProvider);
 
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
@@ -68,10 +77,19 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
+        return analyzeFilesWithJavaIntegration(project, files, PackageMappingProvider.EMPTY);
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeFilesWithJavaIntegration(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files,
+            @NotNull PackageMappingProvider packageMappingProvider
+    ) {
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "java-integration-test");
 
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
-        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(moduleContext, files, trace, null, null, PackageMappingProvider.EMPTY);
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(moduleContext, files, trace, null, null, packageMappingProvider);
     }
 }
