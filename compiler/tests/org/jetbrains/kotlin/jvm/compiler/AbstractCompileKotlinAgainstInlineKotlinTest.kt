@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.InlineTestUtil
+import org.jetbrains.kotlin.codegen.filterClassFiles
 import java.io.File
 import java.util.Collections
 
@@ -31,8 +32,8 @@ public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCom
 
         try {
             val sourceFiles = factory1.getInputFiles() + factory2.getInputFiles()
-            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles, sourceFiles)
-            checkSMAP(sourceFiles, allGeneratedFiles)
+            InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
+            checkSMAP(sourceFiles, allGeneratedFiles.filterClassFiles())
         }
         catch (e: Throwable) {
             System.out.println(factory1.createText() + "\n" + factory2.createText())

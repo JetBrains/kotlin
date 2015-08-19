@@ -229,7 +229,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
         boolean noErrors = true;
-        for (OutputFile file : factory.asList()) {
+        for (OutputFile file : CodegenPackage.getClassFiles(factory)) {
             noErrors &= verifyWithAsm(file, loader);
         }
         return noErrors;
