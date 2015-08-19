@@ -199,6 +199,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("beforeOtherNamed.kt")
+        public void testBeforeOtherNamed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/beforeOtherNamed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionLiteralArgument.kt")
         public void testFunctionLiteralArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/functionLiteralArgument.kt");
