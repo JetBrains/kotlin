@@ -19,17 +19,15 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.frontend.di.createContainerForMacros
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -86,12 +85,11 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
         val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
-        val moduleDescriptor = callExpression.getResolutionFacade().findModuleDescriptor(callExpression)
         val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
-        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, moduleDescriptor)) return null
+        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade, callExpression)) return null
 
         val isSetUsage = callExpression.valueArguments.size() == 1
         if (isSetUsage && property.type != function.valueParameters.single().type) {
@@ -113,7 +111,8 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             resolutionScope: JetScope,
             dataFlowInfo: DataFlowInfo,
             expectedType: JetType,
-            moduleDescriptor: ModuleDescriptor
+            facade: ResolutionFacade,
+            callExpression: JetCallExpression
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
@@ -129,7 +128,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
-        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val callResolver = facade.frontendService<CallResolver>(callExpression)
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property
     }
