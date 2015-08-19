@@ -436,12 +436,20 @@ public class LookupElementFactory(
         originalFunction.extensionReceiverParameter?.type?.let { addPotentiallyInferred(it) }
         originalFunction.valueParameters.forEach { addPotentiallyInferred(it.type) }
 
+        fun allTypeParametersPotentiallyInferred() = originalFunction.typeParameters.all { it in potentiallyInferred }
+
+        if (allTypeParametersPotentiallyInferred()) return false
+
         val returnType = originalFunction.returnType
         // check that there is an expected type and return value from the function can potentially match it
-        if (returnType != null && expectedInfos.any { it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null }) {
+        if (returnType != null) {
             addPotentiallyInferred(returnType)
+
+            if (allTypeParametersPotentiallyInferred() && expectedInfos.any { it.fuzzyType?.checkIsSuperTypeOf(originalFunction.fuzzyReturnType()!!) != null }) {
+                return false
+            }
         }
 
-        return originalFunction.typeParameters.any { it !in potentiallyInferred }
+        return true
     }
 }
