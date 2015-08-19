@@ -5,4 +5,5 @@ internal fun arrayAccessWithLiteral(): kotlin.Int
 internal fun arraySizeMethodCall(): kotlin.Unit
 internal fun listAccessWithLiteral(): kotlin.Int
 internal fun listSizeMethodCall(): kotlin.Unit
+internal fun multiSizeArray(/*0*/ cond: kotlin.Boolean): kotlin.Unit
 internal fun simpleFor(): kotlin.Unit

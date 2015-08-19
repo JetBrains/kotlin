@@ -62,3 +62,31 @@ fun accessThroughMethods() {
     val snd = arr.<!OUT_OF_BOUND_ACCESS!>get(2)<!>
     arr.<!OUT_OF_BOUND_ACCESS!>set(3, fst + snd)<!>
 }
+
+fun multiSizeArray(cond: Boolean) {
+    val arr: Array<Int>
+    if (cond) {
+        arr = Array(3, { it })
+    }
+    else {
+        arr = Array(5, { it })
+    }
+
+    if (arr.size() == 5) {
+        for (i in 3 .. 4) {
+            arr[i] = 0
+        }
+    }
+
+    if (arr.size() == 3) {      // typo, `3` instead `5`
+        for (i in 3 .. 4) {
+            <!OUT_OF_BOUND_ACCESS!>arr[i] = 0<!>
+        }
+    }
+
+    if (arr.size() == 3) {
+        for (i in 0 .. 3) {     // typo, `3` instead `2`
+            println(<!OUT_OF_BOUND_ACCESS!>arr[i]<!>)
+        }
+    }
+}

@@ -317,9 +317,12 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             is BooleanVariableValue.Undefined -> {
                 fun processUndefinedCase(edgeData: ValuesData, restrictions: Map<VariableDescriptor, Set<Int>>) {
                     for ((variable, unrestrictedValues) in restrictions) {
-                        val values = edgeData.intVarsToValues[variable]
+                        val (values, sourceCollection) =
+                                if (edgeData.intVarsToValues.contains(variable))
+                                    edgeData.intVarsToValues[variable] to edgeData.intVarsToValues
+                                else edgeData.collectionsToSizes[variable] to edgeData.collectionsToSizes
                         if (values is IntegerVariableValues.Defined) {
-                            edgeData.intVarsToValues[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
+                            sourceCollection[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
                         }
                     }
                 }
@@ -613,8 +616,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue) -> BooleanVariableValue) =
                 performOperation(updatedData.boolFakeVarsToValues, updatedData.boolFakeVarsToValues,
                                  BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
-        val leftOperandDescriptor =
-                leftOperandVariable.createdAt?.let { PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext) }
+        val leftOperandDescriptor = leftOperandVariable.createdAt?.let {
+            val instructionWithDescriptor = getCollectionReadInstructionIfIsSizeMethodCall(it) ?: it
+            PseudocodeUtil.extractVariableDescriptorIfAny(instructionWithDescriptor, false, bindingContext)
+        }
         when (token) {
             JetTokens.PLUS -> intIntOperation { x, y -> x + y }
             JetTokens.MINUS -> intIntOperation { x, y -> x - y }
@@ -630,6 +635,16 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             JetTokens.OROR -> boolBoolOperation { x, y -> x.or(y) }
             JetTokens.ANDAND -> boolBoolOperation { x, y -> x.and(y) }
         }
+    }
+
+    private fun getCollectionReadInstructionIfIsSizeMethodCall(instruction: Instruction): Instruction? {
+        if (instruction is CallInstruction && !instruction.inputValues.isEmpty()) {
+            val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction) ?: return null
+            if (pseudoAnnotation is PseudoAnnotation.SizeMethod) {
+                return instruction.inputValues.first().createdAt
+            }
+        }
+        return null
     }
 
     private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData) {

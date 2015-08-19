@@ -21,3 +21,19 @@ fun sizeMethodCall() {
     val arr = arrayOf(1, 2, 3)
     val sz = arr.size()
 }
+
+fun multiSizeArray(cond: Boolean) {
+    val arr: Array<Int>
+    if (cond) {
+        arr = Array(3, { it })
+    }
+    else {
+        arr = Array(5, { it })
+    }
+
+    if (arr.size() == 5) {
+        for (i in 3 .. 4) {
+            arr[i] = 0
+        }
+    }
+}
