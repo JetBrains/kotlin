@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public class ImplementMethodsHandler : OverrideImplementMethodsHandler(), IntentionAction {
-    override fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
+public class ImplementMembersHandler : OverrideImplementMembersHandler(), IntentionAction {
+    override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         return OverrideResolver.getMissingImplementations(descriptor)
                 .map { OverrideMemberChooserObject.create(project, it, it) }
     }
 
     override fun getChooserTitle() = "Implement Members"
 
-    override fun getNoMethodsFoundHint() = "No methods to implement have been found"
+    override fun getNoMembersFoundHint() = "No members to implement have been found"
 
     override fun getText() = JetBundle.message("implement.members")
     override fun getFamilyName() = JetBundle.message("implement.members")

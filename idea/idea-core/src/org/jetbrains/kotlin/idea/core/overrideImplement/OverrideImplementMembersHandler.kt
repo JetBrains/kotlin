@@ -37,14 +37,14 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.*
 import java.util.ArrayList
 
-public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActionHandler {
+public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
-    public fun collectMethodsToGenerate(classOrObject: JetClassOrObject): Collection<OverrideMemberChooserObject> {
+    public fun collectMembersToGenerate(classOrObject: JetClassOrObject): Collection<OverrideMemberChooserObject> {
         val descriptor = classOrObject.resolveToDescriptor() as? ClassDescriptor ?: return emptySet()
-        return collectMethodsToGenerate(descriptor, classOrObject.project)
+        return collectMembersToGenerate(descriptor, classOrObject.project)
     }
 
-    protected abstract fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject>
+    protected abstract fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject>
 
     private fun showOverrideImplementChooser(project: Project, members: Array<OverrideMemberChooserObject>): MemberChooser<OverrideMemberChooserObject>? {
         val chooser = MemberChooser(members, true, true, project)
@@ -63,15 +63,15 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         return classOrObject != null
     }
 
-    protected abstract fun getNoMethodsFoundHint(): String
+    protected abstract fun getNoMembersFoundHint(): String
 
     public fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()!!
 
-        val members = collectMethodsToGenerate(classOrObject)
+        val members = collectMembersToGenerate(classOrObject)
         if (members.isEmpty() && !implementAll) {
-            HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint())
+            HintManager.getInstance().showErrorHint(editor, getNoMembersFoundHint())
             return
         }
 

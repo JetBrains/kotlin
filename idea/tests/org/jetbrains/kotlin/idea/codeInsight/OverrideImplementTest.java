@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMethodsHandler;
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 public final class OverrideImplementTest extends AbstractOverrideImplementTest {
@@ -180,11 +180,11 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
     }
 
     public void testSameTypeName() {
-        doDirectoryTest(new OverrideMethodsHandler());
+        doDirectoryTest(new OverrideMembersHandler());
     }
 
     public void testPropagationKJK() {
-        doDirectoryTest(new OverrideMethodsHandler());
+        doDirectoryTest(new OverrideMembersHandler());
     }
 
     public void testMultipleSupers() {

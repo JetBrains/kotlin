@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.*
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
-public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
-    override fun collectMethodsToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
+public class OverrideMembersHandler : OverrideImplementMembersHandler() {
+    override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
         for (member in descriptor.unsubstitutedMemberScope.getAllDescriptors()) {
             if (member is CallableMemberDescriptor
@@ -74,5 +74,5 @@ public class OverrideMethodsHandler : OverrideImplementMethodsHandler() {
 
     override fun getChooserTitle() = "Override Members"
 
-    override fun getNoMethodsFoundHint() = "No methods to override have been found"
+    override fun getNoMembersFoundHint() = "No members to override have been found"
 }

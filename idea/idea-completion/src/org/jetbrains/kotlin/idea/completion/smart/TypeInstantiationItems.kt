@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -170,7 +170,7 @@ class TypeInstantiationItems(
 
                 shortenReferences(context, startOffset, startOffset + text.length())
 
-                ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
+                ImplementMembersHandler().invoke(context.getProject(), editor, context.getFile(), true)
             }
             lookupElement = lookupElement.suppressAutoInsertion()
             lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.ANONYMOUS_OBJECT)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
+import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -144,7 +144,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS))
 
 
-        val implementMethodsHandler = ImplementMethodsHandler()
+        val implementMethodsHandler = ImplementMembersHandler()
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
         MANY_IMPL_MEMBER_NOT_IMPLEMENTED.registerActions(implementMethodsHandler)
 
