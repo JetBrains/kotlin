@@ -30,6 +30,7 @@ public val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
 public val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.rmi.service.CompileDaemon"
 public val COMPILE_DAEMON_DEFAULT_PORT: Int = 17031
 public val COMPILE_DAEMON_ENABLED_PROPERTY: String ="kotlin.daemon.enabled"
+public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String ="kotlin.daemon.jvm.options"
 
 
 fun<C, V, P: KProperty1<C,V>> C.propToParams(p: P, conv: ((v: V) -> String) = { it.toString() } ) =

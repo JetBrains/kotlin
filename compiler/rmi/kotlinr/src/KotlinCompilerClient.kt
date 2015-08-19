@@ -157,6 +157,11 @@ public class KotlinCompilerClient {
             return connectToService(compilerId, daemonOptions, errStream)
         }
 
+        public fun shutdownCompileService(): Unit {
+            KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonLaunchingOptions(), DaemonOptions(), System.out, autostart = false, checkId = false)
+                    ?.shutdown()
+        }
+
         public fun incrementalCompile(compiler: CompileService, args: Array<String>, caches: Map<String, IncrementalCache>, out: OutputStream): Int {
 
             val outStrm = RemoteOutputStreamServer(out)
@@ -173,6 +178,13 @@ public class KotlinCompilerClient {
         }
 
         public fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
+
+        public fun configureDaemonLaunchingOptions(opts: DaemonLaunchingOptions) {
+            System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
+                // TODO: find better way to pass and parse jvm options for daemon
+                opts.jvmParams = it.split("##")
+            }
+        }
 
         data class ClientOptions(
                 public var stop: Boolean = false
