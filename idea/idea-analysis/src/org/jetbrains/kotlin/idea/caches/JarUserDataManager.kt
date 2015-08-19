@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.caches
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public object JarUserDataManager {
@@ -30,7 +32,7 @@ public object JarUserDataManager {
         NO_FILE
     }
 
-    val version = 1
+    val version = 2
 
     val fileAttributeService: FileAttributeService? = ServiceManager.getService(javaClass<FileAttributeService>())
 
@@ -39,44 +41,39 @@ public object JarUserDataManager {
     }
 
     public fun hasFileWithProperty(counter: JarBooleanPropertyCounter, file: VirtualFile): Boolean? {
-        val jarFile = findJarRoot(file) ?: return null
+        val localJarFile = JarFileSystemUtil.findLocalJarFile(file) ?: return null
 
-        val stored = jarFile.getUserData(counter.key)
-        if (stored != null && jarFile.timeStamp == stored.timestamp) {
-            return stored.hasFileWithProperty
+        val stored = localJarFile.getUserData(counter.key)
+        if (stored != null) {
+            if (localJarFile.timeStamp == stored.timestamp) {
+                return stored.hasFileWithProperty
+            }
         }
 
         if (stored == null && fileAttributeService != null) {
-            val savedData = fileAttributeService.readAttribute(counter.key.toString(), jarFile, javaClass<State>())
+            val savedData = fileAttributeService.readAttribute(counter.key.toString(), localJarFile, javaClass<State>())
             if (savedData != null && savedData.value != null) {
                 val hasFileWithProperty = savedData.value == State.HAS_FILE
 
-                jarFile.putUserData(counter.key, PropertyData(hasFileWithProperty, savedData.timeStamp))
+                storeUserData(counter, localJarFile, hasFileWithProperty, savedData.timeStamp)
 
-                if (jarFile.timeStamp == savedData.timeStamp) {
+                if (localJarFile.timeStamp == savedData.timeStamp) {
                     return hasFileWithProperty
                 }
             }
         }
 
-        scheduleJarProcessing(counter, jarFile)
+        val jarFileRoot = JarFileSystemUtil.findJarFileRoot(file) ?: return null
+        scheduleJarProcessing(counter, jarFileRoot, localJarFile)
 
         return null
     }
 
-    private fun findJarRoot(file: VirtualFile): VirtualFile? {
-        if (!file.getUrl().startsWith("jar://")) return null
+    private fun scheduleJarProcessing(counter: JarBooleanPropertyCounter, jarFile: VirtualFile, localJarFile: VirtualFile) {
+        val userData = localJarFile.getUserData(counter.key)
+        if (userData != null && localJarFile.timeStamp == userData.timestamp) return
 
-        var jarFile = file
-        while (jarFile.getParent() != null) jarFile = jarFile.getParent()
-
-        return jarFile
-    }
-
-    private fun scheduleJarProcessing(counter: JarBooleanPropertyCounter, jarFile: VirtualFile) {
-        if (jarFile.getUserData(counter.key) != null) return
-
-        jarFile.putUserData(counter.key, PropertyData(null, jarFile.timeStamp))
+        storeUserData(counter, localJarFile, null)
 
         ApplicationManager.getApplication().executeOnPooledThread {
             runReadAction {
@@ -86,12 +83,42 @@ public object JarUserDataManager {
 
                 val state = if (hasFileWithProperty) State.HAS_FILE else State.NO_FILE
 
-                val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), jarFile, state)
+                val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), localJarFile, state)
 
-                jarFile.putUserData(
-                        counter.key,
-                        PropertyData(hasFileWithProperty, (savedData?.timeStamp ?: jarFile.timeStamp)))
+                storeUserData(counter, localJarFile, hasFileWithProperty, (savedData?.timeStamp ?: localJarFile.timeStamp))
             }
+        }
+    }
+
+    private fun storeUserData(counter: JarBooleanPropertyCounter, localJarFile: VirtualFile,
+                              hasFileWithProperty: Boolean?, timestamp: Long? = null) {
+        assert(localJarFile.isInLocalFileSystem)
+        assert((timestamp == null) == (hasFileWithProperty == null), "Using empty timestamp is only allowed for storing not counted value")
+
+        localJarFile.putUserData(counter.key,
+                                 PropertyData(hasFileWithProperty, timestamp ?: localJarFile.timeStamp))
+    }
+
+    object JarFileSystemUtil {
+        public fun findJarFileRoot(inJarFile: VirtualFile): VirtualFile? {
+            if (!inJarFile.getUrl().startsWith("jar://")) return null
+
+            var jarFile = inJarFile
+            while (jarFile.getParent() != null) jarFile = jarFile.getParent()
+
+            return jarFile
+        }
+
+        public fun findLocalJarFile(inJarFile: VirtualFile): VirtualFile? {
+            if (!inJarFile.getUrl().startsWith("jar://")) return null
+
+            val path = inJarFile.getPath()
+
+            val jarSeparatorIndex = path.indexOf(URLUtil.JAR_SEPARATOR)
+            assert(jarSeparatorIndex >= 0) { "Path passed to JarFileSystem must have jar separator '!/': $path" }
+            val localPath = path.substring(0, jarSeparatorIndex)
+
+            return StandardFileSystems.local().findFileByPath(localPath)
         }
     }
 
