@@ -1110,6 +1110,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NonPredictableSmartCastWithWrongReturnType.kt")
+            public void testNonPredictableSmartCastWithWrongReturnType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/boldOrGrayed/NonPredictableSmartCastWithWrongReturnType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SafeCallAfterNullable.kt")
             public void testSafeCallAfterNullable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/boldOrGrayed/SafeCallAfterNullable.kt");
@@ -1212,6 +1218,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("MemberExtensionFromWith.kt")
             public void testMemberExtensionFromWith() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/MemberExtensionFromWith.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MemberExtensionWithoutExplicitReceiver.kt")
+            public void testMemberExtensionWithoutExplicitReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/MemberExtensionWithoutExplicitReceiver.kt");
                 doTest(fileName);
             }
 
@@ -1798,6 +1810,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         public static class SmartCast extends AbstractJvmBasicCompletionTest {
             public void testAllFilesPresentInSmartCast() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/smartCast"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("MemberExtensionAfterThisSmartCast.kt")
+            public void testMemberExtensionAfterThisSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/MemberExtensionAfterThisSmartCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MembersAfterSmartCast.kt")
+            public void testMembersAfterSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/smartCast/MembersAfterSmartCast.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("SmartCastAfterIf.kt")

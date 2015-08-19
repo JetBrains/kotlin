@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -82,10 +83,18 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
     if (!receiver.exists()) return listOf()
+
+    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
+    return substituteExtensionIfCallable(types, callType)
+}
+
+public fun CallableDescriptor.substituteExtensionIfCallable(
+        receiverTypes: Collection<JetType>,
+        callType: CallType
+): Collection<CallableDescriptor> {
     if (!callType.canCall(this)) return listOf()
 
-    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo).asSequence()
-
+    var types = receiverTypes.asSequence()
     if (callType == CallType.SAFE) {
         types = types.map { it.makeNotNullable() }
     }

@@ -27,10 +27,12 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
@@ -42,10 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.getDataFlowInfo;
 
@@ -76,7 +75,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
-        for (DeclarationDescriptor declarationDescriptor : scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER)) {
+        for (DeclarationDescriptor declarationDescriptor : getAllVariables(scope)) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
 
@@ -104,6 +103,15 @@ public abstract class BaseJetVariableMacro extends Macro {
         }
 
         return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
+    }
+
+    private static Collection<DeclarationDescriptor> getAllVariables(JetScope scope) {
+        Collection<DeclarationDescriptor> result = ContainerUtil.newArrayList();
+        result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER));
+        for (ReceiverParameterDescriptor implicitReceiver : scope.getImplicitReceiversHierarchy()) {
+            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, JetScope.ALL_NAME_FILTER));
+        }
+        return result;
     }
 
     protected abstract boolean isSuitable(

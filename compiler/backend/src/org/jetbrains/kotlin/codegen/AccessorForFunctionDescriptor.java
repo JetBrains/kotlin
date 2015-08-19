@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
 
     private final FunctionDescriptor calleeDescriptor;
@@ -39,7 +37,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor || AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)
-                        ? NO_RECEIVER_PARAMETER
+                        ? null
                         : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),
                    copyValueParameters(descriptor),

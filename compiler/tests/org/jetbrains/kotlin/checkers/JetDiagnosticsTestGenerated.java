@@ -8154,6 +8154,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("nestedClassInObject.kt")
+            public void testNestedClassInObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/nestedClassInObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nestedClassNotAllowed.kt")
             public void testNestedClassNotAllowed() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed.kt");
@@ -11325,6 +11331,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt5326.kt")
             public void testKt5326() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt5326.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt5362.kt")
+            public void testKt5362() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt5362.kt");
                 doTest(fileName);
             }
 

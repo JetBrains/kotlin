@@ -26,8 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-
 public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements ConstructorDescriptor {
 
     protected final boolean isPrimary;
@@ -74,7 +72,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                 return ((ClassDescriptor) classContainer).getThisAsReceiverParameter();
             }
         }
-        return NO_RECEIVER_PARAMETER;
+        return null;
     }
 
     @NotNull

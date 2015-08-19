@@ -3,10 +3,10 @@ class Outer {
     val property = ""
     
     class Nested {
-        fun f() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>function()<!>
-        fun g() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>property<!>
-        fun h() = this<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>@Outer<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
-        fun i() = this<!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>@Outer<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>property<!>
+        fun f() = <!UNRESOLVED_REFERENCE!>function<!>()
+        fun g() = <!UNRESOLVED_REFERENCE!>property<!>
+        fun h() = this<!UNRESOLVED_REFERENCE!>@Outer<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>function<!>()
+        fun i() = this<!UNRESOLVED_REFERENCE!>@Outer<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>property<!>
     }
     
     inner class Inner {

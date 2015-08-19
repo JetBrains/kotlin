@@ -128,44 +128,6 @@ public class QualifiedExpressionResolver {
     }
 
     @NotNull
-    public Collection<DeclarationDescriptor> lookupDescriptorsForQualifiedExpression(
-            @NotNull JetQualifiedExpression importedReference,
-            @NotNull JetScope outerScope,
-            @NotNull DeclarationDescriptor shouldBeVisibleFrom,
-            @NotNull BindingTrace trace,
-            @NotNull LookupMode lookupMode,
-            boolean storeResult
-    ) {
-        JetExpression receiverExpression = importedReference.getReceiverExpression();
-        Collection<DeclarationDescriptor> declarationDescriptors;
-        if (receiverExpression instanceof JetQualifiedExpression) {
-            declarationDescriptors =
-                    lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) receiverExpression, outerScope, shouldBeVisibleFrom,
-                                                            trace, lookupMode, storeResult);
-        }
-        else {
-            assert receiverExpression instanceof JetSimpleNameExpression;
-            declarationDescriptors =
-                    lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression) receiverExpression, outerScope,
-                                                            shouldBeVisibleFrom, trace, lookupMode, true, storeResult);
-        }
-
-        JetExpression selectorExpression = importedReference.getSelectorExpression();
-        if (!(selectorExpression instanceof JetSimpleNameExpression)) {
-            return Collections.emptyList();
-        }
-
-        JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
-        JetSimpleNameExpression lastReference = JetPsiUtil.getLastReference(receiverExpression);
-        if (lastReference == null || !ImportDirectiveProcessor.canImportMembersFrom(declarationDescriptors, lastReference, trace,
-                                                                                    lookupMode)) {
-            return Collections.emptyList();
-        }
-
-        return lookupSelectorDescriptors(selector, declarationDescriptors, trace, shouldBeVisibleFrom, lookupMode, storeResult);
-    }
-
-    @NotNull
     public Collection<DeclarationDescriptor> lookupSelectorDescriptors(
             @NotNull JetSimpleNameExpression selector,
             @NotNull Collection<DeclarationDescriptor> declarationDescriptors,

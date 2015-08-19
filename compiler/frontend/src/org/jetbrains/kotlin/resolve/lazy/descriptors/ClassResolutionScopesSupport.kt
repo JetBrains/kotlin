@@ -25,16 +25,16 @@ class ClassResolutionScopesSupport(
         storageManager: StorageManager,
         private val getOuterScope: () -> JetScope
 ) {
-    private val staticScope = StaticScopeForKotlinClass(classDescriptor)
-
     private val scopeForClassHeaderResolution = storageManager.createLazyValue { computeScopeForClassHeaderResolution() }
     private val scopeForMemberDeclarationResolution = storageManager.createLazyValue { computeScopeForMemberDeclarationResolution() }
+    private val scopeForStaticMemberDeclarationResolution = storageManager.createLazyValue {  computeScopeForStaticMemberDeclarationResolution() }
 
-    fun getStaticScope(): JetScope = staticScope
 
     fun getScopeForClassHeaderResolution(): JetScope = scopeForClassHeaderResolution()
 
     fun getScopeForMemberDeclarationResolution(): JetScope = scopeForMemberDeclarationResolution()
+
+    fun getScopeForStaticMemberDeclarationResolution(): JetScope = scopeForStaticMemberDeclarationResolution()
 
     private fun computeScopeForClassHeaderResolution(): JetScope {
         val scope = WritableScopeImpl(JetScope.Empty, classDescriptor, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + classDescriptor.getName())
@@ -47,22 +47,43 @@ class ClassResolutionScopesSupport(
     }
 
     private fun computeScopeForMemberDeclarationResolution(): JetScope {
-        val thisScope = WritableScopeImpl(JetScope.Empty, classDescriptor, RedeclarationHandler.DO_NOTHING,
-                                          "Scope with 'this' for " + classDescriptor.getName(), classDescriptor.getThisAsReceiverParameter(), classDescriptor)
-        thisScope.changeLockLevel(WritableScope.LockLevel.READING)
+        val thisScope = scopeWithThis(classDescriptor)
 
         return ChainedScope(
                 classDescriptor,
                 "ScopeForMemberDeclarationResolution: " + classDescriptor.getName(),
                 thisScope,
-                classDescriptor.getUnsubstitutedMemberScope(),
+                classDescriptor.unsubstitutedInnerClassesScope,
                 getScopeForClassHeaderResolution(),
+                getCompanionObjectScope(),
+                classDescriptor.getStaticScope())
+    }
+
+    private fun scopeWithThis(descriptor: ClassDescriptor): WritableScopeImpl {
+        val thisScope = WritableScopeImpl(JetScope.Empty, descriptor, RedeclarationHandler.DO_NOTHING,
+                                          "Scope with 'this' for " + descriptor.getName(), descriptor.getThisAsReceiverParameter(), descriptor)
+        thisScope.changeLockLevel(WritableScope.LockLevel.READING)
+        return thisScope
+    }
+
+    private fun computeScopeForStaticMemberDeclarationResolution(): JetScope {
+        if (classDescriptor.getKind().isSingleton) return scopeForMemberDeclarationResolution()
+
+        return ChainedScope(
+                classDescriptor,
+                "ScopeForStaticMemberDeclarationResolution: " + classDescriptor.getName(),
+                classDescriptor.unsubstitutedInnerClassesScope,
+                getOuterScope(),
                 getCompanionObjectScope(),
                 classDescriptor.getStaticScope())
     }
 
     private fun getCompanionObjectScope(): JetScope {
         val companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor()
-        return if ((companionObjectDescriptor != null)) CompanionObjectMixinScope(companionObjectDescriptor) else JetScope.Empty
+        return if (companionObjectDescriptor != null) {
+            ChainedScope(companionObjectDescriptor, "Companion object scope for class: ${classDescriptor.getName()}",
+                         scopeWithThis(companionObjectDescriptor), companionObjectDescriptor.unsubstitutedInnerClassesScope)
+        }
+        else JetScope.Empty
     }
 }

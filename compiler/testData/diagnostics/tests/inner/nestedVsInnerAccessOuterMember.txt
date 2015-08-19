@@ -33,8 +33,8 @@ internal final class Outer {
     internal final class Nested {
         public constructor Nested()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        internal final fun f(): kotlin.Int
-        internal final fun g(): kotlin.String
+        internal final fun f(): [ERROR : Error function type]
+        internal final fun g(): [ERROR : Error function type]
         internal final fun h(): [ERROR : <ERROR FUNCTION RETURN TYPE>]
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal final fun i(): [ERROR : <ERROR PROPERTY TYPE>]

@@ -12,4 +12,6 @@ fun f(pair: Pair<out Any, out Any>) {
 // EXIST: { lookupString: "hashCode", attributes: "bold" }
 // EXIST: { lookupString: "forString", attributes: "grayed" }
 // EXIST: { lookupString: "forAny", attributes: "bold" }
-// EXIST: { lookupString: "forT", attributes: "" }
+
+/*TODO: { lookupString: "forT", attributes: "" }*/
+// EXIST: { lookupString: "forT", attributes: "grayed" }

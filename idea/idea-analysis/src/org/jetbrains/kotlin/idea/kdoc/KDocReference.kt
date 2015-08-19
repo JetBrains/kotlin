@@ -133,7 +133,8 @@ private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): JetScop
 private fun getClassInnerScope(outerScope: JetScope, descriptor: ClassDescriptor): JetScope {
     val redeclarationHandler = RedeclarationHandler.DO_NOTHING
 
-    val headerScope = WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Class ${descriptor.getName()} header scope")
+    val headerScope = WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Class ${descriptor.getName()} header scope",
+                                        descriptor.thisAsReceiverParameter)
     for (typeParameter in descriptor.getTypeConstructor().getParameters()) {
         headerScope.addClassifierDescriptor(typeParameter)
     }
@@ -153,9 +154,6 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
 
         is PackageViewDescriptor ->
             descriptor.memberScope
-
-        is ClassDescriptorWithResolutionScopes ->
-                descriptor.getScopeForMemberDeclarationResolution()
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)

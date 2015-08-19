@@ -3976,12 +3976,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("addInnerModifier.kt")
-        public void testAddInnerModifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addInnerModifier.kt");
-            doTest(fileName);
-        }
-
         public void testAllFilesPresentInModifiers() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }

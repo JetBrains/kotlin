@@ -89,12 +89,12 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Override
     public ReceiverParameterDescriptor getExtensionReceiverParameter() {
-        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+        return null;
     }
 
     @Override
     public ReceiverParameterDescriptor getDispatchReceiverParameter() {
-        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+        return null;
     }
 
     @NotNull

@@ -1,7 +1,7 @@
 package qualified_this {
     ~qtA~class A(val a:Int) {
 
-      ~qtB~class B() {
+      inner ~qtB~class B() {
         val x = `qtB`this`qtB`@B
         val y = `qtA`this`qtA`@A
         val z = `qtB`this
@@ -20,7 +20,7 @@ class A<~T~T, ~E~E> {
   val a : `T`T
   val x : A<`T`T, `E`E>
 
-  class X<~X.T~T> : A<`X.T`T, `E`E> {
+  inner class X<~X.T~T> : A<`X.T`T, `E`E> {
     val a : `X.T`T
     val b : `X.E`E
 

@@ -68,7 +68,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.AS_KEYWORD;
 import static org.jetbrains.kotlin.lexer.JetTokens.AS_SAFE;
@@ -446,13 +445,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ReceiverParameterDescriptor receiverParameterDescriptor = resolutionResult.getReceiverParameterDescriptor();
                 recordThisOrSuperCallInTraceAndCallExtension(context, receiverParameterDescriptor, expression);
                 if (onlyClassReceivers && !isDeclaredInClass(receiverParameterDescriptor)) {
-                    return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);
+                    return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(null);
                 }
             }
             return resolutionResult;
         }
         else {
-            ReceiverParameterDescriptor result = NO_RECEIVER_PARAMETER;
+            ReceiverParameterDescriptor result = null;
             List<ReceiverParameterDescriptor> receivers = context.scope.getImplicitReceiversHierarchy();
             if (onlyClassReceivers) {
                 for (ReceiverParameterDescriptor receiver : receivers) {
@@ -465,7 +464,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else if (!receivers.isEmpty()) {
                 result = receivers.get(0);
             }
-            if (result != NO_RECEIVER_PARAMETER) {
+            if (result != null) {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
             }
