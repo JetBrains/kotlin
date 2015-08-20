@@ -6,7 +6,7 @@ KotlinFieldBreakpoint created at fieldWatchpoints.kt:30
 KotlinFieldBreakpoint created at fieldWatchpoints.kt:32
 KotlinFieldBreakpoint created at fieldWatchpoints.kt:44
 KotlinFieldBreakpoint created at fieldWatchpoints.kt:47
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fieldWatchpoints.FieldWatchpointsPackage
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fieldWatchpoints.FieldWatchpointsPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 fieldWatchpoints.kt:18
 fieldWatchpoints.kt:21
