@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
@@ -125,7 +126,8 @@ public class ReplInterpreter {
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(project),
-                scopeProvider
+                scopeProvider,
+                new JvmPackageMappingProvider(environment)
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY,
@@ -278,7 +280,10 @@ public class ReplInterpreter {
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
 
         for (OutputFile outputFile : state.getFactory().asList()) {
-            classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")), outputFile.asByteArray());
+            if(outputFile.getRelativePath().endsWith(".class")) {
+                classLoader.addClass(JvmClassName.byInternalName(outputFile.getRelativePath().replaceFirst("\\.class$", "")),
+                                     outputFile.asByteArray());
+            }
         }
 
         try {
