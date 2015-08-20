@@ -45,7 +45,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public abstract fun getSyntheticFiles(): List<JetFile>
 
-    protected fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
+    protected open fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
         val commonFiles = if (generateCommonFiles) generateCommonFiles(supportV4) else listOf()
 
         return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->

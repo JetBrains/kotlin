@@ -21,6 +21,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFile
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -48,7 +49,12 @@ class CliSyntheticFileGeneratorForConversionTest(
         resDirectories: List<String>,
         private val supportV4: Boolean
 ) : CliSyntheticFileGenerator(project, manifestPath, resDirectories) {
+
     fun gen() = generateSyntheticFiles(false, supportV4)
+
+    public override fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
+        return super.generateSyntheticFiles(generateCommonFiles, this.supportV4)
+    }
 }
 
 fun UsefulTestCase.createAndroidTestEnvironment(

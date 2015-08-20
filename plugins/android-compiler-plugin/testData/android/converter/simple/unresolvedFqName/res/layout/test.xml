@@ -5,9 +5,8 @@
              tools:context=".ItemDetailActivity"
              tools:ignore="MergeRootFrame" >
 
-    <view
-        class="android.inputmethodservice.KeyboardView"
-        android:id="@+id/MyKeyboardView"
+    <a.b.c
+        android:id="@+id/MyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

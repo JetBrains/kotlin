@@ -5,10 +5,9 @@
              tools:context=".ItemDetailActivity"
              tools:ignore="MergeRootFrame" >
 
-    <org.my.cool.Button
-        android:id="@+id/MyButton"
+    <android.inputmethodservice.KeyboardView
+        android:id="@+id/MyKeyboardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign in" />
+        android:layout_height="wrap_content"/>
 
 </FrameLayout>

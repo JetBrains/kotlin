@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -38,7 +37,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val layoutPaths = getResPaths(path)
         val supportV4 = testDirectory.name.startsWith("support")
         val parser = CliSyntheticFileGeneratorForConversionTest(
-                jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths, supportV4)
+                jetCoreEnvironment.project, File(testDirectory.parent, "AndroidManifest.xml").path, layoutPaths, supportV4)
 
         val actual = parser.gen().toMap { it.name }
 
@@ -65,7 +64,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
     }
 
     private fun getEnvironment(): KotlinCoreEnvironment {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

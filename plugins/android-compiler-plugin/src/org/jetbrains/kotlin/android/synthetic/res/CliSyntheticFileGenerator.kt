@@ -25,6 +25,7 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
 import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.psi.JetFile
 
 public open class CliSyntheticFileGenerator(
