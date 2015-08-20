@@ -21,55 +21,91 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlToken
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 
 public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
 
-    companion object {
+    override fun treeChanged(event: PsiTreeChangeEventImpl) {
+        if (event.code in HANDLED_EVENTS) {
+            val child = event.child
+
+            // We should get more precise event notification (not just "that file was changed somehow")
+            if (child == null && event.code == PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED) {
+                return
+            }
+
+            if (checkIfLayoutFile(child)) {
+                incModificationCount()
+                return
+            }
+
+            val file = event.file ?: return
+            if (!checkIfLayoutFile(file)) return
+
+            val xmlAttribute = findXmlAttribute(child)
+            if (xmlAttribute != null) {
+                val name = xmlAttribute.name
+                if (name != "android:id" && name != "class") return
+            }
+
+            incModificationCount()
+        }
+    }
+
+    private companion object {
         private val HANDLED_EVENTS = setOf(
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_ADDED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_MOVED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_REMOVED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILD_REPLACED,
                 PsiTreeChangeEventImpl.PsiEventType.CHILDREN_CHANGED)
-    }
 
-    override fun treeChanged(event: PsiTreeChangeEventImpl) {
-        if (event.getCode() in HANDLED_EVENTS) {
-            val file = event.getFile() ?: (event.getChild() as? XmlFile)
-            if (file != null) {
-                val project = file.getProject()
+        private fun checkIfLayoutFile(element: PsiElement): Boolean {
+            val xmlFile = element as? XmlFile ?: return false
 
-                val projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex()
-                val module = projectFileIndex.getModuleForFile(file.getVirtualFile())
-                if (module != null) {
-                    val resourceManager = AndroidLayoutXmlFileManager.getInstance(module)
-                    val resDirectories = resourceManager.getModuleResDirectories()
-                    val baseDirectory = file.getParent()?.getParent()?.getVirtualFile()
+            val projectFileIndex = ProjectRootManager.getInstance(xmlFile.project).fileIndex
+            val module = projectFileIndex.getModuleForFile(xmlFile.virtualFile)
 
-                    // File from the res/ directory was modified
-                    if (baseDirectory in resDirectories && file.isLayoutXmlFile()) {
-                        incModificationCount()
-                    }
+            if (module != null) {
+                val resourceManager = AndroidLayoutXmlFileManager.getInstance(module)
+                val resDirectories = resourceManager.getModuleResDirectories()
+                val baseDirectory = xmlFile.parent?.parent?.virtualFile
+
+                if (baseDirectory in resDirectories && xmlFile.isLayoutXmlFile()) {
+                    return true
                 }
             }
+
+            return false
         }
-    }
 
-    private fun AndroidLayoutXmlFileManager.getModuleResDirectories(): List<VirtualFile> {
-        val info = androidModuleInfo ?: return listOf()
+        private fun findXmlAttribute(element: PsiElement?): XmlAttribute? {
+            return when (element) {
+                is XmlToken, is XmlAttributeValue -> findXmlAttribute(element.parent)
+                is XmlAttribute -> element
+                else -> null
+            }
+        }
 
-        val fileManager = VirtualFileManager.getInstance()
-        return info.resDirectories.map { fileManager.findFileByUrl("file://" + it)!! }
-    }
+        private fun AndroidLayoutXmlFileManager.getModuleResDirectories(): List<VirtualFile> {
+            val info = androidModuleInfo ?: return listOf()
 
-    private fun PsiFile.isLayoutXmlFile(): Boolean {
-        if (getFileType() != XmlFileType.INSTANCE) return false
-        return getParent()?.getName()?.startsWith("layout") ?: false
+            val fileManager = VirtualFileManager.getInstance()
+            return info.resDirectories.map { fileManager.findFileByUrl("file://$it") }.filterNotNull()
+        }
+
+        private fun PsiFile.isLayoutXmlFile(): Boolean {
+            if (fileType != XmlFileType.INSTANCE) return false
+            return parent?.name?.startsWith("layout") ?: false
+        }
     }
 
 }
