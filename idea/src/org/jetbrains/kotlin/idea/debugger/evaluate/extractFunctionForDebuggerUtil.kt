@@ -42,13 +42,14 @@ fun getFunctionForExtractedFragment(
         breakpointLine: Int
 ): ExtractionResult? {
 
-    fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult): String {
+    fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: JetFile): String {
         if (KotlinInternalMode.enabled) {
             logger.error("Couldn't extract function for debugger:\n" +
                                  "FILE NAME: ${breakpointFile.getName()}\n" +
                                  "BREAKPOINT LINE: ${breakpointLine}\n" +
                                  "CODE FRAGMENT:\n${codeFragment.getText()}\n" +
                                  "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
+                                 "TMPFILE_TEXT:\n${tmpFile.text}\n" +
                                  "FILE TEXT: \n${breakpointFile.getText()}\n")
         }
         return analysisResult.messages.map { errorMessage ->
@@ -91,7 +92,7 @@ fun getFunctionForExtractedFragment(
                                         captureLocalFunctions = true)
         val analysisResult = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
-            throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
+            throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult, tmpFile))
         }
 
         val validationResult = analysisResult.descriptor!!.validate()
