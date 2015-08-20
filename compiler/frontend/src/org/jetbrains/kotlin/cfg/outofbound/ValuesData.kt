@@ -20,28 +20,36 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import java.util.HashMap
 
-public data class ValuesData(
-        val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
-        val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
-        val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
-        val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap(),
-        val collectionsToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
-) {
-    override fun toString(): String {
-        val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
-        val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
-        val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
-        val arrs = MapUtils.mapToString(collectionsToSizes, descriptorToString, descriptorToString)
-        return "I$ints B$bools C$arrs "
-    }
+public sealed class ValuesData {
+    public abstract fun copy(): ValuesData
 
-    public fun copy(): ValuesData {
-        return ValuesData(
+    public data class Defined(
+            val intVarsToValues: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap(),
+            val intFakeVarsToValues: MutableMap<PseudoValue, IntegerVariableValues> = HashMap(),
+            val boolVarsToValues: MutableMap<VariableDescriptor, BooleanVariableValue> = HashMap(),
+            val boolFakeVarsToValues: MutableMap<PseudoValue, BooleanVariableValue> = HashMap(),
+            val collectionsToSizes: MutableMap<VariableDescriptor, IntegerVariableValues> = HashMap()
+    ) : ValuesData() {
+        override fun toString(): String {
+            val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
+            val ints = MapUtils.mapToString(intVarsToValues, descriptorToString, descriptorToString)
+            val bools = MapUtils.mapToString(boolVarsToValues, descriptorToString, descriptorToString)
+            val arrs = MapUtils.mapToString(collectionsToSizes, descriptorToString, descriptorToString)
+            return "I$ints B$bools C$arrs "
+        }
+
+        override fun copy(): ValuesData.Defined = Defined(
                 HashMap(intVarsToValues),
                 HashMap(intFakeVarsToValues),
                 HashMap(boolVarsToValues),
                 HashMap(boolFakeVarsToValues),
                 HashMap(collectionsToSizes)
         )
+    }
+
+    public object Dead : ValuesData() {
+        override fun toString(): String = "#dead#"
+
+        override fun copy(): ValuesData.Dead = this
     }
 }

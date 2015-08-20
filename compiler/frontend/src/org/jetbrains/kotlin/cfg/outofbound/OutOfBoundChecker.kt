@@ -48,19 +48,21 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
     }
 
     private fun checkOutOfBoundAccess(instruction: CallInstruction, valuesData: ValuesData, ctxt: VariableContext) {
-        val arraySizeVariable = instruction.inputValues[0]
-        val accessPositionVariable = instruction.inputValues[1]
-        val arraySizes = valuesData.intFakeVarsToValues[arraySizeVariable]
-        val accessPositions = valuesData.intFakeVarsToValues[accessPositionVariable]
-        if (arraySizes != null && accessPositions != null &&
-            arraySizes is IntegerVariableValues.Defined && accessPositions is IntegerVariableValues.Defined) {
-            val sizes = arraySizes.values.sort()
-            val positions = accessPositions.values.sort()
-            if (sizes.first() <= positions.last()) {
-                report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.last()), ctxt)
-            }
-            else if (positions.first() < 0) {
-                report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.first()), ctxt)
+        if (valuesData is ValuesData.Defined) {
+            val arraySizeVariable = instruction.inputValues[0]
+            val accessPositionVariable = instruction.inputValues[1]
+            val arraySizes = valuesData.intFakeVarsToValues[arraySizeVariable]
+            val accessPositions = valuesData.intFakeVarsToValues[accessPositionVariable]
+            if (arraySizes != null && accessPositions != null &&
+                arraySizes is IntegerVariableValues.Defined && accessPositions is IntegerVariableValues.Defined) {
+                val sizes = arraySizes.values.sort()
+                val positions = accessPositions.values.sort()
+                if (sizes.first() <= positions.last()) {
+                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.last()), ctxt)
+                }
+                else if (positions.first() < 0) {
+                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.first()), ctxt)
+                }
             }
         }
     }

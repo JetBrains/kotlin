@@ -177,35 +177,38 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 /* mergeDataWithLocalDeclarations */ true,
                 { instruction, incomingData: Collection<ValuesData> -> mergeVariablesValues(instruction, incomingData) },
                 { previous, current, edgeData -> updateEdge(previous, current, edgeData) },
-                ValuesData()
+                ValuesData.Defined()
         )
     }
 
-    private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData {
-        if (loopsInfo.backEdges.contains(OrientedEdge(previousInstruction, currentInstruction))) {
-            // The edge we need to update leads from loop's body to loop enter (for example, from while loop's body end
-            // to while loop's condition). After the first traversal of all the instructions list, this edge will contain
-            // the information that is computed after current instruction. In current implementation we don't process loop
-            // bodies multiple times, so to avoid this computation we destroy the information on this edge.
-            return ValuesData()
+    private fun updateEdge(previousInstruction: Instruction, currentInstruction: Instruction, edgeData: ValuesData): ValuesData =
+        if (edgeData is ValuesData.Defined) {
+            if (loopsInfo.backEdges.contains(OrientedEdge(previousInstruction, currentInstruction))) {
+                // The edge we need to update leads from loop's body to loop enter (for example, from while loop's body end
+                // to while loop's condition). After the first traversal of all the instructions list, this edge will contain
+                // the information that is computed after current instruction. In current implementation we don't process loop
+                // bodies multiple times, so to avoid this computation we destroy the information on this edge.
+                ValuesData.Defined()
+            }
+            else {
+                val updatedEdgeData = edgeData.copy()
+                val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
+                applyRestrictionsOnValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
+            }
         }
-        val updatedEdgeData = edgeData.copy()
-        val filteredEdgeData = removeOutOfScopeVariables(previousInstruction, currentInstruction, updatedEdgeData)
-        applyRestrictionsOnValuesIfNeeded(previousInstruction, currentInstruction, filteredEdgeData)
-        return filteredEdgeData
-    }
+        else edgeData.copy()
 
     private fun removeOutOfScopeVariables(
             previousInstruction: Instruction,
             currentInstruction: Instruction,
-            edgeData: ValuesData
-    ): ValuesData {
+            edgeData: ValuesData.Defined
+    ): ValuesData.Defined {
         val filteredIntVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intVarsToValues)
         val filteredIntFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.intFakeVarsToValues)
         val filteredBoolVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolVarsToValues)
         val filteredBoolFakeVars = filterOutFakeVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.boolFakeVarsToValues)
         val filteredArrayVars = filterOutVariablesOutOfScope(previousInstruction, currentInstruction, edgeData.collectionsToSizes)
-        return ValuesData(
+        return ValuesData.Defined(
                 HashMap(filteredIntVars),
                 HashMap(filteredIntFakeVars),
                 HashMap(filteredBoolVars),
@@ -258,64 +261,61 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun applyRestrictionsOnValuesIfNeeded(
             previousInstruction: Instruction,
             currentInstruction: Instruction,
-            edgeData: ValuesData
-    ) {
-        if (previousInstruction is ConditionalJumpInstruction) {
-            val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.conditionValue]
-            if (conditionBoolValue != null) {
-                if (previousInstruction.element is JetIfExpression || previousInstruction.element is JetBinaryExpression) {
-                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
-                                              previousInstruction.nextOnFalse, edgeData)
-                }
-                else if (previousInstruction.element is JetDoWhileExpression || previousInstruction.element is JetWhileExpression){
-                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
-                                              previousInstruction.nextOnFalse, edgeData, applyOnlyForThenBlock = true)
-                }
+            edgeData: ValuesData.Defined
+    ): ValuesData =
+            if (previousInstruction is ConditionalJumpInstruction) {
+                val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.conditionValue]
+                if (conditionBoolValue != null)
+                    if (previousInstruction.element is JetIfExpression || previousInstruction.element is JetBinaryExpression)
+                        applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
+                                                  previousInstruction.nextOnFalse, edgeData)
+                    else if (previousInstruction.element is JetDoWhileExpression || previousInstruction.element is JetWhileExpression)
+                        applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
+                                                  previousInstruction.nextOnFalse, edgeData, applyOnlyForThenBlock = true)
+                    else edgeData
+                else edgeData
             }
-        }
-        if (previousInstruction is NondeterministicJumpInstruction &&
-            previousInstruction.element is JetWhenExpression &&
-            previousInstruction.inputValue != null
-        ) {
-            val nextOnTrue = previousInstruction.next
-            val nextOnFalse =
-                    if (previousInstruction.resolvedTargets.size() > 0)
-                        previousInstruction.resolvedTargets.values().first()
-                    else return
-            val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.inputValue]
-            if (conditionBoolValue != null) {
-                applyRestrictionsOnValues(conditionBoolValue, currentInstruction, nextOnTrue, nextOnFalse, edgeData)
+            else if (previousInstruction is NondeterministicJumpInstruction &&
+                previousInstruction.element is JetWhenExpression &&
+                previousInstruction.inputValue != null
+            ) {
+                val nextOnTrue = previousInstruction.next
+                val nextOnFalse =
+                        if (previousInstruction.resolvedTargets.size() > 0)
+                            previousInstruction.resolvedTargets.values().first()
+                        else throw IllegalStateException("Jump instruction target in `when` is not resolved")
+                val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.inputValue]
+                if (conditionBoolValue != null)
+                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, nextOnTrue, nextOnFalse, edgeData)
+                else edgeData
             }
-        }
-    }
+            else edgeData
 
     private fun applyRestrictionsOnValues(
             conditionBoolValue: BooleanVariableValue,
             currentInstruction: Instruction,
             onTrueInstruction: Instruction,
             onFalseInstruction: Instruction,
-            edgeData: ValuesData,
+            edgeData: ValuesData.Defined,
             applyOnlyForThenBlock: Boolean = false
-    ) {
+    ): ValuesData =
         when (conditionBoolValue) {
             is BooleanVariableValue.True -> {
-                if (onFalseInstruction == currentInstruction && !applyOnlyForThenBlock) {
+                if (onFalseInstruction == currentInstruction && !applyOnlyForThenBlock)
                     // We are in "else" block and condition evaluated to "true" so this block will not
-                    // be processed (dead code block). To indicate this we will make all variables dead
-                    edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                    edgeData.collectionsToSizes.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                }
+                    // be processed (dead code block). To indicate this we return values data dead
+                    ValuesData.Dead
+                else edgeData
             }
             is BooleanVariableValue.False -> {
-                if (onTrueInstruction == currentInstruction) {
+                if (onTrueInstruction == currentInstruction)
                     // We are in "then" block and condition evaluated to "false" so this block will not
-                    // be processed (dead code block). To indicate this we will make all variables dead
-                    edgeData.intVarsToValues.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                    edgeData.collectionsToSizes.entrySet().forEach { it.setValue(IntegerVariableValues.Dead) }
-                }
+                    // be processed (dead code block). To indicate this we return values data dead
+                    ValuesData.Dead
+                else edgeData
             }
             is BooleanVariableValue.Undefined -> {
-                fun processUndefinedCase(edgeData: ValuesData, restrictions: Map<VariableDescriptor, Set<Int>>) {
+                fun processUndefinedCase(edgeData: ValuesData.Defined, restrictions: Map<VariableDescriptor, Set<Int>>) {
                     for ((variable, unrestrictedValues) in restrictions) {
                         val (values, sourceCollection) =
                                 if (edgeData.intVarsToValues.contains(variable))
@@ -335,119 +335,112 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     // We are in "else" block (and it's processing is required) and need to apply onFalse restrictions
                     processUndefinedCase(edgeData, conditionBoolValue.onFalseRestrictions)
                 }
+                edgeData
             }
         }
-    }
 
     private fun mergeVariablesValues(instruction: Instruction, incomingEdgesData: Collection<ValuesData>): Edges<ValuesData> {
         if (instruction is SubroutineSinkInstruction) {
             // this instruction is assumed to be the last one in function so it is not processed
-            return Edges(ValuesData(), ValuesData())
+            return Edges(ValuesData.Defined(), ValuesData.Defined())
         }
         val enterInstructionData = unionIncomingVariablesValues(incomingEdgesData)
         val exitInstructionData = updateValues(instruction, enterInstructionData)
         return Edges(enterInstructionData, exitInstructionData)
     }
 
-    private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData {
-        if (incomingEdgesData.isEmpty()) {
-            return ValuesData()
-        }
-        val headData = incomingEdgesData.first()
-        val tailData = incomingEdgesData.drop(1)
-        val unitedIntVariables = headData.intVarsToValues
-        val unitedIntFakeVariables = headData.intFakeVarsToValues
-        val unitedBoolVariables = headData.boolVarsToValues
-        val unitedBoolFakeVariables = headData.boolFakeVarsToValues
-        val unitedArrayVariables = headData.collectionsToSizes
-        for (data in tailData) {
-            mergeCorrespondingIntegerVariables(unitedIntVariables, data.intVarsToValues)
-            assert(unitedIntFakeVariables.all { data.intFakeVarsToValues[it.key]?.equals(it.value) ?: true },
-                   "intFake variables assumption failed")
-            unitedIntFakeVariables.putAll(data.intFakeVarsToValues)
-            MapUtils.mergeMapsIntoFirst(unitedBoolVariables, data.boolVarsToValues) { value1, value2 -> value1.or(value2) }
-            assert(unitedBoolFakeVariables.all { data.boolFakeVarsToValues[it.key]?.equals(it.value) ?: true },
-                   "boolFake variables assumption failed")
-            unitedBoolFakeVariables.putAll(data.boolFakeVarsToValues)
-            mergeCorrespondingIntegerVariables(unitedArrayVariables, data.collectionsToSizes)
-        }
-        return ValuesData(unitedIntVariables, unitedIntFakeVariables, unitedBoolVariables, unitedBoolFakeVariables, unitedArrayVariables)
-    }
-
-    private fun mergeCorrespondingIntegerVariables<K>(
-            targetVariablesMap: MutableMap<K, IntegerVariableValues>,
-            variablesToConsume: MutableMap<K, IntegerVariableValues>
-    ) = MapUtils.mergeMapsIntoFirst(targetVariablesMap, variablesToConsume) { value1, value2 -> value1 merge value2 }
-
-    private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData {
-        val updatedData = mergedEdgesData.copy()
-        val variablesUpdatedInLoop = loopsInfo.updatedVariables[instruction]
-        if (variablesUpdatedInLoop != null) {
-            // we meet the loop enter instruction
-            processVariablesUpdatedInLoop(instruction, variablesUpdatedInLoop, updatedData)
-        }
-        when (instruction) {
-            is VariableDeclarationInstruction -> processVariableDeclaration(instruction, updatedData)
-            is ReadValueInstruction -> {
-                val element = instruction.outputValue.element
-                when (element) {
-                    is JetConstantExpression -> processLiteral(element, instruction, updatedData)
-                    is JetNameReferenceExpression -> processVariableReference(instruction, updatedData)
+    private fun unionIncomingVariablesValues(incomingEdgesData: Collection<ValuesData>): ValuesData =
+        if (incomingEdgesData.isEmpty()) ValuesData.Defined()
+        else incomingEdgesData.reduce { vd1, vd2 ->
+                if (vd1 is ValuesData.Defined) {
+                    if (vd2 is ValuesData.Defined) {
+                        MapUtils.mergeMapsIntoFirst(vd1.intVarsToValues, vd2.intVarsToValues) { value1, value2 -> value1 merge value2 }
+                        assert(vd1.intFakeVarsToValues.all { vd2.intFakeVarsToValues[it.key]?.equals(it.value) ?: true },
+                               "intFake variables assumption failed")
+                        vd1.intFakeVarsToValues.putAll(vd2.intFakeVarsToValues)
+                        MapUtils.mergeMapsIntoFirst(vd1.boolVarsToValues, vd2.boolVarsToValues) { value1, value2 -> value1.or(value2) }
+                        assert(vd1.boolFakeVarsToValues.all { vd2.boolFakeVarsToValues[it.key]?.equals(it.value) ?: true },
+                               "boolFake variables assumption failed")
+                        vd1.boolFakeVarsToValues.putAll(vd2.boolFakeVarsToValues)
+                        MapUtils.mergeMapsIntoFirst(vd1.collectionsToSizes, vd2.collectionsToSizes) { value1, value2 -> value1 merge value2 }
+                        vd1
+                    }
+                    else vd1
                 }
+                else vd2
             }
-            is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
-            is CallInstruction -> {
-                when {
-                    instruction.element is JetBinaryExpression -> // todo: make this check stronger, check args types
-                        processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    instruction.element is JetPrefixExpression -> // todo: make this check stronger, check args types
-                        processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    instruction.element is JetPostfixExpression -> // todo: make this check stronger, check args types
-                        processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
-                    else -> {
-                        val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
-                        when (pseudoAnnotation) {
-                            null -> Unit
-                            is PseudoAnnotation.ConstructorWithSizeAsArg,
-                            is PseudoAnnotation.ConstructorWithElementsAsArgs ->
-                                processCollectionCreation(pseudoAnnotation, instruction, updatedData)
-                            is PseudoAnnotation.SizeMethod ->
-                                processSizeMethodCallOnCollection(instruction, updatedData)
-                            is PseudoAnnotation.IncreaseSizeByConstantMethod -> {
-                                val numberOfElementsToAdd = IntegerVariableValues.Defined(pseudoAnnotation.increaseBy)
-                                processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
-                            }
-                            is PseudoAnnotation.IncreaseSizeByPassedCollectionMethod -> {
-                                val numberOfElementsToAdd = tryExtractPassedCollectionSizes(pseudoAnnotation, instruction, updatedData)
-                                processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
-                            }
-                            is PseudoAnnotation.DecreaseSizeToZeroMethod ->
-                                processDecreaseSizeMethodCallOnCollection(pseudoAnnotation, instruction, updatedData)
-                        }
+
+    private fun updateValues(instruction: Instruction, mergedEdgesData: ValuesData): ValuesData =
+        if (mergedEdgesData is ValuesData.Defined) {
+            val updatedData = mergedEdgesData.copy()
+            val variablesUpdatedInLoop = loopsInfo.updatedVariables[instruction]
+            if (variablesUpdatedInLoop != null) {
+                // we meet the loop enter instruction
+                processVariablesUpdatedInLoop(instruction, variablesUpdatedInLoop, updatedData)
+            }
+            when (instruction) {
+                is VariableDeclarationInstruction -> processVariableDeclaration(instruction, updatedData)
+                is ReadValueInstruction -> {
+                    val element = instruction.outputValue.element
+                    when (element) {
+                        is JetConstantExpression -> processLiteral(element, instruction, updatedData)
+                        is JetNameReferenceExpression -> processVariableReference(instruction, updatedData)
                     }
                 }
-            }
-            is MagicInstruction -> {
-                when (instruction.kind) {
-                    MagicKind.LOOP_RANGE_ITERATION -> processLoopRangeInstruction(instruction, updatedData)
-                    MagicKind.AND, MagicKind.OR -> {
-                        // && and || operations are represented as MagicInstruction for some reason (not as CallInstruction)
-                        if (instruction.element is JetBinaryExpression) {
+                is WriteValueInstruction -> processAssignmentToVariable(instruction, updatedData)
+                is CallInstruction -> {
+                    when {
+                        instruction.element is JetBinaryExpression -> // todo: make this check stronger, check args types
                             processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
+                        instruction.element is JetPrefixExpression -> // todo: make this check stronger, check args types
+                            processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
+                        instruction.element is JetPostfixExpression -> // todo: make this check stronger, check args types
+                            processUnaryOperation(instruction.element.operationToken, instruction, updatedData)
+                        else -> {
+                            val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
+                            when (pseudoAnnotation) {
+                                null -> Unit
+                                is PseudoAnnotation.ConstructorWithSizeAsArg,
+                                is PseudoAnnotation.ConstructorWithElementsAsArgs ->
+                                    processCollectionCreation(pseudoAnnotation, instruction, updatedData)
+                                is PseudoAnnotation.SizeMethod ->
+                                    processSizeMethodCallOnCollection(instruction, updatedData)
+                                is PseudoAnnotation.IncreaseSizeByConstantMethod -> {
+                                    val numberOfElementsToAdd = IntegerVariableValues.Defined(pseudoAnnotation.increaseBy)
+                                    processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
+                                }
+                                is PseudoAnnotation.IncreaseSizeByPassedCollectionMethod -> {
+                                    val numberOfElementsToAdd = tryExtractPassedCollectionSizes(pseudoAnnotation, instruction, updatedData)
+                                    processIncreaseSizeMethodCallOnCollection(numberOfElementsToAdd, instruction, updatedData)
+                                }
+                                is PseudoAnnotation.DecreaseSizeToZeroMethod ->
+                                    processDecreaseSizeMethodCallOnCollection(pseudoAnnotation, instruction, updatedData)
+                            }
                         }
                     }
-                    MagicKind.EQUALS_IN_WHEN_CONDITION -> {
-                        processBinaryOperation(JetTokens.EQEQ, instruction, updatedData)
+                }
+                is MagicInstruction -> {
+                    when (instruction.kind) {
+                        MagicKind.LOOP_RANGE_ITERATION -> processLoopRangeInstruction(instruction, updatedData)
+                        MagicKind.AND, MagicKind.OR -> {
+                            // && and || operations are represented as MagicInstruction for some reason (not as CallInstruction)
+                            if (instruction.element is JetBinaryExpression) {
+                                processBinaryOperation(instruction.element.operationToken, instruction, updatedData)
+                            }
+                        }
+                        MagicKind.EQUALS_IN_WHEN_CONDITION -> {
+                            processBinaryOperation(JetTokens.EQEQ, instruction, updatedData)
+                        }
+                        else -> Unit
                     }
-                    else -> Unit
                 }
             }
+            removeFakeVariablesIfNeeded(instruction, updatedData)
+            updatedData
         }
-        removeFakeVariablesIfNeeded(instruction, updatedData)
-        return updatedData
-    }
+        else mergedEdgesData.copy()
 
-    private fun processVariablesUpdatedInLoop(instruction: Instruction, variablesUpdatedInLoop: Set<VariableDescriptor>, edgeData: ValuesData) {
+    private fun processVariablesUpdatedInLoop(instruction: Instruction, variablesUpdatedInLoop: Set<VariableDescriptor>, edgeData: ValuesData.Defined) {
         fun processIntValues(descriptor: VariableDescriptor, varsMap: MutableMap<VariableDescriptor, IntegerVariableValues>): Boolean =
             if (varsMap.contains(descriptor)) {
                 varsMap[descriptor] = IntegerVariableValues.Undefined
@@ -478,7 +471,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData) {
+    private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData.Defined) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
         val variableType = variableDescriptor.type
@@ -493,7 +486,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processLiteral(element: JetConstantExpression, instruction: ReadValueInstruction, updatedData: ValuesData) {
+    private fun processLiteral(element: JetConstantExpression, instruction: ReadValueInstruction, updatedData: ValuesData.Defined) {
         // process literal occurrence (all literals are stored to fake variables by read instruction)
         val node = element.node
         val nodeType = node.elementType as? JetNodeType
@@ -513,7 +506,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processVariableReference(instruction: ReadValueInstruction, updatedData: ValuesData) {
+    private fun processVariableReference(instruction: ReadValueInstruction, updatedData: ValuesData.Defined) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
         fun copyToFakes<V>(from: Map<VariableDescriptor, V>, to: MutableMap<PseudoValue, V>, copy: (V) -> V): Boolean {
@@ -527,7 +520,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         else (copyToFakes(updatedData.collectionsToSizes, updatedData.intFakeVarsToValues) { it.copy() })
     }
 
-    private fun processAssignmentToVariable(instruction: WriteValueInstruction, updatedData: ValuesData) {
+    private fun processAssignmentToVariable(instruction: WriteValueInstruction, updatedData: ValuesData.Defined) {
         // process assignment to variable
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
@@ -538,18 +531,18 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             KotlinBuiltIns.isInt(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                      ?: IntegerVariableValues.Undefined
-                updateIntegerValueIfNeeded(updatedData.intVarsToValues, variableDescriptor, valuesToAssign)
+                updatedData.intVarsToValues[variableDescriptor] = valuesToAssign
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
                 val valueToAssign = updatedData.boolFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                     ?: BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-                updateBooleanVariableIfNeeded(updatedData.boolVarsToValues, variableDescriptor, valueToAssign)
+                updatedData.boolVarsToValues[variableDescriptor] = valueToAssign
             }
             KotlinArrayUtils.isGenericOrPrimitiveArray(targetType),
             KotlinListUtils.isKotlinList(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                      ?: IntegerVariableValues.Undefined
-                updateIntegerValueIfNeeded(updatedData.collectionsToSizes, variableDescriptor, valuesToAssign)
+                updatedData.collectionsToSizes[variableDescriptor] = valuesToAssign
             }
         }
     }
@@ -562,7 +555,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processLoopRangeInstruction(instruction: MagicInstruction, updatedData: ValuesData) {
+    private fun processLoopRangeInstruction(instruction: MagicInstruction, updatedData: ValuesData.Defined) {
         // process range operator result storing in fake variable
         val rangeValues =
                 if (!instruction.inputValues.isEmpty()) {
@@ -582,7 +575,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processBinaryOperation(token: IElementType, instruction: OperationInstruction, updatedData: ValuesData) {
+    private fun processBinaryOperation(token: IElementType, instruction: OperationInstruction, updatedData: ValuesData.Defined) {
         if(instruction.inputValues.size() < 2) {
             // If the code under processing contains error (for example val a = x + 1, where variable x is undefined)
             // the binary operation may have less than 2 arguments
@@ -647,7 +640,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return null
     }
 
-    private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData) {
+    private fun processUnaryOperation(operationToken: IElementType, instruction: CallInstruction, updatedData: ValuesData.Defined) {
         if(instruction.inputValues.size() < 1) {
             // If the code under processing contains error (for example val a = ++)
             // the unary operation may have less than 1 argument
@@ -673,7 +666,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun processCollectionCreation(pseudoAnnotation: PseudoAnnotation, instruction: CallInstruction, updatedData: ValuesData) {
+    private fun processCollectionCreation(pseudoAnnotation: PseudoAnnotation, instruction: CallInstruction, updatedData: ValuesData.Defined) {
         val collectionSize = tryExtractCollectionSize(pseudoAnnotation, instruction, updatedData)
         val collectionSizeVariable = instruction.outputValue
         if (collectionSizeVariable != null && collectionSize != null) {
@@ -684,7 +677,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun tryExtractCollectionSize(
             pseudoAnnotation: PseudoAnnotation,
             instruction: CallInstruction,
-            valuesData: ValuesData
+            valuesData: ValuesData.Defined
     ): IntegerVariableValues? =
             when (pseudoAnnotation) {
                 is PseudoAnnotation.ConstructorWithElementsAsArgs ->
@@ -702,7 +695,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 else -> null
             }
 
-    private fun processSizeMethodCallOnCollection(instruction: CallInstruction, updatedData: ValuesData) {
+    private fun processSizeMethodCallOnCollection(instruction: CallInstruction, updatedData: ValuesData.Defined) {
         if (!instruction.inputValues.isEmpty()) {
             val collectionSize = updatedData.intFakeVarsToValues[instruction.inputValues[0]]
             val resultVariable = instruction.outputValue
@@ -715,20 +708,20 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processIncreaseSizeMethodCallOnCollection(
             numberOfElementsToAdd: IntegerVariableValues?,
             instruction: CallInstruction,
-            updatedData: ValuesData
+            updatedData: ValuesData.Defined
     ) {
         val collectionVariableDescriptor = tryExtractMethodCallReceiverDescriptor(instruction)
                                            ?: return
         val collectionSizes = updatedData.collectionsToSizes[collectionVariableDescriptor]
                               ?: return
         val updateValue = numberOfElementsToAdd?.let { collectionSizes + it } ?: IntegerVariableValues.Undefined
-        updateIntegerValueIfNeeded(updatedData.collectionsToSizes, collectionVariableDescriptor, updateValue)
+        updatedData.collectionsToSizes[collectionVariableDescriptor] = updateValue
     }
 
     private fun tryExtractPassedCollectionSizes(
             pseudoAnnotation: PseudoAnnotation.IncreaseSizeByPassedCollectionMethod,
             instruction: CallInstruction,
-            updatedData: ValuesData
+            updatedData: ValuesData.Defined
     ): IntegerVariableValues? {
         // This function is used to handle the code like `lst.addAll(lst2)`, when we know both `lst` and `lst2` sizes
         fun tryExtractFromKnownCollections(passedCollectionValueSourceInstruction: InstructionWithValue): IntegerVariableValues? {
@@ -764,13 +757,13 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processDecreaseSizeMethodCallOnCollection(
             pseudoAnnotation: PseudoAnnotation,
             instruction: CallInstruction,
-            updatedData: ValuesData
+            updatedData: ValuesData.Defined
     ) {
         val collectionVariableDescriptor = tryExtractMethodCallReceiverDescriptor(instruction)
                                            ?: return
         when(pseudoAnnotation) {
             is PseudoAnnotation.DecreaseSizeToZeroMethod ->
-                updateIntegerValueIfNeeded(updatedData.collectionsToSizes, collectionVariableDescriptor, IntegerVariableValues.Defined(0))
+                updatedData.collectionsToSizes[collectionVariableDescriptor] = IntegerVariableValues.Defined(0)
         }
     }
 
@@ -784,25 +777,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         return null
     }
 
-    private fun updateIntegerValueIfNeeded(
-            collection: MutableMap<VariableDescriptor, IntegerVariableValues>,
-            variableDescriptor: VariableDescriptor,
-            updateValue: IntegerVariableValues
-    ) {
-        if (collection[variableDescriptor] is IntegerVariableValues.Dead) {
-            return
-        }
-        collection[variableDescriptor] = updateValue
-    }
-
-    private fun updateBooleanVariableIfNeeded(
-            collection: MutableMap<VariableDescriptor, BooleanVariableValue>,
-            variableDescriptor: VariableDescriptor,
-            updateValue: BooleanVariableValue
-    ) {
-        collection[variableDescriptor] = updateValue
-    }
-
     // For each input fake variable of current instruction checks if the instruction is the last one to
     // use the variable as input. If this is true, the variable is removed (it will not be used anywhere anymore,
     // so it is useless).
@@ -810,7 +784,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     // because it's input value is used in `applyRestrictionsOnValuesIfNeeded` function above after the instruction
     // of these types is processed. So in general it is impossible to determine when to remove the input value of these
     // instructions using `pseudocode.getUsages` info.
-    private fun removeFakeVariablesIfNeeded(currentInstruction: Instruction, edgeData: ValuesData) {
+    private fun removeFakeVariablesIfNeeded(currentInstruction: Instruction, edgeData: ValuesData.Defined) {
         if (currentInstruction !is ConditionalJumpInstruction && currentInstruction !is NondeterministicJumpInstruction) {
             currentInstruction.inputValues.forEach {
                 val valueUsages = pseudocode.getUsages(it)

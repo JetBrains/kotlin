@@ -16,17 +16,17 @@ public sealed class IntegerVariableValues {
     public open fun minus(): IntegerVariableValues = IntegerVariableValues.Undefined
 
     // special operators (IntegerValues, IntegerValues) -> BooleanVariableValue
-    public open fun eq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun eq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-    public open fun notEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun notEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-    public open fun lessThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun lessThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-    public open fun greaterThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun greaterThan(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-    public open fun greaterOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun greaterOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-    public open fun lessOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData)
+    public open fun lessOrEq(other: IntegerVariableValues, thisVarDescriptor: VariableDescriptor?, valuesData: ValuesData.Defined)
             : BooleanVariableValue = BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
 
     // Represents a value of Integer variable that is not initialized
@@ -36,7 +36,6 @@ public sealed class IntegerVariableValues {
         override fun merge(other: IntegerVariableValues): IntegerVariableValues =
                 when (other) {
                     is IntegerVariableValues.Defined -> other.merge(this)
-                    is Dead -> Uninitialized
                     else -> other
                 }
     }
@@ -51,24 +50,6 @@ public sealed class IntegerVariableValues {
                     is IntegerVariableValues.Defined -> other.merge(this)
                     else -> Undefined
                 }
-    }
-
-    // Represent a value of Integer variable inside the block of dead code
-    public object Dead : IntegerVariableValues() {
-        override fun toString(): String = "#"
-
-        override fun merge(other: IntegerVariableValues): IntegerVariableValues =
-                when (other) {
-                    is IntegerVariableValues.Defined -> other.merge(this)
-                    else -> other
-                }
-
-        override fun plus(others: IntegerVariableValues): IntegerVariableValues = Dead
-        override fun minus(others: IntegerVariableValues): IntegerVariableValues = Dead
-        override fun times(others: IntegerVariableValues): IntegerVariableValues = Dead
-        override fun div(others: IntegerVariableValues): IntegerVariableValues = Dead
-        override fun rangeTo(others: IntegerVariableValues): IntegerVariableValues = Dead
-        override fun minus(): IntegerVariableValues = Dead
     }
 
     // Represent a set of values Integer variable can have
@@ -136,7 +117,6 @@ public sealed class IntegerVariableValues {
                     val notAllValuesKnown = !this.allPossibleValuesKnown || !other.allPossibleValuesKnown
                     Defined(this.values + other.values, forceNotAllValuesKnown = notAllValuesKnown)
                 }
-                is Dead -> this.copy()
             }
 
         public fun leaveOnlyValuesInSet(valuesToLeave: Set<Int>): IntegerVariableValues {
@@ -197,7 +177,7 @@ public sealed class IntegerVariableValues {
         override fun eq(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
                     thisVarDescriptor?.let {
@@ -219,14 +199,14 @@ public sealed class IntegerVariableValues {
         override fun notEq(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyNot(eq(other, thisVarDescriptor, valuesData))
 
         override fun lessThan(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
                     comparison(valueToCompareWith, { array, value -> array.indexOfFirst { it >= value } },
@@ -252,7 +232,7 @@ public sealed class IntegerVariableValues {
         override fun greaterThan(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyComparisonIfArgsAreAppropriate(other, valuesData) { valueToCompareWith ->
                     comparison(valueToCompareWith, { array, value -> array.indexOfFirst { it > value } },
@@ -278,14 +258,14 @@ public sealed class IntegerVariableValues {
         override fun greaterOrEq(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyNot(lessThan(other, thisVarDescriptor, valuesData))
 
         override fun lessOrEq(
                 other: IntegerVariableValues,
                 thisVarDescriptor: VariableDescriptor?,
-                valuesData: ValuesData
+                valuesData: ValuesData.Defined
         ): BooleanVariableValue =
                 applyNot(greaterThan(other, thisVarDescriptor, valuesData))
 
@@ -305,7 +285,7 @@ public sealed class IntegerVariableValues {
 
         private fun applyComparisonIfArgsAreAppropriate(
                 other: IntegerVariableValues,
-                valuesData: ValuesData,
+                valuesData: ValuesData.Defined,
                 comparison: (Int) -> BooleanVariableValue
         ): BooleanVariableValue {
             if (other !is Defined || other.values.size() > 1) {
@@ -323,7 +303,7 @@ public sealed class IntegerVariableValues {
                     is BooleanVariableValue.True -> BooleanVariableValue.False
                 }
 
-        private fun undefinedWithFullRestrictions(valuesData: ValuesData): BooleanVariableValue.Undefined {
+        private fun undefinedWithFullRestrictions(valuesData: ValuesData.Defined): BooleanVariableValue.Undefined {
             val restrictions = valuesData.intVarsToValues.keySet()
                     .map { Pair(it, setOf<Int>()) }
                     .toMap()

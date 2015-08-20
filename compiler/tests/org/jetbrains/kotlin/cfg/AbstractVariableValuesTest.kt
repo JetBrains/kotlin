@@ -72,13 +72,15 @@ public abstract class AbstractVariableValuesTest : AbstractPseudocodeTest() {
     )
 
     private fun dumpCollectedData(dataMap: Map<Instruction, ValuesData>): DumpData {
+        fun definedOrDead(valuesData: ValuesData, forDefined: (ValuesData.Defined) -> String): String =
+                if (valuesData is ValuesData.Defined) forDefined(valuesData)
+                else "{#dead#}"
         val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
         val data = dataMap.mapValues {
-            CollectedDataStrings(
-                    "INTS${MapUtils.mapToString(it.value.intVarsToValues, descriptorToString, descriptorToString)}",
-                    "BOOLS${MapUtils.mapToString(it.value.boolVarsToValues, descriptorToString, descriptorToString)}",
-                    "ARRS${MapUtils.mapToString(it.value.collectionsToSizes, descriptorToString, descriptorToString)}"
-            )
+            val ints = definedOrDead(it.value) { MapUtils.mapToString(it.intVarsToValues, descriptorToString, descriptorToString) }
+            val bools = definedOrDead(it.value) { MapUtils.mapToString(it.boolVarsToValues, descriptorToString, descriptorToString) }
+            val collects = definedOrDead(it.value) { MapUtils.mapToString(it.collectionsToSizes, descriptorToString, descriptorToString) }
+            CollectedDataStrings("INTS$ints", "BOOLS$bools", "ARRS$collects")
         }
         return DumpData(
                 data = data,
