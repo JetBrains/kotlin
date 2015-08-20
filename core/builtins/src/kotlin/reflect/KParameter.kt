@@ -60,4 +60,13 @@ public interface KParameter : KAnnotatedElement {
         /** Ordinary named value parameter. */
         VALUE,
     }
+
+    /**
+     * `true` if this parameter is optional, or `false` otherwise.
+     *
+     * A parameter is optional in any of the two cases:
+     * 1. The default value is provided at the declaration of this parameter.
+     * 2. The parameter is declared in a member function and one of the corresponding parameters in the super functions is optional.
+     */
+    public val isOptional: Boolean
 }
