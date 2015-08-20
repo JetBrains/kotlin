@@ -51,7 +51,7 @@ public object AndroidConst {
     val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
     val SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "$SUPPORT_V4_PACKAGE.app.FragmentActivity"
 
-    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check")
+    val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
     val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
             .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()

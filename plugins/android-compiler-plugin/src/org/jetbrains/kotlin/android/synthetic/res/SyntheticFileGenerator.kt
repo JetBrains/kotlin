@@ -69,12 +69,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }
         val clearCacheFile = renderSyntheticFile
 
-        return listOf(
-               clearCacheFile,
-               FLEXIBLE_TYPE_FILE,
-               FAKE_SUPPORT_V4_APP_FILE,
-               FAKE_SUPPORT_V4_VIEW_FILE,
-               FAKE_SUPPORT_V4_WIDGET_FILE)
+        return listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
     }
 
     protected abstract fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource>
@@ -200,27 +195,10 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString()
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName.asString()
 
-        private val ANDROID_IMPORTS = listOf(
-                "android.app.*",
-                "android.view.*",
-                "android.widget.*",
-                "android.webkit.*",
-                "android.inputmethodservice.*",
-                "android.opengl.*",
-                "android.appwidget.*",
-                "android.support.v4.app.*",
-                "android.support.v4.view.*",
-                "android.support.v4.widget.*",
-                Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
+        private val ANDROID_IMPORTS = listOf(Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
 
         private val FLEXIBLE_TYPE_FILE =
                 AndroidSyntheticFile("ft", "package $EXPLICIT_FLEXIBLE_PACKAGE\n\nclass $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>")
-
-        private val FAKE_SUPPORT_V4_WIDGET_FILE = AndroidSyntheticFile("supportv4_widget", "package android.support.v4.widget")
-
-        private val FAKE_SUPPORT_V4_VIEW_FILE = AndroidSyntheticFile("supportv4_view", "package android.support.v4.view")
-
-        private val FAKE_SUPPORT_V4_APP_FILE = AndroidSyntheticFile("supportv4_app", "package android.support.v4.app")
     }
 
 }
