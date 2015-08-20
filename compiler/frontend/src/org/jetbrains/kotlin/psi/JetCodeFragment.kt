@@ -29,6 +29,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.LinkedHashSet
 import java.util.regex.Pattern
 
@@ -138,7 +139,7 @@ public abstract class JetCodeFragment(
         }
 
         if (imports != null && !imports.isEmpty()) {
-            myImports.addAll(imports.split(IMPORT_SEPARATOR))
+            myImports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
         }
     }
 
