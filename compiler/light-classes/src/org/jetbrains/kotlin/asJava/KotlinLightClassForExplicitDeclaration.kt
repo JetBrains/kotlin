@@ -151,11 +151,6 @@ public open class KotlinLightClassForExplicitDeclaration(
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassData().javaFileStub
 
     protected fun getDescriptor(): ClassDescriptor? {
-        val cachedValue = getLightClassCachedValue(classOrObject)
-        if (cachedValue.hasUpToDateValue()) {
-            return cachedValue.value.dataForClass(classOrObject)?.descriptor
-        }
-
         return LightClassGenerationSupport.getInstance(project).resolveClassToDescriptor(classOrObject)
     }
 
