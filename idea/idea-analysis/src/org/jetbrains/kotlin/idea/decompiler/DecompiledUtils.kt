@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
+import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -29,6 +31,10 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
  */
 public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
     if (file.getExtension() != JavaClassFileType.INSTANCE!!.getDefaultExtension()) {
+        return false
+    }
+
+    if (HasCompiledKotlinInJar.isInNoKotlinJar(file)) {
         return false
     }
 
@@ -69,3 +75,10 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
 
 public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
         isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')
+
+public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCounter(HasCompiledKotlinInJar::class.simpleName!!) {
+    override fun hasProperty(file: VirtualFile) = isKotlinJvmCompiledFile(file)
+
+    fun isInNoKotlinJar(file: VirtualFile): Boolean =
+            JarUserDataManager.hasFileWithProperty(HasCompiledKotlinInJar, file) == false
+}

@@ -67,13 +67,7 @@ public object LibraryUtils {
 
     platformStatic
     public fun getJarFile(classesRoots: List<VirtualFile>, jarName: String): VirtualFile? {
-        for (root in classesRoots) {
-            if (root.getName() == jarName) {
-                return root
-            }
-        }
-
-        return null
+        return classesRoots.firstOrNull { it.name == jarName }
     }
 
     platformStatic

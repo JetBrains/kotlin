@@ -44,12 +44,10 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
     @NotNull
     @Override
     public PsiJavaCodeReferenceElement getBaseClassReference() {
-        Project project = classOrObject.getProject();
-        return JavaPsiFacade.getElementFactory(project).createReferenceElementByFQClassName(
-                getFirstSupertypeFQName(), GlobalSearchScope.allScope(project)
-        );
+        return JavaPsiFacade.getElementFactory(classOrObject.getProject()).createReferenceElementByType(getBaseClassType());
     }
 
+    @NotNull
     private String getFirstSupertypeFQName() {
         ClassDescriptor descriptor = getDescriptor();
         if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
@@ -77,7 +75,20 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
         if (cachedBaseType != null) type = cachedBaseType.get();
         if (type != null && type.isValid()) return type;
 
-        type = JavaPsiFacade.getInstance(classOrObject.getProject()).getElementFactory().createType(getBaseClassReference());
+        String firstSupertypeFQName = getFirstSupertypeFQName();
+        for (PsiClassType superType : getSuperTypes()) {
+            PsiClass superClass = superType.resolve();
+            if (superClass != null && firstSupertypeFQName.equals(superClass.getQualifiedName())) {
+                type = superType;
+                break;
+            }
+        }
+
+        if (type == null) {
+            Project project = classOrObject.getProject();
+            type = PsiType.getJavaLangObject(PsiManager.getInstance(project), GlobalSearchScope.allScope(project));
+        }
+
         cachedBaseType = new SoftReference<PsiClassType>(type);
         return type;
     }

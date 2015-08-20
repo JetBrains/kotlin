@@ -47,12 +47,12 @@ class LazyJavaClassDescriptor(
         internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName(),
-                        outerC.sourceElementFactory.source(jClass)), JavaClassDescriptor {
+                        outerC.components.sourceElementFactory.source(jClass)), JavaClassDescriptor {
 
     private val c: LazyJavaResolverContext = outerC.child(this, jClass)
 
     init {
-        c.javaResolverCache.recordClass(jClass, this)
+        c.components.javaResolverCache.recordClass(jClass, this)
     }
 
     private val kind = when {
@@ -96,7 +96,7 @@ class LazyJavaClassDescriptor(
     override fun getAnnotations() = annotations()
 
     private val functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
-        c.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
+        c.components.samConversionResolver.resolveFunctionTypeIfSamInterface(this) { method ->
             unsubstitutedMemberScope.resolveMethodToFunctionDescriptor(method, false)
         }
     }
@@ -145,7 +145,7 @@ class LazyJavaClassDescriptor(
             result.addIfNotNull(purelyImplementedSupertype)
 
             if (incomplete.isNotEmpty()) {
-                c.errorReporter.reportIncompleteHierarchy(getDeclarationDescriptor(), incomplete.map { javaType ->
+                c.components.errorReporter.reportIncompleteHierarchy(getDeclarationDescriptor(), incomplete.map { javaType ->
                     (javaType as JavaClassifierType).getPresentableText()
                 })
             }

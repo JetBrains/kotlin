@@ -56,11 +56,11 @@ class LazyJavaAnnotationDescriptor(
     private val type = c.storageManager.createLazyValue {
         val fqName = fqName() ?: return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
         val annotationClass = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName)
-                              ?: javaAnnotation.resolve()?.let { javaClass -> c.moduleClassResolver.resolveClass(javaClass) }
+                              ?: javaAnnotation.resolve()?.let { javaClass -> c.components.moduleClassResolver.resolveClass(javaClass) }
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
-    private val source = c.sourceElementFactory.source(javaAnnotation)
+    private val source = c.components.sourceElementFactory.source(javaAnnotation)
 
     private val factory = ConstantValueFactory(c.module.builtIns)
 

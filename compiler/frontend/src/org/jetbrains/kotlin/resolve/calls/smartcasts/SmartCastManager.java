@@ -22,6 +22,7 @@ import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeIntersector;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
@@ -44,12 +46,13 @@ import java.util.Set;
 import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
-public class SmartCastUtils {
+public class SmartCastManager {
 
-    private SmartCastUtils() {}
+    public SmartCastManager() {
+    }
 
     @NotNull
-    public static List<JetType> getSmartCastVariants(
+    public List<JetType> getSmartCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
     ) {
@@ -57,7 +60,7 @@ public class SmartCastUtils {
     }
 
     @NotNull
-    public static List<JetType> getSmartCastVariants(
+    public List<JetType> getSmartCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
@@ -70,7 +73,7 @@ public class SmartCastUtils {
     }
 
     @NotNull
-    public static List<JetType> getSmartCastVariantsWithLessSpecificExcluded(
+    public List<JetType> getSmartCastVariantsWithLessSpecificExcluded(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
@@ -95,7 +98,7 @@ public class SmartCastUtils {
      * @return variants @param receiverToCast may be cast to according to context dataFlowInfo, receiverToCast itself is NOT included
      */
     @NotNull
-    public static Collection<JetType> getSmartCastVariantsExcludingReceiver(
+    public Collection<JetType> getSmartCastVariantsExcludingReceiver(
             @NotNull ResolutionContext context,
             @NotNull ReceiverValue receiverToCast
     ) {
@@ -109,7 +112,7 @@ public class SmartCastUtils {
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
     @NotNull
-    public static Collection<JetType> getSmartCastVariantsExcludingReceiver(
+    public Collection<JetType> getSmartCastVariantsExcludingReceiver(
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -129,7 +132,7 @@ public class SmartCastUtils {
         return Collections.emptyList();
     }
 
-    public static boolean isSubTypeBySmartCastIgnoringNullability(
+    public boolean isSubTypeBySmartCastIgnoringNullability(
             @NotNull ReceiverValue receiverArgument,
             @NotNull JetType receiverParameterType,
             @NotNull ResolutionContext context
@@ -139,7 +142,7 @@ public class SmartCastUtils {
     }
 
     @Nullable
-    private static JetType getSmartCastSubType(
+    private JetType getSmartCastSubType(
             @NotNull JetType receiverParameterType,
             @NotNull Collection<JetType> smartCastTypes
     ) {
@@ -151,7 +154,7 @@ public class SmartCastUtils {
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeUtils.intersect(JetTypeChecker.DEFAULT, subTypes);
+        JetType intersection = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }
@@ -159,7 +162,7 @@ public class SmartCastUtils {
     }
 
     // Returns false when we need smart cast but cannot do it, otherwise true
-    public static boolean recordSmartCastIfNecessary(
+    public boolean recordSmartCastIfNecessary(
             @NotNull ReceiverValue receiver,
             @NotNull JetType receiverParameterType,
             @NotNull ResolutionContext context,
@@ -182,7 +185,7 @@ public class SmartCastUtils {
         return recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isPredictable(), true);
     }
 
-    public static boolean recordCastOrError(
+    public boolean recordCastOrError(
             @NotNull JetExpression expression,
             @NotNull JetType type,
             @NotNull BindingTrace trace,
@@ -203,7 +206,7 @@ public class SmartCastUtils {
         return canBeCast;
     }
 
-    public static boolean canBeSmartCast(
+    public boolean canBeSmartCast(
             @NotNull ReceiverParameterDescriptor receiverParameter,
             @NotNull ReceiverValue receiver,
             @NotNull ResolutionContext context) {

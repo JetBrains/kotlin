@@ -21,7 +21,7 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
@@ -47,7 +47,7 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<JetForE
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return null
         val potentialExpression = createWithIndexExpression(loopRange)
 
-        val newBindingContext = potentialExpression.analyzeInContext(resolutionScope)
+        val newBindingContext = potentialExpression.analyzeInContext(resolutionScope, loopRange)
         val newResolvedCall = potentialExpression.getResolvedCall(newBindingContext) ?: return null
         if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() != WITH_INDEX_FQ_NAME) return null
 

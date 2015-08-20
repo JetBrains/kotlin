@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BodyResolveCache
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -44,7 +45,8 @@ public fun createContainerForReplWithJava(
 
     useInstance(additionalFileScopeProvider)
     useInstance(declarationProviderFactory)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
 
     useImpl<FileScopeProviderImpl>()
     useImpl<SingleModuleClassResolver>()

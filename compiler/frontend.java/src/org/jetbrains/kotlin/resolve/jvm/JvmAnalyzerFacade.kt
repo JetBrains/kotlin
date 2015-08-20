@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleParameters
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
@@ -30,30 +30,27 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import java.util.ArrayList
 import kotlin.platform.platformStatic
-
-public class JvmResolverForModule(
-        override val lazyResolveSession: ResolveSession,
-        override val packageFragmentProvider: PackageFragmentProvider,
-        public val javaDescriptorResolver: JavaDescriptorResolver
-) : ResolverForModule
 
 public class JvmPlatformParameters(
         public val moduleByJavaClass: (JavaClass) -> ModuleInfo
 ) : PlatformAnalysisParameters
 
 
-public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatformParameters> {
+public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: JvmPlatformParameters, resolverForProject: ResolverForProject<M, JvmResolverForModule>
-    ): JvmResolverForModule {
+            platformParameters: JvmPlatformParameters,
+            targetEnvironment: TargetEnvironment,
+            resolverForProject: ResolverForProject<M>
+    ): ResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val filesToAnalyze = getAllFilesToAnalyze(project, moduleInfo, syntheticFiles)
@@ -64,18 +61,21 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
             val moduleInfo = platformParameters.moduleByJavaClass(javaClass)
-            resolverForProject.resolverForModule(moduleInfo as M).javaDescriptorResolver
+            resolverForProject.resolverForModule(moduleInfo as M).componentProvider.get<JavaDescriptorResolver>()
         }
-        val (resolveSession, javaDescriptorResolver) = createContainerForLazyResolveWithJava(
+        val container = createContainerForLazyResolveWithJava(
                 moduleContext,
                 CodeAnalyzerInitializer.getInstance(project).createTrace(),
                 declarationProviderFactory,
                 moduleContentScope,
-                moduleClassResolver
+                moduleClassResolver,
+                targetEnvironment
         )
+        val resolveSession = container.get<ResolveSession>()
+        val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 
         val providersForModule = listOf(resolveSession.getPackageFragmentProvider(), javaDescriptorResolver.packageFragmentProvider)
-        return JvmResolverForModule(resolveSession, CompositePackageFragmentProvider(providersForModule), javaDescriptorResolver)
+        return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
 
     override val moduleParameters: ModuleParameters

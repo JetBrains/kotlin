@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.frontend.di.createContainerForMacros
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
+import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -244,7 +247,7 @@ class ExpectedInfos(
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
+        val callResolver = resolutionFacade.frontendService<CallResolver>(moduleDescriptor)
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = LinkedHashSet<ExpectedInfo>()
@@ -317,7 +320,8 @@ class ExpectedInfos(
                 if (alreadyHasStar) continue
 
                 val parameterType = if (useHeuristicSignatures)
-                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, project) ?: parameter.getType()
+                    resolutionFacade.ideService<HeuristicSignatures>(moduleDescriptor).
+                            correctedParameterType(descriptor, parameter) ?: parameter.getType()
                 else
                     parameter.getType()
 
@@ -505,7 +509,7 @@ class ExpectedInfos(
             null
 
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
-        val iterableDetector = IterableTypesDetector(forExpression.project, moduleDescriptor, scope)
+        val iterableDetector = resolutionFacade.ideService<IterableTypesDetection>(forExpression).createDetector(scope)
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
@@ -522,7 +526,7 @@ class ExpectedInfos(
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
-        val detector = TypesWithContainsDetector(scope, leftOperandType, binaryExpression.project, moduleDescriptor)
+        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade.ideService<HeuristicSignatures>(binaryExpression))
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {

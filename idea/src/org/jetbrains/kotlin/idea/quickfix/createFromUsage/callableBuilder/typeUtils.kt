@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -56,7 +53,7 @@ private fun DeclarationDescriptor.render(
 }
 
 private fun JetType.render(typeParameterNameMap: Map<TypeParameterDescriptor, String>, fq: Boolean): String {
-    val arguments = getArguments().map { it.getType().render(typeParameterNameMap, fq) }
+    val arguments = getArguments().map { if (it.isStarProjection) "*" else it.getType().render(typeParameterNameMap, fq) }
     val typeString = getConstructor().getDeclarationDescriptor()!!.render(typeParameterNameMap, fq)
     val typeArgumentString = if (arguments.isNotEmpty()) arguments.joinToString(", ", "<", ">") else ""
     val nullifier = if (isMarkedNullable()) "?" else ""
@@ -73,20 +70,28 @@ private fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParam
     }
 }
 
+fun JetType.containsStarProjections(): Boolean = arguments.any { it.isStarProjection || it.type.containsStarProjections() }
+
 fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
+    val visitedTypes = HashSet<JetType>()
     val typeParameters = LinkedHashSet<TypeParameterDescriptor>()
-    val arguments = getArguments()
-    if (arguments.isEmpty()) {
-        val descriptor = getConstructor().getDeclarationDescriptor()
-        if (descriptor is TypeParameterDescriptor) {
-            typeParameters.add(descriptor)
+
+    fun traverseTypes(type: JetType) {
+        if (!visitedTypes.add(type)) return
+
+        val arguments = type.arguments
+        if (arguments.isEmpty()) {
+            val descriptor = type.constructor.declarationDescriptor
+            if (descriptor is TypeParameterDescriptor) {
+                typeParameters.add(descriptor)
+            }
+            return
         }
+
+        arguments.forEach { traverseTypes(it.type) }
     }
-    else {
-        arguments.flatMapTo(typeParameters) { projection ->
-            projection.getType().getTypeParameters()
-        }
-    }
+
+    traverseTypes(this)
     return typeParameters
 }
 
@@ -163,13 +168,13 @@ fun JetExpression.guessTypes(
             }
         }
         parent is JetPropertyDelegate -> {
-            val property = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as PropertyDescriptor
-            val delegateClassName = if (property.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
+            val variableDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, parent.getParent() as JetProperty] as VariableDescriptor
+            val delegateClassName = if (variableDescriptor.isVar()) "ReadWriteProperty" else "ReadOnlyProperty"
             val delegateClass = module.resolveTopLevelClass(FqName("kotlin.properties.$delegateClassName"))
                                 ?: return arrayOf(module.builtIns.getAnyType())
-            val receiverType = (property.getExtensionReceiverParameter() ?: property.getDispatchReceiverParameter())?.getType()
+            val receiverType = (variableDescriptor.getExtensionReceiverParameter() ?: variableDescriptor.getDispatchReceiverParameter())?.getType()
                                ?: module.builtIns.getNullableNothingType()
-            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(property.getType()))
+            val typeArguments = listOf(TypeProjectionImpl(receiverType), TypeProjectionImpl(variableDescriptor.getType()))
             arrayOf(TypeUtils.substituteProjectionsForParameters(delegateClass, typeArguments))
         }
         parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
@@ -196,7 +201,7 @@ private fun JetNamedDeclaration.guessType(context: BindingContext): Array<JetTyp
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
     }
-    val theType = TypeUtils.intersect(JetTypeChecker.DEFAULT, expectedTypes)
+    val theType = TypeIntersector.intersectTypes(KotlinBuiltIns.getInstance(), JetTypeChecker.DEFAULT, expectedTypes)
     if (theType != null) {
         return arrayOf(theType)
     }

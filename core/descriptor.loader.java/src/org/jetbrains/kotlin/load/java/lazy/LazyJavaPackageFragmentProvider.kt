@@ -28,18 +28,18 @@ import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public class LazyJavaPackageFragmentProvider(
-        outerContext: GlobalJavaResolverContext,
+        components: JavaResolverComponents,
         module: ModuleDescriptor,
         reflectionTypes: ReflectionTypes
 ) : PackageFragmentProvider {
 
     private val c =
-            LazyJavaResolverContext(outerContext, this, FragmentClassResolver(), module, reflectionTypes, TypeParameterResolver.EMPTY)
+            LazyJavaResolverContext(components, this, FragmentClassResolver(), module, reflectionTypes, TypeParameterResolver.EMPTY)
 
     private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
             c.storageManager.createMemoizedFunctionWithNullableValues {
                 fqName ->
-                val jPackage = c.finder.findPackage(fqName)
+                val jPackage = c.components.finder.findPackage(fqName)
                 if (jPackage != null) {
                     LazyJavaPackageFragment(c, jPackage)
                 }
@@ -59,7 +59,7 @@ public class LazyJavaPackageFragmentProvider(
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             val fqName = javaClass.fqName
             if (fqName != null && javaClass.originKind == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
-                return c.javaResolverCache.getClassResolvedFromSource(fqName)
+                return c.components.javaResolverCache.getClassResolvedFromSource(fqName)
             }
 
             javaClass.outerClass?.let { outerClass ->
@@ -67,7 +67,7 @@ public class LazyJavaPackageFragmentProvider(
                 return outerClassScope?.getClassifier(javaClass.name) as? ClassDescriptor
             }
 
-            val kotlinResult = c.resolveKotlinBinaryClass(c.kotlinClassFinder.findKotlinClass(javaClass))
+            val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(javaClass))
             if (kotlinResult is KotlinClassLookupResult.Found) return kotlinResult.descriptor
 
             if (fqName == null) return null

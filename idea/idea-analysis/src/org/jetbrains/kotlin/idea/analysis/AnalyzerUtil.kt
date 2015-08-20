@@ -14,60 +14,54 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.analyzer
+package org.jetbrains.kotlin.idea.analysis
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.frontend.di.createContainerForMacros
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
+jvmOverloads
 public fun JetExpression.computeTypeInfoInContext(
         scope: JetScope,
+        contextExpression: JetExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule(),
         isStatement: Boolean = false
 ): JetTypeInfo {
-    val expressionTypingServices = createContainerForMacros(getProject(), module).expressionTypingServices
-    return expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
+    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>(contextExpression)
+            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
+jvmOverloads
 public fun JetExpression.analyzeInContext(
         scope: JetScope,
+        contextExpression: JetExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule(),
         isStatement: Boolean = false
 ): BindingContext {
-    computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module, isStatement)
+    computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement)
     return trace.getBindingContext()
 }
 
+jvmOverloads
 public fun JetExpression.computeTypeInContext(
         scope: JetScope,
+        contextExpression: JetExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
-        module: ModuleDescriptor = scope.getModule()
-): JetType {
-    return computeTypeInfoInContext(scope, trace, dataFlowInfo, expectedType, module).type.safeType(this)
+        expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE
+): JetType? {
+    return computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType).type
 }
-
-public fun JetType?.safeType(expression: JetExpression): JetType {
-    if (this != null) return this
-
-    return ErrorUtils.createErrorType("Type for " + expression.getText())
-}
-
-private fun JetScope.getModule(): ModuleDescriptor = this.getContainingDeclaration().module

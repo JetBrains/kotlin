@@ -21,12 +21,16 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
+import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
@@ -34,14 +38,16 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.types.DynamicTypesSettings
 import java.io.File
 import java.util.ArrayList
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
-    protected open fun getDescriptor(declaration: JetDeclaration, resolveSession: ResolveSession): DeclarationDescriptor {
-        return resolveSession.resolveToDescriptor(declaration)
+    protected open fun getDescriptor(declaration: JetDeclaration, container: ComponentProvider): DeclarationDescriptor {
+        return container.get<ResolveSession>().resolveToDescriptor(declaration)
     }
+
+    protected open val targetEnvironment: TargetEnvironment
+        get() = CompilerEnvironment
 
     public fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
@@ -49,12 +55,16 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
         val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject())
 
-        val resolveSession = createLazyResolveSession(
+
+        val container = createContainerForLazyResolve(
                 context,
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                JvmPlatform
+                JvmPlatform,
+                targetEnvironment
         )
+
+        val resolveSession = container.get<ResolveSession>()
 
         context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 
@@ -75,10 +85,10 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 when (declaringElement) {
                     is JetFunctionType -> return
                     is JetNamedFunction ->
-                        addCorrespondingParameterDescriptor(getDescriptor(declaringElement, resolveSession) as FunctionDescriptor, parameter)
+                        addCorrespondingParameterDescriptor(getDescriptor(declaringElement, container) as FunctionDescriptor, parameter)
                     is JetPrimaryConstructor -> {
                         val jetClassOrObject: JetClassOrObject = declaringElement.getContainingClassOrObject()
-                        val classDescriptor = getDescriptor(jetClassOrObject, resolveSession) as ClassDescriptor
+                        val classDescriptor = getDescriptor(jetClassOrObject, container) as ClassDescriptor
                         addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor()!!, parameter)
                     }
                     else -> super.visitParameter(parameter)
@@ -87,7 +97,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
             override fun visitPropertyAccessor(accessor: JetPropertyAccessor) {
                 val parent = accessor.getParent() as JetProperty
-                val propertyDescriptor = getDescriptor(parent, resolveSession) as PropertyDescriptor
+                val propertyDescriptor = getDescriptor(parent, container) as PropertyDescriptor
                 if (accessor.isGetter()) {
                     descriptors.add(propertyDescriptor.getGetter()!!)
                 }
@@ -102,7 +112,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
 
             override fun visitDeclaration(element: JetDeclaration) {
-                val descriptor = getDescriptor(element, resolveSession)
+                val descriptor = getDescriptor(element, container)
                 descriptors.add(descriptor)
                 if (descriptor is ClassDescriptor) {
                     // if class has primary constructor then we visit it later, otherwise add it artificially

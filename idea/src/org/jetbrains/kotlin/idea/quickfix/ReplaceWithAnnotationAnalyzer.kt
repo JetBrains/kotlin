@@ -18,34 +18,35 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.LinkedHashSet
@@ -91,12 +92,12 @@ object ReplaceWithAnnotationAnalyzer {
                 .filter { it.isSafe() }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
 
-        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
+        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(project, symbolDescriptor.module, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
 
-        var bindingContext = expression.analyzeInContext(scope)
+        var bindingContext = analyzeInContext(expression, symbolDescriptor, scope, resolutionFacade)
 
         val typeArgsToAdd = ArrayList<Pair<JetCallExpression, JetTypeArgumentList>>()
         expression.forEachDescendantOfType<JetCallExpression> {
@@ -111,7 +112,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             // reanalyze expression - new usages of type parameters may be added
-            bindingContext = expression.analyzeInContext(scope)
+            bindingContext = analyzeInContext(expression, symbolDescriptor, scope, resolutionFacade)
         }
 
         val receiversToAdd = ArrayList<Pair<JetExpression, JetExpression>>()
@@ -157,6 +158,18 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         return ReplacementExpression(expression, importFqNames)
+    }
+
+    private fun analyzeInContext(
+            expression: JetExpression,
+            symbolDescriptor: CallableDescriptor,
+            scope: ChainedScope,
+            resolutionFacade: ResolutionFacade
+    ): BindingContext {
+        val traceContext = BindingTraceContext()
+        resolutionFacade.frontendService<ExpressionTypingServices>(symbolDescriptor.module)
+                .getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
+        return traceContext.bindingContext
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {

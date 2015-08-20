@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.container
 
-import kotlin.properties.ReadOnlyProperty
-
 public fun createContainer(id: String, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
     val c = StorageComponentContainer(id)
     c.init()
@@ -29,14 +27,19 @@ public inline fun <reified T> StorageComponentContainer.useImpl() {
     registerSingleton(javaClass<T>())
 }
 
-public inline fun <reified T> StorageComponentContainer.get(): T {
-    return resolve(javaClass<T>(), unknownContext)!!.getValue() as T
+public inline fun <reified T> ComponentProvider.get(): T {
+    return getService(javaClass<T>())
+}
+
+@suppress("UNCHECKED_CAST")
+public fun <T> ComponentProvider.getService(request: Class<T>): T {
+    return resolve(request)!!.getValue() as T
 }
 
 public fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
-public inline fun <reified T> StorageComponentContainer.get(thisRef: Any?, desc: PropertyMetadata): T {
-    return resolve(javaClass<T>())!!.getValue() as T
+public inline fun <reified T> ComponentProvider.get(thisRef: Any?, desc: PropertyMetadata): T {
+    return getService(javaClass<T>())
 }

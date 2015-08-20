@@ -45,14 +45,14 @@ public class LazyJavaPackageScope(
     // TODO: Storing references is a temporary hack until modules infrastructure is implemented.
     // See JetTypeMapperWithOutDirectories for details
     public val kotlinBinaryClass: KotlinJvmBinaryClass?
-            = c.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
+            = c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(packageFragment.fqName))
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
         val kotlinBinaryClass = kotlinBinaryClass
         if (kotlinBinaryClass == null)
             JetScope.Empty
         else
-            c.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.Empty
+            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.Empty
     }
 
     private val packageFragment: LazyJavaPackageFragment get() = getContainingDeclaration() as LazyJavaPackageFragment
@@ -60,12 +60,12 @@ public class LazyJavaPackageScope(
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
         val classId = ClassId(packageFragment.fqName, name)
 
-        val kotlinResult = c.resolveKotlinBinaryClass(c.kotlinClassFinder.findKotlinClass(classId))
+        val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(classId))
         when (kotlinResult) {
             is KotlinClassLookupResult.Found -> kotlinResult.descriptor
             is KotlinClassLookupResult.SyntheticClass -> null
             is KotlinClassLookupResult.NotFound -> {
-                c.finder.findClass(classId)?.let { javaClass ->
+                c.components.finder.findClass(classId)?.let { javaClass ->
                     c.javaClassResolver.resolveClass(javaClass).apply {
                         assert(this == null || this.containingDeclaration == packageFragment) {
                             "Wrong package fragment for $this, expected $packageFragment"
@@ -118,7 +118,7 @@ public class LazyJavaPackageScope(
     )
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        result.addIfNotNull(c.samConversionResolver.resolveSamConstructor(name, this))
+        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, this))
     }
 
     override fun getSubPackages() = subPackages()

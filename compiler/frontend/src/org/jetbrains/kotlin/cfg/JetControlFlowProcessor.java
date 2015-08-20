@@ -1147,7 +1147,9 @@ public class JetControlFlowProcessor {
             JetExpression delegate = property.getDelegateExpression();
             if (delegate != null) {
                 generateInstructions(delegate);
-                generateDelegateConsumer(property, delegate);
+                if (builder.getBoundValue(delegate) != null) {
+                    createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate);
+                }
             }
 
             if (JetPsiUtil.isLocal(property)) {
@@ -1155,15 +1157,6 @@ public class JetControlFlowProcessor {
                     generateInstructions(accessor);
                 }
             }
-        }
-
-        private void generateDelegateConsumer(@NotNull JetProperty property, @NotNull JetExpression delegate) {
-            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-            if (!(descriptor instanceof PropertyDescriptor)) return;
-
-            if (builder.getBoundValue(delegate) == null) return;
-
-            createSyntheticValue(property, MagicKind.VALUE_CONSUMER, delegate);
         }
 
         @Override

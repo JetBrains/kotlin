@@ -27,7 +27,7 @@ class LazyJavaAnnotations(
         private val c: LazyJavaResolverContext,
         private val annotationOwner: JavaAnnotationOwner
 ) : Annotations {
-    private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
+    private val annotationDescriptors = c.components.storageManager.createMemoizedFunctionWithNullableValues {
         annotation: JavaAnnotation -> JavaAnnotationMapper.mapOrResolveJavaAnnotation(annotation, c)
     }
 
@@ -36,7 +36,7 @@ class LazyJavaAnnotations(
             ?: JavaAnnotationMapper.findMappedJavaAnnotation(fqName, annotationOwner, c)
 
     override fun findExternalAnnotation(fqName: FqName) =
-            c.externalAnnotationResolver.findExternalAnnotation(annotationOwner, fqName)?.let(annotationDescriptors)
+            c.components.externalAnnotationResolver.findExternalAnnotation(annotationOwner, fqName)?.let(annotationDescriptors)
 
     override fun iterator() =
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.framework;
 
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.jar.Attributes;
 
 public class JsLibraryStdDetectionUtil {
+    private static final Key<Boolean> IS_JS_LIBRARY_STD_LIB = Key.create("IS_JS_LIBRARY_STD_LIB");
 
     public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
         return getJsLibraryStdVersion(classesRoots, true);
@@ -52,8 +54,6 @@ public class JsLibraryStdDetectionUtil {
         VirtualFile jar = fixedJarName ? LibraryUtils.getJarFile(classesRoots, PathUtil.JS_LIB_JAR_NAME) : getJsStdLibJar(classesRoots);
         if (jar == null) return null;
 
-        assert KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(classesRoots) : "StdLib should also be detected as Kotlin/Javascript library";
-
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
     }
 
@@ -63,8 +63,16 @@ public class JsLibraryStdDetectionUtil {
             if (root.getFileSystem().getProtocol() != StandardFileSystems.JAR_PROTOCOL) continue;
 
             VirtualFile jar = VfsUtilCore.getVirtualFileForJar(root);
-            if (jar != null && LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()))) {
-                return jar;
+            if (jar != null) {
+                Boolean isJSStdLib = jar.getUserData(IS_JS_LIBRARY_STD_LIB);
+                if (isJSStdLib == null) {
+                    isJSStdLib = LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()));
+                    jar.putUserData(IS_JS_LIBRARY_STD_LIB, isJSStdLib);
+                }
+
+                if (isJSStdLib) {
+                    return jar;
+                }
             }
         }
 

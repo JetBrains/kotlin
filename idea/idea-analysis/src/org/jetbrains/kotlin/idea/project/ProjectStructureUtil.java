@@ -68,8 +68,9 @@ public class ProjectStructureUtil {
             result = CachedValuesManager.getManager(module.getProject()).createCachedValue(new CachedValueProvider<Boolean>() {
                 @Override
                 public Result<Boolean> compute() {
-                    return Result.create(getJSStandardLibrary(module) != null, ProjectRootModificationTracker
-                            .getInstance(module.getProject()));
+                    return Result.create(
+                            getJSStandardLibrary(module) != null,
+                            ProjectRootModificationTracker.getInstance(module.getProject()));
                 }
             }, false);
 

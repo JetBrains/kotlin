@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.BOTH_RECEIVERS
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
@@ -47,7 +47,10 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isDynamic
 
-public class TaskPrioritizer(private val storageManager: StorageManager) {
+public class TaskPrioritizer(
+        private val storageManager: StorageManager,
+        private val smartCastManager: SmartCastManager
+) {
 
     public fun <D : CallableDescriptor> splitLexicallyLocalDescriptors(
             allDescriptors: Collection<ResolutionCandidate<D>>,
@@ -130,10 +133,11 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         addCandidatesForNoReceiver(implicitReceivers, c)
     }
 
-    private class ReceiverWithTypes(
+    private inner class ReceiverWithTypes(
             val value: ReceiverValue,
-            private val context: ResolutionContext<*>) {
-        val types: Collection<JetType> by lazy { SmartCastUtils.getSmartCastVariants(value, context) }
+            private val context: ResolutionContext<*>
+    ) {
+        val types: Collection<JetType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForExplicitReceiver(

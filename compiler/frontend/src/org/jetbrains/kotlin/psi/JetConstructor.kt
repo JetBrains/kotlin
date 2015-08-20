@@ -66,9 +66,9 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
 
     override fun getTypeParameters() = emptyList<JetTypeParameter>()
 
-    override fun getName(): String = getContainingClassOrObject().getName()!!
+    override fun getName(): String? = getContainingClassOrObject().getName()
 
-    override fun getNameAsSafeName() = Name.identifier(getName())
+    override fun getNameAsSafeName() = JetPsiUtil.safeName(getName())
 
     override fun getFqName() = null
 

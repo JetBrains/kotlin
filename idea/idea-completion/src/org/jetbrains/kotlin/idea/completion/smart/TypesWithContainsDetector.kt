@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.HeuristicSignatures
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -35,10 +33,8 @@ import java.util.HashMap
 class TypesWithContainsDetector(
         private val scope: JetScope,
         private val argumentType: JetType,
-        private val project: Project,
-        private val moduleDescriptor: ModuleDescriptor
+        private val heuristicSignatures: HeuristicSignatures
 ) {
-
     private val cache = HashMap<FuzzyType, Boolean>()
     private val containsName = Name.identifier("contains")
     private val booleanType = KotlinBuiltIns.getInstance().getBooleanType()
@@ -60,7 +56,7 @@ class TypesWithContainsDetector(
     private fun isGoodContainsFunction(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
         if (!TypeUtils.equalTypes(function.getReturnType()!!, booleanType)) return false
         val parameter = function.getValueParameters().singleOrNull() ?: return false
-        val parameterType = HeuristicSignatures.correctedParameterType(function, parameter, moduleDescriptor, project) ?: parameter.getType()
+        val parameterType = heuristicSignatures.correctedParameterType(function, parameter) ?: parameter.getType()
         val fuzzyParameterType = FuzzyType(parameterType, function.getTypeParameters() + freeTypeParams)
         return fuzzyParameterType.checkIsSuperTypeOf(argumentType) != null
     }

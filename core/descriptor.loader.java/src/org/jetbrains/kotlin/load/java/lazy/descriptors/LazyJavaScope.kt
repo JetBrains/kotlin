@@ -84,7 +84,7 @@ public abstract class LazyJavaScope(
             val descriptor = resolveMethodToFunctionDescriptor(method, true)
             result.add(descriptor)
             if (method.isStatic) {
-                result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
+                result.addIfNotNull(c.components.samConversionResolver.resolveSamAdapter(descriptor))
             }
         }
 
@@ -107,7 +107,7 @@ public abstract class LazyJavaScope(
     fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
-                containingDeclaration, annotations, method.getName(), c.sourceElementFactory.source(method)
+                containingDeclaration, annotations, method.getName(), c.components.sourceElementFactory.source(method)
         )
 
         val c = c.child(functionDescriptorImpl, method)
@@ -132,11 +132,11 @@ public abstract class LazyJavaScope(
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
 
         if (record) {
-            c.javaResolverCache.recordMethod(method, functionDescriptorImpl)
+            c.components.javaResolverCache.recordMethod(method, functionDescriptorImpl)
         }
 
         if (signatureErrors.isNotEmpty()) {
-            c.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
+            c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
         }
 
         return functionDescriptorImpl
@@ -204,7 +204,7 @@ public abstract class LazyJavaScope(
                     outType,
                     false,
                     varargElementType,
-                    c.sourceElementFactory.source(javaParameter)
+                    c.components.sourceElementFactory.source(javaParameter)
             )
         }.toList()
         return ResolvedValueParameters(descriptors, synthesizedNames)
@@ -242,10 +242,10 @@ public abstract class LazyJavaScope(
         propertyDescriptor.initialize(null, null)
 
         val propertyType = getPropertyType(field, propertyDescriptor.getAnnotations())
-        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar)
+        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar)
         val signatureErrors = effectiveSignature.getErrors()
         if (!signatureErrors.isEmpty()) {
-            c.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
+            c.components.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
         }
 
         propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null : JetType?)
@@ -253,11 +253,11 @@ public abstract class LazyJavaScope(
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
-                        c.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)
+                        c.components.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)
                     })
         }
 
-        c.javaResolverCache.recordField(field, propertyDescriptor);
+        c.components.javaResolverCache.recordField(field, propertyDescriptor);
 
         return propertyDescriptor
     }
@@ -269,7 +269,7 @@ public abstract class LazyJavaScope(
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
-                                      c.sourceElementFactory.source(field), /* original = */ null)
+                                      c.components.sourceElementFactory.source(field), /* original = */ null)
     }
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): JetType {
@@ -277,7 +277,7 @@ public abstract class LazyJavaScope(
         val finalStatic = field.isFinal() && field.isStatic()
 
         // simple static constants should not have flexible types:
-        val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
+        val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
         val propertyType = c.typeResolver.transformJavaType(
                 field.getType(),
                 LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)

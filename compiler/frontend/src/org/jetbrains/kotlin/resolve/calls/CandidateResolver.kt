@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils.canBeSmartCast
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils.getSmartCastVariantsExcludingReceiver
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils.isSubTypeBySmartCastIgnoringNullability
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils.recordSmartCastIfNecessary
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -66,7 +63,8 @@ public class CandidateResolver(
         private val genericCandidateResolver: GenericCandidateResolver,
         private val reflectionTypes: ReflectionTypes,
         private val modifiersChecker: ModifiersChecker,
-        private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>
+        private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
+        private val smartCastManager: SmartCastManager
 ){
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
@@ -372,7 +370,7 @@ public class CandidateResolver(
             actualType: JetType,
             context: ResolutionContext<*>): JetType? {
         val receiverToCast = ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType)
-        val variants = getSmartCastVariantsExcludingReceiver(context, receiverToCast)
+        val variants = smartCastManager.getSmartCastVariantsExcludingReceiver(context, receiverToCast)
         for (possibleType in variants) {
             if (JetTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
                 return possibleType
@@ -401,7 +399,7 @@ public class CandidateResolver(
 
         val erasedReceiverType = getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor)
 
-        if (!isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, this)) {
+        if (!smartCastManager.isSubTypeBySmartCastIgnoringNullability(receiverArgument, erasedReceiverType, this)) {
             RECEIVER_TYPE_ERROR
         } else {
             SUCCESS
@@ -441,13 +439,13 @@ public class CandidateResolver(
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS
 
         val safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.getCall().isExplicitSafeCall()
-        val isSubtypeBySmartCast = isSubTypeBySmartCastIgnoringNullability(
+        val isSubtypeBySmartCast = smartCastManager.isSubTypeBySmartCastIgnoringNullability(
                 receiverArgument, receiverParameter.getType(), this)
         if (!isSubtypeBySmartCast) {
             tracing.wrongReceiverType(trace, receiverParameter, receiverArgument)
             return OTHER_ERROR
         }
-        if (!recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), this, safeAccess)) {
+        if (!smartCastManager.recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), this, safeAccess)) {
             return OTHER_ERROR
         }
 
@@ -455,7 +453,7 @@ public class CandidateResolver(
 
         val bindingContext = trace.getBindingContext()
         if (!safeAccess && !receiverParameter.getType().isMarkedNullable() && receiverArgumentType.isMarkedNullable()) {
-            if (!canBeSmartCast(receiverParameter, receiverArgument, this)) {
+            if (!smartCastManager.canBeSmartCast(receiverParameter, receiverArgument, this)) {
                 tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
                 return UNSAFE_CALL_ERROR
             }

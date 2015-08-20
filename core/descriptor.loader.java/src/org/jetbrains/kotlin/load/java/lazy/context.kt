@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 
-open class GlobalJavaResolverContext(
+class JavaResolverComponents(
         val storageManager: StorageManager,
         val finder: JavaClassFinder,
         val kotlinClassFinder: KotlinClassFinder,
@@ -49,32 +49,22 @@ open class GlobalJavaResolverContext(
 )
 
 open class LazyJavaResolverContext(
-        globalContext: GlobalJavaResolverContext,
+        val components: JavaResolverComponents,
         val packageFragmentProvider: LazyJavaPackageFragmentProvider,
         val javaClassResolver: LazyJavaClassResolver,
         val module: ModuleDescriptor,
         val reflectionTypes: ReflectionTypes,
         val typeParameterResolver: TypeParameterResolver
-) : GlobalJavaResolverContext(
-        globalContext.storageManager,
-        globalContext.finder,
-        globalContext.kotlinClassFinder,
-        globalContext.deserializedDescriptorResolver,
-        globalContext.externalAnnotationResolver,
-        globalContext.externalSignatureResolver,
-        globalContext.errorReporter,
-        globalContext.javaResolverCache,
-        globalContext.javaPropertyInitializerEvaluator,
-        globalContext.samConversionResolver,
-        globalContext.sourceElementFactory,
-        globalContext.moduleClassResolver
 ) {
     val typeResolver = LazyJavaTypeResolver(this, typeParameterResolver)
+
+    val storageManager: StorageManager
+        get() = components.storageManager
 }
 
 fun LazyJavaResolverContext.child(
         typeParameterResolver: TypeParameterResolver
-) = LazyJavaResolverContext(this, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
+) = LazyJavaResolverContext(components, packageFragmentProvider, javaClassResolver, module, reflectionTypes, typeParameterResolver)
 
 
 fun LazyJavaResolverContext.child(

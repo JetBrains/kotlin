@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.frontend.di
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
@@ -60,7 +58,9 @@ public fun createContainerForBodyResolve(
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(statementFilter)
+
     useInstance(BodyResolveCache.ThrowException)
+
     useImpl<BodyResolver>()
 }
 
@@ -90,44 +90,38 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<LazyTopDownAnalyzer>()
 
     useInstance(NoTopLevelDescriptorProvider)
-    useInstance(BodyResolveCache.ThrowException)
+
+    CompilerEnvironment.configure(this)
+
     useInstance(FileScopeProvider.ThrowException)
 
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
 }
 
-private fun createContainerForLazyResolve(
+public fun createContainerForLazyResolve(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
-        platform: TargetPlatform
+        platform: TargetPlatform,
+        targetEnvironment: TargetEnvironment
 ): StorageComponentContainer = createContainer("LazyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
 
+    targetEnvironment.configure(this)
+
     useImpl<LazyResolveToken>()
     useImpl<ResolveSession>()
 }
 
+jvmOverloads
 public fun createLazyResolveSession(
-        moduleContext: ModuleContext, declarationProviderFactory: DeclarationProviderFactory, bindingTrace: BindingTrace,
-        platform: TargetPlatform
-): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform).get<ResolveSession>()
-
-public fun createContainerForMacros(project: Project, module: ModuleDescriptor): ContainerForMacros {
-    val componentContainer = createContainer("Macros") {
-        configureModule(ModuleContext(module, project), TargetPlatform.Default)
-        useImpl<ExpressionTypingServices>()
-    }
-    return ContainerForMacros(componentContainer)
-}
-
-public class ContainerForMacros(container: StorageComponentContainer) {
-    val callResolver: CallResolver by container
-    val typeResolver: TypeResolver by container
-    val expressionTypingComponents: ExpressionTypingComponents by container
-    val expressionTypingServices: ExpressionTypingServices by container
-}
+        moduleContext: ModuleContext,
+        declarationProviderFactory: DeclarationProviderFactory,
+        bindingTrace: BindingTrace,
+        platform: TargetPlatform,
+        targetEnvironment: TargetEnvironment = CompilerEnvironment
+): ResolveSession = createContainerForLazyResolve(moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment).get<ResolveSession>()

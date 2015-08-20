@@ -17,8 +17,12 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
@@ -29,7 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -44,8 +48,7 @@ import java.util.LinkedHashSet
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
-        private val moduleDescriptor: ModuleDescriptor,
-        private val project: Project,
+        private val resolutionFacade: ResolutionFacade,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
     public data class ReceiversData(
@@ -68,7 +71,7 @@ public class ReferenceVariantsHelper(
                 = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
                 .filter(visibilityFilter)
 
-        variants = ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
+        variants = ShadowedDeclarationsFilter(context, resolutionFacade).filter(variants, expression)
 
         if (filterOutJavaGettersAndSetters) {
             val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
@@ -107,8 +110,10 @@ public class ReferenceVariantsHelper(
 
         val dataFlowInfo = context.getDataFlowInfo(expression)
 
+        val smartCastManager = resolutionFacade.frontendService<SmartCastManager>(expression)
         val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
-            SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
+            smartCastManager
+                    .getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
         }.toSet()
 
         val pair = getExplicitReceiverData(expression)
@@ -127,7 +132,8 @@ public class ReferenceVariantsHelper(
                                         context.getType(receiverExpression)
             if (expressionType != null && !expressionType.isError()) {
                 val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                val explicitReceiverTypes = SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
+                val explicitReceiverTypes = smartCastManager
+                        .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)
 
                 descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
             }

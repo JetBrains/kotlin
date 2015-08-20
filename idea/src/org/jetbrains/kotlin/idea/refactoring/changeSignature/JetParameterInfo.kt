@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
+import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -200,7 +201,7 @@ public class JetParameterInfo(
             buffer.append(valOrVar).append(' ')
         }
 
-        buffer.append(getInheritedName(inheritedCallable))
+        buffer.append(getInheritedName(inheritedCallable).quoteIfNeeded())
 
         if (requiresExplicitType(inheritedCallable)) {
             buffer.append(": ").append(renderType(parameterIndex, inheritedCallable))

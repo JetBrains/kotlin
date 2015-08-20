@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.analyzer
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
@@ -30,34 +31,34 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import java.util.ArrayList
 import java.util.HashMap
 
-public interface ResolverForModule {
-    public val lazyResolveSession: ResolveSession
-    public val packageFragmentProvider: PackageFragmentProvider
-}
+public class ResolverForModule(
+    public val packageFragmentProvider: PackageFragmentProvider,
+    public val componentProvider: ComponentProvider
+)
 
-public interface ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
-    public fun resolverForModule(moduleInfo: M): R = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
+public interface ResolverForProject<M : ModuleInfo> {
+    public fun resolverForModule(moduleInfo: M): ResolverForModule = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     public fun descriptorForModule(moduleInfo: M): ModuleDescriptor
-    public fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R
+    public fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule
 
     val allModules: Collection<M>
 }
 
-public class EmptyResolverForProject<M : ModuleInfo, R : ResolverForModule> : ResolverForProject<M, R> {
-    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R = throw IllegalStateException("$descriptor is not contained in this resolver")
+public class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M> {
+    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule = throw IllegalStateException("$descriptor is not contained in this resolver")
     override fun descriptorForModule(moduleInfo: M) = throw IllegalStateException("Should not be called for $moduleInfo")
     override val allModules: Collection<M> = listOf()
 }
 
-public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
+public class ResolverForProjectImpl<M : ModuleInfo>(
         val descriptorByModule: Map<M, ModuleDescriptorImpl>,
-        val delegateResolver: ResolverForProject<M, R> = EmptyResolverForProject()
-) : ResolverForProject<M, R> {
-    val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, () -> R> = HashMap()
+        val delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
+) : ResolverForProject<M> {
+    val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, () -> ResolverForModule> = HashMap()
 
     override val allModules: Collection<M> by lazy {
         (descriptorByModule.keySet() + delegateResolver.allModules).toSet()
@@ -69,7 +70,7 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
         }
     }
 
-    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R {
+    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule {
         val computation = resolverByModuleDescriptor[descriptor] ?: return delegateResolver.resolverForModuleDescriptor(descriptor)
         return computation()
     }
@@ -120,17 +121,18 @@ public interface ModuleInfo {
     }
 }
 
-public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
+public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
             projectContext: ProjectContext,
             modules: Collection<M>,
             modulesContent: (M) -> ModuleContent,
             platformParameters: P,
-            delegateResolver: ResolverForProject<M, A> = EmptyResolverForProject()
-    ): ResolverForProject<M, A> {
+            targetEnvironment: TargetEnvironment,
+            delegateResolver: ResolverForProject<M> = EmptyResolverForProject()
+    ): ResolverForProject<M> {
 
         val storageManager = projectContext.storageManager
-        fun createResolverForProject(): ResolverForProjectImpl<M, A> {
+        fun createResolverForProject(): ResolverForProjectImpl<M> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
             modules.forEach {
                 module ->
@@ -181,8 +183,8 @@ public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisPa
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val computeResolverForModule = storageManager.createLazyValue {
                     createResolverForModule(
-                            module, descriptor, projectContext.withModule(descriptor),
-                            modulesContent(module), platformParameters, resolverForProject
+                            module, descriptor, projectContext.withModule(descriptor), modulesContent(module),
+                            platformParameters, targetEnvironment, resolverForProject
                     )
                 }
 
@@ -195,15 +197,17 @@ public interface AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisPa
         return resolverForProject
     }
 
-    protected fun <M : ModuleInfo> createResolverForModule(
+    protected abstract fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: P, resolverForProject: ResolverForProject<M, A>
-    ): A
+            platformParameters: P,
+            targetEnvironment: TargetEnvironment,
+            resolverForProject: ResolverForProject<M>
+    ): ResolverForModule
 
-    public val moduleParameters: ModuleParameters
+    public abstract val moduleParameters: ModuleParameters
 }
 
 //NOTE: relies on delegate to be lazily computed and cached
