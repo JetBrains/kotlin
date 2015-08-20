@@ -157,19 +157,33 @@ public class KotlinCompilerClient {
             return connectToService(compilerId, daemonOptions, errStream)
         }
 
-        public fun shutdownCompileService(): Unit {
-            KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonLaunchingOptions(), DaemonOptions(), System.out, autostart = false, checkId = false)
+        public fun shutdownCompileService(daemonOptions: DaemonOptions): Unit {
+            KotlinCompilerClient.connectToCompileService(CompilerId(), DaemonLaunchingOptions(), daemonOptions, System.out, autostart = false, checkId = false)
                     ?.shutdown()
         }
 
-        public fun incrementalCompile(compiler: CompileService, args: Array<String>, caches: Map<String, IncrementalCache>, out: OutputStream): Int {
+        public fun shutdownCompileService(): Unit {
+            shutdownCompileService(DaemonOptions())
+        }
+
+        public fun compile(compiler: CompileService, args: Array<out String>, out: OutputStream): Int {
+
+            val outStrm = RemoteOutputStreamServer(out)
+            try {
+                return compiler.remoteCompile(args, outStrm, CompileService.OutputFormat.PLAIN)
+            }
+            finally {
+                outStrm.disconnect()
+            }
+        }
+
+        public fun incrementalCompile(compiler: CompileService, args: Array<out String>, caches: Map<String, IncrementalCache>, out: OutputStream): Int {
 
             val outStrm = RemoteOutputStreamServer(out)
             val cacheServers = hashMapOf<String, RemoteIncrementalCacheServer>()
             try {
                 caches.forEach { cacheServers.put( it.getKey(), RemoteIncrementalCacheServer( it.getValue())) }
-                val res = compiler.remoteIncrementalCompile(args, cacheServers, outStrm, CompileService.OutputFormat.XML)
-                return res
+                return compiler.remoteIncrementalCompile(args, cacheServers, outStrm, CompileService.OutputFormat.XML)
             }
             finally {
                 cacheServers.forEach { it.getValue().disconnect() }

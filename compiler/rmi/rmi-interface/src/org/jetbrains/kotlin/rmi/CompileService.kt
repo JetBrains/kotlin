@@ -51,7 +51,7 @@ public interface CompileService : Remote {
 
     throws(RemoteException::class)
     public fun remoteIncrementalCompile(
-            args: Array<String>,
+            args: Array<out String>,
             caches: Map<String, RemoteIncrementalCache>,
             outputStream: RemoteOutputStream,
             outputFormat: OutputFormat): Int

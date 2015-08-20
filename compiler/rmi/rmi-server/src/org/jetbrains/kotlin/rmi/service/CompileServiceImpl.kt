@@ -126,7 +126,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             val res = body()
             val endTime = System.nanoTime()
             val endMem = usedMemory() / 1024
-            log.info("Done")
+            log.info("Done with result " + res.toString())
             log.info("Elapsed time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
             log.info("Used memory: $endMem kb (${"%+d".format(endMem - startMem)} kb)")
             return res
@@ -178,7 +178,7 @@ class CompileServiceImpl<Compiler: CLICompiler<*>>(
             }
         }
 
-    override fun remoteIncrementalCompile(args: Array<String>, caches: Map<String, CompileService.RemoteIncrementalCache>, errStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
+    override fun remoteIncrementalCompile(args: Array<out String>, caches: Map<String, CompileService.RemoteIncrementalCache>, errStream: RemoteOutputStream, outputFormat: CompileService.OutputFormat): Int =
         ifAlive {
             checkedCompile(args) {
                 val strm = RemoteOutputStreamClient(errStream)
