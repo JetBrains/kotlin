@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -46,16 +45,12 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public abstract fun getSyntheticFiles(): List<JetFile>
 
-    protected fun generateSyntheticFiles(
-            generateCommonFiles: Boolean,
-            scope: GlobalSearchScope,
-            supportV4: Boolean
-    ): List<AndroidSyntheticFile> {
+    protected fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
         val commonFiles = if (generateCommonFiles) generateCommonFiles(supportV4) else listOf()
 
         return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->
             val files = entry.getValue()
-            val resources = extractLayoutResources(files, scope)
+            val resources = extractLayoutResources(files)
 
             val layoutName = entry.getKey()
 
@@ -81,7 +76,9 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         return listOf(clearCacheFile, TOOLS_FILE)
     }
 
-    protected abstract fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource>
+    protected abstract fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource>
+
+    protected abstract fun checkIfClassExist(fqName: String): Boolean
 
     private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>, supportV4: Boolean): AndroidSyntheticFile {
         return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX, escapeAndroidIdentifier(layoutName), resources) {
@@ -152,25 +149,23 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         return fqName.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)
     }
 
-    protected fun resolveFqClassNameForView(javaPsiFacade: JavaPsiFacade, scope: GlobalSearchScope, tag: String): String? {
+    protected fun resolveFqClassNameForView(tag: String): String? {
         if (tag.contains('.')) {
-            if (javaPsiFacade.findClass(tag, scope) == null) {
+            if (!checkIfClassExist(tag)) {
                 return null
             }
             return tag
         }
         for (pkg in AndroidConst.FQNAME_RESOLVE_PACKAGES) {
             val fqName = "$pkg.$tag"
-            if (javaPsiFacade.findClass(fqName, scope) != null) {
+            if (checkIfClassExist(fqName)) {
                 return fqName
             }
         }
         return null
     }
 
-    protected fun supportV4Available(javaPsiFacade: JavaPsiFacade, scope: GlobalSearchScope): Boolean {
-        return javaPsiFacade.findClasses(AndroidConst.SUPPORT_FRAGMENT_FQNAME, scope).isNotEmpty()
-    }
+    protected fun supportV4Available(): Boolean = checkIfClassExist(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
 
     protected fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
         val resourceMap = linkedMapOf<String, AndroidResource>()

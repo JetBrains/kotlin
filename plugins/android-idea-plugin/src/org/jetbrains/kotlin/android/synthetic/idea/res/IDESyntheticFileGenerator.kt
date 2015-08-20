@@ -20,9 +20,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
@@ -32,13 +32,10 @@ import org.jetbrains.kotlin.psi.JetFile
 
 class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(module.project) {
 
-    private val javaPsiFacade: JavaPsiFacade by lazy { JavaPsiFacade.getInstance(module.project) }
-    private val moduleScope: GlobalSearchScope by lazy { module.getModuleWithDependenciesAndLibrariesScope(false) }
-
     private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
         cachedValue {
-            val supportV4 = supportV4Available(javaPsiFacade, moduleScope)
-            Result.create(generateSyntheticJetFiles(generateSyntheticFiles(true, moduleScope, supportV4)), psiTreeChangePreprocessor)
+            val supportV4 = supportV4Available()
+            Result.create(generateSyntheticJetFiles(generateSyntheticFiles(true, supportV4)), psiTreeChangePreprocessor)
         }
     }
 
@@ -48,13 +45,16 @@ class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(mod
         module.project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
     }
 
-    public override fun getSyntheticFiles(): List<JetFile> = cachedJetFiles.value
+    public override fun getSyntheticFiles(): List<JetFile> {
+        if (!checkIfClassExist(AndroidConst.VIEW_FQNAME)) return listOf()
+        return cachedJetFiles.value
+    }
 
-    override fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource> {
+    override fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource> {
         val widgets = arrayListOf<AndroidResource>()
         val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
-            widgets += parseAndroidResource(id, widgetType) {
-                resolveFqClassNameForView(javaPsiFacade, scope, it)
+            widgets += parseAndroidResource(id, widgetType) { tag ->
+                resolveFqClassNameForView(tag)
             }
         }
 
@@ -62,4 +62,8 @@ class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(mod
         return filterDuplicates(widgets)
     }
 
+    override fun checkIfClassExist(fqName: String): Boolean {
+        val moduleScope = module.getModuleWithDependenciesAndLibrariesScope(false)
+        return JavaPsiFacade.getInstance(module.project).findClass(fqName, moduleScope) != null
+    }
 }

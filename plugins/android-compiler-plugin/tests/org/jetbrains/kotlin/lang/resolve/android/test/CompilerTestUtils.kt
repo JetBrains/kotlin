@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.lang.resolve.android.test
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
@@ -49,7 +48,7 @@ class CliSyntheticFileGeneratorForConversionTest(
         resDirectories: List<String>,
         private val supportV4: Boolean
 ) : CliSyntheticFileGenerator(project, manifestPath, resDirectories) {
-    fun gen(scope: GlobalSearchScope) = generateSyntheticFiles(false, scope, supportV4)
+    fun gen() = generateSyntheticFiles(false, supportV4)
 }
 
 fun UsefulTestCase.createAndroidTestEnvironment(

@@ -40,10 +40,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val parser = CliSyntheticFileGeneratorForConversionTest(
                 jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths, supportV4)
 
-        val module = ModuleManager.getInstance(jetCoreEnvironment.project).modules.first()
-        val moduleScope = module.getModuleWithDependenciesAndLibrariesScope(false)
-
-        val actual = parser.gen(moduleScope).toMap { it.name }
+        val actual = parser.gen().toMap { it.name }
 
         val expectedLayoutFiles = testDirectory.listFiles {
             it.isFile() && it.name.endsWith(".kt")
