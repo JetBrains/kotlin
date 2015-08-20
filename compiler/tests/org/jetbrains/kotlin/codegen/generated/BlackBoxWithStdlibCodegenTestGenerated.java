@@ -3396,6 +3396,27 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInPlatformStatic() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("companionObjectFunction.kt")
+                public void testCompanionObjectFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic/companionObjectFunction.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("objectFunction.kt")
+                public void testObjectFunction() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/platformStatic/objectFunction.kt");
+                    doTestWithStdlib(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/mapping/types")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

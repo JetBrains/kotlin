@@ -17,8 +17,12 @@
 package kotlin.reflect.jvm
 
 import java.lang.reflect.*
+import java.util.*
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.jvm.internal.KCallableImpl
+import kotlin.reflect.jvm.internal.KPackageImpl
+import kotlin.reflect.jvm.internal.KPropertyImpl
+import kotlin.reflect.jvm.internal.KTypeImpl
 
 // Kotlin reflection -> Java reflection
 
@@ -115,15 +119,26 @@ public val Field.kotlinProperty: KProperty<*>?
  */
 public val Method.kotlinFunction: KFunction<*>?
     get() {
-        if (isSynthetic()) return null
+        if (isSynthetic) return null
 
-        if (Modifier.isStatic(getModifiers())) {
-            getDeclaringClass().kotlinPackage?.let { pkg ->
-                return pkg.functions.firstOrNull { it.javaMethod == this }
+        if (Modifier.isStatic(modifiers)) {
+            val kotlinPackage = declaringClass.kotlinPackage
+            if (kotlinPackage != null) {
+                return kotlinPackage.functions.firstOrNull { it.javaMethod == this }
+            }
+
+            // For static bridge method generated for a jvmStatic function in the companion object, also try to find the latter
+            val companion = declaringClass.kotlin.companionObject
+            if (companion != null) {
+                companion.functions.firstOrNull {
+                    val m = it.javaMethod
+                    m != null && m.name == this.name &&
+                    Arrays.equals(m.parameterTypes, this.parameterTypes) && m.returnType == this.returnType
+                }?.let { return it }
             }
         }
 
-        return getDeclaringClass().kotlin.functions.firstOrNull { it.javaMethod == this }
+        return declaringClass.kotlin.functions.firstOrNull { it.javaMethod == this }
     }
 
 /**
