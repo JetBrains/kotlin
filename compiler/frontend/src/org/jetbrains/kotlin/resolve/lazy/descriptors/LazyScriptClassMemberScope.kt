@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -48,7 +49,7 @@ public class LazyScriptClassMemberScope protected constructor(
                 + getPropertiesForScriptParameters()).toReadOnlyList()
     }
 
-    private fun getPropertiesForScriptParameters() = getPrimaryConstructor()!!.getValueParameters().flatMap { getProperties(it.getName()) }
+    private fun getPropertiesForScriptParameters() = getPrimaryConstructor()!!.valueParameters.flatMap { getProperties(it.name, NoLookupLocation.FOR_SCRIPT) }
 
     override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
         super.getNonDeclaredProperties(name, result)
