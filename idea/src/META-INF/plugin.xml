@@ -320,6 +320,8 @@
     <completion.contributor language="jet"
                             implementationClass="org.jetbrains.kotlin.idea.completion.KDocCompletionContributor"/>
 
+    <statistician key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionStatistician"/>
+
     <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
     <completion.confidence language="jet"
                            implementationClass="org.jetbrains.kotlin.idea.completion.confidence.UnfocusedPossibleFunctionParameter"/>

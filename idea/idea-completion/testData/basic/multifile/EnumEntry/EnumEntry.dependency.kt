@@ -6,3 +6,5 @@ enum class EnumTest(val i: Int = 0) {
 }
 
 class EAnotherClass
+
+// ALLOW_AST_ACCESS
