@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.actions.JetAddImportAction
+import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -41,10 +41,9 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.CachedValueProperty
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -70,10 +69,9 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
         if (suggestions.isEmpty()) return false
 
         if (!ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            val hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, DescriptorUtils.getFqNameSafe(suggestions.first()).asString())
-
-            val project = editor.getProject() ?: return false
-            HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), createAction(project, editor))
+            val addImportAction = createAction(element.project, editor)
+            val hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, addImportAction.highestPriorityFqName.asString())
+            HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), addImportAction)
         }
 
         return true
@@ -96,7 +94,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
     private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
-    private fun createAction(project: Project, editor: Editor) = JetAddImportAction(project, editor, element, suggestions)
+    private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
     private fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
         if (!element.isValid()) return listOf()

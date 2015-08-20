@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
  * Automatically adds import directive to the file for resolving reference.
  * Based on {@link AddImportAction}
  */
-public class JetAddImportAction(
+public class KotlinAddImportAction(
         private val project: Project,
         private val editor: Editor,
         private val element: JetSimpleNameExpression,
@@ -99,6 +99,9 @@ public class JetAddImportAction(
             .groupBy { DescriptorUtils.getFqNameSafe(it) }
             .map { Variant(it.key, it.value) }
             .sortBy { it.priority }
+
+    public val highestPriorityFqName: FqName
+        get() = variants.first().fqName
 
     override fun execute(): Boolean {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
