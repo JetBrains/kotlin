@@ -40,4 +40,24 @@ public interface KParameter : KAnnotatedElement {
      * not the individual element.
      */
     public val type: KType
+
+    /**
+     * Kind of this parameter.
+     */
+    public val kind: Kind
+
+    /**
+     * Kind represents a particular position of the parameter declaration in the source code,
+     * such as an instance, an extension receiver parameter or a value parameter.
+     */
+    public enum class Kind {
+        /** Instance required to make a call to the member, or an outer class instance for an inner class constructor. */
+        INSTANCE,
+
+        /** Extension receiver of an extension function or property. */
+        EXTENSION_RECEIVER,
+
+        /** Ordinary named value parameter. */
+        VALUE,
+    }
 }

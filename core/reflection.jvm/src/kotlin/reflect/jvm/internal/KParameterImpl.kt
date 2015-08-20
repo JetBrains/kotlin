@@ -25,6 +25,7 @@ import kotlin.reflect.KType
 class KParameterImpl(
         val callable: KCallableImpl<*>,
         override val index: Int,
+        override val kind: KParameter.Kind,
         computeDescriptor: () -> ParameterDescriptor
 ) : KParameter, KAnnotatedElementImpl {
     private val descriptor: ParameterDescriptor by ReflectProperties.lazySoft(computeDescriptor)
