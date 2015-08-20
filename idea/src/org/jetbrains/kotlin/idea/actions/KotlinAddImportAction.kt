@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.SymbolUsageProximityPrioritizer
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
@@ -57,41 +58,22 @@ public class KotlinAddImportAction(
         candidates: Collection<DeclarationDescriptor>
 ) : QuestionAction {
 
-    private val module = ModuleUtilCore.findModuleForPsiElement(element)
-
-    private enum class Priority {
-        MODULE,
-        PROJECT,
-        OTHER
-    }
-
-    private fun detectPriority(descriptor: DeclarationDescriptor): Priority {
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-        return when {
-            declaration == null -> Priority.OTHER
-            ModuleUtilCore.findModuleForPsiElement(declaration) == module -> Priority.MODULE
-            ProjectRootsUtil.isInProjectSource(declaration) -> Priority.PROJECT
-            else -> Priority.OTHER
-        }
-    }
+    private val prioritizer = SymbolUsageProximityPrioritizer(element.getContainingJetFile())
 
     private inner class Variant(
             val fqName: FqName,
             val descriptors: Collection<DeclarationDescriptor>
     ) {
-        val priority = descriptors.map { detectPriority(it) }.min()!!
+        val priority = descriptors
+                .map { prioritizer.priority(fqName, DescriptorToSourceUtilsIde.getAnyDeclaration(project, it), false) }
+                .min()!!
 
         val descriptorToImport: DeclarationDescriptor
             get() {
-                if (descriptors.size() == 1) return descriptors.single()
-                return descriptors.sortBy {
-                    when (it) {
-                        is ClassDescriptor -> 0
-                        is PackageViewDescriptor -> 1
-                        else -> 2
-                    }
-                }.first()
+                return descriptors.singleOrNull()
+                       ?: descriptors.sortBy { if (it is ClassDescriptor) 0 else 1 }.first()
             }
+
         val declarationToImport = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptorToImport)
     }
 

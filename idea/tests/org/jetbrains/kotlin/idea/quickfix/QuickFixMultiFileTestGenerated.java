@@ -53,9 +53,15 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
-        @TestMetadata("ambiguousClassName.before.Main.kt")
-        public void testAmbiguousClassName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousClassName.before.Main.kt");
+        @TestMetadata("ambiguousNamePreferFromProject.before.Main.kt")
+        public void testAmbiguousNamePreferFromProject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousNamePreferFromProject.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("ambiguousNamePreferWithImportsFromPackage.before.Main.kt")
+        public void testAmbiguousNamePreferWithImportsFromPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/ambiguousNamePreferWithImportsFromPackage.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 

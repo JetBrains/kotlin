@@ -236,7 +236,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, KindWeigher)
 
-        sorter = sorter.weighAfter("stats", DeclarationRemotenessWeigher(parameters.originalFile as JetFile))
+        sorter = sorter.weighAfter("stats", SymbolUsageProximityWeigher(parameters.position.containingFile as JetFile))
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 

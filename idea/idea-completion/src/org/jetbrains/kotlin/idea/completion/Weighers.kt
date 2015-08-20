@@ -24,17 +24,13 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.*
+import org.jetbrains.kotlin.idea.core.SymbolUsageProximityPrioritizer
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.nullability
-import java.util.HashSet
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -118,74 +114,13 @@ object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching",
     }
 }
 
-class DeclarationRemotenessWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.declarationRemoteness") {
-    private val importCache = ImportCache()
+class SymbolUsageProximityWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.symbolUsageProximity") {
+    private val prioritizer = SymbolUsageProximityPrioritizer(file)
 
-    private enum class Weight {
-        thisFile,
-        kotlinDefaultImport,
-        preciseImport,
-        allUnderImport,
-        default,
-        hasImportFromSamePackage,
-        notImported,
-        notToBeUsedInKotlin
-    }
-
-    override fun weigh(element: LookupElement): Weight {
-        val o = element.getObject() as? DeclarationLookupObject ?: return Weight.default
-
-        val elementFile = o.psiElement?.getContainingFile()
-        if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
-            return Weight.thisFile
-        }
-
-        val fqName = o.importableFqName
-        if (fqName != null) {
-            val importPath = ImportPath(fqName, false)
-
-            if (o is PackageLookupObject) {
-                return when {
-                    importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
-                    else -> Weight.default
-                }
-            }
-
-            return when {
-                JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> Weight.notToBeUsedInKotlin
-                ImportInsertHelper.getInstance(file.getProject()).isImportedWithDefault(importPath, file) -> Weight.kotlinDefaultImport
-                importCache.isImportedWithPreciseImport(fqName) -> Weight.preciseImport
-                importCache.isImportedWithAllUnderImport(fqName) -> Weight.allUnderImport
-                importCache.hasPreciseImportFromPackage(fqName.parent()) -> Weight.hasImportFromSamePackage
-                else -> Weight.notImported
-            }
-        }
-
-        return Weight.default
-    }
-
-    private inner class ImportCache {
-        private val preciseImports = HashSet<FqName>()
-        private val preciseImportPackages = HashSet<FqName>()
-        private val allUnderImports = HashSet<FqName>()
-
-        init {
-            for (import in file.getImportDirectives()) {
-                val importPath = import.getImportPath() ?: continue
-                val fqName = importPath.fqnPart()
-                if (importPath.isAllUnder()) {
-                    allUnderImports.add(fqName)
-                }
-                else {
-                    preciseImports.add(fqName)
-                    preciseImportPackages.add(fqName.parent())
-                }
-            }
-        }
-
-        fun isImportedWithPreciseImport(name: FqName) = name in preciseImports
-        fun isImportedWithAllUnderImport(name: FqName) = name.parent() in allUnderImports
-        fun hasPreciseImportFromPackage(packageName: FqName) = packageName in preciseImportPackages
+    override fun weigh(element: LookupElement): SymbolUsageProximityPrioritizer.Priority {
+        val o = element.`object` as? DeclarationLookupObject ?: return SymbolUsageProximityPrioritizer.Priority.DEFAULT
+        val fqName = o.importableFqName ?: return SymbolUsageProximityPrioritizer.Priority.DEFAULT
+        return prioritizer.priority(fqName, o.psiElement, o is PackageLookupObject)
     }
 }
 
