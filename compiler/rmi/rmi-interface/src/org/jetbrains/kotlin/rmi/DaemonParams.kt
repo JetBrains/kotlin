@@ -117,10 +117,11 @@ val COMPILER_ID_DIGEST = "MD5"
 
 
 fun updateSingleFileDigest(file: File, md: MessageDigest) {
-    val stream = DigestInputStream(file.inputStream(), md)
-    val buf = ByteArray(1024)
-    while (stream.read(buf) == buf.size()) {}
-    stream.close()
+    DigestInputStream(file.inputStream(), md).use {
+        val buf = ByteArray(1024)
+        while (it.read(buf) != -1) { }
+        it.close()
+    }
 }
 
 fun updateForAllClasses(dir: File, md: MessageDigest) {

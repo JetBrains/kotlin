@@ -24,6 +24,7 @@ import java.io.PrintStream
 import java.rmi.ConnectException
 import java.rmi.Remote
 import java.rmi.registry.LocateRegistry
+import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -45,7 +46,6 @@ public class KotlinCompilerClient {
     companion object {
 
         val DAEMON_STARTUP_TIMEOUT_MS = 10000L
-        val DAEMON_STARTUP_CHECK_INTERVAL_MS = 100L
 
         private fun connectToService(compilerId: CompilerId, daemonOptions: DaemonOptions, errStream: PrintStream): CompileService? {
 
@@ -71,9 +71,13 @@ public class KotlinCompilerClient {
 
 
         private fun startDaemon(compilerId: CompilerId, daemonLaunchingOptions: DaemonLaunchingOptions, daemonOptions: DaemonOptions, errStream: PrintStream) {
-            val javaExecutable = listOf(System.getProperty("java.home"), "bin", "java").joinToString(File.separator)
+            val javaExecutable = File(System.getProperty("java.home"), "bin").let {
+                val javaw = File(it, "javaw.exe")
+                if (javaw.exists()) javaw
+                else File(it, "java")
+            }
             // TODO: add some specific environment variables to the cp and may be command line, to allow some specific startup configs
-            val args = listOf(javaExecutable,
+            val args = listOf(javaExecutable.absolutePath,
                               "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                        daemonLaunchingOptions.jvmParams +
                        COMPILER_DAEMON_CLASS_FQN +
@@ -84,16 +88,18 @@ public class KotlinCompilerClient {
             // assuming daemon process is deaf and (mostly) silent, so do not handle streams
             val daemon = processBuilder.start()
 
-            val lock = ReentrantReadWriteLock()
-            var isEchoRead = false
+            var isEchoRead = Semaphore(1)
+            isEchoRead.acquire()
 
-            val stdouThread =
+            val stdoutThread =
                     thread {
                         daemon.getInputStream()
                               .reader()
                               .forEachLine {
-                                  if (daemonOptions.startEcho.isNotEmpty() && it.contains(daemonOptions.startEcho))
-                                      lock.write { isEchoRead = true; return@forEachLine }
+                                  if (daemonOptions.startEcho.isNotEmpty() && it.contains(daemonOptions.startEcho)) {
+                                      isEchoRead.release()
+                                      return@forEachLine
+                                  }
                                   errStream.println("[daemon] " + it)
                               }
                     }
@@ -101,14 +107,10 @@ public class KotlinCompilerClient {
                 // trying to wait for process
                 if (daemonOptions.startEcho.isNotEmpty()) {
                     errStream.println("[daemon client] waiting for daemon to respond")
-                    var waitMillis: Long = DAEMON_STARTUP_TIMEOUT_MS / DAEMON_STARTUP_CHECK_INTERVAL_MS
-                    while (waitMillis-- > 0) {
-                        Thread.sleep(DAEMON_STARTUP_CHECK_INTERVAL_MS)
-                        if (!daemon.isAlive() || lock.read { isEchoRead } == true) break;
-                    }
+                    val succeeded = isEchoRead.tryAcquire(DAEMON_STARTUP_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                     if (!daemon.isAlive())
                         throw Exception("Daemon terminated unexpectedly")
-                    if (lock.read { isEchoRead } == false)
+                    if (!succeeded)
                         throw Exception("Unable to get response from daemon in $DAEMON_STARTUP_TIMEOUT_MS ms")
                 }
                 else
@@ -117,9 +119,9 @@ public class KotlinCompilerClient {
             }
             finally {
                 // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
-                if (stdouThread.isAlive)
+                if (stdoutThread.isAlive)
                 // TODO: find better method to stop the thread, but seems it will require asynchronous consuming of the stream
-                    lock.write { stdouThread.stop() }
+                    stdoutThread.stop()
             }
         }
 
@@ -182,7 +184,7 @@ public class KotlinCompilerClient {
             val outStrm = RemoteOutputStreamServer(out)
             val cacheServers = hashMapOf<String, RemoteIncrementalCacheServer>()
             try {
-                caches.forEach { cacheServers.put( it.getKey(), RemoteIncrementalCacheServer( it.getValue())) }
+                caches.mapValuesTo(cacheServers, { RemoteIncrementalCacheServer( it.getValue()) })
                 return compiler.remoteIncrementalCompile(args, cacheServers, outStrm, CompileService.OutputFormat.XML)
             }
             finally {
@@ -242,34 +244,36 @@ public class KotlinCompilerClient {
                 compilerId.updateDigest()
             }
 
-            connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)?.let {
-                when {
-                    clientOptions.stop -> {
-                        println("Shutdown the daemon")
-                        it.shutdown()
-                        println("Daemon shut down successfully")
+            val daemon = connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, autostart = !clientOptions.stop, checkId = !clientOptions.stop)
+
+            if (daemon == null) {
+                if (clientOptions.stop) println("No daemon found to shut down")
+                else throw Exception("Unable to connect to daemon")
+            }
+            else when {
+                clientOptions.stop -> {
+                    println("Shutdown the daemon")
+                    daemon.shutdown()
+                    println("Daemon shut down successfully")
+                }
+                else -> {
+                    println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
+                    val outStrm = RemoteOutputStreamServer(System.out)
+                    try {
+                        val memBefore = daemon.getUsedMemory() / 1024
+                        val startTime = System.nanoTime()
+                        val res = daemon.remoteCompile(filteredArgs.toArrayList().toTypedArray(), outStrm, CompileService.OutputFormat.PLAIN)
+                        val endTime = System.nanoTime()
+                        println("Compilation result code: $res")
+                        val memAfter = daemon.getUsedMemory() / 1024
+                        println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
+                        println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
                     }
-                    else -> {
-                        println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
-                        val outStrm = RemoteOutputStreamServer(System.out)
-                        try {
-                            val memBefore = it.getUsedMemory() / 1024
-                            val startTime = System.nanoTime()
-                            val res = it.remoteCompile(filteredArgs.toArrayList().toTypedArray(), outStrm, CompileService.OutputFormat.PLAIN)
-                            val endTime = System.nanoTime()
-                            println("Compilation result code: $res")
-                            val memAfter = it.getUsedMemory() / 1024
-                            println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
-                            println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
-                        }
-                        finally {
-                            outStrm.disconnect()
-                        }
+                    finally {
+                        outStrm.disconnect()
                     }
                 }
             }
-            ?: if (clientOptions.stop) println("No daemon found to shut down")
-               else throw Exception("Unable to connect to daemon")
         }
     }
 }

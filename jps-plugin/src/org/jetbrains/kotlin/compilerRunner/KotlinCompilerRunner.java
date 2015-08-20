@@ -62,7 +62,8 @@ public class KotlinCompilerRunner {
             CompilerSettings compilerSettings,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches, File moduleFile,
+            Map<String, IncrementalCache> incrementalCaches,
+            File moduleFile,
             OutputItemsCollector collector
     ) {
         K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
@@ -78,7 +79,8 @@ public class KotlinCompilerRunner {
             @NotNull CompilerSettings compilerSettings,
             @NotNull MessageCollector messageCollector,
             @NotNull CompilerEnvironment environment,
-            Map<String, IncrementalCache> incrementalCaches, @NotNull OutputItemsCollector collector,
+            Map<String, IncrementalCache> incrementalCaches,
+            @NotNull OutputItemsCollector collector,
             @NotNull Collection<File> sourceFiles,
             @NotNull List<String> libraryFiles,
             @NotNull File outputFile
@@ -156,7 +158,6 @@ public class KotlinCompilerRunner {
             // exec() returns an ExitCode object, class of which is loaded with a different class loader,
             // so we take it's contents through reflection
             return getReturnCodeFromObject(rc);
-
         }
         catch (Throwable e) {
             MessageCollectorUtil.reportException(messageCollector, e);

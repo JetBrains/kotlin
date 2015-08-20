@@ -53,29 +53,17 @@ public class DaemonPolicy(val port: Int) : Policy() {
 
 
 class DaemonPermissionCollection : PermissionCollection() {
-    var perms = ArrayList<Permission>()
+    val perms = ArrayList<Permission>()
 
     override fun add(p: Permission) {
         perms.add(p)
     }
 
-    override fun implies(p: Permission): Boolean {
-        val i = perms.iterator()
-        while (i.hasNext()) {
-            if (i.next().implies(p)) {
-                return true
-            }
-        }
-        return false
-    }
+    override fun implies(p: Permission): Boolean = perms.any { implies(p) }
 
-    override fun elements(): Enumeration<Permission> {
-        return Collections.enumeration(perms)
-    }
+    override fun elements(): Enumeration<Permission> = Collections.enumeration(perms)
 
-    override fun isReadOnly(): Boolean {
-        return false
-    }
+    override fun isReadOnly(): Boolean = false
 //
 //    companion object {
 //

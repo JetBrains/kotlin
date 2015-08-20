@@ -35,8 +35,8 @@ class RemoteOutputStreamServer(val out: OutputStream) : RemoteOutputStream {
         out.close()
     }
 
-    override fun write(data: ByteArray, start: Int, length: Int) {
-        out.write(data, start, length)
+    override fun write(data: ByteArray, offset: Int, length: Int) {
+        out.write(data, offset, length)
     }
 
     override fun write(dataByte: Int) {

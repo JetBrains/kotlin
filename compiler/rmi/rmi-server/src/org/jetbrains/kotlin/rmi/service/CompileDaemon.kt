@@ -57,10 +57,7 @@ class LogStream(name: String) : OutputStream() {
     }
 
     fun flush(data: ByteArray, offset: Int, length: Int) {
-        if (offset == 0 && length == data.size())
-            log.info(lineBuf.toString() + data.toString())
-        else
-            log.info(lineBuf.toString() + data.toString().substring(offset, length))
+        log.info(lineBuf.toString() + data.toString().substring(offset, length))
         lineBuf.setLength(0)
     }
 
