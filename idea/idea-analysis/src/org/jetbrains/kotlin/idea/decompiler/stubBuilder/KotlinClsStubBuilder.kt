@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
-import com.intellij.util.cls.ClsFormatException
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleSyntheticClassKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
@@ -74,6 +74,11 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val classData = JvmProtoBufUtil.readClassDataFrom(annotationData)
                 val context = components.createContext(classData.getNameResolver(), packageFqName)
                 createTopLevelClassStub(classId, classData.getClassProto(), context)
+            }
+            header.isCompatibleSyntheticClassKind() && header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
+                val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
+                val context = components.createContext(packageData.getNameResolver(), packageFqName)
+                createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)
             }
             else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
         }
