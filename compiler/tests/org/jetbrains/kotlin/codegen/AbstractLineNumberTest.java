@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
@@ -74,12 +75,13 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
                                                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
                                                environment.getProject());
 
-        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles =
+                GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
         OutputUtilsPackage.writeAllTo(outputFiles, tmpdir);
     }
 
     @NotNull
-    private JetFile createPsiFile(@NotNull String filename) {
+    private Pair<JetFile, KotlinCoreEnvironment> createPsiFile(@NotNull String filename) {
         File file = new File(filename);
         KotlinCoreEnvironment environment = createEnvironment();
 
@@ -91,12 +93,15 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
             throw UtilsPackage.rethrow(e);
         }
 
-        return JetTestUtils.createFile(file.getName(), text, environment.getProject());
+        return new Pair(JetTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
     }
 
     private void doTest(@NotNull String filename, boolean custom) {
-        JetFile psiFile = createPsiFile(filename);
-        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
+        Pair<JetFile, KotlinCoreEnvironment> fileAndEnv = createPsiFile(filename);
+        JetFile psiFile = fileAndEnv.getFirst();
+        KotlinCoreEnvironment environment = fileAndEnv.getSecond();
+
+        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, environment);
 
         List<Integer> expectedLineNumbers;
         List<Integer> actualLineNumbers;
@@ -241,8 +246,8 @@ public class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     public void testStaticDelegate() {
-        JetFile foo = createPsiFile(getTestDataPath() + "/staticDelegate/foo.kt");
-        JetFile bar = createPsiFile(getTestDataPath() + "/staticDelegate/bar.kt");
+        JetFile foo = createPsiFile(getTestDataPath() + "/staticDelegate/foo.kt").getFirst();
+        JetFile bar = createPsiFile(getTestDataPath() + "/staticDelegate/bar.kt").getFirst();
         GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
         OutputFile file = state.getFactory().get(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class");
         assertNotNull(file);

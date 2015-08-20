@@ -36,7 +36,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
         val testFile = File(path)
         val testKtFile = loadJetFile(getProject(), testFile)
 
-        val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(getProject(), listOf(testKtFile))
+        val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(getProject(), listOf(testKtFile), environment)
 
         val testDeclaration = testKtFile.getDeclarations().last()!! as JetCallableDeclaration
 

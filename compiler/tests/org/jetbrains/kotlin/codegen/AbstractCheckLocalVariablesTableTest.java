@@ -69,7 +69,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
 
-        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
 
         String classAndMethod = parseClassAndMethodSignature();
         String[] split = classAndMethod.split("\\.");

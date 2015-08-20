@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
 import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
 import java.util.Collections;
@@ -34,20 +37,33 @@ public class GenerationUtils {
     }
 
     @NotNull
-    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile) {
-        return compileFileGetGenerationStateForTest(psiFile).getFactory();
+    public static ClassFileFactory compileFileGetClassFileFactoryForTest(
+            @NotNull JetFile psiFile,
+            @NotNull KotlinCoreEnvironment environment
+    ) {
+        return compileFileGetGenerationStateForTest(psiFile, environment).getFactory();
     }
 
     @NotNull
-    public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile);
+    public static GenerationState compileFileGetGenerationStateForTest(
+            @NotNull JetFile psiFile,
+            @NotNull KotlinCoreEnvironment environment
+    ) {
+        AnalysisResult analysisResult =
+                JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, new JvmPackageMappingProvider(environment));
         return compileFilesGetGenerationState(psiFile.getProject(), analysisResult, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
+        return compileManyFilesGetGenerationStateForTest(project, files, PackageMappingProvider.EMPTY);
+    }
+
+    @NotNull
+    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files,
+            @NotNull PackageMappingProvider packageMappingProvider) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files);
+                project, files, packageMappingProvider);
         return compileFilesGetGenerationState(project, analysisResult, files);
     }
 

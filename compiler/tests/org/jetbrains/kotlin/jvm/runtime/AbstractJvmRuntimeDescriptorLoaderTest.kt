@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
@@ -123,7 +124,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
                 val jetFile = JetTestUtils.createFile(file.getPath(), text, environment.project)
-                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile).writeAllTo(tmpdir)
+                GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
             }
         }
     }

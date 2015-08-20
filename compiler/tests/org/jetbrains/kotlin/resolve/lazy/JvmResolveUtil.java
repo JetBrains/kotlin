@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.load.java.lazy.PackageMappingProvider;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -33,9 +34,14 @@ import java.util.Collections;
 public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
+        return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackageMappingProvider.EMPTY);
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file, @NotNull PackageMappingProvider provider) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
-        AnalysisResult analysisResult = analyzeOneFileWithJavaIntegration(file);
+        AnalysisResult analysisResult = analyzeOneFileWithJavaIntegration(file, provider);
 
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
@@ -43,8 +49,13 @@ public class JvmResolveUtil {
     }
 
     @NotNull
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull PackageMappingProvider provider) {
+        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), provider);
+    }
+
+    @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file));
+        return analyzeOneFileWithJavaIntegration(file, PackageMappingProvider.EMPTY);
     }
 
     @NotNull
@@ -75,9 +86,10 @@ public class JvmResolveUtil {
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegration(
             @NotNull Project project,
-            @NotNull Collection<JetFile> files
+            @NotNull Collection<JetFile> files,
+            @NotNull KotlinCoreEnvironment environment
     ) {
-        return analyzeFilesWithJavaIntegration(project, files, PackageMappingProvider.EMPTY);
+        return analyzeFilesWithJavaIntegration(project, files, new JvmPackageMappingProvider(environment));
     }
 
     @NotNull
