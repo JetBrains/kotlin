@@ -285,6 +285,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("declaredVsInheritedFunctions")
+        public void testDeclaredVsInheritedFunctions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/declaredVsInheritedFunctions/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("functionReferenceErasedToKFunction")
         public void testFunctionReferenceErasedToKFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/functionReferenceErasedToKFunction/");

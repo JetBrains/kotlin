@@ -17,9 +17,14 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import kotlin.jvm.internal.KotlinPackage
+import kotlin.reflect.KCallable
 import kotlin.reflect.KPackage
 
 class KPackageImpl(override val jClass: Class<*>) : KDeclarationContainerImpl(), KPackage {
@@ -30,10 +35,20 @@ class KPackageImpl(override val jClass: Class<*>) : KDeclarationContainerImpl(),
         moduleData.module.getPackage(fqName)
     }
 
-    override val scope: JetScope get() = descriptor.memberScope
+    internal val scope: JetScope get() = descriptor.memberScope
+
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = true).toList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()
+
+    @suppress("UNCHECKED_CAST")
+    override fun getProperties(name: Name): Collection<PropertyDescriptor> =
+            scope.getProperties(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
+
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
+            scope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass

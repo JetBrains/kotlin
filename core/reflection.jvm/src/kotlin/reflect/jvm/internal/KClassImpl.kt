@@ -18,12 +18,16 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KotlinReflectionInternalError
@@ -43,9 +47,14 @@ class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainer
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-    override val scope: JetScope get() = ChainedScope(
-            descriptor, "KClassImpl scope", descriptor.getDefaultType().getMemberScope(), descriptor.getStaticScope()
-    )
+    internal val memberScope: JetScope get() = descriptor.defaultType.memberScope
+
+    internal val staticScope: JetScope get() = descriptor.staticScope
+
+    override val members: Collection<KCallable<*>>
+        get() = getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = true)
+                .plus(getMembers(staticScope, declaredOnly = false, nonExtensions = true, extensions = true))
+                .toList()
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
@@ -55,6 +64,15 @@ class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainer
             }
             return emptyList()
         }
+
+    @suppress("UNCHECKED_CAST")
+    override fun getProperties(name: Name): Collection<PropertyDescriptor> =
+            (memberScope.getProperties(name, NoLookupLocation.FROM_REFLECTION) +
+             staticScope.getProperties(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
+
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
+            memberScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION) +
+            staticScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override val simpleName: String? get() {
         if (jClass.isAnonymousClass()) return null

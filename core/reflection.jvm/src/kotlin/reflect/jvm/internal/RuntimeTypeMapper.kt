@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.structure.reflect.*
 import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -117,7 +118,9 @@ sealed class JvmPropertySignature {
 
 object RuntimeTypeMapper {
     fun mapSignature(possiblySubstitutedFunction: FunctionDescriptor): JvmFunctionSignature {
-        val function = possiblySubstitutedFunction.original
+        // Fake overrides don't have a source element, so we need to take a declaration.
+        // TODO: support the case when a fake override overrides several declarations with different signatures
+        val function = DescriptorUtils.unwrapFakeOverride(possiblySubstitutedFunction).original
 
         when (function) {
             is DeserializedCallableMemberDescriptor -> {

@@ -23,7 +23,7 @@ import kotlin.reflect.jvm.internal.KPackageImpl
  */
 public val KPackage.properties: Collection<KProperty0<*>>
     get() = (this as KPackageImpl)
-            .getMembers(declaredOnly = false, nonExtensions = true, extensions = false)
+            .getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = false)
             .filterIsInstance<KProperty0<*>>()
             .toList()
 
@@ -32,6 +32,6 @@ public val KPackage.properties: Collection<KProperty0<*>>
  */
 public val KPackage.extensionProperties: Collection<KProperty1<*, *>>
     get() = (this as KPackageImpl)
-            .getMembers(declaredOnly = false, nonExtensions = false, extensions = true)
+            .getMembers(scope, declaredOnly = false, nonExtensions = false, extensions = true)
             .filterIsInstance<KProperty1<*, *>>()
             .toList()
