@@ -90,3 +90,27 @@ fun multiSizeArray(cond: Boolean) {
         }
     }
 }
+
+fun insideLambda(cond: Boolean) {
+    var a: Int? = null
+    if (cond) {
+        a = 3
+    }
+    a?.let {
+        val arr = arrayOf(1, 2, 3)
+        println(arr[it])                // no alarm here, `it` is lambda's argument and is unknown
+        val n = 3
+        println(<!OUT_OF_BOUND_ACCESS!>arr[n]<!>)                 // local variable's value is known
+    }
+    a?.let { i ->
+        val arr = arrayOf(1, 2, 3)
+        println(arr[i])                 // same as `it`
+    }
+    val outArr = arrayOf(1, 2, 3)
+    val k = 3
+    a?.let {
+        val n = 3
+        println(<!OUT_OF_BOUND_ACCESS!>outArr[n]<!>)
+        println(<!OUT_OF_BOUND_ACCESS!>outArr[k]<!>)
+    }
+}
