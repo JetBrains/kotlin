@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
@@ -163,7 +164,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
-            if (!shouldCompleteParameterNameAndType()) {
+            if (!shouldCompleteParameterNameAndType() || TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) {
                 return true
             }
         }
