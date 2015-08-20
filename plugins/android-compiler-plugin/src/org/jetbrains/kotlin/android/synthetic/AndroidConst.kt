@@ -55,6 +55,8 @@ public object AndroidConst {
 
     val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.getTypes() + JetTokens.SOFT_KEYWORDS.getTypes())
             .map { it as? JetKeywordToken }.filterNotNull().map { it.getValue() }.toSet()
+
+    val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
 public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
@@ -74,10 +76,13 @@ fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
 }
 
-public fun parseAndroidResource(id: String, type: String): AndroidResource {
-   return  when (type) {
+public fun parseAndroidResource(id: String, tag: String, fqNameResolver: (String) -> String?): AndroidResource {
+   return when (tag) {
         "fragment" -> AndroidFragment(id)
-        "include" -> AndroidWidget(id, "View")
-        else -> AndroidWidget(id, type)
+        "include" -> AndroidWidget(id, AndroidConst.VIEW_FQNAME)
+        else -> {
+            val fqName = fqNameResolver(tag) ?: AndroidConst.VIEW_FQNAME
+            AndroidWidget(id, fqName)
+        }
    }
 }

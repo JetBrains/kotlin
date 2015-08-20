@@ -16,22 +16,30 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider.Result
 import java.io.ByteArrayInputStream
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
 import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.psi.JetFile
 import kotlin.properties.Delegates
 
-public class CliSyntheticFileGenerator(
+public open class CliSyntheticFileGenerator(
         project: Project,
         private val manifestPath: String,
         private val resDirectories: List<String>,
         private val supportV4: Boolean
 ) : SyntheticFileGenerator(project) {
+
+    private val javaPsiFacade: JavaPsiFacade by lazy { JavaPsiFacade.getInstance(project) }
+    private val projectScope: GlobalSearchScope by lazy { GlobalSearchScope.allScope(project) }
+
+    private val cachedJetFiles by lazy {
+        generateSyntheticJetFiles(generateSyntheticFiles(true, projectScope))
+    }
 
     override fun supportV4(): Boolean {
         return supportV4
@@ -41,27 +49,31 @@ public class CliSyntheticFileGenerator(
         CliAndroidLayoutXmlFileManager(project, manifestPath, resDirectories)
     }
 
-    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by lazy {
-        cachedValue {
-            Result.create(generateSyntheticFiles(), ModificationTracker.NEVER_CHANGED)
-        }
-    }
+    public override fun getSyntheticFiles(): List<JetFile> = cachedJetFiles
 
-    override fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource> {
+    override fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource> {
         val resources = arrayListOf<AndroidResource>()
-        val handler = AndroidXmlHandler { id, widgetType -> resources.add(parseAndroidResource(id, widgetType)) }
 
-        try {
-            for (file in files) {
+        val handler = AndroidXmlHandler { id, tag ->
+            resources += parseAndroidResource(id, tag) { tag ->
+                resolveFqClassNameForView(javaPsiFacade, scope, tag)
+            }
+        }
+
+        for (file in files) {
+            try {
                 val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
                 layoutXmlFileManager.saxParser.parse(inputStream, handler)
+            } catch (e: Throwable) {
+                LOG.error(e)
             }
-            return filterDuplicates(resources)
         }
-        catch (e: Throwable) {
-            LOG.error(e)
-            return listOf()
-        }
+
+        return filterDuplicates(resources)
+    }
+
+    private companion object {
+        private val LOG: Logger = Logger.getInstance(javaClass)
     }
 }
 

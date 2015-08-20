@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.android.synthetic.idea.TestConst
 import org.jetbrains.kotlin.android.synthetic.idea.res.IDESyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import kotlin.test.assertEquals
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
@@ -31,11 +31,11 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
             "$path${it.name}/"
         }
 
-        val cliParser = CliSyntheticFileGenerator(project, path + "../AndroidManifest.xml", resDirs, false)
+        val cliParser = CliSyntheticFileGenerator(project, "$path../AndroidManifest.xml", resDirs, false)
         val ideParser = IDESyntheticFileGenerator(ModuleManager.getInstance(project).getModules()[0])
 
-        val cliResult = cliParser.getSyntheticFiles()!!.joinToString("\n\n")
-        val ideResult = ideParser.getSyntheticFiles()!!.joinToString("\n\n")
+        val cliResult = cliParser.getSyntheticFiles().joinToString("\n\n")
+        val ideResult = ideParser.getSyntheticFiles().joinToString("\n\n")
 
         assertEquals(cliResult, ideResult)
     }

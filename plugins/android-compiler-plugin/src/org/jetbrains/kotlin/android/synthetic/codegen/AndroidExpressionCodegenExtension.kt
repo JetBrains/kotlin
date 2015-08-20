@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.codegen
 
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils

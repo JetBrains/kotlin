@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -36,56 +37,20 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public class NoAndroidManifestFound : Exception("No android manifest file found in project root")
 
-    protected val LOG: Logger = Logger.getInstance(javaClass)
-
     public abstract val layoutXmlFileManager: AndroidLayoutXmlFileManager
-
-    protected abstract val cachedSources: CachedValue<List<AndroidSyntheticFile>>
-
-    private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
-        cachedValue {
-            val psiManager = PsiManager.getInstance(project)
-            val applicationPackage = layoutXmlFileManager.androidModuleInfo?.applicationPackage
-
-            val jetFiles = cachedSources.value.mapIndexed { index, syntheticFile ->
-                val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"
-                val virtualFile = LightVirtualFile(fileName, syntheticFile.contents)
-                val jetFile = psiManager.findFile(virtualFile) as JetFile
-                if (applicationPackage != null) {
-                    jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
-                }
-                jetFile
-            }
-
-            Result.create(jetFiles, cachedSources)
-        }
-    }
 
     protected abstract fun supportV4(): Boolean
 
-    public fun generateSyntheticFiles(generateCommonFiles: Boolean = true): List<AndroidSyntheticFile> {
-        val commonFiles = if (generateCommonFiles) {
-            val renderSyntheticFile = renderSyntheticFile("clearCache") {
-                writePackage(AndroidConst.SYNTHETIC_PACKAGE)
-                writeAndroidImports()
-                writeClearCacheFunction(AndroidConst.ACTIVITY_FQNAME)
-                writeClearCacheFunction(AndroidConst.FRAGMENT_FQNAME)
-                if (supportV4()) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
-            }
-            val clearCacheFile = renderSyntheticFile
+    public abstract fun getSyntheticFiles(): List<JetFile>
 
-            listOf(clearCacheFile,
-                   FLEXIBLE_TYPE_FILE,
-                   FAKE_SUPPORT_V4_APP_FILE,
-                   FAKE_SUPPORT_V4_VIEW_FILE,
-                   FAKE_SUPPORT_V4_WIDGET_FILE)
-        } else listOf()
+    protected fun generateSyntheticFiles(generateCommonFiles: Boolean = true, scope: GlobalSearchScope): List<AndroidSyntheticFile> {
+        val commonFiles = if (generateCommonFiles) generateCommonFiles() else listOf()
 
         return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->
             val files = entry.getValue()
-            val resources = extractLayoutResources(files)
+            val resources = extractLayoutResources(files, scope)
 
-            val layoutName = files[0].name.substringBefore('.')
+            val layoutName = entry.getKey()
 
             val mainLayoutFile = renderMainLayoutFile(layoutName, resources)
             val viewLayoutFile = renderViewLayoutFile(layoutName, resources)
@@ -94,9 +59,25 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }.filterNotNull() + commonFiles
     }
 
-    public fun getSyntheticFiles(): List<JetFile>? = cachedJetFiles.value
+    private fun generateCommonFiles(): List<AndroidSyntheticFile> {
+        val renderSyntheticFile = renderSyntheticFile("clearCache") {
+            writePackage(AndroidConst.SYNTHETIC_PACKAGE)
+            writeAndroidImports()
+            writeClearCacheFunction(AndroidConst.ACTIVITY_FQNAME)
+            writeClearCacheFunction(AndroidConst.FRAGMENT_FQNAME)
+            if (supportV4()) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
+        }
+        val clearCacheFile = renderSyntheticFile
 
-    protected abstract fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource>
+        return listOf(
+               clearCacheFile,
+               FLEXIBLE_TYPE_FILE,
+               FAKE_SUPPORT_V4_APP_FILE,
+               FAKE_SUPPORT_V4_VIEW_FILE,
+               FAKE_SUPPORT_V4_WIDGET_FILE)
+    }
+
+    protected abstract fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource>
 
     private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
         return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX,
@@ -140,13 +121,13 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         writeEmptyLine()
     }
 
-    private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidResource, stubCall: String) {
+    private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, resource: AndroidResource, stubCall: String) {
         // extract startsWith() to fun
-        val className = if (isFromSupportV4Package(receiver)) widget.supportClassName else widget.className
-        val cast = if (widget.className != "View") " as? $className" else ""
+        val className = if (isFromSupportV4Package(receiver)) resource.supportClassName else resource.className
+        val cast = if (resource.className != "View") " as? $className" else ""
         val body = arrayListOf("return $stubCall$cast")
         writeImmutableExtensionProperty(receiver,
-                                        name = widget.id,
+                                        name = resource.id,
                                         retType = "$EXPLICIT_FLEXIBLE_CLASS_NAME<$className, $className?>",
                                         getterBody = body)
     }
@@ -161,6 +142,22 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     private fun isFromSupportV4Package(fqName: String): Boolean {
         return fqName.startsWith(AndroidConst.SUPPORT_V4_PACKAGE)
+    }
+
+    protected fun resolveFqClassNameForView(javaPsiFacade: JavaPsiFacade, scope: GlobalSearchScope, tag: String): String? {
+        if (tag.contains('.')) {
+            if (javaPsiFacade.findClass(tag, scope) == null) {
+                return null
+            }
+            return tag
+        }
+        for (pkg in AndroidConst.FQNAME_RESOLVE_PACKAGES) {
+            val fqName = "$pkg.$tag"
+            if (javaPsiFacade.findClass(fqName, scope) != null) {
+                return fqName
+            }
+        }
+        return null
     }
 
     protected fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
@@ -182,6 +179,21 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }
         resourcesToExclude.forEach { resourceMap.remove(it) }
         return resourceMap.values().toList()
+    }
+
+    protected fun generateSyntheticJetFiles(files: List<AndroidSyntheticFile>): List<JetFile> {
+        val psiManager = PsiManager.getInstance(project)
+        val applicationPackage = layoutXmlFileManager.androidModuleInfo?.applicationPackage
+
+        return files.mapIndexed { index, syntheticFile ->
+            val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"
+            val virtualFile = LightVirtualFile(fileName, syntheticFile.contents)
+            val jetFile = psiManager.findFile(virtualFile) as JetFile
+            if (applicationPackage != null) {
+                jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
+            }
+            jetFile
+        }
     }
 
     companion object {

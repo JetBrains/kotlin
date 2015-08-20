@@ -21,11 +21,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
-import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
 import org.jetbrains.kotlin.psi.JetProperty
 
-public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.getProject()) {
+public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
 
     override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
@@ -37,7 +37,7 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
         val layoutFiles = getLayoutXmlFiles()[layoutPackageName]
         if (layoutFiles == null || layoutFiles.isEmpty()) return listOf()
 
-        val propertyName = property.getName()
+        val propertyName = property.name
 
         val attributes = arrayListOf<PsiElement>()
         val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
@@ -53,7 +53,7 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
 
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
         val applicationPackage = manifest?.getPackage()?.toString()
-        val mainResDirectories = getAllResourceDirectories().map { it.getPath() }
+        val mainResDirectories = allResourceDirectories.map { it.path }
 
         return if (applicationPackage != null) {
             AndroidModuleInfo(applicationPackage, mainResDirectories)

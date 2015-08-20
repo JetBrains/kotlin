@@ -21,6 +21,10 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -29,10 +33,6 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
-import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.psi.JetFile
 
 public object AndroidConfigurationKeys {
@@ -70,8 +70,8 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
 
 public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = ServiceManager.getService(project, javaClass<SyntheticFileGenerator>())
-        return parser.getSyntheticFiles() ?: listOf()
+        val parser = ServiceManager.getService(project, javaClass<SyntheticFileGenerator>()) as? CliSyntheticFileGenerator
+        return parser?.getSyntheticFiles() ?: listOf()
     }
 }
 

@@ -16,20 +16,19 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
-import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
-import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
+import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
 
 private class AndroidTestExternalDeclarationsProvider(
@@ -39,10 +38,18 @@ private class AndroidTestExternalDeclarationsProvider(
         val supportV4: Boolean
 ) : ExternalDeclarationsProvider {
     override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
-        val parser = CliSyntheticFileGenerator(project, manifestPath, resPaths)
-        parser.supportV4 = supportV4
-        return parser.getSyntheticFiles() ?: listOf()
+        val parser = CliSyntheticFileGeneratorForConversionTest(project, manifestPath, resPaths, supportV4)
+        return parser.getSyntheticFiles()
     }
+}
+
+class CliSyntheticFileGeneratorForConversionTest(
+        project: Project,
+        manifestPath: String,
+        resDirectories: List<String>,
+        supportV4: Boolean
+) : CliSyntheticFileGenerator(project, manifestPath, resDirectories, supportV4) {
+    fun gen(scope: GlobalSearchScope) = generateSyntheticFiles(false, scope)
 }
 
 fun UsefulTestCase.createAndroidTestEnvironment(

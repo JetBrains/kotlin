@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.android.synthetic.idea
 import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.android.synthetic.idea.res.IDESyntheticFileGenerator
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
@@ -30,8 +31,8 @@ public class IDEAndroidExternalDeclarationsProvider(private val project: Project
         if (moduleInfo !is ModuleSourceInfo) return listOf()
 
         val module = moduleInfo.module
-        val parser = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>())!!
-        val syntheticFiles = parser.getSyntheticFiles()
+        val parser = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>()) as? IDESyntheticFileGenerator
+        val syntheticFiles = parser?.getSyntheticFiles()
         syntheticFiles?.forEach { it.moduleInfo = moduleInfo }
 
         return syntheticFiles ?: listOf()

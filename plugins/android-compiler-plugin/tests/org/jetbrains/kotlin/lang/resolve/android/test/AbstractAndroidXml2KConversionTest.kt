@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import java.io.File
-import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
-import kotlin.test.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
+import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.fail
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
@@ -35,10 +36,14 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
         val jetCoreEnvironment = getEnvironment()
         val layoutPaths = getResPaths(path)
-        val parser = CliSyntheticFileGenerator(jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths)
-        parser.supportV4 = testDirectory.name.startsWith("support")
+        val supportV4 = testDirectory.name.startsWith("support")
+        val parser = CliSyntheticFileGeneratorForConversionTest(
+                jetCoreEnvironment.project, path + "AndroidManifest.xml", layoutPaths, supportV4)
 
-        val actual = parser.generateSyntheticFiles(false).toMap { it.name }
+        val module = ModuleManager.getInstance(jetCoreEnvironment.project).modules.first()
+        val moduleScope = module.getModuleWithDependenciesAndLibrariesScope(false)
+
+        val actual = parser.gen(moduleScope).toMap { it.name }
 
         val expectedLayoutFiles = testDirectory.listFiles {
             it.isFile() && it.name.endsWith(".kt")
