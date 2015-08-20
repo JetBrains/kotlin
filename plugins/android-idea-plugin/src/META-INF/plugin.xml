@@ -1,10 +1,10 @@
-<idea-plugin version="2" url="http://kotlin.jetbrains.org">
+<idea-plugin version="2" url="http://kotlinlang.org">
   <id>org.jetbrains.kotlin.android</id>
 
   <name>Kotlin Extensions For Android</name>
   <description>Various extensions facilitating Android development in Kotlin</description>
   <version>@snapshot@</version>
-  <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
+  <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
 
   <!-- IDEA VERSION -->
 
@@ -22,6 +22,8 @@
       <renamePsiElementProcessor id="KotlinAndroidSyntheticProperty"
                                  implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidRenameProcessor"
                                  order="first"/>
+
+      <errorHandler implementation="org.jetbrains.kotlin.plugin.android.AndroidExtensionsReportSubmitter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
