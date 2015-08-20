@@ -17,16 +17,15 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
@@ -50,13 +49,15 @@ import java.util.HashSet
 import java.util.LinkedHashSet
 
 public class KotlinIndicesHelper(
-        private val project: Project,
         private val resolutionFacade: ResolutionFacade,
         private val scope: GlobalSearchScope,
-        private val moduleDescriptor: ModuleDescriptor,
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
         applyExcludeSettings: Boolean
 ) {
+
+    private val moduleDescriptor = resolutionFacade.moduleDescriptor
+    private val project = resolutionFacade.project
+
     private val descriptorFilter =
             if (applyExcludeSettings)
                 { d -> visibilityFilter(d) && !isExcludedFromAutoImport(d) }
@@ -69,7 +70,7 @@ public class KotlinIndicesHelper(
         declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
             if (it.getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                resolutionFacade.resolveImportReference(project, moduleDescriptor, it.getFqName()!!).filterIsInstance<CallableDescriptor>()
+                resolutionFacade.resolveImportReference(moduleDescriptor, it.getFqName()!!).filterIsInstance<CallableDescriptor>()
             }
             else {
                 (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
@@ -117,7 +118,7 @@ public class KotlinIndicesHelper(
     private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
         val result = HashSet<String>()
         for (receiverValue in receiverValues) {
-            val smartCastManager = resolutionFacade.frontendService<SmartCastManager>(moduleDescriptor)
+            val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
             for (type in smartCastManager.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
                 result.addTypeNames(type)
             }
@@ -171,7 +172,7 @@ public class KotlinIndicesHelper(
         for (declaration in declarations) {
             if (declaration.getContainingJetFile().isCompiled()) {
                 //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                for (descriptor in resolutionFacade.resolveImportReference(project, moduleDescriptor, declaration.getFqName()!!)) {
+                for (descriptor in resolutionFacade.resolveImportReference(moduleDescriptor, declaration.getFqName()!!)) {
                     if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
                         processDescriptor(descriptor)
                     }
@@ -214,7 +215,7 @@ public class KotlinIndicesHelper(
     }
 
     private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
-        return resolutionFacade.resolveImportReference(project, moduleDescriptor, fqName)
+        return resolutionFacade.resolveImportReference(moduleDescriptor, fqName)
                 .filterIsInstance<CallableDescriptor>()
                 .filter { it.getExtensionReceiverParameter() == null }
     }

@@ -69,7 +69,7 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
                 TypeUtils.NO_EXPECTED_TYPE
             }
             val dataFlow = context.getDataFlowInfo(callExpression)
-            val callResolver = resolutionFacade.frontendService<CallResolver>(callExpression)
+            val callResolver = resolutionFacade.frontendService<CallResolver>()
             val resolutionResults = callResolver.resolveFunctionCall(
                     BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
             if (!resolutionResults.isSingleResult()) {

@@ -25,6 +25,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.platform.platformStatic
 
@@ -53,7 +53,7 @@ public class KotlinCacheService(val project: Project) {
     private val globalFacadesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalFacade(platform) }
 
     private inner class GlobalFacade(platform: TargetPlatform) {
-        val facadeForLibraries = ResolutionFacadeImpl(project) {
+        val facadeForLibraries = ProjectResolutionFacade(project) {
             globalResolveSessionProvider(
                     project,
                     platform,
@@ -66,7 +66,7 @@ public class KotlinCacheService(val project: Project) {
             )
         }
 
-        val facadeForModules = ResolutionFacadeImpl(project) {
+        val facadeForModules = ProjectResolutionFacade(project) {
             globalResolveSessionProvider(
                     project,
                     platform,
@@ -77,13 +77,15 @@ public class KotlinCacheService(val project: Project) {
     }
 
     deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
-    public fun getGlobalFacade(platform: TargetPlatform): ResolutionFacade = globalFacade(platform)
+    public fun <T> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+        return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
+    }
 
     private fun globalFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForModules
 
     private fun librariesFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForLibraries
 
-    private fun createFacadeForSyntheticFiles(files: Set<JetFile>): ResolutionFacadeImpl {
+    private fun createFacadeForSyntheticFiles(files: Set<JetFile>): ProjectResolutionFacade {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
@@ -94,7 +96,7 @@ public class KotlinCacheService(val project: Project) {
         return when {
             syntheticFileModule is ModuleSourceInfo -> {
                 val dependentModules = syntheticFileModule.getDependentModules()
-                ResolutionFacadeImpl(project) {
+                ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
                             project,
                             targetPlatform,
@@ -107,7 +109,7 @@ public class KotlinCacheService(val project: Project) {
             }
 
             syntheticFileModule is LibrarySourceInfo || syntheticFileModule is NotUnderContentRootModuleInfo -> {
-                ResolutionFacadeImpl(project) {
+                ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
                             project,
                             targetPlatform,
@@ -124,7 +126,7 @@ public class KotlinCacheService(val project: Project) {
                 // currently the only known scenario is when we cannot determine that file is a library source
                 // (file under both classes and sources root)
                 LOG.warn("Creating cache with synthetic files ($files) in classes of library $syntheticFileModule")
-                ResolutionFacadeImpl(project) {
+                ProjectResolutionFacade(project) {
                     globalResolveSessionProvider(
                             project,
                             targetPlatform,
@@ -142,14 +144,14 @@ public class KotlinCacheService(val project: Project) {
     private val syntheticFileCachesLock = Any()
 
     private val slruCacheProvider = CachedValueProvider {
-        CachedValueProvider.Result(object : SLRUCache<Set<JetFile>, ResolutionFacadeImpl>(2, 3) {
-            override fun createValue(files: Set<JetFile>): ResolutionFacadeImpl {
+        CachedValueProvider.Result(object : SLRUCache<Set<JetFile>, ProjectResolutionFacade>(2, 3) {
+            override fun createValue(files: Set<JetFile>): ProjectResolutionFacade {
                 return createFacadeForSyntheticFiles(files)
             }
         }, LibraryModificationTracker.getInstance(project), ProjectRootModificationTracker.getInstance(project))
     }
 
-    private fun getFacadeForSyntheticFiles(files: Set<JetFile>): ResolutionFacadeImpl {
+    private fun getFacadeForSyntheticFiles(files: Set<JetFile>): ProjectResolutionFacade {
         return synchronized(syntheticFileCachesLock) {
             //NOTE: computations inside createCacheForSyntheticFiles depend on project root structure
             // so we additionally drop the whole slru cache on change
@@ -157,24 +159,16 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    public fun getLazyResolveSession(element: JetElement): ResolveSession {
-        val file = element.getContainingJetFile()
-        return getFacadeToAnalyzeFiles(listOf(file)).getLazyResolveSession(file)
-    }
-
-    private fun getFacadeToAnalyzeFiles(files: Collection<JetFile>): ResolutionFacadeImpl {
+    private fun getFacadeToAnalyzeFiles(files: Collection<JetFile>): ResolutionFacade {
         val syntheticFiles = findSyntheticFiles(files)
-        return if (syntheticFiles.isNotEmpty()) {
+        val file = files.first()
+        val projectFacade = if (syntheticFiles.isNotEmpty()) {
             getFacadeForSyntheticFiles(syntheticFiles)
         }
         else {
-            val firstFile = files.firstOrNull()
-            val targetPlatform = if (firstFile != null)
-                TargetPlatformDetector.getPlatform(firstFile)
-            else
-                TargetPlatformDetector.getDefaultPlatform()
-            globalFacade(targetPlatform)
+            globalFacade(TargetPlatformDetector.getPlatform(file))
         }
+        return ResolutionFacadeImpl(projectFacade, file.getModuleInfo())
     }
 
     private fun findSyntheticFiles(files: Collection<JetFile>) = files.map {
@@ -196,7 +190,7 @@ private fun globalResolveSessionProvider(
         platform: TargetPlatform,
         dependencies: Collection<Any>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
-        reuseDataFrom: ResolutionFacadeImpl? = null,
+        reuseDataFrom: ProjectResolutionFacade? = null,
         syntheticFiles: Collection<JetFile> = listOf(),
         logProcessCanceled: Boolean = false
 ): CachedValueProvider.Result<ModuleResolverProvider> {

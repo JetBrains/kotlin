@@ -51,7 +51,6 @@ interface InheritanceItemsSearcher {
 class SmartCompletion(
         private val expression: JetExpression,
         private val resolutionFacade: ResolutionFacade,
-        private val moduleDescriptor: ModuleDescriptor,
         private val bindingContext: BindingContext,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         private val inDescriptor: DeclarationDescriptor,
@@ -66,7 +65,9 @@ class SmartCompletion(
 
     public val expectedInfos: Collection<ExpectedInfo> = calcExpectedInfos(expressionWithType)
 
-    public val smartCastCalculator: SmartCastCalculator by lazy { SmartCastCalculator(bindingContext, moduleDescriptor, expression) }
+    public val smartCastCalculator: SmartCastCalculator by lazy {
+        SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression)
+    }
 
     public val descriptorFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?
             = { descriptor: DeclarationDescriptor -> filterDescriptor(descriptor).map { postProcess(it) } }.check { expectedInfos.isNotEmpty() }
@@ -172,7 +173,7 @@ class SmartCompletion(
         val inheritanceSearchers = ArrayList<InheritanceItemsSearcher>()
 
         if (expectedInfos.isNotEmpty() && receiver == null) {
-            TypeInstantiationItems(resolutionFacade, moduleDescriptor, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
+            TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
                     .addTo(items, inheritanceSearchers, expectedInfos)
 
             if (expression is JetSimpleNameExpression) {
@@ -254,7 +255,7 @@ class SmartCompletion(
         // if expected types are too general, try to use expected type from outer calls
         var count = 0
         while (true) {
-            val infos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useOuterCallsExpectedTypeCount = count)
+            val infos = ExpectedInfos(bindingContext, resolutionFacade, useOuterCallsExpectedTypeCount = count)
                     .calculate(expression)
             if (count == 2 /* use two outer calls maximum */ || infos.none { it.fuzzyType?.isAlmostEverything() ?: false }) {
                 return if (forBasicCompletion)

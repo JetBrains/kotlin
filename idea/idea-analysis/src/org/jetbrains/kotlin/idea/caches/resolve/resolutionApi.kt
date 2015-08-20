@@ -46,7 +46,7 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
 
 public fun JetFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
-    return facade.resolveImportReference(project, facade.findModuleDescriptor(this), fqName)
+    return facade.resolveImportReference(facade.moduleDescriptor, fqName)
 }
 
 //NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear
@@ -61,11 +61,11 @@ public fun JetElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode
 
 public fun JetElement.analyzeAndGetResult(): AnalysisResult {
     val resolutionFacade = getResolutionFacade()
-    return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.findModuleDescriptor(this))
+    return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.moduleDescriptor)
 }
 
 public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
-    return getResolutionFacade().findModuleDescriptor(this)
+    return getResolutionFacade().moduleDescriptor
 }
 
 public fun JetElement.analyzeFully(): BindingContext {
@@ -77,12 +77,11 @@ public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): Anal
 }
 
 public fun ResolutionFacade.resolveImportReference(
-        project: Project,
         moduleDescriptor: ModuleDescriptor,
         fqName: FqName
 ): Collection<DeclarationDescriptor> {
     val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-    val qualifiedExpressionResolver = this.frontendService<QualifiedExpressionResolver>(moduleDescriptor)
+    val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, javaClass<QualifiedExpressionResolver>())
     return qualifiedExpressionResolver.processImportReference(
             importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
 }
@@ -98,5 +97,5 @@ public fun getResolveScope(file: JetFile): GlobalSearchScope {
 }
 
 public fun ResolutionFacade.getFileTopLevelScope(file: JetFile): JetScope {
-    return frontendService<FileScopeProvider>(file).getFileScope(file)
+    return frontendService<FileScopeProvider>().getFileScope(file)
 }

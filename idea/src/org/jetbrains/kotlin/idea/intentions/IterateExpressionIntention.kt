@@ -22,11 +22,11 @@ import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -51,7 +51,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
         val type = bindingContext.getType(expression) ?: return null
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, expression] ?: return null
-        val detector = resolutionFacade.ideService<IterableTypesDetection>(expression).createDetector(scope)
+        val detector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
         val elementType = detector.elementType(type)?.type ?: return null
         return Data(type, elementType)
     }

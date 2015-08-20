@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver {
     @suppress("DEPRECATED_SYMBOL_WITH_MESSAGE")
-    return KotlinCacheService.getInstance(getProject()).getGlobalFacade(JvmPlatform).frontendService<JavaDescriptorResolver>(this)
+    return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), javaClass<JavaDescriptorResolver>())
 }
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {

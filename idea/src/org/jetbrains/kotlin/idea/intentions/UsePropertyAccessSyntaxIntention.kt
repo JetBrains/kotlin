@@ -89,7 +89,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
-        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade, callExpression)) return null
+        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade)) return null
 
         val isSetUsage = callExpression.valueArguments.size() == 1
         if (isSetUsage && property.type != function.valueParameters.single().type) {
@@ -118,8 +118,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             resolutionScope: JetScope,
             dataFlowInfo: DataFlowInfo,
             expectedType: JetType,
-            facade: ResolutionFacade,
-            callExpression: JetCallExpression
+            facade: ResolutionFacade
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
@@ -135,7 +134,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
-        val callResolver = facade.frontendService<CallResolver>(callExpression)
+        val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property
     }

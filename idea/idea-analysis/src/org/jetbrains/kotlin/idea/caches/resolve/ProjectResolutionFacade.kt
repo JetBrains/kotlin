@@ -37,53 +37,20 @@ import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
-private class ResolutionFacadeImpl(
-        override val project: Project,
+private class ProjectResolutionFacade(
+        val project: Project,
         computeModuleResolverProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
-) : ResolutionFacade {
+) {
     private val resolverCache = SynchronizedCachedValue(project, computeModuleResolverProvider, trackValue = false)
 
     val moduleResolverProvider: ModuleResolverProvider
         get() = resolverCache.getValue()
 
-    public fun getLazyResolveSession(element: JetElement): ResolveSession {
-        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.get<ResolveSession>()
-    }
+    fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
+    fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
-    private fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = moduleResolverProvider.resolverForProject.resolverForModule(moduleInfo)
-    private fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = moduleResolverProvider.resolverForProject.resolverForModuleDescriptor(moduleDescriptor)
-
-    override fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
-        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.getService(serviceClass)
-    }
-
-    override fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
-        return resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
-    }
-
-    override fun <T> getIdeService(element: PsiElement, serviceClass: Class<T>): T {
-        return resolverForModuleInfo(element.getModuleInfo()).componentProvider.create(serviceClass)
-    }
-
-    override fun <T> getIdeService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
-        return resolverForDescriptor(moduleDescriptor).componentProvider.create(serviceClass)
-    }
-
-    override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
-        return resolveElementCache.resolveToElement(element, bodyResolveMode)
-    }
-
-    override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
-        return moduleResolverProvider.resolverForProject.descriptorForModule(element.getModuleInfo())
-    }
-
-    override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
-        return getLazyResolveSession(declaration).resolveToDescriptor(declaration)
-    }
-
-    override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
-        return getAnalysisResultsForElements(elements)
+    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+        return moduleResolverProvider.resolverForProject.descriptorForModule(ideaModuleInfo)
     }
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
@@ -114,6 +81,51 @@ private class ResolutionFacadeImpl(
             AnalysisResult.error(bindingContext, withError.error)
         else
         //TODO: (module refactoring) several elements are passed here in debugger
-            AnalysisResult.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())
+            AnalysisResult.success(bindingContext, findModuleDescriptor(elements.first().getModuleInfo()))
     }
+}
+
+private class ResolutionFacadeImpl(
+        private val projectFacade: ProjectResolutionFacade,
+        private val moduleInfo: IdeaModuleInfo
+) : ResolutionFacade {
+    override val project: Project
+        get() = projectFacade.project
+
+    //TODO: ideally we would like to store moduleDescriptor once and for all
+    // but there are some usages that use resolutionFacade and mutate the psi leading to recomputation of underlying structures
+    override val moduleDescriptor: ModuleDescriptor
+        get() = projectFacade.findModuleDescriptor(moduleInfo)
+
+    override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+        val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
+        return resolveElementCache.resolveToElement(element, bodyResolveMode)
+    }
+
+    override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
+            = projectFacade.getAnalysisResultsForElements(elements)
+
+    override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
+        val resolveSession = projectFacade.resolverForModuleInfo(declaration.getModuleInfo()).componentProvider.get<ResolveSession>()
+        return resolveSession.resolveToDescriptor(declaration)
+    }
+
+    override fun <T> getFrontendService(serviceClass: Class<T>): T  = getFrontendService(moduleInfo, serviceClass)
+
+    override fun <T> getIdeService(serviceClass: Class<T>): T {
+        return projectFacade.resolverForModuleInfo(moduleInfo).componentProvider.create(serviceClass)
+    }
+
+    override fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
+        return getFrontendService(element.getModuleInfo(), serviceClass)
+    }
+
+    fun <T> getFrontendService(ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+        return projectFacade.resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
+    }
+
+    override fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
+        return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
+    }
+
 }

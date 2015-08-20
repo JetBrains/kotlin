@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -67,23 +65,21 @@ object ReplaceWithAnnotationAnalyzer {
     public fun analyze(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
-            resolutionFacade: ResolutionFacade,
-            project: Project
+            resolutionFacade: ResolutionFacade
     ): ReplacementExpression {
         val originalDescriptor = (if (symbolDescriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
         else
             symbolDescriptor).getOriginal()
-        return analyzeOriginal(annotation, originalDescriptor, resolutionFacade, project)
+        return analyzeOriginal(annotation, originalDescriptor, resolutionFacade)
     }
 
     private fun analyzeOriginal(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
-            resolutionFacade: ResolutionFacade,
-            project: Project
+            resolutionFacade: ResolutionFacade
     ): ReplacementExpression {
-        val psiFactory = JetPsiFactory(project)
+        val psiFactory = JetPsiFactory(resolutionFacade.project)
         var expression = psiFactory.createExpression(annotation.expression)
 
         val importFqNames = annotation.imports
@@ -92,7 +88,7 @@ object ReplaceWithAnnotationAnalyzer {
                 .filter { it.isSafe() }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
 
-        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(project, symbolDescriptor.module, it) }
+        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(symbolDescriptor.module, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
@@ -167,7 +163,7 @@ object ReplaceWithAnnotationAnalyzer {
             resolutionFacade: ResolutionFacade
     ): BindingContext {
         val traceContext = BindingTraceContext()
-        resolutionFacade.frontendService<ExpressionTypingServices>(symbolDescriptor.module)
+        resolutionFacade.getFrontendService(symbolDescriptor.module, javaClass<ExpressionTypingServices>())
                 .getTypeInfo(scope, expression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, traceContext, false)
         return traceContext.bindingContext
     }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
-import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -148,7 +147,6 @@ class ReturnValueAdditionalData(val callable: CallableDescriptor) : ExpectedInfo
 class ExpectedInfos(
         val bindingContext: BindingContext,
         val resolutionFacade: ResolutionFacade,
-        val moduleDescriptor: ModuleDescriptor,
         val useHeuristicSignatures: Boolean = true,
         val useOuterCallsExpectedTypeCount: Int = 0
 ) {
@@ -203,7 +201,7 @@ class ExpectedInfos(
 
         if (useOuterCallsExpectedTypeCount > 0 && results.any(::makesSenseToUseOuterCallExpectedType)) {
             val callExpression = (call.callElement as? JetExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
-            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
+            val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
                     .map { it.fuzzyType }
                     .filterNotNull()
@@ -228,9 +226,6 @@ class ExpectedInfos(
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
         val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
 
-        val project = call.callElement.getProject()
-        val moduleDescriptor = resolutionFacade.findModuleDescriptor(call.callElement)
-
         // leave only arguments before the current one
         val truncatedCall = object : DelegatingCall(call) {
             val arguments = call.getValueArguments().subList(0, argumentIndex)
@@ -247,7 +242,7 @@ class ExpectedInfos(
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
-        val callResolver = resolutionFacade.frontendService<CallResolver>(moduleDescriptor)
+        val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = LinkedHashSet<ExpectedInfo>()
@@ -320,7 +315,7 @@ class ExpectedInfos(
                 if (alreadyHasStar) continue
 
                 val parameterType = if (useHeuristicSignatures)
-                    resolutionFacade.ideService<HeuristicSignatures>(moduleDescriptor).
+                    resolutionFacade.ideService<HeuristicSignatures>().
                             correctedParameterType(descriptor, parameter) ?: parameter.getType()
                 else
                     parameter.getType()
@@ -509,7 +504,7 @@ class ExpectedInfos(
             null
 
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
-        val iterableDetector = resolutionFacade.ideService<IterableTypesDetection>(forExpression).createDetector(scope)
+        val iterableDetector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
@@ -526,7 +521,7 @@ class ExpectedInfos(
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
         val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
-        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade.ideService<HeuristicSignatures>(binaryExpression))
+        val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade.ideService<HeuristicSignatures>())
 
         val byTypeFilter = object : ByTypeFilter {
             override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor? {
