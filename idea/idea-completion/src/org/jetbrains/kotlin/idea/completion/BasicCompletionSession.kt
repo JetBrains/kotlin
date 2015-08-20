@@ -145,17 +145,15 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun shouldCompleteParameterNameAndType(): Boolean {
-        when (completionKind) {
-            CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> {
-                val parameter = position.getNonStrictParentOfType<JetParameter>()!!
-                val list = parameter.getParent() as? JetParameterList ?: return false
-                val owner = list.getParent()
-                return owner !is JetCatchClause &&
-                       owner !is JetPropertyAccessor &&
-                       !((owner as? JetPrimaryConstructor)?.getContainingClassOrObject()?.isAnnotation() ?: false)
-            }
+        if (completionKind != CompletionKind.PARAMETER_NAME && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) return false
 
-            else -> return false
+        val parameter = position.getNonStrictParentOfType<JetParameter>()!!
+        val list = parameter.parent as? JetParameterList ?: return false
+        val owner = list.parent
+        return when (owner) {
+            is JetCatchClause, is JetPropertyAccessor, is JetFunctionLiteral -> false
+            is JetPrimaryConstructor -> !owner.getContainingClassOrObject().isAnnotation()
+            else -> true
         }
     }
 

@@ -1584,9 +1584,21 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
-            @TestMetadata("NotForLambdaParameter.kt")
-            public void testNotForLambdaParameter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForLambdaParameter.kt");
+            @TestMetadata("NotForLambdaParameter1.kt")
+            public void testNotForLambdaParameter1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForLambdaParameter1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForLambdaParameter2.kt")
+            public void testNotForLambdaParameter2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForLambdaParameter2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForLambdaParameter3.kt")
+            public void testNotForLambdaParameter3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForLambdaParameter3.kt");
                 doTest(fileName);
             }
 
