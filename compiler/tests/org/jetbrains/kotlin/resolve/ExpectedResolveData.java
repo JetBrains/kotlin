@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
@@ -131,15 +132,14 @@ public abstract class ExpectedResolveData {
 
     protected abstract JetFile createJetFile(String fileName, String text);
 
-    protected BindingContext analyze(List<JetFile> files) {
+    protected static BindingContext analyze(List<JetFile> files, KotlinCoreEnvironment environment) {
         if (files.isEmpty()) {
             System.err.println("Suspicious: no files");
             return BindingContext.EMPTY;
         }
 
         Project project = files.iterator().next().getProject();
-        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(
-                project, files);
+        AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(project, files, environment);
         return analysisResult.getBindingContext();
     }
 

@@ -26,5 +26,6 @@ class AnnotationDescriptorResolveWithoutAnalyzeBodyTest : AnnotationDescriptorRe
         checkAnnotationOnAllExceptLocalDeclarations(content, expectedAnnotation)
     }
 
-    override fun analyzeFile(ktFile: JetFile): AnalysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(ktFile.getProject(), setOf(ktFile));
+    override fun analyzeFile(ktFile: JetFile): AnalysisResult =
+            JvmResolveUtil.analyzeFilesWithJavaIntegration(ktFile.getProject(), setOf(ktFile), environment);
 }

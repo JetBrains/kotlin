@@ -81,7 +81,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
-        AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<JetFile>emptySet());
+        AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<JetFile>emptySet(), environment);
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
         assertFalse(packageView.isEmpty());
 

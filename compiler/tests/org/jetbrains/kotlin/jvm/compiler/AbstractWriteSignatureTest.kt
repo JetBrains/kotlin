@@ -23,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.join
@@ -56,7 +57,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         val psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment!!.project)
 
-        val outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile)
+        val outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment!!)
 
         outputFiles.writeAllTo(tmpdir)
 
