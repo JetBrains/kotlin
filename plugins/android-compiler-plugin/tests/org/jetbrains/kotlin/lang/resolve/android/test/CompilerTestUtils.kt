@@ -47,9 +47,9 @@ class CliSyntheticFileGeneratorForConversionTest(
         project: Project,
         manifestPath: String,
         resDirectories: List<String>,
-        supportV4: Boolean
-) : CliSyntheticFileGenerator(project, manifestPath, resDirectories, supportV4) {
-    fun gen(scope: GlobalSearchScope) = generateSyntheticFiles(false, scope)
+        private val supportV4: Boolean
+) : CliSyntheticFileGenerator(project, manifestPath, resDirectories) {
+    fun gen(scope: GlobalSearchScope) = generateSyntheticFiles(false, scope, supportV4)
 }
 
 fun UsefulTestCase.createAndroidTestEnvironment(
@@ -61,7 +61,7 @@ fun UsefulTestCase.createAndroidTestEnvironment(
     configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPaths)
     configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
 
-    val myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    val myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.project
 
     val declarationsProvider = AndroidTestExternalDeclarationsProvider(project, resPaths, manifestPath, supportV4)
@@ -72,5 +72,5 @@ fun UsefulTestCase.createAndroidTestEnvironment(
 }
 
 fun getResPaths(path: String): List<String> {
-    return File(path).listFiles { it.name.startsWith("res") && it.isDirectory() }!!.map { "$path${it.name}/" }
+    return File(path).listFiles { it.name.startsWith("res") && it.isDirectory }!!.map { "$path${it.name}/" }
 }

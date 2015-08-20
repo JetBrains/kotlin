@@ -23,7 +23,6 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.parseAndroidResource
@@ -33,22 +32,15 @@ import org.jetbrains.kotlin.psi.JetFile
 
 class IDESyntheticFileGenerator(val module: Module) : SyntheticFileGenerator(module.project) {
 
-    private val supportV4: Boolean
-
     private val javaPsiFacade: JavaPsiFacade by lazy { JavaPsiFacade.getInstance(module.project) }
     private val moduleScope: GlobalSearchScope by lazy { module.getModuleWithDependenciesAndLibrariesScope(false) }
 
     private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
         cachedValue {
-            Result.create(generateSyntheticJetFiles(generateSyntheticFiles(true, moduleScope)), psiTreeChangePreprocessor)
+            val supportV4 = supportV4Available(javaPsiFacade, moduleScope)
+            Result.create(generateSyntheticJetFiles(generateSyntheticFiles(true, moduleScope, supportV4)), psiTreeChangePreprocessor)
         }
     }
-
-    init {
-        supportV4 = javaPsiFacade.findClasses(AndroidConst.SUPPORT_FRAGMENT_FQNAME, moduleScope).isNotEmpty()
-    }
-
-    override fun supportV4() = supportV4
 
     override val layoutXmlFileManager: IDEAndroidLayoutXmlFileManager = IDEAndroidLayoutXmlFileManager(module)
 

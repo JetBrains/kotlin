@@ -39,12 +39,14 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public abstract val layoutXmlFileManager: AndroidLayoutXmlFileManager
 
-    protected abstract fun supportV4(): Boolean
-
     public abstract fun getSyntheticFiles(): List<JetFile>
 
-    protected fun generateSyntheticFiles(generateCommonFiles: Boolean = true, scope: GlobalSearchScope): List<AndroidSyntheticFile> {
-        val commonFiles = if (generateCommonFiles) generateCommonFiles() else listOf()
+    protected fun generateSyntheticFiles(
+            generateCommonFiles: Boolean,
+            scope: GlobalSearchScope,
+            supportV4: Boolean
+    ): List<AndroidSyntheticFile> {
+        val commonFiles = if (generateCommonFiles) generateCommonFiles(supportV4) else listOf()
 
         return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->
             val files = entry.getValue()
@@ -52,20 +54,22 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
             val layoutName = entry.getKey()
 
-            val mainLayoutFile = renderMainLayoutFile(layoutName, resources)
+            val mainLayoutFile = renderMainLayoutFile(layoutName, resources, supportV4)
             val viewLayoutFile = renderViewLayoutFile(layoutName, resources)
 
             listOf(mainLayoutFile, viewLayoutFile)
         }.filterNotNull() + commonFiles
     }
 
-    private fun generateCommonFiles(): List<AndroidSyntheticFile> {
+    private fun generateCommonFiles(supportV4: Boolean): List<AndroidSyntheticFile> {
         val renderSyntheticFile = renderSyntheticFile("clearCache") {
             writePackage(AndroidConst.SYNTHETIC_PACKAGE)
             writeAndroidImports()
             writeClearCacheFunction(AndroidConst.ACTIVITY_FQNAME)
             writeClearCacheFunction(AndroidConst.FRAGMENT_FQNAME)
-            if (supportV4()) writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
+            if (supportV4) {
+                writeClearCacheFunction(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
+            }
         }
         val clearCacheFile = renderSyntheticFile
 
@@ -74,11 +78,10 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     protected abstract fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource>
 
-    private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
-        return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX,
-                                escapeAndroidIdentifier(layoutName), resources) {
+    private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>, supportV4: Boolean): AndroidSyntheticFile {
+        return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX, escapeAndroidIdentifier(layoutName), resources) {
             val properties = it.mainProperties.toArrayList()
-            if (supportV4()) properties.addAll(it.mainPropertiesForSupportV4)
+            if (supportV4) properties.addAll(it.mainPropertiesForSupportV4)
             properties
         }
     }
@@ -153,6 +156,10 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
             }
         }
         return null
+    }
+
+    protected fun supportV4Available(javaPsiFacade: JavaPsiFacade, scope: GlobalSearchScope): Boolean {
+        return javaPsiFacade.findClasses(AndroidConst.SUPPORT_FRAGMENT_FQNAME, scope).isNotEmpty()
     }
 
     protected fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {

@@ -31,7 +31,7 @@ public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase()
             "$path${it.name}/"
         }
 
-        val cliParser = CliSyntheticFileGenerator(project, "$path../AndroidManifest.xml", resDirs, false)
+        val cliParser = CliSyntheticFileGenerator(project, "$path../AndroidManifest.xml", resDirs)
         val ideParser = IDESyntheticFileGenerator(ModuleManager.getInstance(project).getModules()[0])
 
         val cliResult = cliParser.getSyntheticFiles().joinToString("\n\n")

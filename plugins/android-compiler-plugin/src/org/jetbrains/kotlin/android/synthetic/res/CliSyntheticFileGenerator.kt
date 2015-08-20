@@ -30,19 +30,15 @@ import kotlin.properties.Delegates
 public open class CliSyntheticFileGenerator(
         project: Project,
         private val manifestPath: String,
-        private val resDirectories: List<String>,
-        private val supportV4: Boolean
+        private val resDirectories: List<String>
 ) : SyntheticFileGenerator(project) {
 
     private val javaPsiFacade: JavaPsiFacade by lazy { JavaPsiFacade.getInstance(project) }
     private val projectScope: GlobalSearchScope by lazy { GlobalSearchScope.allScope(project) }
 
     private val cachedJetFiles by lazy {
-        generateSyntheticJetFiles(generateSyntheticFiles(true, projectScope))
-    }
-
-    override fun supportV4(): Boolean {
-        return supportV4
+        val supportV4 = supportV4Available(javaPsiFacade, projectScope)
+        generateSyntheticJetFiles(generateSyntheticFiles(true, projectScope, supportV4))
     }
 
     override val layoutXmlFileManager: CliAndroidLayoutXmlFileManager by Delegates.lazy {
