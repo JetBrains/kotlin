@@ -81,8 +81,9 @@ public fun parseAndroidResource(id: String, tag: String, fqNameResolver: (String
         "fragment" -> AndroidFragment(id)
         "include" -> AndroidWidget(id, AndroidConst.VIEW_FQNAME)
         else -> {
-            val fqName = fqNameResolver(tag) ?: AndroidConst.VIEW_FQNAME
-            AndroidWidget(id, fqName)
+            val fqName = fqNameResolver(tag)
+            val invalidType = if (fqName != null) null else tag
+            AndroidWidget(id, fqName ?: AndroidConst.VIEW_FQNAME, invalidType)
         }
    }
 }

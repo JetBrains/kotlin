@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
+import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
@@ -32,8 +33,13 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public object AndroidConfigurationKeys {
     public val ANDROID_RES_PATH: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("android resources search path")
@@ -86,6 +92,15 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+            StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
+        }
+    }
+}
+
+public class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
+    override fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform) {
+        if (platform is JvmPlatform) {
+            container.useInstance(AndroidExtensionPropertiesCallChecker())
         }
     }
 }

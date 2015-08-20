@@ -25,5 +25,8 @@
                         area="IDEA_PROJECT"/>
         <extensionPoint name="quickFixContributor"
                         interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"/>
+        <extensionPoint name="storageComponentContainerContributor"
+                        interface="org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

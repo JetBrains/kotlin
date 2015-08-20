@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -144,6 +145,7 @@ public class KotlinCoreEnvironment private constructor(
         ExpressionCodegenExtension.registerExtensionPoint(project)
         ClassBuilderInterceptorExtension.registerExtensionPoint(project)
         AnalysisCompletedHandlerExtension.registerExtensionPoint(project)
+        StorageComponentContainerContributor.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration)

@@ -34,7 +34,11 @@ public abstract class AndroidResource(val id: String) {
     public open fun sameClass(other: AndroidResource): Boolean = false
 }
 
-public class AndroidWidget(id: String, override val className: String) : AndroidResource(id) {
+public class AndroidWidget(
+        id: String,
+        override val className: String,
+        val invalidType: String? = null // When widget type is invalid, this value is the widget tag name
+) : AndroidResource(id) {
     private companion object {
         val MAIN_PROPERTIES = listOf(
                 AndroidConst.ACTIVITY_FQNAME to "findViewById(0)",

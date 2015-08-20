@@ -29,5 +29,7 @@
       <expressionCodegenExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension"/>
       <findUsagesHandlerDecorator implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidFindUsageHandlerDecorator"/>
       <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
+      <defaultErrorMessages implementation="org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid"/>
+      <storageComponentContainerContributor implementation="org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor"/>
   </extensions>
 </idea-plugin>

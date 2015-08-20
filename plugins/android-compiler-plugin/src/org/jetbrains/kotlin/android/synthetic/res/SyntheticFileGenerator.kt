@@ -28,10 +28,15 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.KotlinStringWriter
 import org.jetbrains.kotlin.android.synthetic.escapeAndroidIdentifier
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.types.Flexibility
 
-public class AndroidSyntheticFile(val name: String, val contents: String)
+public class AndroidSyntheticFile(val name: String, val contents: String) {
+    companion object {
+        fun create(name: String, vararg contents: String) = AndroidSyntheticFile(name, contents.joinToString("\n\n"))
+    }
+}
 
 public abstract class SyntheticFileGenerator(protected val project: Project) {
 
@@ -73,7 +78,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }
         val clearCacheFile = renderSyntheticFile
 
-        return listOf(clearCacheFile, FLEXIBLE_TYPE_FILE)
+        return listOf(clearCacheFile, TOOLS_FILE)
     }
 
     protected abstract fun extractLayoutResources(files: List<PsiFile>, scope: GlobalSearchScope): List<AndroidResource>
@@ -120,10 +125,15 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
     }
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, resource: AndroidResource, stubCall: String) {
-        // extract startsWith() to fun
         val className = if (isFromSupportV4Package(receiver)) resource.supportClassName else resource.className
         val cast = if (resource.className != "View") " as? $className" else ""
         val body = arrayListOf("return $stubCall$cast")
+
+        // Annotation on wrong widget type
+        if (resource is AndroidWidget && resource.invalidType != null) {
+            writeText("@${INVALID_WIDGET_TYPE_ANNOTATION_FQNAME.asString()}(\"${resource.invalidType}\")")
+        }
+
         writeImmutableExtensionProperty(receiver,
                                         name = resource.id,
                                         retType = "$EXPLICIT_FLEXIBLE_CLASS_NAME<$className, $className?>",
@@ -172,9 +182,9 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
                 if (!res.sameClass(existing)) {
                     resourcesToExclude.add(res.id)
-                } else if (res is AndroidWidget && existing.className != res.className && existing.className != "View") {
+                } else if (res is AndroidWidget && existing.className != res.className && existing.className != AndroidConst.VIEW_FQNAME) {
                     // Widgets with the same id but different types exist.
-                    resourceMap.put(res.id, AndroidWidget(res.id, "View"))
+                    resourceMap.put(res.id, AndroidWidget(res.id, AndroidConst.VIEW_FQNAME))
                 }
             }
             else resourceMap.put(res.id, res)
@@ -198,14 +208,20 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         }
     }
 
-    companion object {
+    public companion object {
         private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString()
         private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName.asString()
 
         private val ANDROID_IMPORTS = listOf(Flexibility.FLEXIBLE_TYPE_CLASSIFIER.asSingleFqName().asString())
 
-        private val FLEXIBLE_TYPE_FILE =
-                AndroidSyntheticFile("ft", "package $EXPLICIT_FLEXIBLE_PACKAGE\n\nclass $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>")
+        private val INVALID_WIDGET_TYPE_ANNOTATION = "InvalidWidgetType"
+        public val INVALID_WIDGET_TYPE_ANNOTATION_TYPE_PARAMETER: String = "type"
+        public val INVALID_WIDGET_TYPE_ANNOTATION_FQNAME: FqName = FqName("$EXPLICIT_FLEXIBLE_PACKAGE.$INVALID_WIDGET_TYPE_ANNOTATION")
+
+        private val TOOLS_FILE = AndroidSyntheticFile.create("tools",
+                "package $EXPLICIT_FLEXIBLE_PACKAGE",
+                "class $EXPLICIT_FLEXIBLE_CLASS_NAME<L, U>",
+                "annotation class $INVALID_WIDGET_TYPE_ANNOTATION(public val $INVALID_WIDGET_TYPE_ANNOTATION_TYPE_PARAMETER: String)")
     }
 
 }
