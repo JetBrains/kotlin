@@ -229,6 +229,8 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
             result.add(builtIns.getPrimitiveArrayClassDescriptor(type));
         }
 
+        result.add(builtIns.getArray());
+
         result.add(builtIns.getUnit());
         result.add(builtIns.getNothing());
 
