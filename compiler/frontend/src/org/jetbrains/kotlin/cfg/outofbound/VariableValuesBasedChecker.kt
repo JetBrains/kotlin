@@ -17,37 +17,66 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.google.common.collect.Maps
+import org.jetbrains.kotlin.cfg.UnreachableCode
+import org.jetbrains.kotlin.cfg.UnreachableCodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.BindingTrace
+import java.util.HashMap
+import java.util.HashSet
 
-public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTrace) {
+public class VariableValuesBasedChecker(
+        val pseudocode: Pseudocode,
+        val trace: BindingTrace,
+        val report: (Diagnostic, Instruction, HashMap<Instruction, DiagnosticFactory<*>>) -> Unit
+) {
     private val pseudocodeVariablesDataCollector: PseudocodeIntegerVariablesDataCollector =
             PseudocodeIntegerVariablesDataCollector(pseudocode, trace.bindingContext)
+    private val variableValuesData: Map<Instruction, Edges<ValuesData>> =
+            pseudocodeVariablesDataCollector.collectVariableValuesData()
 
     public fun checkOutOfBoundErrors() {
-        val outOfBoundAnalysisData = pseudocodeVariablesDataCollector.collectVariableValuesData()
         val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
-        pseudocode.traverse(TraversalOrder.FORWARD, outOfBoundAnalysisData, { instruction, inData: ValuesData, outData: ValuesData ->
-            val ctxt = VariableContext(instruction, reportedDiagnosticMap)
+        pseudocode.traverse(TraversalOrder.FORWARD, variableValuesData, { instruction, inData: ValuesData, outData: ValuesData ->
             if (instruction is CallInstruction) {
                 val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForAccess(instruction)
                 if (pseudoAnnotation != null) {
-                    checkOutOfBoundAccess(instruction, inData, ctxt)
+                    checkOutOfBoundAccess(instruction, inData, reportedDiagnosticMap)
                 }
             }
         })
     }
 
-    private fun checkOutOfBoundAccess(instruction: CallInstruction, valuesData: ValuesData, ctxt: VariableContext) {
+    public fun collectUnreachableCodeBasedOnVariableValues(
+            alreadyKnownReachableElements: Set<JetElement>,
+            alreadyKnownUnreachableElements: Set<JetElement>
+    ): UnreachableCode {
+        val reachableElements = HashSet(alreadyKnownReachableElements)
+        val unreachableElements = HashSet(alreadyKnownUnreachableElements)
+        variableValuesData.forEach {
+            if (it.key is JetElementInstruction) {
+                val element = (it.key as JetElementInstruction).element
+                if (it.value.incoming is ValuesData.Dead) unreachableElements.add(element)
+                else reachableElements.add(element)
+            }
+        }
+        return UnreachableCodeImpl(reachableElements, unreachableElements)
+    }
+
+    private fun checkOutOfBoundAccess(
+            instruction: CallInstruction,
+            valuesData: ValuesData,
+            reportedDiagnosticMap: HashMap<Instruction, DiagnosticFactory<*>>
+    ) {
         if (valuesData is ValuesData.Defined) {
             val arraySizeVariable = instruction.inputValues[0]
             val accessPositionVariable = instruction.inputValues[1]
@@ -58,50 +87,12 @@ public class OutOfBoundChecker(val pseudocode: Pseudocode, val trace: BindingTra
                 val sizes = arraySizes.values.sort()
                 val positions = accessPositions.values.sort()
                 if (sizes.first() <= positions.last()) {
-                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.last()), ctxt)
+                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.last()), instruction, reportedDiagnosticMap)
                 }
                 else if (positions.first() < 0) {
-                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.first()), ctxt)
+                    report(Errors.OUT_OF_BOUND_ACCESS.on(instruction.element, sizes.first(), positions.first()), instruction, reportedDiagnosticMap)
                 }
             }
         }
-    }
-
-    // ======= all the code below is copied (and adapted) from org.jetbrains.kotlin.cfg.JetFlowInformationProvider ======
-    // it should be reused when this class will be merged with JetFlowInformationProvider
-    private fun report(
-            diagnostic: Diagnostic,
-            ctxt: VariableContext) {
-        val instruction = ctxt.instruction
-        if (instruction.copies.isEmpty()) {
-            trace.report(diagnostic)
-            return
-        }
-        val previouslyReported = ctxt.reportedDiagnosticMap
-        previouslyReported.put(instruction, diagnostic.getFactory())
-
-        var alreadyReported = false
-        var sameErrorForAllCopies = true
-        for (copy in instruction.copies) {
-            val previouslyReportedErrorFactory = previouslyReported.get(copy)
-            if (previouslyReportedErrorFactory != null) {
-                alreadyReported = true
-            }
-
-            if (previouslyReportedErrorFactory !== diagnostic.getFactory()) {
-                sameErrorForAllCopies = false
-            }
-        }
-
-        //only one reporting required
-        if (!alreadyReported) {
-            trace.report(diagnostic)
-        }
-    }
-
-    private inner class VariableContext (
-            val instruction: Instruction,
-            val reportedDiagnosticMap: MutableMap<Instruction, DiagnosticFactory<*>>) {
-        val variableDescriptor: VariableDescriptor? = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, trace.getBindingContext())
     }
 }

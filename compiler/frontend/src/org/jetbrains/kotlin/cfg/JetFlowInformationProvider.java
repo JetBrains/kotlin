@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
-import org.jetbrains.kotlin.cfg.outofbound.OutOfBoundChecker;
+import org.jetbrains.kotlin.cfg.outofbound.VariableValuesBasedChecker;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodePackage;
@@ -82,7 +82,7 @@ public class JetFlowInformationProvider {
     private final BindingTrace trace;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
-    private final OutOfBoundChecker outOfBoundChecker;
+    private final VariableValuesBasedChecker variableValuesBasedChecker;
 
     private JetFlowInformationProvider(
             @NotNull JetElement declaration,
@@ -92,7 +92,21 @@ public class JetFlowInformationProvider {
         this.subroutine = declaration;
         this.trace = trace;
         this.pseudocode = pseudocode;
-        this.outOfBoundChecker = new OutOfBoundChecker(pseudocode, trace);
+        this.variableValuesBasedChecker = new VariableValuesBasedChecker(
+                pseudocode, trace,
+                new Function3<Diagnostic, Instruction, HashMap<Instruction, DiagnosticFactory<?>>, Unit>() {
+                    @Override
+                    public Unit invoke(
+                            Diagnostic diagnostic,
+                            Instruction instruction,
+                            HashMap<Instruction, DiagnosticFactory<?>> map
+                    ) {
+                        VariableContext ctxt = new VariableContext(instruction, map);
+                        report(diagnostic, ctxt);
+                        return Unit.INSTANCE$;
+                    }
+                }
+        );
     }
 
     public JetFlowInformationProvider(
@@ -132,7 +146,7 @@ public class JetFlowInformationProvider {
 
         markWhenWithoutElse();
 
-        outOfBoundChecker.checkOutOfBoundErrors();
+        variableValuesBasedChecker.checkOutOfBoundErrors();
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
@@ -296,6 +310,7 @@ public class JetFlowInformationProvider {
                 reachableElements.add(element);
             }
         }
+        //return variableValuesBasedChecker.collectUnreachableCodeBasedOnVariableValues(reachableElements, unreachableElements);
         return new UnreachableCodeImpl(reachableElements, unreachableElements);
     }
 
