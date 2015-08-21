@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid.*
 
 public class AndroidExtensionPropertiesCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -39,7 +40,9 @@ public class AndroidExtensionPropertiesCallChecker : CallChecker {
             it.name.asString() == SyntheticFileGenerator.INVALID_WIDGET_TYPE_ANNOTATION_TYPE_PARAMETER
         }.values().firstOrNull() as? StringValue ?: return
 
-        context.trace.report(ErrorsAndroid.SYNTHETIC_INVALID_WIDGET_TYPE.on(expression, type.value))
+        val erroneousType = type.value
+        val warning = if (erroneousType.contains('.')) SYNTHETIC_UNRESOLVED_WIDGET_TYPE else SYNTHETIC_INVALID_WIDGET_TYPE
+        context.trace.report(warning.on(expression, erroneousType))
     }
 
 }

@@ -24,6 +24,7 @@ import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsAndroid {
     DiagnosticFactory1<JetExpression, String> SYNTHETIC_INVALID_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<JetExpression, String> SYNTHETIC_UNRESOLVED_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
