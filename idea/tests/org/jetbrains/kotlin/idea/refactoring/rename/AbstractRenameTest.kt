@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -82,6 +83,11 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val renameTypeStr = renameObject.getString("type")
 
         val hintDirective = renameObject.getNullableString("hint")
+
+        val withRuntime = renameObject.getNullableString("withRuntime")
+        if (withRuntime != null) {
+            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
+        }
 
         try {
             val context = TestContext()
