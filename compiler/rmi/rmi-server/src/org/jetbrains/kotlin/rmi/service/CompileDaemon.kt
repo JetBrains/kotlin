@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
 import org.jetbrains.kotlin.rmi.CompilerId
 import org.jetbrains.kotlin.rmi.DaemonOptions
-import org.jetbrains.kotlin.rmi.propParseFilter
+import org.jetbrains.kotlin.rmi.filterSetProps
 import org.jetbrains.kotlin.service.CompileServiceImpl
 import java.io.OutputStream
 import java.io.PrintStream
@@ -95,7 +96,7 @@ public class CompileDaemon {
 
             val compilerId = CompilerId()
             val daemonOptions = DaemonOptions()
-            val filteredArgs = args.asIterable().propParseFilter(compilerId, daemonOptions)
+            val filteredArgs = args.asIterable().filterSetProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
             if (filteredArgs.any()) {
                 val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
@@ -115,7 +116,7 @@ public class CompileDaemon {
             val registry = LocateRegistry.createRegistry(daemonOptions.port);
             val compiler = K2JVMCompiler()
 
-            val server = CompileServiceImpl(registry, compiler, compilerId, daemonOptions)
+            CompileServiceImpl(registry, compiler, compilerId, daemonOptions)
 
             if (daemonOptions.startEcho.isNotEmpty())
                 println(daemonOptions.startEcho)

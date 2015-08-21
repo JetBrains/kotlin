@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.config.CompilerSettings;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
-import org.jetbrains.kotlin.rmi.CompileService;
-import org.jetbrains.kotlin.rmi.CompilerId;
-import org.jetbrains.kotlin.rmi.DaemonLaunchingOptions;
-import org.jetbrains.kotlin.rmi.DaemonOptions;
+import org.jetbrains.kotlin.rmi.*;
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -133,14 +130,13 @@ public class KotlinCompilerRunner {
             String[] argsArray = ArrayUtil.toStringArray(argumentsList);
 
             // trying the daemon first
-            if (incrementalCaches != null && KotlinCompilerClient.Companion.isDaemonEnabled()) {
+            if (incrementalCaches != null && RmiPackage.isDaemonEnabled()) {
                 File libPath = CompilerRunnerUtil.getLibPath(environment.getKotlinPaths(), messageCollector);
                 // TODO: it may be a good idea to cache the compilerId, since making it means calculating digest over jar(s) and if \\
                 //    the lifetime of JPS process is small anyway, we can neglect the probability of changed compiler
                 CompilerId compilerId = CompilerId.makeCompilerId(new File(libPath, "kotlin-compiler.jar"));
-                DaemonOptions daemonOptions = new DaemonOptions();
-                DaemonLaunchingOptions daemonLaunchingOptions = new DaemonLaunchingOptions();
-                KotlinCompilerClient.Companion.configureDaemonLaunchingOptions(daemonLaunchingOptions);
+                DaemonOptions daemonOptions = RmiPackage.configureDaemonOptions();
+                DaemonLaunchingOptions daemonLaunchingOptions = RmiPackage.configureDaemonLaunchingOptions(true);
                 // TODO: find proper stream to report daemon connection progress
                 CompileService daemon = KotlinCompilerClient.Companion.connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, System.out, true, true);
                 if (daemon != null) {

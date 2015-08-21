@@ -31,6 +31,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.thread
 import kotlin.concurrent.write
 import kotlin.platform.platformStatic
+import kotlin.reflect.KProperty1
 
 fun Process.isAlive() =
         try {
@@ -79,10 +80,10 @@ public class KotlinCompilerClient {
             // TODO: add some specific environment variables to the cp and may be command line, to allow some specific startup configs
             val args = listOf(javaExecutable.absolutePath,
                               "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
-                       daemonLaunchingOptions.jvmParams +
+                       daemonLaunchingOptions.extractors.flatMap { it.extract("-") } +
                        COMPILER_DAEMON_CLASS_FQN +
-                       daemonOptions.asParams +
-                       compilerId.asParams
+                       daemonOptions.extractors.flatMap { it.extract(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
+                       compilerId.extractors.flatMap { it.extract(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
             errStream.println("[daemon client] starting the daemon as: " + args.joinToString(" "))
             val processBuilder = ProcessBuilder(args).redirectErrorStream(true)
             // assuming daemon process is deaf and (mostly) silent, so do not handle streams
@@ -141,7 +142,7 @@ public class KotlinCompilerClient {
                     errStream.println("[daemon client] found the suitable daemon")
                     return service
                 }
-                errStream.println("[daemon client] compiler identity don't match: " + compilerId.asParams.joinToString(" "))
+                errStream.println("[daemon client] compiler identity don't match: " + compilerId.extractors.flatMap { it.extract("") }.joinToString(" "))
                 if (!autostart) return null;
                 errStream.println("[daemon client] shutdown the daemon")
                 service.shutdown()
@@ -193,21 +194,11 @@ public class KotlinCompilerClient {
             }
         }
 
-        public fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
-
-        public fun configureDaemonLaunchingOptions(opts: DaemonLaunchingOptions) {
-            System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)?.let {
-                // TODO: find better way to pass and parse jvm options for daemon
-                opts.jvmParams = it.split("##")
-            }
-        }
-
         data class ClientOptions(
                 public var stop: Boolean = false
         ) :CmdlineParams {
-            override val asParams: Iterable<String>
-                get() =
-                    if (stop) listOf("stop") else listOf()
+            override val extractors: List<PropExtractor<*, *, *>>
+                get() = listOf( BoolPropExtractor(this, ::stop))
 
             override val parsers: List<PropParser<*,*,*>>
                 get() = listOf( BoolPropParser(this, ::stop))
@@ -218,7 +209,7 @@ public class KotlinCompilerClient {
             val daemonOptions = DaemonOptions()
             val daemonLaunchingOptions = DaemonLaunchingOptions()
             val clientOptions = ClientOptions()
-            val filteredArgs = args.asIterable().propParseFilter(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions)
+            val filteredArgs = args.asIterable().filterSetProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
             if (!clientOptions.stop) {
                 if (compilerId.compilerClasspath.none()) {
