@@ -62,7 +62,7 @@ fun whileBreak(cond: Boolean) {
         if (i > 2) {
             break
         }
-        arr[i]
+        <!UNREACHABLE_CODE!>arr[i]<!>
     }
 }
 
@@ -73,7 +73,7 @@ fun whileContinue(cond: Boolean) {
         if (i > 2) {
             continue
         }
-        arr[i]
+        <!UNREACHABLE_CODE!>arr[i]<!>
     }
 }
 
