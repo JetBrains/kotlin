@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.console
 
+import com.intellij.execution.Platform
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.JavaParameters
+import com.intellij.openapi.compiler.ex.CompilerPathsEx
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -25,6 +27,7 @@ import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.console.actions.errorNotification
@@ -38,7 +41,7 @@ public class KotlinConsoleKeeper(val project: Project) {
 
     fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap.get(virtualFile)
     fun putVirtualFileToConsole(virtualFile: VirtualFile, console: KotlinConsoleRunner) = consoleMap.put(virtualFile, console)
-    fun removeConsole(virtualFile: VirtualFile?) = consoleMap.remove(virtualFile)
+    fun removeConsole(virtualFile: VirtualFile) = consoleMap.remove(virtualFile)
 
     fun run(module: Module): KotlinConsoleRunner? {
         val path = module.moduleFilePath
@@ -76,24 +79,35 @@ public class KotlinConsoleKeeper(val project: Project) {
         // path to compiler and his options
         paramList.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 
+        // add path to compiled output in kompiler classpath
+        paramList.add("-cp")
+        paramList.add(pathToCompiledOutput(module))
+
         return commandLine
     }
 
-    private fun createJavaParametersWithSdk(module: Module?): JavaParameters {
+    private fun createJavaParametersWithSdk(module: Module): JavaParameters {
         val params = JavaParameters()
         params.charset = null
 
-        if (module != null) {
-            val sdk = ModuleRootManager.getInstance(module).sdk
-            if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
-                params.jdk = sdk
-            }
+        val sdk = ModuleRootManager.getInstance(module).sdk
+        if (sdk != null && sdk.sdkType is JavaSdkType && File(sdk.homePath).exists()) {
+            params.jdk = sdk
         }
+
         if (params.jdk == null) {
             params.jdk = SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome())
         }
 
         return params
+    }
+
+    private fun pathToCompiledOutput(module: Module): String {
+        val outPaths = CompilerPathsEx.getOutputPaths(arrayOf(module))
+        val compiledModulePath = outPaths.find { "production" in it } ?: return "<module is not compiled>"
+        val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
+
+        return "$compiledModulePath${Platform.current().pathSeparator}$moduleDependencies"
     }
 
     companion object {
