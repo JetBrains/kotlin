@@ -113,12 +113,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
         createDebugProcess(path)
 
-        val count = InTextDirectivesUtils.getPrefixedInt(fileText, "// STEP_INTO: ") ?: 0
-        if (count > 0) {
-            for (i in 1..count) {
-                doOnBreakpoint { this@AbstractKotlinEvaluateExpressionTest.stepInto(this) }
-            }
-        }
+        doStepping(path)
 
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()

@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.MethodFilter
-import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.SuspendContextRunnable
+import com.intellij.debugger.actions.MethodSmartStepTarget
+import com.intellij.debugger.actions.SmartStepTarget
+import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
+import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.roots.JdkOrderEntry
@@ -45,11 +45,13 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
+import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
+import java.io.File
 import javax.swing.SwingUtilities
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
@@ -134,6 +136,69 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun SuspendContextImpl.stepOut() {
         dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
+    }
+
+    protected fun doStepping(path: String) {
+        val file = File(path)
+        val fileText = file.readText()
+        fun repeat(indexPrefix: String, f: SuspendContextImpl.() -> Unit) {
+            for (i in 1..(InTextDirectivesUtils.getPrefixedInt(fileText, indexPrefix) ?: 1)) {
+                doOnBreakpoint(f)
+            }
+        }
+
+        file.readLines().forEach {
+            val line = it.trim()
+            when {
+                line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
+                line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { stepOut() }
+                line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { smartStepInto(InTextDirectivesUtils.getPrefixedInt(it, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
+                line.startsWith("// SMART_STEP_INTO: ") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
+                line.startsWith("// RESUME: ") -> repeat("// RESUME: ") { resume(this) }
+            }
+        }
+    }
+
+    protected fun SuspendContextImpl.smartStepInto(chooseFromList: Int = 0) {
+        this.smartStepInto(chooseFromList, false)
+    }
+
+    private fun SuspendContextImpl.smartStepInto(chooseFromList: Int, ignoreFilters: Boolean) {
+        val filters = createSmartStepIntoFilters()
+        if (chooseFromList == 0) {
+            filters.forEach {
+                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
+            }
+        }
+        else {
+            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList)))
+        }
+    }
+
+    private fun createSmartStepIntoFilters(): List<MethodFilter> {
+        val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
+        val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
+
+        val line = (breakpoint as LineBreakpoint).getLineIndex()
+
+        return runReadAction {
+            val containingFile = breakpoint.getPsiFile()
+            if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
+
+            val position = MockSourcePosition(_file = containingFile, _line = line)
+
+            val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
+
+            stepTargets.filterIsInstance<SmartStepTarget>().map {
+                stepTarget ->
+                when (stepTarget) {
+                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!)
+                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
+                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    else -> null
+                }
+            }
+        }.filterNotNull()
     }
 
     protected fun SuspendContextImpl.printContext() {
