@@ -24,7 +24,7 @@ interface FileAttributeService {
     fun register(id: String, version: Int) {}
 
     fun <T: Enum<T>> writeAttribute(id: String, file: VirtualFile, value: T): CachedAttributeData<T> =
-            CachedAttributeData(value, timeStamp = file.timeStamp)
+            CachedAttributeData(value, timeStamp = file.getTimeStamp())
 
     fun <T: Enum<T>> readAttribute(id: String, file: VirtualFile, klass: Class<T>): CachedAttributeData<T>? = null
 }

@@ -45,7 +45,7 @@ public object JarUserDataManager {
 
         val stored = localJarFile.getUserData(counter.key)
         if (stored != null) {
-            if (localJarFile.timeStamp == stored.timestamp) {
+            if (localJarFile.getTimeStamp() == stored.timestamp) {
                 return stored.hasFileWithProperty
             }
         }
@@ -57,7 +57,7 @@ public object JarUserDataManager {
 
                 storeUserData(counter, localJarFile, hasFileWithProperty, savedData.timeStamp)
 
-                if (localJarFile.timeStamp == savedData.timeStamp) {
+                if (localJarFile.getTimeStamp() == savedData.timeStamp) {
                     return hasFileWithProperty
                 }
             }
@@ -71,7 +71,7 @@ public object JarUserDataManager {
 
     private fun scheduleJarProcessing(counter: JarBooleanPropertyCounter, jarFile: VirtualFile, localJarFile: VirtualFile) {
         val userData = localJarFile.getUserData(counter.key)
-        if (userData != null && localJarFile.timeStamp == userData.timestamp) return
+        if (userData != null && localJarFile.getTimeStamp() == userData.timestamp) return
 
         storeUserData(counter, localJarFile, null)
 
@@ -85,18 +85,18 @@ public object JarUserDataManager {
 
                 val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), localJarFile, state)
 
-                storeUserData(counter, localJarFile, hasFileWithProperty, (savedData?.timeStamp ?: localJarFile.timeStamp))
+                storeUserData(counter, localJarFile, hasFileWithProperty, (savedData?.timeStamp ?: localJarFile.getTimeStamp()))
             }
         }
     }
 
     private fun storeUserData(counter: JarBooleanPropertyCounter, localJarFile: VirtualFile,
                               hasFileWithProperty: Boolean?, timestamp: Long? = null) {
-        assert(localJarFile.isInLocalFileSystem)
+        assert(localJarFile.isInLocalFileSystem())
         assert((timestamp == null) == (hasFileWithProperty == null), "Using empty timestamp is only allowed for storing not counted value")
 
         localJarFile.putUserData(counter.key,
-                                 PropertyData(hasFileWithProperty, timestamp ?: localJarFile.timeStamp))
+                                 PropertyData(hasFileWithProperty, timestamp ?: localJarFile.getTimeStamp()))
     }
 
     object JarFileSystemUtil {

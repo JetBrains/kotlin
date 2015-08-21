@@ -31,7 +31,7 @@ public class FileAttributeServiceImpl : FileAttributeService {
     override fun <T: Enum<T>> writeAttribute(id: String, file: VirtualFile, value: T): CachedAttributeData<T> {
         val attribute = attributes[id] ?: throw IllegalArgumentException("Attribute with $id wasn't registered")
 
-        val data = CachedAttributeData(value, timeStamp = file.timeStamp)
+        val data = CachedAttributeData(value, timeStamp = file.getTimeStamp())
 
         attribute.writeAttribute(file).use {
             DataInputOutputUtil.writeTIME(it, data.timeStamp)
@@ -49,7 +49,7 @@ public class FileAttributeServiceImpl : FileAttributeService {
             val timeStamp = DataInputOutputUtil.readTIME(it)
             val intValue = DataInputOutputUtil.readINT(it)
 
-            if (file.timeStamp == timeStamp) {
+            if (file.getTimeStamp() == timeStamp) {
                 CachedAttributeData(deserializeEnumValue(intValue, klass), timeStamp)
             }
             else {
