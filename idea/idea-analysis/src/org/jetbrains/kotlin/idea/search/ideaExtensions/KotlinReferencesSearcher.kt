@@ -25,12 +25,14 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinLightParameter
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -157,6 +159,18 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     }
                     else if (declaration is JetPropertyAccessor) {
                         searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                    }
+                }
+                is KotlinLightParameter -> {
+                    val componentFunctionDescriptor = element.getOrigin()?.dataClassComponentFunction()
+                    if (componentFunctionDescriptor != null) {
+                        val containingClass = element.method.containingClass
+                        val componentFunction = containingClass?.methods?.find {
+                            it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
+                        }
+                        if (componentFunction != null) {
+                            searchNamedElement(queryParameters, componentFunction)
+                        }
                     }
                 }
             }

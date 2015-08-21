@@ -159,7 +159,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetProperty && declaration.isSerializationImplicitlyUsedField()) return
                 if (isCompanionObject && (declaration as JetObjectDeclaration).hasSerializationImplicitlyUsedField()) return
                 // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
-                if (declaration is JetParameter && declaration.dataClassComponentFunctionName() != null) return
+                if (declaration is JetParameter && declaration.dataClassComponentFunction() != null) return
 
                 // Main checks: finding reference usages && text usages
                 if (hasNonTrivialUsages(declaration)) return
