@@ -80,7 +80,8 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
 
 private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
     fun isPlatformStaticProperty() =
-            property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null
+            property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
+            property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)

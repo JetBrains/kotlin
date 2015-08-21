@@ -25,6 +25,15 @@ package kotlin.jvm
 target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 public annotation(retention = AnnotationRetention.BINARY, mustBeDocumented = true) class jvmOverloads
 
+
+/**
+ * Specifies that a static method or field needs to be generated from this element.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
+ * for more information.
+ */
+target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmStatic
+
 /**
  * Instructs the Kotlin compiler to generate a public backing field for this property.
  */

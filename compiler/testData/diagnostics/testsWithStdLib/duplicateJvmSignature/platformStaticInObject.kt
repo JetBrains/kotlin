@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
 open class Base {
     fun `foo$default`(i: Int, mask: Int) {}
 }
 
 object Derived : Base() {
-    <!ACCIDENTAL_OVERRIDE!>platformStatic fun foo(i: Int = 0)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>jvmStatic fun foo(i: Int = 0)<!> {}
 }

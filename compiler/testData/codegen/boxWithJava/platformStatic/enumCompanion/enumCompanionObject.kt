@@ -1,13 +1,13 @@
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
 enum class A {
     ;
     companion object {
         val foo: String = "OK"
 
-        platformStatic val bar: String = "OK"
+        jvmStatic val bar: String = "OK"
 
-        platformStatic fun baz() = foo
+        jvmStatic fun baz() = foo
     }
 }
 

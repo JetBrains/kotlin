@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class Converter private constructor(
         private val elementToConvert: PsiElement,
@@ -424,7 +423,7 @@ class Converter private constructor(
         if (function == null) return null
 
         if (PsiMethodUtil.isMainMethod(method)) {
-            val fqName = FqName("kotlin.platform.platformStatic")
+            val fqName = FqName("kotlin.jvm.jvmStatic")
             val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
 
             function.annotations += Annotations(

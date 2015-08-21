@@ -28,10 +28,6 @@ import kotlin.annotation.AnnotationTarget.*
 target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformName(public val name: String)
 
-/**
- * Specifies that a static method or field needs to be generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#static-methods-and-fields)
- * for more information.
- */
 target(FUNCTION, PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER)
+deprecated("Use kotlin.jvm.jvmStatic instead", ReplaceWith("kotlin.jvm.jvmStatic"))
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class platformStatic

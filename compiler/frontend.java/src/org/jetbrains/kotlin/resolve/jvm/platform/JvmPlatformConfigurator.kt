@@ -150,7 +150,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
                 container.getContainingDeclaration().let { DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
 
         if (!insideObject && !insideCompanionObjectInClass) {
-            diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration))
+            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT.on(declaration))
         }
 
         val checkDeclaration = when(declaration) {

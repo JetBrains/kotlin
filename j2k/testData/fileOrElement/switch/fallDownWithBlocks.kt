@@ -1,7 +1,5 @@
-import kotlin.platform.platformStatic
-
 public object C {
-    platformStatic public fun main(args: Array<String>) {
+    jvmStatic public fun main(args: Array<String>) {
         when (args.size()) {
             1 -> {
                 run {

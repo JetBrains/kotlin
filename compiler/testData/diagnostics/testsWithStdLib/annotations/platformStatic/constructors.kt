@@ -1,9 +1,9 @@
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 class A {
-    <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor() {}
+    <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor() {}
     inner class B {
-        <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor() {}
+        <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor() {}
     }
 }
 
-class C <!WRONG_ANNOTATION_TARGET!>platformStatic<!> constructor()
+class C <!WRONG_ANNOTATION_TARGET!>jvmStatic<!> constructor()

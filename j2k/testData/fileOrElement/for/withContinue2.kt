@@ -1,7 +1,5 @@
-import kotlin.platform.platformStatic
-
 public object TestClass {
-    platformStatic public fun main(args: Array<String>) {
+    jvmStatic public fun main(args: Array<String>) {
         var i = 0
         var j = 1
         while (i < 10) {

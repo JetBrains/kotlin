@@ -1,6 +1,4 @@
 // ERROR: Property must be initialized or be abstract
-import kotlin.platform.platformStatic
-
 public class Identifier<T> {
     public val name: T
     private val myHasDollar: Boolean
@@ -23,7 +21,7 @@ public class Identifier<T> {
 }
 
 public object User {
-    platformStatic public fun main(args: Array<String>) {
+    jvmStatic public fun main(args: Array<String>) {
         val i1 = Identifier("name", false, true)
         val i2 = Identifier("name", false)
         val i3 = Identifier("name")

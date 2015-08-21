@@ -1,5 +1,3 @@
-import kotlin.platform.platformStatic
-
 class T {
     class U {
         abstract class A {
@@ -25,7 +23,7 @@ class T {
                 var X = "1" + "2"
 
                 // INFO: {"checked": "true"}
-                platformStatic fun foo2(n: Int): String {
+                jvmStatic fun foo2(n: Int): String {
                     return "_" + n + "_"
                 }
             }
