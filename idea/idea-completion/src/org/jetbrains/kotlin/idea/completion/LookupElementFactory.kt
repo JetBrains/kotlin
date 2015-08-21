@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
@@ -156,7 +155,7 @@ public class LookupElementFactory(
         element = element.appendTailText(" ($containerName)", true)
 
         if (lookupObject.isDeprecated) {
-            element = element.setStrikeout(true)
+            element = element.withStrikeoutness(true)
         }
 
         return element.withIconFromLookupObject()
