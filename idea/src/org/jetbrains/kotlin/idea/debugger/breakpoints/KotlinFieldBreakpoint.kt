@@ -43,7 +43,7 @@ import com.sun.jdi.request.MethodEntryRequest
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
@@ -189,7 +189,7 @@ class KotlinFieldBreakpoint(
 
     private fun computeBreakpointType(property: JetCallableDeclaration): BreakpointType {
         return runReadAction {
-            val bindingContext = property.analyzeAndGetResult().bindingContext
+            val bindingContext = property.analyze()
             var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
             if (descriptor is ValueParameterDescriptor) {
                 descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
