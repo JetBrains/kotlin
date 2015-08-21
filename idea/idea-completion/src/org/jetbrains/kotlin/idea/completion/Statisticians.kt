@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 class KotlinCompletionStatistician : CompletionStatistician() {
     override fun serialize(element: LookupElement, location: CompletionLocation): StatisticsInfo? {
@@ -56,7 +57,21 @@ class KotlinProximityStatistician : ProximityStatistician() {
 }
 
 object KotlinStatisticsInfo {
+    private val SIGNATURE_RENDERER = DescriptorRenderer.withOptions {
+        withDefinedIn = false
+        withoutReturnType = true
+        startFromName = true
+        receiverAfterName = true
+        modifiers = emptySet()
+        renderDefaultValues = false
+        parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+    }
+
     fun forDescriptor(descriptor: DeclarationDescriptor): StatisticsInfo {
+        if (descriptor is ClassDescriptor) {
+            return descriptor.importableFqName?.let { StatisticsInfo("", it.asString()) } ?: StatisticsInfo.EMPTY
+        }
+
         val container = descriptor.containingDeclaration
         val containerFqName = when (container) {
                                   is ClassDescriptor -> container.importableFqName?.asString()
@@ -64,7 +79,7 @@ object KotlinStatisticsInfo {
                                   is ModuleDescriptor -> ""
                                   else -> null
                               }  ?: return StatisticsInfo.EMPTY
-        val signature = DescriptorRenderer.COMPACT.render(descriptor) //TODO: more compact presentation
+        val signature = SIGNATURE_RENDERER.render(descriptor)
         return StatisticsInfo("", "$containerFqName###$signature")
     }
 }
