@@ -22,6 +22,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import kotlin.KotlinPackage;
+import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ModuleChunk;
@@ -117,7 +118,16 @@ public class KotlinBuilderModuleScriptGenerator {
         return ContainerUtil.filter(getAllDependencies(target).classes().getRoots(), new Condition<File>() {
             @Override
             public boolean value(File file) {
-                return file.exists();
+                if (!file.exists()) {
+                    String extension = IoPackage.getExtension(file);
+
+                    // Don't filter out files, we want to report warnings about absence through the common place
+                    if (!(extension.equals("class") || extension.equals("jar"))) {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         });
     }

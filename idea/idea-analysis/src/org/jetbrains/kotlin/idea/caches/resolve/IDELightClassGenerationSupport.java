@@ -219,7 +219,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
             return JetSourceNavigationHelper.getOriginalClass(classOrObject);
         }
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+        return KotlinLightClassForExplicitDeclaration.Companion.create(psiManager, classOrObject);
     }
 
     @Nullable
@@ -302,6 +302,17 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
         }
         return result;
+    }
+
+    @Nullable
+    @Override
+    public ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject) {
+        try {
+            return (ClassDescriptor) ResolvePackage.resolveToDescriptor(classOrObject);
+        }
+        catch (IllegalStateException e) {
+            return null;
+        }
     }
 
     @Nullable

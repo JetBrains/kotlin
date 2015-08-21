@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -71,4 +72,7 @@ public abstract class LightClassGenerationSupport {
 
     @NotNull
     public abstract Collection<PsiClass> getPackageClasses(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
+
+    @Nullable
+    public abstract ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject);
 }

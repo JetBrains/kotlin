@@ -177,7 +177,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                         if (classDescriptor == null) {
                             return new OutermostKotlinClassLightClassData(
                                     javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
-                                    null, Collections.<JetClassOrObject, InnerKotlinClassLightClassData>emptyMap()
+                                    Collections.<JetClassOrObject, InnerKotlinClassLightClassData>emptyMap()
                             );
                         }
 
@@ -192,8 +192,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                             InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
                                     predictClassFqName(bindingContext, innerClassDescriptor),
-                                    innerClass,
-                                    innerClassDescriptor
+                                    innerClass
                             );
 
                             innerClassesMap.put(innerClass, innerLightClassData);
@@ -204,7 +203,6 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                                 extraDiagnostics,
                                 fqName,
                                 classOrObject,
-                                classDescriptor,
                                 innerClassesMap
                         );
                     }

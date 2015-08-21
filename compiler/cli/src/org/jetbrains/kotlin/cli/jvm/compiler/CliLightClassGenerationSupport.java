@@ -189,7 +189,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject);
+        return KotlinLightClassForExplicitDeclaration.Companion.create(psiManager, classOrObject);
     }
 
     @NotNull
@@ -202,6 +202,12 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
         //noinspection RedundantTypeArguments
         return UtilsPackage.<PsiClass>emptyOrSingletonList(KotlinLightClassForPackage.Factory.create(psiManager, packageFqName, scope, filesWithCallables));
+    }
+
+    @Nullable
+    @Override
+    public ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject) {
+        return bindingContext.get(BindingContext.CLASS, classOrObject);
     }
 
     @NotNull
