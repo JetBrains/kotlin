@@ -109,41 +109,51 @@ object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartComple
 
 object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
-        variable, // variable or property
-        function,
+        enumMember,
+        callable,
         keyword,
         default,
         packages
     }
 
-    private data class CompoundWeight(val weight: Weight, val callableWeight: CallableWeight? = null) : Comparable<CompoundWeight> {
-        override fun compareTo(other: CompoundWeight): Int {
-            if (callableWeight != null && other.callableWeight != null && callableWeight != other.callableWeight) {
-                return callableWeight.compareTo(other.callableWeight)
-            }
-            return weight.compareTo(other.weight)
-        }
-    }
-
-    override fun weigh(element: LookupElement): CompoundWeight {
+    override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
 
         return when (o) {
-            is PackageLookupObject -> CompoundWeight(Weight.packages)
+            is PackageLookupObject -> Weight.packages
 
             is DeclarationLookupObject -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
-                    is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
-                    is FunctionDescriptor -> CompoundWeight(Weight.function, element.getUserData(CALLABLE_WEIGHT_KEY))
-                    is ClassDescriptor -> if (descriptor.kind == ClassKind.ENUM_ENTRY) CompoundWeight(Weight.variable) else CompoundWeight(Weight.default)
-                    else -> CompoundWeight(Weight.default)
+                    is VariableDescriptor, is FunctionDescriptor -> Weight.callable
+                    is ClassDescriptor -> if (descriptor.kind == ClassKind.ENUM_ENTRY) Weight.enumMember else Weight.default
+                    else -> Weight.default
                 }
             }
 
-            is KeywordLookupObject -> CompoundWeight(Weight.keyword)
+            is KeywordLookupObject -> Weight.keyword
 
-            else -> CompoundWeight(Weight.default)
+            else -> Weight.default
+        }
+    }
+}
+
+object CallableWeigher : LookupElementWeigher("kotlin.callableWeight") {
+    override fun weigh(element: LookupElement) = element.getUserData(CALLABLE_WEIGHT_KEY)
+}
+
+object VariableOrFunctionWeigher : LookupElementWeigher("kotlin.variableOrFunction"){
+    private enum class Weight {
+        variable,
+        function
+    }
+
+    override fun weigh(element: LookupElement): Weight? {
+        val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor ?: return null
+        return when (descriptor) {
+            is VariableDescriptor -> Weight.variable
+            is FunctionDescriptor -> Weight.function
+            else -> null
         }
     }
 }

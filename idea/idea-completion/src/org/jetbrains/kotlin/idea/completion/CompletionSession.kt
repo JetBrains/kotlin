@@ -233,9 +233,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         val importableFqNameClassifier = ImportableFqNameClassifier(file)
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, NotImportedWeigher(importableFqNameClassifier), KindWeigher)
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, NotImportedWeigher(importableFqNameClassifier), KindWeigher, CallableWeigher)
 
-        sorter = sorter.weighAfter("stats", ImportedWeigher(importableFqNameClassifier), LocationWeigher(file, parameters.originalFile as JetFile))
+        sorter = sorter.weighAfter("stats", VariableOrFunctionWeigher, ImportedWeigher(importableFqNameClassifier), LocationWeigher(file, parameters.originalFile as JetFile))
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
