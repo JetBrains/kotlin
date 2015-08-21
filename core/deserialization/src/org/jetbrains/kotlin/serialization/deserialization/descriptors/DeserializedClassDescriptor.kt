@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
@@ -177,7 +178,7 @@ public class DeserializedClassDescriptor(
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.getMemberList()) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
-            computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
+            computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter,
@@ -216,14 +217,14 @@ public class DeserializedClassDescriptor(
             })
         }
 
-        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>) {
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
-                for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+                for (descriptor in supertype.memberScope.getAllDescriptors()) {
                     if (descriptor is FunctionDescriptor) {
-                        result.addAll(getFunctions(descriptor.getName()))
+                        result.addAll(getFunctions(descriptor.name, location))
                     }
                     else if (descriptor is PropertyDescriptor) {
-                        result.addAll(getProperties(descriptor.getName()))
+                        result.addAll(getProperties(descriptor.name, location))
                     }
                     // Nothing else is inherited
                 }

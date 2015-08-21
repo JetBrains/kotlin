@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -40,15 +42,13 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public abstract class LazyJavaScope(
         protected val c: LazyJavaResolverContext,
@@ -57,7 +57,7 @@ public abstract class LazyJavaScope(
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
-            { computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER) },
+            { computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS) },
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
             //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
@@ -296,15 +296,18 @@ public abstract class LazyJavaScope(
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = allDescriptors()
 
-    protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
-                                     nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+    protected fun computeDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            location: LookupLocation
+    ): List<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             for (name in getClassNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
-                    result.addIfNotNull(getClassifier(name))
+                    result.addIfNotNull(getClassifier(name, location))
                 }
             }
         }
@@ -312,7 +315,7 @@ public abstract class LazyJavaScope(
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getFunctionNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
-                    result.addAll(getFunctions(name))
+                    result.addAll(getFunctions(name, location))
                 }
             }
         }
@@ -320,7 +323,7 @@ public abstract class LazyJavaScope(
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getPropertyNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name))
+                    result.addAll(getProperties(name, location))
                 }
             }
         }

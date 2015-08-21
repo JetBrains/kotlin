@@ -17,19 +17,17 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayList
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
+import java.util.*
 
 public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
@@ -114,8 +112,11 @@ public abstract class DeserializedMemberScope protected constructor(
 
     override fun getContainingDeclaration() = c.containingDeclaration
 
-    protected fun computeDescriptors(kindFilter: DescriptorKindFilter,
-                                     nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    protected fun computeDescriptors(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            location: LookupLocation
+    ): Collection<DeclarationDescriptor> {
         //NOTE: descriptors should be in the same order they were serialized in
         // see MemberComparator
         val result = LinkedHashSet<DeclarationDescriptor>(0)
@@ -124,9 +125,9 @@ public abstract class DeserializedMemberScope protected constructor(
             addEnumEntryDescriptors(result, nameFilter)
         }
 
-        addFunctionsAndProperties(result, kindFilter, nameFilter)
+        addFunctionsAndProperties(result, kindFilter, nameFilter, location)
 
-        addNonDeclaredDescriptors(result)
+        addNonDeclaredDescriptors(result, location)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             addClassDescriptors(result, nameFilter)
@@ -138,7 +139,8 @@ public abstract class DeserializedMemberScope protected constructor(
     private fun addFunctionsAndProperties(
             result: LinkedHashSet<DeclarationDescriptor>,
             kindFilter: DescriptorKindFilter,
-            nameFilter: (Name) -> Boolean
+            nameFilter: (Name) -> Boolean,
+            location: LookupLocation
     ) {
         val acceptsProperties = kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)
         val acceptsFunctions = kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)
@@ -148,10 +150,10 @@ public abstract class DeserializedMemberScope protected constructor(
 
         val keys = membersProtos().keySet().filter { nameFilter(it.name) }
         if (acceptsProperties) {
-            addMembers(result, keys, Kind.PROPERTY) { getProperties(it) }
+            addMembers(result, keys, Kind.PROPERTY) { getProperties(it, location) }
         }
         if (acceptsFunctions) {
-            addMembers(result, keys, Kind.FUNCTION) { getFunctions(it) }
+            addMembers(result, keys, Kind.FUNCTION) { getFunctions(it, location) }
         }
     }
 
@@ -169,7 +171,7 @@ public abstract class DeserializedMemberScope protected constructor(
         }
     }
 
-    protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>)
+    protected abstract fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation)
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 

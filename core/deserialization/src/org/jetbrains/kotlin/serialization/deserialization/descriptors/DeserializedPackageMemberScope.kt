@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -43,7 +45,7 @@ public open class DeserializedPackageMemberScope(
     internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = computeDescriptors(kindFilter, nameFilter)
+            = computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
 
     override fun getClassDescriptor(name: Name): ClassDescriptor? =
             if (SpecialNames.isSafeIdentifier(name)) c.components.deserializeClass(ClassId(packageFqName, name))
@@ -57,7 +59,7 @@ public open class DeserializedPackageMemberScope(
         }
     }
 
-    override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>) {
+    override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         // Do nothing
     }
 
