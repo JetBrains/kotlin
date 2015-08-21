@@ -31,7 +31,7 @@ class SymbolUsageProximityPrioritizer(private val file: JetFile) {
     private val thisModule = ModuleUtilCore.findModuleForPsiElement(file)
 
     private enum class PriorityBasedOnImports {
-        thisFile,
+        thisPackage,
         defaultImport,
         preciseImport,
         allUnderImport,
@@ -41,13 +41,14 @@ class SymbolUsageProximityPrioritizer(private val file: JetFile) {
         notToBeUsedInKotlin
     }
 
-    private enum class PriorityBasedOnModule {
+    private enum class PriorityBasedOnLocation {
+        thisFile,
         thisModule,
         project,
         other
     }
 
-    data class Priority(private val priority1: PriorityBasedOnImports, private val priority2: PriorityBasedOnModule) : Comparable<Priority> {
+    data class Priority(private val priority1: PriorityBasedOnImports, private val priority2: PriorityBasedOnLocation) : Comparable<Priority> {
         override fun compareTo(other: Priority): Int {
             val c1 = priority1.compareTo(other.priority1)
             if (c1 != 0) return c1
@@ -55,16 +56,14 @@ class SymbolUsageProximityPrioritizer(private val file: JetFile) {
         }
 
         companion object {
-            val DEFAULT = Priority(PriorityBasedOnImports.default, PriorityBasedOnModule.other)
+            val DEFAULT = Priority(PriorityBasedOnImports.default, PriorityBasedOnLocation.other)
         }
     }
 
     fun priority(fqName: FqName, declaration: PsiElement?, isPackage: Boolean)
-            = Priority(priorityBasedOnImports(fqName, declaration, isPackage), priorityBasedOnModule(declaration))
+            = Priority(priorityBasedOnImports(fqName, isPackage), priorityBasedOnLocation(declaration))
 
-    private fun priorityBasedOnImports(fqName: FqName, declaration: PsiElement?, isPackage: Boolean): PriorityBasedOnImports {
-        if (declaration?.containingFile == file) return PriorityBasedOnImports.thisFile
-
+    private fun priorityBasedOnImports(fqName: FqName, isPackage: Boolean): PriorityBasedOnImports {
         val importPath = ImportPath(fqName, false)
 
         if (isPackage) {
@@ -76,7 +75,8 @@ class SymbolUsageProximityPrioritizer(private val file: JetFile) {
 
         return when {
             JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName).isNotEmpty() -> PriorityBasedOnImports.notToBeUsedInKotlin
-            ImportInsertHelper.getInstance(file.getProject()).isImportedWithDefault(importPath, file) -> PriorityBasedOnImports.defaultImport
+            fqName.parent() == file.packageFqName -> PriorityBasedOnImports.thisPackage
+            ImportInsertHelper.getInstance(file.project).isImportedWithDefault(importPath, file) -> PriorityBasedOnImports.defaultImport
             importCache.isImportedWithPreciseImport(fqName) -> PriorityBasedOnImports.preciseImport
             importCache.isImportedWithAllUnderImport(fqName) -> PriorityBasedOnImports.allUnderImport
             importCache.hasPreciseImportFromPackage(fqName.parent()) -> PriorityBasedOnImports.hasImportFromSamePackage
@@ -84,12 +84,13 @@ class SymbolUsageProximityPrioritizer(private val file: JetFile) {
         }
     }
 
-    private fun priorityBasedOnModule(declaration: PsiElement?): PriorityBasedOnModule {
+    private fun priorityBasedOnLocation(declaration: PsiElement?): PriorityBasedOnLocation {
         return when {
-            declaration == null -> PriorityBasedOnModule.other
-            ModuleUtilCore.findModuleForPsiElement(declaration) == thisModule -> PriorityBasedOnModule.thisModule
-            ProjectRootsUtil.isInProjectSource(declaration) -> PriorityBasedOnModule.project
-            else -> PriorityBasedOnModule.other
+            declaration == null -> PriorityBasedOnLocation.other
+            declaration.containingFile == file -> PriorityBasedOnLocation.thisFile
+            ModuleUtilCore.findModuleForPsiElement(declaration) == thisModule -> PriorityBasedOnLocation.thisModule
+            ProjectRootsUtil.isInProjectSource(declaration) -> PriorityBasedOnLocation.project
+            else -> PriorityBasedOnLocation.other
         }
     }
 
