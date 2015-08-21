@@ -43,15 +43,14 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
-import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 class UnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
@@ -75,7 +74,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         val fqNames = HashSet<FqName>()
         val parentFqNames = HashSet<FqName>()
         for (descriptor in descriptorsToImport) {
-            val fqName = descriptor.importableFqNameSafe
+            val fqName = descriptor.importableFqName!!
             fqNames.add(fqName)
 
             if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed

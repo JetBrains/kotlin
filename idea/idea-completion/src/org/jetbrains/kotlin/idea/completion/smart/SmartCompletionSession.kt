@@ -67,7 +67,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                     referenceVariants.forEach { collector.addElements(filter(it)) }
                     flushToResultSet()
 
-                    processNonImported { collector.addElements(filter(it)) }
+                    processNonImported { collector.addElements(filter(it), notImported = true) }
                     flushToResultSet()
 
                     if (position.getContainingFile() is JetCodeFragment) {

@@ -20,32 +20,30 @@ import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.actions.AddImportAction
 import com.intellij.codeInsight.hint.QuestionAction
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.openapi.module.ModuleUtilCore
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.SymbolUsageProximityPrioritizer
-import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 /**
  * Automatically adds import directive to the file for resolving reference.
@@ -58,14 +56,14 @@ public class KotlinAddImportAction(
         candidates: Collection<DeclarationDescriptor>
 ) : QuestionAction {
 
-    private val prioritizer = SymbolUsageProximityPrioritizer(element.getContainingJetFile())
+    private val prioritizer = Prioritizer(element.getContainingJetFile())
 
     private inner class Variant(
             val fqName: FqName,
             val descriptors: Collection<DeclarationDescriptor>
     ) {
         val priority = descriptors
-                .map { prioritizer.priority(fqName, DescriptorToSourceUtilsIde.getAnyDeclaration(project, it), false) }
+                .map { prioritizer.priority(fqName, it) }
                 .min()!!
 
         val descriptorToImport: DeclarationDescriptor
@@ -151,10 +149,45 @@ public class KotlinAddImportAction(
             val descriptor = selectedVariant.descriptorToImport
             // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
             if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
-                element.mainReference.bindToFqName(descriptor.importableFqNameSafe, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
+                element.mainReference.bindToFqName(descriptor.importableFqName!!, JetSimpleNameReference.ShorteningMode.FORCED_SHORTENING)
             }
             else {
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptor)
+            }
+        }
+    }
+
+    private class Prioritizer(private val file: JetFile) {
+        private val classifier = ImportableFqNameClassifier(file)
+        private val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
+
+        private enum class Location {
+            currentModule,
+            project,
+            libraries,
+            unknown
+        }
+
+        private class Priority(private val priority1: ImportableFqNameClassifier.Classification, private val priority2: Location) : Comparable<Priority> {
+            override fun compareTo(other: Priority): Int {
+                val c1 = priority1.compareTo(other.priority1)
+                if (c1 != 0) return c1
+                return priority2.compareTo(other.priority2)
+            }
+        }
+
+        fun priority(fqName: FqName, descriptor: DeclarationDescriptor): Priority {
+            val classification = classifier.classify(fqName, false)
+            val location = location(descriptor)
+            return Priority(classification, location)
+        }
+
+        private fun location(descriptor: DeclarationDescriptor): Location {
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor) ?: return Location.unknown
+            return when {
+                ModuleUtilCore.findModuleForPsiElement(declaration) == currentModule -> Location.currentModule
+                ProjectRootsUtil.isInProjectSource(declaration) -> Location.project
+                else -> Location.libraries
             }
         }
     }

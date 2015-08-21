@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
-import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -234,9 +231,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, KindWeigher)
+        val importableFqNameClassifier = ImportableFqNameClassifier(file)
 
-        sorter = sorter.weighAfter("stats", SymbolUsageProximityWeigher(parameters.position.containingFile as JetFile))
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, NotImportedWeigher(importableFqNameClassifier), KindWeigher)
+
+        sorter = sorter.weighAfter("stats", ImportedWeigher(importableFqNameClassifier), LocationWeigher(file, parameters.originalFile as JetFile))
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
@@ -303,8 +302,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(parameters, indicesHelper, prefixMatcher, kindFilter)
                 .collect(
-                        { descriptor -> collector.addDescriptorElements(descriptor, suppressAutoInsertion = true) },
-                        { javaClass -> collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(javaClass)) }
+                        { descriptor -> collector.addDescriptorElements(descriptor, notImported = true) },
+                        { javaClass -> collector.addElement(lookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
                 )
     }
 }

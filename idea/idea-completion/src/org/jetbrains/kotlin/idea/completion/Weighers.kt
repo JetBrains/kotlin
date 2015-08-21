@@ -19,14 +19,16 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
+import com.intellij.openapi.module.ModuleUtilCore
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.*
-import org.jetbrains.kotlin.idea.core.SymbolUsageProximityPrioritizer
+import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
@@ -35,6 +37,69 @@ import org.jetbrains.kotlin.types.typeUtil.nullability
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
             = element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT
+}
+
+class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImported") {
+    private enum class Weight {
+        default,
+        hasImportFromSamePackage,
+        notImported,
+        notToBeUsedInKotlin
+    }
+
+    override fun weigh(element: LookupElement): Weight {
+        if (element.getUserData(NOT_IMPORTED_KEY) == null) return Weight.default
+        val o = element.`object` as? DeclarationLookupObject
+        val fqName = o?.importableFqName ?: return Weight.default
+        return when (classifier.classify(fqName, o is PackageLookupObject)) {
+            ImportableFqNameClassifier.Classification.hasImportFromSamePackage -> Weight.hasImportFromSamePackage
+            ImportableFqNameClassifier.Classification.notImported -> Weight.notImported
+            ImportableFqNameClassifier.Classification.notToBeUsedInKotlin -> Weight.notToBeUsedInKotlin
+            else -> Weight.default
+        }
+    }
+}
+
+class ImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.imported") {
+    private enum class Weight {
+        currentPackage,
+        defaultImport,
+        preciseImport,
+        allUnderImport
+    }
+
+    override fun weigh(element: LookupElement): Weight? {
+        val o = element.`object` as? DeclarationLookupObject
+        val fqName = o?.importableFqName ?: return null
+        return when (classifier.classify(fqName, o is PackageLookupObject)) {
+            ImportableFqNameClassifier.Classification.fromCurrentPackage -> Weight.currentPackage
+            ImportableFqNameClassifier.Classification.defaultImport -> Weight.defaultImport
+            ImportableFqNameClassifier.Classification.preciseImport -> Weight.preciseImport
+            ImportableFqNameClassifier.Classification.allUnderImport -> Weight.allUnderImport
+            else -> null
+        }
+    }
+}
+
+class LocationWeigher(private val file: JetFile, private val originalFile: JetFile) : LookupElementWeigher("kotlin.location") {
+    private val currentModule = ModuleUtilCore.findModuleForPsiElement(originalFile)
+
+    private enum class Weight {
+        currentFile,
+        currentModule,
+        project,
+        libraries
+    }
+
+    override fun weigh(element: LookupElement): Weight? {
+        val declaration = (element.`object` as? DeclarationLookupObject)?.psiElement ?: return null
+        return when {
+            declaration.containingFile == file -> Weight.currentFile
+            ModuleUtilCore.findModuleForPsiElement(declaration) == currentModule -> Weight.currentModule
+            ProjectRootsUtil.isInProjectSource(declaration) -> Weight.project
+            else -> Weight.libraries
+        }
+    }
 }
 
 object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.smartCompletionPriority") {
@@ -111,16 +176,6 @@ object PreferMatchingItemWeigher : LookupElementWeigher("kotlin.preferMatching",
                 else -> Weight.defaultExactMatch
             }
         }
-    }
-}
-
-class SymbolUsageProximityWeigher(private val file: JetFile) : LookupElementWeigher("kotlin.symbolUsageProximity") {
-    private val prioritizer = SymbolUsageProximityPrioritizer(file)
-
-    override fun weigh(element: LookupElement): SymbolUsageProximityPrioritizer.Priority {
-        val o = element.`object` as? DeclarationLookupObject ?: return SymbolUsageProximityPrioritizer.Priority.DEFAULT
-        val fqName = o.importableFqName ?: return SymbolUsageProximityPrioritizer.Priority.DEFAULT
-        return prioritizer.priority(fqName, o.psiElement, o is PackageLookupObject)
     }
 }
 

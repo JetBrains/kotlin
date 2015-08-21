@@ -22,23 +22,22 @@ import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.types.JetType
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
-        val mayBeUnsafe = DescriptorUtils.getFqName(getImportableDescriptor())
-        return if (mayBeUnsafe.isSafe()) mayBeUnsafe.toSafe() else null
+        val importableDescriptor = getImportableDescriptor()
+        if (!importableDescriptor.canBeReferencedViaImport()) return null
+        return importableDescriptor.fqNameSafe
     }
-
-public val DeclarationDescriptor.importableFqNameSafe: FqName
-    get() = DescriptorUtils.getFqNameSafe(getImportableDescriptor())
 
 public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     if (this is PackageViewDescriptor ||
         DescriptorUtils.isTopLevelDeclaration(this) ||
-        (this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this))) {
-        return !getName().isSpecial()
+        this is CallableDescriptor && DescriptorUtils.isStaticDeclaration(this)) {
+        return !name.isSpecial
     }
 
     val parentClass = getContainingDeclaration() as? ClassDescriptor ?: return false

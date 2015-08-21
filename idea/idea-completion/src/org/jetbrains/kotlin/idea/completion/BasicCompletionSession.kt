@@ -217,7 +217,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 collector.addElements(additionalItems)
             }
 
-            collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
+            collector.addDescriptorElements(referenceVariants)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
@@ -280,7 +280,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 if (position.getContainingFile() is JetCodeFragment) {
                     flushToResultSet()
-                    collector.addDescriptorElements(getRuntimeReceiverTypeReferenceVariants(), suppressAutoInsertion = false, withReceiverCast = true)
+                    collector.addDescriptorElements(getRuntimeReceiverTypeReferenceVariants(), withReceiverCast = true)
                 }
             }
         }
@@ -290,7 +290,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun addNonImported(completionKind: CompletionKind) {
         if (completionKind == CompletionKind.ALL) {
-            collector.addDescriptorElements(getTopLevelExtensions(), suppressAutoInsertion = true)
+            collector.addDescriptorElements(getTopLevelExtensions(), notImported = true)
         }
 
         flushToResultSet()
@@ -299,7 +299,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             completionKind.classKindFilter?.let { addAllClasses(it) }
 
             if (completionKind == CompletionKind.ALL) {
-                collector.addDescriptorElements(getTopLevelCallables(), suppressAutoInsertion = true)
+                collector.addDescriptorElements(getTopLevelCallables(), notImported = true)
             }
         }
 
