@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.cfg.outofbound
 
 import com.google.common.collect.Maps
-import org.jetbrains.kotlin.cfg.UnreachableCode
-import org.jetbrains.kotlin.cfg.UnreachableCodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.CallInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -29,11 +26,10 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.resolve.BindingTrace
 import java.util.HashMap
-import java.util.HashSet
 
+// Performs Pseudocode checks based on variable values analysis
 public class VariableValuesBasedChecker(
         val pseudocode: Pseudocode,
         val trace: BindingTrace,
@@ -44,6 +40,7 @@ public class VariableValuesBasedChecker(
     private val variableValuesData: Map<Instruction, Edges<ValuesData>> =
             pseudocodeVariablesDataCollector.collectVariableValuesData()
 
+    // Checks if there are out-of-bound-access errors in the `pseudocode` and reports them using `report` function
     public fun checkOutOfBoundErrors() {
         val reportedDiagnosticMap = Maps.newHashMap<Instruction, DiagnosticFactory<*>>()
         pseudocode.traverse(TraversalOrder.FORWARD, variableValuesData, { instruction, inData: ValuesData, outData: ValuesData ->
@@ -56,21 +53,9 @@ public class VariableValuesBasedChecker(
         })
     }
 
-    public fun collectUnreachableCodeBasedOnVariableValues(
-            alreadyKnownReachableElements: Set<JetElement>,
-            alreadyKnownUnreachableElements: Set<JetElement>
-    ): UnreachableCode {
-        val reachableElements = HashSet(alreadyKnownReachableElements)
-        val unreachableElements = HashSet(alreadyKnownUnreachableElements)
-        variableValuesData.forEach {
-            if (it.key is JetElementInstruction) {
-                val element = (it.key as JetElementInstruction).element
-                if (it.value.incoming is ValuesData.Dead) unreachableElements.add(element)
-                else reachableElements.add(element)
-            }
-        }
-        return UnreachableCodeImpl(reachableElements, unreachableElements)
-    }
+    // Returns `true` if the passed `instruction` is unreachable according to variable values analysis
+    public fun isUnreachableAccordingValueAnalysis(instruction: Instruction): Boolean =
+            variableValuesData[instruction]?.incoming is ValuesData.Dead
 
     private fun checkOutOfBoundAccess(
             instruction: CallInstruction,

@@ -303,14 +303,13 @@ public class JetFlowInformationProvider {
                 if (!isJumpElement) continue;
             }
 
-            if (instruction.getDead()) {
+            if (instruction.getDead() || variableValuesBasedChecker.isUnreachableAccordingValueAnalysis(instruction)) {
                 unreachableElements.add(element);
             }
             else {
                 reachableElements.add(element);
             }
         }
-        //return variableValuesBasedChecker.collectUnreachableCodeBasedOnVariableValues(reachableElements, unreachableElements);
         return new UnreachableCodeImpl(reachableElements, unreachableElements);
     }
 
