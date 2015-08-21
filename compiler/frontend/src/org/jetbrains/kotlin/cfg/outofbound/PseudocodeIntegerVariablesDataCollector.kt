@@ -585,11 +585,11 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         val rightOperandVariable = instruction.inputValues[1]
         val resultVariable = instruction.outputValue
                              ?: return
-        fun performOperation<Op, R>(
-                operandsMap: MutableMap<PseudoValue, Op>,
+        fun performIntOperation<R>(
+                operandsMap: MutableMap<PseudoValue, IntegerVariableValues>,
                 resultMap: MutableMap<PseudoValue, R>,
                 valueToUseIfNoOperands: R,
-                operation: (Op, Op) -> R
+                operation: (IntegerVariableValues, IntegerVariableValues) -> R
         ) {
             val leftOperandValues = operandsMap[leftOperandVariable]
             val rightOperandValues = operandsMap[rightOperandVariable]
@@ -600,15 +600,30 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 resultMap[resultVariable] = valueToUseIfNoOperands
             }
         }
+        fun performBoolOperation<R>(
+                operandsMap: MutableMap<PseudoValue, BooleanVariableValue>,
+                resultMap: MutableMap<PseudoValue, R>,
+                valueToUseIfNoFirstOperand: R,
+                operation: (BooleanVariableValue, BooleanVariableValue?) -> R
+        ) {
+            val leftOperandValues = operandsMap[leftOperandVariable]
+            val rightOperandValues = operandsMap[rightOperandVariable]
+            if (leftOperandValues != null) {
+                resultMap[resultVariable] = operation(leftOperandValues, rightOperandValues)
+            }
+            else {
+                resultMap[resultVariable] = valueToUseIfNoFirstOperand
+            }
+        }
         fun intIntOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> IntegerVariableValues) =
-            performOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues,
-                             IntegerVariableValues.Undefined, operation)
+                performIntOperation(updatedData.intFakeVarsToValues, updatedData.intFakeVarsToValues,
+                                    IntegerVariableValues.Undefined, operation)
         fun intBoolOperation(operation: (IntegerVariableValues, IntegerVariableValues) -> BooleanVariableValue) =
-                performOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues,
-                                 BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
-        fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue) -> BooleanVariableValue) =
-                performOperation(updatedData.boolFakeVarsToValues, updatedData.boolFakeVarsToValues,
-                                 BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
+                performIntOperation(updatedData.intFakeVarsToValues, updatedData.boolFakeVarsToValues,
+                                    BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
+        fun boolBoolOperation(operation: (BooleanVariableValue, BooleanVariableValue?) -> BooleanVariableValue) =
+                performBoolOperation(updatedData.boolFakeVarsToValues, updatedData.boolFakeVarsToValues,
+                                     BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS, operation)
         val leftOperandDescriptor = leftOperandVariable.createdAt?.let {
             val instructionWithDescriptor = getCollectionReadInstructionIfIsSizeMethodCall(it) ?: it
             PseudocodeUtil.extractVariableDescriptorIfAny(instructionWithDescriptor, false, bindingContext)

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 public sealed class BooleanVariableValue {
     // Logic operators, (BoolVariableValue, BoolVariableValue) -> BoolVariableValue
-    public abstract fun and(other: BooleanVariableValue): BooleanVariableValue
-    public abstract fun or(other: BooleanVariableValue): BooleanVariableValue
+    public abstract fun and(other: BooleanVariableValue?): BooleanVariableValue
+    public abstract fun or(other: BooleanVariableValue?): BooleanVariableValue
     public abstract fun not(): BooleanVariableValue
 
     // For now derived classes of BooleanVariableValue are immutable,
@@ -32,13 +32,13 @@ public sealed class BooleanVariableValue {
     public object True : BooleanVariableValue() {
         override fun toString(): String = "T"
 
-        override fun and(other: BooleanVariableValue): BooleanVariableValue =
+        override fun and(other: BooleanVariableValue?): BooleanVariableValue =
             when (other) {
                 True -> True
-                else -> other.copy()
+                else -> other?.copy() ?: Undefined.WITH_NO_RESTRICTIONS
             }
 
-        override fun or(other: BooleanVariableValue): BooleanVariableValue = True
+        override fun or(other: BooleanVariableValue?): BooleanVariableValue = True
 
         override fun not(): BooleanVariableValue = False
     }
@@ -46,9 +46,9 @@ public sealed class BooleanVariableValue {
     public object False : BooleanVariableValue() {
         override fun toString(): String = "F"
 
-        override fun and(other: BooleanVariableValue): BooleanVariableValue = False
+        override fun and(other: BooleanVariableValue?): BooleanVariableValue = False
 
-        override fun or(other: BooleanVariableValue): BooleanVariableValue = other.copy()
+        override fun or(other: BooleanVariableValue?): BooleanVariableValue = other?.copy() ?: Undefined.WITH_NO_RESTRICTIONS
 
         override fun not(): BooleanVariableValue = True
     }
@@ -65,8 +65,9 @@ public sealed class BooleanVariableValue {
             return "U$onTrue$onFalse"
         }
 
-        override fun and(other: BooleanVariableValue): BooleanVariableValue =
+        override fun and(other: BooleanVariableValue?): BooleanVariableValue =
                 when(other) {
+                    null -> Undefined.WITH_NO_RESTRICTIONS
                     True -> this.copy()
                     False -> False
                     is Undefined -> mergeCorrespondingValues(
@@ -76,8 +77,9 @@ public sealed class BooleanVariableValue {
                     )
                 }
 
-        override fun or(other: BooleanVariableValue): BooleanVariableValue =
+        override fun or(other: BooleanVariableValue?): BooleanVariableValue =
                 when(other) {
+                    null -> Undefined.WITH_NO_RESTRICTIONS
                     True -> True
                     False -> this.copy()
                     is Undefined -> mergeCorrespondingValues(

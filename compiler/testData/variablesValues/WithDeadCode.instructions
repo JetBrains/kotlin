@@ -274,3 +274,101 @@ error:
 sink:
     <SINK>                                                                                                                                in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
 =====================
+== andSequenceWithDeadCode ==
+fun andSequenceWithDeadCode() {
+    false && true && true && 1 > 0
+}
+---------------------
+L0:
+  1 <START>                                                          in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+  2 mark({ false && true && true && 1 > 0 })                         in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(false) -> <v0>                                                 in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jf(L4|<v0>)                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v1>                                                  in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L4 [result of boolean operation]:
+    magic[AND](false && true|<v0>, <v1>) -> <v2>                     in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jf(L3|<v2>)                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v3>                                                  in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L3 [result of boolean operation]:
+    magic[AND](false && true && true|<v2>, <v3>) -> <v4>             in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jf(L2|<v4>)                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(1) -> <v5>                                                     in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    r(0) -> <v6>                                                     in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    mark(1 > 0)                                                      in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    call(1 > 0, compareTo|<v5>, <v6>) -> <v7>                        in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L2 [result of boolean operation]:
+    magic[AND](false && true && true && 1 > 0|<v4>, <v7>) -> <v8>    in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+L1:
+  1 <END>                                                            in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+error:
+    <ERROR>                                                          in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+sink:
+    <SINK>                                                           in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+=====================
+== orSequenceWithDeadCode ==
+fun orSequenceWithDeadCode() {
+    true || false || true || 1 > 100
+}
+---------------------
+L0:
+  1 <START>                                                           in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+  2 mark({ true || false || true || 1 > 100 })                        in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v0>                                                   in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L4|<v0>)                                                       in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(false) -> <v1>                                                  in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L4 [result of boolean operation]:
+    magic[OR](true || false|<v0>, <v1>) -> <v2>                       in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L3|<v2>)                                                       in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v3>                                                   in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L3 [result of boolean operation]:
+    magic[OR](true || false || true|<v2>, <v3>) -> <v4>               in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L2|<v4>)                                                       in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(1) -> <v5>                                                      in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    r(100) -> <v6>                                                    in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    mark(1 > 100)                                                     in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+    call(1 > 100, compareTo|<v5>, <v6>) -> <v7>                       in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L2 [result of boolean operation]:
+    magic[OR](true || false || true || 1 > 100|<v4>, <v7>) -> <v8>    in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+L1:
+  1 <END>                                                             in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+error:
+    <ERROR>                                                           in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+sink:
+    <SINK>                                                            in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+=====================
+== booleanOperatorsSequenceWithDeadCode ==
+fun booleanOperatorsSequenceWithDeadCode() {
+    false && true || true && true || true || false
+}
+---------------------
+L0:
+  1 <START>                                                                          in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+  2 mark({ false && true || true && true || true || false })                         in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(false) -> <v0>                                                                 in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jf(L5|<v0>)                                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v1>                                                                  in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L5 [result of boolean operation]:
+    magic[AND](false && true|<v0>, <v1>) -> <v2>                                     in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L4|<v2>)                                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v3>                                                                  in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jf(L6|<v3>)                                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v4>                                                                  in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+L6 [result of boolean operation]:
+    magic[AND](true && true|<v3>, <v4>) -> <v5>                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+L4 [result of boolean operation]:
+    magic[OR](false && true || true && true|<v2>, <v5>) -> <v6>                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L3|<v6>)                                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(true) -> <v7>                                                                  in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L3 [result of boolean operation]:
+    magic[OR](false && true || true && true || true|<v6>, <v7>) -> <v8>              in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    jt(L2|<v8>)                                                                      in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+    r(false) -> <v9>                                                                 in: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}    out: INTS{#dead#} BOOLS{#dead#} ARRS{#dead#}
+L2 [result of boolean operation]:
+    magic[OR](false && true || true && true || true || false|<v8>, <v9>) -> <v10>    in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+L1:
+  1 <END>                                                                            in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+error:
+    <ERROR>                                                                          in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+sink:
+    <SINK>                                                                           in: INTS{}       BOOLS{}       ARRS{}          out: INTS{}       BOOLS{}       ARRS{}
+=====================

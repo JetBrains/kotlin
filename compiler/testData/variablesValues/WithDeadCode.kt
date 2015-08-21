@@ -49,3 +49,15 @@ fun whileWithDeadCode() {
     }
     42
 }
+
+fun andSequenceWithDeadCode() {
+    false && true && true && 1 > 0
+}
+
+fun orSequenceWithDeadCode() {
+    true || false || true || 1 > 100
+}
+
+fun booleanOperatorsSequenceWithDeadCode() {
+    false && true || true && true || true || false
+}
