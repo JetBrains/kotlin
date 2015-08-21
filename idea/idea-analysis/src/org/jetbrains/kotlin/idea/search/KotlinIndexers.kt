@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
-import java.util.ArrayDeque
+import java.util.*
 
 val KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT: Short = 0x20
 
@@ -66,6 +66,15 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
                 }
             }
 
+            JetTokens.IDENTIFIER -> {
+                 if (myDelegate.tokenText.startsWith("`")) {
+                     scanWordsInToken(UsageSearchContext.IN_CODE.toInt(), false, false)
+                 }
+                 else {
+                     addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+                 }
+            }
+
             in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
 
             in JetTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
@@ -98,7 +107,7 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
 class KotlinIdIndexer: LexerBasedIdIndexer() {
     override fun createLexer(consumer: OccurrenceConsumer): Lexer = KotlinFilterLexer(consumer)
 
-    override fun getVersion() = 2
+    override fun getVersion() = 3
 }
 
 class KotlinTodoIndexer: LexerBasedTodoIndexer(), IdAndToDoScannerBasedOnFilterLexer {
