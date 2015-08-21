@@ -27,6 +27,10 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.statistics.StatisticsManager
+import com.intellij.psi.util.ProximityLocation
+import com.intellij.psi.util.proximity.PsiProximityComparator
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -38,7 +42,6 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
@@ -56,7 +59,8 @@ public class KotlinAddImportAction(
         candidates: Collection<DeclarationDescriptor>
 ) : QuestionAction {
 
-    private val prioritizer = Prioritizer(element.getContainingJetFile())
+    private val file = element.getContainingJetFile()
+    private val prioritizer = Prioritizer(file)
 
     private inner class Variant(
             val fqName: FqName,
@@ -145,7 +149,9 @@ public class KotlinAddImportAction(
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid()) return@executeWriteCommand
 
-            val file = element.getContainingFile() as JetFile
+            val location = ProximityLocation(file, ModuleUtilCore.findModuleForPsiElement(file))
+            StatisticsManager.getInstance().incUseCount(PsiProximityComparator.STATISTICS_KEY, selectedVariant.declarationToImport, location)
+
             val descriptor = selectedVariant.descriptorToImport
             // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name
             if (descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
@@ -159,36 +165,28 @@ public class KotlinAddImportAction(
 
     private class Prioritizer(private val file: JetFile) {
         private val classifier = ImportableFqNameClassifier(file)
-        private val currentModule = ModuleUtilCore.findModuleForPsiElement(file)
+        private val proximityComparator = PsiProximityComparator(file)
 
-        private enum class Location {
-            currentModule,
-            project,
-            libraries,
-            unknown
-        }
+        private inner class Priority(private val fqName: FqName, private val descriptor: DeclarationDescriptor) : Comparable<Priority> {
+            private val isDeprecated = KotlinBuiltIns.isDeprecated(descriptor)
+            private val classification = classifier.classify(fqName, false)
+            private val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
 
-        private class Priority(private val priority1: ImportableFqNameClassifier.Classification, private val priority2: Location) : Comparable<Priority> {
             override fun compareTo(other: Priority): Int {
-                val c1 = priority1.compareTo(other.priority1)
+                if (isDeprecated != other.isDeprecated) {
+                    return if (isDeprecated) +1 else -1
+                }
+
+                val c1 = classification.compareTo(other.classification)
                 if (c1 != 0) return c1
-                return priority2.compareTo(other.priority2)
+
+                val c2 = proximityComparator.compare(declaration, other.declaration)
+                if (c2 != 0) return c2
+
+                return fqName.asString().compareTo(other.fqName.asString())
             }
         }
 
-        fun priority(fqName: FqName, descriptor: DeclarationDescriptor): Priority {
-            val classification = classifier.classify(fqName, false)
-            val location = location(descriptor)
-            return Priority(classification, location)
-        }
-
-        private fun location(descriptor: DeclarationDescriptor): Location {
-            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor) ?: return Location.unknown
-            return when {
-                ModuleUtilCore.findModuleForPsiElement(declaration) == currentModule -> Location.currentModule
-                ProjectRootsUtil.isInProjectSource(declaration) -> Location.project
-                else -> Location.libraries
-            }
-        }
+        fun priority(fqName: FqName, descriptor: DeclarationDescriptor) = Priority(fqName, descriptor)
     }
 }

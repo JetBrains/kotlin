@@ -3,7 +3,7 @@
 
 import java.util.*
 import dependency.*
-import dependency.Date
+import java.util.Date
 
 fun foo(d: Date<caret>) {
 }
