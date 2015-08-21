@@ -192,7 +192,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
 
             is JetNamedFunction -> {
-                if (element.isLocal()) {
+                if (!LightClassUtil.canGenerateLightClass(element)) {
                     findKotlinDeclarationUsages(element)
                 }
                 else {
@@ -204,7 +204,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 findUsagesByJavaProcessor(element, false)
 
             is JetProperty -> {
-                if (element.isLocal()) {
+                if (!LightClassUtil.canGenerateLightClass(element)) {
                     findKotlinDeclarationUsages(element)
                 }
                 else {

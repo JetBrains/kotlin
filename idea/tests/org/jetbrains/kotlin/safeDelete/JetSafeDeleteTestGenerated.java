@@ -534,6 +534,12 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteProperty/kotlinProperty/propertyExt2.kt");
             doPropertyTest(fileName);
         }
+
+        @TestMetadata("propertyInLocalObject.kt")
+        public void testPropertyInLocalObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteProperty/kotlinProperty/propertyInLocalObject.kt");
+            doPropertyTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava")
