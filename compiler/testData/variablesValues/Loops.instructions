@@ -140,12 +140,12 @@ L0:
     v(var d: Boolean)                                                                                                                            in: INTS{a:[2],c:-}       BOOLS{b:F}                 ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    r(a) -> <v2>                                                                                                                                 in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
-    r(10) -> <v3>                                                                                                                                in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
-    mark(a < 10)                                                                                                                                 in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
-    call(a < 10, compareTo|<v2>, <v3>) -> <v4>                                                                                                   in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
-    mark(while (a < 10) { a = a + 1 b = !b c = 5 d = true val e = 8 var f = false })                                                             in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}
-    jf(L3|<v4>)                                                                                                                                  in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    r(a) -> <v2>                                                                                                                                 in: INTS{a:[2],c:-}       BOOLS{b:F,d:U{}{}}         ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    r(10) -> <v3>                                                                                                                                in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    mark(a < 10)                                                                                                                                 in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    call(a < 10, compareTo|<v2>, <v3>) -> <v4>                                                                                                   in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    mark(while (a < 10) { a = a + 1 b = !b c = 5 d = true val e = 8 var f = false })                                                             in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
+    jf(L3|<v4>)                                                                                                                                  in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
 L4 [body entry point]:
   3 mark({ a = a + 1 b = !b c = 5 d = true val e = 8 var f = false })                                                                            in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
     r(a) -> <v5>                                                                                                                                 in: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}    out: INTS{a:?,c:?}         BOOLS{b:U{}{},d:U{}{}}     ARRS{}
@@ -269,12 +269,12 @@ L0:
     w(i|<v0>)                                    in: INTS{i:-}   BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    r(i) -> <v1>                                 in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
-    r(0) -> <v2>                                 in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
-    mark(i > 0)                                  in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
-    call(i > 0, compareTo|<v1>, <v2>) -> <v3>    in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
-    mark(while (i > 0) ++i)                      in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:[1]} BOOLS{} ARRS{}
-    jf(L3|<v3>)                                  in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(i) -> <v1>                                 in: INTS{i:[1]} BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(0) -> <v2>                                 in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    mark(i > 0)                                  in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    call(i > 0, compareTo|<v1>, <v2>) -> <v3>    in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    mark(while (i > 0) ++i)                      in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    jf(L3|<v3>)                                  in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
 L4 [body entry point]:
     r(i) -> <v4>                                 in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
     mark(++i)                                    in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
@@ -456,15 +456,15 @@ L0:
     w(a|<v0>)                                        in: INTS{a:-}   BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    r(a) -> <v1>                                     in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
-    mark(++a)                                        in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
-    call(++a, inc|<v1>) -> <v2>                      in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[0]} BOOLS{} ARRS{}
-    w(a|<v2>)                                        in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-    r(0) -> <v3>                                     in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-    mark(++a > 0)                                    in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-    call(++a > 0, compareTo|<v2>, <v3>) -> <v4>      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-    mark(while (++a > 0) { 42 })                     in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:[1]} BOOLS{} ARRS{}
-    jf(L3|<v4>)                                      in: INTS{a:[1]} BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    r(a) -> <v1>                                     in: INTS{a:[0]} BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    mark(++a)                                        in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    call(++a, inc|<v1>) -> <v2>                      in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    w(a|<v2>)                                        in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    r(0) -> <v3>                                     in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    mark(++a > 0)                                    in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    call(++a > 0, compareTo|<v2>, <v3>) -> <v4>      in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    mark(while (++a > 0) { 42 })                     in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
+    jf(L3|<v4>)                                      in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
 L4 [body entry point]:
   3 mark({ 42 })                                     in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
     r(42) -> <v5>                                    in: INTS{a:?}   BOOLS{} ARRS{}    out: INTS{a:?}   BOOLS{} ARRS{}
@@ -501,19 +501,19 @@ L0:
   3 mark(do { a = a + 1 } while (a < 2))                      in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({ a = a + 1 })                                       in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
-    r(a) -> <v2>                                              in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
-    r(1) -> <v3>                                              in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
-    mark(a + 1)                                               in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
-    call(a + 1, plus|<v2>, <v3>) -> <v4>                      in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[-1]} BOOLS{} ARRS{}
-    w(a|<v4>)                                                 in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
+    mark({ a = a + 1 })                                       in: INTS{a:[-1]} BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    r(a) -> <v2>                                              in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    r(1) -> <v3>                                              in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    mark(a + 1)                                               in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    call(a + 1, plus|<v2>, <v3>) -> <v4>                      in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    w(a|<v4>)                                                 in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
 L5 [body exit point]:
 L6 [condition entry point]:
-    r(a) -> <v6>                                              in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
-    r(2) -> <v7>                                              in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
-    mark(a < 2)                                               in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
-    call(a < 2, compareTo|<v6>, <v7>) -> <v8>                 in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:[0]}  BOOLS{} ARRS{}
-    jt(L2|<v8>)                                               in: INTS{a:[0]}  BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    r(a) -> <v6>                                              in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    r(2) -> <v7>                                              in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    mark(a < 2)                                               in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    call(a < 2, compareTo|<v6>, <v7>) -> <v8>                 in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
+    jt(L2|<v8>)                                               in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
 L3 [loop exit point]:
     read (Unit)                                               in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
   2 r(42) -> <v9>                                             in: INTS{a:?}    BOOLS{} ARRS{}    out: INTS{a:?}    BOOLS{} ARRS{}
@@ -564,4 +564,52 @@ error:
     <ERROR>                                                             in: INTS{}       BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
 sink:
     <SINK>                                                              in: INTS{}       BOOLS{} ARRS{}           out: INTS{}       BOOLS{} ARRS{}
+=====================
+== whileReturn ==
+// this test shows why external variable updated inside loop is assumed unknown both inside loop's body and condition
+fun whileReturn() {
+    var i = 0
+    while(if (i < 2) true else return) {
+        i++
+    }
+}
+---------------------
+L0:
+  1 <START>                                                           in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+  2 mark({ var i = 0 while(if (i < 2) true else return) { i++ } })    in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+    v(var i = 0)                                                      in: INTS{}      BOOLS{} ARRS{}    out: INTS{i:-}   BOOLS{} ARRS{}
+    r(0) -> <v0>                                                      in: INTS{i:-}   BOOLS{} ARRS{}    out: INTS{i:-}   BOOLS{} ARRS{}
+    w(i|<v0>)                                                         in: INTS{i:-}   BOOLS{} ARRS{}    out: INTS{i:[0]} BOOLS{} ARRS{}
+L2 [loop entry point]:
+L6 [condition entry point]:
+    mark(if (i < 2) true else return)                                 in: INTS{i:[0]} BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(i) -> <v1>                                                      in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(2) -> <v2>                                                      in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    mark(i < 2)                                                       in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    call(i < 2, compareTo|<v1>, <v2>) -> <v3>                         in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    jf(L7|<v3>)                                                       in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(true) -> <v4>                                                   in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    jmp(L8)                                                           in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+L7 [else branch]:
+    ret L1                                                            in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+L8 ['if' expression result]:
+    merge(if (i < 2) true else return|<v4>, !<v5>) -> <v6>            in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    mark(while(if (i < 2) true else return) { i++ })                  in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    jf(L3|<v6>)                                                       in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+L4 [body entry point]:
+  3 mark({ i++ })                                                     in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    r(i) -> <v7>                                                      in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    mark(i++)                                                         in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    call(i++, inc|<v7>) -> <v8>                                       in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+    w(i|<v8>)                                                         in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+  2 jmp(L2)                                                           in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                                       in: INTS{i:?}   BOOLS{} ARRS{}    out: INTS{i:?}   BOOLS{} ARRS{}
+L1:
+  1 <END>                                                             in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+error:
+    <ERROR>                                                           in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
+sink:
+    <SINK>                                                            in: INTS{}      BOOLS{} ARRS{}    out: INTS{}      BOOLS{} ARRS{}
 =====================

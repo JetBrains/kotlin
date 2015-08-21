@@ -39,11 +39,13 @@ fun whileWithDeadCode() {
     while (a < 0) {
         ++a
     }
+    a = 2
     while (a > 0) {
         while (a < 0) {
             ++a
         }
     }
+    a = 2
     while (++a <= 2) {
         ++a
     }

@@ -112,12 +112,6 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     updatedVariablesMap[topInfo.first] = topInfo.second
                 }
             }
-            if (instruction is ConditionalJumpInstruction &&
-                (instruction.element is JetWhileExpression || instruction.element is JetDoWhileExpression)) {
-                assert(variablesStack.isNotEmpty(), "Jump in while is met but there is still no loop info")
-                val topInfo = variablesStack.removeFirst()
-                variablesStack.push(instruction to topInfo.second)
-            }
             if (!variablesStack.isEmpty()) {
                 extractTargetDescriptorIfUpdateInstruction(instruction)?.let {
                     variablesStack.first().second.add(it)

@@ -107,3 +107,11 @@ fun forInCollection() {
     }
     43
 }
+
+// this test shows why external variable updated inside loop is assumed unknown both inside loop's body and condition
+fun whileReturn() {
+    var i = 0
+    while(if (i < 2) true else return) {
+        i++
+    }
+}
