@@ -268,7 +268,7 @@ public class DescriptorResolver {
                     new ValueParameterDescriptorImpl(functionDescriptor, null, parameter.getIndex(), parameter.getAnnotations(),
                                                      parameter.getName(), parameter.getType(),
                                                      declaresDefaultValue,
-                                                     parameter.getVarargElementType(), SourceElement.NO_SOURCE);
+                                                     parameter.getVarargElementType(), parameter.getSource());
             parameterDescriptors.add(parameterDescriptor);
             if (declaresDefaultValue) {
                 trace.record(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor, propertyDescriptor);
