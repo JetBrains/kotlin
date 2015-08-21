@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.JetType
-import java.util.Collections
-import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 
 // SCRIPT: Members of a script class
 public class LazyScriptClassMemberScope protected constructor(
@@ -43,9 +42,9 @@ public class LazyScriptClassMemberScope protected constructor(
         createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.script))
     }
 
-    override fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
-        return (super.computeExtraDescriptors()
-                + getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME))
+    override fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
+        return (super.computeExtraDescriptors(location)
+                + getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME), location)
                 + getPropertiesForScriptParameters()).toReadOnlyList()
     }
 

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
@@ -34,14 +36,12 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.JetType
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public open class LazyClassMemberScope(
         c: LazyClassContext,
@@ -54,7 +54,7 @@ public open class LazyClassMemberScope(
         computeDescriptorsFromDeclaredElements(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
     }
     private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
-        computeExtraDescriptors()
+        computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
@@ -64,21 +64,21 @@ public open class LazyClassMemberScope(
         return result
     }
 
-    protected open fun computeExtraDescriptors(): Collection<DeclarationDescriptor> {
+    protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
-        for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
-            for (descriptor in supertype.getMemberScope().getDescriptors()) {
+        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+            for (descriptor in supertype.memberScope.getDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
-                    result.addAll(getFunctions(descriptor.getName()))
+                    result.addAll(getFunctions(descriptor.name, location))
                 }
                 else if (descriptor is PropertyDescriptor) {
-                    result.addAll(getProperties(descriptor.getName()))
+                    result.addAll(getProperties(descriptor.name, location))
                 }
                 // Nothing else is inherited
             }
         }
 
-        addDataClassMethods(result)
+        addDataClassMethods(result, location)
 
         result.trimToSize()
         return result
@@ -123,16 +123,18 @@ public open class LazyClassMemberScope(
     }
 
     protected override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {
+        val location = NoLookupLocation.FOR_ALREADY_TRACKED
+
         val fromSupertypes = Lists.newArrayList<FunctionDescriptor>()
-        for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
-            fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name))
+        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+            fromSupertypes.addAll(supertype.memberScope.getFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
-        generateDataClassMethods(result, name)
+        generateDataClassMethods(result, name, location)
         generateFakeOverrides(name, fromSupertypes, result, javaClass<FunctionDescriptor>())
     }
 
-    private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name) {
+    private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name, location: LookupLocation) {
         if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         val constructor = getPrimaryConstructor() ?: return
@@ -147,7 +149,7 @@ public open class LazyClassMemberScope(
                 if (parameter.getType().isError()) continue
                 if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVar()) continue
 
-                val properties = getProperties(parameter.getName())
+                val properties = getProperties(parameter.name, location)
                 if (properties.isEmpty()) continue
 
                 val property = properties.iterator().next() as PropertyDescriptor
@@ -165,7 +167,7 @@ public open class LazyClassMemberScope(
         if (name == DescriptorResolver.COPY_METHOD_NAME) {
             for (parameter in constructor.getValueParameters()) {
                 // force properties resolution to fill BindingContext.VALUE_PARAMETER_AS_PROPERTY slice
-                getProperties(parameter.getName())
+                getProperties(parameter.name, location)
             }
 
             val copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(constructor.getValueParameters(), thisDescriptor, trace)
@@ -195,8 +197,8 @@ public open class LazyClassMemberScope(
 
         // Members from supertypes
         val fromSupertypes = ArrayList<PropertyDescriptor>()
-        for (supertype in thisDescriptor.getTypeConstructor().getSupertypes()) {
-            fromSupertypes.addAll(supertype.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>)
+        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+            fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_PROPERTIES, result))
         generateFakeOverrides(name, fromSupertypes, result as MutableCollection<PropertyDescriptor>, javaClass<PropertyDescriptor>())
@@ -239,7 +241,7 @@ public open class LazyClassMemberScope(
         return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver)
     }
 
-    private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>) {
+    private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
         if (getPrimaryConstructor() == null) return
@@ -248,14 +250,14 @@ public open class LazyClassMemberScope(
         var n = 1
         while (true) {
             val componentName = createComponentName(n)
-            val functions = getFunctions(componentName)
+            val functions = getFunctions(componentName, location)
             if (functions.isEmpty()) break
 
             result.addAll(functions)
 
             n++
         }
-        result.addAll(getFunctions(Name.identifier("copy")))
+        result.addAll(getFunctions(Name.identifier("copy"), location))
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
@@ -314,14 +316,14 @@ public open class LazyClassMemberScope(
     companion object {
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<FunctionDescriptor> {
-                return extractFrom.getMemberScope().getFunctions(name)
+                return extractFrom.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<PropertyDescriptor> {
                 @suppress("UNCHECKED_CAST")
-                return extractFrom.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>
+                return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>
             }
         }
     }

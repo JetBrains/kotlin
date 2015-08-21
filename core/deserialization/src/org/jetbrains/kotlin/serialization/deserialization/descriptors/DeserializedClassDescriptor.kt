@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -35,9 +36,7 @@ import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
@@ -186,17 +185,17 @@ public class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
             val fromSupertypes = ArrayList<FunctionDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
-                fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name))
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+                fromSupertypes.addAll(supertype.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, functions)
         }
 
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
                 @suppress("UNCHECKED_CAST")
-                fromSupertypes.addAll(supertype.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>)
+                fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
         }
