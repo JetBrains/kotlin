@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.types.JetType
 import java.util.*
@@ -196,6 +197,13 @@ class LookupElementsCollector(
             result = postProcessor(result)
         }
 
+        val psiElement = (result.`object` as? DeclarationLookupObject)?.psiElement
+        if (psiElement != null) {
+            result = object : LookupElementDecorator<LookupElement>(result) {
+                override fun getPsiElement() = psiElement
+            }
+        }
+
         elements.getOrPut(prefixMatcher) { ArrayList() }.add(result)
     }
 
@@ -203,7 +211,7 @@ class LookupElementsCollector(
     private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
         if (!completionParameters.isAutoPopup()) return false
         val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
-        return insertedText == element.getUserData(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
+        return insertedText == element.getUserDataDeep(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
     }
 
     public fun addElements(elements: Iterable<LookupElement>, prefixMatcher: PrefixMatcher = defaultPrefixMatcher, notImported: Boolean = false) {

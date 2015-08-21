@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionStatistician
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.statistics.StatisticsInfo
 import com.intellij.psi.util.ProximityLocation
@@ -39,8 +38,7 @@ class KotlinCompletionStatistician : CompletionStatistician() {
     override fun serialize(element: LookupElement, location: CompletionLocation): StatisticsInfo? {
         val o = (element.`object` as? DeclarationLookupObject) ?: return null
 
-        assert(element !is LookupElementDecorator<*>, "LookupElementDecorator's should be unwrapped by DecoratorCompletionStatistician")
-        val context = element.getUserData(STATISTICS_INFO_CONTEXT_KEY) ?: ""
+        val context = element.getUserDataDeep(STATISTICS_INFO_CONTEXT_KEY) ?: ""
 
         if (o.descriptor != null) {
             return KotlinStatisticsInfo.forDescriptor(o.descriptor!!.original, context)

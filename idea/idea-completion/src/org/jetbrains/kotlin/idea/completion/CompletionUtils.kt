@@ -48,6 +48,26 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
 
+@tailRecursive
+fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
+    if (this is LookupElementDecorator<*>) {
+        getDelegate().putUserDataDeep(key, value)
+    }
+    else {
+        putUserData(key, value)
+    }
+}
+
+@tailRecursive
+fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
+    if (this is LookupElementDecorator<*>) {
+        return getDelegate().getUserDataDeep(key)
+    }
+    else {
+        return getUserData(key)
+    }
+}
+
 enum class ItemPriority {
     DEFAULT,
     BACKING_FIELD,

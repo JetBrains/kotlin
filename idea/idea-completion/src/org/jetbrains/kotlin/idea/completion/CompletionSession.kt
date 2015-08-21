@@ -223,8 +223,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         if (statisticsContext != null) {
             collector.addLookupElementPostProcessor { lookupElement ->
                 // we should put data into the original element because of DecoratorCompletionStatistician
-                val unwrapped = sequence(lookupElement) { (it as? LookupElementDecorator<*>)?.delegate }.last()
-                unwrapped.putUserData(STATISTICS_INFO_CONTEXT_KEY, statisticsContext)
+                lookupElement.putUserDataDeep(STATISTICS_INFO_CONTEXT_KEY, statisticsContext)
                 lookupElement
             }
         }
