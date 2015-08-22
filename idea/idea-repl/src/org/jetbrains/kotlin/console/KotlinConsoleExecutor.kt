@@ -26,7 +26,6 @@ public class KotlinConsoleExecutor(
         private val runner: KotlinConsoleRunner,
         private val historyManager: KotlinConsoleHistoryManager
 ) {
-    private val XML_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     private val historyHighlighter = KotlinHistoryHighlighter(runner)
 
     fun executeCommand() = WriteCommandAction.runWriteCommandAction(runner.project) {
@@ -50,7 +49,12 @@ public class KotlinConsoleExecutor(
         val processInputOS = processHandler.processInput ?: return logError(javaClass, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
-        val xmlRes = "$XML_PREFIX<input>${StringUtil.escapeXml(StringUtil.escapeLineBreak(command.trim()))}</input>"
+        val xmlRes = "${ReplConstants.XML_PREAMBLE}" +
+                     "<input>" +
+                        "${StringUtil.escapeXml(
+                                StringUtil.replace(command.trim(), ReplConstants.SOURCE_CHARS, ReplConstants.XML_REPLACEMENTS)
+                           )}" +
+                     "</input>"
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
         processInputOS.flush()

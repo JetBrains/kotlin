@@ -27,7 +27,7 @@ public class ReplIdeDiagnosticMessageHolder : DiagnosticMessageHolder {
     private val diagnostics = arrayListOf<Pair<Diagnostic, String>>()
 
     override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) {
-        diagnostics.add(diagnostic to render)
+        diagnostics.add(Pair(diagnostic, render))
     }
 
     override val renderedDiagnostics: String

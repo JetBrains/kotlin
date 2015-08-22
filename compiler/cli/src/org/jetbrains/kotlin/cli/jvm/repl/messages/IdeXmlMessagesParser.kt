@@ -21,18 +21,17 @@ import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import javax.xml.parsers.DocumentBuilderFactory
-import kotlin.platform.platformStatic
 
-public object FromIdeXmlMessagesParser {
+public class IdeXmlMessagesParser {
     private fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))
 
-    platformStatic fun parse(inputMessage: String): String {
+    fun parse(inputMessage: String): String {
         val docFactory = DocumentBuilderFactory.newInstance()
         val docBuilder = docFactory.newDocumentBuilder()
         val input = docBuilder.parse(strToSource(inputMessage))
 
         val root = input.firstChild as Element
-        val inputContent = StringUtil.unescapeStringCharacters(root.textContent).trim()
+        val inputContent = StringUtil.replace(root.textContent, EscapeConstants.XML_REPLACEMENTS, EscapeConstants.SOURCE_CHARS).trim()
 
         return inputContent
     }

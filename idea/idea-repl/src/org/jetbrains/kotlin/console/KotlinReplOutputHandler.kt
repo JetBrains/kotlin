@@ -35,17 +35,17 @@ public class KotlinReplOutputHandler(
         process: Process,
         commandLine: String
 ) : OSProcessHandler(process, commandLine) {
-    private val XML_START = "<?xml"
+
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 
     override fun notifyTextAvailable(text: String, key: Key<*>?) {
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
-        if (!text.startsWith(XML_START)) return super.notifyTextAvailable(text, key)
+        if (!text.startsWith(ReplConstants.XML_PREFIX)) return super.notifyTextAvailable(text, key)
 
         val output = dBuilder.parse(strToSource(text))
         val root = output.firstChild as Element
         val outputType = root.getAttribute("type")
-        val content = StringUtil.unescapeStringCharacters(root.textContent).trim()
+        val content = StringUtil.replace(root.textContent, ReplConstants.XML_REPLACEMENTS, ReplConstants.SOURCE_CHARS).trim()
 
         when (outputType) {
             "INITIAL_PROMPT"  -> super.notifyTextAvailable("$content\n", key)

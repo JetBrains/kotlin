@@ -25,7 +25,7 @@ import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.FromIdeXmlMessagesParser;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.IdeXmlMessagesParser;
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -42,6 +42,7 @@ public class ReplFromTerminal {
 
     private final boolean ideMode;
     private final ReplSystemOutWrapper replWriter;
+    private final IdeXmlMessagesParser ideXmlParser = new IdeXmlMessagesParser();
 
     private final ConsoleReader consoleReader;
 
@@ -186,7 +187,7 @@ public class ReplFromTerminal {
     private String readLine(@Nullable String prompt) throws IOException {
         String line = consoleReader.readLine(prompt);
         if (ideMode && line != null) {
-            line = FromIdeXmlMessagesParser.parse(line);
+            line = ideXmlParser.parse(line);
         }
         return line;
     }

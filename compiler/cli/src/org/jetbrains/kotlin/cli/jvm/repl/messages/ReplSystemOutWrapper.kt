@@ -21,7 +21,6 @@ import com.intellij.util.LineSeparator
 import java.io.PrintStream
 
 public class ReplSystemOutWrapper(private val standardOut: PrintStream, private val ideMode: Boolean) : PrintStream(standardOut, true) {
-    private val XML_PREFIX = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     private val END_LINE = LineSeparator.getSystemLineSeparator().separatorString
 
     private enum class EscapeType {
@@ -51,8 +50,8 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
     }
 
     private fun xmlEscape(s: String, escapeType: EscapeType): String {
-        val singleLine = StringUtil.escapeLineBreak(s)
-        return "$XML_PREFIX<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
+        val singleLine = StringUtil.replace(s, EscapeConstants.SOURCE_CHARS, EscapeConstants.XML_REPLACEMENTS)
+        return "${EscapeConstants.XML_PREAMBLE}<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
     fun printlnResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)

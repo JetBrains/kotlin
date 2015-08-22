@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.console.highlight
 
 import com.intellij.execution.impl.ConsoleViewUtil
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter
 import com.intellij.openapi.editor.markup.HighlighterLayer
@@ -27,13 +28,10 @@ import org.jetbrains.kotlin.console.gutter.ReplIcons
 public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) {
     fun addAndHighlightNewCommand(command: String) {
         val historyEditor = runner.consoleView.historyViewer
+
+        addLineBreakIfNeeded(historyEditor)
+
         val historyDocument = historyEditor.document
-
-        if (historyDocument.textLength == 0) { // this will work first time after 'Clear all' action
-            historyDocument.setText("\n")
-            runner.addGutterIndicator(historyEditor, ReplIcons.HISTORY_INDICATOR)
-        }
-
         val oldHistoryLength = historyDocument.textLength
         historyDocument.insertString(oldHistoryLength, command)
         EditorUtil.scrollToTheEnd(historyEditor)
@@ -59,6 +57,19 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
             )
 
             lexer.advance()
+        }
+    }
+
+    private fun addLineBreakIfNeeded(historyEditor: EditorEx) {
+        val historyDocument = historyEditor.document
+        val historyText = historyDocument.text
+
+        if (!historyText.endsWith('\n')) {
+            val textLength = historyText.length()
+            historyDocument.insertString(textLength, "\n")
+
+            if (textLength == 0) // this will work first time after 'Clear all' action
+                runner.addGutterIndicator(historyEditor, ReplIcons.HISTORY_INDICATOR)
         }
     }
 }

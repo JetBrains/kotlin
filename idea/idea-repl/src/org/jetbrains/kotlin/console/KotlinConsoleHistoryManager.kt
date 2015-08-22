@@ -79,7 +79,7 @@ public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRun
 
                 historyPos = Math.max(historyPos - 1, 0)
                 WriteCommandAction.runWriteCommandAction(ktConsole.project) {
-                    document.setText(history[historyPos])
+                    document.setText(history[historyPos].trim())
                     caret.moveToOffset(0)
                     prevCaretOffset = 0
                 }
@@ -92,7 +92,7 @@ public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRun
 
                 historyPos = Math.min(historyPos + 1, history.size())
                 WriteCommandAction.runWriteCommandAction(ktConsole.project) {
-                    document.setText(if (historyPos == history.size()) unfinishedCommand else history[historyPos])
+                    document.setText(if (historyPos == history.size()) unfinishedCommand else history[historyPos].trim())
                     caret.moveToOffset(document.textLength)
                     prevCaretOffset = document.textLength
                 }
