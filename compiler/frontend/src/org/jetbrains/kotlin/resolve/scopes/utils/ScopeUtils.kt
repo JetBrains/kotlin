@@ -138,7 +138,6 @@ private inline fun <T: Any> LexicalScope.collectFromMeAndParent(
         if (element != null) {
             if (result == null) {
                 result = SmartList()
-                return emptyList()
             }
             result!!.add(element)
         }
