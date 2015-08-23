@@ -58,12 +58,11 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
     override fun getContainingDeclaration() = ownerDeclarationDescriptor
 
-    override fun changeLockLevel(lockLevel: WritableScope.LockLevel): WritableScope {
+    override fun changeLockLevel(lockLevel: WritableScope.LockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
         this.lockLevel = lockLevel
-        return this
     }
 
     protected fun checkMayRead() {

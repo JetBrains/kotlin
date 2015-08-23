@@ -356,6 +356,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             ) {
                 receiverClassDescriptor.getTypeConstructor().getParameters().forEach { addClassifierDescriptor(it) }
                 changeLockLevel(WritableScope.LockLevel.READING)
+                this
             }
 
             val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
