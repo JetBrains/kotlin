@@ -1,7 +1,5 @@
 package demo
 
-import kotlin.platform.platformStatic
-
 public object SwitchDemo {
     public fun print(o: Any) {
         println(o)
@@ -78,7 +76,7 @@ public object SwitchDemo {
         println(monthString)
     }
 
-    platformStatic public fun main(args: Array<String>) {
+    jvmStatic public fun main(args: Array<String>) {
         for (i in 1..12)
             test(i)
     }

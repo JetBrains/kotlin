@@ -110,10 +110,9 @@ public class ReferenceVariantsHelper(
 
         val dataFlowInfo = context.getDataFlowInfo(expression)
 
-        val smartCastManager = resolutionFacade.frontendService<SmartCastManager>(expression)
+        val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
         val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
-            smartCastManager
-                    .getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
+            smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(it.value, context, containingDeclaration, dataFlowInfo)
         }.toSet()
 
         val pair = getExplicitReceiverData(expression)

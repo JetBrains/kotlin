@@ -16,16 +16,12 @@
 
 package org.jetbrains.kotlin.lang.resolve.android
 
-import java.util.ArrayList
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
-import java.io.ByteArrayInputStream
-import kotlin.properties.Delegates
-import com.intellij.psi.impl.*
-import com.intellij.openapi.components.*
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
+import java.io.ByteArrayInputStream
 
 public class CliAndroidUIXmlProcessor(
         project: Project,
@@ -33,11 +29,11 @@ public class CliAndroidUIXmlProcessor(
         private val resDirectories: List<String>
 ) : AndroidUIXmlProcessor(project) {
 
-    override val resourceManager: CliAndroidResourceManager by Delegates.lazy {
+    override val resourceManager: CliAndroidResourceManager by lazy {
         CliAndroidResourceManager(project, manifestPath, resDirectories)
     }
 
-    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by Delegates.lazy {
+    override val cachedSources: CachedValue<List<AndroidSyntheticFile>> by lazy {
         cachedValue {
             Result.create(parse(), ModificationTracker.NEVER_CHANGED)
         }
@@ -49,7 +45,7 @@ public class CliAndroidUIXmlProcessor(
 
         try {
             for (file in files) {
-                val inputStream = ByteArrayInputStream(file.getVirtualFile().contentsToByteArray())
+                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
                 resourceManager.saxParser.parse(inputStream, handler)
             }
             return removeDuplicates(resources)

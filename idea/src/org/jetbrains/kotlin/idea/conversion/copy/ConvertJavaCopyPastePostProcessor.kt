@@ -97,13 +97,13 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             rangeMarker.setGreedyToLeft(true)
             rangeMarker.setGreedyToRight(true)
 
+            KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
+
             explicitImports.forEach { fqName ->
                 targetFile.resolveImportReference(fqName).firstOrNull()?.let {
                     ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
                 }
             }
-
-            KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
 
             return rangeMarker.range
         }

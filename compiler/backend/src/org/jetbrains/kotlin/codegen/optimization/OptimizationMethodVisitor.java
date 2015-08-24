@@ -37,6 +37,8 @@ import java.util.List;
 public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
 
+    private static final MethodTransformer MANDATORY_METHOD_TRANSFORMER = new MandatoryMethodTransformer();
+
     private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
             new RedundantNullCheckMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
@@ -75,7 +77,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         super.visitEnd();
 
         if (shouldBeTransformed(methodNode)) {
-            MandatoryMethodTransformer.INSTANCE$.transform("fake", methodNode);
+            MANDATORY_METHOD_TRANSFORMER.transform("fake", methodNode);
             if (canBeOptimized(methodNode) && !disableOptimization) {
                 for (MethodTransformer transformer : OPTIMIZATION_TRANSFORMERS) {
                     transformer.transform("fake", methodNode);

@@ -65,3 +65,29 @@ public class WithVarargConstructor {
 public class T {
     public Set<String> set;
 }
+
+public interface JFunction0 {
+    void foo();
+}
+
+public interface JFunction1ReturnType<T> {
+    void foo(T t);
+}
+
+public interface JFunction1<T> {
+    T foo();
+}
+
+public interface JFunction2<T, K> {
+    K foo(T p);
+}
+
+public class MethodReferenceHelperClass {
+    public static void staticFun0(JFunction0 f) {}
+    public static <T> void staticFun1(JFunction1<T> f) {}
+    public static <T, K> void staticFun2(JFunction2<T, K> f) {}
+
+    public void memberFun0(JFunction0 f) {}
+    public <T> void memberFun1(JFunction1<T> f) {}
+    public <T, K> void memberFun2(JFunction2<T, K> f) {}
+}

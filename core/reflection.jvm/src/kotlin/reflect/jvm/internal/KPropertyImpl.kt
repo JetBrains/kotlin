@@ -27,7 +27,7 @@ import kotlin.reflect.KProperty
 interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
     val javaField: Field?
 
-    val container: KCallableContainerImpl
+    val container: KDeclarationContainerImpl
 
     override val getter: Getter<R>
 
@@ -80,7 +80,8 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
 
 private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
     fun isPlatformStaticProperty() =
-            property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null
+            property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
+            property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
     fun isNotNullProperty() =
             !TypeUtils.isNullableType(property.descriptor.type)

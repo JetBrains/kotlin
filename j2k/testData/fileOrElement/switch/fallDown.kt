@@ -1,9 +1,7 @@
 package switch_demo
 
-import kotlin.platform.platformStatic
-
 public object SwitchDemo {
-    platformStatic public fun main(args: Array<String>) {
+    jvmStatic public fun main(args: Array<String>) {
         val month = 8
         val monthString: String
         when (month) {

@@ -35,25 +35,22 @@ public interface ResolutionFacade {
 
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 
-    public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
+    public val moduleDescriptor: ModuleDescriptor
 
+    // get service for the module this resolution was created for
+    public fun <T> getFrontendService(serviceClass: Class<T>): T
+
+    public fun <T> getIdeService(serviceClass: Class<T>): T
+
+    // get service for the module defined by PsiElement/ModuleDescriptor passed as parameter
     public fun <T> getFrontendService(element: PsiElement, serviceClass: Class<T>): T
 
     public fun <T> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
 
-    public fun <T> getIdeService(element: PsiElement, serviceClass: Class<T>): T
-
-    public fun <T> getIdeService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T
 }
 
-public inline fun <reified T> ResolutionFacade.frontendService(element: PsiElement): T
-        = this.getFrontendService(element, javaClass<T>())
+public inline fun <reified T> ResolutionFacade.frontendService(): T
+        = this.getFrontendService(javaClass<T>())
 
-public inline fun <reified T> ResolutionFacade.frontendService(moduleDescriptor: ModuleDescriptor): T
-        = this.getFrontendService(moduleDescriptor, javaClass<T>())
-
-public inline fun <reified T> ResolutionFacade.ideService(element: PsiElement): T
-        = this.getIdeService(element, javaClass<T>())
-
-public inline fun <reified T> ResolutionFacade.ideService(moduleDescriptor: ModuleDescriptor): T
-        = this.getIdeService(moduleDescriptor, javaClass<T>())
+public inline fun <reified T> ResolutionFacade.ideService(): T
+        = this.getIdeService(javaClass<T>())

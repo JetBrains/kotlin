@@ -22,16 +22,16 @@ import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
 import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
 abstract class DescriptorBasedProperty<out R> protected constructor(
-        internal val container: KCallableContainerImpl,
+        internal val container: KDeclarationContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: PropertyDescriptor?
 ) : KCallableImpl<R> {
-    constructor(container: KCallableContainerImpl, name: String, signature: String) : this(
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(
             container, name, signature, null
     )
 
-    constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : this(
+    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : this(
             container,
             descriptor.name.asString(),
             RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),

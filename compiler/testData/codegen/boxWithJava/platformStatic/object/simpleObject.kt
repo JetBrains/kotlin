@@ -1,16 +1,16 @@
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
 object A {
 
     val b: String = "OK"
 
-    platformStatic val c: String = "OK"
+    jvmStatic val c: String = "OK"
 
-    platformStatic fun test1() = b
+    jvmStatic fun test1() = b
 
-    platformStatic fun test2() = b
+    jvmStatic fun test2() = b
 
-    platformStatic fun String.test3() = this + b
+    jvmStatic fun String.test3() = this + b
 }
 
 fun box(): String {

@@ -36,6 +36,6 @@ public fun ResolutionFacade.psiClassToDescriptor(
         resolveToDescriptor(declaration)
     }
     else {
-        frontendService<JavaDescriptorResolver>(psiClass).resolveClass(JavaClassImpl(psiClass))
+        this.getFrontendService(psiClass, javaClass<JavaDescriptorResolver>()).resolveClass(JavaClassImpl(psiClass))
     }  as? ClassifierDescriptor
 }

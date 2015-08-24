@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.CaretPosition
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMethodsHandler
 import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class TypeInstantiationItems(
         val resolutionFacade: ResolutionFacade,
-        val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,
@@ -95,7 +94,7 @@ class TypeInstantiationItems(
 
             val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(classifier))
             if (javaClassId != null) {
-                val javaAnalog = moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName())
+                val javaAnalog = resolutionFacade.moduleDescriptor.resolveTopLevelClass(javaClassId.asSingleFqName())
                 if (javaAnalog != null) {
                     inheritanceSearchers.addInheritorSearcher(javaAnalog, classifier, typeArgs, tail)
                 }

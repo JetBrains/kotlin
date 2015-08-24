@@ -18,6 +18,6 @@ package kotlin.jvm.internal
 
 import kotlin.reflect.KDeclarationContainer
 
-public interface DeclarationContainerImpl : KDeclarationContainer {
+interface ClassBasedDeclarationContainer : KDeclarationContainer {
     public val jClass: Class<*>
 }

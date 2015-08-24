@@ -1,57 +1,57 @@
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
-<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'class'">platformStatic</error>
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'class'">jvmStatic</error>
 class A {
-    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">platformStatic</error>
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">jvmStatic</error>
     companion object {
-        platformStatic fun a1() {
+        jvmStatic fun a1() {
 
         }
     }
 
-    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">platformStatic</error>
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">jvmStatic</error>
     object A {
-        platformStatic fun a2() {
+        jvmStatic fun a2() {
 
         }
     }
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
+            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'">jvmStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
+    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'">jvmStatic fun a4()</error> {
 
     }
 }
 
-<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">platformStatic</error>
+<error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">jvmStatic</error>
 interface B {
     companion object {
-        <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a1()</error> {
+        <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'">jvmStatic fun a1()</error> {
 
         }
     }
 
     object A {
-        platformStatic fun a2() {
+        jvmStatic fun a2() {
 
         }
     }
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a3()</error> {
+            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'">jvmStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[PLATFORM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'platformStatic'">platformStatic fun a4()</error> {
+    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'jvmStatic'">jvmStatic fun a4()</error> {
 
     }
 }

@@ -1,5 +1,3 @@
-import kotlin.platform.platformStatic
-
 abstract class A {
     // INFO: {"checked": "true", "toAbstract": "true"}
     var x = 2 * 3
@@ -21,7 +19,7 @@ abstract class A {
         var X = "1" + "2"
 
         // INFO: {"checked": "true", "toAbstract": "true"}
-        platformStatic fun foo2(n: Int): String {
+        jvmStatic fun foo2(n: Int): String {
             return "_" + n + "_"
         }
     }

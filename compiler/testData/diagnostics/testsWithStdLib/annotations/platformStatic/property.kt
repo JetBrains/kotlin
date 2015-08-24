@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
 open class B {
     public open val base1 : Int = 1
@@ -9,38 +9,38 @@ open class B {
 class A {
     companion object : B() {
         var p1:Int = 1
-            @platformStatic set(p: Int) {
+            @jvmStatic set(p: Int) {
                 p1 = 1
             }
 
-        @platformStatic val z = 1;
+        @jvmStatic val z = 1;
 
-        @platformStatic override val base1: Int = 0
+        @jvmStatic override val base1: Int = 0
 
         override val base2: Int = 0
-            @platformStatic get
+            @jvmStatic get
     }
 
     object A : B() {
         var p:Int = 1
-            @platformStatic set(p1: Int) {
+            @jvmStatic set(p1: Int) {
                 p = 1
             }
 
-        @platformStatic val z = 1;
+        @jvmStatic val z = 1;
 
-        <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic override val base1: Int<!> = 0
+        <!OVERRIDE_CANNOT_BE_STATIC!>@jvmStatic override val base1: Int<!> = 0
 
-        platformStatic open fun f() {}
+        jvmStatic open fun f() {}
 
         override val base2: Int = 0
-            <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic get<!>
+            <!OVERRIDE_CANNOT_BE_STATIC!>@jvmStatic get<!>
     }
 
     var p:Int = 1
-        <!PLATFORM_STATIC_NOT_IN_OBJECT!>@platformStatic set(p1: Int)<!> {
+        <!JVM_STATIC_NOT_IN_OBJECT!>@jvmStatic set(p1: Int)<!> {
             p = 1
         }
 
-    <!PLATFORM_STATIC_NOT_IN_OBJECT!>@platformStatic val z2<!> = 1;
+    <!JVM_STATIC_NOT_IN_OBJECT!>@jvmStatic val z2<!> = 1;
 }

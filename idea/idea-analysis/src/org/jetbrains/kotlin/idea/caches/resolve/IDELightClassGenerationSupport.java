@@ -91,9 +91,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         Collections.sort(sortedFiles, scopeFileComparator);
 
         JetFile file = sortedFiles.get(0);
-        ResolveSession session = KotlinCacheService.getInstance(file.getProject()).getLazyResolveSession(file);
-        forceResolvePackageDeclarations(files, session);
-        return new LightClassConstructionContext(session.getBindingContext(), session.getModuleDescriptor());
+        ResolveSession resolveSession = ResolvePackage.getResolutionFacade(file).getFrontendService(ResolveSession.class);
+        forceResolvePackageDeclarations(files, resolveSession);
+        return new LightClassConstructionContext(resolveSession.getBindingContext(), resolveSession.getModuleDescriptor());
     }
 
     @NotNull
@@ -101,7 +101,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(classOrObject);
 
-        ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(classOrObject);
+        ModuleDescriptor moduleDescriptor = resolutionFacade.getModuleDescriptor();
         BindingContext bindingContext = resolutionFacade.analyze(classOrObject, BodyResolveMode.FULL);
         if (classOrObject.isLocal()) {
             ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, classOrObject);

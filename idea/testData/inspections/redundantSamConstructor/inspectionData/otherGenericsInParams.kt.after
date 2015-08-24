@@ -1,0 +1,12 @@
+package redundantSamConstructor
+
+import a.*
+
+fun test() {
+    MyJavaClass.foo1({ }, 1)
+    MyJavaClass.foo1(Runnable { }, Runnable { })
+    MyJavaClass.foo2(1, { })
+    MyJavaClass.foo2(Runnable { }, Runnable { })
+
+    A<String>().foo({})
+}

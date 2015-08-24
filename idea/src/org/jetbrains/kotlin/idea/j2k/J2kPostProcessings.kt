@@ -21,6 +21,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
@@ -46,6 +47,7 @@ object J2KPostProcessingRegistrar {
         _processings.add(MoveLambdaOutsideParenthesesProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
+        _processings.add(RemoveRedundantSamAdaptersProcessing())
 
         registerIntentionBasedProcessing(IfThenToSafeAccessIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(IfThenToElvisIntention()) { applyTo(it) }
@@ -162,6 +164,20 @@ object J2KPostProcessingRegistrar {
             if (element !is JetCallExpression) return null
             val propertyName = intention.detectPropertyNameToUse(element) ?: return null
             return { intention.applyTo(element, propertyName) }
+        }
+    }
+
+    private class RemoveRedundantSamAdaptersProcessing : J2kPostProcessing {
+        override fun createAction(element: JetElement, diagnostics: Diagnostics): (() -> Unit)? {
+            if (element !is JetCallExpression) return null
+
+            val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+            if (expressions.isEmpty()) return null
+
+            return {
+                RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+                        .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
+            }
         }
     }
 }

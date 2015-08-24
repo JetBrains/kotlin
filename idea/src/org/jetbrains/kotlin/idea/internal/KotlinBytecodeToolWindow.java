@@ -233,10 +233,8 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
             };
 
-            ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(jetFile);
-
             state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
-                                        moduleDescriptor, bindingContext,
+                                        resolutionFacade.getModuleDescriptor(), bindingContext,
                                         toProcess, !enableAssertions, !enableAssertions,
                                         generateClassFilter,
                                         !enableInline, !enableOptimization, null, null,

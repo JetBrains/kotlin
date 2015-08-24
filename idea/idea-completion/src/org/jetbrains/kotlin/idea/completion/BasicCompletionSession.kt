@@ -97,8 +97,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         null
 
     private val smartCompletion = expression?.let {
-        SmartCompletion(it, resolutionFacade, moduleDescriptor, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
-                        GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true)
+        SmartCompletion(
+                it, resolutionFacade, bindingContext, isVisibleFilter, inDescriptor, prefixMatcher,
+                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, forBasicCompletion = true
+        )
     }
 
     private fun calcCompletionKind(): CompletionKind {

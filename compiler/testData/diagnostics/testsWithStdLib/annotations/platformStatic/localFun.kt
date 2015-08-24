@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-import kotlin.platform.platformStatic
+import kotlin.jvm.jvmStatic
 
 fun main(args: Array<String>) {
-    <!PLATFORM_STATIC_NOT_IN_OBJECT!>@platformStatic fun a()<!>{
+    <!JVM_STATIC_NOT_IN_OBJECT!>@jvmStatic fun a()<!>{
 
     }
 }

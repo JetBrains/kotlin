@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ant
 
 import org.apache.tools.ant.AntClassLoader
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
+import org.jetbrains.kotlin.preloading.Preloader
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.JarURLConnection
@@ -54,10 +55,10 @@ object KotlinAntTaskUtil {
         val cached = classLoaderRef.get()
         if (cached != null) return cached
 
-        val myLoader = javaClass.getClassLoader()
+        val myLoader = javaClass.classLoader
         if (myLoader !is AntClassLoader) return myLoader
 
-        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJar), 4096, myLoader, null)
+        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJar), Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, myLoader, null)
         classLoaderRef = SoftReference(classLoader)
 
         return classLoader

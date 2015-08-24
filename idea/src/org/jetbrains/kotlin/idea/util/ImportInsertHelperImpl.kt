@@ -204,7 +204,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val targetFqName = target.importableFqNameSafe
             val parentFqName = targetFqName.parent()
 
-            val moduleDescriptor = resolutionFacade.findModuleDescriptor(file)
+            val moduleDescriptor = resolutionFacade.moduleDescriptor
             val imports = file.getImportDirectives()
             val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
             val importedScopes = imports

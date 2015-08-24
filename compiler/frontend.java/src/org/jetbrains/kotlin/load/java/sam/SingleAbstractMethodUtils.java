@@ -86,7 +86,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    private static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
+    public static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();

@@ -38,7 +38,7 @@ public fun JetExpression.computeTypeInfoInContext(
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false
 ): JetTypeInfo {
-    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>(contextExpression)
+    return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
             .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 

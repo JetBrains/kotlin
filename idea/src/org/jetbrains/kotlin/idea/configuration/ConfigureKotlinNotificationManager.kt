@@ -16,22 +16,14 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.project.Project
-import com.intellij.notification.NotificationsManager
 import com.intellij.notification.Notification
-import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.kotlin.idea.configuration.ui.notifications.*
+import com.intellij.notification.NotificationsManager
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project) {
         notify(project, ConfigureKotlinNotification(project, ConfigureKotlinNotification.getNotificationString(project)))
-    }
-}
-
-@deprecated("Deprecated after moving to platform types")
-object AbsentSdkAnnotationsNotificationManager: KotlinSingleNotificationManager<AbsentSdkAnnotationsNotification> {
-    fun notify(project: Project, sdks: Collection<Sdk>) {
-        notify(project, AbsentSdkAnnotationsNotification(sdks, getNotificationTitle(sdks), getNotificationString(sdks)))
     }
 }
 

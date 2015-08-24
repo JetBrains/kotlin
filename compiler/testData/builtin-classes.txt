@@ -1076,10 +1076,12 @@ public interface PropertyMetadata {
         public abstract fun <get-name>(): kotlin.String
 }
 
-public final class PropertyMetadataImpl : kotlin.PropertyMetadata {
+kotlin.data() public final class PropertyMetadataImpl : kotlin.PropertyMetadata {
     /*primary*/ public constructor PropertyMetadataImpl(/*0*/ name: kotlin.String)
     public open override /*1*/ val name: kotlin.String
         public open override /*1*/ fun <get-name>(): kotlin.String
+    public final /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ name: kotlin.String = ...): kotlin.PropertyMetadataImpl
 }
 
 public interface Range</*0*/ T : kotlin.Comparable<T>> {

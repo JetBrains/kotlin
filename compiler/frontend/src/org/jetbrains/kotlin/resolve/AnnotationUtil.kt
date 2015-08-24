@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
@@ -29,7 +28,8 @@ public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
 }
 
 public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null
+    return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null ||
+           getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmStatic")) != null
 }
 
 public fun DeclarationDescriptor.findPublicFieldAnnotation(): AnnotationDescriptor? {

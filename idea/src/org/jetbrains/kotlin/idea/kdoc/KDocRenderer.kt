@@ -181,7 +181,8 @@ object KDocRenderer {
                 MarkdownTokenTypes.LPAREN,
                 MarkdownTokenTypes.RPAREN,
                 MarkdownTokenTypes.LBRACKET,
-                MarkdownTokenTypes.RBRACKET -> {
+                MarkdownTokenTypes.RBRACKET,
+                MarkdownTokenTypes.CODE_FENCE_CONTENT-> {
                     sb.append(nodeText)
                 }
                 MarkdownTokenTypes.EOL -> {

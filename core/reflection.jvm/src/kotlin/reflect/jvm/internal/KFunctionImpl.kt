@@ -31,15 +31,15 @@ import kotlin.reflect.jvm.internal.JvmFunctionSignature.JavaMethod
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.KotlinFunction
 
 open class KFunctionImpl protected constructor(
-        private val container: KCallableContainerImpl,
+        private val container: KDeclarationContainerImpl,
         name: String,
         signature: String,
         descriptorInitialValue: FunctionDescriptor?
 ) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl(),
         KLocalFunction<Any?>, KMemberFunction<Any, Any?>, KTopLevelExtensionFunction<Any?, Any?>, KTopLevelFunction<Any?> {
-    constructor(container: KCallableContainerImpl, name: String, signature: String) : this(container, name, signature, null)
+    constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
 
-    constructor(container: KCallableContainerImpl, descriptor: FunctionDescriptor) : this(
+    constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
             container, descriptor.name.asString(), RuntimeTypeMapper.mapSignature(descriptor).asString(), descriptor
     )
 
@@ -66,7 +66,11 @@ open class KFunctionImpl protected constructor(
             is Constructor<*> -> FunctionCaller.Constructor(member)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) -> FunctionCaller.InstanceMethod(member)
-                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null -> FunctionCaller.PlatformStaticInObject(member)
+
+                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
+                descriptor.annotations.findAnnotation(JVM_STATIC) != null->
+                    FunctionCaller.PlatformStaticInObject(member)
+
                 else -> FunctionCaller.StaticMethod(member)
             }
             else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor")

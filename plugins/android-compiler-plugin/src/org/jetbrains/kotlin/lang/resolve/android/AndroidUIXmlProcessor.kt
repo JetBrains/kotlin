@@ -16,42 +16,16 @@
 
 package org.jetbrains.kotlin.lang.resolve.android
 
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.concurrent.ConcurrentLinkedQueue
-import java.io.File
-import javax.xml.parsers.SAXParserFactory
-import java.io.File
-import java.io.FileInputStream
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetFile
-import javax.xml.parsers.SAXParser
-import java.util.HashMap
-import com.intellij.openapi.project.Project
-import java.util.concurrent.ConcurrentLinkedQueue
-import com.intellij.testFramework.LightVirtualFile
-import com.intellij.psi.PsiManager
-import java.io.FileInputStream
-import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.Attributes
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.util.PsiModificationTracker
-import java.util.Queue
-import com.intellij.psi.PsiFile
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider.Result
-import java.util.concurrent.atomic.AtomicInteger
-import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.openapi.util.*
-import com.intellij.openapi.vfs.impl.*
-import com.intellij.openapi.vfs.*
-import kotlin.properties.*
-import com.intellij.psi.impl.*
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.types.Flexibility
 
 public class AndroidSyntheticFile(val name: String, val contents: String)
@@ -69,12 +43,12 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     //MAKE CONSTANT (or abstract)
     var supportV4 = false
 
-    private val cachedJetFiles: CachedValue<List<JetFile>> by Delegates.lazy {
+    private val cachedJetFiles: CachedValue<List<JetFile>> by lazy {
         cachedValue {
             val psiManager = PsiManager.getInstance(project)
             val applicationPackage = resourceManager.androidModuleInfo?.applicationPackage
 
-            val jetFiles = cachedSources.getValue().mapIndexed { index, syntheticFile ->
+            val jetFiles = cachedSources.value.mapIndexed { index, syntheticFile ->
                 val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"
                 val virtualFile = LightVirtualFile(fileName, syntheticFile.contents)
                 val jetFile = psiManager.findFile(virtualFile) as JetFile
@@ -109,7 +83,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
             val files = entry.getValue()
             val resources = parseLayout(files)
 
-            val layoutName = files[0].getName().substringBefore('.')
+            val layoutName = files[0].name.substringBefore('.')
 
             val mainLayoutFile = renderMainLayoutFile(layoutName, resources)
             val viewLayoutFile = renderViewLayoutFile(layoutName, resources)
@@ -118,7 +92,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
         }.filterNotNull() + commonFiles
     }
 
-    public fun parseToPsi(): List<JetFile>? = cachedJetFiles.getValue()
+    public fun parseToPsi(): List<JetFile>? = cachedJetFiles.value
 
     protected abstract fun parseLayout(files: List<PsiFile>): List<AndroidResource>
 
@@ -209,8 +183,8 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
     }
 
     companion object {
-        private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getPackageFqName().asString()
-        private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.getRelativeClassName().asString()
+        private val EXPLICIT_FLEXIBLE_PACKAGE = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString()
+        private val EXPLICIT_FLEXIBLE_CLASS_NAME = Flexibility.FLEXIBLE_TYPE_CLASSIFIER.relativeClassName.asString()
 
         private val ANDROID_IMPORTS = listOf(
                 "android.app.*",

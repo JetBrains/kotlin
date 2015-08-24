@@ -73,7 +73,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val position: PsiElement = parameters.getPosition()
     private val file = position.getContainingFile() as JetFile
     protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
-    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
+    protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.moduleDescriptor
     protected val project: Project = position.getProject()
 
     protected val nameExpression: JetSimpleNameExpression?
@@ -148,7 +148,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             var receiverTypes = receiversData.receivers.flatMap { receiverValue ->
                 val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)
                 if (dataFlowValue.isPredictable) { // we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed
-                    resolutionFacade.frontendService<SmartCastManager>(file)
+                    resolutionFacade.frontendService<SmartCastManager>()
                             .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)
                 }
                 else {
@@ -187,7 +187,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter, true)
+        get() = KotlinIndicesHelper(resolutionFacade, searchScope, isVisibleFilter, true)
 
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
             = ToFromOriginalFileMapper(parameters.originalFile as JetFile, position.containingFile as JetFile, parameters.offset)

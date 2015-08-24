@@ -69,12 +69,12 @@ sealed class JvmFunctionSignature {
     }
 
     open class BuiltInFunction(private val signature: String) : JvmFunctionSignature() {
-        open fun getMember(container: KCallableContainerImpl): Member? = null
+        open fun getMember(container: KDeclarationContainerImpl): Member? = null
 
         override fun asString(): String = signature
 
         class Predefined(signature: String, private val member: Member): BuiltInFunction(signature) {
-            override fun getMember(container: KCallableContainerImpl): Member = member
+            override fun getMember(container: KDeclarationContainerImpl): Member = member
         }
     }
 }

@@ -25,13 +25,10 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -69,7 +66,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         element.accept(object: JetTreeVisitorVoid() {
 
             override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
-                val context = expression.analyzeAndGetResult().bindingContext
+                val context = expression.analyze()
                 val resolvedCall = expression.getParentCall(context).getResolvedCall(context)
                 if (resolvedCall != null && !InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
                     val arguments = resolvedCall.getValueArguments()

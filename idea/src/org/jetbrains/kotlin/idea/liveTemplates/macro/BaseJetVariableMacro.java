@@ -72,8 +72,7 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        IterableTypesDetector detector =
-                resolutionFacade.getIdeService(contextExpression, IterableTypesDetection.class).createDetector(scope);
+        IterableTypesDetector detector = resolutionFacade.getIdeService(IterableTypesDetection.class).createDetector(scope);
 
         DataFlowInfo dataFlowInfo = getDataFlowInfo(bindingContext, contextExpression);
 

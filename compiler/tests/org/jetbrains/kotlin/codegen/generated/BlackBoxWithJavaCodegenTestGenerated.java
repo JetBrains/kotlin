@@ -273,6 +273,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("callPrivateJavaMethod")
+        public void testCallPrivateJavaMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/callPrivateJavaMethod/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("callStaticJavaMethod")
         public void testCallStaticJavaMethod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/callStaticJavaMethod/");

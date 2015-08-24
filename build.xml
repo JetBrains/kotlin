@@ -278,9 +278,9 @@
                 <assertions>
                     <enable/>
                 </assertions>
+                <arg value="-cp"/>
                 <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <arg value="org.jetbrains.kotlin.cli.js.K2JSCompiler"/>
-                <arg line="4096 notime"/>
                 <arg line="${src.line}"/>
                 <arg value="-output"/>
                 <arg value="@{output}"/>
@@ -415,6 +415,7 @@
             <assertions>
                 <enable/>
             </assertions>
+            <!-- TODO: use the new command-line interface to preloader here -->
             <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
             <arg value="org.jetbrains.kotlin.serialization.builtins.BuiltinsPackage"/>
             <arg value="4096"/>
@@ -646,9 +647,9 @@
                 <assertions>
                     <enable/>
                 </assertions>
+                <arg value="-cp"/>
                 <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <arg value="org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"/>
-                <arg line="4096 notime"/>
                 <arg line="${src.line}"/>
                 <arg value="-d"/>
                 <arg value="@{output}"/>

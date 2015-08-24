@@ -16,24 +16,15 @@
 
 package org.jetbrains.kotlin.codegen.optimization.fixStack
 
-import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
-import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
-import org.jetbrains.kotlin.codegen.optimization.fixStack.forEachPseudoInsn
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.*
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
-import java.util.*
-import kotlin.properties.Delegates
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-public object FixStackMethodTransformer : MethodTransformer() {
+public class FixStackMethodTransformer : MethodTransformer() {
     public override fun transform(internalClassName: String, methodNode: MethodNode) {
         val context = FixStackContext(methodNode)
 

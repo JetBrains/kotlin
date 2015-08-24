@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
+import org.jetbrains.kotlin.preloading.Preloader;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.UtilsPackage;
 
@@ -228,7 +229,9 @@ public class MockLibraryUtil {
     private static synchronized ClassLoader createCompilerClassLoader() {
         try {
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
-            return ClassPreloadingUtils.preloadClasses(Collections.singletonList(kotlinCompilerJar), 4096, null, null, null);
+            return ClassPreloadingUtils.preloadClasses(
+                    Collections.singletonList(kotlinCompilerJar), Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE, null, null, null
+            );
         }
         catch (Throwable e) {
             throw UtilsPackage.rethrow(e);

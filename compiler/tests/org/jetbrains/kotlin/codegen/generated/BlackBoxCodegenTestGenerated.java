@@ -2851,6 +2851,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyMetadataEqualsHashCodeToString.kt")
+        public void testPropertyMetadataEqualsHashCodeToString() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyMetadataEqualsHashCodeToString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyMetadataShouldBeCached.kt")
         public void testPropertyMetadataShouldBeCached() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/delegatedProperty/propertyMetadataShouldBeCached.kt");

@@ -47,9 +47,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             addFunctionLiteralArgumentCompletions()
 
-            val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
-                                             bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
-                                             toFromOriginalFileMapper, lookupElementFactory)
+            val completion = SmartCompletion(
+                    expression, resolutionFacade, bindingContext, isVisibleFilter, inDescriptor,
+                    prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory
+            )
 
             val (additionalItems, inheritanceSearcher) = completion.additionalItems()
             collector.addElements(additionalItems)
@@ -103,7 +104,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                         override fun getValueArgumentList() = throw UnsupportedOperationException()
                     }
 
-                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor)
+                    val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade)
                             .calculateForArgument(dummyCall, dummyArgument)
                     collector.addElements(LambdaItems.collect(expectedInfos))
                 }

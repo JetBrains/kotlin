@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
-import java.util.HashMap
+import java.util.*
 
 public class JavaToKotlinPreconversionPullUpHelper(
         private val data: PullUpData,
@@ -58,7 +58,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
     private val fieldsToUsages = HashMap<PsiField, List<EncapsulateFieldUsageInfo>>()
     private val dummyAccessorByName = HashMap<String, PsiMethod>()
 
-    private val platformStaticAnnotation = JetPsiFactory(data.sourceClass.project).createAnnotationEntry("kotlin.platform.platformStatic")
+    private val jvmStaticAnnotation = JetPsiFactory(data.sourceClass.project).createAnnotationEntry("kotlin.jvm.jvmStatic")
 
     companion object {
         private var PsiMember.originalMember: PsiMember? by CopyableUserDataProperty(Key.create("ORIGINAL_MEMBER"))
@@ -147,7 +147,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
             newDeclaration.removeModifier(JetTokens.ABSTRACT_KEYWORD)
         }
         if (member.hasModifierProperty(PsiModifier.STATIC) && newDeclaration is JetNamedFunction) {
-            newDeclaration.addAnnotationWithSpace(platformStaticAnnotation).addToShorteningWaitSet()
+            newDeclaration.addAnnotationWithSpace(jvmStaticAnnotation).addToShorteningWaitSet()
         }
 
         if (originalMember is PsiField) {

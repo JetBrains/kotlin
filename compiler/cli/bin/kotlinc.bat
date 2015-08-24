@@ -28,8 +28,8 @@ rem We use the value of the JAVA_OPTS environment variable if defined
 set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
 
 "%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-  org.jetbrains.kotlin.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
-  %KOTLIN_COMPILER% 4096 notime %*
+  org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
+  %KOTLIN_COMPILER% %*
 
 exit /b %ERRORLEVEL%
 goto end
