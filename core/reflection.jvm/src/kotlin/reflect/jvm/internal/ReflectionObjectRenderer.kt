@@ -56,11 +56,14 @@ object ReflectionObjectRenderer {
         }
     }
 
-    // TODO: include visibility, return type
+    // TODO: include visibility
     fun renderProperty(descriptor: PropertyDescriptor): String {
         return StringBuilder {
             append(if (descriptor.isVar) "var " else "val ")
             appendReceiversAndName(descriptor)
+
+            append(": ")
+            append(renderType(descriptor.type))
         }.toString()
     }
 

@@ -10,7 +10,7 @@ class A {
 
 fun box(): String {
     val p = javaClass<A>().kotlin.memberExtensionProperties.single()
-    return if ("$p" == "var A.(kotlin.String.)id") "OK" else "Fail $p"
+    return if ("$p" == "var A.(kotlin.String.)id: kotlin.String") "OK" else "Fail $p"
 
     val q = javaClass<A>().kotlin.declaredFunctions.single()
     if ("$q" != "fun A.(kotlin.Int.)foo(): kotlin.Double") return "Fail q $q"
