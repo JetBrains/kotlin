@@ -281,7 +281,7 @@ public interface Errors {
 
     // Property-specific
 
-    DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
+    DiagnosticFactory2<JetNamedDeclaration, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
             DiagnosticFactory2.create(ERROR, VAL_OR_VAR_NODE);
 
     DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);

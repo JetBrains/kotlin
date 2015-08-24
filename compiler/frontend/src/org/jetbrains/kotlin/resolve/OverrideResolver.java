@@ -554,7 +554,7 @@ public class OverrideResolver {
                 public void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden) {
                     if (!kindMismatchError) {
                         kindMismatchError = true;
-                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                        trace.report(VAR_OVERRIDDEN_BY_VAL.on(member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
                     }
                 }
 

@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getCalleeHighlightingRange
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.sure
 import kotlin.platform.platformStatic
 
@@ -319,9 +316,13 @@ public object PositioningStrategies {
         }
     }
 
-    public val VAL_OR_VAR_NODE: PositioningStrategy<JetProperty> = object : PositioningStrategy<JetProperty>() {
-        override fun mark(element: JetProperty): List<TextRange> {
-            return markElement(element.getValOrVarKeyword())
+    public val VAL_OR_VAR_NODE: PositioningStrategy<JetNamedDeclaration> = object : PositioningStrategy<JetNamedDeclaration>() {
+        override fun mark(element: JetNamedDeclaration): List<TextRange> {
+            return when (element) {
+                is JetParameter -> markElement(element.valOrVarKeyword ?: element)
+                is JetProperty -> markElement(element.valOrVarKeyword)
+                else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
+            }
         }
     }
 
