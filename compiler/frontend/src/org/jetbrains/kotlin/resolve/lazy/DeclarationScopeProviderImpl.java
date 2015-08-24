@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -59,7 +60,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
 
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
-            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject);
+            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE);
             if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
                 return classDescriptor.getScopeForInitializerResolution();
             }

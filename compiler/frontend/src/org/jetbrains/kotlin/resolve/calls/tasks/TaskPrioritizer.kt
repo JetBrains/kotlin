@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.Call
@@ -178,7 +179,7 @@ public class TaskPrioritizer(
                 convertWithImpliedThis(
                         c.scope,
                         explicitReceiver.value,
-                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.types, c.context.trace),
+                        callableDescriptorCollector.getExtensionsByName(c.scope, c.name, explicitReceiver.types, createLookupLocation(c), c.context.trace),
                         createKind(EXTENSION_RECEIVER, isExplicit),
                         c.context.call
                 )
@@ -197,10 +198,10 @@ public class TaskPrioritizer(
                 val members = Lists.newArrayList<ResolutionCandidate<D>>()
                 for (type in explicitReceiver.types) {
                     val membersForThisVariant = if (staticMembers) {
-                        callableDescriptorCollector.getStaticMembersByName(type, c.name, c.context.trace)
+                        callableDescriptorCollector.getStaticMembersByName(type, c.name, createLookupLocation(c), c.context.trace)
                     }
                     else {
-                        callableDescriptorCollector.getMembersByName(type, c.name, c.context.trace)
+                        callableDescriptorCollector.getMembersByName(type, c.name, createLookupLocation(c), c.context.trace)
                     }
                     convertWithReceivers(
                             membersForThisVariant,
@@ -229,7 +230,7 @@ public class TaskPrioritizer(
             val dynamicScope = DynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.getContainingDeclaration())
 
             val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
-                it.getNonExtensionsByName(dynamicScope, c.name, c.context.trace)
+                it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c), c.context.trace)
             }
 
             convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
@@ -250,7 +251,7 @@ public class TaskPrioritizer(
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, c.context.trace)
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, createLookupLocation(c), c.context.trace)
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }
@@ -265,7 +266,7 @@ public class TaskPrioritizer(
 
             val members = convertWithImpliedThisAndNoReceiver(
                     c.scope,
-                    callableDescriptorCollector.getNonExtensionsByName(c.scope, c.name, c.context.trace),
+                    callableDescriptorCollector.getNonExtensionsByName(c.scope, c.name, createLookupLocation(c), c.context.trace),
                     c.context.call
             )
 
@@ -297,6 +298,8 @@ public class TaskPrioritizer(
             addMembers(implicitReceiver, c, staticMembers = true, isExplicit = false)
         }
     }
+
+    private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = KotlinLookupLocation(c.context.call.callElement)
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverWithTypes, c: TaskPrioritizerContext<D, F>) {
         val implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope)

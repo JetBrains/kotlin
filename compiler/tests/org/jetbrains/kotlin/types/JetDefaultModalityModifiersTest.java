@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -108,7 +109,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
                     TargetPlatform.Default.INSTANCE$
             );
 
-            return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass);
+            return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass, NoLookupLocation.FROM_TEST);
         }
 
         private void testClassModality(String classDeclaration, ClassKind kind, Modality expectedModality) {

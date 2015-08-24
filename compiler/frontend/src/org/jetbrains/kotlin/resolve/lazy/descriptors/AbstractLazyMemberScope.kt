@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.LinkedHashSet
+import java.util.*
 
 public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
 protected constructor(
@@ -125,33 +125,36 @@ protected constructor(
 
     protected abstract fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>)
 
-    protected fun computeDescriptorsFromDeclaredElements(kindFilter: DescriptorKindFilter,
-                                                         nameFilter: (Name) -> Boolean): List<DeclarationDescriptor> {
+    protected fun computeDescriptorsFromDeclaredElements(
+            kindFilter: DescriptorKindFilter,
+            nameFilter: (Name) -> Boolean,
+            location: LookupLocation
+    ): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
         val result = LinkedHashSet<DeclarationDescriptor>(declarations.size())
         for (declaration in declarations) {
             if (declaration is JetClassOrObject) {
-                val name = declaration.getNameAsSafeName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(classDescriptors(name))
                 }
             }
             else if (declaration is JetFunction) {
-                val name = declaration.getNameAsSafeName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getFunctions(name))
+                    result.addAll(getFunctions(name, location))
                 }
             }
             else if (declaration is JetProperty) {
-                val name = declaration.getNameAsSafeName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name))
+                    result.addAll(getProperties(name, location))
                 }
             }
             else if (declaration is JetParameter) {
-                val name = declaration.getNameAsSafeName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name))
+                    result.addAll(getProperties(name, location))
                 }
             }
             else if (declaration is JetScript) {

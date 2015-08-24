@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -99,13 +100,13 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : JetScopeImp
 
         val memberScope = ownerClass.unsubstitutedMemberScope
         val getMethod = possibleGetMethodNames(name)
-                                .flatMap { memberScope.getFunctions(it).asSequence() }
+                                .flatMap { memberScope.getFunctions(it, NoLookupLocation.UNSORTED).asSequence() }
                                 .singleOrNull {
                                     isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return null
 
 
-        val setMethod = memberScope.getFunctions(setMethodName(getMethod.name))
+        val setMethod = memberScope.getFunctions(setMethodName(getMethod.name), NoLookupLocation.UNSORTED)
                 .singleOrNull { isGoodSetMethod(it, getMethod) }
 
         val propertyType = getMethod.returnType ?: return null

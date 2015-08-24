@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
@@ -208,8 +209,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             fun getType(): JetType {
                 val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
-                    2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"))!!
-                    3 -> module.resolveTopLevelClass(FqName("kotlin.Triple"))!!
+                    2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"), NoLookupLocation.FROM_IDE)!!
+                    3 -> module.resolveTopLevelClass(FqName("kotlin.Triple"), NoLookupLocation.FROM_IDE)!!
                     else -> return DEFAULT_RETURN_TYPE
                 }
                 return TypeUtils.substituteParameters(boxingClass, outputValueTypes)

@@ -35,6 +35,24 @@ public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("classifierMembers")
+    public void testClassifierMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/classifierMembers/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localDeclarations")
+    public void testLocalDeclarations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/localDeclarations/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("packageDeclarations")
+    public void testPackageDeclarations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/packageDeclarations/");
+        doTest(fileName);
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/simple/");

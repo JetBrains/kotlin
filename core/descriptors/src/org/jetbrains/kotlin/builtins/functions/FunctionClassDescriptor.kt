@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
@@ -109,7 +110,7 @@ public class FunctionClassDescriptor(
             val result = ArrayList<JetType>(2)
 
             fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
-                val descriptor = packageFragment.getMemberScope().getClassifier(name) as? ClassDescriptor
+                val descriptor = packageFragment.getMemberScope().getClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
                 val typeConstructor = descriptor.getTypeConstructor()

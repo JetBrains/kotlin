@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -35,9 +37,7 @@ import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 public class DeserializedClassDescriptor(
         outerContext: DeserializationContext,
@@ -178,7 +178,7 @@ public class DeserializedClassDescriptor(
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.getMemberList()) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
-            computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER)
+            computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter,
@@ -186,17 +186,17 @@ public class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
             val fromSupertypes = ArrayList<FunctionDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
-                fromSupertypes.addAll(supertype.getMemberScope().getFunctions(name))
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+                fromSupertypes.addAll(supertype.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, functions)
         }
 
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
                 @suppress("UNCHECKED_CAST")
-                fromSupertypes.addAll(supertype.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>)
+                fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
         }
@@ -217,14 +217,14 @@ public class DeserializedClassDescriptor(
             })
         }
 
-        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>) {
-            for (supertype in classDescriptor.getTypeConstructor().getSupertypes()) {
-                for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+        override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+                for (descriptor in supertype.memberScope.getAllDescriptors()) {
                     if (descriptor is FunctionDescriptor) {
-                        result.addAll(getFunctions(descriptor.getName()))
+                        result.addAll(getFunctions(descriptor.name, location))
                     }
                     else if (descriptor is PropertyDescriptor) {
-                        result.addAll(getProperties(descriptor.getName()))
+                        result.addAll(getProperties(descriptor.name, location))
                     }
                     // Nothing else is inherited
                 }

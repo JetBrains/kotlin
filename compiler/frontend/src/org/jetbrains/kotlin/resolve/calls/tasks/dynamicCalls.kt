@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCol
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.DynamicType
 import org.jetbrains.kotlin.types.JetType
@@ -224,8 +224,8 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, bindingTrace: BindingTrace): Collection<D> {
-        return delegate.getExtensionsByName(scope, name, receiverTypes, bindingTrace).filter {
+    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation, bindingTrace: BindingTrace): Collection<D> {
+        return delegate.getExtensionsByName(scope, name, receiverTypes, location, bindingTrace).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }
     }

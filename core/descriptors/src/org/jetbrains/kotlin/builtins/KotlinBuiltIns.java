@@ -511,14 +511,14 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMap(), "Entry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMap(), "Entry", NoLookupLocation.FROM_BUILTINS);
         assert classDescriptor != null : "Can't find Map.Entry";
         return classDescriptor;
     }
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry", NoLookupLocation.FROM_BUILTINS);
         assert classDescriptor != null : "Can't find MutableMap.MutableEntry";
         return classDescriptor;
     }

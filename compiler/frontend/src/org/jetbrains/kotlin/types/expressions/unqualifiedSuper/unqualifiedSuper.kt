@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
@@ -47,18 +49,19 @@ public fun resolveUnqualifiedSuperFromExpressionContext(
                 val calleeExpression = selectorExpression.calleeExpression
                 if (calleeExpression is JetSimpleNameExpression) {
                     val calleeName = calleeExpression.getReferencedNameAsName()
+                    val location = NoLookupLocation.WHEN_TYPING
                     if (isCallingMethodOfAny(selectorExpression, calleeName)) {
-                        return resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
+                        return resolveSupertypesForMethodOfAny(supertypes, calleeName, location, anyType)
                     }
                     else {
-                        return resolveSupertypesByCalleeName(supertypes, calleeName)
+                        return resolveSupertypesByCalleeName(supertypes, calleeName, location)
                     }
                 }
             }
             is JetSimpleNameExpression -> {
                 // super.x: x can be a property only
                 // NB there are no properties in kotlin.Any
-                return resolveSupertypesByPropertyName(supertypes, selectorExpression.getReferencedNameAsName())
+                return resolveSupertypesByPropertyName(supertypes, selectorExpression.getReferencedNameAsName(), NoLookupLocation.WHEN_TYPING)
             }
         }
     }
@@ -94,19 +97,19 @@ private fun isCallingMethodOfAnyWithSuper(superExpression: JetSuperExpression): 
 private fun JetType.isInterface(): Boolean =
         TypeUtils.getClassDescriptor(this)?.kind == ClassKind.INTERFACE
 
-private fun resolveSupertypesForMethodOfAny(supertypes: Collection<JetType>, calleeName: Name, anyType: JetType): Collection<JetType> {
-    val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) { getFunctionMembers(it, calleeName) }
+private fun resolveSupertypesForMethodOfAny(supertypes: Collection<JetType>, calleeName: Name, location: LookupLocation, anyType: JetType): Collection<JetType> {
+    val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, false) { getFunctionMembers(it, calleeName, location) }
     return if (typesWithConcreteOverride.isNotEmpty())
         typesWithConcreteOverride
     else
         anyType.singletonList()
 }
 
-private fun resolveSupertypesByCalleeName(supertypes: Collection<JetType>, calleeName: Name): Collection<JetType> =
-        resolveSupertypesByMembers(supertypes, true) { getFunctionMembers(it, calleeName) + getPropertyMembers(it, calleeName) }
+private fun resolveSupertypesByCalleeName(supertypes: Collection<JetType>, calleeName: Name, location: LookupLocation): Collection<JetType> =
+        resolveSupertypesByMembers(supertypes, true) { getFunctionMembers(it, calleeName, location) + getPropertyMembers(it, calleeName, location) }
 
-private fun resolveSupertypesByPropertyName(supertypes: Collection<JetType>, propertyName: Name): Collection<JetType> =
-        resolveSupertypesByMembers(supertypes, true) { getPropertyMembers(it, propertyName) }
+private fun resolveSupertypesByPropertyName(supertypes: Collection<JetType>, propertyName: Name, location: LookupLocation): Collection<JetType> =
+        resolveSupertypesByMembers(supertypes, true) { getPropertyMembers(it, propertyName, location) }
 
 private inline fun resolveSupertypesByMembers(
         supertypes: Collection<JetType>,
@@ -131,11 +134,11 @@ private inline fun resolveSupertypesByMembers(
         else emptyList<JetType>()
 }
 
-private fun getFunctionMembers(type: JetType, name: Name): Collection<MemberDescriptor> =
-        type.memberScope.getFunctions(name)
+private fun getFunctionMembers(type: JetType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+        type.memberScope.getFunctions(name, location)
 
-private fun getPropertyMembers(type: JetType, name: Name): Collection<MemberDescriptor> =
-        type.memberScope.getProperties(name).filterIsInstanceTo(SmartList<MemberDescriptor>())
+private fun getPropertyMembers(type: JetType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
+        type.memberScope.getProperties(name, location).filterIsInstanceTo(SmartList<MemberDescriptor>())
 
 private fun isConcreteMember(supertype: JetType, memberDescriptor: MemberDescriptor): Boolean {
     // "Concrete member" is a function or a property that is not abstract,

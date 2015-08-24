@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
@@ -85,7 +86,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = resolveTopLevelClass(module, javaClass);
+                    ClassDescriptor topLevelClass = resolveTopLevelClass(module, javaClass, NoLookupLocation.FROM_TEST);
                     PackageViewDescriptor topLevelPackage = module.getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -44,9 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.*
-import java.util.ArrayList
-import java.util.Collections
-import java.util.LinkedHashSet
+import java.util.*
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,
@@ -82,8 +81,8 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
-          return descriptor.getTypeConstructor().getSupertypes().flatMap {
-              it.getMemberScope().getFunctions(name).map { f -> f as SimpleFunctionDescriptor }
+          return descriptor.typeConstructor.supertypes.flatMap {
+              it.memberScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { f -> f as SimpleFunctionDescriptor }
           }.toSet()
       }
 
@@ -119,8 +118,8 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
-        return descriptor.getTypeConstructor().getSupertypes().flatMap {
-            it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }
+        return descriptor.typeConstructor.supertypes.flatMap {
+            it.memberScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p as PropertyDescriptor }
         }.toSet()
     }
 

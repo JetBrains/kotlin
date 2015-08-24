@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetScript
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
@@ -27,7 +28,7 @@ public interface TopLevelDescriptorProvider {
 
     fun getScriptDescriptor(script: JetScript): ScriptDescriptor
 
-    fun getTopLevelClassDescriptors(fqName: FqName): Collection<ClassDescriptor>
+    fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor>
 }
 
 public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
@@ -41,7 +42,7 @@ public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
         shouldNotBeCalled()
     }
 
-    override fun getTopLevelClassDescriptors(fqName: FqName): Collection<ClassDescriptor> {
+    override fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor> {
         shouldNotBeCalled()
     }
 }

@@ -28,5 +28,13 @@ public enum class NoLookupLocation : LookupLocation {
     FROM_BUILTINS,
     WHEN_CHECK_REDECLARATIONS,
     FOR_SCRIPT,
-    FROM_REFLECTION
+    FROM_REFLECTION,
+    WHEN_RESOLVE_DECLARATION,
+    WHEN_GET_DECLARATION_SCOPE,
+    FOR_ALREADY_TRACKED,
+    // TODO replace with real location (e.g. FROM_IDE) where it possible
+    WHEN_GET_ALL_DESCRIPTORS,
+    WHEN_TYPING,
+    WHEN_GET_SUPER_MEMBERS,
+    FOR_NON_TRACKED_SCOPE
 }

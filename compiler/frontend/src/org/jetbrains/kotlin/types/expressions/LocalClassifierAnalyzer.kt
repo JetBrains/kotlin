@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -156,11 +157,11 @@ class LocalLazyDeclarationResolver(
         topLevelDescriptorProvider : TopLevelDescriptorProvider
 ) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider) {
 
-    override fun getClassDescriptor(classOrObject: JetClassOrObject): ClassDescriptor {
+    override fun getClassDescriptor(classOrObject: JetClassOrObject, location: LookupLocation): ClassDescriptor {
         if (localClassDescriptorManager.isMyClass(classOrObject)) {
             return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
         }
-        return super.getClassDescriptor(classOrObject)
+        return super.getClassDescriptor(classOrObject, location)
     }
 }
 

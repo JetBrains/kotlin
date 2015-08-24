@@ -27,6 +27,7 @@ import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
@@ -258,7 +259,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @NotNull
     @ReadOnly
-    public Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName) {
+    public Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName, @NotNull final LookupLocation location) {
         if (fqName.isRoot()) return Collections.emptyList();
 
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName.parent());
@@ -274,7 +275,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                         }
                         JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
                         if (classOrObject == null) return null;
-                        return getClassDescriptor(classOrObject);
+                        return getClassDescriptor(classOrObject, location);
                     }
                 }
         );
@@ -282,13 +283,13 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @Override
     @NotNull
-    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
-        return lazyDeclarationResolver.getClassDescriptor(classOrObject);
+    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject, @NotNull LookupLocation location) {
+        return lazyDeclarationResolver.getClassDescriptor(classOrObject, location);
     }
 
     @NotNull
     public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
-        JetScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script);
+        JetScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
         ClassifierDescriptor classifier = memberScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();

@@ -21,6 +21,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
@@ -64,14 +65,14 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
-        JetScope scope = getMemberScopeDeclaredIn(classOrObject);
+    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject, @NotNull LookupLocation location) {
+        JetScope scope = getMemberScopeDeclaredIn(classOrObject, location);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = scope.getClassifier(classOrObject.getNameAsSafeName(), NoLookupLocation.UNSORTED);
+        ClassifierDescriptor scopeDescriptor = scope.getClassifier(classOrObject.getNameAsSafeName(), location);
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {
@@ -93,21 +94,32 @@ public class LazyDeclarationResolver {
 
     @NotNull
     public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
+        return resolveToDescriptor(declaration, /*track =*/true);
+    }
+
+    @NotNull
+    private DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration, final boolean track) {
         DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
+            @NotNull
+            private LookupLocation lookupLocationFor(@NotNull JetDeclaration declaration, boolean isTopLevel) {
+                return isTopLevel && track ? new KotlinLookupLocation(declaration) : NoLookupLocation.WHEN_RESOLVE_DECLARATION;
+            }
+
             @Override
             public DeclarationDescriptor visitClass(@NotNull JetClass klass, Void data) {
-                return getClassDescriptor(klass);
+                return getClassDescriptor(klass, lookupLocationFor(klass, klass.isTopLevel()));
             }
 
             @Override
             public DeclarationDescriptor visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
-                return getClassDescriptor(declaration);
+                return getClassDescriptor(declaration, lookupLocationFor(declaration, declaration.isTopLevel()));
             }
 
             @Override
             public DeclarationDescriptor visitTypeParameter(@NotNull JetTypeParameter parameter, Void data) {
                 JetTypeParameterListOwner ownerElement = PsiTreeUtil.getParentOfType(parameter, JetTypeParameterListOwner.class);
-                DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement);
+                assert ownerElement != null : "Owner not found for type parameter: " + parameter.getText();
+                DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement, /*track =*/false);
 
                 List<TypeParameterDescriptor> typeParameters;
                 if (ownerDescriptor instanceof CallableDescriptor) {
@@ -134,8 +146,9 @@ public class LazyDeclarationResolver {
 
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
-                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(function);
-                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), NoLookupLocation.UNSORTED);
+                LookupLocation location = lookupLocationFor(function, function.isTopLevel());
+                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
+                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -145,9 +158,9 @@ public class LazyDeclarationResolver {
                 if (grandFather instanceof JetPrimaryConstructor) {
                     JetClassOrObject jetClass = ((JetPrimaryConstructor) grandFather).getContainingClassOrObject();
                     // This is a primary constructor parameter
-                    ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
+                    ClassDescriptor classDescriptor = getClassDescriptor(jetClass, lookupLocationFor(jetClass, false));
                     if (parameter.hasValOrVar()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), NoLookupLocation.UNSORTED);
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), lookupLocationFor(parameter, false));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -177,20 +190,21 @@ public class LazyDeclarationResolver {
 
             @Override
             public DeclarationDescriptor visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
-                getClassDescriptor((JetClassOrObject) constructor.getParent().getParent()).getConstructors();
+                getClassDescriptor((JetClassOrObject) constructor.getParent().getParent(), lookupLocationFor(constructor, false)).getConstructors();
                 return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override
             public DeclarationDescriptor visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
-                getClassDescriptor(constructor.getContainingClassOrObject()).getConstructors();
+                getClassDescriptor(constructor.getContainingClassOrObject(), lookupLocationFor(constructor, false)).getConstructors();
                 return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
-                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(property);
-                scopeForDeclaration.getProperties(property.getNameAsSafeName(), NoLookupLocation.UNSORTED);
+                LookupLocation location = lookupLocationFor(property, property.isTopLevel());
+                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
+                scopeForDeclaration.getProperties(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
@@ -213,7 +227,7 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    /*package*/ JetScope getMemberScopeDeclaredIn(@NotNull JetDeclaration declaration) {
+    /*package*/ JetScope getMemberScopeDeclaredIn(@NotNull JetDeclaration declaration, @NotNull LookupLocation location) {
         JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);
         boolean isTopLevel = parentDeclaration == null;
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports
@@ -224,7 +238,7 @@ public class LazyDeclarationResolver {
         }
         else {
             if (parentDeclaration instanceof JetClassOrObject) {
-                return getClassDescriptor((JetClassOrObject) parentDeclaration).getUnsubstitutedMemberScope();
+                return getClassDescriptor((JetClassOrObject) parentDeclaration, location).getUnsubstitutedMemberScope();
             } else {
                 throw new IllegalStateException("Don't call this method for local declarations: " + declaration + "\n" +
                                                 PsiUtilPackage.getElementTextWithContext(declaration));

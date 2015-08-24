@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
@@ -389,10 +389,11 @@ public class DescriptorUtils {
         return Visibilities.PUBLIC;
     }
 
+    // TODO: should be internal
     @Nullable
-    public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName) {
+    public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName, @NotNull LookupLocation location) {
         ClassifierDescriptor classifier =
-                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), NoLookupLocation.UNSORTED);
+                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), location);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());
