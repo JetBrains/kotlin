@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.types.JetType
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
-        val importableDescriptor = getImportableDescriptor()
-        if (!importableDescriptor.canBeReferencedViaImport()) return null
-        return importableDescriptor.fqNameSafe
+        if (!canBeReferencedViaImport()) return null
+        return getImportableDescriptor().fqNameSafe
     }
 
 public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {

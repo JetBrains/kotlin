@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
@@ -71,6 +70,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -638,7 +639,7 @@ private fun ExtractionData.inferParametersInfo(
                     info.typeParameters, info.nonDenotableTypes, options, targetScope, false
             )) continue
 
-            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.importableFqName!!)
+            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
         }
         else {
             val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
