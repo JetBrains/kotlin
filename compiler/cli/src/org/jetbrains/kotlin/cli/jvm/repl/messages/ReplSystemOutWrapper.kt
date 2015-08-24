@@ -28,7 +28,9 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
         USER_OUTPUT,
         REPL_RESULT,
         REPL_INCOMPLETE,
-        ERROR
+        COMPILE_ERROR,
+        RUNTIME_ERROR,
+        INNER_ERROR
     }
 
     override fun print(x: Boolean) = printWithEscaping(x.toString())
@@ -54,8 +56,10 @@ public class ReplSystemOutWrapper(private val standardOut: PrintStream, private 
         return "${EscapeConstants.XML_PREAMBLE}<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
-    fun printlnResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
-    fun printlnError(x: String) = printlnWithEscaping(x, EscapeType.ERROR)
     fun printlnInit(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
+    fun printlnResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
     fun printlnIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
+    fun printlnCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
+    fun printlnRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
+    fun printlnInnerError(x: String) = printlnWithEscaping(x, EscapeType.INNER_ERROR)
 }

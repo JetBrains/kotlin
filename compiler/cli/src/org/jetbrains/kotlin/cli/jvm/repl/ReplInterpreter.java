@@ -166,7 +166,8 @@ public class ReplInterpreter {
 
     public enum LineResultType {
         SUCCESS,
-        ERROR,
+        COMPILE_ERROR,
+        RUNTIME_ERROR,
         INCOMPLETE,
     }
 
@@ -209,11 +210,8 @@ public class ReplInterpreter {
             return errorText;
         }
 
-        public static LineResult successful(Object value, boolean unit) {
-            return new LineResult(value, unit, null, LineResultType.SUCCESS);
-        }
-
-        public static LineResult error(@NotNull String errorText) {
+        @NotNull
+        private static LineResult error(@NotNull String errorText, @NotNull LineResultType errorType) {
             if (errorText.isEmpty()) {
                 errorText = "<unknown error>";
             }
@@ -221,7 +219,22 @@ public class ReplInterpreter {
                 errorText += "\n";
             }
 
-            return new LineResult(null, false, errorText, LineResultType.ERROR);
+            return new LineResult(null, false, errorText, errorType);
+        }
+
+        @NotNull
+        public static LineResult successful(Object value, boolean unit) {
+            return new LineResult(value, unit, null, LineResultType.SUCCESS);
+        }
+
+        @NotNull
+        public static LineResult compileError(@NotNull String errorText) {
+            return error(errorText, LineResultType.COMPILE_ERROR);
+        }
+
+        @NotNull
+        public static LineResult runtimeError(@NotNull String errorText) {
+            return error(errorText, LineResultType.RUNTIME_ERROR);
         }
 
         public static LineResult incomplete() {
@@ -265,7 +278,7 @@ public class ReplInterpreter {
         previousIncompleteLines.clear();
 
         if (syntaxErrorReport.isHasErrors()) {
-            return LineResult.error(errorHolder.getRenderedDiagnostics());
+            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
         }
 
         prepareForTheNextReplLine(topDownAnalysisContext);
@@ -276,7 +289,7 @@ public class ReplInterpreter {
 
         ScriptDescriptor scriptDescriptor = doAnalyze(psiFile, errorHolder);
         if (scriptDescriptor == null) {
-            return LineResult.error(errorHolder.getRenderedDiagnostics());
+            return LineResult.compileError(errorHolder.getRenderedDiagnostics());
         }
 
         List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
@@ -314,7 +327,7 @@ public class ReplInterpreter {
                 scriptInstance = scriptInstanceConstructor.newInstance(constructorArgs);
             }
             catch (Throwable e) {
-                return LineResult.error(renderStackTrace(e.getCause()));
+                return LineResult.runtimeError(renderStackTrace(e.getCause()));
             }
             Field rvField = scriptClass.getDeclaredField("rv");
             rvField.setAccessible(true);
@@ -351,7 +364,9 @@ public class ReplInterpreter {
             }
         }
         Collections.reverse(newTrace);
-        cause.setStackTrace(newTrace.toArray(new StackTraceElement[newTrace.size()]));
+        List<StackTraceElement> resultingTrace = newTrace.subList(0, newTrace.size() - 1);
+
+        cause.setStackTrace(resultingTrace.toArray(new StackTraceElement[resultingTrace.size()]));
         return Throwables.getStackTraceAsString(cause);
     }
 

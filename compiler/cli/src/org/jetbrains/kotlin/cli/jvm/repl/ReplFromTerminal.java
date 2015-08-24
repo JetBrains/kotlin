@@ -134,7 +134,7 @@ public class ReplFromTerminal {
                 ((FileHistory) consoleReader.getHistory()).flush();
             }
             catch (Exception e) {
-                System.err.println("failed to flush history: " + e);
+                replWriter.printlnInnerError("failed to flush history: " + e);
             }
         }
     }
@@ -203,8 +203,11 @@ public class ReplFromTerminal {
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
             replWriter.printlnIncomplete();
         }
-        else if (lineResult.getType() == ReplInterpreter.LineResultType.ERROR) {
-            replWriter.printlnError(lineResult.getErrorText());
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.COMPILE_ERROR) {
+            replWriter.printlnCompileError(lineResult.getErrorText());
+        }
+        else if (lineResult.getType() == ReplInterpreter.LineResultType.RUNTIME_ERROR) {
+            replWriter.printlnRuntimeError(lineResult.getErrorText());
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);

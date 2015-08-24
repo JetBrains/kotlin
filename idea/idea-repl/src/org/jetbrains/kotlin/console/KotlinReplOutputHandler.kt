@@ -20,6 +20,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.w3c.dom.Element
@@ -50,31 +51,34 @@ public class KotlinReplOutputHandler(
         when (outputType) {
             "INITIAL_PROMPT"  -> super.notifyTextAvailable("$content\n", key)
             "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
-            "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon("$content\n")
+            "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
             "REPL_INCOMPLETE" -> outputHighlighter.changeIndicatorOnIncomplete()
-            "ERROR"           -> {
-                val compilerMessages = arrayListOf<SeverityDetails>()
-
-                val report = dBuilder.parse(strToSource(content, Charsets.UTF_16))
-                val entries = report.getElementsByTagName("reportEntry")
-                for (i in 0..entries.length - 1) {
-                    val reportEntry = entries.item(i) as Element
-
-                    val severityLevel = reportEntry.getAttribute("severity").toSeverity()
-                    val rangeStart = reportEntry.getAttribute("rangeStart").toInt()
-                    val rangeEnd = reportEntry.getAttribute("rangeEnd").toInt()
-                    val description = reportEntry.textContent
-
-                    compilerMessages.add(SeverityDetails(severityLevel, description, TextRange(rangeStart, rangeEnd)))
-                }
-
-                outputHighlighter.highlightErrors(compilerMessages)
-            }
-            else -> super.notifyTextAvailable("UNEXPECTED TEXT: $content\n", key)
+            "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
+            "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError(content)
+            "INNER_ERROR"     -> logError(javaClass, content)
         }
     }
 
     private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
+
+    private fun createCompilerMessages(runtimeErrorsReport: String): List<SeverityDetails> {
+        val compilerMessages = arrayListOf<SeverityDetails>()
+
+        val report = dBuilder.parse(strToSource(runtimeErrorsReport, Charsets.UTF_16))
+        val entries = report.getElementsByTagName("reportEntry")
+        for (i in 0..entries.length - 1) {
+            val reportEntry = entries.item(i) as Element
+
+            val severityLevel = reportEntry.getAttribute("severity").toSeverity()
+            val rangeStart = reportEntry.getAttribute("rangeStart").toInt()
+            val rangeEnd = reportEntry.getAttribute("rangeEnd").toInt()
+            val description = reportEntry.textContent
+
+            compilerMessages.add(SeverityDetails(severityLevel, description, TextRange(rangeStart, rangeEnd)))
+        }
+
+        return compilerMessages
+    }
 
     private fun String.toSeverity() = when (this) {
         "ERROR"   -> Severity.ERROR

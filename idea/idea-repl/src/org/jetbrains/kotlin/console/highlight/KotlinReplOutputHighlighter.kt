@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.console.highlight
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.CodeInsightColors
@@ -84,7 +85,7 @@ public class KotlinReplOutputHighlighter(
         runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.INCOMPLETE_INDICATOR)
     }
 
-    fun highlightErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(runner.project) {
+    fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(runner.project) {
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.ERROR
 
@@ -110,6 +111,12 @@ public class KotlinReplOutputHighlighter(
         for ((highlighter, messages) in highlighterAndMessagesByLine) {
             highlighter.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
         }
+    }
+
+    fun printRuntimeError(errorText: String) {
+        resetConsoleEditorIndicator()
+        historyManager.lastCommandType = ReplOutputType.ERROR
+        consoleView.print("\t$errorText", ConsoleViewContentType.ERROR_OUTPUT)
     }
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {
