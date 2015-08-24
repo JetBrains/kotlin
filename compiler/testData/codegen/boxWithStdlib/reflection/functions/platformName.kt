@@ -1,6 +1,4 @@
-import kotlin.platform.platformName
-
-@platformName("Fail")
+@jvmName("Fail")
 fun OK() {}
 
 fun box() = ::OK.name

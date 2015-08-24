@@ -1,8 +1,8 @@
 package 
 
-kotlin.platform.platformName(name = "barInt") internal fun bar(/*0*/ x: kotlin.List<kotlin.Int>): kotlin.Unit
-kotlin.platform.platformName(name = "barStr") internal fun bar(/*0*/ x: kotlin.List<kotlin.String>): kotlin.Unit
-kotlin.platform.platformName(name = "bar") internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
+kotlin.jvm.jvmName(name = "barInt") internal fun bar(/*0*/ x: kotlin.List<kotlin.Int>): kotlin.Unit
+kotlin.jvm.jvmName(name = "barStr") internal fun bar(/*0*/ x: kotlin.List<kotlin.String>): kotlin.Unit
+kotlin.jvm.jvmName(name = "bar") internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
 internal fun kotlin.Any.foo(): kotlin.Unit
 
 internal final class C {
