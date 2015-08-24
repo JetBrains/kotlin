@@ -41,4 +41,13 @@ class KParameterImpl(
 
     override val type: KType
         get() = KTypeImpl(descriptor.type) { callable.caller.parameterTypes[index] }
+
+    override fun equals(other: Any?) =
+            other is KParameterImpl && callable == other.callable && descriptor == other.descriptor
+
+    override fun hashCode() =
+            (callable.hashCode() * 31) + descriptor.hashCode()
+
+    override fun toString() =
+            ReflectionObjectRenderer.renderParameter(this)
 }

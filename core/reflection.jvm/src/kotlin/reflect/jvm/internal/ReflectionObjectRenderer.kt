@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.JetType
+import kotlin.reflect.KParameter
 
 object ReflectionObjectRenderer {
     private val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
@@ -47,6 +48,14 @@ object ReflectionObjectRenderer {
         append(renderer.renderName(callable.name))
     }
 
+    fun renderCallable(descriptor: CallableDescriptor): String {
+        return when (descriptor) {
+            is PropertyDescriptor -> renderProperty(descriptor)
+            is FunctionDescriptor -> renderFunction(descriptor)
+            else -> error("Illegal callable: $descriptor")
+        }
+    }
+
     // TODO: include visibility, return type
     fun renderProperty(descriptor: PropertyDescriptor): String {
         return StringBuilder {
@@ -66,6 +75,19 @@ object ReflectionObjectRenderer {
 
             append(": ")
             append(renderType(descriptor.returnType!!))
+        }.toString()
+    }
+
+    fun renderParameter(parameter: KParameterImpl): String {
+        return StringBuilder {
+            when (parameter.kind) {
+                KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver")
+                KParameter.Kind.INSTANCE -> append("instance")
+                KParameter.Kind.VALUE -> append("parameter #${parameter.index} ${parameter.name}")
+            }
+
+            append(" of ")
+            append(renderCallable(parameter.callable.descriptor))
         }.toString()
     }
 

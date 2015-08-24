@@ -3492,6 +3492,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("parametersEqualsHashCode.kt")
+            public void testParametersEqualsHashCode() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/parametersEqualsHashCode.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("parametersToString.kt")
+            public void testParametersToString() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/parametersToString.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("propertyEqualsHashCode.kt")
             public void testPropertyEqualsHashCode() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/propertyEqualsHashCode.kt");
