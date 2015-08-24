@@ -25,6 +25,7 @@ import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
@@ -45,8 +46,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 val isTargetUsage = (PsiReference::matchesTarget).searchFilter
 
@@ -88,7 +88,7 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
     return when {
         name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>()
         this is JetParameter -> {
-            val componentFunctionName = this.dataClassComponentFunctionName()
+            val componentFunctionName = this.dataClassComponentFunction()?.name
             if (componentFunctionName == null) return Collections.emptyList<String>()
 
             return listOf(componentFunctionName.asString(), JetTokens.LPAR.getValue())
@@ -97,7 +97,7 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
     }
 }
 
-fun JetParameter.dataClassComponentFunctionName(): Name? {
+fun JetParameter.dataClassComponentFunction(): FunctionDescriptor? {
     if (!hasValOrVar()) return null
 
     // Forcing full resolve of owner class: otherwise DATA_CLASS_COMPONENT_FUNCTION won't be calculated.
@@ -107,9 +107,7 @@ fun JetParameter.dataClassComponentFunctionName(): Name? {
 
     val context = this.analyze()
     val paramDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? ValueParameterDescriptor
-    return context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]?.let {
-        it.getName()
-    }
+    return context[BindingContext.DATA_CLASS_COMPONENT_FUNCTION, paramDescriptor]
 }
 
 public abstract class UsagesSearchHelper<T : PsiNamedElement> {

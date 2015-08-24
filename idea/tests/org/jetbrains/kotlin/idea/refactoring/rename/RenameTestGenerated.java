@@ -311,6 +311,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinStaticMethod/renameKotlinStaticMethod.test")
+    public void testRenameKotlinStaticMethod_RenameKotlinStaticMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinStaticMethod/renameKotlinStaticMethod.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinValProperty/renameAsJavaGetterForExplicitGetter.test")
     public void testRenameKotlinValProperty_RenameAsJavaGetterForExplicitGetter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinValProperty/renameAsJavaGetterForExplicitGetter.test");

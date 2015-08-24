@@ -25,17 +25,21 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinLightParameter
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
 
@@ -134,6 +138,19 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
             }
         }
 
+        private fun findStaticMethodFromCompanionObject(function: JetFunction): PsiMethod? {
+            val originObject = function.parents
+                .dropWhile { it is JetClassBody }
+                .firstOrNull() as? JetObjectDeclaration ?: return null
+            if (originObject.isCompanion()) {
+                val originClass = originObject.getStrictParentOfType<JetClass>()
+                val originLightClass = LightClassUtil.getPsiClass(originClass)
+                val allMethods = originLightClass?.allMethods
+                return allMethods?.find { it is KotlinLightMethod && it.getOrigin() == function }
+            }
+            return null
+        }
+
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
             when (element) {
                 is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
@@ -143,6 +160,11 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     if (name != null) {
                         val method = runReadAction { LightClassUtil.getLightClassMethod(function) }
                         searchNamedElement(queryParameters, method)
+                    }
+
+                    val staticFromCompanionObject = findStaticMethodFromCompanionObject(element)
+                    if (staticFromCompanionObject != null) {
+                        searchNamedElement(queryParameters, staticFromCompanionObject)
                     }
                 }
                 is JetProperty -> {
@@ -157,6 +179,24 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     }
                     else if (declaration is JetPropertyAccessor) {
                         searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                    }
+                    else if (declaration is JetFunction) {
+                        val staticFromCompanionObject = findStaticMethodFromCompanionObject(declaration)
+                        if (staticFromCompanionObject != null) {
+                            searchNamedElement(queryParameters, staticFromCompanionObject)
+                        }
+                    }
+                }
+                is KotlinLightParameter -> {
+                    val componentFunctionDescriptor = element.getOrigin()?.dataClassComponentFunction()
+                    if (componentFunctionDescriptor != null) {
+                        val containingClass = element.method.containingClass
+                        val componentFunction = containingClass?.methods?.find {
+                            it.name == componentFunctionDescriptor.name.asString() && it.parameterList.parametersCount == 0
+                        }
+                        if (componentFunction != null) {
+                            searchNamedElement(queryParameters, componentFunction)
+                        }
                     }
                 }
             }

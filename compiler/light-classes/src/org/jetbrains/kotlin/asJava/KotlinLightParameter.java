@@ -131,4 +131,8 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         JetParameter origin = getOrigin();
         return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
     }
+
+    public KotlinLightMethod getMethod() {
+        return method;
+    }
 }
