@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 public class KotlinJavaScriptMetaFileSystem : ArchiveFileSystem() {
     companion object {
+        val ARCHIVE_SUFFIX = ".kjsm_archive"
+
         @JvmStatic
         public fun getInstance(): KotlinJavaScriptMetaFileSystem = VirtualFileManager.getInstance().getFileSystem(KotlinJavascriptMetadataUtils.VFS_PROTOCOL) as KotlinJavaScriptMetaFileSystem
     }
-
-    private val ARCHIVE_SUFFIX = ".kjsm_archive"
 
     override fun getProtocol(): String = KotlinJavascriptMetadataUtils.VFS_PROTOCOL
 
@@ -41,15 +41,15 @@ public class KotlinJavaScriptMetaFileSystem : ArchiveFileSystem() {
     }
 
     override fun getHandler(entryFile: VirtualFile): KotlinJavaScriptHandler {
-        val pathToRoot = extractLocalPath(this.extractRootPath(entryFile.path))
+        val pathToRoot = extractLocalPath(this.extractRootPath(entryFile.path)).removeSuffix()
         return VfsImplUtil.getHandler<KotlinJavaScriptHandler>(this, "$pathToRoot$ARCHIVE_SUFFIX") {
-            KotlinJavaScriptHandler(it.substringBeforeLast(ARCHIVE_SUFFIX))
+            KotlinJavaScriptHandler(it.removeSuffix())
         }
     }
 
     override fun extractLocalPath(rootPath: String): String = StringUtil.trimEnd(rootPath, JarFileSystem.JAR_SEPARATOR)
 
-    override fun composeRootPath(localPath: String): String = localPath + JarFileSystem.JAR_SEPARATOR
+    override fun composeRootPath(localPath: String): String = localPath.removeSuffix() + JarFileSystem.JAR_SEPARATOR
 
     override fun findFileByPath(path: String): VirtualFile? = VfsImplUtil.findFileByPath(this, path)
 
@@ -58,4 +58,6 @@ public class KotlinJavaScriptMetaFileSystem : ArchiveFileSystem() {
     override fun refreshAndFindFileByPath(path: String): VirtualFile? = VfsImplUtil.refreshAndFindFileByPath(this, path)
 
     override fun refresh(asynchronous: Boolean) = VfsImplUtil.refresh(this, asynchronous)
+
+    private fun String.removeSuffix() = substringBeforeLast(ARCHIVE_SUFFIX)
 }
