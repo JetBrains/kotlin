@@ -322,3 +322,11 @@ public object CallInstructionUtils {
     private fun receiverIsCollection(receiverType: JetType): Boolean =
             (KotlinArrayUtils.isGenericOrPrimitiveArray(receiverType) || KotlinListUtils.isKotlinList(receiverType))
 }
+
+public object PseudocodeLabelUtils {
+    public val LOOP_ENTRY_POINT_TEXT: String = "loop entry point"
+    public val LOOP_EXIT_POINT_TEXT: String = "loop exit point"
+    public val CONDITION_ENTRY_POINT_TEXT: String = "condition entry point"
+    public val WHEN_ENTRY_BODY_TEXT: String = "'when' entry body"
+    public val NEXT_WHEN_ENTRY_TEXT: String = "next 'when' entry"
+}

@@ -46,3 +46,48 @@ fun whenInsideWhile() {
             else -> if (count == 1) count++ else print("123")
         }
 }
+
+fun whenWithEmumerationCase(): Int {
+    val c = 3
+    val d = 4
+    val e = 5
+    var z = 0
+    when(c) {
+        5, 4, 3 -> z++;
+        else -> {
+            z = -1000;
+        }
+    }
+
+    when(d) {
+        5, 4, 3 -> z++;
+        else -> {
+            z = -1000;
+        }
+    }
+
+    when(e) {
+        5, 4, 3 -> z++;
+        else -> {
+            z = -1000;
+        }
+    }
+    return z
+}
+
+fun whenWithManyEmumerationCase(): Int {
+    val c = 3
+    val d = 4
+    when (c) {
+        5, 2 -> 42
+        6, 3 -> 43
+        7, 4 -> 44
+        else -> 45
+    }
+    when (d) {
+        5, 2 -> 42
+        6, 3 -> 43
+        7, 4 -> 44
+        else -> 45
+    }
+}

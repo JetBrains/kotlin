@@ -97,17 +97,14 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         labels.forEach { instructionIndexToLabels.getOrPut(it.targetInstructionIndex, { HashSet() }).add(it) }
         val updatedVariablesMap = HashMap<Instruction, Set<VariableDescriptor>>(labels.size(), 1f)
         val variablesStack = linkedListOf<Pair<Instruction, HashSet<VariableDescriptor>>>()
-        val loopEntryPointText = "loop entry point"
-        val loopExitPointText = "loop exit point"
-        val conditionEntryPointText = "condition entry point"
         fun extractUpdatedVariablesInfoIfAny(index: Int, instruction: Instruction) {
             val instructionLabels = instructionIndexToLabels[index]
             if (instructionLabels != null) {
                 val labelsAsStrings = instructionLabels.map { it.toString() }
-                if (labelsAsStrings.any { it contains loopEntryPointText }) {
+                if (labelsAsStrings.any { it contains PseudocodeLabelUtils.LOOP_ENTRY_POINT_TEXT }) {
                     variablesStack.push(instruction to hashSetOf())
                 }
-                else if (labelsAsStrings.any { it contains loopExitPointText }) {
+                else if (labelsAsStrings.any { it contains PseudocodeLabelUtils.LOOP_EXIT_POINT_TEXT }) {
                     val topInfo = variablesStack.removeFirst()
                     updatedVariablesMap[topInfo.first] = topInfo.second
                 }
@@ -122,20 +119,20 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         fun extractBackEdgeInfoIfAny(instruction: Instruction) {
             if (instruction is ConditionalJumpInstruction &&
                 instruction.element is JetDoWhileExpression &&
-                instruction.targetLabel.toString() contains loopEntryPointText) {
+                instruction.targetLabel.toString() contains PseudocodeLabelUtils.LOOP_ENTRY_POINT_TEXT) {
                 backEdgesSet.add(OrientedEdge(instruction, instruction.nextOnTrue))
             }
             if (instruction is UnconditionalJumpInstruction &&
                 (instruction.element is JetForExpression ||
                  instruction.element is JetWhileExpression) &&
-                instruction.targetLabel.toString() contains loopEntryPointText) {
+                instruction.targetLabel.toString() contains PseudocodeLabelUtils.LOOP_ENTRY_POINT_TEXT) {
                 backEdgesSet.add(OrientedEdge(
                         instruction,
                         instruction.resolvedTarget ?: throw IllegalStateException("Jump instruction target in not resolved")
                 ))
             }
             if (instruction is UnconditionalJumpInstruction && instruction.element is JetContinueExpression &&
-                instruction.targetLabel.toString() contains conditionEntryPointText) {
+                instruction.targetLabel.toString() contains PseudocodeLabelUtils.CONDITION_ENTRY_POINT_TEXT) {
                 backEdgesSet.add(OrientedEdge(
                         instruction,
                         instruction.resolvedTarget ?: throw IllegalStateException("Jump instruction target in not resolved")
@@ -264,8 +261,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
                                                   previousInstruction.nextOnFalse, edgeData)
                     else if (previousInstruction.element is JetDoWhileExpression || previousInstruction.element is JetWhileExpression)
-                        applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue,
-                                                  previousInstruction.nextOnFalse, edgeData, applyOnlyForThenBlock = true)
+                        applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.nextOnTrue, null, edgeData)
                     else edgeData
                 else edgeData
             }
@@ -273,29 +269,47 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 previousInstruction.element is JetWhenExpression &&
                 previousInstruction.inputValue != null
             ) {
-                val nextOnTrue = previousInstruction.next
-                val nextOnFalse =
-                        if (previousInstruction.resolvedTargets.size() > 0)
-                            previousInstruction.resolvedTargets.values().first()
-                        else throw IllegalStateException("Jump instruction target in `when` is not resolved")
                 val conditionBoolValue = edgeData.boolFakeVarsToValues[previousInstruction.inputValue]
-                if (conditionBoolValue != null)
-                    applyRestrictionsOnValues(conditionBoolValue, currentInstruction, nextOnTrue, nextOnFalse, edgeData)
+                if (conditionBoolValue != null) {
+                    val target = extractTargetInstructionsForJumpInWhen(previousInstruction)
+                    if (isJumpInWhenEnumerationCase(previousInstruction))
+                        applyRestrictionsOnValues(conditionBoolValue, currentInstruction, target, previousInstruction.next, edgeData)
+                    else applyRestrictionsOnValues(conditionBoolValue, currentInstruction, previousInstruction.next, target, edgeData)
+                }
                 else edgeData
             }
             else edgeData
 
+    private fun isJumpInWhenEnumerationCase(instruction: NondeterministicJumpInstruction): Boolean =
+            if (instruction.targetLabels.size() > 0) {
+                val targetLabel = instruction.targetLabels.first()
+                if (targetLabel is PseudocodeImpl.PseudocodeLabel) {
+                    if (targetLabel.toString() contains PseudocodeLabelUtils.WHEN_ENTRY_BODY_TEXT)
+                        true
+                    else {
+                        assert(targetLabel.toString() contains PseudocodeLabelUtils.NEXT_WHEN_ENTRY_TEXT,
+                               "'when' target labels assumption failed")
+                        false
+                    }
+                }
+                else throw IllegalArgumentException("Label is not PseudocodeImpl.PseudocodeLabel so no info available")
+            }
+            else throw IllegalStateException("Jump instruction in `when` has no labels")
+
+    private fun extractTargetInstructionsForJumpInWhen(instruction: NondeterministicJumpInstruction): Instruction =
+            if (instruction.resolvedTargets.size() > 0) instruction.resolvedTargets.values().first()
+            else throw IllegalStateException("Jump instruction target in `when` is not resolved")
+
     private fun applyRestrictionsOnValues(
             conditionBoolValue: BooleanVariableValue,
             currentInstruction: Instruction,
-            onTrueInstruction: Instruction,
-            onFalseInstruction: Instruction,
-            edgeData: ValuesData.Defined,
-            applyOnlyForThenBlock: Boolean = false
+            onTrueInstruction: Instruction?,
+            onFalseInstruction: Instruction?,
+            edgeData: ValuesData.Defined
     ): ValuesData =
         when (conditionBoolValue) {
             is BooleanVariableValue.True -> {
-                if (onFalseInstruction == currentInstruction && !applyOnlyForThenBlock)
+                if (onFalseInstruction == currentInstruction)
                     // We are in "else" block and condition evaluated to "true" so this block will not
                     // be processed (dead code block). To indicate this we return values data dead
                     ValuesData.Dead
@@ -324,7 +338,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                     // We are in "then" block and need to apply onTrue restrictions
                     processUndefinedCase(edgeData, conditionBoolValue.onTrueRestrictions)
                 }
-                else if (!applyOnlyForThenBlock) {
+                else if (onFalseInstruction != null) {
                     assert(onFalseInstruction == currentInstruction)
                     // We are in "else" block (and it's processing is required) and need to apply onFalse restrictions
                     processUndefinedCase(edgeData, conditionBoolValue.onFalseRestrictions)
