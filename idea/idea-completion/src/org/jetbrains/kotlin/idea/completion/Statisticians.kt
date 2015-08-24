@@ -43,7 +43,7 @@ class KotlinCompletionStatistician : CompletionStatistician() {
         val context = element.getUserData(STATISTICS_INFO_CONTEXT_KEY) ?: ""
 
         if (o.descriptor != null) {
-            return KotlinStatisticsInfo.forDescriptor(o.descriptor!!, context)
+            return KotlinStatisticsInfo.forDescriptor(o.descriptor!!.original, context)
         }
         else {
             val fqName = o.importableFqName ?: return StatisticsInfo.EMPTY
