@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.*
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
@@ -76,7 +76,8 @@ public class LookupElementFactory(
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        var element = createLookupElement(_descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), qualifyNestedClasses, includeClassTypeArguments)
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(resolutionFacade.project, _descriptor)
+        var element = createLookupElement(_descriptor, declaration, qualifyNestedClasses, includeClassTypeArguments)
 
         val weight = callableWeight(descriptor)
         if (weight != null) {
@@ -200,7 +201,7 @@ public class LookupElementFactory(
         val iconDeclaration: PsiElement?
         if (descriptor is ConstructorDescriptor) {
             nameAndIconDescriptor = descriptor.getContainingDeclaration()
-            iconDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(nameAndIconDescriptor)
+            iconDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(resolutionFacade.project, nameAndIconDescriptor)
         }
         else {
             nameAndIconDescriptor = descriptor
