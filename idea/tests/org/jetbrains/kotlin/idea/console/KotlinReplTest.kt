@@ -17,53 +17,38 @@
 package org.jetbrains.kotlin.idea.console
 
 import com.intellij.execution.impl.ConsoleViewImpl
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestCase
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
+import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.runners.MethodSorters
 import kotlin.properties.Delegates
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@FixMethodOrder(MethodSorters.JVM)
 public class KotlinReplTest : PlatformTestCase() {
     private var consoleRunner: KotlinConsoleRunner by Delegates.notNull()
 
     override fun setUp() {
         super.setUp()
-        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
+        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module, testMode = true)!!
     }
 
     override fun tearDown() {
-        val consoleView = consoleRunner.consoleView
-
-        consoleRunner.processHandler.destroyProcess()
-
-        // dispose RunContentDescriptor by reflection
-        val getNodeMethod = Disposer.getTree().javaClass.getDeclaredMethod("getNode", Object().javaClass)
-        getNodeMethod.isAccessible = true
-        val consoleNode = getNodeMethod(Disposer.getTree(), consoleView)
-        val getParentMethod = consoleNode.javaClass.getDeclaredMethod("getParent")
-        getParentMethod.isAccessible = true
-        val consoleParent = getParentMethod(consoleNode)
-        val getObjectMethod = consoleParent.javaClass.getDeclaredMethod("getObject")
-        getObjectMethod.isAccessible = true
-        val descriptor = getObjectMethod(consoleParent) as Disposable
-
-        Disposer.dispose(descriptor)
-
+        consoleRunner.dispose()
         super.tearDown()
     }
 
-    fun checkHistoryUpdate(maxIter: Int = 20, sleepTime: Long = 500, p: (String) -> Boolean): String {
+    private fun checkHistoryUpdate(maxIterations: Int = 20, sleepTime: Long = 1000, predicate: (String) -> Boolean): String {
         val consoleView = consoleRunner.consoleView as ConsoleViewImpl
         var docHistory: String = ""
 
-        for (i in 1..maxIter) {
+        for (i in 1..maxIterations) {
             docHistory = consoleRunner.consoleView.historyViewer.document.text.trim()
 
-            if (p(docHistory)) break
+            if (predicate(docHistory)) break
 
             Thread.sleep(sleepTime)
             consoleView.flushDeferredText()
@@ -80,12 +65,5 @@ public class KotlinReplTest : PlatformTestCase() {
         assertFalse(hasErrors(historyText), "Cannot run kotlin repl")
         assertTrue(allOk(historyText), "Successful run should contain text: ':help for help'")
         assertFalse(consoleRunner.processHandler.isProcessTerminated, "Process accidentally terminated")
-    }
-
-    @Test fun testSimpleCommand() {
-        consoleRunner.pipeline.submitCommand("1 + 1")
-        val docHistory = checkHistoryUpdate { x: String -> x.endsWith("2</output>") }
-
-        assertTrue(docHistory.endsWith("2</output>"), "1 + 1 should be equal 2, but document history is: '$docHistory'")
     }
 }

@@ -41,11 +41,12 @@ public class BuildAndRestartConsoleAction(
         private val module: Module,
         private val executor: Executor,
         private val contentDescriptor: RunContentDescriptor,
-        private val restarter: Consumer<Module>
+        private val restarter: Consumer<Module>,
+        private val testMode: Boolean
 ) : AnAction("Build and restart", buildAndRestartMessage(module), AllIcons.Actions.Restart) {
 
     init {
-        showOutdatedClassedNotificationIfNeeded()
+        if (!testMode) showOutdatedClassedNotificationIfNeeded()
     }
 
     override fun actionPerformed(_: AnActionEvent) = compileModule()

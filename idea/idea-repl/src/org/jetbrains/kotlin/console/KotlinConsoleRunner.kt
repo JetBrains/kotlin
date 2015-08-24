@@ -29,6 +29,7 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.*
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
@@ -46,10 +47,12 @@ import java.awt.Color
 import java.awt.Font
 import java.util.concurrent.ConcurrentHashMap
 import javax.swing.Icon
+import kotlin.properties.Delegates
 
 public class KotlinConsoleRunner(
         private val cmdLine: GeneralCommandLine,
         private val module: Module,
+        private val testMode: Boolean,
         myProject: Project,
         title: String,
         path: String?
@@ -57,6 +60,8 @@ public class KotlinConsoleRunner(
     private val editorToIndicator = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
     val executor = KotlinConsoleExecutor(this, historyManager)
+
+    private var disposableDescriptor: RunContentDescriptor by Delegates.notNull()
 
     override fun createProcess() = cmdLine.createProcess()
 
@@ -102,8 +107,10 @@ public class KotlinConsoleRunner(
                                     defaultExecutor: Executor,
                                     contentDescriptor: RunContentDescriptor
     ): List<AnAction> {
+        disposableDescriptor = contentDescriptor
+
         val actionList = arrayListOf<AnAction>(
-                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, restarter),
+                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, restarter, testMode),
                 createConsoleExecAction(consoleExecuteActionHandler),
                 createCloseAction(defaultExecutor, contentDescriptor)
         )
@@ -176,5 +183,11 @@ public class KotlinConsoleRunner(
     fun changeEditorIndicatorIcon(editor: EditorEx, newIcon: Icon) {
         val oldHighlighter = editorToIndicator[editor] ?: return
         WriteCommandAction.runWriteCommandAction(project) { oldHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIcon) }
+    }
+
+    // this method shouldn't be called in normal usage; it is for test purpose only
+    fun dispose() {
+        processHandler.destroyProcess()
+        Disposer.dispose(disposableDescriptor)
     }
 }
