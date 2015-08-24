@@ -23,11 +23,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.openapi.vfs.newvfs.VfsImplUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import kotlin.platform.platformStatic
 
 public class KotlinJavaScriptMetaFileSystem : ArchiveFileSystem() {
     companion object {
-        platformStatic
+        @JvmStatic
         public fun getInstance(): KotlinJavaScriptMetaFileSystem = VirtualFileManager.getInstance().getFileSystem(KotlinJavascriptMetadataUtils.VFS_PROTOCOL) as KotlinJavaScriptMetaFileSystem
     }
 
@@ -37,13 +36,13 @@ public class KotlinJavaScriptMetaFileSystem : ArchiveFileSystem() {
 
     override fun extractRootPath(path: String): String {
         val jarSeparatorIndex = path.indexOf(JarFileSystem.JAR_SEPARATOR)
-        assert(jarSeparatorIndex >= 0) { "Path passed to KotlinJavascriptMetaFileSystem must have separator '!/': " + path }
+        assert(jarSeparatorIndex >= 0) { "Path passed to KotlinJavascriptMetaFileSystem must have separator '!/': $path" }
         return path.substring(0, jarSeparatorIndex + JarFileSystem.JAR_SEPARATOR.length())
     }
 
     override fun getHandler(entryFile: VirtualFile): KotlinJavaScriptHandler {
-        val pathToRoot = extractLocalPath(this.extractRootPath(entryFile.getPath()))
-        return VfsImplUtil.getHandler<KotlinJavaScriptHandler>(this, pathToRoot + ARCHIVE_SUFFIX) {
+        val pathToRoot = extractLocalPath(this.extractRootPath(entryFile.path))
+        return VfsImplUtil.getHandler<KotlinJavaScriptHandler>(this, "$pathToRoot$ARCHIVE_SUFFIX") {
             KotlinJavaScriptHandler(it.substringBeforeLast(ARCHIVE_SUFFIX))
         }
     }
