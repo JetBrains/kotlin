@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchLocation
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.getSpecialNamesToSearch
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -49,7 +50,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         val unwrappedElement = element.namedUnwrappedElement
         if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return
 
-        val words = unwrappedElement.getSpecialNamesToSearch()
+        val classNameForCompanionObject = unwrappedElement.getClassNameForCompanionObject()
+        val words = unwrappedElement.getSpecialNamesToSearch() +
+                    (if (classNameForCompanionObject != null) listOf(classNameForCompanionObject) else emptyList())
 
         val effectiveSearchScope = runReadAction { queryParameters.effectiveSearchScope }
 

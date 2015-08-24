@@ -33,6 +33,9 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES
 import com.intellij.psi.search.PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.DefinitionsScopedSearch
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -47,6 +50,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -233,21 +237,29 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
         }
 
-        val searchHelper: UsagesSearchHelper<out JetNamedDeclaration> = when (declaration) {
-            is JetClassOrObject -> ClassUsagesSearchHelper(constructorUsages = true, nonConstructorUsages = true, skipImports = true)
-            is JetNamedFunction -> FunctionUsagesSearchHelper(skipImports = true)
-            is JetProperty, is JetParameter -> PropertyUsagesSearchHelper(skipImports = true, namedArgumentUsages = false)
-            else -> DefaultSearchHelper<JetNamedDeclaration>()
-        }
 
-        val request = searchHelper.newRequest(UsagesSearchTarget(declaration, useScope))
-        val query = UsagesSearch.search(request)
+        return hasReferences(declaration, useScope) ||
+               hasOverrides(declaration, useScope) ||
+               hasCompanionObjectMemberUsages(declaration, useScope)
+    }
 
-        return !query.forEach(Processor {
-            assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() +
-                                 " findAll(): " + query.findAll().map { it?.getElement()?.let{ it.getElementTextWithContext() } } })
-            declaration.isAncestor(it.getElement()) || it.getElement().getParent() is JetValueArgumentName
+    private fun hasReferences(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
+        return !ReferencesSearch.search(declaration, useScope).forEach(Processor {
+            assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() })
+            declaration.isAncestor(it.getElement()) ||
+            it.element.parent is JetValueArgumentName ||
+            it.element.getParentOfType<JetImportDirective>(false) != null
         })
+    }
+
+    private fun hasOverrides(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
+        return DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null
+    }
+
+    private fun hasCompanionObjectMemberUsages(declaration: JetNamedDeclaration, useScope: SearchScope): Boolean {
+        if (declaration !is JetObjectDeclaration || !declaration.isCompanion()) return false
+
+        return declaration.declarations.any { it is JetNamedDeclaration && hasReferences(it, useScope) }
     }
 
     override fun createOptionsPanel(): JComponent? {
