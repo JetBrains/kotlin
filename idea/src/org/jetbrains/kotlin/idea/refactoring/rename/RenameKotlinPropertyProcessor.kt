@@ -44,7 +44,9 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
-    override fun canProcessElement(element: PsiElement): Boolean = element.namedUnwrappedElement is JetProperty
+    override fun canProcessElement(element: PsiElement): Boolean {
+        return element.namedUnwrappedElement is JetProperty
+    }
 
     /* Can't properly update getters and setters in Java */
     override fun isInplaceRenameSupported() = false

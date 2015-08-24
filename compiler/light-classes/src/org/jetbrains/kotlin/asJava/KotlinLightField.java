@@ -182,4 +182,9 @@ public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiFi
         }
         return super.isEquivalentTo(another);
     }
+
+    @Override
+    public boolean isWritable() {
+        return getOrigin().isWritable();
+    }
 }

@@ -171,6 +171,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
                             searchNamedElement(queryParameters, propertyMethods.getGetter())
                             searchNamedElement(queryParameters, propertyMethods.getSetter())
+                            searchNamedElement(queryParameters, propertyMethods.getBackingField())
                         }
                 is KotlinLightMethod -> {
                     val declaration = element.getOrigin()

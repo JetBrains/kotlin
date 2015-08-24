@@ -1,0 +1,6 @@
+{
+  "type": "KOTLIN_PROPERTY",
+  "classId": "testing/rename/Foo",
+  "oldName": "FIRST",
+  "newName": "SECOND"
+}
