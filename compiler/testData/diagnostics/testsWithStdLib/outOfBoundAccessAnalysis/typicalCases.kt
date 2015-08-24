@@ -47,7 +47,6 @@ fun listAppend2(resetNeeded: Boolean, notTwo: Boolean, appendLineEnd: Boolean) {
     if (appendLineEnd) {
         arr.add('\n')
     }
-    println(arr)
     <!OUT_OF_BOUND_ACCESS!>arr[0] = '?'<!>
     <!OUT_OF_BOUND_ACCESS!>arr[1] = '?'<!>            // `arr` size can be 1
     println(arr)
