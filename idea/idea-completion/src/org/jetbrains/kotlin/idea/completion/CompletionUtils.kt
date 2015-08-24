@@ -61,6 +61,8 @@ fun LookupElement.assignPriority(priority: ItemPriority): LookupElement {
     return this
 }
 
+val STATISTICS_INFO_CONTEXT_KEY = Key<String>("STATISTICS_INFO_CONTEXT_KEY")
+
 val NOT_IMPORTED_KEY = Key<Unit>("NOT_IMPORTED_KEY")
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)

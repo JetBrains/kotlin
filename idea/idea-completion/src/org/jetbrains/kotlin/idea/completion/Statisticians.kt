@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionStatistician
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.statistics.StatisticsInfo
 import com.intellij.psi.util.ProximityLocation
@@ -38,12 +39,15 @@ class KotlinCompletionStatistician : CompletionStatistician() {
     override fun serialize(element: LookupElement, location: CompletionLocation): StatisticsInfo? {
         val o = (element.`object` as? DeclarationLookupObject) ?: return null
 
+        assert(element !is LookupElementDecorator<*>, "LookupElementDecorator's should be unwrapped by DecoratorCompletionStatistician")
+        val context = element.getUserData(STATISTICS_INFO_CONTEXT_KEY) ?: ""
+
         if (o.descriptor != null) {
-            return KotlinStatisticsInfo.forDescriptor(o.descriptor!!)
+            return KotlinStatisticsInfo.forDescriptor(o.descriptor!!, context)
         }
         else {
             val fqName = o.importableFqName ?: return StatisticsInfo.EMPTY
-            return StatisticsInfo("", fqName.asString())
+            return StatisticsInfo(context, fqName.asString())
         }
     }
 }
@@ -67,7 +71,7 @@ object KotlinStatisticsInfo {
         parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     }
 
-    fun forDescriptor(descriptor: DeclarationDescriptor): StatisticsInfo {
+    fun forDescriptor(descriptor: DeclarationDescriptor, context: String = ""): StatisticsInfo {
         if (descriptor is ClassDescriptor) {
             return descriptor.importableFqName?.let { StatisticsInfo("", it.asString()) } ?: StatisticsInfo.EMPTY
         }
@@ -80,6 +84,6 @@ object KotlinStatisticsInfo {
                                   else -> null
                               }  ?: return StatisticsInfo.EMPTY
         val signature = SIGNATURE_RENDERER.render(descriptor)
-        return StatisticsInfo("", "$containerFqName###$signature")
+        return StatisticsInfo(context, "$containerFqName###$signature")
     }
 }

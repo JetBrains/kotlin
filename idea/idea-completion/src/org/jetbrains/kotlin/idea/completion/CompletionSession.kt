@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
+import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -217,6 +219,16 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     public fun complete(): Boolean {
+        val statisticsContext = calcContextForStatisticsInfo()
+        if (statisticsContext != null) {
+            collector.addLookupElementPostProcessor { lookupElement ->
+                // we should put data into the original element because of DecoratorCompletionStatistician
+                val unwrapped = sequence(lookupElement) { (it as? LookupElementDecorator<*>)?.delegate }.last()
+                unwrapped.putUserData(STATISTICS_INFO_CONTEXT_KEY, statisticsContext)
+                lookupElement
+            }
+        }
+
         doComplete()
         flushToResultSet()
         return !collector.isResultEmpty
@@ -240,6 +252,26 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
         return sorter
+    }
+
+    protected fun calcContextForStatisticsInfo(): String? {
+        if (expectedInfos.isEmpty()) return null
+
+        var context = expectedInfos
+                .map { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
+                .filterNotNull()
+                .singleOrNull()
+                ?.let { "expectedType=$it" }
+
+        if (context == null) {
+            context = expectedInfos
+                    .map { it.expectedName }
+                    .filterNotNull()
+                    .singleOrNull()
+                    ?.let { "expectedName=$it" }
+        }
+
+        return context
     }
 
     protected val referenceVariants: Collection<DeclarationDescriptor> by lazy {
