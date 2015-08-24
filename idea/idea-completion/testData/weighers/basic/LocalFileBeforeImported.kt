@@ -1,19 +1,19 @@
 package test
 
-import some.fooImported
+import some.foo2Imported
 
-val fooVar = 12
-fun fooCurentFile() = 12
+val foo5Var = 12
+fun foo4CurentFile() = 12
 
 val some = foo<caret>
 
 // "foo" is before other elements because of exact prefix match
 
 // ORDER: foo
-// ORDER: fooVar
-// ORDER: fooCurentFile
-// ORDER: fooFromSamePackage
-// ORDER: fooImported
-// ORDER: fooNotImported
+// ORDER: foo5Var
+// ORDER: foo4CurentFile
+// ORDER: foo3FromSamePackage
+// ORDER: foo2Imported
+// ORDER: foo1NotImported
 // INVOCATION_COUNT: 2
 // SELECTED: 0
