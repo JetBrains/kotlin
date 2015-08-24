@@ -21,11 +21,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
@@ -44,21 +40,8 @@ fun logError(cl: Class<*>, message: String) {
 public class RunKotlinConsoleAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return errorNotification(null, "<p>Project not found</p>")
-        val module = getModule(e) ?: return errorNotification(project, "<p>Module not found</p>")
 
-        KotlinConsoleKeeper.getInstance(project).run(module)
-    }
-
-    private fun getModule(e: AnActionEvent): Module? {
-        val project = e.project ?: return null
-        val file = CommonDataKeys.VIRTUAL_FILE.getData(e.dataContext)
-
-        if (file != null) {
-            val moduleForFile = ModuleUtilCore.findModuleForFile(file, project)
-            if (moduleForFile != null) return moduleForFile
-        }
-
-        return ModuleManager.getInstance(project).modules.firstOrNull()
+        KotlinConsoleModuleDialog(project).showIfNeeded(e.dataContext)
     }
 }
 
