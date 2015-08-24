@@ -1,6 +1,6 @@
 package test
 
-kotlin.platform.platformName(name = "bar") internal fun foo(): kotlin.Unit
+kotlin.jvm.jvmName(name = "bar") internal fun foo(): kotlin.Unit
 
 public open class PlatformName {
     public constructor PlatformName()

@@ -1,6 +1,6 @@
 package
 
-kotlin.platform.platformName(name = ".") internal fun foo(): kotlin.Unit
-kotlin.platform.platformName(name = "") internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
-kotlin.platform.platformName(name = "<") internal fun fooLT(): kotlin.Unit
-kotlin.platform.platformName(name = "/") internal fun fooSlash(): kotlin.Unit
+kotlin.jvm.jvmName(name = ".") internal fun foo(): kotlin.Unit
+kotlin.jvm.jvmName(name = "") internal fun foo(/*0*/ a: kotlin.Any): kotlin.Unit
+kotlin.jvm.jvmName(name = "<") internal fun fooLT(): kotlin.Unit
+kotlin.jvm.jvmName(name = "/") internal fun fooSlash(): kotlin.Unit

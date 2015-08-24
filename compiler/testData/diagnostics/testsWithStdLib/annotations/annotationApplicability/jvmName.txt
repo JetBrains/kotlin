@@ -1,0 +1,45 @@
+package 
+
+kotlin.jvm.jvmName(name = "c") internal val px: kotlin.Int = 1
+internal val valx: kotlin.Int
+internal var vardef: kotlin.Int
+internal var varx: kotlin.Int
+kotlin.jvm.jvmName(name = "d") internal val kotlin.Any.px: kotlin.Int
+kotlin.jvm.jvmName(name = "a") internal fun foo(): kotlin.Unit
+internal fun foo1(): kotlin.Unit
+kotlin.jvm.jvmName(name = "b") internal fun kotlin.Any.foo(): kotlin.Unit
+
+internal abstract class AB {
+    public constructor AB()
+    kotlin.jvm.jvmName(name = "AB_absFun1") internal abstract fun absFun1(): kotlin.Unit
+    internal abstract fun absFun2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.jvm.jvmName(name = "AB_openFun") internal open fun openFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.jvm.jvmName(name = "C") internal final class C {
+    kotlin.jvm.jvmName(name = "primary") public constructor C()
+    kotlin.jvm.jvmName(name = "ctr") public constructor C(/*0*/ x: kotlin.Int)
+    kotlin.jvm.jvmName(name = "c") internal final val px: kotlin.Int = 1
+    internal final val valx: kotlin.Int
+    internal final var varx: kotlin.Int
+    kotlin.jvm.jvmName(name = "d") internal final val kotlin.Any.px: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.jvm.jvmName(name = "a") internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    kotlin.jvm.jvmName(name = "b") internal final fun kotlin.Any.foo(): kotlin.Unit
+}
+
+internal final class D : AB {
+    public constructor D()
+    internal open override /*1*/ fun absFun1(): kotlin.Unit
+    kotlin.jvm.jvmName(name = "D_absFun2") internal open override /*1*/ fun absFun2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.jvm.jvmName(name = "D_finalFun") internal final fun finalFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.jvm.jvmName(name = "D_openFun") internal final override /*1*/ fun openFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

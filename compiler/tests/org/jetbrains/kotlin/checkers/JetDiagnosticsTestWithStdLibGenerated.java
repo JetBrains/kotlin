@@ -111,9 +111,9 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
-            @TestMetadata("platformName.kt")
-            public void testPlatformName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/platformName.kt");
+            @TestMetadata("jvmName.kt")
+            public void testJvmName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmName.kt");
                 doTest(fileName);
             }
         }

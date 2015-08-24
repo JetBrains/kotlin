@@ -122,7 +122,7 @@ public class MainFunctionDetector {
 
     @NotNull
     private static String getJVMFunctionName(FunctionDescriptor functionDescriptor) {
-        String platformName = DescriptorUtils.getPlatformName(functionDescriptor);
+        String platformName = DescriptorUtils.getJvmName(functionDescriptor);
         if (platformName != null) {
             return platformName;
         }

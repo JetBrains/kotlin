@@ -23,20 +23,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.StringValue;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.NESTED_CLASS_NOT_ALLOWED;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.kotlin.psi.JetStubbedPsiUtil.getContainingDeclaration;
 
@@ -188,7 +183,6 @@ public class ModifiersChecker {
             checkNestedClassAllowed(modifierListOwner, descriptor);
             ModifierCheckerCore.INSTANCE$.check(modifierListOwner, trace, descriptor);
             checkTypeParametersModifiers(modifierListOwner);
-            checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
             ClassDescriptor classDescriptor = descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
             annotationChecker.check(modifierListOwner, trace, classDescriptor);
@@ -198,7 +192,6 @@ public class ModifiersChecker {
                 @NotNull JetDeclaration modifierListOwner,
                 @NotNull DeclarationDescriptor descriptor
         ) {
-            checkPlatformNameApplicability(descriptor);
             runDeclarationCheckers(modifierListOwner, descriptor);
             annotationChecker.check(modifierListOwner, trace,
                                               descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null);
@@ -214,44 +207,6 @@ public class ModifiersChecker {
                     trace.report(NESTED_CLASS_NOT_ALLOWED.on(aClass));
                 }
             }
-        }
-
-        private void checkPlatformNameApplicability(@NotNull DeclarationDescriptor descriptor) {
-            AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
-            if (annotation == null) return;
-
-            JetAnnotationEntry annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation);
-            if (annotationEntry == null) return;
-
-            if (descriptor instanceof FunctionDescriptor && !isRenamableFunction((FunctionDescriptor) descriptor)) {
-                trace.report(INAPPLICABLE_PLATFORM_NAME.on(annotationEntry));
-            }
-
-            String value = null;
-            Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
-            if (!values.isEmpty()) {
-                ConstantValue<?> name = values.iterator().next();
-                if (name instanceof StringValue) {
-                    value = ((StringValue) name).getValue();
-                }
-            }
-            if (value == null || !Name.isValidIdentifier(value)) {
-                trace.report(ILLEGAL_PLATFORM_NAME.on(annotationEntry, String.valueOf(value)));
-            }
-
-            if (descriptor instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
-                if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.getModality().isOverridable()) {
-                    trace.report(INAPPLICABLE_PLATFORM_NAME.on(annotationEntry));
-                }
-            }
-        }
-
-
-        private boolean isRenamableFunction(@NotNull FunctionDescriptor descriptor) {
-            DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-
-            return containingDescriptor instanceof PackageFragmentDescriptor || containingDescriptor instanceof ClassDescriptor;
         }
 
         @NotNull

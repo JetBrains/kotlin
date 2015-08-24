@@ -1,22 +1,20 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-import kotlin.platform.*
-
-@platformName("bar")
+@jvmName("bar")
 fun foo(a: Any) {}
 
 fun Any.foo() {}
 
-@platformName("barInt")
+@jvmName("barInt")
 fun bar(x: List<Int>) {}
 
-@platformName("barStr")
+@jvmName("barStr")
 fun bar(x: List<String>) {}
 
 class C {
     var rwProp: Int
-        @platformName("get_rwProp")
+        @jvmName("get_rwProp")
         get() = 0
-        @platformName("set_rwProp")
+        @jvmName("set_rwProp")
         set(v) {}
 
     fun getRwProp(): Int = 123

@@ -51,6 +51,8 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
+    public static final FqName JVM_NAME = new FqName("kotlin.jvm.jvmName");
+    public static final FqName PLATFORM_NAME = new FqName("kotlin.platform.platformName");
 
     private DescriptorUtils() {
     }
@@ -552,17 +554,25 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static String getPlatformName(@NotNull Annotated descriptor) {
-        AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
-        if (platformNameAnnotation == null) return null;
+    public static String getJvmName(@NotNull Annotated descriptor) {
+        AnnotationDescriptor jvmNameAnnotation = getJvmNameAnnotation(descriptor);
+        if (jvmNameAnnotation == null) return null;
 
-        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = platformNameAnnotation.getAllValueArguments();
+        Map<ValueParameterDescriptor, ConstantValue<?>> arguments = jvmNameAnnotation.getAllValueArguments();
         if (arguments.isEmpty()) return null;
 
         ConstantValue<?> name = arguments.values().iterator().next();
         if (!(name instanceof StringValue)) return null;
 
         return ((StringValue) name).getValue();
+    }
+
+    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated descriptor) {
+        AnnotationDescriptor jvmNameAnnotation = descriptor.getAnnotations().findAnnotation(JVM_NAME);
+        if (jvmNameAnnotation == null) {
+            jvmNameAnnotation = descriptor.getAnnotations().findAnnotation(PLATFORM_NAME);
+        }
+        return jvmNameAnnotation;
     }
 
     private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {

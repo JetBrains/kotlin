@@ -1,7 +1,7 @@
-import kotlin.platform.platformName;
+import kotlin.jvm.jvmName;
 
 public class FakePlatformName {
-    @platformName(name = "fake")
+    @jvmName(name = "fake")
     public String foo() {
         return "foo";
     }

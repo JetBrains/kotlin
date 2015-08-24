@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.JavaAnnotationCallChecker
 import org.jetbrains.kotlin.load.kotlin.JavaAnnotationMethodCallChecker
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.annotations.findPublicFieldAnnotation
@@ -61,6 +63,7 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
                 PlatformStaticAnnotationChecker(),
+                JvmNameAnnotationChecker(),
                 LocalFunInlineChecker(),
                 ReifiedTypeParameterAnnotationChecker(),
                 NativeFunChecker(),
@@ -163,6 +166,44 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
         }
     }
 }
+
+public class JvmNameAnnotationChecker : DeclarationChecker {
+    override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
+        val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
+        if (platformNameAnnotation != null) {
+            checkDeclaration(descriptor, platformNameAnnotation, diagnosticHolder)
+        }
+    }
+
+    private fun checkDeclaration(descriptor: DeclarationDescriptor,
+                                 annotation: AnnotationDescriptor,
+                                 diagnosticHolder: DiagnosticSink) {
+        val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
+
+        if (descriptor is FunctionDescriptor && !isRenamableFunction(descriptor)) {
+            diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+        }
+
+        val value = DescriptorUtils.getJvmName(descriptor)
+        if (value == null || !Name.isValidIdentifier(value)) {
+            diagnosticHolder.report(ErrorsJvm.ILLEGAL_JVM_NAME.on(annotationEntry, value))
+        }
+
+        if (descriptor is CallableMemberDescriptor) {
+            val callableMemberDescriptor = descriptor
+            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.modality.isOverridable) {
+                diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+            }
+        }
+    }
+
+    private fun isRenamableFunction(descriptor: FunctionDescriptor): Boolean {
+        val containingDescriptor = descriptor.containingDeclaration
+
+        return containingDescriptor is PackageFragmentDescriptor || containingDescriptor is ClassDescriptor
+    }
+}
+
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
