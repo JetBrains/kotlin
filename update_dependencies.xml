@@ -363,15 +363,18 @@
 
             <!-- When ABI version changes, the second build should compile markdown-parser manually instead of using the old version -->
 
-            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"
-                  resultproperty="markdown.abi.incompatible">
-                <arg value="-cp"/>
-                <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
-                <arg value="-script"/>
-                <arg value="generators/infrastructure/check-library-abi-version.kts"/>
-                <arg value="${basedir}/dependencies/markdown.jar"/>
-                <arg value="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
-            </exec>
+            <!--<exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"-->
+                  <!--resultproperty="markdown.abi.incompatible">-->
+                <!--<arg value="-cp"/>-->
+                <!--<arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>-->
+                <!--<arg value="-script"/>-->
+                <!--<arg value="generators/infrastructure/check-library-abi-version.kts"/>-->
+                <!--<arg value="${basedir}/dependencies/markdown.jar"/>-->
+                <!--<arg value="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>-->
+            <!--</exec>-->
+
+            <!-- Force rebuild for markdown to avoid standard library incompatibility -->
+            <property name="markdown.abi.incompatible" value="1"/>
 
             <if>
                 <not>
