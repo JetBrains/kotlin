@@ -1,3 +1,11 @@
 package testing.rename
 
-public class Foo(public val /*rename*/first: String)
+public open class Foo(public open val /*rename*/first: String)
+
+public class Bar : Foo("abc") {
+    override val first = "xyzzy"
+}
+
+fun usages(f: Foo, b: Bar): String {
+    return f.first + b.first
+}
