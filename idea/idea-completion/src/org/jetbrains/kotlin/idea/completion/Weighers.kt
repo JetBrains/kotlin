@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.CompletionLocation
+import com.intellij.codeInsight.completion.CompletionWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.psi.util.proximity.PsiProximityComparator
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -99,6 +102,14 @@ class LocationWeigher(private val file: JetFile, private val originalFile: JetFi
             ProjectRootsUtil.isInProjectSource(declaration) -> Weight.project
             else -> Weight.libraries
         }
+    }
+}
+
+// analog of LookupElementProximityWeigher which does not work for us
+object KotlinLookupElementProximityWeigher : CompletionWeigher() {
+    override fun weigh(element: LookupElement, location: CompletionLocation): Comparable<Nothing>? {
+        val psiElement = (element.`object` as? DeclarationLookupObject)?.psiElement ?: return null
+        return PsiProximityComparator.getProximity({ psiElement }, location.completionParameters.position, location.processingContext)
     }
 }
 
