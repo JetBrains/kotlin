@@ -376,8 +376,8 @@ error:
 sink:
     <SINK>                                                                                                                                                                                        in: INTS{}          BOOLS{} ARRS{}    out: INTS{}          BOOLS{} ARRS{}
 =====================
-== whenWithEmumerationCase ==
-fun whenWithEmumerationCase(): Int {
+== whenWithEnumerationCase ==
+fun whenWithEnumerationCase(): Int {
     val c = 3
     val d = 4
     val e = 5
@@ -525,8 +525,8 @@ error:
 sink:
     <SINK>                                                                                                                                                                                                                 in: INTS{}                        BOOLS{}       ARRS{}          out: INTS{}                        BOOLS{}       ARRS{}
 =====================
-== whenWithManyEmumerationCase ==
-fun whenWithManyEmumerationCase(): Int {
+== whenWithManyEnumerationCase ==
+fun whenWithManyEnumerationCase() {
     val c = 3
     val d = 4
     when (c) {

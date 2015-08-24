@@ -47,7 +47,7 @@ fun whenInsideWhile() {
         }
 }
 
-fun whenWithEmumerationCase(): Int {
+fun whenWithEnumerationCase(): Int {
     val c = 3
     val d = 4
     val e = 5
@@ -75,7 +75,7 @@ fun whenWithEmumerationCase(): Int {
     return z
 }
 
-fun whenWithManyEmumerationCase(): Int {
+fun whenWithManyEnumerationCase() {
     val c = 3
     val d = 4
     when (c) {
