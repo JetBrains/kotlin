@@ -281,6 +281,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameKotlinMethodWithEscapedName/renameKotlinMethodWithEscapedName.test")
+    public void testRenameKotlinMethodWithEscapedName_RenameKotlinMethodWithEscapedName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinMethodWithEscapedName/renameKotlinMethodWithEscapedName.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameKotlinPackage/renameInOtherFile.test")
     public void testRenameKotlinPackage_RenameInOtherFile() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameKotlinPackage/renameInOtherFile.test");

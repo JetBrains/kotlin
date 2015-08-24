@@ -251,8 +251,7 @@ public class LightClassUtil {
             return getPsiClass(((JetConstructor) declaration).getContainingClassOrObject());
         }
 
-        //noinspection unchecked
-        if (PsiTreeUtil.getParentOfType(declaration, JetFunction.class, JetProperty.class) != null) {
+        if (!canGenerateLightClass(declaration)) {
             // Can't get wrappers for internal declarations. Their classes are not generated during calcStub
             // with ClassBuilderMode.LIGHT_CLASSES mode, and this produces "Class not found exception" in getDelegate()
             return null;
@@ -272,6 +271,11 @@ public class LightClassUtil {
         }
 
         return null;
+    }
+
+    public static boolean canGenerateLightClass(JetDeclaration declaration) {
+        //noinspection unchecked
+        return PsiTreeUtil.getParentOfType(declaration, JetFunction.class, JetProperty.class) == null;
     }
 
     @NotNull

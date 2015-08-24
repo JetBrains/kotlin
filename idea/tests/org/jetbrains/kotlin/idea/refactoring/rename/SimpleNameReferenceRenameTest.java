@@ -47,6 +47,10 @@ public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
         doTest("anotherRenamed");
     }
 
+    public void testMemberOfLocalObject() throws Exception {
+        doTest("bar");
+    }
+
     public void testLocalFunction() throws Exception {
         doTest("xyzzy");
     }
