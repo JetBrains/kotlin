@@ -21,7 +21,6 @@ import com.intellij.codeInsight.completion.CompletionWeigher
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.util.proximity.PsiProximityComparator
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -31,8 +30,6 @@ import org.jetbrains.kotlin.idea.completion.smart.*
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -80,27 +77,6 @@ class ImportedWeigher(private val classifier: ImportableFqNameClassifier) : Look
             ImportableFqNameClassifier.Classification.preciseImport -> Weight.preciseImport
             ImportableFqNameClassifier.Classification.allUnderImport -> Weight.allUnderImport
             else -> null
-        }
-    }
-}
-
-class LocationWeigher(private val file: JetFile, private val originalFile: JetFile) : LookupElementWeigher("kotlin.location") {
-    private val currentModule = ModuleUtilCore.findModuleForPsiElement(originalFile)
-
-    private enum class Weight {
-        currentFile,
-        currentModule,
-        project,
-        libraries
-    }
-
-    override fun weigh(element: LookupElement): Weight? {
-        val declaration = (element.`object` as? DeclarationLookupObject)?.psiElement ?: return null
-        return when {
-            declaration.containingFile == file -> Weight.currentFile
-            ModuleUtilCore.findModuleForPsiElement(declaration) == currentModule -> Weight.currentModule
-            ProjectRootsUtil.isInProjectSource(declaration) -> Weight.project
-            else -> Weight.libraries
         }
     }
 }
