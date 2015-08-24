@@ -29,6 +29,8 @@ import com.intellij.openapi.editor.markup.*
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
+import com.intellij.util.Consumer
+import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
@@ -83,7 +85,9 @@ public class KotlinConsoleRunner(
 
         keeper.putVirtualFileToConsole(consoleFile, this)
         processHandler.addProcessListener(object : ProcessAdapter() {
-            override fun processTerminated(_: ProcessEvent) { keeper.removeConsole(consoleFile) }
+            override fun processTerminated(_: ProcessEvent) {
+                keeper.removeConsole(consoleFile)
+            }
         })
 
         return processHandler
@@ -98,15 +102,22 @@ public class KotlinConsoleRunner(
                                     contentDescriptor: RunContentDescriptor
     ): List<AnAction> {
         val actionList = arrayListOf<AnAction>(
-            createCloseAction(defaultExecutor, contentDescriptor),
-            createConsoleExecAction(consoleExecuteActionHandler)
+                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, restarter),
+                createConsoleExecAction(consoleExecuteActionHandler),
+                createCloseAction(defaultExecutor, contentDescriptor)
         )
         toolbarActions.addAll(actionList)
         return actionList
     }
 
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler)
-        = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, "KotlinShellExecute", consoleExecuteActionHandler)
+            = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, "KotlinShellExecute", consoleExecuteActionHandler)
+
+    private val restarter = object : Consumer<Module> {
+        override fun consume(module: Module) {
+            KotlinConsoleKeeper.getInstance(project).run(module)
+        }
+    }
 
     private fun setupPlaceholder(editor: EditorEx) {
         editor.setPlaceholder("<Ctrl+Enter> to execute")
