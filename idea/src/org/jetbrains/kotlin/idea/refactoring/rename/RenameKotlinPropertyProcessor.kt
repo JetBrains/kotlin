@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.SyntheticElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.OverridingMethodsSearch
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -45,14 +47,20 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element.namedUnwrappedElement is JetProperty
+        val namedUnwrappedElement = element.namedUnwrappedElement
+        return namedUnwrappedElement is JetProperty || (namedUnwrappedElement is JetParameter && namedUnwrappedElement.hasValOrVar())
     }
 
     /* Can't properly update getters and setters in Java */
     override fun isInplaceRenameSupported() = false
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
-        val jetProperty = element?.namedUnwrappedElement as? JetProperty
+        val namedUnwrappedElement = element?.namedUnwrappedElement
+        if (namedUnwrappedElement is JetParameter) {
+            return namedUnwrappedElement
+        }
+
+        val jetProperty = namedUnwrappedElement as? JetProperty
         if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
 
         val deepestSuperProperty = findDeepestOverriddenProperty(jetProperty)
@@ -82,13 +90,15 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        val jetProperty = element?.namedUnwrappedElement as? JetProperty
-        if (jetProperty == null) throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
-
-        val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(jetProperty) }
+        val namedUnwrappedElement = element?.namedUnwrappedElement
+        val propertyMethods = when(namedUnwrappedElement) {
+            is JetProperty -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
+            is JetParameter -> runReadAction { LightClassUtil.getLightClassPropertyMethods(namedUnwrappedElement) }
+            else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
+        }
 
         for (propertyMethod in propertyMethods) {
-            addRenameElements(propertyMethod, jetProperty.getName(), newName, allRenames, scope)
+            addRenameElements(propertyMethod, (element as PsiNamedElement).name, newName, allRenames, scope)
         }
     }
 
@@ -99,12 +109,12 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     }
 
     override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
-        if (element !is JetProperty) {
+        if (element !is JetProperty && element !is JetParameter) {
             super.renameElement(element, newName, usages, listener)
             return
         }
 
-        val name = element.getName()!!
+        val name = (element as PsiNamedElement).getName()!!
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
 

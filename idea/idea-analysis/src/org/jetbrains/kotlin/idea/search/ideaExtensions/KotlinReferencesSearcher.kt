@@ -169,10 +169,15 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 }
                 is JetProperty -> {
                     val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
-                            searchNamedElement(queryParameters, propertyMethods.getGetter())
-                            searchNamedElement(queryParameters, propertyMethods.getSetter())
-                            searchNamedElement(queryParameters, propertyMethods.getBackingField())
-                        }
+                    searchNamedElement(queryParameters, propertyMethods.getGetter())
+                    searchNamedElement(queryParameters, propertyMethods.getSetter())
+                }
+                is JetParameter -> {
+                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
+                    searchNamedElement(queryParameters, propertyMethods.getGetter())
+                    searchNamedElement(queryParameters, propertyMethods.getSetter())
+                    searchNamedElement(queryParameters, propertyMethods.getBackingField())
+                }
                 is KotlinLightMethod -> {
                     val declaration = element.getOrigin()
                     if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
@@ -189,7 +194,8 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     }
                 }
                 is KotlinLightParameter -> {
-                    val componentFunctionDescriptor = element.getOrigin()?.dataClassComponentFunction()
+                    val origin = element.getOrigin() ?: return
+                    val componentFunctionDescriptor = origin.dataClassComponentFunction()
                     if (componentFunctionDescriptor != null) {
                         val containingClass = element.method.containingClass
                         val componentFunction = containingClass?.methods?.find {
@@ -199,6 +205,10 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                             searchNamedElement(queryParameters, componentFunction)
                         }
                     }
+
+                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(origin) }
+                    searchNamedElement(queryParameters, propertyMethods.getGetter())
+                    searchNamedElement(queryParameters, propertyMethods.getSetter())
                 }
             }
         }
