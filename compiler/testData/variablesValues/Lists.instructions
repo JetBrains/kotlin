@@ -162,3 +162,122 @@ error:
 sink:
     <SINK>                                                              in: INTS{} BOOLS{} ARRS{}           out: INTS{} BOOLS{} ARRS{}
 =====================
+== listAsUnknownCallArgument ==
+fun listAsUnknownCallArgument() {
+    class A<T>(val list: MutableList<T>) {
+        public fun mutateListField() {
+            list.clear()
+        }
+    }
+    fun mutateList<T>(list: MutableList<T>) {
+        list.clear()
+    }
+    var v1 = arrayListOf("foo")
+    val v2 = arrayListOf("bar", "baz")
+
+    val a = A(v1)
+    a.mutateListField()
+    mutateList(v2)
+
+    val sizes = v1.size() + v2.size()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                                                                                                                                        in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+  2 mark({ class A<T>(val list: MutableList<T>) { public fun mutateListField() { list.clear() } } fun mutateList<T>(list: MutableList<T>) { list.clear() } var v1 = arrayListOf("foo") val v2 = arrayListOf("bar", "baz") val a = A(v1) a.mutateListField() mutateList(v2) val sizes = v1.size() + v2.size() })    in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    v(val list: MutableList<T>)                                                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    magic[FAKE_INITIALIZER](val list: MutableList<T>) -> <v0>                                                                                                                                                                                                                                                      in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    w(list|<v0>)                                                                                                                                                                                                                                                                                                   in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    jmp?(L2)                                                                                                                                                                                                                                                                                                       in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    d(public fun mutateListField() { list.clear() })                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+L2 [after local declaration]:
+    jmp?(L5)                                                                                                                                                                                                                                                                                                       in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+    d(fun mutateList<T>(list: MutableList<T>) { list.clear() })                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+L5 [after local declaration]:
+    v(var v1 = arrayListOf("foo"))                                                                                                                                                                                                                                                                                 in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{v1:-}
+    mark("foo")                                                                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{v1:-}             out: INTS{}        BOOLS{} ARRS{v1:-}
+    r("foo") -> <v1>                                                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{v1:-}             out: INTS{}        BOOLS{} ARRS{v1:-}
+    mark(arrayListOf("foo"))                                                                                                                                                                                                                                                                                       in: INTS{}        BOOLS{} ARRS{v1:-}             out: INTS{}        BOOLS{} ARRS{v1:-}
+    call(arrayListOf("foo"), arrayListOf|<v1>) -> <v2>                                                                                                                                                                                                                                                             in: INTS{}        BOOLS{} ARRS{v1:-}             out: INTS{}        BOOLS{} ARRS{v1:-}
+    w(v1|<v2>)                                                                                                                                                                                                                                                                                                     in: INTS{}        BOOLS{} ARRS{v1:-}             out: INTS{}        BOOLS{} ARRS{v1:[1]}
+    v(val v2 = arrayListOf("bar", "baz"))                                                                                                                                                                                                                                                                          in: INTS{}        BOOLS{} ARRS{v1:[1]}           out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    mark("bar")                                                                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    r("bar") -> <v3>                                                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    mark("baz")                                                                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    r("baz") -> <v4>                                                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    mark(arrayListOf("bar", "baz"))                                                                                                                                                                                                                                                                                in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    call(arrayListOf("bar", "baz"), arrayListOf|<v3>, <v4>) -> <v5>                                                                                                                                                                                                                                                in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}
+    w(v2|<v5>)                                                                                                                                                                                                                                                                                                     in: INTS{}        BOOLS{} ARRS{v1:[1],v2:-}      out: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}
+    v(val a = A(v1))                                                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}    out: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}
+    r(v1) -> <v6>                                                                                                                                                                                                                                                                                                  in: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}    out: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}
+    mark(A(v1))                                                                                                                                                                                                                                                                                                    in: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}    out: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}
+    call(A(v1), <init>|<v6>) -> <v7>                                                                                                                                                                                                                                                                               in: INTS{}        BOOLS{} ARRS{v1:[1],v2:[2]}    out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    w(a|<v7>)                                                                                                                                                                                                                                                                                                      in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    mark(a.mutateListField())                                                                                                                                                                                                                                                                                      in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    r(a) -> <v8>                                                                                                                                                                                                                                                                                                   in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    mark(mutateListField())                                                                                                                                                                                                                                                                                        in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    call(mutateListField(), mutateListField|<v8>) -> <v9>                                                                                                                                                                                                                                                          in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    r(v2) -> <v10>                                                                                                                                                                                                                                                                                                 in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    mark(mutateList(v2))                                                                                                                                                                                                                                                                                           in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}
+    call(mutateList(v2), mutateList|<v10>) -> <v11>                                                                                                                                                                                                                                                                in: INTS{}        BOOLS{} ARRS{v1:?,v2:[2]}      out: INTS{}        BOOLS{} ARRS{v1:?,v2:?}
+    v(val sizes = v1.size() + v2.size())                                                                                                                                                                                                                                                                           in: INTS{}        BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    mark(v1.size())                                                                                                                                                                                                                                                                                                in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    r(v1) -> <v12>                                                                                                                                                                                                                                                                                                 in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    mark(size())                                                                                                                                                                                                                                                                                                   in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    call(size(), size|<v12>) -> <v13>                                                                                                                                                                                                                                                                              in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    mark(v2.size())                                                                                                                                                                                                                                                                                                in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    r(v2) -> <v14>                                                                                                                                                                                                                                                                                                 in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    mark(size())                                                                                                                                                                                                                                                                                                   in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    call(size(), size|<v14>) -> <v15>                                                                                                                                                                                                                                                                              in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    mark(v1.size() + v2.size())                                                                                                                                                                                                                                                                                    in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    call(v1.size() + v2.size(), plus|<v13>, <v15>) -> <v16>                                                                                                                                                                                                                                                        in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}
+    w(sizes|<v16>)                                                                                                                                                                                                                                                                                                 in: INTS{sizes:-} BOOLS{} ARRS{v1:?,v2:?}        out: INTS{sizes:?} BOOLS{} ARRS{v1:?,v2:?}
+L1:
+  1 <END>                                                                                                                                                                                                                                                                                                          in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+error:
+    <ERROR>                                                                                                                                                                                                                                                                                                        in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+sink:
+    <SINK>                                                                                                                                                                                                                                                                                                         in: INTS{}        BOOLS{} ARRS{}                 out: INTS{}        BOOLS{} ARRS{}
+=====================
+== mutateListField ==
+public fun mutateListField() {
+            list.clear()
+        }
+---------------------
+L3:
+  3 <START>                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+  4 mark({ list.clear() })                    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    mark(list.clear())                        in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    magic[IMPLICIT_RECEIVER](list) -> <v0>    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    r(list|<v0>) -> <v1>                      in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    mark(clear())                             in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    call(clear(), clear|<v1>) -> <v2>         in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L4:
+  3 <END>                                     in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+=====================
+== mutateList ==
+fun mutateList<T>(list: MutableList<T>) {
+        list.clear()
+    }
+---------------------
+L6:
+  3 <START>                                                  in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    v(list: MutableList<T>)                                  in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    magic[FAKE_INITIALIZER](list: MutableList<T>) -> <v0>    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    w(list|<v0>)                                             in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+  4 mark({ list.clear() })                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    mark(list.clear())                                       in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    r(list) -> <v1>                                          in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    mark(clear())                                            in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+    call(clear(), clear|<v1>) -> <v2>                        in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+L7:
+  3 <END>                                                    in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+error:
+    <ERROR>                                                  in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+sink:
+    <SINK>                                                   in: INTS{} BOOLS{} ARRS{}    out: INTS{} BOOLS{} ARRS{}
+=====================

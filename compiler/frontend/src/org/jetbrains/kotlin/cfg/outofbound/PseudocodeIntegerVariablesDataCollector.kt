@@ -407,7 +407,8 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         else -> {
                             val pseudoAnnotation = CallInstructionUtils.tryExtractPseudoAnnotationForCollector(instruction)
                             when (pseudoAnnotation) {
-                                null -> Unit
+                                null -> if (CallInstructionUtils.tryExtractPseudoAnnotationForAccess(instruction) == null)
+                                    processArbitraryCall(instruction, updatedData)
                                 is PseudoAnnotation.ConstructorWithSizeAsArg,
                                 is PseudoAnnotation.ConstructorWithElementsAsArgs ->
                                     processCollectionCreation(pseudoAnnotation, instruction, updatedData)
@@ -790,14 +791,30 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
         }
     }
 
-    private fun tryExtractMethodCallReceiverDescriptor(instruction: CallInstruction): VariableDescriptor? {
-        if (instruction.inputValues.size() > 0) {
-            val collectionVariableValueSourceInstruction = instruction.inputValues[0].createdAt
-                                                           ?: return null
-            return PseudocodeUtil.extractVariableDescriptorIfAny(
-                    collectionVariableValueSourceInstruction, false, bindingContext)
+    private fun tryExtractMethodCallReceiverDescriptor(instruction: CallInstruction): VariableDescriptor? =
+        tryExtractInputValueDescriptor(instruction, 0)
+
+    private fun tryExtractInputValueDescriptor(instruction: CallInstruction, inputValueIndex: Int): VariableDescriptor? =
+            if (instruction.inputValues.size() > inputValueIndex) {
+                val collectionVariableValueSourceInstruction = instruction.inputValues[inputValueIndex].createdAt
+                collectionVariableValueSourceInstruction?.let {
+                    PseudocodeUtil.extractVariableDescriptorIfAny(it, false, bindingContext)
+                } ?: null
+            }
+            else null
+
+    // Checks all arguments of called function (or constructor call) and if the argument is known collection
+    // variable, the size of this collection is set undefined (we do not know how the size of the collection can
+    // change inside called function)
+    private fun processArbitraryCall(instruction: CallInstruction, valuesData: ValuesData.Defined) {
+        instruction.inputValues.indices.forEach {
+            val variableDescriptor = tryExtractInputValueDescriptor(instruction, it)
+            variableDescriptor?.let {
+                if (valuesData.collectionsToSizes.contains(it)) {
+                    valuesData.collectionsToSizes[it] = IntegerVariableValues.Undefined
+                }
+            }
         }
-        return null
     }
 
     // For each input fake variable of current instruction checks if the instruction is the last one to

@@ -29,3 +29,22 @@ fun listClear() {
     lst.clear()
     42
 }
+
+fun listAsUnknownCallArgument() {
+    class A<T>(val list: MutableList<T>) {
+        public fun mutateListField() {
+            list.clear()
+        }
+    }
+    fun mutateList<T>(list: MutableList<T>) {
+        list.clear()
+    }
+    var v1 = arrayListOf("foo")
+    val v2 = arrayListOf("bar", "baz")
+
+    val a = A(v1)
+    a.mutateListField()
+    mutateList(v2)
+
+    val sizes = v1.size() + v2.size()
+}
