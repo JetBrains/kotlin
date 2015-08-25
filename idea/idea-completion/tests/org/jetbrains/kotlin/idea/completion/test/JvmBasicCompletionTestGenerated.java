@@ -1918,6 +1918,69 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/super")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Super extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInSuper() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/super"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("QualifierType1.kt")
+            public void testQualifierType1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierType2.kt")
+            public void testQualifierType2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierType3.kt")
+            public void testQualifierType3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierType4.kt")
+            public void testQualifierType4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierType5.kt")
+            public void testQualifierType5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierType6.kt")
+            public void testQualifierType6() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierType6.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierTypeAny.kt")
+            public void testQualifierTypeAny() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierTypeAny.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierTypeAnyInInterface.kt")
+            public void testQualifierTypeAnyInInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierTypeAnyInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("QualifierTypeGeneric.kt")
+            public void testQualifierTypeGeneric() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/super/QualifierTypeGeneric.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/typeArgsOrNot")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

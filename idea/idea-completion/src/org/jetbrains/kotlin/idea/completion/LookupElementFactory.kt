@@ -146,7 +146,9 @@ public class LookupElementFactory(
             if (nestLevel > 0) {
                 var itemText = psiClass.getName()
                 for (i in 1..nestLevel) {
-                    itemText = containerName.substringAfterLast('.') + "." + itemText
+                    val outerClassName = containerName.substringAfterLast('.')
+                    element = element.withLookupString(outerClassName)
+                    itemText = outerClassName + "." + itemText
                     containerName = containerName.substringBeforeLast('.', FqName.ROOT.toString())
                 }
                 element = element.withPresentableText(itemText!!)
@@ -246,6 +248,7 @@ public class LookupElementFactory(
                     element = element.withPresentableText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderClassifierName(descriptor))
 
                     while (container is ClassDescriptor) {
+                        element = element.withLookupString(container.name.asString())
                         container = container.getContainingDeclaration()
                     }
                 }

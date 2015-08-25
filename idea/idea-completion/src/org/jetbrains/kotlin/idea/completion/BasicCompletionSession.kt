@@ -27,6 +27,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -39,12 +40,10 @@ import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
@@ -79,7 +78,9 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         NAMED_ARGUMENTS_ONLY(descriptorKindFilter = null, classKindFilter = null),
 
-        PARAMETER_NAME(descriptorKindFilter = null, classKindFilter = null)
+        PARAMETER_NAME(descriptorKindFilter = null, classKindFilter = null),
+
+        SUPER_QUALIFIER(descriptorKindFilter = DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classKindFilter = null)
     }
 
     private val completionKind = calcCompletionKind()
@@ -136,6 +137,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         // expression we are at first of it
         val typeReference = position.getStrictParentOfType<JetTypeReference>()
         if (typeReference != null) {
+            if (typeReference.parent is JetSuperExpression) {
+                return CompletionKind.SUPER_QUALIFIER
+            }
+
             val firstPartReference = PsiTreeUtil.findChildOfType(typeReference, javaClass<JetSimpleNameExpression>())
             if (firstPartReference == nameExpression) {
                 return CompletionKind.TYPES
@@ -180,6 +185,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 lookupElement.putUserData(LookupCancelWatcher.AUTO_POPUP_AT, position.startOffset)
                 lookupElement
             }
+        }
+
+        if (completionKind == CompletionKind.SUPER_QUALIFIER) {
+            completeSuperQualifier()
+            return
         }
 
         // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
@@ -304,6 +314,28 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
+    }
+
+    private fun completeSuperQualifier() {
+        val classOrObject = position.parents.firstIsInstanceOrNull<JetClassOrObject>() ?: return
+        val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
+        var superClasses = classDescriptor.defaultType.constructor.supertypes
+                .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+                .filterNotNull()
+
+        //TODO: IMO it's not good that Any is to be added manually
+        if (superClasses.all { it.kind == ClassKind.INTERFACE }) {
+            superClasses += KotlinBuiltIns.getInstance().any
+        }
+
+        if (!isNoQualifierContext()) {
+            val referenceVariantsSet = referenceVariants.toSet()
+            superClasses = superClasses.filter { it in referenceVariantsSet }
+        }
+
+        superClasses
+                .map { lookupElementFactory.createLookupElement(it, boldImmediateMembers = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
+                .forEach { collector.addElement(it) }
     }
 
     override fun createSorter(): CompletionSorter {
