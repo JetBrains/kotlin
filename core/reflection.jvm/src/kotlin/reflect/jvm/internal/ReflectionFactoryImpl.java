@@ -32,7 +32,12 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KPackage createKotlinPackage(Class javaClass) {
-        return new KPackageImpl(javaClass);
+        return createKotlinPackage(javaClass, "undefined");
+    }
+
+    @Override
+    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return new KPackageImpl(javaClass, moduleName);
     }
 
     @Override

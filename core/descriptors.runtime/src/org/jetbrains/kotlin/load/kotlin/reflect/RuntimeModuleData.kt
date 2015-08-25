@@ -44,7 +44,7 @@ public class RuntimeModuleData private constructor(public val deserialization: D
     public val localClassResolver: LocalClassResolver get() = deserialization.localClassResolver
 
     companion object {
-        public fun create(classLoader: ClassLoader): RuntimeModuleData {
+        public fun create(classLoader: ClassLoader, moduleName: String?): RuntimeModuleData {
             val storageManager = LockBasedStorageManager()
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager,
                                               ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE))
@@ -57,8 +57,10 @@ public class RuntimeModuleData private constructor(public val deserialization: D
                     ExternalAnnotationResolver.EMPTY, ExternalSignatureResolver.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
                     JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver
             )
+                println("moduleName $moduleName")
             val lazyJavaPackageFragmentProvider =
-                    LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module), PackageMappingProvider.EMPTY)
+                    LazyJavaPackageFragmentProvider(globalJavaResolverContext, module, ReflectionTypes(module),
+                                                    if (moduleName == null) PackageMappingProvider.EMPTY else RuntimePackageMappingProvider(moduleName, classLoader))
             val javaDescriptorResolver = JavaDescriptorResolver(lazyJavaPackageFragmentProvider, module)
             val javaClassDataFinder = JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver)
             val binaryClassAnnotationAndConstantLoader = BinaryClassAnnotationAndConstantLoaderImpl(module, storageManager, reflectKotlinClassFinder, RuntimeErrorReporter)

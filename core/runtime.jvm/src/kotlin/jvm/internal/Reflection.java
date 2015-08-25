@@ -55,6 +55,10 @@ public class Reflection {
         return factory.createKotlinPackage(javaClass);
     }
 
+    public static KPackage createKotlinPackage(Class javaClass, String moduleName) {
+        return factory.createKotlinPackage(javaClass, moduleName);
+    }
+
     public static KClass foreignKotlinClass(Class javaClass) {
         return factory.foreignKotlinClass(javaClass);
     }
