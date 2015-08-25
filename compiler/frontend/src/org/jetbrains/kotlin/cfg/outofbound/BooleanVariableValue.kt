@@ -24,6 +24,8 @@ public sealed class BooleanVariableValue {
     public abstract fun or(other: BooleanVariableValue?): BooleanVariableValue
     public abstract fun not(): BooleanVariableValue
 
+    public abstract fun merge(other: BooleanVariableValue): BooleanVariableValue
+
     // For now derived classes of BooleanVariableValue are immutable,
     // so copy returns this. In the future, if some class become mutable
     // the implementation of this method may change
@@ -41,6 +43,13 @@ public sealed class BooleanVariableValue {
         override fun or(other: BooleanVariableValue?): BooleanVariableValue = True
 
         override fun not(): BooleanVariableValue = False
+
+        override fun merge(other: BooleanVariableValue): BooleanVariableValue =
+                when (other) {
+                    False -> Undefined.WITH_FULL_RESTRICTIONS
+                    True -> True
+                    is Undefined -> Undefined(other.onTrueRestrictions, Restrictions.Full)
+                }
     }
 
     public object False : BooleanVariableValue() {
@@ -51,6 +60,13 @@ public sealed class BooleanVariableValue {
         override fun or(other: BooleanVariableValue?): BooleanVariableValue = other?.copy() ?: Undefined.WITH_NO_RESTRICTIONS
 
         override fun not(): BooleanVariableValue = True
+
+        override fun merge(other: BooleanVariableValue): BooleanVariableValue =
+                when (other) {
+                    False -> False
+                    True -> Undefined.WITH_FULL_RESTRICTIONS
+                    is Undefined -> Undefined(Restrictions.Full, other.onFalseRestrictions)
+                }
     }
 
     public data class Undefined (
@@ -82,6 +98,13 @@ public sealed class BooleanVariableValue {
                 }
 
         override fun not(): BooleanVariableValue = Undefined(onFalseRestrictions, onTrueRestrictions)
+
+        override fun merge(other: BooleanVariableValue): BooleanVariableValue =
+                when (other) {
+                    False -> Undefined(Restrictions.Full, this.onFalseRestrictions)
+                    True -> Undefined(this.onTrueRestrictions, Restrictions.Full)
+                    is Undefined -> this.or(other)
+                }
 
         companion object {
             public val WITH_NO_RESTRICTIONS: Undefined = Undefined(Restrictions.Empty, Restrictions.Empty)

@@ -375,7 +375,7 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                         assert(vd1.intFakeVarsToValues.all { vd2.intFakeVarsToValues[it.key]?.equals(it.value) ?: true },
                                "intFake variables assumption failed")
                         vd1.intFakeVarsToValues.putAll(vd2.intFakeVarsToValues)
-                        MapUtils.mergeMapsIntoFirst(vd1.boolVarsToValues, vd2.boolVarsToValues) { value1, value2 -> value1.or(value2) }
+                        MapUtils.mergeMapsIntoFirst(vd1.boolVarsToValues, vd2.boolVarsToValues) { value1, value2 -> value1 merge value2 }
                         assert(vd1.boolFakeVarsToValues.all { vd2.boolFakeVarsToValues[it.key]?.equals(it.value) ?: true },
                                "boolFake variables assumption failed")
                         vd1.boolFakeVarsToValues.putAll(vd2.boolFakeVarsToValues)
