@@ -330,7 +330,7 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
 
     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        val baseLookupElement = LookupElementBuilder.create(text).setIcon(JetIcons.LAMBDA)
+        val baseLookupElement = LookupElementBuilder.create(text).withIcon(JetIcons.LAMBDA)
         return BaseTypeLookupElement(type, baseLookupElement)
     }
     else {
