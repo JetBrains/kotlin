@@ -284,4 +284,25 @@ public class CodeInsightUtils {
 
         return element;
     }
+
+    @Nullable
+    public static <T> T getTopmostElementAtOffset(@NotNull PsiElement element, int offset, @NotNull Class<T> klass) {
+        T lastElementOfType = null;
+        if (klass.isInstance(element)) {
+            lastElementOfType = (T) element;
+        }
+        do {
+            PsiElement parent = element.getParent();
+            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof JetBlockExpression) {
+                break;
+            }
+            if (klass.isInstance(parent)) {
+                lastElementOfType = (T) parent;
+            }
+            element = parent;
+        }
+        while(true);
+
+        return lastElementOfType;
+    }
 }

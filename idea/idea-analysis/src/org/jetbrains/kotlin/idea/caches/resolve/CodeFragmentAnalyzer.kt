@@ -70,8 +70,13 @@ public class CodeFragmentAnalyzer(
                    is JetDeclarationWithBody -> this.getBodyExpression()
                    is JetBlockExpression -> this.getStatements().lastOrNull()
                    else -> {
-                       this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
-                       ?: this.parents.firstIsInstanceOrNull<JetExpression>()
+                       val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
+                       if (previousSibling != null) return previousSibling
+                       for (parent in this.parents) {
+                           if (parent is JetWhenEntry || parent is JetIfExpression || parent is JetBlockExpression) return this
+                           if (parent is JetExpression) return parent
+                       }
+                       null
                    }
                } ?: this
     }
