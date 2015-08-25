@@ -551,6 +551,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lSimple.kt");
                 doSingleBreakpointTest(fileName);
             }
+
+            @TestMetadata("ldifferentTypes.kt")
+            public void testLdifferentTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/ldifferentTypes.kt");
+                doSingleBreakpointTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas")

@@ -24,18 +24,20 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.psi.JavaCodeFragment
-import com.intellij.psi.PsiCodeBlock
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.concurrency.Semaphore
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
+import com.sun.jdi.ArrayReference
 import com.sun.jdi.ObjectReference
+import com.sun.jdi.PrimitiveValue
 import com.sun.jdi.Value
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.core.refactoring.j2kText
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -150,23 +152,52 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         }
 
         //internal for tests
-        fun createCodeFragmentForLabeledObjects(markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, ObjectReference>> {
+        fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
             val sb = StringBuilder()
-            val labeledObjects = HashMap<String, ObjectReference>()
+            val labeledObjects = HashMap<String, Value>()
             for ((value, markup) in markupMap.entrySet()) {
                 val labelName = markup.text
                 if (!Name.isValidIdentifier(labelName)) continue
 
-                val objectRef = value as ObjectReference
+                val objectRef = value as? Value ?: continue
 
-                val typeName = value.type().name()
-                val labelNameWithSuffix = labelName + DEBUG_LABEL_SUFFIX
-                sb.append("val ").append(labelNameWithSuffix).append(": ").append(typeName).append("? = null\n")
+                val labelNameWithSuffix = "$labelName$DEBUG_LABEL_SUFFIX"
+                sb.append("${createKotlinProperty(project, labelNameWithSuffix, objectRef.type().name(), TypeKind.getTypeKind(objectRef))}\n")
 
                 labeledObjects.put(labelNameWithSuffix, objectRef)
             }
             sb.append("val _debug_context_val = 1")
             return sb.toString() to labeledObjects
+        }
+
+        private enum class TypeKind {
+            PRIMITIVE,
+            ARRAY,
+            OBJECT;
+
+            companion object {
+                fun getTypeKind(value: Value): TypeKind {
+                    return when(value) {
+                        is ArrayReference -> ARRAY
+                        is PrimitiveValue -> PRIMITIVE
+                        else -> OBJECT
+                    }
+                }
+            }
+        }
+
+        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, typeKind: TypeKind): String? {
+            fun String.addArraySuffix() = if (typeKind == TypeKind.ARRAY) this + "[]" else this
+
+            val className = variableTypeName.replace("$", ".").substringBefore("[]")
+            val classType = PsiType.getTypeByName(className, project, GlobalSearchScope.allScope(project))
+            val type = (if (typeKind != TypeKind.PRIMITIVE && classType.resolve() == null)
+                CommonClassNames.JAVA_LANG_OBJECT
+            else
+                className).addArraySuffix()
+
+            val field = PsiElementFactory.SERVICE.getInstance(project).createField(variableName, PsiType.getTypeByName(type, project, GlobalSearchScope.allScope(project)))
+            return field.j2kText()?.substringAfter("private ")
         }
     }
 
@@ -177,7 +208,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         val markupMap = session.valueMarkers?.getAllMarkers()
         if (markupMap == null || markupMap.isEmpty()) return originalContext
 
-        val (text, labels) = createCodeFragmentForLabeledObjects(markupMap)
+        val (text, labels) = createCodeFragmentForLabeledObjects(project, markupMap)
         if (text.isEmpty()) return originalContext
 
         return createWrappingContext(text, labels, originalContext, project)
@@ -186,7 +217,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     // internal for test
     fun createWrappingContext(
             newFragmentText: String,
-            labels: Map<String, ObjectReference>,
+            labels: Map<String, Value>,
             originalContext: PsiElement?,
             project: Project
     ): JetElement? {
