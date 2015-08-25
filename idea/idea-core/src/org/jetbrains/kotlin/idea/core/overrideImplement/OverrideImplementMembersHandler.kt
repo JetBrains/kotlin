@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.*
-import java.util.ArrayList
+import java.util.*
 
 public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
@@ -202,12 +202,13 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
                                                 descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
             newDescriptor.addOverriddenDescriptor(descriptor)
 
-            val body = StringBuilder()
-            body.append("\nget()")
-            body.append(" = ")
-            body.append(generateUnsupportedOrSuperCall(classOrObject, descriptor))
-            if (descriptor.isVar) {
-                body.append("\nset(value) {}")
+            val body = StringBuilder {
+                append("\nget()")
+                append(" = ")
+                append(generateUnsupportedOrSuperCall(classOrObject, descriptor))
+                if (descriptor.isVar) {
+                    append("\nset(value) {}")
+                }
             }
             return JetPsiFactory(classOrObject.project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
         }
@@ -234,23 +235,22 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
                 return "throw UnsupportedOperationException()"
             }
             else {
-                val builder = StringBuilder()
-                builder.append("super")
-                if (classOrObject.getDelegationSpecifiers().size() > 1) {
-                    val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
-                    builder.append("<").append(superClassFqName).append(">")
-                }
-                builder.append(".").append(descriptor.escapedName())
-
-                if (descriptor is FunctionDescriptor) {
-                    val paramTexts = descriptor.valueParameters.map {
-                        val renderedName = it.escapedName()
-                        if (it.varargElementType != null) "*$renderedName" else renderedName
+                return StringBuilder {
+                    append("super")
+                    if (classOrObject.getDelegationSpecifiers().size() > 1) {
+                        val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
+                        append("<").append(superClassFqName).append(">")
                     }
-                    paramTexts.joinTo(builder, prefix="(", postfix=")")
-                }
+                    append(".").append(descriptor.escapedName())
 
-                return builder.toString()
+                    if (descriptor is FunctionDescriptor) {
+                        val paramTexts = descriptor.valueParameters.map {
+                            val renderedName = it.escapedName()
+                            if (it.varargElementType != null) "*$renderedName" else renderedName
+                        }
+                        paramTexts.joinTo(this, prefix="(", postfix=")")
+                    }
+                }.toString()
             }
         }
 
