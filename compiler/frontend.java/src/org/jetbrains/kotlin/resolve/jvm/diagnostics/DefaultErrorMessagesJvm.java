@@ -52,7 +52,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS, "''jvmOverloads'' annotation has no effect for methods without default arguments");
         MAP.put(ErrorsJvm.OVERLOADS_ABSTRACT, "''jvmOverloads'' annotation cannot be used on abstract methods");
         MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''jvmOverloads'' annotation has no effect on private and local declarations");
-        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''jvmName ''annotation is not applicable to this declaration");
+        MAP.put(ErrorsJvm.INAPPLICABLE_JVM_NAME, "''jvmName'' annotation is not applicable to this declaration");
         MAP.put(ErrorsJvm.ILLEGAL_JVM_NAME, "Illegal JVM name: ''{0}''", STRING);
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");

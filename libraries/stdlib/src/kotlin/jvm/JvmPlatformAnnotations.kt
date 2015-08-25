@@ -35,7 +35,7 @@ target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.FI
 public annotation(retention = AnnotationRetention.RUNTIME, mustBeDocumented = true) class jvmStatic
 
 /**
- * Specifies the name for the target platform element (Java method, JavaScript function)
+ * Specifies the name for the Java class or method
  * which is generated from this element.
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname)
  * for more information.
