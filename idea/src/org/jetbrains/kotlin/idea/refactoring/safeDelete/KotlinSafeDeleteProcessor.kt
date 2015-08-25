@@ -337,14 +337,14 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
     // Mostly copied from JavaSafeDeleteProcessor.findClassUsages. Temporary solution
     private object ClassSearchCopiedFromJava {
-        private val LOG = Logger.getInstance("#" + javaClass<KotlinSafeDeleteProcessor>().canonicalName)
+        private val LOG = Logger.getInstance("#" + javaClass<KotlinSafeDeleteProcessor>().getCanonicalName())
 
         fun findClassUsages(psiClass: PsiClass, allElementsToDelete: Array<out PsiElement>, usages: MutableList<UsageInfo>) {
             val justPrivates = containsOnlyPrivates(psiClass)
 
             ReferencesSearch.search(psiClass).forEach(object : Processor<PsiReference> {
                 override fun process(reference: PsiReference): Boolean {
-                    val element = reference.element
+                    val element = reference.getElement()
 
                     fun isInside(place: PsiElement, ancestors: Array<out PsiElement>): Boolean {
                         for (ancestor in ancestors) {
@@ -358,31 +358,31 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     }
 
                     if (!isInside(element, allElementsToDelete)) {
-                        val parent = element.parent
+                        val parent = element.getParent()
                         if (parent is PsiReferenceList) {
-                            val pparent = parent.parent
+                            val pparent = parent.getParent()
                             if (pparent is PsiClass) {
                                 /* If psiClass contains only private members, then it is safe to remove it
                                    and change inheritor's extends/implements accordingly */
                                 if (justPrivates && element is PsiJavaCodeReferenceElement) {
-                                    if (parent == pparent.extendsList || parent == pparent.implementsList) {
+                                    if (parent == pparent.getExtendsList() || parent == pparent.getImplementsList()) {
                                         usages.add(SafeDeleteExtendsClassUsageInfo(element, psiClass, pparent))
                                         return true
                                     }
                                 }
                             }
                         }
-                        LOG.assertTrue(element.textRange != null)
+                        LOG.assertTrue(element.getTextRange() != null)
 
                         val importDirective = getImportDirective(element, element)
                         if (importDirective != null) {
                             usages.add(SafeDeleteReferenceJavaDeleteUsageInfo(importDirective, psiClass, true))
                         }
                         else {
-                            val containingFile = psiClass.containingFile
+                            val containingFile = psiClass.getContainingFile()
                             val sameFileWithSingleClass = containingFile is PsiClassOwner
-                                                          && containingFile.classes.size() == 1
-                                                          && element.containingFile === containingFile
+                                                          && containingFile.getClasses().size() == 1
+                                                          && element.getContainingFile() === containingFile
 
                             usages.add(SafeDeleteReferenceJavaDeleteUsageInfo(element, psiClass,
                                     sameFileWithSingleClass || isInNonStaticImport(element)))
@@ -394,21 +394,21 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         fun findTypeParameterExternalUsages(typeParameter: PsiTypeParameter, usages: MutableCollection<UsageInfo>) {
-            val owner = typeParameter.owner
+            val owner = typeParameter.getOwner()
             if (owner != null) {
-                val parameterList = owner.typeParameterList
+                val parameterList = owner.getTypeParameterList()
                 if (parameterList != null) {
-                    val paramsCount = parameterList.typeParameters.size()
+                    val paramsCount = parameterList.getTypeParameters().size()
                     val index = parameterList.getTypeParameterIndex(typeParameter)
 
                     ReferencesSearch.search(owner).forEach(object : Processor<PsiReference> {
                         override fun process(reference: PsiReference): Boolean {
                             if (reference is PsiJavaCodeReferenceElement) {
-                                val parameterList = reference.parameterList
+                                val parameterList = reference.getParameterList()
                                 if (parameterList != null) {
-                                    val typeArgs = parameterList.typeParameterElements
+                                    val typeArgs = parameterList.getTypeParameterElements()
                                     if (typeArgs.size() > index) {
-                                        if (typeArgs.size() == 1 && paramsCount > 1 && typeArgs[0].type is PsiDiamondType) return true
+                                        if (typeArgs.size() == 1 && paramsCount > 1 && typeArgs[0].getType() is PsiDiamondType) return true
                                         usages.add(SafeDeleteReferenceJavaDeleteUsageInfo(typeArgs[index], typeParameter, true))
                                     }
                                 }
@@ -421,11 +421,11 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         private fun getImportDirective(element: PsiElement?, original: PsiElement): JetImportDirective? = when (element) {
-            is JetDotQualifiedExpression -> getImportDirective(element.parent, original)
-            is JetNameReferenceExpression -> getImportDirective(element.parent, original)
+            is JetDotQualifiedExpression -> getImportDirective(element.getParent(), original)
+            is JetNameReferenceExpression -> getImportDirective(element.getParent(), original)
             is JetImportDirective -> {
-                val lastChild = element.importedReference
-                if (lastChild == original || (lastChild is JetDotQualifiedExpression && lastChild.selectorExpression == original)) {
+                val lastChild = element.getImportedReference()
+                if (lastChild == original || (lastChild is JetDotQualifiedExpression && lastChild.getSelectorExpression() == original)) {
                     element
                 } else {
                     null
@@ -435,25 +435,25 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         private fun containsOnlyPrivates(aClass: PsiClass): Boolean {
-            val fields = aClass.fields
+            val fields = aClass.getFields()
             for (field in fields) {
                 if (!field.hasModifierProperty(PsiModifier.PRIVATE)) return false
             }
 
-            val methods = aClass.methods
+            val methods = aClass.getMethods()
             for (method in methods) {
                 if (!method.hasModifierProperty(PsiModifier.PRIVATE)) {
-                    if (method.isConstructor) {
+                    if (method.isConstructor()) {
                         //skip non-private constructors with call to super only
-                        val body = method.body
+                        val body = method.getBody()
                         if (body != null) {
-                            val statements = body.statements
+                            val statements = body.getStatements()
                             if (statements.size() == 0) continue
                             if (statements.size() == 1 && statements[0] is PsiExpressionStatement) {
-                                val expression = (statements[0] as PsiExpressionStatement).expression
+                                val expression = (statements[0] as PsiExpressionStatement).getExpression()
                                 if (expression is PsiMethodCallExpression) {
-                                    val methodExpression = expression.methodExpression
-                                    if (methodExpression.text == PsiKeyword.SUPER) {
+                                    val methodExpression = expression.getMethodExpression()
+                                    if (methodExpression.getText() == PsiKeyword.SUPER) {
                                         continue
                                     }
                                 }
@@ -464,7 +464,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 }
             }
 
-            val inners = aClass.innerClasses
+            val inners = aClass.getInnerClasses()
             for (inner in inners) {
                 if (!inner.hasModifierProperty(PsiModifier.PRIVATE)) return false
             }
