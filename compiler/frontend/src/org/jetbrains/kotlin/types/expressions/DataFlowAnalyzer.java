@@ -226,6 +226,22 @@ public class DataFlowAnalyzer {
             }
         }
 
+        // For cases like:
+        // fun bar(x: Any) {}
+        // fun <T : Any?> foo(x: T) {
+        //      if (x != null) {
+        //          bar(x) // Should be allowed with smart cast
+        //      }
+        // }
+        //
+        // It doesn't handled by upper code with getPossibleTypes because smart cast of T after `x != null` is still has same type T.
+        // But at the same time we're sure that `x` can't be null and just check for such cases manually
+        if (!c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
+                && JetTypeChecker.DEFAULT.isSubtypeOf(expressionType, TypeUtils.makeNullable(c.expectedType))) {
+            smartCastManager.recordCastOrError(expression, expressionType, c.trace, dataFlowValue.isPredictable(), false);
+            return expressionType;
+        }
+
         return null;
     }
 

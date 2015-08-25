@@ -28,9 +28,8 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
 
         t = <!TYPE_MISMATCH!>y<!>
 
-        // Could be smart-cast
         if (y != null) {
-            t = <!TYPE_MISMATCH!>y<!>
+            t = <!DEBUG_INFO_SMARTCAST!>y<!>
         }
 
         if (tN != null) {

@@ -6167,6 +6167,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("smartCastsValueArgument.kt")
+                public void testSmartCastsValueArgument() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/smartCastsValueArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("tpBoundsViolation.kt")
                 public void testTpBoundsViolation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpBoundsViolation.kt");
