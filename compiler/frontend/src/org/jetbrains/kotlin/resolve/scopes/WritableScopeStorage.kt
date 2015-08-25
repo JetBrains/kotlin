@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import java.util.ArrayList
 import java.util.HashMap
@@ -107,5 +110,14 @@ public interface WritableScopeStorage {
         } while (rest != null)
         return result
     }
+
+    fun getDeclaredClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size())
+            = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+
+    fun getDeclaredVariables(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<VariableDescriptor>
+            = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
+
+    fun getDeclaredFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<FunctionDescriptor>
+            = functionsByName(name, descriptorLimit) ?: emptyList()
 
 }
