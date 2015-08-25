@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
-@SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Preloader {
     public static final int DEFAULT_CLASS_NUMBER_ESTIMATE = 4096;
 
@@ -87,14 +87,8 @@ public class Preloader {
         return new URLClassLoader(classpath, parent);
     }
 
-    @SuppressWarnings({"AssignmentToForLoopParameter", "ConstantConditions"})
+    @SuppressWarnings("AssignmentToForLoopParameter")
     private static Options parseOptions(String[] args) throws Exception {
-        // TODO: remove this temporary workaround as soon as the new command-line interface is bootstrapped
-        if (args.length >= 3 && "4096".equals(args[2])) {
-            //noinspection deprecation
-            return oldOptions(args);
-        }
-
         List<File> classpath = Collections.emptyList();
         boolean measure = false;
         List<File> instrumenters = Collections.emptyList();
@@ -135,14 +129,6 @@ public class Preloader {
         if (mainClass == null) throw new PreloaderException("no main class name provided");
 
         return new Options(classpath, measure, instrumenters, estimate, mainClass, arguments);
-    }
-
-    @Deprecated
-    private static Options oldOptions(String[] args) {
-        return new Options(
-                parseClassPath(args[0]), false, Collections.<File>emptyList(), 4096, args[1],
-                Arrays.asList(Arrays.copyOfRange(args, 4, args.length))
-        );
     }
 
     private static List<File> parseClassPath(String classpath) {
