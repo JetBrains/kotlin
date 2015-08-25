@@ -16,7 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
+import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
@@ -45,7 +45,7 @@ private class WeakClassLoaderBox(classLoader: ClassLoader) {
 }
 
 private fun Class<*>.getOrCreateModule(): RuntimeModuleData {
-    val classLoader = this.classLoader
+    val classLoader = this.safeClassLoader
     val key = WeakClassLoaderBox(classLoader)
 
     val cached = moduleByClassLoader[key]

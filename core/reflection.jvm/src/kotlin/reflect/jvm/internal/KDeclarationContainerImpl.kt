@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
-import org.jetbrains.kotlin.load.java.structure.reflect.classLoader
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
+import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -184,7 +184,7 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     }
 
     private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): Array<Class<*>> {
-        val classLoader = jClass.classLoader
+        val classLoader = jClass.safeClassLoader
         return signature.getParameterTypeList().map { jvmType ->
             loadJvmType(jvmType, nameResolver, classLoader)
         }.toTypedArray()
@@ -221,7 +221,7 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
         val implClassName = nameResolver.getName(proto.getExtension(JvmProtoBuf.implClassName))
         // TODO: store fq name of impl class name in jvm_descriptors.proto
         val classId = ClassId(jClass.classId.getPackageFqName(), implClassName)
-        return jClass.classLoader.loadClass(classId.asSingleFqName().asString())
+        return jClass.safeClassLoader.loadClass(classId.asSingleFqName().asString())
     }
 
     private fun loadJvmType(
