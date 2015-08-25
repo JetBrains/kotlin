@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.CompiledDataDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClasses
@@ -307,7 +308,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         override fun visitProperty(property: JetProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
-                                valuesForLabels.put(property.name!!, value.asValue())
+                                valuesForLabels.put(property.name?.quoteIfNeeded()!!, value.asValue())
                             }
                         }
                     })
