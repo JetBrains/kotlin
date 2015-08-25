@@ -23,6 +23,7 @@ import com.intellij.execution.process.*
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.*
@@ -47,13 +48,13 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.swing.Icon
 
 public class KotlinConsoleRunner(
-        private val title: String,
         private val cmdLine: GeneralCommandLine,
         private val module: Module,
         myProject: Project,
+        title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    private val editorToIndicator = ConcurrentHashMap<EditorEx, KotlinConsoleIndicatorRenderer>()
+    private val editorToIndicator = ConcurrentHashMap<EditorEx, RangeHighlighter>()
     private val historyManager = KotlinConsoleHistoryManager(this)
     val executor = KotlinConsoleExecutor(this, historyManager)
 
@@ -119,6 +120,8 @@ public class KotlinConsoleRunner(
         }
     }
 
+    override fun constructConsoleTitle(title: String) = "$title (in module ${module.name})"
+
     private fun setupPlaceholder(editor: EditorEx) {
         editor.setPlaceholder("<Ctrl+Enter> to execute")
         editor.setShowPlaceholderWhenFocused(true)
@@ -147,10 +150,16 @@ public class KotlinConsoleRunner(
             addGutterIndicator(editor, icon)
         }
 
-        configureEditorGutter(consoleView.historyViewer, ReplColors.HISTORY_GUTTER_COLOR, ReplIcons.HISTORY_INDICATOR)
-        configureEditorGutter(consoleView.consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
+        val historyEditor = consoleView.historyViewer
+        val consoleEditor = consoleView.consoleEditor
 
-        consoleView.consoleEditor.settings.isCaretRowShown = true
+        configureEditorGutter(historyEditor, ReplColors.HISTORY_GUTTER_COLOR, ReplIcons.HISTORY_INDICATOR)
+        configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
+
+        historyEditor.settings.isUseSoftWraps = true
+
+        consoleEditor.settings.isCaretRowShown = true
+        consoleEditor.settings.additionalLinesCount = 2
     }
 
     fun addGutterIndicator(editor: EditorEx, icon: Icon) {
@@ -161,10 +170,11 @@ public class KotlinConsoleRunner(
         )
 
         indicatorHighlighter.gutterIconRenderer = indicator
-        editorToIndicator[editor] = indicator
+        editorToIndicator[editor] = indicatorHighlighter
     }
 
     fun changeEditorIndicatorIcon(editor: EditorEx, newIcon: Icon) {
-        editorToIndicator[editor]?.indicatorIcon = newIcon
+        val oldHighlighter = editorToIndicator[editor] ?: return
+        WriteCommandAction.runWriteCommandAction(project) { oldHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIcon) }
     }
 }

@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.console.gutter
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import javax.swing.Icon
 
-public class KotlinConsoleIndicatorRenderer(var indicatorIcon: Icon) : GutterIconRenderer() {
+public class KotlinConsoleIndicatorRenderer(private val indicatorIcon: Icon) : GutterIconRenderer() {
     override fun getIcon() = indicatorIcon
-    override fun hashCode() = System.identityHashCode(this)
-    override fun equals(other: Any?) = this === other
+    override fun hashCode() = indicatorIcon.hashCode()
+    override fun equals(other: Any?) = indicatorIcon == (other as? KotlinConsoleIndicatorRenderer)?.indicatorIcon ?: null
 }

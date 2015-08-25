@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
+private val REPL_TITLE = "Kotlin REPL"
+
 public class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
@@ -46,7 +48,7 @@ public class KotlinConsoleKeeper(val project: Project) {
         val path = module.moduleFilePath
         val cmdLine = createCommandLine(module) ?: return errorNotification(project, "Module SDK not found") let { null }
 
-        val consoleRunner = KotlinConsoleRunner(path, cmdLine, module, project, REPL_TITLE)
+        val consoleRunner = KotlinConsoleRunner(cmdLine, module, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
         consoleRunner.setupGutters()
 
@@ -110,8 +112,6 @@ public class KotlinConsoleKeeper(val project: Project) {
     }
 
     companion object {
-        private val REPL_TITLE = "Kotlin REPL"
-
         jvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinConsoleKeeper>())
     }
 }

@@ -16,12 +16,18 @@
 
 package org.jetbrains.kotlin.console
 
+import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.kotlin.console.highlight.ReplOutputType
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 
-public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRunner) : KeyAdapter() {
+public class KotlinConsoleHistoryManager(private val runner: KotlinConsoleRunner) : KeyAdapter() {
+    private val project = runner.project
+    private val consoleEditor: EditorEx by lazy { runner.consoleView.consoleEditor } // [consoleEditor] is null at the moment if instantiation
+
     private val history = arrayListOf<String>()
 
     private var historyPos = 0
@@ -52,14 +58,15 @@ public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRun
     override fun keyReleased(e: KeyEvent): Unit = when (e.keyCode) {
         KeyEvent.VK_UP   -> moveHistoryCursor(HistoryMove.UP)
         KeyEvent.VK_DOWN -> moveHistoryCursor(HistoryMove.DOWN)
-        KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = ktConsole.consoleView.consoleEditor.caretModel.offset
+        KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = consoleEditor.caretModel.offset
     }
 
     private fun moveHistoryCursor(move: HistoryMove) {
         if (history.isEmpty()) return
+        if (LookupManager.getInstance(project).activeLookup != null) return
 
-        val caret = ktConsole.consoleView.consoleEditor.caretModel
-        val document = ktConsole.consoleView.editorDocument
+        val caret = consoleEditor.caretModel
+        val document = consoleEditor.document
 
         val curOffset = caret.offset
         val curLine = document.getLineNumber(curOffset)
@@ -78,23 +85,27 @@ public class KotlinConsoleHistoryManager(private val ktConsole: KotlinConsoleRun
                 }
 
                 historyPos = Math.max(historyPos - 1, 0)
-                WriteCommandAction.runWriteCommandAction(ktConsole.project) {
+                WriteCommandAction.runWriteCommandAction(project) {
                     document.setText(history[historyPos].trim())
-                    caret.moveToOffset(0)
+                    EditorUtil.scrollToTheEnd(consoleEditor)
                     prevCaretOffset = 0
+                    caret.moveToOffset(0)
                 }
             }
             HistoryMove.DOWN -> {
+                if (historyPos == history.size()) return
+
                 if (curLine != totalLines - 1 || (isMultiline && prevCaretOffset != document.textLength)) {
                     prevCaretOffset = curOffset
                     return
                 }
 
                 historyPos = Math.min(historyPos + 1, history.size())
-                WriteCommandAction.runWriteCommandAction(ktConsole.project) {
+                WriteCommandAction.runWriteCommandAction(project) {
                     document.setText(if (historyPos == history.size()) unfinishedCommand else history[historyPos].trim())
                     caret.moveToOffset(document.textLength)
                     prevCaretOffset = document.textLength
+                    EditorUtil.scrollToTheEnd(consoleEditor)
                 }
             }
         }

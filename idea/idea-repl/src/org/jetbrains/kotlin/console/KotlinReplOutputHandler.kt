@@ -44,6 +44,8 @@ public class KotlinReplOutputHandler(
 
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 
+    override fun isSilentlyDestroyOnClose() = true
+
     override fun notifyTextAvailable(text: String, key: Key<*>?) {
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
         if (!text.startsWith(XML_PREFIX)) return super.notifyTextAvailable(text, key)

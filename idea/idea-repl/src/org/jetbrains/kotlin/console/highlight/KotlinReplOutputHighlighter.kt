@@ -47,6 +47,7 @@ public class KotlinReplOutputHighlighter(
         private val runner: KotlinConsoleRunner,
         private val historyManager: KotlinConsoleHistoryManager
 ) {
+    private val project = runner.project
     private val consoleView = runner.consoleView
     private val historyEditor = consoleView.historyViewer
     private val historyDocument = historyEditor.document
@@ -70,7 +71,7 @@ public class KotlinReplOutputHighlighter(
         consoleView.print(command, ReplColors.USER_OUTPUT_CONTENT_TYPE)
     }
 
-    fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(runner.project) {
+    fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(project) {
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.RESULT
 
@@ -85,7 +86,7 @@ public class KotlinReplOutputHighlighter(
         runner.changeEditorIndicatorIcon(consoleView.consoleEditor, ReplIcons.INCOMPLETE_INDICATOR)
     }
 
-    fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(runner.project) {
+    fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
         resetConsoleEditorIndicator()
         historyManager.lastCommandType = ReplOutputType.ERROR
 
@@ -137,8 +138,8 @@ public class KotlinReplOutputHighlighter(
     ): TextAttributes {
         val highlightInfo = HighlightInfo.newHighlightInfo(infoType).range(start, end).severity(severity).textAttributes(insightColors).create()
 
-        val psiFile = PsiDocumentManager.getInstance(runner.project).getPsiFile(runner.consoleView.consoleEditor.document)
-        val colorScheme = runner.consoleView.consoleEditor.colorsScheme
+        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(consoleView.consoleEditor.document)
+        val colorScheme = consoleView.consoleEditor.colorsScheme
 
         return highlightInfo?.getTextAttributes(psiFile, colorScheme) ?: TextAttributes()
     }
