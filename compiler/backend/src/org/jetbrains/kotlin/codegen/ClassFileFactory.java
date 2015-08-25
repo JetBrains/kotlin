@@ -38,6 +38,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
+
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
@@ -86,7 +88,7 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private void writeModuleMappings(Collection<PackageCodegen> values) {
         String moduleName = KotlinPackage.removeSurrounding(state.getModule().getName().asString(), "<", ">");
-        String outputFilePath = "META-INF/" + moduleName + ".kotlin_module";
+        String outputFilePath = getMappingFileName(moduleName);
         final StringWriter moduleMapping = new StringWriter(1024);
         for (PackageCodegen codegen : values) {
             codegen.getFacades().serialize(moduleMapping);

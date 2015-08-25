@@ -82,7 +82,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
 
-        val actual = createReflectedPackageView(classLoader)
+        val actual = createReflectedPackageView(classLoader, "")
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
@@ -129,8 +129,8 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         }
     }
 
-    private fun createReflectedPackageView(classLoader: URLClassLoader): SyntheticPackageViewForTest {
-        val module = RuntimeModuleData.create(classLoader).module
+    private fun createReflectedPackageView(classLoader: URLClassLoader, moduleName: String): SyntheticPackageViewForTest {
+        val module = RuntimeModuleData.create(classLoader, moduleName).module
 
 
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())

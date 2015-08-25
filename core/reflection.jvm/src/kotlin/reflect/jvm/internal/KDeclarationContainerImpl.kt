@@ -39,7 +39,7 @@ import kotlin.reflect.KotlinReflectionInternalError
 abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
     val moduleData by ReflectProperties.lazySoft {
-        jClass.getOrCreateModule()
+        jClass.getOrCreateModule(null)
     }
 
     abstract val scope: JetScope

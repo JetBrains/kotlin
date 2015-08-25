@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -30,6 +32,15 @@ public class GeneratedClassLoader extends URLClassLoader {
     public GeneratedClassLoader(@NotNull ClassFileFactory factory, ClassLoader parentClassLoader, URL... urls) {
         super(urls, parentClassLoader);
         this.factory = factory;
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String name) {
+        OutputFile outputFile = factory.get(name);
+        if (outputFile != null) {
+            return new ByteArrayInputStream(outputFile.asByteArray());
+        }
+        return super.getResourceAsStream(name);
     }
 
     @NotNull

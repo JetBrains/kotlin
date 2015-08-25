@@ -245,4 +245,13 @@ public class JvmCodegenUtil {
                module == module.getBuiltIns().getBuiltInsModule() ||
                DescriptorUtils.isAnnotationClass(descriptor);
     }
+
+    public static String getModuleName(ModuleDescriptor module) {
+        return KotlinPackage.removeSurrounding(module.getName().asString(), "<", ">");
+    }
+
+    @NotNull
+    public static String getMappingFileName(@NotNull String moduleName) {
+        return "META-INF/" + moduleName + ".kotlin_module";
+    }
 }

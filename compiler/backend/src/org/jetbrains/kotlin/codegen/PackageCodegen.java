@@ -260,7 +260,7 @@ public class PackageCodegen {
 
     private void generateKotlinPackageReflectionField() {
         MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class));
+        Method method = method("createKotlinPackage", K_PACKAGE_TYPE, getType(Class.class), getType(String.class));
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
         iv.areturn(Type.VOID_TYPE);
