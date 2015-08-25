@@ -634,33 +634,52 @@ public class JetParsing extends AbstractJetParsing {
 
     // Returns true if we should continue parse annotation
     private boolean parseAnnotationTargetIfNeeded(AnnotationParsingMode mode) {
-        if (mode.isFileAnnotationParsingMode) {
-            if (at(COLON)) {
-                // recovery for "@:ann"
-                errorAndAdvance("Expected 'file' keyword before ':'"); // COLON
-                return true;
-            }
+        String expectedAnnotationTargetBeforeColon = "Expected 'file' keyword before ':'";
 
-            if (lookahead(1) == COLON && !at(FILE_KEYWORD) && at(IDENTIFIER)) {
-                // recovery for "@fil:ann"
-                errorAndAdvance("Expected 'file' keyword as target"); // IDENTIFIER
-                advance(); // COLON
-                return true;
-            }
-
-            if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(at(FILE_KEYWORD) && lookahead(1) == COLON)) {
-                return false;
-            }
-
-            String message = "Expecting \"" + FILE_KEYWORD.getValue() + COLON.getValue() + "\" prefix for file annotations";
-            expect(FILE_KEYWORD, message);
-            expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
+        if (at(COLON)) {
+            // recovery for "@:ann"
+            errorAndAdvance(expectedAnnotationTargetBeforeColon); // COLON
+            return true;
         }
-        else if (at(FILE_KEYWORD) && lookahead(1) == COLON) {
-            errorAndAdvance("File annotations are only allowed before package declaration", 2);
+
+        JetKeywordToken targetKeyword = atTargetKeyword();
+        if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
+            return false;
+        }
+
+        if (lookahead(1) == COLON && targetKeyword == null && at(IDENTIFIER)) {
+            // recovery for "@fil:ann"
+            errorAndAdvance(expectedAnnotationTargetBeforeColon); // IDENTIFIER
+            advance(); // COLON
+            return true;
+        }
+
+        if (targetKeyword == null && mode.isFileAnnotationParsingMode) {
+            parseAnnotationTarget(mode, FILE_KEYWORD);
+        }
+        else if (targetKeyword != null) {
+            parseAnnotationTarget(mode, targetKeyword);
         }
 
         return true;
+    }
+
+    private void parseAnnotationTarget(AnnotationParsingMode mode, JetKeywordToken keyword) {
+        if (keyword == FILE_KEYWORD && !mode.isFileAnnotationParsingMode && at(keyword) && lookahead(1) == COLON) {
+            errorAndAdvance("File annotations are only allowed before package declaration", 2);
+            return;
+        }
+
+        String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
+
+        expect(keyword, message);
+        expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
+    }
+
+    @Nullable
+    private JetKeywordToken atTargetKeyword() {
+        if (at(FILE_KEYWORD)) return (JetKeywordToken) FILE_KEYWORD;
+        return null;
     }
 
     /*
@@ -678,11 +697,12 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker annotation = mark();
 
-        if (at(AT)) {
+        boolean atAt = at(AT);
+        if (atAt) {
             advance(); // AT
         }
 
-        if (!parseAnnotationTargetIfNeeded(mode)) {
+        if (atAt && !parseAnnotationTargetIfNeeded(mode)) {
             annotation.rollbackTo();
             return false;
         }

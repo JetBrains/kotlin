@@ -39,7 +39,7 @@ JetFile: nonFIleAnnotationBeforePackage.kt
     PsiWhiteSpace('\n')
     ANNOTATION_ENTRY
       PsiElement(AT)('@')
-      PsiErrorElement:Expected 'file' keyword as target
+      PsiErrorElement:Expected 'file' keyword before ':'
         PsiElement(IDENTIFIER)('fil')
       PsiElement(COLON)(':')
       CONSTRUCTOR_CALLEE
