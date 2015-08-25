@@ -31,6 +31,24 @@ public val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
         ((it as KFunctionImpl).descriptor as ConstructorDescriptor).isPrimary
     }
 
+
+/**
+ * Returns a [KClass] instance representing the companion object of a given class,
+ * or `null` if the class doesn't have a companion object.
+ */
+public val KClass<*>.companionObject: KClass<*>?
+    get() = nestedClasses.firstOrNull {
+        (it as KClassImpl<*>).descriptor.isCompanionObject
+    }
+
+/**
+ * Returns an instance of the companion object of a given class,
+ * or `null` if the class doesn't have a companion object.
+ */
+public val KClass<*>.companionObjectInstance: Any?
+    get() = companionObject?.objectInstance
+
+
 /**
  * Returns a type corresponding to the given class with type parameters of that class substituted as the corresponding arguments.
  * For example, for class `MyMap<K, V>` [defaultType] would return the type `MyMap<K, V>`.
