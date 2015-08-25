@@ -248,7 +248,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     public static boolean isFromBuiltIns(@NotNull PsiElement element) {
-        String url = element.getContainingFile().getVirtualFile().getUrl();
+        VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+        if (virtualFile == null) return false;
+
+        String url = virtualFile.getUrl();
         return VfsUtilCore.isUnder(url, builtInDirUrls);
     }
 
