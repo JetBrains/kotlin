@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.tree.FileElement
@@ -24,14 +25,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.JetFileType
-import java.util.HashSet
-import com.intellij.openapi.util.Key
-import com.intellij.psi.impl.PsiModificationTrackerImpl
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.LinkedHashSet
-import java.util.regex.Pattern
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -44,6 +40,9 @@ public abstract class JetCodeFragment(
 
     private var viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
     private var myImports = LinkedHashSet<String>()
+    private val additionalContextForLambda: PsiElement? by lazy {
+        this.getCopyableUserData(ADDITIONAL_CONTEXT_FOR_LAMBDA)?.invoke()
+    }
 
     init {
         getViewProvider().forceCachedPsi(this)
@@ -70,7 +69,7 @@ public abstract class JetCodeFragment(
 
     override fun isValid() = true
 
-    override fun getContext() = context
+    override fun getContext() = additionalContextForLambda ?: context
 
     override fun getResolveScope() = context?.getResolveScope() ?: super<JetFile>.getResolveScope()
 
@@ -146,5 +145,6 @@ public abstract class JetCodeFragment(
     companion object {
         public val IMPORT_SEPARATOR: String = ","
         public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
+        public val ADDITIONAL_CONTEXT_FOR_LAMBDA: Key<Function0<JetElement?>> = Key.create("ADDITIONAL_CONTEXT_FOR_LAMBDA")
     }
 }

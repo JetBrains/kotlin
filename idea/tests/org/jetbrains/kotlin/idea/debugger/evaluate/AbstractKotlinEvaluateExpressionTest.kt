@@ -311,6 +311,8 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = createContextElement(this)
 
+            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext?.frameProxy)
+
             try {
 
                 val evaluator =

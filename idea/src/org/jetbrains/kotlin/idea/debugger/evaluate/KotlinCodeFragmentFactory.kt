@@ -20,6 +20,10 @@ import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.debugger.engine.events.DebuggerCommandImpl
+import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -32,20 +36,34 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
 import com.sun.jdi.ArrayReference
-import com.sun.jdi.ObjectReference
 import com.sun.jdi.PrimitiveValue
 import com.sun.jdi.Value
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.j2kText
+import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.jvm.java
 
@@ -106,6 +124,65 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
         })
 
+        if (contextElement != null) {
+            val lambdas = getInlinedLambdasInside(contextElement)
+            if (lambdas.isNotEmpty()) {
+                codeFragment.putCopyableUserData(JetCodeFragment.ADDITIONAL_CONTEXT_FOR_LAMBDA, lamdba@ {
+                    val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
+
+                    val semaphore = Semaphore()
+                    semaphore.down()
+
+                    var visibleVariables: List<Pair<LocalVariableProxyImpl, Value>>? = null
+
+                    val worker = object : DebuggerCommandImpl() {
+                        override fun action() {
+                            try {
+                                val frameProxy = if (ApplicationManager.getApplication().isUnitTestMode)
+                                    context?.getCopyableUserData(DEBUG_FRAME_FOR_TESTS)
+                                else
+                                    debuggerContext.frameProxy
+
+                                visibleVariables = frameProxy?.let { f -> f.visibleVariables().map { it to f.getValue(it) } } ?: emptyList()
+                            }
+                            finally {
+                                semaphore.up()
+                            }
+                        }
+                    }
+
+                    debuggerContext.debugProcess?.managerThread?.invoke(worker)
+
+                    for (i in 0..50) {
+                        if (semaphore.waitFor(20)) break
+                    }
+
+                    fun isLocalVariableForParameterPresent(p: ValueParameterDescriptor): Boolean {
+                        return visibleVariables?.firstOrNull {
+                            if (it.first.name() != p.name.asString()) return@firstOrNull false
+
+                            val parameterClassDescriptor = p.type.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull true
+                            val actualClassDescriptor = it.second.asValue().asmType.getClassDescriptor(debuggerContext.project) ?: return@firstOrNull true
+                            return@firstOrNull runReadAction { DescriptorUtils.isSubclass(actualClassDescriptor, parameterClassDescriptor) }
+                        } != null
+                    }
+
+                    for (lambda in lambdas) {
+                        val function = lambda.analyze(BodyResolveMode.PARTIAL).get(BindingContext.FUNCTION, lambda)
+                        if (function != null && function.valueParameters.all { isLocalVariableForParameterPresent(it) }) {
+                            val fragmentForVisibleVariables = createCodeFragmentForVisibleVariables(lambda.project, visibleVariables!!)
+                                return@lamdba createWrappingContext(
+                                        fragmentForVisibleVariables.first,
+                                        fragmentForVisibleVariables.second,
+                                        lambda.bodyExpression,
+                                        lambda.project)
+                        }
+                    }
+                    return@lamdba null
+                })
+            }
+        }
+
         return codeFragment
     }
 
@@ -131,6 +208,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     companion object {
         public val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
         public val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
+        @TestOnly val DEBUG_FRAME_FOR_TESTS: Key<StackFrameProxyImpl> = Key.create("DEBUG_FRAME_FOR_TESTS")
 
         fun getContextElement(elementAt: PsiElement?): JetElement? {
             if (elementAt == null) return null
@@ -161,6 +239,16 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
         private fun JetElement?.check(): Boolean = this != null && this.check { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
 
+        private fun getInlinedLambdasInside(contextElement: JetElement): List<JetFunction> {
+            val start = contextElement.startOffset
+            val end = contextElement.endOffset
+
+            val bindingContext = contextElement.analyze(BodyResolveMode.PARTIAL)
+            return CodeInsightUtils.findElementsOfClassInRange(contextElement.getContainingJetFile(), start, end, javaClass<JetFunctionLiteral>(), javaClass<JetNamedFunction>())
+                    .filterIsInstance<JetFunction>()
+                    .filter { JetPsiUtil.getParentCallIfPresent(it as JetExpression) != null && InlineUtil.isInlinedArgument(it, bindingContext, false) }
+        }
+
         //internal for tests
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
             val sb = StringBuilder()
@@ -172,7 +260,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 val objectRef = value as? Value ?: continue
 
                 val labelNameWithSuffix = "$labelName$DEBUG_LABEL_SUFFIX"
-                sb.append("${createKotlinProperty(project, labelNameWithSuffix, objectRef.type().name(), TypeKind.getTypeKind(objectRef))}\n")
+                sb.append("${createKotlinProperty(project, labelNameWithSuffix, objectRef.type().name(), objectRef)}\n")
 
                 labeledObjects.put(labelNameWithSuffix, objectRef)
             }
@@ -180,28 +268,34 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             return sb.toString() to labeledObjects
         }
 
-        private enum class TypeKind {
-            PRIMITIVE,
-            ARRAY,
-            OBJECT;
+        private fun createCodeFragmentForVisibleVariables(project: Project, visibleVariables: List<Pair<LocalVariableProxyImpl, Value>>): Pair<String, Map<String, Value>> {
+            val sb = StringBuilder()
+            val labeledObjects = HashMap<String, Value>()
+            for ((variable, value) in visibleVariables) {
+                val variableName = variable.name()
+                if (!Name.isValidIdentifier(variableName)) continue
 
-            companion object {
-                fun getTypeKind(value: Value): TypeKind {
-                    return when(value) {
-                        is ArrayReference -> ARRAY
-                        is PrimitiveValue -> PRIMITIVE
-                        else -> OBJECT
-                    }
-                }
+                val kotlinProperty = createKotlinProperty(project, variableName, variable.typeName(), value) ?: continue
+                sb.append("$kotlinProperty\n")
+
+                labeledObjects.put(variableName, value)
             }
+            sb.append("val _debug_context_val = 1")
+            return sb.toString() to labeledObjects
         }
 
-        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, typeKind: TypeKind): String? {
-            fun String.addArraySuffix() = if (typeKind == TypeKind.ARRAY) this + "[]" else this
+        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): String? {
+            val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(project)
+            if (actualClassDescriptor != null && actualClassDescriptor.defaultType.arguments.isEmpty()) {
+                val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(actualClassDescriptor.defaultType.makeNullable())
+                return "val ${variableName.quoteIfNeeded()}: $renderedType = null"
+            }
+
+            fun String.addArraySuffix() = if (value is ArrayReference) this + "[]" else this
 
             val className = variableTypeName.replace("$", ".").substringBefore("[]")
             val classType = PsiType.getTypeByName(className, project, GlobalSearchScope.allScope(project))
-            val type = (if (typeKind != TypeKind.PRIMITIVE && classType.resolve() == null)
+            val type = (if (value !is PrimitiveValue && classType.resolve() == null)
                 CommonClassNames.JAVA_LANG_OBJECT
             else
                 className).addArraySuffix()
