@@ -22,7 +22,6 @@ import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.RangeMarker
@@ -69,7 +68,7 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
     companion object {
         fun getInstance(project: Project): LookupCancelWatcher = project.getComponent(javaClass<LookupCancelWatcher>())!!
 
-        val AUTO_POPUP_AT = Key<Int>("LookupCancelWatcher.DO_NOT_REPEAT_AUTO_POPUP_AT")
+        val AUTO_POPUP_AT = Key<Int>("LookupCancelWatcher.AUTO_POPUP_AT")
     }
 
     fun wasAutoPopupRecentlyCancelled(editor: Editor, offset: Int): Boolean {

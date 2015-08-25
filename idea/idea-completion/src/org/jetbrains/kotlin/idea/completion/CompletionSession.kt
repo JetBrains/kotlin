@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
-import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
@@ -259,6 +258,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         var context = expectedInfos
                 .map { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
                 .filterNotNull()
+                .distinct()
                 .singleOrNull()
                 ?.let { "expectedType=$it" }
 
@@ -266,6 +266,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             context = expectedInfos
                     .map { it.expectedName }
                     .filterNotNull()
+                    .distinct()
                     .singleOrNull()
                     ?.let { "expectedName=$it" }
         }
