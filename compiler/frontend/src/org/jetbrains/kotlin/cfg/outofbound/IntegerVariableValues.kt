@@ -192,8 +192,11 @@ public sealed class IntegerVariableValues {
                                 return@applyComparisonIfArgsAreAppropriate BooleanVariableValue.True
                             }
                         }
-                        BooleanVariableValue.Undefined.create(mapOf(it to onTrueValues), mapOf(it to thisValues))
-                    } ?: undefinedWithFullRestrictions(valuesData)
+                        BooleanVariableValue.Undefined(
+                                Restrictions.Specific.create(mapOf(it to onTrueValues)),
+                                Restrictions.Specific.create(mapOf(it to thisValues))
+                        )
+                    } ?: BooleanVariableValue.Undefined.WITH_FULL_RESTRICTIONS
                 }
 
         override fun notEq(
@@ -220,11 +223,11 @@ public sealed class IntegerVariableValues {
                                        }
                                    }
                                    return@comparison thisVarDescriptor?.let {
-                                       BooleanVariableValue.Undefined.create(
-                                               mapOf(it to valuesWithLessIndices),
-                                               mapOf(it to valuesWithGreaterOrEqIndices)
+                                       BooleanVariableValue.Undefined(
+                                               Restrictions.Specific.create(mapOf(it to valuesWithLessIndices)),
+                                               Restrictions.Specific.create(mapOf(it to valuesWithGreaterOrEqIndices))
                                        )
-                                   } ?: undefinedWithFullRestrictions(valuesData)
+                                   } ?: BooleanVariableValue.Undefined.WITH_FULL_RESTRICTIONS
                                }
                     )
                 }
@@ -246,11 +249,11 @@ public sealed class IntegerVariableValues {
                                        }
                                    }
                                    return@comparison thisVarDescriptor?.let {
-                                       BooleanVariableValue.Undefined.create(
-                                               mapOf(it to valuesWithGreaterOrEqIndices),
-                                               mapOf(it to valuesWithLessIndices)
+                                       BooleanVariableValue.Undefined(
+                                               Restrictions.Specific.create(mapOf(it to valuesWithGreaterOrEqIndices)),
+                                               Restrictions.Specific.create(mapOf(it to valuesWithLessIndices))
                                        )
-                                   } ?: undefinedWithFullRestrictions(valuesData)
+                                   } ?: BooleanVariableValue.Undefined.WITH_FULL_RESTRICTIONS
                                }
                     )
                 }
@@ -290,7 +293,7 @@ public sealed class IntegerVariableValues {
         ): BooleanVariableValue {
             if (other !is Defined || other.values.size() > 1) {
                 // the second check means that in expression "x 'operator' y" only one element set is supported for "y"
-                return undefinedWithFullRestrictions(valuesData)
+                return BooleanVariableValue.Undefined.WITH_FULL_RESTRICTIONS
             }
             return comparison(other.values.single())
         }
@@ -298,16 +301,9 @@ public sealed class IntegerVariableValues {
         private fun applyNot(booleanValue: BooleanVariableValue): BooleanVariableValue =
                 when (booleanValue) {
                     is BooleanVariableValue.Undefined ->
-                        BooleanVariableValue.Undefined.create(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
+                        BooleanVariableValue.Undefined(booleanValue.onFalseRestrictions, booleanValue.onTrueRestrictions)
                     is BooleanVariableValue.False -> BooleanVariableValue.True
                     is BooleanVariableValue.True -> BooleanVariableValue.False
                 }
-
-        private fun undefinedWithFullRestrictions(valuesData: ValuesData.Defined): BooleanVariableValue.Undefined {
-            val restrictions = valuesData.intVarsToValues.keySet()
-                    .map { Pair(it, setOf<Int>()) }
-                    .toMap()
-            return BooleanVariableValue.Undefined.create(restrictions, restrictions)
-        }
     }
 }

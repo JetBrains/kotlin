@@ -323,14 +323,23 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
                 else edgeData
             }
             is BooleanVariableValue.Undefined -> {
-                fun processUndefinedCase(edgeData: ValuesData.Defined, restrictions: Map<VariableDescriptor, Set<Int>>) {
-                    for ((variable, unrestrictedValues) in restrictions) {
-                        val (values, sourceCollection) =
-                                if (edgeData.intVarsToValues.contains(variable))
-                                    edgeData.intVarsToValues[variable] to edgeData.intVarsToValues
-                                else edgeData.collectionsToSizes[variable] to edgeData.collectionsToSizes
-                        if (values is IntegerVariableValues.Defined) {
-                            sourceCollection[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
+                fun processUndefinedCase(edgeData: ValuesData.Defined, restrictions: Restrictions) {
+                    when (restrictions) {
+                        Restrictions.Empty -> Unit // no need to apply any restrictions
+                        Restrictions.Full -> {
+                            edgeData.intVarsToValues.keySet().forEach { edgeData.intVarsToValues[it] = IntegerVariableValues.Undefined }
+                            edgeData.collectionsToSizes.keySet().forEach { edgeData.collectionsToSizes[it] = IntegerVariableValues.Undefined }
+                        }
+                        is Restrictions.Specific -> {
+                            for ((variable, unrestrictedValues) in restrictions.values) {
+                                val (values, sourceCollection) =
+                                        if (edgeData.intVarsToValues.contains(variable))
+                                            edgeData.intVarsToValues[variable] to edgeData.intVarsToValues
+                                        else edgeData.collectionsToSizes[variable] to edgeData.collectionsToSizes
+                                if (values is IntegerVariableValues.Defined) {
+                                    sourceCollection[variable] = values.leaveOnlyValuesInSet(unrestrictedValues)
+                                }
+                            }
                         }
                     }
                 }

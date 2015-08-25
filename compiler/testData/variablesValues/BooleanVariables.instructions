@@ -252,8 +252,8 @@ L4 [result of boolean operation]:
     r(42) -> <v16>                                                                             in: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}
   2 jmp(L7)                                                                                    in: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[1]}     BOOLS{cond:U{}{}} ARRS{}
 L6 [else branch]:
-  3 mark({ 43 })                                                                               in: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}
-    r(43) -> <v17>                                                                             in: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1]}    BOOLS{cond:U{}{}} ARRS{}
+  3 mark({ 43 })                                                                               in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
+    r(43) -> <v17>                                                                             in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
 L7 ['if' expression result]:
   2 merge(if (cond && a > 0 && a < 2) { 42 } else { 43 }|<v16>, <v17>) -> <v18>                in: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}    out: INTS{a:[-1, 1]} BOOLS{cond:U{}{}} ARRS{}
 L1:

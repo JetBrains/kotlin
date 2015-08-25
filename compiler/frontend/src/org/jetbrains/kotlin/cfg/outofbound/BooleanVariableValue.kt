@@ -53,27 +53,20 @@ public sealed class BooleanVariableValue {
         override fun not(): BooleanVariableValue = True
     }
 
-    public data class Undefined private constructor(
-            val onTrueRestrictions: Map<VariableDescriptor, Set<Int>>,
-            val onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
+    public data class Undefined (
+            val onTrueRestrictions: Restrictions,
+            val onFalseRestrictions: Restrictions
     ): BooleanVariableValue() {
-        override fun toString(): String {
-            val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
-            val setToString: (Set<Int>) -> String = { it.sort().toString() }
-            val onTrue = MapUtils.mapToString(onTrueRestrictions, descriptorToString, descriptorToString, setToString)
-            val onFalse = MapUtils.mapToString(onFalseRestrictions, descriptorToString, descriptorToString, setToString)
-            return "U$onTrue$onFalse"
-        }
+        override fun toString(): String = "U${onTrueRestrictions.toString()}${onFalseRestrictions.toString()}"
 
         override fun and(other: BooleanVariableValue?): BooleanVariableValue =
                 when(other) {
                     null -> Undefined.WITH_NO_RESTRICTIONS
                     True -> this.copy()
                     False -> False
-                    is Undefined -> mergeCorrespondingValues(
-                            other,
-                            { value1, value2 -> value1.intersect(value2) },
-                            { value1, value2 -> value1.union(value2) }
+                    is Undefined -> Undefined(
+                            this.onTrueRestrictions.andInTruePosition(other.onTrueRestrictions),
+                            this.onFalseRestrictions.andInFalsePosition(other.onFalseRestrictions)
                     )
                 }
 
@@ -82,37 +75,81 @@ public sealed class BooleanVariableValue {
                     null -> Undefined.WITH_NO_RESTRICTIONS
                     True -> True
                     False -> this.copy()
-                    is Undefined -> mergeCorrespondingValues(
-                            other,
-                            { value1, value2 -> value1.union(value2) },
-                            { value1, value2 -> value1.intersect(value2) }
+                    is Undefined -> Undefined(
+                            this.onTrueRestrictions.orInTruePosition(other.onTrueRestrictions),
+                            this.onFalseRestrictions.orInFalsePosition(other.onFalseRestrictions)
                     )
                 }
 
         override fun not(): BooleanVariableValue = Undefined(onFalseRestrictions, onTrueRestrictions)
 
-        private fun mergeCorrespondingValues(
-                other: Undefined,
-                mergeOnTrueValues: (Set<Int>, Set<Int>) -> Set<Int>,
-                mergeOnFalseValues: (Set<Int>, Set<Int>) -> Set<Int>
-        ): Undefined {
-            val onTrueIntersected = MapUtils.mergeMaps(onTrueRestrictions, other.onTrueRestrictions, mergeOnTrueValues)
-            val onFalseIntersected = MapUtils.mergeMaps(onFalseRestrictions, other.onFalseRestrictions, mergeOnFalseValues)
-            return Undefined(onTrueIntersected, onFalseIntersected)
-        }
-
         companion object {
-            public val WITH_NO_RESTRICTIONS: Undefined = Undefined(mapOf(), mapOf())
-            public fun create(
-                    onTrueRestrictions: Map<VariableDescriptor, Set<Int>>,
-                    onFalseRestrictions: Map<VariableDescriptor, Set<Int>>
-            ): Undefined =
-                    if (onTrueRestrictions.isEmpty() && onFalseRestrictions.isEmpty()) WITH_NO_RESTRICTIONS
-                    else Undefined(onTrueRestrictions, onFalseRestrictions)
+            public val WITH_NO_RESTRICTIONS: Undefined = Undefined(Restrictions.Empty, Restrictions.Empty)
+            public val WITH_FULL_RESTRICTIONS: Undefined = Undefined(Restrictions.Full, Restrictions.Full)
         }
     }
 
     companion object {
         public fun create(value: Boolean): BooleanVariableValue = if(value) True else False
+    }
+}
+
+public sealed class Restrictions {
+    public abstract fun andInTruePosition(other: Restrictions): Restrictions
+    public abstract fun andInFalsePosition(other: Restrictions): Restrictions
+    public abstract fun orInTruePosition(other: Restrictions): Restrictions
+    public abstract fun orInFalsePosition(other: Restrictions): Restrictions
+
+    public object Empty : Restrictions() {
+        override fun toString(): String = "{}"
+
+        override fun andInTruePosition(other: Restrictions): Restrictions = other
+
+        override fun andInFalsePosition(other: Restrictions): Restrictions = Empty
+
+        override fun orInTruePosition(other: Restrictions): Restrictions = andInFalsePosition(other)
+
+        override fun orInFalsePosition(other: Restrictions): Restrictions = andInTruePosition(other)
+    }
+    public object Full : Restrictions() {
+        override fun toString(): String = "{full}"
+
+        override fun andInTruePosition(other: Restrictions): Restrictions = Full
+
+        override fun andInFalsePosition(other: Restrictions): Restrictions = other
+
+        override fun orInTruePosition(other: Restrictions): Restrictions = andInFalsePosition(other)
+
+        override fun orInFalsePosition(other: Restrictions): Restrictions = andInTruePosition(other)
+    }
+    public data class Specific protected constructor(val values: Map<VariableDescriptor, Set<Int>>) : Restrictions() {
+        override fun toString(): String {
+            val descriptorToString: (VariableDescriptor) -> String = { it.name.asString() }
+            val setToString: (Set<Int>) -> String = { it.sort().toString() }
+            return MapUtils.mapToString(values, descriptorToString, descriptorToString, setToString)
+        }
+
+        override fun andInTruePosition(other: Restrictions): Restrictions =
+                when (other) {
+                    is Specific -> Specific(MapUtils.mergeMaps(this.values, other.values) { v1, v2 -> v1 intersect v2 })
+                    Empty -> this
+                    Full -> Full
+                }
+
+        override fun andInFalsePosition(other: Restrictions): Restrictions =
+                when (other) {
+                    is Specific -> Specific(MapUtils.mergeMaps(this.values, other.values) { v1, v2 -> v1 union v2 })
+                    Empty -> Empty
+                    Full -> this
+                }
+
+        override fun orInTruePosition(other: Restrictions): Restrictions = andInFalsePosition(other)
+
+        override fun orInFalsePosition(other: Restrictions): Restrictions = andInTruePosition(other)
+
+        companion object {
+            public fun create(values: Map<VariableDescriptor, Set<Int>>): Restrictions =
+                    if (values.isEmpty()) Empty else Specific(values)
+        }
     }
 }
