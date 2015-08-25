@@ -19,6 +19,7 @@ package kotlin.reflect
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
+import kotlin.reflect.jvm.internal.KTypeImpl
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -29,6 +30,14 @@ public val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
     get() = (this as KClassImpl<T>).constructors.firstOrNull {
         ((it as KFunctionImpl).descriptor as ConstructorDescriptor).isPrimary
     }
+
+/**
+ * Returns a type corresponding to the given class with type parameters of that class substituted as the corresponding arguments.
+ * For example, for class `MyMap<K, V>` [defaultType] would return the type `MyMap<K, V>`.
+ */
+public val KClass<*>.defaultType: KType
+    get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
+
 
 /**
  * Returns static functions declared in this class.
