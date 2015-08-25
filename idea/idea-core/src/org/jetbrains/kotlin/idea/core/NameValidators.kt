@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
+import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -97,10 +99,9 @@ public class NewDeclarationNameValidator(
 
         return when(target) {
             Target.VARIABLES ->
-                getProperties(name, NoLookupLocation.FROM_IDE).any { !it.isExtension && it.isVisible() } ||
-                getLocalVariable(name) != null
+                getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() }
             Target.FUNCTIONS_AND_CLASSES ->
-                getFunctions(name, NoLookupLocation.FROM_IDE).any { !it.isExtension && it.isVisible() } ||
+                getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() } ||
                 getClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
         }
     }
