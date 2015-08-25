@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleSyntheticClassKind
 import org.jetbrains.kotlin.name.FqName
@@ -75,7 +76,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val context = components.createContext(classData.getNameResolver(), packageFqName)
                 createTopLevelClassStub(classId, classData.getClassProto(), context)
             }
-            header.isCompatibleSyntheticClassKind() && header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
+            header.isCompatibleFileFacadeKind() -> {
                 val packageData = JvmProtoBufUtil.readPackageDataFrom(annotationData)
                 val context = components.createContext(packageData.getNameResolver(), packageFqName)
                 createPackageFacadeFileStub(packageData.getPackageProto(), packageFqName, context)

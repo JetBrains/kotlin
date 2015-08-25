@@ -31,8 +31,8 @@ public class KotlinClassHeader(
 
     init {
         if (isCompatibleAbiVersion) {
-            assert((annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE && syntheticClassKind != KotlinSyntheticClass.Kind.PACKAGE_PART)) {
-                "Annotation data should be not null only for CLASS, PACKAGE_FACADE and PACKAGE_PARTS (kind=$kind)"
+            assert((annotationData != null) == shouldHaveAnnotationData(kind, syntheticClassKind)) {
+                "Annotation data should be not null only for CLASS and PACKAGE_FACADE (kind=$kind)"
             }
             assert((syntheticClassKind == null) == (kind != Kind.SYNTHETIC_CLASS)) {
                 "Synthetic class kind should be present for SYNTHETIC_CLASS (kind=$kind)"
@@ -46,6 +46,7 @@ public class KotlinClassHeader(
     public enum class Kind {
         CLASS,
         PACKAGE_FACADE,
+        FILE_FACADE,
         SYNTHETIC_CLASS
     }
 
@@ -54,8 +55,17 @@ public class KotlinClassHeader(
             (if (classKind != null) "$classKind " else "") +
             (if (syntheticClassKind != null) "$syntheticClassKind " else "") +
             "version=$version"
+
+    companion object {
+        private fun shouldHaveAnnotationData(kind: Kind, syntheticClassKind: KotlinSyntheticClass.Kind?): Boolean =
+                kind == Kind.CLASS ||
+                kind == Kind.PACKAGE_FACADE ||
+                kind == Kind.FILE_FACADE ||
+                syntheticClassKind == KotlinSyntheticClass.Kind.PACKAGE_PART
+    }
 }
 
 public fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
 public fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
+public fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
 public fun KotlinClassHeader.isCompatibleSyntheticClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS

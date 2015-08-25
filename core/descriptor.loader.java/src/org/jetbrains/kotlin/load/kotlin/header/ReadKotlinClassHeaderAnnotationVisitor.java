@@ -42,6 +42,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     static {
         HEADER_KINDS.put(KotlinClass.CLASS_NAME, CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_FILE_FACADE), FILE_FACADE);
         HEADER_KINDS.put(KotlinSyntheticClass.CLASS_NAME, SYNTHETIC_CLASS);
 
         initOldAnnotations();
@@ -78,7 +79,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return new KotlinClassHeader(headerKind, version, null, classKind, syntheticClassKind);
         }
 
-        if ((headerKind == CLASS || headerKind == PACKAGE_FACADE) && annotationData == null) {
+        if ((headerKind == CLASS || headerKind == PACKAGE_FACADE || headerKind == FILE_FACADE) && annotationData == null) {
             // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
             // We tell the outside world that there's really no annotation at all
             return null;
@@ -106,6 +107,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                     return new ClassHeaderReader();
                 case PACKAGE_FACADE:
                     return new PackageHeaderReader();
+                case FILE_FACADE:
+                    return new FileFacadeHeaderReader();
                 case SYNTHETIC_CLASS:
                     return new SyntheticClassHeaderReader();
                 default:
@@ -225,6 +228,17 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private class PackageHeaderReader extends HeaderAnnotationArgumentVisitor {
         public PackageHeaderReader() {
             super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE));
+        }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+            unexpectedEnumArgument(name, enumClassId, enumEntryName);
+        }
+    }
+
+    private class FileFacadeHeaderReader extends HeaderAnnotationArgumentVisitor {
+        public FileFacadeHeaderReader() {
+            super(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_FILE_FACADE));
         }
 
         @Override

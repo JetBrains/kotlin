@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -111,14 +112,6 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
             }
         }
 
-        AnnotationVisitor av = v.newAnnotation(Type.getObjectType(KotlinSyntheticClass.CLASS_NAME.getInternalName()).getDescriptor(), true);
-        av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
-        av.visitEnum(
-                JvmAnnotationNames.KIND_FIELD_NAME,
-                Type.getObjectType(KotlinSyntheticClass.KIND_INTERNAL_NAME).getDescriptor(),
-                KotlinSyntheticClass.Kind.PACKAGE_PART.toString()
-        );
-
         JvmSerializationBindings bindings = v.getSerializationBindings();
 
         DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(bindings, state.getTypeMapper()));
@@ -140,7 +133,8 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
         NameResolver nameResolver = new NameResolver(strings.serializeSimpleNames(), strings.serializeQualifiedNames());
         PackageData data = new PackageData(nameResolver, packageProto);
 
-
+        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
+        av.visit(ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(SerializationUtil.serializePackageData(data))) {
             array.visit(null, string);
