@@ -6,28 +6,28 @@ import bar.*
     val a = 1
     var b = ""
 
-    val c: /*c:foo.A p:foo*/String
-        get() = /*c:foo.A p:foo p:bar c:foo.A.Companion*/b
+    val c: /*c:foo.A c:foo.A.Companion p:foo*/String
+        get() = /*p:foo p:bar c:foo.A c:foo.A.Companion*/b
 
-    var d: /*c:foo.A p:foo*/String = "ddd"
-        get() = /*c:foo.A p:foo p:bar c:foo.A.Companion*/$d
-        set(v) { /*c:foo.A p:foo p:bar c:foo.A.Companion*/$d = v }
+    var d: /*c:foo.A c:foo.A.Companion p:foo*/String = "ddd"
+        get() = /*p:foo p:bar c:foo.A c:foo.A.Companion*/$d
+        set(v) { /*p:foo p:bar c:foo.A c:foo.A.Companion*/$d = v }
 
     fun foo() {
-        /*c:foo.A p:foo p:bar c:foo.A.Companion*/a
-        /*c:foo.A p:foo p:bar c:foo.A.Companion*/foo()
+        /*p:foo p:bar c:foo.A c:foo.A.Companion*/a
+        /*p:foo p:bar c:foo.A c:foo.A.Companion*/foo()
         this./*c:foo.A*/a
         this./*c:foo.A*/foo()
-        /*c:foo.A p:foo p:bar c:foo.A.Companion*/baz()
-        /*c:foo.A p:foo p:bar c:foo.A.Companion*/Companion./*c:foo.A.Companion*/a
-        /*c:foo.A p:foo p:bar c:foo.A.Companion*/O./*c:foo.A.O*/v = "OK"
+        /*p:foo p:bar c:foo.A c:foo.A.Companion*/baz()
+        /*p:foo p:bar c:foo.A c:foo.A.Companion*/Companion./*c:foo.A.Companion*/a
+        /*p:foo p:bar c:foo.A c:foo.A.Companion*/O./*c:foo.A.O*/v = "OK"
     }
 
     class B {
         val a = 1
 
         companion object CO {
-            fun bar(a: /*c:foo.A.B.CO c:foo.A.B c:foo.A p:foo*/Int) {}
+            fun bar(a: /*c:foo.A.B.CO c:foo.A.B c:foo.A c:foo.A.Companion p:foo*/Int) {}
         }
     }
 
@@ -59,10 +59,10 @@ import bar.*
 
     val a = 1
     fun foo() {
-        /*c:foo.E p:foo p:bar*/a
-        /*c:foo.E p:foo p:bar*/Y./*c:foo.E*/a
-        /*c:foo.E p:foo p:bar*/foo()
-        /*c:foo.E p:foo p:bar*/X./*c:foo.E*/foo()
+        /*p:foo p:bar c:foo.E*/a
+        /*p:foo p:bar c:foo.E*/Y./*c:foo.E*/a
+        /*p:foo p:bar c:foo.E*/foo()
+        /*p:foo p:bar c:foo.E*/X./*c:foo.E*/foo()
     }
 }
 
