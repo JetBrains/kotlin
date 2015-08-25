@@ -23,7 +23,7 @@ public class A(val a: Int, var b: Int = 3, val arr: Array<Int>, val lst: ArrayLi
         b = 0
         val f = arr3[b]
         b = 150
-        val g = <!OUT_OF_BOUND_ACCESS!>arr3[b]<!>
+        val g = arr3[b]
         return d + f + g
     }
 
@@ -94,5 +94,5 @@ fun classMutableField(): Int {
     a.c = 3
     b.c = 4
     b.array = IntArray(3)
-    return r1 + <!OUT_OF_BOUND_ACCESS!>b.array[a.c]<!> + <!OUT_OF_BOUND_ACCESS!>b.array[b.c]<!>
+    return r1 + b.array[a.c] + b.array[b.c]
 }

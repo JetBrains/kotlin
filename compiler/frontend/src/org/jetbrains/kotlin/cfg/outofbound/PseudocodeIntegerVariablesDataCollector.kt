@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -492,6 +495,10 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
     private fun processVariableDeclaration(instruction: Instruction, updatedData: ValuesData.Defined) {
         val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext)
                                  ?: return
+        if (variableDescriptor is PropertyDescriptor) {
+            // properties are not supported
+            return
+        }
         val variableType = variableDescriptor.type
         when {
             KotlinBuiltIns.isInt(variableType) ->
@@ -549,18 +556,24 @@ public class PseudocodeIntegerVariablesDataCollector(val pseudocode: Pseudocode,
             KotlinBuiltIns.isInt(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                      ?: IntegerVariableValues.Undefined
-                updatedData.intVarsToValues[variableDescriptor] = valuesToAssign
+                if (updatedData.intVarsToValues.contains(variableDescriptor)) {
+                    updatedData.intVarsToValues[variableDescriptor] = valuesToAssign
+                }
             }
             KotlinBuiltIns.isBoolean(targetType) -> {
                 val valueToAssign = updatedData.boolFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                     ?: BooleanVariableValue.Undefined.WITH_NO_RESTRICTIONS
-                updatedData.boolVarsToValues[variableDescriptor] = valueToAssign
+                if (updatedData.boolVarsToValues.contains(variableDescriptor)) {
+                    updatedData.boolVarsToValues[variableDescriptor] = valueToAssign
+                }
             }
             KotlinArrayUtils.isGenericOrPrimitiveArray(targetType),
             KotlinListUtils.isKotlinList(targetType) -> {
                 val valuesToAssign = updatedData.intFakeVarsToValues[fakeVariable]?.let { it.copy() }
                                      ?: IntegerVariableValues.Undefined
-                updatedData.collectionsToSizes[variableDescriptor] = valuesToAssign
+                if (updatedData.collectionsToSizes.contains(variableDescriptor)) {
+                    updatedData.collectionsToSizes[variableDescriptor] = valuesToAssign
+                }
             }
         }
     }
