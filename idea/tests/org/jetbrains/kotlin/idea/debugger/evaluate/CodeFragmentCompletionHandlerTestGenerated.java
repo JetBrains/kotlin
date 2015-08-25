@@ -41,6 +41,12 @@ public class CodeFragmentCompletionHandlerTestGenerated extends AbstractCodeFrag
         doTest(fileName);
     }
 
+    @TestMetadata("CastPropertyWithSmartCast.kt")
+    public void testCastPropertyWithSmartCast() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/CastPropertyWithSmartCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InsertExtFunction.kt")
     public void testInsertExtFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertExtFunction.kt");
