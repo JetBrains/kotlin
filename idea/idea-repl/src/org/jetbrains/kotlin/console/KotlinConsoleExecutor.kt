@@ -22,6 +22,8 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 
+private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+
 public class KotlinConsoleExecutor(
         private val runner: KotlinConsoleRunner,
         private val historyManager: KotlinConsoleHistoryManager
@@ -49,11 +51,11 @@ public class KotlinConsoleExecutor(
         val processInputOS = processHandler.processInput ?: return logError(javaClass, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
-        val xmlRes = "${ReplConstants.XML_PREAMBLE}" +
+        val xmlRes = "$XML_PREAMBLE" +
                      "<input>" +
-                        "${StringUtil.escapeXml(
-                                StringUtil.replace(command.trim(), ReplConstants.SOURCE_CHARS, ReplConstants.XML_REPLACEMENTS)
-                           )}" +
+                     "${StringUtil.escapeXml(
+                             StringUtil.replace(command.trim(), SOURCE_CHARS, XML_REPLACEMENTS)
+                     )}" +
                      "</input>"
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)

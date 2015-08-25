@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.platform.platformStatic
 
 public class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
@@ -45,7 +44,7 @@ public class KotlinConsoleKeeper(val project: Project) {
 
     fun run(module: Module): KotlinConsoleRunner? {
         val path = module.moduleFilePath
-        val cmdLine = createCommandLine(module) ?: return errorNotification(project, "<p>Module SDK not found</p>") let { null }
+        val cmdLine = createCommandLine(module) ?: return errorNotification(project, "Module SDK not found") let { null }
 
         val consoleRunner = KotlinConsoleRunner(path, cmdLine, module, project, REPL_TITLE)
         consoleRunner.initAndRun()
@@ -113,6 +112,6 @@ public class KotlinConsoleKeeper(val project: Project) {
     companion object {
         private val REPL_TITLE = "Kotlin REPL"
 
-        platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinConsoleKeeper>())
+        jvmStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinConsoleKeeper>())
     }
 }

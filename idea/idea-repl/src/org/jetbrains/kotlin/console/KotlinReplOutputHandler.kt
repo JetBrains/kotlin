@@ -29,6 +29,11 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
 
+private val XML_PREFIX = "<?xml"
+
+public val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
+public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 
 public class KotlinReplOutputHandler(
@@ -41,12 +46,12 @@ public class KotlinReplOutputHandler(
 
     override fun notifyTextAvailable(text: String, key: Key<*>?) {
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
-        if (!text.startsWith(ReplConstants.XML_PREFIX)) return super.notifyTextAvailable(text, key)
+        if (!text.startsWith(XML_PREFIX)) return super.notifyTextAvailable(text, key)
 
         val output = dBuilder.parse(strToSource(text))
         val root = output.firstChild as Element
         val outputType = root.getAttribute("type")
-        val content = StringUtil.replace(root.textContent, ReplConstants.XML_REPLACEMENTS, ReplConstants.SOURCE_CHARS).trim()
+        val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS).trim()
 
         when (outputType) {
             "INITIAL_PROMPT"  -> super.notifyTextAvailable("$content\n", key)

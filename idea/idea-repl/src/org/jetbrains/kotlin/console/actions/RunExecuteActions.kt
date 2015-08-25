@@ -27,19 +27,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
 fun errorNotification(project: Project?, message: String) {
-    val tag = "KOTLIN REPL ERROR"
-    val title = "Kotlin REPL Configuration Error"
-    Notifications.Bus.notify(Notification(tag, title, message, NotificationType.ERROR), project)
+    val errorTag = "KOTLIN REPL ERROR"
+    val errorTitle = "Kotlin REPL Configuration Error"
+    Notifications.Bus.notify(Notification(errorTag, errorTitle, message, NotificationType.ERROR), project)
 }
 
-fun logError(cl: Class<*>, message: String) {
-    val logger = Logger.getInstance(cl)
-    logger.error(message)
-}
+fun logError(cl: Class<*>, message: String) = with(Logger.getInstance(cl)) { error(message) }
 
 public class RunKotlinConsoleAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return errorNotification(null, "<p>Project not found</p>")
+        val project = e.project ?: return errorNotification(null, "Project not found")
 
         KotlinConsoleModuleDialog(project).showIfNeeded(e.dataContext)
     }
@@ -47,8 +44,9 @@ public class RunKotlinConsoleAction : AnAction() {
 
 public class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return errorNotification(null, "<p>Cannot find project</p>")
-        val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile) ?: return errorNotification(project, "<p>Action performed in an invalid console</p>")
+        val project = e.project ?: return errorNotification(null, "Cannot find project")
+        val ktConsole = KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile(consoleFile)
+                        ?: return errorNotification(project, "Action performed in an invalid console")
 
         ktConsole.executor.executeCommand()
     }
