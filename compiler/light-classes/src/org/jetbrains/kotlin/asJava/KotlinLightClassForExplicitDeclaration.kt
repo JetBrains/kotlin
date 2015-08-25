@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -439,7 +440,8 @@ public open class KotlinLightClassForExplicitDeclaration(
 
             if (qualifiedName == DescriptorUtils.getFqName(classDescriptor).asString()) return true
 
-            val mappedDescriptor = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(qualifiedName))
+            val fqName = FqNameUnsafe(qualifiedName)
+            val mappedDescriptor = if (fqName.isSafe()) JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(fqName.toSafe()) else null
             val mappedQName = if (mappedDescriptor == null) null else DescriptorUtils.getFqName(mappedDescriptor).asString()
             if (qualifiedName == mappedQName) return true
 
