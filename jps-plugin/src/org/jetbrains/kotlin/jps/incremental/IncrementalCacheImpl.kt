@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.name.FqName
@@ -169,6 +170,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
 
                     JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
                 }
+            header.isCompatibleFileFacadeKind() ||
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 
