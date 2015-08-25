@@ -17,73 +17,73 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
 class ClassResolutionScopesSupport(
         private val classDescriptor: ClassDescriptor,
         storageManager: StorageManager,
-        private val getOuterScope: () -> JetScope
+        private val getOuterScope: () -> LexicalScope,
+        private val primaryConstructorParameters: List<JetParameter>? = null
 ) {
-    private val scopeForClassHeaderResolution = storageManager.createLazyValue { computeScopeForClassHeaderResolution() }
-    private val scopeForMemberDeclarationResolution = storageManager.createLazyValue { computeScopeForMemberDeclarationResolution() }
-    private val scopeForStaticMemberDeclarationResolution = storageManager.createLazyValue {  computeScopeForStaticMemberDeclarationResolution() }
-
-
-    fun getScopeForClassHeaderResolution(): JetScope = scopeForClassHeaderResolution()
-
-    fun getScopeForMemberDeclarationResolution(): JetScope = scopeForMemberDeclarationResolution()
-
-    fun getScopeForStaticMemberDeclarationResolution(): JetScope = scopeForStaticMemberDeclarationResolution()
-
-    private fun computeScopeForClassHeaderResolution(): JetScope {
-        val scope = WritableScopeImpl(JetScope.Empty, classDescriptor, RedeclarationHandler.DO_NOTHING, "Scope with type parameters for " + classDescriptor.getName())
-        for (typeParameterDescriptor in classDescriptor.getTypeConstructor().getParameters()) {
-            scope.addClassifierDescriptor(typeParameterDescriptor)
+    private fun scopeWithGenerics(parent: LexicalScope, debugName: String): LexicalScopeImpl {
+        return LexicalScopeImpl(parent, classDescriptor, false, null, debugName) {
+            classDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
         }
-        scope.changeLockLevel(WritableScope.LockLevel.READING)
-
-        return ChainedScope(classDescriptor, "ScopeForClassHeaderResolution: " + classDescriptor.getName(), scope, getOuterScope())
     }
 
-    private fun computeScopeForMemberDeclarationResolution(): JetScope {
-        val thisScope = scopeWithThis(classDescriptor)
-
-        return ChainedScope(
-                classDescriptor,
-                "ScopeForMemberDeclarationResolution: " + classDescriptor.getName(),
-                thisScope,
-                classDescriptor.unsubstitutedInnerClassesScope,
-                getScopeForClassHeaderResolution(),
-                getCompanionObjectScope(),
-                classDescriptor.getStaticScope())
+    public val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
+        scopeWithGenerics(getOuterScope(), "Scope for class header resolution for ${classDescriptor.name}")
     }
 
-    private fun scopeWithThis(descriptor: ClassDescriptor): WritableScopeImpl {
-        val thisScope = WritableScopeImpl(JetScope.Empty, descriptor, RedeclarationHandler.DO_NOTHING,
-                                          "Scope with 'this' for " + descriptor.getName(), descriptor.getThisAsReceiverParameter(), descriptor)
-        thisScope.changeLockLevel(WritableScope.LockLevel.READING)
-        return thisScope
+    private val scopeWithStaticMembersAndCompanionObjectReceiver = storageManager.createLazyValue {
+        val staticScopes = classDescriptor.companionObjectDescriptor?.let {
+            arrayOf(classDescriptor.staticScope, it.unsubstitutedInnerClassesScope)
+        } ?: arrayOf(classDescriptor.staticScope)
+
+        LexicalChainedScope(getOuterScope(), classDescriptor, false,
+                            classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter,
+                            "Scope with static members and companion object for ${classDescriptor.name}",
+                            memberScopes = *staticScopes)
     }
 
-    private fun computeScopeForStaticMemberDeclarationResolution(): JetScope {
-        if (classDescriptor.getKind().isSingleton) return scopeForMemberDeclarationResolution()
-
-        return ChainedScope(
-                classDescriptor,
-                "ScopeForStaticMemberDeclarationResolution: " + classDescriptor.getName(),
-                classDescriptor.unsubstitutedInnerClassesScope,
-                getOuterScope(),
-                getCompanionObjectScope(),
-                classDescriptor.getStaticScope())
+    public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
+        val scopeWithGenerics = scopeWithGenerics(scopeWithStaticMembersAndCompanionObjectReceiver(),
+                                                  "Scope with generics for ${classDescriptor.name}")
+        LexicalChainedScope(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
+                            "Scope for member declaration resolution: ${classDescriptor.name}",
+                            classDescriptor.unsubstitutedInnerClassesScope)
     }
 
-    private fun getCompanionObjectScope(): JetScope {
-        val companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor()
-        return if (companionObjectDescriptor != null) {
-            ChainedScope(companionObjectDescriptor, "Companion object scope for class: ${classDescriptor.getName()}",
-                         scopeWithThis(companionObjectDescriptor), companionObjectDescriptor.unsubstitutedInnerClassesScope)
+    public val scopeForStaticMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
+        if (classDescriptor.kind.isSingleton) {
+            scopeForMemberDeclarationResolution()
         }
-        else JetScope.Empty
+        else {
+            LexicalChainedScope(scopeWithStaticMembersAndCompanionObjectReceiver(), classDescriptor, false, null,
+                                "Scope for static member declaration resolution: ${classDescriptor.name}",
+                                classDescriptor.unsubstitutedInnerClassesScope)
+        }
     }
+
+    public val scopeForInitializerResolution: () -> LexicalScope = storageManager.createLazyValue {
+        val primaryConstructor = classDescriptor.unsubstitutedPrimaryConstructor ?:
+                                 return@createLazyValue scopeForMemberDeclarationResolution()
+        assert(primaryConstructorParameters != null) {
+            "primary constructor parameters must be not null, because primary constructor exist: $primaryConstructor"
+        }
+        LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
+                         "Scope for initializer resolution: ${classDescriptor.name}") {
+            primaryConstructorParameters!!.forEachIndexed {
+                index, parameter ->
+                if (!parameter.hasValOrVar()) {
+                    addVariableDescriptor(primaryConstructor.valueParameters[index])
+                }
+            }
+        }
+    }
+
 }

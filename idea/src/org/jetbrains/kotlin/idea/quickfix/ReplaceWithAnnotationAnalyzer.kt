@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -177,11 +179,12 @@ object ReplaceWithAnnotationAnalyzer {
                 descriptor.memberScope
 
             is ClassDescriptorWithResolutionScopes ->
-                descriptor.getScopeForMemberDeclarationResolution()
+                descriptor.getScopeForMemberDeclarationResolution().asJetScope()
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.getContainingDeclaration())
-                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope }).getScopeForMemberDeclarationResolution()
+                ClassResolutionScopesSupport(descriptor, LockBasedStorageManager.NO_LOCKS, { outerScope.memberScopeAsFileScope() })
+                        .scopeForMemberDeclarationResolution().asJetScope()
             }
 
             is FunctionDescriptor ->

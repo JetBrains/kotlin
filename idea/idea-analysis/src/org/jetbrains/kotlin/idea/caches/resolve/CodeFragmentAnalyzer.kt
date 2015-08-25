@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -95,7 +96,7 @@ public class CodeFragmentAnalyzer(
             is JetClassOrObject -> {
                 val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
-                scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
+                scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution().asJetScope()
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is JetExpression -> {

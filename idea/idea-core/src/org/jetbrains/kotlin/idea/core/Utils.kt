@@ -20,15 +20,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import java.util.HashMap
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import java.util.*
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
     val parameters = targetDescriptor.getValueParameters()
@@ -89,7 +90,7 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
         if (parent is JetClassBody) {
             val classDescriptor = bindingContext[BindingContext.CLASS, parent.getParent()] as? ClassDescriptorWithResolutionScopes
             if (classDescriptor != null) {
-                return classDescriptor.getScopeForMemberDeclarationResolution()
+                return classDescriptor.getScopeForMemberDeclarationResolution().asJetScope()
             }
         }
 

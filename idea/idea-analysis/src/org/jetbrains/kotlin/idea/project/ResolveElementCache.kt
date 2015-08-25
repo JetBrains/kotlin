@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -43,10 +42,9 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ResolveElementCache(
         private val resolveSession: ResolveSession,
@@ -409,15 +407,15 @@ public class ResolveElementCache(
                                                     classOrObject,
                                                     descriptor,
                                                     descriptor.getUnsubstitutedPrimaryConstructor(),
-                                                    descriptor.getScopeForClassHeaderResolution(),
-                                                    descriptor.getScopeForMemberDeclarationResolution())
+                                                    descriptor.getScopeForClassHeaderResolution().asJetScope(),
+                                                    descriptor.getScopeForMemberDeclarationResolution().asJetScope())
 
         return trace
     }
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(jetProperty)
-        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty)
+        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty).asJetScope()
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(jetProperty) as PropertyDescriptor
@@ -450,7 +448,7 @@ public class ResolveElementCache(
     private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: JetNamedFunction, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(namedFunction)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction).asJetScope()
         val functionDescriptor = resolveSession.resolveToDescriptor(namedFunction) as FunctionDescriptor
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
@@ -463,7 +461,7 @@ public class ResolveElementCache(
     private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(constructor)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor).asJetScope()
         val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
@@ -475,7 +473,7 @@ public class ResolveElementCache(
 
     private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile): BindingTrace {
         val trace = createDelegatingTrace(klass)
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass).asJetScope()
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
@@ -523,7 +521,7 @@ public class ResolveElementCache(
 
     private class BodyResolveContextForLazy(
             private val topDownAnalysisMode: TopDownAnalysisMode,
-            private val declaringScopes: Function1<JetDeclaration, JetScope?>
+            private val declaringScopes: Function1<JetDeclaration, LexicalScope?>
     ) : BodiesResolveContext {
         override fun getFiles(): Collection<JetFile> = setOf()
 
@@ -537,7 +535,7 @@ public class ResolveElementCache(
 
         override fun getFunctions(): MutableMap<JetNamedFunction, SimpleFunctionDescriptor> = hashMapOf()
 
-        override fun getDeclaringScope(declaration: JetDeclaration): JetScope? = declaringScopes(declaration)
+        override fun getDeclaringScope(declaration: JetDeclaration): LexicalScope? = declaringScopes(declaration)
 
         override fun getScripts(): MutableMap<JetScript, ScriptDescriptor> = hashMapOf()
 

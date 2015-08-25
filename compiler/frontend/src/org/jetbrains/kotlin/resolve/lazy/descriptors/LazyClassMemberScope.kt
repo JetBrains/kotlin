@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -91,7 +93,7 @@ public open class LazyClassMemberScope(
     private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
             = c.storageManager.createNullableLazyValue { resolvePrimaryConstructor() }
 
-    override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): JetScope {
+    override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration): LexicalScope {
         if (declaration is JetProperty) {
             return thisDescriptor.getScopeForInitializerResolution()
         }
@@ -222,7 +224,7 @@ public open class LazyClassMemberScope(
             val parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex())
             if (parameter.hasValOrVar()) {
                 val propertyDescriptor = c.descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
-                        thisDescriptor, valueParameterDescriptor, thisDescriptor.getScopeForClassHeaderResolution(), parameter, trace)
+                        thisDescriptor, valueParameterDescriptor, thisDescriptor.getScopeForClassHeaderResolution().asJetScope(), parameter, trace)
                 result.add(propertyDescriptor)
             }
         }
@@ -233,7 +235,7 @@ public open class LazyClassMemberScope(
             ?: return setOf()
 
         val lazyTypeResolver = DelegationResolver.TypeResolver { reference ->
-            c.typeResolver.resolveType(thisDescriptor.getScopeForClassHeaderResolution(), reference, trace, false)
+            c.typeResolver.resolveType(thisDescriptor.getScopeForClassHeaderResolution().asJetScope(), reference, trace, false)
         }
         val lazyMemberExtractor = DelegationResolver.MemberExtractor<T> {
             type -> extractor.extract(type, name)
@@ -282,7 +284,7 @@ public open class LazyClassMemberScope(
 
         if (DescriptorUtils.canHaveDeclaredConstructors(thisDescriptor) || hasPrimaryConstructor) {
             val constructor = c.functionDescriptorResolver.resolvePrimaryConstructorDescriptor(
-                    thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
+                    thisDescriptor.getScopeForClassHeaderResolution().asJetScope(), thisDescriptor, classOrObject, trace)
             constructor ?: return null
             setDeferredReturnType(constructor)
             return constructor
@@ -299,7 +301,7 @@ public open class LazyClassMemberScope(
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
             val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(
-                    thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, constructor, trace
+                    thisDescriptor.getScopeForClassHeaderResolution().asJetScope(), thisDescriptor, constructor, trace
             )
             setDeferredReturnType(descriptor)
             descriptor
