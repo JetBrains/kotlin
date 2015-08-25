@@ -12,35 +12,35 @@ interface B {
 
 class C : A(), B {
     override fun equals(other: Any?): Boolean {
-        <selection><caret>return super<A>.equals(other)</selection>
+        <selection><caret>return super.equals(other)</selection>
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun internalFun() {
-        super<A>.internalFun()
+        super.internalFun()
     }
 
     override val internalProperty: Int
         get() = throw UnsupportedOperationException()
 
     override fun protectedFun() {
-        super<A>.protectedFun()
+        super.protectedFun()
     }
 
     override val protectedProperty: Int
         get() = throw UnsupportedOperationException()
 
     override fun publicFun() {
-        super<A>.publicFun()
+        super.publicFun()
     }
 
     override val publicProperty: Int
         get() = throw UnsupportedOperationException()
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 }

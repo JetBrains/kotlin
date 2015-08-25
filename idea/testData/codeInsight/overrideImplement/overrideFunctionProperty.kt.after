@@ -1,3 +1,4 @@
+// ERROR: Unresolved reference: println
 open class A() {
     open val method : () -> Unit? = {println("hello")}
 }

@@ -1,3 +1,5 @@
+// ERROR: 'internal open fun foo(): kotlin.Unit' is already defined in C
+// ERROR: 'internal open fun foo(): kotlin.Unit' is already defined in C
 interface I {
     open fun foo(){}
 }
@@ -8,7 +10,7 @@ open class A {
 
 class C : A(), I {
     override fun equals(other: Any?): Boolean {
-        <selection><caret>return super<A>.equals(other)</selection>
+        <selection><caret>return super.equals(other)</selection>
     }
 
     override fun foo() {
@@ -20,10 +22,10 @@ class C : A(), I {
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 }

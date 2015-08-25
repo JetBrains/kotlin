@@ -10,6 +10,6 @@ class Outer {
 
 class X : Outer.Inner1, Outer.Inner2 {
     override fun f() {
-        <selection><caret>super<Outer.Inner1>.f()</selection>
+        <selection><caret>super.f()</selection>
     }
 }

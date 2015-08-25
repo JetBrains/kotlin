@@ -189,15 +189,15 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
             for (selectedElement in selectedElements) {
                 val descriptor = selectedElement.immediateSuper
                 when (descriptor) {
-                    is SimpleFunctionDescriptor -> overridingMembers.add(overrideFunction(classOrObject, descriptor))
-                    is PropertyDescriptor -> overridingMembers.add(overrideProperty(classOrObject, descriptor))
+                    is SimpleFunctionDescriptor -> overridingMembers.add(overrideFunction(classOrObject, descriptor, selectedElement.bodyType))
+                    is PropertyDescriptor -> overridingMembers.add(overrideProperty(classOrObject, descriptor, selectedElement.bodyType))
                     else -> error("Unknown member to override: $descriptor")
                 }
             }
             return overridingMembers
         }
 
-        private fun overrideProperty(classOrObject: JetClassOrObject, descriptor: PropertyDescriptor): JetElement {
+        private fun overrideProperty(classOrObject: JetClassOrObject, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetElement {
             val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                                 descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
             newDescriptor.addOverriddenDescriptor(descriptor)
@@ -205,7 +205,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
             val body = StringBuilder {
                 append("\nget()")
                 append(" = ")
-                append(generateUnsupportedOrSuperCall(classOrObject, descriptor))
+                append(generateUnsupportedOrSuperCall(descriptor, bodyType))
                 if (descriptor.isVar) {
                     append("\nset(value) {}")
                 }
@@ -213,31 +213,29 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
             return JetPsiFactory(classOrObject.project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
         }
 
-        private fun overrideFunction(classOrObject: JetClassOrObject, descriptor: FunctionDescriptor): JetNamedFunction {
+        private fun overrideFunction(classOrObject: JetClassOrObject, descriptor: FunctionDescriptor, bodyType: OverrideMemberChooserObject.BodyType): JetNamedFunction {
             val newDescriptor = descriptor.copy(descriptor.containingDeclaration, Modality.OPEN, descriptor.visibility,
                                                 descriptor.kind, /* copyOverrides = */ true)
             newDescriptor.addOverriddenDescriptor(descriptor)
 
             val returnType = descriptor.returnType
             val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
-            val isAbstract = descriptor.modality == Modality.ABSTRACT
 
-            val delegation = generateUnsupportedOrSuperCall(classOrObject, descriptor)
+            val delegation = generateUnsupportedOrSuperCall(descriptor, bodyType)
 
-            val body = "{" + (if (returnsNotUnit && !isAbstract) "return " else "") + delegation + "}"
+            val body = "{" + (if (returnsNotUnit && bodyType != OverrideMemberChooserObject.BodyType.EMPTY) "return " else "") + delegation + "}"
 
             return JetPsiFactory(classOrObject.project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
         }
 
-        private fun generateUnsupportedOrSuperCall(classOrObject: JetClassOrObject, descriptor: CallableMemberDescriptor): String {
-            val isAbstract = descriptor.modality == Modality.ABSTRACT
-            if (isAbstract) {
+        private fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
+            if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
                 return "throw UnsupportedOperationException()"
             }
             else {
                 return StringBuilder {
                     append("super")
-                    if (classOrObject.getDelegationSpecifiers().size() > 1) {
+                    if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
                         val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
                         append("<").append(superClassFqName).append(">")
                     }

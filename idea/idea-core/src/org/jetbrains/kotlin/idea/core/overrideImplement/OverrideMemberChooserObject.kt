@@ -27,24 +27,32 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 
 interface OverrideMemberChooserObject : ClassMember {
+    enum class BodyType {
+        EMPTY,
+        SUPER,
+        QUALIFIED_SUPER
+    }
+
     val descriptor: CallableMemberDescriptor
     val immediateSuper: CallableMemberDescriptor
+    val bodyType: BodyType
 
     companion object {
-        fun create(project: Project, descriptor: CallableMemberDescriptor, immediateSuper: CallableMemberDescriptor): OverrideMemberChooserObject {
+        fun create(project: Project, descriptor: CallableMemberDescriptor, immediateSuper: CallableMemberDescriptor, bodyType: BodyType): OverrideMemberChooserObject {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
             if (declaration != null) {
-                return WithDeclaration(descriptor, declaration, immediateSuper)
+                return WithDeclaration(descriptor, declaration, immediateSuper, bodyType)
             }
             else {
-                return WithoutDeclaration(descriptor, immediateSuper)
+                return WithoutDeclaration(descriptor, immediateSuper, bodyType)
             }
         }
 
         private class WithDeclaration(
                 descriptor: CallableMemberDescriptor,
                 declaration: PsiElement,
-                override val immediateSuper: CallableMemberDescriptor
+                override val immediateSuper: CallableMemberDescriptor,
+                override val bodyType: BodyType
         ) : DescriptorMemberChooserObject(declaration, descriptor), OverrideMemberChooserObject {
 
             override val descriptor: CallableMemberDescriptor
@@ -53,7 +61,8 @@ interface OverrideMemberChooserObject : ClassMember {
 
         private class WithoutDeclaration(
                 override val descriptor: CallableMemberDescriptor,
-                override val immediateSuper: CallableMemberDescriptor
+                override val immediateSuper: CallableMemberDescriptor,
+                override val bodyType: BodyType
         ) : MemberChooserObjectBase(DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(null, descriptor)), OverrideMemberChooserObject {
 
             override fun getParentNodeDelegate(): MemberChooserObject? {

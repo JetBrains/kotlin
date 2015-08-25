@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
-import java.util.ArrayList
-import java.util.LinkedHashMap
+import java.util.*
 
 public class OverrideMembersHandler : OverrideImplementMembersHandler() {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
@@ -56,7 +55,15 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     else {
                         immediateSupers.singleOrNull { (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.CLASS } ?: immediateSupers.first()
                     }
-                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse))
+
+                    val bodyType = if (immediateSuperToUse.modality == Modality.ABSTRACT)
+                        OverrideMemberChooserObject.BodyType.EMPTY
+                    else if (realSupersToUse.size() == 1)
+                        OverrideMemberChooserObject.BodyType.SUPER
+                    else
+                        OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER
+
+                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType))
                 }
             }
         }

@@ -15,11 +15,11 @@ abstract class B : A() {
 
 class C : B(), I {
     override fun equals(other: Any?): Boolean {
-        <selection><caret>return super<B>.equals(other)</selection>
+        <selection><caret>return super.equals(other)</selection>
     }
 
     override fun f() {
-        super<B>.f()
+        super.f()
     }
 
     override fun g() {
@@ -27,10 +27,10 @@ class C : B(), I {
     }
 
     override fun hashCode(): Int {
-        return super<B>.hashCode()
+        return super.hashCode()
     }
 
     override fun toString(): String {
-        return super<B>.toString()
+        return super.toString()
     }
 }

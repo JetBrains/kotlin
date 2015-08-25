@@ -18,15 +18,15 @@ interface I3 {
 
 abstract class B : I2, A(), I3 {
     override fun a() {
-        <selection><caret>super<A>.a()</selection>
+        <selection><caret>super.a()</selection>
     }
 
     override fun equals(other: Any?): Boolean {
-        return super<A>.equals(other)
+        return super.equals(other)
     }
 
     override fun hashCode(): Int {
-        return super<A>.hashCode()
+        return super.hashCode()
     }
 
     override fun i() {
@@ -42,6 +42,6 @@ abstract class B : I2, A(), I3 {
     }
 
     override fun toString(): String {
-        return super<A>.toString()
+        return super.toString()
     }
 }

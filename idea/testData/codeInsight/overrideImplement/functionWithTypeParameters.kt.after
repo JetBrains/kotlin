@@ -1,5 +1,8 @@
+// ERROR: 'foo' overrides nothing
+// ERROR: Class 'TraitImpl' must be declared abstract or implement abstract member internal abstract fun <A, B : java.lang.Runnable, E : kotlin.Map.Entry<A, B>> foo(): kotlin.Unit where B : kotlin.Cloneable, B : kotlin.Comparable<B> defined in Trait
+// see KT-8942
 interface Trait {
-    fun <A, B : Runnable, E : Map.Entry<A, B>> foo() where B : Cloneable, B : Comparable<B>;
+    fun <A, B : Runnable, E : Map.Entry<A, B>> foo() where B : Cloneable, B : Comparable<B>
 }
 
 class TraitImpl : Trait {
