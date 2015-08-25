@@ -111,24 +111,30 @@ public class CodegenTestUtil {
 
     @NotNull
     public static File compileJava(@NotNull String filename, @NotNull String... additionalClasspath) {
-        return compileJava(Collections.singletonList(filename), additionalClasspath);
+        return compileJava(Collections.singletonList(filename), Arrays.asList(additionalClasspath), Collections.<String>emptyList());
     }
 
     @NotNull
-    public static File compileJava(@NotNull List<String> filenames, @NotNull String... additionalClasspath) {
+    public static File compileJava(
+            @NotNull List<String> fileNames,
+            @NotNull List<String> additionalClasspath,
+            @NotNull List<String> additionalOptions
+    ) {
         try {
             File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
             List<String> classpath = new ArrayList<String>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
             classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
             classpath.add(JetTestUtils.getAnnotationsJar().getPath());
-            classpath.addAll(Arrays.asList(additionalClasspath));
-            List<String> options = Arrays.asList(
+            classpath.addAll(additionalClasspath);
+
+            List<String> options = new ArrayList<String>(Arrays.asList(
                     "-classpath", KotlinPackage.join(classpath, File.pathSeparator, "", "", -1, ""),
                     "-d", javaClassesTempDirectory.getPath()
-            );
+            ));
+            options.addAll(additionalOptions);
 
-            List<File> fileList = Lists.transform(filenames, new Function<String, File>() {
+            List<File> fileList = Lists.transform(fileNames, new Function<String, File>() {
                 @Override
                 public File apply(@Nullable String input) {
                     return new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + input);

@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.Name.guess
 
 public class ReflectJavaValueParameter(
         private val returnType: ReflectJavaType,
         private val annotations: Array<Annotation>,
+        private val name: String?,
         private val isVararg: Boolean
 ) : ReflectJavaElement(), JavaValueParameter {
     override fun getAnnotations() = getAnnotations(annotations)
@@ -30,7 +33,7 @@ public class ReflectJavaValueParameter(
 
     override fun isDeprecatedInJavaDoc() = false
 
-    override fun getName() = null // TODO: use ParameterNames on JDK 8
+    override fun getName() = name?.let(Name::guess)
     override fun getType() = returnType
     override fun isVararg() = isVararg
 

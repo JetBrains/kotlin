@@ -89,4 +89,26 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/boxWithJava/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInReflection() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("realParameterNames")
+        public void testRealParameterNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/realParameterNames/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("synthesizedParameterNames")
+        public void testSynthesizedParameterNames() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/synthesizedParameterNames/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
 }
