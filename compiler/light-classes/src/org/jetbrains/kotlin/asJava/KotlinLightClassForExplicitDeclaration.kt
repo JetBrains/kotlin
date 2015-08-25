@@ -140,7 +140,21 @@ public open class KotlinLightClassForExplicitDeclaration(
             val psiClass = LightClassUtil.findClass(classFqName, javaFileStub)
             if (psiClass == null) {
                 val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-                throw IllegalStateException("Class was not found " + classFqName + "\n" + "in " + outermostClassOrObject.containingFile.text + "\n" + "stub: \n" + javaFileStub.psi.text)
+                val ktFileText: String? = try {
+                    outermostClassOrObject.containingFile.text
+                }
+                catch (e: Exception) {
+                    "Can't get text for outermost class"
+                }
+
+                val stubFileText: String? = try {
+                    javaFileStub.psi.text
+                }
+                catch (e: Exception) {
+                    "Can't get stub text"
+                }
+
+                throw IllegalStateException("Class was not found $classFqName\nin $ktFileText\nstub: \n$stubFileText")
             }
             delegate = psiClass
         }
