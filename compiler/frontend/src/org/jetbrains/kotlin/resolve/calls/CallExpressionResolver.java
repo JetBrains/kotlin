@@ -120,7 +120,7 @@ public class CallExpressionResolver {
 
         // if the expression is a receiver in a qualified expression, it should be resolved after the selector is resolved
         boolean isLHSOfDot = JetPsiUtil.isLHSOfDot(nameExpression);
-        if (!resolutionResult.isNothing()) {
+        if (!resolutionResult.isNothing() && resolutionResult.getResultCode() != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER) {
             boolean isQualifier = isLHSOfDot && resolutionResult.isSingleResult()
                                   && resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
             if (!isQualifier) {

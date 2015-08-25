@@ -1,0 +1,15 @@
+package
+
+package some {
+    internal val kotlin.Int.foo: kotlin.Int
+    internal val kotlin.Int.some: kotlin.Int
+    internal fun kotlin.Int.extFun(): kotlin.Int
+    internal fun kotlin.String.test(): kotlin.Unit
+
+    internal final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
