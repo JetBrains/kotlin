@@ -140,7 +140,7 @@ fun ordering(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?)") {
+    templates add f("sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -148,21 +148,21 @@ fun ordering(): List<GenericFunction> {
 
         doc {
             """
-            Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+            Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
             """
         }
 
         returns("SELF", Sequences)
         doc(Sequences) {
-            "Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [order] function."
+            "Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function."
         }
 
         body {
-            "return sortedWith(compareBy(order))"
+            "return sortedWith(compareBy(selector))"
         }
     }
 
-    templates add f("sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?)") {
+    templates add f("sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?)") {
         exclude(Strings)
         inline(true)
         returns("List<T>")
@@ -170,17 +170,17 @@ fun ordering(): List<GenericFunction> {
 
         doc {
             """
-            Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+            Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
             """
         }
 
         returns("SELF", Sequences)
         doc(Sequences) {
-            "Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [order] function."
+            "Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function."
         }
 
         body {
-            "return sortedWith(compareByDescending(order))"
+            "return sortedWith(compareByDescending(selector))"
         }
     }
 

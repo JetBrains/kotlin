@@ -296,157 +296,157 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): List<T> {
-    return sortedWith(compareBy(order))
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> BooleanArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Boolean) -> R?): List<Boolean> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> BooleanArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Boolean) -> R?): List<Boolean> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ByteArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Byte) -> R?): List<Byte> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> ByteArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Byte) -> R?): List<Byte> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> CharArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Char) -> R?): List<Char> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> CharArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Char) -> R?): List<Char> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> DoubleArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Double) -> R?): List<Double> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> DoubleArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Double) -> R?): List<Double> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> FloatArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Float) -> R?): List<Float> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> FloatArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Float) -> R?): List<Float> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> IntArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Int) -> R?): List<Int> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> IntArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Int) -> R?): List<Int> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> LongArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Long) -> R?): List<Long> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> LongArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Long) -> R?): List<Long> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ShortArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Short) -> R?): List<Short> {
-    return sortedWith(compareBy(order))
+public inline fun <R : Comparable<R>> ShortArray.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Short) -> R?): List<Short> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): List<T> {
-    return sortedWith(compareBy(order))
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [order] function.
+ * Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): Sequence<T> {
-    return sortedWith(compareBy(order))
+public inline fun <T, R : Comparable<R>> Sequence<T>.sortedBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): Sequence<T> {
+    return sortedWith(compareBy(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): List<T> {
-    return sortedWith(compareByDescending(order))
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Boolean) -> R?): List<Boolean> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> BooleanArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Boolean) -> R?): List<Boolean> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Byte) -> R?): List<Byte> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> ByteArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Byte) -> R?): List<Byte> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> CharArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Char) -> R?): List<Char> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> CharArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Char) -> R?): List<Char> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Double) -> R?): List<Double> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> DoubleArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Double) -> R?): List<Double> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Float) -> R?): List<Float> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> FloatArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Float) -> R?): List<Float> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> IntArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Int) -> R?): List<Int> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> IntArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Int) -> R?): List<Int> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> LongArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Long) -> R?): List<Long> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> LongArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Long) -> R?): List<Long> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (Short) -> R?): List<Short> {
-    return sortedWith(compareByDescending(order))
+public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (Short) -> R?): List<Short> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): List<T> {
-    return sortedWith(compareByDescending(order))
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): List<T> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
- * Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [order] function.
+ * Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function.
  */
-public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R?): Sequence<T> {
-    return sortedWith(compareByDescending(order))
+public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) selector: (T) -> R?): Sequence<T> {
+    return sortedWith(compareByDescending(selector))
 }
 
 /**
