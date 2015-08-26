@@ -163,7 +163,7 @@ class UnusedImportInspection : AbstractKotlinInspection() {
         if (project.isDisposed || !file.isValid || editor.isDisposed || !file.isWritable) return false
 
         // do not optimize imports on the fly during undo/redo
-        val undoManager = UndoManager.getInstance(editor.project)
+        val undoManager = UndoManager.getInstance(project)
         if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) return false
 
         // if we stand inside import statements, do not optimize
