@@ -28,7 +28,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
             if (member is CallableMemberDescriptor
                 && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
                 val overridden = member.overriddenDescriptors
-                if (overridden.any { it.modality == Modality.FINAL || it.visibility.normalize() == Visibilities.PRIVATE }) continue
+                if (overridden.any { it.modality == Modality.FINAL || Visibilities.isPrivate(it.visibility.normalize()) }) continue
 
                 class Data(
                         val realSuper: CallableMemberDescriptor,
