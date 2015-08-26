@@ -18,20 +18,26 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import java.util.ArrayList
+import java.lang.reflect.Type
+import java.util.*
 import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.KotlinReflectionInternalError
+import kotlin.reflect.jvm.javaType
 
 interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     val descriptor: CallableMemberDescriptor
 
     val caller: FunctionCaller<*>
 
+    val defaultCaller: FunctionCaller<*>?
+
     override val annotated: Annotated get() = descriptor
 
     override val parameters: List<KParameter>
         get() {
+            val descriptor = descriptor
             val result = ArrayList<KParameter>()
             var index = 0
 
@@ -58,4 +64,74 @@ interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     override fun call(vararg args: Any?): R = reflectionCall {
         return caller.call(args) as R
     }
+
+    // See ArgumentGenerator#generate
+    override fun callBy(args: Map<KParameter, Any?>): R {
+        val parameters = parameters
+        val arguments = ArrayList<Any?>(parameters.size())
+        var mask = 0
+        val masks = ArrayList<Int>(1)
+        var index = 0
+
+        for (parameter in parameters) {
+            if (index != 0 && index % Integer.SIZE == 0) {
+                masks.add(mask)
+                mask = 0
+            }
+
+            when {
+                args.containsKey(parameter) -> {
+                    arguments.add(args[parameter])
+                }
+                parameter.isOptional -> {
+                    arguments.add(defaultPrimitiveValue(parameter.type.javaType))
+                    mask = mask or (1 shl (index % Integer.SIZE))
+                }
+                else -> {
+                    throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
+                }
+            }
+
+            if (parameter.kind == KParameter.Kind.VALUE) {
+                index++
+            }
+        }
+
+        if (mask == 0 && masks.isEmpty()) {
+            return call(*arguments.toTypedArray())
+        }
+
+        masks.add(mask)
+
+        val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $descriptor")
+
+        arguments.addAll(masks)
+
+        if (caller is FunctionCaller.Constructor) {
+            // DefaultConstructorMarker
+            arguments.add(null)
+        }
+
+        @suppress("UNCHECKED_CAST")
+        return reflectionCall {
+            caller.call(arguments.toTypedArray()) as R
+        }
+    }
+
+    private fun defaultPrimitiveValue(type: Type): Any? =
+            if (type is Class<*> && type.isPrimitive) {
+                when (type) {
+                    java.lang.Boolean.TYPE -> false
+                    java.lang.Character.TYPE -> 0.toChar()
+                    java.lang.Byte.TYPE -> 0.toByte()
+                    java.lang.Short.TYPE -> 0.toShort()
+                    java.lang.Integer.TYPE -> 0
+                    java.lang.Float.TYPE -> 0f
+                    java.lang.Long.TYPE -> 0L
+                    java.lang.Double.TYPE -> 0.0
+                    java.lang.Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
+                    else -> throw UnsupportedOperationException("Unknown primitive: $type")
+                }
+            }
+            else null
 }

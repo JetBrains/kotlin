@@ -37,6 +37,8 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     override val caller: FunctionCaller<*> get() = getter.caller
 
+    override val defaultCaller: FunctionCaller<*>? get() = getter.defaultCaller
+
     abstract class Accessor<out R> : KProperty.Accessor<R> {
         abstract override val property: KPropertyImpl<R>
 
@@ -54,6 +56,8 @@ interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = true)
         }
+
+        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 }
 
@@ -74,6 +78,8 @@ interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
+
+        override val defaultCaller: FunctionCaller<*>? get() = null
     }
 }
 

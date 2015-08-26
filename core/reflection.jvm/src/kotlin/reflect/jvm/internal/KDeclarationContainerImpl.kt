@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
@@ -137,6 +138,24 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
         return functions.single()
     }
 
+    private fun Class<*>.tryGetMethod(name: String, parameterTypes: List<Class<*>>, declared: Boolean) =
+            try {
+                if (declared) getDeclaredMethod(name, *parameterTypes.toTypedArray())
+                else getMethod(name, *parameterTypes.toTypedArray())
+            }
+            catch (e: NoSuchMethodException) {
+                null
+            }
+
+    private fun Class<*>.tryGetConstructor(parameterTypes: List<Class<*>>, declared: Boolean) =
+            try {
+                if (declared) getDeclaredConstructor(*parameterTypes.toTypedArray())
+                else getConstructor(*parameterTypes.toTypedArray())
+            }
+            catch (e: NoSuchMethodException) {
+                null
+            }
+
     // TODO: check resulting method's return type
     fun findMethodBySignature(
             @suppress("UNUSED_PARAMETER") proto: ProtoBuf.Callable,
@@ -144,7 +163,7 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
             nameResolver: NameResolver,
             declared: Boolean
     ): Method? {
-        val name = nameResolver.getString(signature.getName())
+        val name = nameResolver.getString(signature.name)
         if (name == "<init>") return null
 
         val parameterTypes = loadParameterTypes(nameResolver, signature)
@@ -153,13 +172,25 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
         // This is likely to change after the package part reform.
         val owner = jClass
 
-        return try {
-            if (declared) owner.getDeclaredMethod(name, *parameterTypes)
-            else owner.getMethod(name, *parameterTypes)
+        return owner.tryGetMethod(name, parameterTypes, declared)
+    }
+
+    fun findDefaultMethod(
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            isMember: Boolean,
+            declared: Boolean
+    ): Method? {
+        val name = nameResolver.getString(signature.name)
+        if (name == "<init>") return null
+
+        val parameterTypes = arrayListOf<Class<*>>()
+        if (isMember) {
+            parameterTypes.add(jClass)
         }
-        catch (e: NoSuchMethodException) {
-            null
-        }
+        addParametersAndMasks(parameterTypes, nameResolver, signature)
+
+        return jClass.tryGetMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, declared)
     }
 
     fun findConstructorBySignature(
@@ -167,24 +198,40 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
             nameResolver: NameResolver,
             declared: Boolean
     ): Constructor<*>? {
-        if (nameResolver.getString(signature.getName()) != "<init>") return null
+        if (nameResolver.getString(signature.name) != "<init>") return null
 
-        val parameterTypes = loadParameterTypes(nameResolver, signature)
+        return jClass.tryGetConstructor(loadParameterTypes(nameResolver, signature), declared)
+    }
 
-        return try {
-            if (declared) jClass.getDeclaredConstructor(*parameterTypes)
-            else jClass.getConstructor(*parameterTypes)
-        }
-        catch (e: NoSuchMethodException) {
-            null
+    fun findDefaultConstructor(
+            signature: JvmProtoBuf.JvmMethodSignature,
+            nameResolver: NameResolver,
+            declared: Boolean
+    ): Constructor<*>? {
+        if (nameResolver.getString(signature.name) != "<init>") return null
+
+        val parameterTypes = arrayListOf<Class<*>>()
+        addParametersAndMasks(parameterTypes, nameResolver, signature)
+        parameterTypes.add(DEFAULT_CONSTRUCTOR_MARKER)
+
+        return jClass.tryGetConstructor(parameterTypes, declared)
+    }
+
+    private fun addParametersAndMasks(
+            result: MutableList<Class<*>>, nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature
+    ) {
+        val valueParameters = loadParameterTypes(nameResolver, signature)
+        result.addAll(valueParameters)
+        repeat((valueParameters.size() + Integer.SIZE - 1) / Integer.SIZE) {
+            result.add(Integer.TYPE)
         }
     }
 
-    private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): Array<Class<*>> {
+    private fun loadParameterTypes(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): List<Class<*>> {
         val classLoader = jClass.safeClassLoader
-        return signature.getParameterTypeList().map { jvmType ->
+        return signature.parameterTypeList.map { jvmType ->
             loadJvmType(jvmType, nameResolver, classLoader)
-        }.toTypedArray()
+        }
     }
 
     // TODO: check resulting field's type
@@ -256,5 +303,7 @@ abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
                 LONG to java.lang.Long.TYPE,
                 DOUBLE to java.lang.Double.TYPE
         )
+
+        private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
     }
 }
