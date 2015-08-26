@@ -220,8 +220,7 @@ public class LazyDeclarationResolver {
             }
         }, null);
         if (result == null) {
-            throw new IllegalStateException("No descriptor resolved for " + declaration + ":\n" +
-                                            PsiUtilPackage.getElementTextWithContext(declaration));
+            throw new NoDescriptorForDeclarationException(declaration);
         }
         return result;
     }
