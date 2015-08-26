@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -306,10 +307,9 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 }
             }
             else {
-                PsiClass clsClass = getLightClassForDecompiledFacade(packageFqName, files);
-                if (clsClass != null) {
-                    result.add(clsClass);
-                }
+                FqName packageFacadeFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
+                List<PsiClass> clsClasses = getLightClassesForDecompiledFacadeFiles(packageFacadeFqName, files);
+                result.addAll(clsClasses);
             }
         }
         return result;
@@ -339,10 +339,8 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 }
             }
             else {
-                PsiClass clsClass = getLightClassForDecompiledFacade(facadeFqName, files);
-                if (clsClass != null) {
-                    result.add(clsClass);
-                }
+                List<PsiClass> clsClasses = getLightClassesForDecompiledFacadeFiles(facadeFqName, files);
+                result.addAll(clsClasses);
             }
         }
         return result;
@@ -377,15 +375,14 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Nullable
-    private static PsiClass getLightClassForDecompiledFacade(@NotNull FqName facadeFqName, @NotNull List<JetFile> filesWithCallables) {
-        JetFile firstFile = filesWithCallables.iterator().next();
-        if (firstFile.isCompiled()) {
-            if (filesWithCallables.size() > 1) {
-                LOG.error("Several files with callables for facade: " + facadeFqName);
+    private static List<PsiClass> getLightClassesForDecompiledFacadeFiles(@NotNull FqName facadeFqName, @NotNull List<JetFile> filesWithCallables) {
+        List<PsiClass> lightClasses = new ArrayList<PsiClass>();
+        for (JetFile file : filesWithCallables) {
+            if (file.isCompiled()) {
+                lightClasses.add(createLightClassForDecompiledKotlinFile(file));
             }
-            return createLightClassForDecompiledKotlinFile(firstFile);
         }
-        return null;
+        return lightClasses;
     }
 
     @NotNull

@@ -24,5 +24,5 @@ import org.jetbrains.kotlin.name.ClassId
 public interface ResolverForDecompiler {
     public fun resolveTopLevelClass(classId: ClassId): ClassDescriptor?
 
-    public fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor>
+    public fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor>
 }
