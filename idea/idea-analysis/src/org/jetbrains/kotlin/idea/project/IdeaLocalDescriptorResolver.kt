@@ -18,20 +18,17 @@ package org.jetbrains.kotlin.idea.project
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.LocalDescriptorResolver
+import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 
 public class IdeaLocalDescriptorResolver(
         private val resolveElementCache: ResolveElementCache
 ): LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor {
         val context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL)
-        return BindingContextUtils.getNotNull(
-                context, BindingContext.DECLARATION_TO_DESCRIPTOR, declaration,
-                "Descriptor wasn't found for declaration $declaration\n${declaration.getElementTextWithContext()}"
-        )
+        return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+            ?: throw NoDescriptorForDeclarationException(declaration)
     }
 }
