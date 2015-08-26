@@ -70,7 +70,7 @@ public class CompilerRunnerUtil {
     }
 
     @Nullable
-    public static Object invokeExecMethod(
+    public synchronized static Object invokeExecMethod(
             @NotNull String compilerClassName,
             @NotNull String[] arguments,
             @NotNull CompilerEnvironment environment,
