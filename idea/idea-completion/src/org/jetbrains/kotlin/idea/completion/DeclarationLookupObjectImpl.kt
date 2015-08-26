@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
-import javax.swing.Icon
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -38,8 +35,7 @@ import javax.swing.Icon
  */
 public abstract class DeclarationLookupObjectImpl(
         public final override val descriptor: DeclarationDescriptor?,
-        public final override val psiElement: PsiElement?,
-        private val resolutionFacade: ResolutionFacade
+        public final override val psiElement: PsiElement?
 ): DeclarationLookupObject {
     init {
         assert(descriptor != null || psiElement != null)
@@ -65,20 +61,9 @@ public abstract class DeclarationLookupObjectImpl(
     override fun equals(other: Any?): Boolean {
         if (this identityEquals other) return true
         if (other == null || javaClass != other.javaClass) return false
-
         val lookupObject = other as DeclarationLookupObjectImpl
-
-        if (resolutionFacade != lookupObject.resolutionFacade) {
-            LOG.warn("Descriptors from different resolve sessions")
-            return false
-        }
-
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
     }
 
     override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as? PsiDocCommentOwner)?.isDeprecated() ?: false
-
-    companion object {
-        private val LOG = Logger.getInstance("#" + javaClass<DeclarationLookupObject>().getName())
-    }
 }

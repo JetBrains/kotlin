@@ -168,7 +168,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             }
         }
 
-        LookupElementFactory(resolutionFacade, receiverTypes, factoryContext, inDescriptor, { expectedInfos })
+        LookupElementFactory(resolutionFacade, receiverTypes, factoryContext, inDescriptor, InsertHandlerProvider { expectedInfos })
     }
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes

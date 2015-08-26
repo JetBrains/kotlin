@@ -185,7 +185,7 @@ class TypeInstantiationItems(
 
             val baseInsertHandler = when (visibleConstructors.size()) {
                 0 -> KotlinFunctionInsertHandler(needTypeArguments = false, needValueArguments = false)
-                1 -> lookupElementFactory.getDefaultInsertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
+                1 -> lookupElementFactory.insertHandlerProvider.insertHandler(visibleConstructors.single()) as KotlinFunctionInsertHandler
                 else -> KotlinFunctionInsertHandler(needTypeArguments = false, needValueArguments = true)
             }
 
