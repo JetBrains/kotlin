@@ -6155,9 +6155,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("smartCasts.kt")
+                public void testSmartCasts() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/smartCasts.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCastsOnThis.kt")
+                public void testSmartCastsOnThis() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/smartCastsOnThis.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("tpBoundsViolation.kt")
                 public void testTpBoundsViolation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpBoundsViolation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tpInBounds.kt")
+                public void testTpInBounds() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/tpInBounds.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("useAsReceiver.kt")
+                public void testUseAsReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/nullability/useAsReceiver.kt");
                     doTest(fileName);
                 }
 

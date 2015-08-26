@@ -183,6 +183,11 @@ public class ExpressionTypingUtils {
         return expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
     }
 
+    public static boolean isExclExclExpression(@Nullable JetExpression expression) {
+        return expression instanceof JetUnaryExpression
+               && ((JetUnaryExpression) expression).getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
+    }
+
     @NotNull
     public static List<JetType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
         List<JetType> parameterTypes = new ArrayList<JetType>(valueParameters.size());

@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.ArrayList
 
@@ -452,8 +453,13 @@ public class CandidateResolver(
         val receiverArgumentType = receiverArgument.getType()
 
         val bindingContext = trace.getBindingContext()
-        if (!safeAccess && !receiverParameter.getType().isMarkedNullable() && receiverArgumentType.isMarkedNullable()) {
-            if (!smartCastManager.canBeSmartCast(receiverParameter, receiverArgument, this)) {
+        // We just checked isSubtypeIgnoringNullability(receiverType, parameter)
+        // Here we do almost the same thing as isSubtypeOf does (but pay attention only to nullability):
+        // - find corresponding supertype, than check it's nullability is not weaker than parameter's one
+        // - if latter failed, check whether value can be smart cast
+        val commonReceiverType = TypeCheckingProcedure.findCorrespondingSupertype(receiverArgumentType, receiverParameter.type)
+        if (!safeAccess && !receiverParameter.type.isMarkedNullable && (commonReceiverType?.isMarkedNullable ?: false)) {
+            if (!smartCastManager.recordSmartCastToNotNullIfPossible(receiverArgument, this)) {
                 tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
                 return UNSAFE_CALL_ERROR
             }

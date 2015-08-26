@@ -220,16 +220,44 @@ public class SmartCastManager {
         return canBeCast;
     }
 
-    public boolean canBeSmartCast(
-            @NotNull ReceiverParameterDescriptor receiverParameter,
+    public boolean recordSmartCastToNotNullIfPossible(
             @NotNull ReceiverValue receiver,
-            @NotNull ResolutionContext context) {
-        if (!receiver.getType().isMarkedNullable()) return true;
+            @NotNull ResolutionContext context
+    ) {
+        if (!TypeUtils.isNullableType(receiver.getType())) return true;
 
-        List<JetType> smartCastVariants = getSmartCastVariants(receiver, context);
-        for (JetType smartCastVariant : smartCastVariants) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(smartCastVariant, receiverParameter.getType())) return true;
+        DataFlowValue dataFlowValue = getDataFlowValueExcludingReceiver(
+                context.trace.getBindingContext(),
+                context.scope.getContainingDeclaration(),
+                receiver
+        );
+
+        if (dataFlowValue == null) return false;
+
+        if (!context.dataFlowInfo.getNullability(dataFlowValue).canBeNull()) {
+            JetExpression receiverExpression = getReceiverExpression(receiver);
+
+            // report smart cast only on predictable expressions that were not reported before
+            if (receiverExpression != null
+                && dataFlowValue.isPredictable()
+                && context.trace.getBindingContext().get(SMARTCAST, receiverExpression) == null) {
+                recordCastOrError(
+                        receiverExpression, receiver.getType(), context.trace,
+                        /* canBeCast = */ true, /* recordExpressionType = */ false
+                );
+            }
+
+            return true;
         }
-        return false;
+
+        return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
+    }
+
+    @Nullable
+    private static JetExpression getReceiverExpression(@NotNull ReceiverValue value) {
+        if (value instanceof ExpressionReceiver) {
+            return ((ExpressionReceiver) value).getExpression();
+        }
+        return null;
     }
 }

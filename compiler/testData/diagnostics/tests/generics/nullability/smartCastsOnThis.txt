@@ -1,0 +1,7 @@
+package
+
+internal fun </*0*/ T : kotlin.CharSequence?> T.bar1(): kotlin.Unit
+internal fun kotlin.CharSequence?.bar2(): kotlin.Unit
+internal fun </*0*/ T : kotlin.CharSequence> T.bar3(): kotlin.Unit
+internal fun kotlin.CharSequence.bar4(): kotlin.Unit
+internal fun </*0*/ T : kotlin.String?> T.foo(): kotlin.Unit
