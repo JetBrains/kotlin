@@ -123,7 +123,7 @@ class TypeInstantiationItems(
             typeArgs: List<TypeProjection>,
             tail: Tail?
     ): LookupElement? {
-        var lookupElement = lookupElementFactory.createLookupElement(classifier, bindingContext, false)
+        var lookupElement = lookupElementFactory.createLookupElement(classifier, useReceiverTypes = false)
 
         if (DescriptorUtils.isNonCompanionObject(classifier)) {
             return lookupElement.addTail(tail)
@@ -255,10 +255,10 @@ class TypeInstantiationItems(
             val samConstructor = scope.getFunctions(`class`.name, NoLookupLocation.FROM_IDE)
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
-            val lookupElement = lookupElementFactory.createLookupElement(samConstructor, bindingContext, false)
-                    .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
-                    .addTail(tail)
-            collection.add(lookupElement)
+            lookupElementFactory.createLookupElementsInSmartCompletion(samConstructor, bindingContext, useReceiverTypes = false)
+                    .mapTo(collection) {
+                        it.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION).addTail(tail)
+                    }
         }
     }
 

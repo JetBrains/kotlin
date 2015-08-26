@@ -19,35 +19,21 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.ElementPattern
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.types.JetType
 import java.util.*
 
 class LookupElementsCollector(
         private val defaultPrefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
-        private val sorter: CompletionSorter,
-        private val inDescriptor: DeclarationDescriptor,
-        private val context: LookupElementsCollector.Context
+        private val sorter: CompletionSorter
 ) {
-    public enum class Context {
-        NORMAL,
-        STRING_TEMPLATE_AFTER_DOLLAR,
-        INFIX_CALL
-    }
 
     private val elements = LinkedHashMap<PrefixMatcher, ArrayList<LookupElement>>()
 
@@ -89,73 +75,14 @@ class LookupElementsCollector(
 
     public fun addDescriptorElements(descriptor: DeclarationDescriptor, notImported: Boolean = false, withReceiverCast: Boolean = false) {
         run {
-            var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
+            var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
 
             if (withReceiverCast) {
-                lookupElement = lookupElement.withReceiverCast()
+                lookupElements = lookupElements.map { it.withReceiverCast() }
             }
 
-            if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
-                lookupElement = lookupElement.withBracesSurrounding()
-            }
-
-            addElement(lookupElement, notImported = notImported)
+            addElements(lookupElements, notImported = notImported)
         }
-
-        // add special item for function with one argument of function type with more than one parameter
-        if (context != Context.INFIX_CALL && descriptor is FunctionDescriptor) {
-            addSpecialFunctionDescriptorElementIfNeeded(descriptor)
-        }
-
-        if (descriptor is PropertyDescriptor) {
-            var lookupElement = lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
-            if (lookupElement != null) {
-                if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
-                    lookupElement = lookupElement.withBracesSurrounding()
-                }
-                addElement(lookupElement)
-            }
-        }
-    }
-
-    private fun addSpecialFunctionDescriptorElementIfNeeded(descriptor: FunctionDescriptor) {
-        val parameters = descriptor.getValueParameters()
-        if (parameters.size() == 1) {
-            val parameterType = parameters.get(0).getType()
-            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                if (parameterCount > 1) {
-                    addSpecialFunctionDescriptorElement(descriptor, parameterType)
-                }
-            }
-        }
-    }
-
-    private fun addSpecialFunctionDescriptorElement(descriptor: FunctionDescriptor, parameterType: JetType) {
-        var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
-        val needTypeArguments = (lookupElementFactory.getDefaultInsertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
-        val lambdaInfo = GenerateLambdaInfo(parameterType, true)
-
-        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun renderElement(presentation: LookupElementPresentation) {
-                super.renderElement(presentation)
-
-                val tails = presentation.getTailFragments()
-                presentation.clearTail()
-                presentation.appendTailText(" " + buildLambdaPresentation(parameterType) + " ", false)
-                tails.forEach { presentation.appendTailText(it.text, true) }
-            }
-
-            override fun handleInsert(context: InsertionContext) {
-                KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = lambdaInfo).handleInsert(context, this)
-            }
-        }
-
-        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-
-        addElement(lookupElement)
     }
 
     public fun addElement(element: LookupElement, prefixMatcher: PrefixMatcher = defaultPrefixMatcher, notImported: Boolean = false) {

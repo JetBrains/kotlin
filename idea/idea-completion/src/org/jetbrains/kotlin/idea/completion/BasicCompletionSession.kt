@@ -334,7 +334,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         superClasses
-                .map { lookupElementFactory.createLookupElement(it, boldImmediateMembers = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
+                .map { lookupElementFactory.createLookupElement(it, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
                 .forEach { collector.addElement(it) }
     }
 

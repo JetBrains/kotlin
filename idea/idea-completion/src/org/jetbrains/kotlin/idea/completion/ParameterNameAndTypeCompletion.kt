@@ -170,7 +170,7 @@ class ParameterNameAndTypeCompletion(
 
     private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElement(classifier, false, qualifyNestedClasses = true)
+                = lookupElementFactory.createLookupElement(classifier, useReceiverTypes = false, qualifyNestedClasses = true)
     }
 
     private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.getQualifiedName()!!) {

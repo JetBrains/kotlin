@@ -82,7 +82,7 @@ class StaticMembers(
             }
 
             collection.addLookupElements(descriptor, expectedInfos, classifier) {
-                descriptor -> createLookupElement(descriptor, classDescriptor)
+                descriptor -> createLookupElements(descriptor, classDescriptor)
             }
         }
 
@@ -102,46 +102,48 @@ class StaticMembers(
         members.forEach(::processMember)
     }
 
-    private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = lookupElementFactory.createLookupElement(memberDescriptor, bindingContext, false)
+    private fun createLookupElements(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): Collection<LookupElement> {
+        val lookupElements = lookupElementFactory.createLookupElementsInSmartCompletion(memberDescriptor, bindingContext, useReceiverTypes = false)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
-        return object: LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun getAllLookupStrings(): Set<String> {
-                return setOf(lookupElement.getLookupString(), qualifierPresentation)
-            }
-
-            override fun renderElement(presentation: LookupElementPresentation) {
-                getDelegate().renderElement(presentation)
-
-                presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
-
-                val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
-                if (memberDescriptor is FunctionDescriptor) {
-                    presentation.appendTailText(tailText, true)
-                }
-                else {
-                    presentation.setTailText(tailText, true)
+        return lookupElements.map {
+            object: LookupElementDecorator<LookupElement>(it) {
+                override fun getAllLookupStrings(): Set<String> {
+                    return setOf(it.lookupString, qualifierPresentation)
                 }
 
-                if (presentation.getTypeText().isNullOrEmpty()) {
-                    presentation.setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    getDelegate().renderElement(presentation)
+
+                    presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
+
+                    val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
+                    if (memberDescriptor is FunctionDescriptor) {
+                        presentation.appendTailText(tailText, true)
+                    }
+                    else {
+                        presentation.setTailText(tailText, true)
+                    }
+
+                    if (presentation.getTypeText().isNullOrEmpty()) {
+                        presentation.setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
+                    }
                 }
-            }
 
-            override fun handleInsert(context: InsertionContext) {
-                var text = qualifierText + "." + memberDescriptor.getName().render()
+                override fun handleInsert(context: InsertionContext) {
+                    var text = qualifierText + "." + memberDescriptor.getName().render()
 
-                context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
-                context.setTailOffset(context.getStartOffset() + text.length())
+                    context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
+                    context.setTailOffset(context.getStartOffset() + text.length())
 
-                if (memberDescriptor is FunctionDescriptor) {
-                    getDelegate().handleInsert(context)
+                    if (memberDescriptor is FunctionDescriptor) {
+                        getDelegate().handleInsert(context)
+                    }
+
+                    shortenReferences(context, context.getStartOffset(), context.getTailOffset())
                 }
-
-                shortenReferences(context, context.getStartOffset(), context.getTailOffset())
-            }
-        }.assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
+            }.assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
+        }
     }
 }

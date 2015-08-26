@@ -295,6 +295,7 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
 
 fun LookupElementFactory.createBackingFieldLookupElement(
         property: PropertyDescriptor,
+        useReceiverTypes: Boolean,
         inDescriptor: DeclarationDescriptor,
         resolutionFacade: ResolutionFacade
 ): LookupElement? {
@@ -312,7 +313,7 @@ fun LookupElementFactory.createBackingFieldLookupElement(
     val bindingContext = resolutionFacade.analyze(declaration)
     if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]!!) return null
 
-    val lookupElement = createLookupElement(property, true)
+    val lookupElement = createLookupElement(property, useReceiverTypes)
     return object : LookupElementDecorator<LookupElement>(lookupElement) {
         override fun getLookupString() = "$" + super.getLookupString()
         override fun getAllLookupStrings() = setOf(getLookupString())
@@ -335,7 +336,7 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
     }
     else {
         val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
-        val baseLookupElement = createLookupElement(classifier, false, qualifyNestedClasses = true, includeClassTypeArguments = false)
+        val baseLookupElement = createLookupElement(classifier, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
         val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 

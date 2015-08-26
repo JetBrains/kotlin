@@ -36,8 +36,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -155,7 +154,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         expectedInfos: Collection<ExpectedInfo>,
         infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
         noNameSimilarityForReturnItself: Boolean = false,
-        lookupElementFactory: (TDescriptor) -> LookupElement?
+        lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
 ) {
     class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
         override fun equals(other: Any?)
@@ -163,7 +162,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         override fun hashCode() = if (this.descriptor != null) this.descriptor.getOriginal().hashCode() else 0
     }
 
-    fun ItemData.createLookupElement() = lookupElementFactory(this.descriptor)?.withOptions(this.itemOptions)
+    fun ItemData.createLookupElements() = lookupElementFactory(this.descriptor).map { it.withOptions(this.itemOptions) }
 
     val matchedInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     val makeNullableInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
@@ -179,20 +178,18 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
 
     if (!matchedInfos.isEmpty()) {
         for ((itemData, infos) in matchedInfos) {
-            val lookupElement = itemData.createLookupElement()
-            if (lookupElement != null) {
-                val nameSimilarityInfos = if (noNameSimilarityForReturnItself && descriptor is CallableDescriptor) {
-                    infos.filter { (it.additionalData as? ReturnValueAdditionalData)?.callable != descriptor } // do not calculate name similarity with function itself in its return
-                }
-                else
-                    infos
-                add(lookupElement.addTailAndNameSimilarity(infos, nameSimilarityInfos))
+            val lookupElements = itemData.createLookupElements()
+            val nameSimilarityInfos = if (noNameSimilarityForReturnItself && descriptor is CallableDescriptor) {
+                infos.filter { (it.additionalData as? ReturnValueAdditionalData)?.callable != descriptor } // do not calculate name similarity with function itself in its return
             }
+            else
+                infos
+            lookupElements.mapTo(this) { it.addTailAndNameSimilarity(infos, nameSimilarityInfos) }
         }
     }
     else {
         for ((itemData, infos) in makeNullableInfos) {
-            addLookupElementsForNullable({ itemData.createLookupElement() }, infos)
+            addLookupElementsForNullable({ itemData.createLookupElements() }, infos)
         }
     }
 }
@@ -204,18 +201,17 @@ private fun <T : DeclarationDescriptor?> T.substituteFixed(substitutor: TypeSubs
     return this?.substitute(substitutor) as T
 }
 
-private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
-    for (element in lookupElementsForNullable(factory)) {
-        add(element.addTailAndNameSimilarity(matchedInfos))
+private fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> Collection<LookupElement>, matchedInfos: Collection<ExpectedInfo>) {
+    fun LookupElement.postProcess(): LookupElement {
+        var element = this
+        element = element.suppressAutoInsertion()
+        element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
+        element = element.addTailAndNameSimilarity(matchedInfos)
+        return element
     }
-}
 
-private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection<LookupElement> {
-    val result = ArrayList<LookupElement>(2)
-
-    var lookupElement = factory()
-    if (lookupElement != null) {
-        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
+    factory().mapTo(this) {
+        object: LookupElementDecorator<LookupElement>(it) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
                 presentation.setItemText("!! " + presentation.getItemText())
@@ -223,15 +219,11 @@ private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection
             override fun handleInsert(context: InsertionContext) {
                 WithTailInsertHandler("!!", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
             }
-        }
-        lookupElement = lookupElement!!.suppressAutoInsertion()
-        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        result.add(lookupElement!!)
+        }.postProcess()
     }
 
-    lookupElement = factory()
-    if (lookupElement != null) {
-        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+    factory().mapTo(this) {
+        object: LookupElementDecorator<LookupElement>(it) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
                 presentation.setItemText("?: " + presentation.getItemText())
@@ -239,13 +231,8 @@ private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection
             override fun handleInsert(context: InsertionContext) {
                 WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate()) //TODO: code style
             }
-        }
-        lookupElement = lookupElement!!.suppressAutoInsertion()
-        lookupElement = lookupElement!!.assignSmartCompletionPriority(SmartCompletionItemPriority.NULLABLE)
-        result.add(lookupElement!!)
+        }.postProcess()
     }
-
-    return result
 }
 
 fun functionType(function: FunctionDescriptor): JetType? {
@@ -274,22 +261,24 @@ fun functionType(function: FunctionDescriptor): JetType? {
     )
 }
 
-fun LookupElementFactory.createLookupElement(
+fun LookupElementFactory.createLookupElementsInSmartCompletion(
         descriptor: DeclarationDescriptor,
         bindingContext: BindingContext,
-        boldImmediateMembers: Boolean
-): LookupElement {
-    var element = createLookupElement(descriptor, boldImmediateMembers)
+        useReceiverTypes: Boolean
+): Collection<LookupElement> {
+    return createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes).map {
+        var element = it
 
-    if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
-        element = element.keepOldArgumentListOnTab()
+        if (descriptor is FunctionDescriptor && descriptor.valueParameters.isNotEmpty()) {
+            element = element.keepOldArgumentListOnTab()
+        }
+
+        if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
+            element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
+        }
+
+        element
     }
-
-    if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
-        element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
-    }
-
-    return element
 }
 
 enum class SmartCompletionItemPriority {

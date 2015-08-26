@@ -40,9 +40,9 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 interface InheritanceItemsSearcher {
     fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit)
@@ -146,13 +146,7 @@ class SmartCompletion(
         val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
         result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
-            lookupElementFactory.createLookupElement(descriptor, bindingContext, true)
-        }
-
-        if (descriptor is PropertyDescriptor) {
-            result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
-                lookupElementFactory.createBackingFieldLookupElement(descriptor, inDescriptor, resolutionFacade)
-            }
+            lookupElementFactory.createLookupElementsInSmartCompletion(descriptor, bindingContext, true)
         }
 
         if (receiver == null) {
@@ -232,7 +226,7 @@ class SmartCompletion(
                 val types = smartCastCalculator.types(item.receiverParameter).map { FuzzyType(it, emptyList()) }
                 val classifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, classifier) {
-                    item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS)
+                    item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()
                 }
             }
         }
@@ -287,7 +281,7 @@ class SmartCompletion(
             val matchedExpectedInfos = functionExpectedInfos.filter { it.matchingSubstitutor(functionType) != null }
             if (matchedExpectedInfos.isEmpty()) return null
 
-            var lookupElement = lookupElementFactory.createLookupElement(descriptor, bindingContext, true)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
             val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
             lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = text

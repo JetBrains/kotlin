@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
@@ -87,7 +86,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
                 .filter { it.getName().asString() !in documentedParameters }
 
         descriptors.forEach {
-            collector.addElement(lookupElementFactory.createLookupElement(it, false))
+            collector.addElement(lookupElementFactory.createLookupElement(it, useReceiverTypes = false))
         }
     }
 
@@ -108,7 +107,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
         }
 
         scope.getDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
-            val element = lookupElementFactory.createLookupElement(it, false)
+            val element = lookupElementFactory.createLookupElement(it, useReceiverTypes = false)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
                     // insert only plain name here, no qualifier/parentheses/etc.

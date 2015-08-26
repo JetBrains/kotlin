@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 object KeywordValues {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {
@@ -54,8 +55,8 @@ object KeywordValues {
             val booleanInfoClassifier = { info: ExpectedInfo ->
                 if (info.fuzzyType?.type?.isBooleanOrNullableBoolean() ?: false) ExpectedInfoClassification.match(TypeSubstitutor.EMPTY) else ExpectedInfoClassification.noMatch
             }
-            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE) }
-            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE) }
+            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("true").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.TRUE).singletonList() }
+            collection.addLookupElements(null, expectedInfos, booleanInfoClassifier) { LookupElementBuilder.create("false").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.FALSE).singletonList() }
         }
 
         if (!shouldSkipNull(expressionWithType)) {
@@ -66,7 +67,7 @@ object KeywordValues {
                     ExpectedInfoClassification.noMatch
             }
             collection.addLookupElements(null, expectedInfos, classifier) {
-                LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL)
+                LookupElementBuilder.create("null").bold().assignSmartCompletionPriority(SmartCompletionItemPriority.NULL).singletonList()
             }
         }
     }

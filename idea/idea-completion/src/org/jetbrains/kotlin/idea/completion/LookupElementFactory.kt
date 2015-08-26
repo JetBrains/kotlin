@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.util.PlatformIcons
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -62,13 +64,86 @@ public data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObj
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>,
+        private val context: LookupElementFactory.Context,
+        private val inDescriptor: DeclarationDescriptor?,
         expectedInfosCalculator: () -> Collection<ExpectedInfo>
 ) {
+    public enum class Context {
+        NORMAL,
+        STRING_TEMPLATE_AFTER_DOLLAR,
+        INFIX_CALL
+    }
+
     private val expectedInfos by lazy { expectedInfosCalculator() }
+
+    public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
+        val result = SmartList<LookupElement>()
+
+        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
+        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
+            lookupElement = lookupElement.withBracesSurrounding()
+        }
+        result.add(lookupElement)
+
+        // add special item for function with one argument of function type with more than one parameter
+        if (context != Context.INFIX_CALL && descriptor is FunctionDescriptor) {
+            result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+        }
+
+        if (descriptor is PropertyDescriptor && inDescriptor != null) {
+            var backingFieldElement = createBackingFieldLookupElement(descriptor, useReceiverTypes, inDescriptor, resolutionFacade)
+            if (backingFieldElement != null) {
+                if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
+                    backingFieldElement = backingFieldElement.withBracesSurrounding()
+                }
+                result.add(backingFieldElement)
+            }
+        }
+
+        return result
+    }
+
+    private fun MutableCollection<LookupElement>.addSpecialFunctionCallElements(descriptor: FunctionDescriptor, useReceiverTypes: Boolean) {
+        val singleParameter = descriptor.valueParameters.singleOrNull() ?: return
+        val parameterType = singleParameter.type
+        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+            if (functionParameterCount > 1) {
+                add(createFunctionCallElementWithExplicitLambdaParameters(descriptor, parameterType, useReceiverTypes))
+            }
+        }
+    }
+
+    private fun createFunctionCallElementWithExplicitLambdaParameters(descriptor: FunctionDescriptor, parameterType: JetType, useReceiverTypes: Boolean): LookupElement {
+        var lookupElement = createLookupElement(descriptor, useReceiverTypes)
+        val needTypeArguments = (getDefaultInsertHandler(descriptor) as KotlinFunctionInsertHandler).needTypeArguments
+        val lambdaInfo = GenerateLambdaInfo(parameterType, true)
+
+        lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+
+                val tails = presentation.getTailFragments()
+                presentation.clearTail()
+                presentation.appendTailText(" " + buildLambdaPresentation(parameterType) + " ", false)
+                tails.forEach { presentation.appendTailText(it.text, true) }
+            }
+
+            override fun handleInsert(context: InsertionContext) {
+                KotlinFunctionInsertHandler(needTypeArguments, needValueArguments = true, lambdaInfo = lambdaInfo).handleInsert(context, this)
+            }
+        }
+
+        if (context == Context.STRING_TEMPLATE_AFTER_DOLLAR) {
+            lookupElement = lookupElement.withBracesSurrounding()
+        }
+
+        return lookupElement
+    }
 
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,
-            boldImmediateMembers: Boolean,
+            useReceiverTypes: Boolean,
             qualifyNestedClasses: Boolean = false,
             includeClassTypeArguments: Boolean = true
     ): LookupElement {
@@ -84,7 +159,7 @@ public class LookupElementFactory(
             element.putUserData(CALLABLE_WEIGHT_KEY, weight) // store for use in lookup elements sorting
         }
 
-        if (boldImmediateMembers) {
+        if (useReceiverTypes) {
             element = element.boldIfImmediate(weight)
         }
         return element
