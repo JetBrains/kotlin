@@ -589,7 +589,7 @@ class CollectionTest {
     }
 
     test fun sortedWith() {
-        val comparator = compareBy<String> { it.toUpperCase().reverse() }
+        val comparator = compareBy<String> { it.toUpperCase().reversed() }
         val data = listOf("cat", "dad", "BAD")
 
         expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator) }

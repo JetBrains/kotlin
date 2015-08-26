@@ -105,7 +105,7 @@ fun ordering(): List<GenericFunction> {
         }
         body(ArraysOfPrimitives) {
             """
-            return copyOf().apply { sort() }.reverse()
+            return copyOf().apply { sort() }.reversed()
             """
         }
 

@@ -333,7 +333,7 @@ public class SequenceTest {
     }
 
     test fun sortedWith() {
-        val comparator = compareBy { s: String -> s.reverse() }
+        val comparator = compareBy { s: String -> s.reversed() }
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
     }
 
