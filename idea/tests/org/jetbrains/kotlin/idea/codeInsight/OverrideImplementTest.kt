@@ -225,7 +225,7 @@ public class OverrideImplementTest : AbstractOverrideImplementTest() {
     }
 
     public fun testGenericSuperClass() {
-        doOverrideFileTest("size")
+        doOverrideFileTest("iterator")
     }
 
     public fun testDuplicatedAnyMembersBug() {
