@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import java.util.Arrays
 import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
@@ -144,7 +145,8 @@ fun classFileToString(classFile: File): String {
             when {
                 classHeader!!.isCompatiblePackageFacadeKind() ->
                     out.write("\n------ package proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
-
+                classHeader.isCompatibleFileFacadeKind() ->
+                    out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
                 classHeader.isCompatibleClassKind() ->
                     out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -55,11 +56,14 @@ public class KotlinJavaScriptDeserializerForDecompiler(
             ResolveEverythingToKotlinAnyLocalClassResolver, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
     )
 
-    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
-        val file = metaFileFinder.findKotlinJavascriptMetaFile(PackageClassUtils.getPackageClassId(packageFqName))
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
+        val packageFqName = facadeFqName.parent()
+        assert(packageFqName == directoryPackageFqName) {
+            "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
+        }
+        val file = metaFileFinder.findKotlinJavascriptMetaFile(ClassId.topLevel(facadeFqName))
         if (file == null) {
-            LOG.error("Could not read data for $packageFqName")
+            LOG.error("Could not read data for $facadeFqName")
             return emptyList()
         }
 

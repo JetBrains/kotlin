@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -66,7 +68,11 @@ public fun buildDecompiledText(
                     mapOf())
         }
         classHeader.isCompatiblePackageFacadeKind() ->
-            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
+            buildDecompiledText(packageFqName,
+                                ArrayList(resolver.resolveDeclarationsInFacade(PackageClassUtils.getPackageClassFqName(packageFqName))))
+        classHeader.isCompatibleFileFacadeKind() ->
+            buildDecompiledText(packageFqName,
+                                ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
         classHeader.isCompatibleClassKind() ->
             buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
         else ->
@@ -82,13 +88,18 @@ public fun buildDecompiledTextFromJsMetadata(
     val isPackageHeader = JsMetaFileUtils.isPackageHeader(classFile)
 
     if (isPackageHeader) {
-        return buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)), descriptorRendererForKotlinJavascriptDecompiler)
+        return buildDecompiledText(packageFqName,
+                                   resolveDeclarationsInPackage(packageFqName, resolver),
+                                   descriptorRendererForKotlinJavascriptDecompiler)
     }
     else {
         val classId = JsMetaFileUtils.getClassId(classFile)
         return buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull(), descriptorRendererForKotlinJavascriptDecompiler)
     }
 }
+
+private fun resolveDeclarationsInPackage(packageFqName: FqName, resolver: ResolverForDecompiler) =
+        ArrayList(resolver.resolveDeclarationsInFacade(PackageClassUtils.getPackageClassFqName(packageFqName)))
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"

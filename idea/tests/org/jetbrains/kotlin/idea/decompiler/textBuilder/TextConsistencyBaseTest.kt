@@ -67,8 +67,9 @@ private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : Resolver
         return module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
     }
 
-    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        return module.getPackage(packageFqName).memberScope.getAllDescriptors() filter {
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
+        // TODO how to handle non-package facades properly here?
+        return module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors() filter {
             it is CallableMemberDescriptor && it.module != KotlinBuiltIns.getInstance().getBuiltInsModule()
         } sortBy MemberComparator.INSTANCE
     }
