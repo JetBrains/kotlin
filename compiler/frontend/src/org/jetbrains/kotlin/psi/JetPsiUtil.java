@@ -494,6 +494,10 @@ public class JetPsiUtil {
             return JetExpressionParsing.Precedence.ASSIGNMENT.ordinal();
         }
 
+        if (expression instanceof JetSuperExpression) {
+            return maxPriority;
+        }
+
         if (expression instanceof JetDeclaration || expression instanceof JetStatementExpression) {
             return 0;
         }

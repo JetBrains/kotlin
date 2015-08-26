@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.name.Name
 open public class JetExpressionWithLabel(node: ASTNode) : JetExpressionImpl(node) {
 
     public fun getTargetLabel(): JetSimpleNameExpression? =
-            findChildByType<JetContainerNode>(JetNodeTypes.LABEL_QUALIFIER)?.
-            findChildByType(JetNodeTypes.LABEL) as? JetSimpleNameExpression
+            labelQualifier?.findChildByType(JetNodeTypes.LABEL) as? JetSimpleNameExpression
+
+    public val labelQualifier: JetContainerNode?
+        get() = findChildByType(JetNodeTypes.LABEL_QUALIFIER)
 
     public fun getLabelName(): String? = getTargetLabel()?.getReferencedName()
     public fun getLabelNameAsName(): Name? = getTargetLabel()?.getReferencedNameAsName()
