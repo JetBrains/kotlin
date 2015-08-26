@@ -9465,6 +9465,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("objectInsideFun.kt")
+            public void testObjectInsideFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/objectInsideFun.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("objectLiteralExpressionTypeMismatch.kt")
             public void testObjectLiteralExpressionTypeMismatch() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/objects/objectLiteralExpressionTypeMismatch.kt");
