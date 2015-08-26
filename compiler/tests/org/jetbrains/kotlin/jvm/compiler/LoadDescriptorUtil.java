@@ -141,7 +141,7 @@ public final class LoadDescriptorUtil {
                 }
             });
             AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                    jetCoreEnvironment.getProject(), jetFiles);
+                    jetCoreEnvironment.getProject(), jetFiles, new JvmPackageMappingProvider(jetCoreEnvironment));
             return new JetFilesAndAnalysisResult(jetFiles, result);
         }
 

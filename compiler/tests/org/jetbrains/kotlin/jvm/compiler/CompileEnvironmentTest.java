@@ -52,8 +52,9 @@ public class CompileEnvironmentTest extends TestCase {
                     "-annotations", jdkAnnotations.getAbsolutePath()
             );
             Assert.assertEquals(ExitCode.OK, exitCode);
-            assertEquals(1, out.listFiles().length);
-            assertEquals(2, out.listFiles()[0].listFiles().length);
+            assertEquals(2, out.listFiles().length);
+            assertEquals(1, out.listFiles()[0].listFiles().length);//META-INF
+            assertEquals(2, out.listFiles()[1].listFiles().length);//Smoke package
         }
         finally {
             FileUtil.delete(tempDir);

@@ -16,25 +16,24 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
 import org.jetbrains.kotlin.utils.Printer
+import java.util.*
 
 public open class DeserializedNewPackageMemberScope(
         val packageDescriptor: PackageFragmentDescriptor,
         val membersList: List<JetScope>
 ) : JetScopeImpl() {
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = membersList.flatMap { it.getFunctions(name, location) }
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = sort(membersList.flatMap { it.getFunctions(name, location) })
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = membersList.flatMap { it.getProperties(name, location) }
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = sort(membersList.flatMap { it.getProperties(name, location) })
 
     override fun getClassifier(name: Name, location: LookupLocation) = membersList.asSequence().map { it.getClassifier(name, location) }.filterNotNull().firstOrNull()
 
@@ -57,6 +56,13 @@ public open class DeserializedNewPackageMemberScope(
     }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = membersList.flatMap { it.getDescriptors(kindFilter, nameFilter) }
+            = sort(membersList.flatMap { it.getDescriptors(kindFilter, nameFilter) })
 
+
+    public fun <T : DeclarationDescriptor> sort(descriptors: Collection<T>): List<T> {
+        val result = ArrayList(descriptors)
+        //NOTE: the exact comparator does matter here
+        Collections.sort(result, MemberComparator.INSTANCE)
+        return result
+    }
 }

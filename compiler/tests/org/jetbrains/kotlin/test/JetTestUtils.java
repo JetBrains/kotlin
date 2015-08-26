@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -286,8 +287,8 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFile(@NotNull JetFile file) {
-        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
+    public static AnalysisResult analyzeFile(@NotNull JetFile file, @NotNull KotlinCoreEnvironment environment) {
+        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file, environment);
     }
 
     @NotNull

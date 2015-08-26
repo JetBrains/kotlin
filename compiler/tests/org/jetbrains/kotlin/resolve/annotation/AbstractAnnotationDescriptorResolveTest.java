@@ -325,7 +325,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected JetFile getFile(@NotNull String content) {
         JetFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
-        AnalysisResult analysisResult = analyzeFile(ktFile);
+        AnalysisResult analysisResult = JetTestUtils.analyzeFile(ktFile, getEnvironment());
         context = analysisResult.getBindingContext();
 
         return ktFile;
@@ -341,11 +341,6 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected PackageFragmentDescriptor getPackage(@NotNull String content) {
         return getPackage(getFile(content));
-    }
-
-    @NotNull
-    protected AnalysisResult analyzeFile(@NotNull JetFile ktFile) {
-        return JetTestUtils.analyzeFile(ktFile);
     }
 
     protected static String getContent(@NotNull String annotationText) throws IOException {

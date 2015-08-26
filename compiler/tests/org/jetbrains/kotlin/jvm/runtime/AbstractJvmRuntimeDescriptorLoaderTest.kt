@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
@@ -82,7 +82,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
 
-        val actual = createReflectedPackageView(classLoader, "")
+        val actual = createReflectedPackageView(classLoader, JvmResolveUtil.TEST_MODULE_NAME)
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
