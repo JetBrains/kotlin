@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -75,9 +74,9 @@ public final class PsiCodegenPredictor {
         }
 
         if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||
-                declaration instanceof JetEnumEntry) {
+                isEnumEntryWithoutBody(declaration)) {
             // Other subclasses are not valid for class name prediction.
-            // For example EnumEntry, JetFunctionLiteral
+            // For example JetFunctionLiteral
             return null;
         }
 
@@ -104,5 +103,13 @@ public final class PsiCodegenPredictor {
         }
 
         return parentInternalName + (parentDeclaration == null ? "/" : "$") + name.asString();
+    }
+
+    private static boolean isEnumEntryWithoutBody(JetDeclaration declaration) {
+        if (!(declaration instanceof JetEnumEntry)) {
+            return false;
+        }
+        JetClassBody body = ((JetEnumEntry) declaration).getBody();
+        return body == null || body.getDeclarations().size() == 0;
     }
 }

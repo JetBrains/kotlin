@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.constant
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 import kotlin.test.assertTrue
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -189,8 +187,8 @@ public fun JetDeclaration.isOverridable(): Boolean {
     val parent = getParent()
     if (!(parent is JetClassBody || parent is JetParameterList)) return false
 
-    val klass = parent.getParent()
-    if (!(klass is JetClass && klass.isInheritable())) return false
+    val klass = parent.getParent() as? JetClass ?: return false
+    if (!klass.isInheritable() && !klass.isEnum()) return false
 
     if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
 
