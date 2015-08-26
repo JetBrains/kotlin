@@ -469,6 +469,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("NestedBuiltInClass.kt")
+        public void testNestedBuiltInClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NestedBuiltInClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NestedClassBug.kt")
         public void testNestedClassBug() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NestedClassBug.kt");
