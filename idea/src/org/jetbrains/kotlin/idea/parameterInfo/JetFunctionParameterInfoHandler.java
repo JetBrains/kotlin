@@ -413,8 +413,10 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             }
         };
         Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, resolutionFacade, visibilityFilter).getReferenceVariants(
-                callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
-                                                             Collections.<DescriptorKindExclude>emptyList()), nameFilter, false, false);
+                callNameExpression,
+                new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK, Collections.<DescriptorKindExclude>emptyList()),
+                nameFilter
+        );
 
         Collection<Pair<? extends DeclarationDescriptor, ResolutionFacade>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolutionFacade>>();
         for (DeclarationDescriptor variant : variants) {

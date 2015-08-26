@@ -90,9 +90,9 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     // special completion for outside parenthesis lambda argument
     private fun addFunctionLiteralArgumentCompletions() {
         if (nameExpression != null) {
-            val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression)
-            if (receiverData != null && receiverData.second == CallType.INFIX) {
-                val call = receiverData.first.getCall(bindingContext)
+            val (receiverExpression, callType) = ReferenceVariantsHelper.getExplicitReceiverData(nameExpression) ?: return
+            if (callType == CallType.INFIX) {
+                val call = receiverExpression.getCall(bindingContext)
                 if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
                     val dummyArgument = object : FunctionLiteralArgument {
                         override fun getFunctionLiteral() = throw UnsupportedOperationException()

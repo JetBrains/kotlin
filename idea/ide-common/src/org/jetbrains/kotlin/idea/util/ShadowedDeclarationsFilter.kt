@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -25,53 +26,54 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.CallResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
-        private val resolutionFacade: ResolutionFacade
+        private val resolutionFacade: ResolutionFacade,
+        private val context: JetExpression,
+        explicitReceiverData: ReferenceVariantsHelper.ExplicitReceiverData?
 ) {
     private val psiFactory = JetPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
-    public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>, expression: JetSimpleNameExpression): Collection<TDescriptor> {
-        val call = expression.getCall(bindingContext) ?: return declarations
+    private val explicitReceiverValue = explicitReceiverData?.let {
+        val type = bindingContext.getType(it.expression) ?: return@let null
+        ExpressionReceiver(it.expression, type)
+    } ?: ReceiverValue.NO_RECEIVER
 
+    public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
         return declarations
                 .groupBy { signature(it) }
                 .values()
-                .flatMap { group -> filterEqualSignatureGroup(group, call) }
+                .flatMap { group -> filterEqualSignatureGroup(group) }
     }
 
     public fun <TDescriptor : DeclarationDescriptor> filterNonImported(
             declarations: Collection<TDescriptor>,
-            importedDeclarations: Collection<DeclarationDescriptor>,
-            expression: JetSimpleNameExpression
+            importedDeclarations: Collection<DeclarationDescriptor>
     ): Collection<TDescriptor> {
         val importedDeclarationsSet = importedDeclarations.toSet()
         val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
 
         val importedDeclarationsBySignature = importedDeclarationsSet.groupBy { signature(it) }
 
-        val call = expression.getCall(bindingContext) ?: return nonImportedDeclarations
-
         val notShadowed = HashSet<DeclarationDescriptor>()
         // same signature non-imported declarations from different packages do not shadow each other
         for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
             val imported = importedDeclarationsBySignature[pair.first]
             val all = if (imported != null) group + imported else group
-            notShadowed.addAll(filterEqualSignatureGroup(all, call, descriptorsToImport = group))
+            notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
         }
         return declarations.filter { it in notShadowed }
     }
@@ -88,7 +90,6 @@ public class ShadowedDeclarationsFilter(
 
     private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
             descriptors: Collection<TDescriptor>,
-            call: Call,
             descriptorsToImport: Collection<TDescriptor> = emptyList()
     ): Collection<TDescriptor> {
         if (descriptors.size() == 1) return descriptors
@@ -135,7 +136,7 @@ public class ShadowedDeclarationsFilter(
             arguments.add(DummyArgument(i))
         }
 
-        val newCall = object : DelegatingCall(call) {
+        val newCall = object : Call {
             //TODO: compiler crash (KT-8011)
             //val arguments = parameters.indices.map { DummyArgument(it) }
             val callee = psiFactory.createExpressionByPattern("$0", name)
@@ -151,17 +152,26 @@ public class ShadowedDeclarationsFilter(
             override fun getTypeArguments() = emptyList<JetTypeProjection>()
 
             override fun getTypeArgumentList() = null
+
+            override fun getDispatchReceiver() = ReceiverValue.NO_RECEIVER
+
+            override fun getCallOperationNode() = null
+
+            override fun getExplicitReceiver() = explicitReceiverValue
+
+            override fun getCallElement() = callee
+
+            override fun getCallType() = Call.CallType.DEFAULT
         }
 
-        val calleeExpression = call.getCalleeExpression() ?: return descriptors
-        var resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return descriptors
+        var resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return descriptors
 
         if (descriptorsToImport.isNotEmpty()) {
             resolutionScope = ChainedScope(resolutionScope.getContainingDeclaration(), "Scope with explicitly imported descriptors",
                                            ExplicitImportsScope(descriptorsToImport), resolutionScope)
         }
 
-        val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
+        val dataFlowInfo = bindingContext.getDataFlowInfo(context)
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
