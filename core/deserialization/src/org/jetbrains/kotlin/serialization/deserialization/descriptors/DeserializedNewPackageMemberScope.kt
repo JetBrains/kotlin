@@ -58,5 +58,4 @@ public open class DeserializedNewPackageMemberScope(
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = membersList.flatMap { it.getDescriptors(kindFilter, nameFilter) }
-
 }

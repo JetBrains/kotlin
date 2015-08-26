@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class JvmResolveUtil {
+
+    public static String TEST_MODULE_NAME = "java-integration-test";
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegrationAndCheckForErrors(@NotNull JetFile file) {
         return analyzeOneFileWithJavaIntegrationAndCheckForErrors(file, PackageMappingProvider.EMPTY);
@@ -46,6 +48,11 @@ public class JvmResolveUtil {
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
 
         return analysisResult;
+    }
+
+    @NotNull
+    public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file,  @NotNull KotlinCoreEnvironment environment) {
+        return analyzeOneFileWithJavaIntegration(file, new JvmPackageMappingProvider(environment));
     }
 
     @NotNull
@@ -98,7 +105,8 @@ public class JvmResolveUtil {
             @NotNull Collection<JetFile> files,
             @NotNull PackageMappingProvider packageMappingProvider
     ) {
-        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, "java-integration-test");
+
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, TEST_MODULE_NAME);
 
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 

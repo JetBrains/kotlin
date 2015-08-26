@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.lazy.JvmPackageMappingProvider
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.junit.Assert
@@ -65,7 +66,8 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
                     val moduleName = javaClass.getName().asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
                 },
-                CompilerEnvironment
+                CompilerEnvironment,
+                packageMappingProviderFactory = { a, b -> JvmPackageMappingProvider(environment)}
         )
 
         performChecks(resolverForProject, modules)
