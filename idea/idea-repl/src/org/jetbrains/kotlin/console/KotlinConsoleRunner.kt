@@ -48,6 +48,7 @@ import kotlin.properties.Delegates
 public class KotlinConsoleRunner(
         private val cmdLine: GeneralCommandLine,
         private val module: Module,
+        private val previousCompilationFailed: Boolean,
         private val testMode: Boolean,
         myProject: Project,
         title: String,
@@ -105,7 +106,7 @@ public class KotlinConsoleRunner(
         disposableDescriptor = contentDescriptor
 
         val actionList = arrayListOf<AnAction>(
-                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, restarter, testMode),
+                BuildAndRestartConsoleAction(project, module, defaultExecutor, contentDescriptor, previousCompilationFailed, testMode),
                 createConsoleExecAction(consoleExecuteActionHandler),
                 createCloseAction(defaultExecutor, contentDescriptor)
         )
@@ -115,12 +116,6 @@ public class KotlinConsoleRunner(
 
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler)
             = ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, "KotlinShellExecute", consoleExecuteActionHandler)
-
-    private val restarter = object : Consumer<Module> {
-        override fun consume(module: Module) {
-            KotlinConsoleKeeper.getInstance(project).run(module)
-        }
-    }
 
     override fun constructConsoleTitle(title: String) = "$title (in module ${module.name})"
 

@@ -44,11 +44,11 @@ public class KotlinConsoleKeeper(val project: Project) {
     fun putVirtualFileToConsole(virtualFile: VirtualFile, console: KotlinConsoleRunner) = consoleMap.put(virtualFile, console)
     fun removeConsole(virtualFile: VirtualFile) = consoleMap.remove(virtualFile)
 
-    fun run(module: Module, testMode: Boolean = false): KotlinConsoleRunner? {
+    fun run(module: Module, previousCompilationFailed: Boolean = false, testMode: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
         val cmdLine = createCommandLine(module) ?: return errorNotification(project, "Module SDK not found") let { null }
 
-        val consoleRunner = KotlinConsoleRunner(cmdLine, module, testMode, project, REPL_TITLE, path)
+        val consoleRunner = KotlinConsoleRunner(cmdLine, module, previousCompilationFailed, testMode, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
         consoleRunner.setupGutters()
 
