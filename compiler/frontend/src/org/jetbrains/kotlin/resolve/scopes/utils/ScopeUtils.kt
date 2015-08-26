@@ -95,6 +95,7 @@ public fun LexicalScope.getClassifier(name: Name, location: LookupLocation = NoL
 
 public fun LexicalScope.asJetScope(): JetScope {
     if (this is JetScope) return this
+    if (this is MemberScopeToFileScopeAdapter) return this.memberScope
     return LexicalToJetScopeAdapter(this)
 }
 
@@ -148,6 +149,12 @@ private class LexicalToJetScopeAdapter(val lexicalScope: LexicalScope): JetScope
     override fun getImplicitReceiversHierarchy() = lexicalScope.getImplicitReceiversHierarchy()
     override fun getOwnDeclaredDescriptors() = lexicalScope.getDeclaredDescriptors()
 
+    override fun equals(other: Any?) = other is LexicalToJetScopeAdapter && other.lexicalScope == this.lexicalScope
+
+    override fun hashCode() = lexicalScope.hashCode()
+
+    override fun toString() = "LexicalToJetScopeAdapter for $lexicalScope"
+
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName)
         p.pushIndent()
@@ -189,6 +196,12 @@ private class MemberScopeToFileScopeAdapter(val memberScope: JetScope) : FileSco
     }
 
     override fun getDeclaredFunctions(name: Name, location: LookupLocation) = memberScope.getFunctions(name, location)
+
+    override fun equals(other: Any?) = other is MemberScopeToFileScopeAdapter && other.memberScope == memberScope
+
+    override fun hashCode() = memberScope.hashCode()
+
+    override fun toString() = "MemberScopeToFileScopeAdapter for $memberScope"
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName)
