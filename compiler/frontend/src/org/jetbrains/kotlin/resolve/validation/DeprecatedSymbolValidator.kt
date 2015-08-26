@@ -90,9 +90,9 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
         val message = deprecated.argumentValue("value") as? String
         return if (message == null)
-            Errors.DEPRECATED_SYMBOL.on(element, descriptor)
+            Errors.DEPRECATED_SYMBOL.on(element, descriptor.original)
         else
-            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.on(element, descriptor, message)
+            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.on(element, descriptor.original, message)
     }
 
     private val PROPERTY_SET_OPERATIONS = TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ, JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS)
