@@ -70,10 +70,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
-import java.util.ServiceLoader
+import java.util.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
@@ -89,17 +86,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
     override fun getCompilableFileExtensions() = arrayListOf("kt")
 
+    override fun buildStarted(context: CompileContext) {
+        val historyLabel = context.getBuilderParameter("history label")
+        if (historyLabel != null) {
+            LOG.debug("Label in local history: $historyLabel")
+        }
+    }
+
     override fun build(
             context: CompileContext,
             chunk: ModuleChunk,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
             outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        val historyLabel = context.getBuilderParameter("history label")
-        if (historyLabel != null) {
-            LOG.info("Label in local history: $historyLabel")
-        }
-
         val messageCollector = MessageCollectorAdapter(context)
         try {
             return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
