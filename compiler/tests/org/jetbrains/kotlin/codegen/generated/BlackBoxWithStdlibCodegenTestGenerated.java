@@ -3513,6 +3513,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("javaClass.kt")
+            public void testJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/javaClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("primitiveJavaClass.kt")
+            public void testPrimitiveJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/primitiveJavaClass.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("propertyGetSetName.kt")
             public void testPropertyGetSetName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/propertyGetSetName.kt");
@@ -3522,6 +3534,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("propertyInstanceof.kt")
             public void testPropertyInstanceof() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/propertyInstanceof.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("reifiedTypeJavaClass.kt")
+            public void testReifiedTypeJavaClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/reifiedTypeJavaClass.kt");
                 doTestWithStdlib(fileName);
             }
 

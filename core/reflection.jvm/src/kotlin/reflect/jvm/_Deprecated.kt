@@ -45,3 +45,14 @@ public val <T> KClass<T>.declaredExtensionProperties: Collection<KProperty2<T, *
 public var KProperty<*>.accessible: Boolean
     get() = isAccessible
     set(value) { isAccessible = value }
+
+
+@deprecated("Use .java instead.", ReplaceWith("java"))
+public val <T> KClass<T>.__java: Class<T>
+    @jvmName("getJava")
+    get() = this.java
+
+@deprecated("Use .kotlin instead.", ReplaceWith("kotlin"))
+public val <T> Class<T>.__kotlin: KClass<T>
+    @jvmName("getKotlin")
+    get() = this.kotlin

@@ -17,18 +17,10 @@
 package kotlin.reflect.jvm
 
 import java.lang.reflect.*
-import kotlin.jvm.internal.Intrinsic
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 
 // Kotlin reflection -> Java reflection
-
-/**
- * Returns a Java [Class] instance corresponding to the given [KClass] instance.
- */
-@Intrinsic("kotlin.KClass.java.property")
-public val <T> KClass<T>.java: Class<T>
-    get() = (this as KClassImpl<T>).jClass
 
 /**
  * Returns a Java [Class] instance that represents a Kotlin package.
@@ -89,13 +81,6 @@ public val KType.javaType: Type
 
 
 // Java reflection -> Kotlin reflection
-
-// TODO: getstatic $kotlinClass or go to foreignKClasses
-/**
- * Returns a [KClass] instance corresponding to the given Java [Class] instance.
- */
-public val <T> Class<T>.kotlin: KClass<T>
-    get() = KClassImpl(this)
 
 /**
  * Returns a [KPackage] instance corresponding to the Java [Class] instance.

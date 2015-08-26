@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.HashMap
-import kotlin.reflect.jvm.java
+import java.util.*
+import kotlin.reflect.jvm.*
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,

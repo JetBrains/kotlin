@@ -1,5 +1,4 @@
 import kotlin.test.*
-import kotlin.reflect.jvm.*
 
 fun box(): String {
     val any = Array<Any>::class

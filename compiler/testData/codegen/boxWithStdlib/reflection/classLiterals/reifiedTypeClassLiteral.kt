@@ -1,5 +1,4 @@
 import kotlin.test.*
-import kotlin.reflect.jvm.java
 
 class Klass
 class Other

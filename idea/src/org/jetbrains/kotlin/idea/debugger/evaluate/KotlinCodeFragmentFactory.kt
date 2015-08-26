@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.reflect.jvm.java
+import kotlin.reflect.jvm.*
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     private val LOG = Logger.getInstance(this.javaClass)

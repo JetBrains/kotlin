@@ -23,9 +23,9 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import java.io.File
 import java.lang.reflect.Constructor
-import java.util.HashMap
+import java.util.*
 import java.util.regex.Pattern
-import kotlin.reflect.jvm.java
+import kotlin.reflect.jvm.*
 import java.lang.reflect.Array as RArray
 
 fun parse(line: String, reader: OutputLineReader, messages: MutableList<Any>, logger: ILogger): Boolean {

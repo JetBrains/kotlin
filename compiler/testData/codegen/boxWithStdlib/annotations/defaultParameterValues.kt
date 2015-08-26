@@ -1,5 +1,4 @@
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.java
 
 annotation(retention = AnnotationRetention.RUNTIME) class Ann(
         val i: Int = 1,

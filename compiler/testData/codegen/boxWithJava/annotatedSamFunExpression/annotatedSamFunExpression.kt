@@ -1,5 +1,4 @@
 import java.lang.reflect.Method
-import kotlin.reflect.jvm.java
 import kotlin.test.assertEquals
 
 annotation(retention = AnnotationRetention.RUNTIME) class Ann(val x: String)

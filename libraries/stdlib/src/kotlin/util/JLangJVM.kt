@@ -27,13 +27,16 @@ public annotation(retention = AnnotationRetention.SOURCE) class throws(public va
 /**
  * Returns the runtime Java class of this object.
  */
-@Intrinsic("kotlin.javaClass.property") public val <T: Any> T.javaClass : Class<T>
+@Intrinsic("kotlin.javaClass.property")
+public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
 /**
  * Returns the Java class for the specified type.
  */
-@Intrinsic("kotlin.javaClass.function") public fun <reified T: Any> javaClass(): Class<T> = null as Class<T>
+@Intrinsic("kotlin.javaClass.function")
+@deprecated("Use the class reference and .java extension property instead: MyClass::class.java", ReplaceWith("T::class.java"))
+public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
 /**
  * Executes the given function [block] while holding the monitor of the given object [lock].
